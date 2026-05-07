@@ -113,7 +113,7 @@ The seeded vocabulary plus any promoted proposals.
 
 ### `:CanonicalTagProposal`
 
-Created when the agent emits a tag with `propose=True`.
+Created when the agent emits a tag with `canonical_missing=True`. Raw tag names are expected to be specific and often new; this node is only for proposing a missing broad canonical label.
 
 | Property | Type | Notes |
 |---|---|---|

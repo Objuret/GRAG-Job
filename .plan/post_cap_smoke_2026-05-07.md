@@ -194,12 +194,91 @@ Failed chunk ordinals:
 
 ## Interpretation
 
-This smoke confirms that the capped graph no longer has oversized chunk content and the file orchestration stage can run on the capped chunks. It is not green enough to scale yet: two chunk calls still failed schema validation because the model emitted `propose=true` with a non-null `canonical`.
+This smoke confirms that the capped graph no longer has oversized chunk content and the file orchestration stage can run on the capped chunks. It was not green enough to scale yet: two chunk calls failed schema validation because the old prompt/schema used the ambiguous `propose` field and the model emitted `propose=true` with a non-null `canonical`.
 
-The next engineering step should address this before a broader batch:
+Follow-up decision after reviewing the failure:
 
-1. Either make the writer/client repair this single invalid pattern deterministically by setting `propose=false` when `canonical` is non-null, or
-2. Split canonical mapping/proposal into a second stage, or
-3. Tighten the prompt further and re-run the two failed WorkItems as a retry.
+Raw tag names are expected to be specific and often new. The proposal concept only applies when the broad canonical vocabulary is missing a fitting label. The schema/prompt should therefore use `canonical_missing`, not `propose`.
 
-Given the repository's "fail loud" rule, option 1 is a policy decision and should be documented if chosen.
+At that point, the next step was to retry the two failed chunk WorkItems under the `canonical_missing` schema/prompt, then rerun the file orchestration WorkItem so file relevance would cover all non-empty chunks. The follow-up retry below completed that step.
+
+## Follow-Up Retry After Schema Rename
+
+The schema and prompt were changed so raw tag novelty is represented by `name`, while missing canonical vocabulary is represented by `canonical_missing`.
+
+Before retrying, the file orchestration WorkItem for `960f223de786daa74a7d0f70` was reset to `unrun`, and stale `File.description` / `Chunk.relevance_to_file` values for that file were cleared so the file step could be rerun after the failed chunks passed.
+
+Retry command:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\run_index.py --file-id 960f223de786daa74a7d0f70 --chunk-limit 2 --file-limit 1 --concurrency 2
+```
+
+Exact terminal output:
+
+```text
+Run started: 2026-05-07T13-52-46Z-7ec1b8
+[orchestrator] reset 2 failed work items to unrun
+[orchestrator] canonical vocab loaded; dataset_id filter = None; file_id filter = '960f223de786daa74a7d0f70'
+[orchestrator] chunk stage: processed=2 done=2 failed=0
+[orchestrator] file stage: processed=1 done=1 failed=0
+[orchestrator] rollup wrote 56 (:File)-[:TAGGED]->(:Tag) edges
+Run finished: ok
+  chunks_done=2, chunks_failed=0
+  files_done=1, files_failed=0
+  tokens in/out = 5594/1343, duration_ms = 24490
+```
+
+Persisted retry run:
+
+Note: the retry was executed from a working tree that already contained the `canonical_missing` schema/prompt changes, before those edits were committed. Therefore `Run.git_commit` records the previously committed SHA, not the final commit that documents this fix.
+
+```json
+{
+  "run_id": "2026-05-07T13-52-46Z-7ec1b8",
+  "status": "ok",
+  "chunks_done": 2,
+  "chunks_failed": 0,
+  "files_done": 1,
+  "files_failed": 0,
+  "total_in_tokens": 5594,
+  "total_out_tokens": 1343,
+  "total_duration_ms": 24490,
+  "git_commit": "78ad0b9de64cf75bb49c6de569b04f3ea3089b1e",
+  "agent_model": "gpt-4o-mini",
+  "agent_max_concurrency": 2
+}
+```
+
+Final target-file state:
+
+```json
+{
+  "target_workitems": [
+    {"kind": "chunk_extraction", "status": "done", "n": 10},
+    {"kind": "file_orchestration", "status": "done", "n": 1}
+  ],
+  "target_file_edges": {
+    "has_tag": 62,
+    "tagged": 56
+  },
+  "target_relevance": {
+    "chunks": 10,
+    "relevance_set": 10,
+    "min_rel": 0.4,
+    "max_rel": 0.9
+  },
+  "global_failed_workitems": 0
+}
+```
+
+Canonical proposals observed during the retry:
+
+```json
+[
+  {"label": "employee_role_in_review", "cluster": "information_need", "observed_count": 1},
+  {"label": "user_education", "cluster": "information_need", "observed_count": 1}
+]
+```
+
+Interpretation after retry: the file-scoped post-cap smoke is now green for this file. The new `canonical_missing` path works, and all non-empty chunks have file relevance.

@@ -48,7 +48,7 @@ Each entry: **Decision** • **Rationale** • **Alternatives considered** • *
 ### D4 — `canonical_id` on `HAS_TAG` edges (per-chunk attribution)
 
 - **Decision.** Each `(:Chunk)-[:HAS_TAG]->(:Tag)` edge stores `canonical_id` (the canonical the agent mapped to, or `null` when proposing). Aggregation at file-level reads it from the edge.
-- **Rationale.** Per-chunk attribution: the same Tag node can be canonical-mapped from one chunk and proposed-as-new from another. The edge is the per-occurrence record.
+- **Rationale.** Per-chunk attribution: the same raw Tag node can be mapped to a canonical from one chunk and treated as missing a canonical from another. The edge is the per-occurrence record.
 - **Alternatives.** Store mapping on the Tag node (one canonical per name globally). Rejected — it conflates extraction events.
 - **Status.** Active. See [`indexing/extraction_writer.py`](../indexing/extraction_writer.py).
 
@@ -157,7 +157,7 @@ The orchestrator handles four outcomes for a chunk_extraction call:
 
 1. **Normal.** `error_class == "ok"`, `parsed.empty == False`, `chunk_end_offset` echoes the graph. Writer sets the description and creates `HAS_TAG` edges. WorkItem → `done`.
 2. **Empty verdict.** `parsed.empty == True` with an `empty_reason`. Writer sets `(:Chunk).empty=true` and clears any prior `HAS_TAG` edges. WorkItem → `done`.
-3. **Propose new canonical.** A `Tag` with `propose=True` and a `gloss`. Writer creates a `(:CanonicalTagProposal)` node with stable `proposal_id` and an `OBSERVED_IN` edge to the chunk. The `HAS_TAG` edge has `canonical_id=null` (until/unless triage promotes the proposal).
+3. **Missing canonical proposal.** A `Tag` with `canonical_missing=True`, `canonical=null`, and a `gloss`. Writer creates a `(:CanonicalTagProposal)` node with stable `proposal_id` and an `OBSERVED_IN` edge to the chunk. The raw tag `name` is allowed to be new even in normal mapped tags; `canonical_missing` means the broad canonical vocabulary itself lacks a fitting label. The `HAS_TAG` edge has `canonical_id=null` until/unless triage promotes the proposal.
 4. **Validation failure.** `error_class == "ok"` but `chunk_end_offset` doesn't match the graph (or pydantic rejected the JSON, surfaced as `schema_invalid` from the agent client). WorkItem → `failed` with `error_class="schema_validation"` (mismatch case) or `"schema_invalid"` (pydantic case). Auto-reset on next run.
 
 ## File orchestrator role

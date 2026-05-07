@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from typing import Literal
 
+from typing import Any
+
 from pydantic import BaseModel, Field, model_validator
 
 
@@ -23,28 +25,46 @@ Cluster = Literal[
 class Tag(BaseModel):
     """One tag emitted by the chunk agent.
 
-    Either canonical is set (the tag mapped to an existing canonical in the seed
-    vocabulary) or propose is True (the tag is a candidate for a new canonical).
+    ``name`` is the raw, specific tag extracted from the chunk. ``canonical``
+    maps that raw tag to the broad controlled vocabulary. ``canonical_missing``
+    is only for the rare case where no broad canonical label fits.
     """
 
     name: str = Field(min_length=1, description="Raw snake_case label, e.g. 'revenue_decline'.")
     cluster: Cluster
-    canonical: str | None = Field(default=None, description="Canonical label if mapped; null when proposing.")
+    canonical: str | None = Field(
+        default=None,
+        description="Broad canonical label if mapped; null only when canonical_missing=True.",
+    )
     weight_local: float = Field(ge=0.0, le=1.0, description="Saliency of this tag for this chunk.")
-    propose: bool = False
-    gloss: str | None = Field(default=None, description="One-line definition; required when propose=True.")
+    canonical_missing: bool = False
+    gloss: str | None = Field(default=None, description="One-line canonical proposal definition; required when canonical_missing=True.")
     rationale: str | None = Field(default=None, description="Why a new canonical is needed; optional.")
 
+    @model_validator(mode="before")
+    @classmethod
+    def _normalise_legacy_propose(cls, data: Any) -> Any:
+        if not isinstance(data, dict):
+            return data
+        if "canonical_missing" not in data and "propose" in data:
+            out = dict(data)
+            # Legacy prompts used `propose` ambiguously. If the model also
+            # supplied a canonical, it meant "new raw tag name", not "missing
+            # canonical", so preserve the canonical mapping.
+            out["canonical_missing"] = bool(out["propose"]) and out.get("canonical") is None
+            return out
+        return data
+
     @model_validator(mode="after")
-    def _validate_propose_vs_canonical(self) -> "Tag":
-        if self.propose:
+    def _validate_missing_vs_canonical(self) -> "Tag":
+        if self.canonical_missing:
             if self.canonical is not None:
-                raise ValueError("propose=True is incompatible with a non-null canonical.")
+                raise ValueError("canonical_missing=True is incompatible with a non-null canonical.")
             if not self.gloss:
-                raise ValueError("propose=True requires a gloss.")
+                raise ValueError("canonical_missing=True requires a gloss.")
         else:
             if self.canonical is None:
-                raise ValueError("Either set canonical or set propose=True with a gloss.")
+                raise ValueError("Either set canonical or set canonical_missing=True with a gloss.")
         return self
 
 

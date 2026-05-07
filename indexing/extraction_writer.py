@@ -60,11 +60,11 @@ class ExtractionWriter:
             {
                 "name": t.name,
                 "cluster": t.cluster,
-                "canonical_id": None if t.propose else t.canonical,
+                "canonical_id": None if t.canonical_missing else t.canonical,
                 "weight_local": float(t.weight_local),
-                "propose": bool(t.propose),
+                "canonical_missing": bool(t.canonical_missing),
                 "proposal_id": (
-                    stable_short_hash(f"{t.cluster}:{t.name}", 24) if t.propose else None
+                    stable_short_hash(f"{t.cluster}:{t.name}", 24) if t.canonical_missing else None
                 ),
                 "gloss": t.gloss,
                 "rationale": t.rationale,
@@ -100,7 +100,7 @@ class ExtractionWriter:
                     MATCH (c:Chunk {chunk_id: $cid})
                     UNWIND $tags AS tag
                     MERGE (t:Tag {name: tag.name})
-                    FOREACH (_ IN CASE WHEN tag.propose THEN [1] ELSE [] END |
+                    FOREACH (_ IN CASE WHEN tag.canonical_missing THEN [1] ELSE [] END |
                       MERGE (p:CanonicalTagProposal {proposal_id: tag.proposal_id})
                         ON CREATE SET p.label = tag.name,
                                       p.cluster = tag.cluster,
