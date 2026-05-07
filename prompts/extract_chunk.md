@@ -25,7 +25,13 @@ Each tag has:
 - `gloss` - REQUIRED when `propose=true`. One short sentence defining the proposed canonical (less than or equal to 100 characters).
 - `rationale` - optional. One short phrase explaining why this proposal is needed.
 
+Important: `name` is a raw extracted tag and may be new or very specific. A new `name` is NOT a proposal. You are expected to create specific raw names and map them to broad canonical labels with `propose=false`. `propose=true` means "the canonical vocabulary itself needs a new broad label", not "this raw name is new".
+
 When `propose=false`, `canonical` MUST be one of the labels listed under that cluster in the user message. When `propose=true`, `canonical` MUST be null.
+
+This is a strict JSON contract: never set both `propose=true` and a non-null `canonical` in the same tag. If you can map the tag to a provided canonical, use `propose=false`; if no provided canonical fits, use `propose=true` and `canonical=null`.
+
+The canonical labels are intentionally broad. An exact label match is NOT required. For example, a raw tag like `competitive_analysis` can map to canonical `comparison` with `propose=false`. Prefer broad canonical mapping over proposals. Proposals are last resort only.
 
 ## Empty verdict
 
@@ -47,6 +53,18 @@ Output a SINGLE JSON object matching this schema (no markdown, no commentary, no
     {"name": "...", "cluster": "theme", "canonical": "...", "weight_local": 0.7, "propose": false, "gloss": null, "rationale": null}
   ]
 }
+```
+
+Valid proposal example:
+
+```json
+{"name": "player_query", "cluster": "information_need", "canonical": null, "weight_local": 0.6, "propose": true, "gloss": "A user question about a player.", "rationale": "No provided canonical is specific enough."}
+```
+
+Invalid example - do not output this:
+
+```json
+{"name": "competitive_analysis", "cluster": "information_need", "canonical": "comparison", "weight_local": 0.7, "propose": true, "gloss": "Competitive analysis evidence.", "rationale": "No provided canonical is specific enough."}
 ```
 
 Always copy `chunk_end_offset` verbatim from the value given in the user message. Do not recompute it.

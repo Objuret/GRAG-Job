@@ -93,6 +93,7 @@ class Orchestrator:
         run_id: str,
         *,
         dataset_id: str | None = None,
+        file_id: str | None = None,
         chunk_limit: int | None = None,
         file_limit: int | None = None,
     ) -> RunSummary:
@@ -105,10 +106,23 @@ class Orchestrator:
         self._chunk_prompt = self._read_prompt("extract_chunk.md")
         self._file_prompt = self._read_prompt("file_descriptor.md")
         await self._load_canonical_vocab()
-        print(f"[orchestrator] canonical vocab loaded; dataset_id filter = {dataset_id!r}")
+        print(
+            "[orchestrator] canonical vocab loaded; "
+            f"dataset_id filter = {dataset_id!r}; file_id filter = {file_id!r}"
+        )
 
-        await self._run_chunk_stage(run_id, dataset_id=dataset_id, chunk_limit=chunk_limit)
-        await self._run_file_stage(run_id, dataset_id=dataset_id, file_limit=file_limit)
+        await self._run_chunk_stage(
+            run_id,
+            dataset_id=dataset_id,
+            file_id=file_id,
+            chunk_limit=chunk_limit,
+        )
+        await self._run_file_stage(
+            run_id,
+            dataset_id=dataset_id,
+            file_id=file_id,
+            file_limit=file_limit,
+        )
 
         edges = await self._rollup.run(run_id, dataset_id=dataset_id)
         print(f"[orchestrator] rollup wrote {edges} (:File)-[:TAGGED]->(:Tag) edges")
@@ -150,6 +164,7 @@ class Orchestrator:
         run_id: str,
         *,
         dataset_id: str | None,
+        file_id: str | None,
         chunk_limit: int | None,
     ) -> None:
         processed = 0
@@ -164,7 +179,9 @@ class Orchestrator:
                 break
 
             items = await self._worklist.pull_unrun_chunk_items(
-                batch_limit, dataset_id_filter=dataset_id
+                batch_limit,
+                dataset_id_filter=dataset_id,
+                file_id_filter=file_id,
             )
             if not items:
                 break
@@ -326,6 +343,7 @@ class Orchestrator:
         run_id: str,
         *,
         dataset_id: str | None,
+        file_id: str | None,
         file_limit: int | None,
     ) -> None:
         processed = 0
@@ -340,7 +358,9 @@ class Orchestrator:
                 break
 
             items = await self._worklist.pull_unrun_file_items_with_chunks_done(
-                batch_limit, dataset_id_filter=dataset_id
+                batch_limit,
+                dataset_id_filter=dataset_id,
+                file_id_filter=file_id,
             )
             if not items:
                 break

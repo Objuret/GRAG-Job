@@ -31,6 +31,7 @@ from .worklist import WorkList
 class PreflightResult:
     files_seen: int = 0
     files_new: int = 0
+    files_skipped_no_chunks: int = 0
     chunks_created: int = 0
     work_items_seeded: int = 0
     failures: list[dict] = field(default_factory=list)
@@ -181,9 +182,12 @@ async def run_preflight(settings: Settings, client: Neo4jClient) -> PreflightRes
             result.chunks_created += n_chunks
 
             seeded_chunk_items = await worklist.seed_chunk_extraction_items(file_id)
+            if seeded_chunk_items == 0:
+                result.files_skipped_no_chunks += 1
+                continue
             # file_orchestration MUST be the LAST step. If anything above raises,
-            # this file gets no orchestration item this run; a future re-run
-            # (e.g., after the user frees memory) can heal it.
+            # or if the file cannot produce chunks, this file gets no
+            # orchestration item this run.
             await worklist.seed_file_orchestration_item(file_id)
             result.work_items_seeded += seeded_chunk_items + 1
         except Exception as exc:  # noqa: BLE001 — explicit per-file isolation

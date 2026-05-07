@@ -1,6 +1,6 @@
 """CLI entry point for the indexing run.
 
-    python scripts/run_index.py [--dataset-id ID] [--chunk-limit N] [--file-limit N] [--concurrency N]
+    python scripts/run_index.py [--dataset-id ID] [--file-id ID] [--chunk-limit N] [--file-limit N] [--concurrency N]
 
 Reads `.env` for LLM/agent settings (recommended: `LLM_BASE_URL`, `LLM_MODEL`,
 `LLM_API_KEY`, `LLM_TIMEOUT_SECONDS`, `LLM_MAX_CONCURRENCY`; legacy: `AGENT_*`
@@ -45,6 +45,12 @@ def parse_args() -> argparse.Namespace:
         type=str,
         default=None,
         help="Limit work to a single Source/dataset_id (matches Source.source_id).",
+    )
+    parser.add_argument(
+        "--file-id",
+        type=str,
+        default=None,
+        help="Limit work to a single File.file_id.",
     )
     parser.add_argument(
         "--chunk-limit",
@@ -125,6 +131,7 @@ async def main() -> None:
         await orchestrator.run(
             run_id,
             dataset_id=args.dataset_id,
+            file_id=args.file_id,
             chunk_limit=args.chunk_limit,
             file_limit=args.file_limit,
         )

@@ -79,7 +79,7 @@ class Chunker:
     async def _existing_chunk_count(self, file_id: str) -> int:
         async with self._client.session() as s:
             result = await s.run(
-                "MATCH (f:File {file_id: $fid})-[:HAS_CHUNK]->(c:Chunk) RETURN count(c) AS n",
+                "MATCH (c:Chunk {file_id: $fid}) RETURN count(c) AS n",
                 fid=file_id,
             )
             record = await result.single()
@@ -102,6 +102,12 @@ class Chunker:
 
     def _make_chunk_id(self, file_id: str, ordinal: int, start_offset: int) -> str:
         return stable_short_hash(f"{file_id}:{ordinal}:{start_offset}", 24)
+
+    def _cap_chunk_content(self, content: str) -> str:
+        max_chars = self._policy.hard_max_tokens * 4
+        if len(content) <= max_chars:
+            return content
+        return content[:max_chars] + "\n...<chunk content truncated>"
 
     def _chunk_jsonl(self, file_id: str, path: Path) -> Iterable[ChunkRecord]:
         offset = 0
@@ -139,15 +145,18 @@ class Chunker:
                 kind="raw",
                 start_offset=0,
                 end_offset=len(text),
-                content=text[: self._policy.hard_max_tokens * 4],
-                token_estimate=_est_tokens(text),
+                content=self._cap_chunk_content(text),
+                token_estimate=_est_tokens(self._cap_chunk_content(text)),
                 locator={"type": "malformed_json"},
             )
             return
 
         if isinstance(data, list):
             for ordinal, item in enumerate(data):
-                content = json.dumps(item, ensure_ascii=False, indent=2, default=str)
+                safe = self._make_json_safe_for_chunk(item)
+                content = self._cap_chunk_content(
+                    json.dumps(safe, ensure_ascii=False, indent=2, default=str)
+                )
                 yield ChunkRecord(
                     chunk_id=self._make_chunk_id(file_id, ordinal, 0),
                     file_id=file_id,
@@ -160,22 +169,26 @@ class Chunker:
                     locator={"index": ordinal},
                 )
         elif isinstance(data, dict):
-            full = json.dumps(data, ensure_ascii=False, indent=2, default=str)
+            safe_data = self._make_json_safe_for_chunk(data)
+            full = json.dumps(safe_data, ensure_ascii=False, indent=2, default=str)
             if _est_tokens(full) <= self._policy.hard_max_tokens:
+                content = self._cap_chunk_content(full)
                 yield ChunkRecord(
                     chunk_id=self._make_chunk_id(file_id, 0, 0),
                     file_id=file_id,
                     ordinal=0,
                     kind="object",
                     start_offset=0,
-                    end_offset=len(full),
-                    content=full,
-                    token_estimate=_est_tokens(full),
+                    end_offset=len(content),
+                    content=content,
+                    token_estimate=_est_tokens(content),
                     locator={"type": "object"},
                 )
             else:
-                for ordinal, (key, value) in enumerate(data.items()):
-                    content = json.dumps({key: value}, ensure_ascii=False, indent=2, default=str)
+                for ordinal, (key, value) in enumerate(safe_data.items()):
+                    content = self._cap_chunk_content(
+                        json.dumps({key: value}, ensure_ascii=False, indent=2, default=str)
+                    )
                     yield ChunkRecord(
                         chunk_id=self._make_chunk_id(file_id, ordinal, 0),
                         file_id=file_id,
@@ -195,35 +208,44 @@ class Chunker:
                 kind="raw",
                 start_offset=0,
                 end_offset=len(text),
-                content=text,
-                token_estimate=_est_tokens(text),
+                content=self._cap_chunk_content(text),
+                token_estimate=_est_tokens(self._cap_chunk_content(text)),
                 locator={"type": "primitive"},
             )
 
     def _chunk_parquet(self, file_id: str, path: Path) -> Iterable[ChunkRecord]:
         """Stream parquet rows in batches so we never materialize the full table.
 
-        Files containing image bytes can exceed RAM if read whole. We use
-        ``ParquetFile.iter_batches`` and convert each :class:`pyarrow.RecordBatch`
-        to Python dicts one batch at a time. Bytes/bytearray values are replaced
-        with a placeholder so chunk content stays small.
+        Files containing image bytes can exceed RAM if read whole. We inspect
+        the Arrow schema, omit columns whose type contains binary data, then
+        convert the remaining columns one batch at a time.
         """
+        import pyarrow as pa
         import pyarrow.parquet as pq
 
         pf = pq.ParquetFile(path)
+        selected_columns: list[str] = []
+        omitted_columns: list[str] = []
+        for field in pf.schema_arrow:
+            if self._arrow_type_contains_binary(field.type, pa):
+                omitted_columns.append(field.name)
+            else:
+                selected_columns.append(field.name)
+
+        if not selected_columns:
+            return
+
         ordinal = 0
-        for batch in pf.iter_batches(batch_size=512):
+        for batch in pf.iter_batches(batch_size=64, columns=selected_columns):
             rows = batch.to_pylist()
             for row in rows:
-                clean = {
-                    k: (
-                        f"<{type(v).__name__} {len(v)} bytes>"
-                        if isinstance(v, (bytes, bytearray))
-                        else v
-                    )
-                    for k, v in row.items()
-                }
-                content = json.dumps(clean, ensure_ascii=False, indent=2, default=str)
+                clean = self._make_json_safe_for_chunk(row)
+                if omitted_columns:
+                    clean["_omitted_columns"] = omitted_columns
+                    clean["_omitted_reason"] = "binary parquet columns are not embedded in chunk content"
+                content = self._cap_chunk_content(
+                    json.dumps(clean, ensure_ascii=False, indent=2, default=str)
+                )
                 yield ChunkRecord(
                     chunk_id=self._make_chunk_id(file_id, ordinal, 0),
                     file_id=file_id,
@@ -236,6 +258,43 @@ class Chunker:
                     locator={"row": ordinal},
                 )
                 ordinal += 1
+
+    def _arrow_type_contains_binary(self, dtype: Any, pa: Any) -> bool:
+        if pa.types.is_binary(dtype) or pa.types.is_large_binary(dtype) or pa.types.is_fixed_size_binary(dtype):
+            return True
+        if pa.types.is_list(dtype) or pa.types.is_large_list(dtype) or pa.types.is_fixed_size_list(dtype):
+            return self._arrow_type_contains_binary(dtype.value_type, pa)
+        if pa.types.is_struct(dtype):
+            return any(self._arrow_type_contains_binary(field.type, pa) for field in dtype)
+        if pa.types.is_map(dtype):
+            return self._arrow_type_contains_binary(dtype.key_type, pa) or self._arrow_type_contains_binary(dtype.item_type, pa)
+        return False
+
+    def _make_json_safe_for_chunk(self, value: Any, *, depth: int = 0) -> Any:
+        if depth >= 8:
+            return "<max depth reached>"
+        if isinstance(value, (bytes, bytearray)):
+            return f"<{type(value).__name__} {len(value)} bytes>"
+        if isinstance(value, str):
+            max_chars = self._policy.hard_max_tokens * 4
+            if len(value) > max_chars:
+                return value[:max_chars] + "...<truncated>"
+            return value
+        if isinstance(value, dict):
+            return {
+                str(k): self._make_json_safe_for_chunk(v, depth=depth + 1)
+                for k, v in value.items()
+            }
+        if isinstance(value, (list, tuple)):
+            max_items = 50
+            out = [
+                self._make_json_safe_for_chunk(v, depth=depth + 1)
+                for v in value[:max_items]
+            ]
+            if len(value) > max_items:
+                out.append(f"<{len(value) - max_items} items truncated>")
+            return out
+        return value
 
     def _chunk_text(self, file_id: str, path: Path, kind: ChunkKind) -> Iterable[ChunkRecord]:
         text = path.read_text(encoding="utf-8", errors="replace")

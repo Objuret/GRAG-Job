@@ -121,41 +121,37 @@ class WorkList:
         self,
         limit: int,
         dataset_id_filter: str | None = None,
+        file_id_filter: str | None = None,
     ) -> list[WorkItemRecord]:
         """Pull unrun chunk_extraction work items.
 
-        When ``dataset_id_filter`` is provided, only items whose ``file_id``
-        belongs to a File in that Source/dataset are returned. The filter uses
-        an inner MATCH against (:Source {source_id})-[:CONTAINS]->(:File) so it
-        leverages the unique index on Source.source_id and File.file_id.
+        When filters are provided, only items whose ``file_id`` belongs to that
+        dataset and/or exact file are returned.
         """
         async with self._client.session() as s:
-            if dataset_id_filter is None:
-                cypher = """
-                MATCH (w:WorkItem)
-                WHERE w.kind = 'chunk_extraction' AND w.status = 'unrun'
-                RETURN w.work_item_id AS work_item_id,
-                       w.kind AS kind,
-                       w.target_id AS target_id,
-                       w.file_id AS file_id,
-                       w.status AS status
-                LIMIT $limit
-                """
-                params = {"limit": limit}
-            else:
-                cypher = """
-                MATCH (w:WorkItem)
-                WHERE w.kind = 'chunk_extraction' AND w.status = 'unrun'
-                MATCH (src:Source {source_id: $dataset_id})-[:CONTAINS]->(f:File {file_id: w.file_id})
-                RETURN w.work_item_id AS work_item_id,
-                       w.kind AS kind,
-                       w.target_id AS target_id,
-                       w.file_id AS file_id,
-                       w.status AS status
-                LIMIT $limit
-                """
-                params = {"limit": limit, "dataset_id": dataset_id_filter}
-
+            cypher = """
+            MATCH (w:WorkItem)
+            WHERE w.kind = 'chunk_extraction' AND w.status = 'unrun'
+              AND ($file_id IS NULL OR w.file_id = $file_id)
+              AND (
+                  $dataset_id IS NULL OR EXISTS {
+                      MATCH (:Source {source_id: $dataset_id})-[:CONTAINS]->(f:File)
+                      WHERE f.file_id = w.file_id
+                  }
+              )
+            RETURN w.work_item_id AS work_item_id,
+                   w.kind AS kind,
+                   w.target_id AS target_id,
+                   w.file_id AS file_id,
+                   w.status AS status
+            ORDER BY w.file_id, w.target_id
+            LIMIT $limit
+            """
+            params = {
+                "limit": limit,
+                "dataset_id": dataset_id_filter,
+                "file_id": file_id_filter,
+            }
             result = await s.run(cypher, **params)
             return [
                 WorkItemRecord(
@@ -172,43 +168,44 @@ class WorkList:
         self,
         limit: int,
         dataset_id_filter: str | None = None,
+        file_id_filter: str | None = None,
     ) -> list[WorkItemRecord]:
         """Pull file_orchestration items whose file has no unrun chunk_extraction items.
 
         Failed chunk extractions don't block the file orchestrator: the orchestrator
-        works with whatever chunks succeeded. When ``dataset_id_filter`` is
-        provided, only items for files in that dataset are returned.
+        works with whatever chunks succeeded. Filters can narrow by dataset
+        and/or exact file.
         """
         async with self._client.session() as s:
-            base_filter = """
+            cypher = """
                 MATCH (w:WorkItem)
                 WHERE w.kind = 'file_orchestration' AND w.status = 'unrun'
+                  AND ($file_id IS NULL OR w.file_id = $file_id)
+                  AND (
+                      $dataset_id IS NULL OR EXISTS {
+                          MATCH (:Source {source_id: $dataset_id})-[:CONTAINS]->(f:File)
+                          WHERE f.file_id = w.file_id
+                      }
+                  )
                   AND NOT EXISTS {
                       MATCH (cw:WorkItem)
                       WHERE cw.kind = 'chunk_extraction'
                         AND cw.file_id = w.target_id
                         AND cw.status = 'unrun'
                   }
-            """
-            tail = """
                 RETURN w.work_item_id AS work_item_id,
                        w.kind AS kind,
                        w.target_id AS target_id,
                        w.file_id AS file_id,
                        w.status AS status
+                ORDER BY w.file_id
                 LIMIT $limit
             """
-            if dataset_id_filter is None:
-                cypher = base_filter + tail
-                params = {"limit": limit}
-            else:
-                cypher = (
-                    base_filter
-                    + " MATCH (src:Source {source_id: $dataset_id})-[:CONTAINS]->(f:File {file_id: w.file_id}) "
-                    + tail
-                )
-                params = {"limit": limit, "dataset_id": dataset_id_filter}
-
+            params = {
+                "limit": limit,
+                "dataset_id": dataset_id_filter,
+                "file_id": file_id_filter,
+            }
             result = await s.run(cypher, **params)
             return [
                 WorkItemRecord(

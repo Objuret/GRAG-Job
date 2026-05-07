@@ -48,7 +48,7 @@ Cluster is stored as a **string property on the `HAS_TAG` and `TAGGED` edges**. 
 2. **One OpenAI-compatible LLM endpoint.** Configured via `LLM_*` env (legacy `AGENT_*` aliases honoured — `LLM_*` wins). See [`env_and_config.md`](env_and_config.md).
 3. **The agent client never raises.** [`agents/client.py`](../agents/client.py) catches every `httpx`/schema error and returns a typed `AgentResult` with an `error_class`. The orchestrator decides what to do.
 4. **Per-error-class circuit breaker.** [`indexing/breaker.py`](../indexing/breaker.py) tracks consecutive counts and rolling-window rates per error class. Trips raise `BreakerTripped`; the orchestrator stops pulling new work and the run finishes as `aborted`.
-5. **Worklist drives everything.** Every chunk and every file has a `(:WorkItem)` row in Neo4j. The orchestrator pulls `unrun` items and marks them `done` or `failed`. New runs auto-reset all `failed` items to `unrun`.
+5. **Worklist drives everything.** Every chunk and every chunk-bearing file has a `(:WorkItem)` row in Neo4j. Files that produce zero chunks (for example images or archives) are registered as `:File` but skipped by the LLM worklist. The orchestrator pulls `unrun` items and marks them `done` or `failed`. New runs auto-reset all `failed` items to `unrun`.
 6. **Neo4j is the only durable store.** No parquet, no JSON side artefacts in the indexing path. Re-running pre-flight is idempotent (skips files that already have chunks).
 
 ## Where to look first when changing X
@@ -90,14 +90,13 @@ python scripts/run_index.py
 python scripts/verify_graph.py
 ```
 
-`run_index.py` accepts `--dataset-id`, `--chunk-limit`, `--file-limit`, `--concurrency`. See its `--help` and [`runbook.md`](runbook.md) for partial-failure recovery.
+`run_index.py` accepts `--dataset-id`, `--file-id`, `--chunk-limit`, `--file-limit`, `--concurrency`. See its `--help` and [`runbook.md`](runbook.md) for partial-failure recovery.
 
 ## Backlog (carry-over, not in code)
 
 Pulled from [`status.md`](status.md). Truthful snapshot:
 
-- Parquet streaming for very large files: chunker uses `iter_batches`, but a row with deeply nested struct can still produce huge JSON content. Needs cap or smarter handling.
-- Nested-struct → JSON conversion in chunker: bytes are placeholdered, but structs/arrays serialise as-is. Some HF parquet rows blow up. Document or trim.
+- Parquet visual-content path: chunker now omits Arrow columns containing binary data and caps nested JSON conversion, so DocVQA preflights cleanly. Future image-aware indexing still needs a proper visual path.
 - Proposal triage CLI (`python -m clustering.review`) referenced in `canonical_seed.yaml` does not exist yet.
 - Named cluster query views (`by_theme`, `by_information_need`, `recent_active`, `multidim`) are not built.
 - An `exports/` snapshot stage is not built.

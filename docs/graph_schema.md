@@ -134,7 +134,7 @@ Created when the agent emits a tag with `propose=True`.
 
 ### `:WorkItem`
 
-The "what to do" register. One row per chunk extraction and one per file orchestration.
+The "what to do" register. One row per chunk extraction and one per file orchestration for files that have at least one chunk. Files that produce zero chunks have no LLM WorkItem.
 
 | Property | Type | Notes |
 |---|---|---|

@@ -94,6 +94,7 @@ Output (paraphrased):
 Pre-flight complete:
   files_seen        = 12
   files_new         = 12
+  skipped_no_chunks = 0
   chunks_created    = 542
   work_items_seeded = 554
   failures          = 0
@@ -110,6 +111,7 @@ python scripts/run_index.py
 Optional flags:
 
 - `--dataset-id <id>` — limit work to one dataset (matches `:Source.source_id`).
+- `--file-id <id>` — limit work to one file (matches `:File.file_id`). Useful for targeted smoke tests.
 - `--chunk-limit N` — cap chunk_extraction WorkItems this run.
 - `--file-limit N` — cap file_orchestration WorkItems this run.
 - `--concurrency N` — override `LLM_MAX_CONCURRENCY` for this run only.
@@ -201,7 +203,7 @@ Then re-run the bootstrap and onwards. Note: this also drops the canonical tag s
 
 ## Cost / token notes
 
-- One LLM call per chunk + one per file. With a typical small dataset (~500 chunks, ~50 files), that's ~550 calls per run.
+- One LLM call per chunk + one per chunk-bearing file. With a typical small dataset (~500 chunks, ~50 chunk-bearing files), that's ~550 calls per run.
 - `LLM_MAX_CONCURRENCY=32` is the default — high enough to be fast, low enough that 429s are rare on a paid OpenAI account. If the provider rate-limits aggressively, drop to 8–16.
 - Token usage per chunk depends on chunk content size and the canonical-vocab block (currently small — under 500 tokens). The orchestrator records `in_tokens`, `out_tokens`, `duration_ms` per WorkItem and sums them on `:Run`.
 - Breaker thresholds are documented in [`architecture.md`](architecture.md#d7--tight-circuit-breaker-thresholds-table). Trips abort the run; nothing partial is lost — completed WorkItems remain `done`, failed ones are reset on next run.

@@ -61,7 +61,7 @@ Each entry: **Decision** • **Rationale** • **Alternatives considered** • *
 
 ### D6 — Worklist-first model with `WorkItem` register
 
-- **Decision.** Every chunk and every file has a `(:WorkItem)` row keyed `f"{kind}:{target_id}"`. Status flow: `unrun → done | failed`.
+- **Decision.** Every chunk and every chunk-bearing file has a `(:WorkItem)` row keyed `f"{kind}:{target_id}"`. Files that produce zero chunks are kept as `:File` metadata but do not get file-orchestration work. Status flow: `unrun → done | failed`.
 - **Rationale.** A clean, queryable register of "what to do" that survives crashes. Lets us run partial batches with `--chunk-limit` / `--file-limit` and resume. Lets us filter by dataset.
 - **Alternatives.** Compute the worklist on the fly each run from `(:Chunk)`/`(:File)`. Rejected because we lose per-item failure history and assignment timestamps.
 - **Status.** Active. See [`indexing/worklist.py`](../indexing/worklist.py).

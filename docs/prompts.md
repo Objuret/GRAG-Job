@@ -65,6 +65,7 @@ A `schema_invalid` rate of ≥ 20% over 50 calls trips the breaker and aborts th
 - **Never** rename a cluster string without updating the `Cluster` Literal and the canonical seed YAML and the user-message renderer's `CLUSTER_ORDER`.
 - The chunk_end_offset echo check is the orchestrator's only way to detect "the model hallucinated a different chunk". Keep the prompt explicit about copying it verbatim.
 - The empty-vs-content invariant is enforced by `ChunkExtraction._validate_empty_vs_content`. Don't add a third state.
+- Proposal tags must set `canonical=null`; never show examples or wording where `propose=true` appears with a non-null canonical.
 - Keep tag count guidance ("3-10 typical") in sync with what the breaker can absorb. A surge of 30+ tags per chunk inflates token cost without improving retrieval.
 
 ## `prompts/file_descriptor.md`

@@ -30,6 +30,7 @@ async def main() -> None:
             "Pre-flight complete:",
             f"  files_seen        = {result.files_seen}",
             f"  files_new         = {result.files_new}",
+            f"  skipped_no_chunks = {result.files_skipped_no_chunks}",
             f"  chunks_created    = {result.chunks_created}",
             f"  work_items_seeded = {result.work_items_seeded}",
             f"  failures          = {len(result.failures)}",
