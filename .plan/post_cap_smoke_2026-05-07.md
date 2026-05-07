@@ -282,3 +282,187 @@ Canonical proposals observed during the retry:
 ```
 
 Interpretation after retry: the file-scoped post-cap smoke is now green for this file. The new `canonical_missing` path works, and all non-empty chunks have file relevance.
+
+## Complete Persisted Target Results After Retry
+
+This is the complete persisted result for `Salesforce__HERB/products/ActionGenie.json` after the retry. The raw model response bodies are not available because the current pipeline parses them and writes only graph state. Everything below was read back from Neo4j.
+
+Final file description:
+
+```text
+The JSON file contains comprehensive data relating to the ActionGenie product, particularly focusing on market research, team collaboration, and integration with communication platforms like Slack. It includes identifiers for team members and customers, discussions from Slack channels about the onForceX project, meeting transcripts reviewing key documents, and resources related to AI integration. Additionally, it lists various integrations and pulls requests crucial for real-time data processing, along with inquiries about document authors and roles. The content serves to support the development and marketing strategies for the onForceX product.
+```
+
+### Final Chunk Descriptions
+
+| Ord | Chunk ID | Rel | Tokens | Chars | Description |
+|---:|---|---:|---:|---:|---|
+| 0 | `41f94ee80a3b23cd1517db28` | 0.4 | 261 | 1046 | This chunk contains a list of team member identifiers, represented as unique IDs. |
+| 1 | `032c4ca28d9f0f6ad34af945` | 0.7 | 116 | 465 | This chunk contains a list of customer identifiers, possibly related to the ActionGenie product. |
+| 2 | `1c495711230df5cdb2074e3c` | 0.8 | 1507 | 6029 | This chunk contains messages from a Slack channel discussing a project named onForceX, including planning details and feedback on documents shared within the team. |
+| 3 | `7c06021fb642cee14a3530a1` | 0.9 | 1507 | 6029 | This chunk includes a market research report on the onForceX Smart Actions for Slack, detailing its features, target audience, and market potential. |
+| 4 | `005497699f70e06a17dceac9` | 0.9 | 1507 | 6029 | The chunk contains meeting transcripts discussing feedback on the Market Research Report and Product Vision Document for a product called onForceX, including sections on AI technologies, competitive analysis, and user education strategies. |
+| 5 | `4437bb6daf1e9501a553dc5d` | 0.6 | 244 | 976 | This chunk contains chat records from a meeting discussing various documents related to the onForceX project, including market research and product vision. |
+| 6 | `2960d8e4619ac86535c7f888` | 0.5 | 1271 | 5086 | This chunk contains a list of URLs with descriptions related to AI integration in communication platforms and productivity enhancement tools. |
+| 7 | `e301f7e9611efb661c396761` | 0.7 | 1507 | 6029 | This chunk lists several pull requests related to integrating various APIs and systems for real-time data processing and event handling across different applications. |
+| 8 | `6da4c297bca324a46ee67759` | 0.7 | 1507 | 6029 | This chunk contains a series of questions related to employee IDs of authors and reviewers for various documents associated with the ActionGenie product, along with features related to integration with third-party Slack apps. |
+| 9 | `1eff2a43f34dddfbd2a9fbe9` | 0.4 | 432 | 1729 | This chunk contains a list of unanswerable questions related to the ActionGenie product, focusing on various employee roles and documentation. |
+
+### Final Chunk HAS_TAG Edges
+
+This is every raw tag emitted for the ten chunks and written as `(:Chunk)-[:HAS_TAG]->(:Tag)`.
+
+| Ord | Chunk | Rel | Tok | Chars | Tag | Cluster | Canonical | Local W | Tag Run |
+|---:|---|---:|---:|---:|---|---|---|---:|---|
+| 0 | `41f94ee80a3b23cd1517db28` | 0.4 | 261 | 1046 | `team_identifiers` | `object_entity` | `dataset` | 0.8 | `2026-05-07T13-26-16Z-9598ed` |
+| 1 | `032c4ca28d9f0f6ad34af945` | 0.7 | 116 | 465 | `customer_identifiers` | `object_entity` | `dataset` | 0.9 | `2026-05-07T13-26-16Z-9598ed` |
+| 2 | `1c495711230df5cdb2074e3c` | 0.8 | 1507 | 6029 | `slack_channel_creation` | `event_process` | `launch` | 0.8 | `2026-05-07T13-26-16Z-9598ed` |
+| 2 | `1c495711230df5cdb2074e3c` | 0.8 | 1507 | 6029 | `user_engagement` | `event_process` | `change` | 0.6 | `2026-05-07T13-26-16Z-9598ed` |
+| 2 | `1c495711230df5cdb2074e3c` | 0.8 | 1507 | 6029 | `ai_growth_statistics` | `information_need` | `number` | 0.6 | `2026-05-07T13-26-16Z-9598ed` |
+| 2 | `1c495711230df5cdb2074e3c` | 0.8 | 1507 | 6029 | `market_research_report` | `object_entity` | `document` | 0.7 | `2026-05-07T13-26-16Z-9598ed` |
+| 2 | `1c495711230df5cdb2074e3c` | 0.8 | 1507 | 6029 | `planning_onForceX` | `theme` | `technology` | 0.9 | `2026-05-07T13-26-16Z-9598ed` |
+| 2 | `1c495711230df5cdb2074e3c` | 0.8 | 1507 | 6029 | `2026-06-09` | `time_relevance` | `active` | 0.9 | `2026-05-07T13-26-16Z-9598ed` |
+| 3 | `7c06021fb642cee14a3530a1` | 0.9 | 1507 | 6029 | `ai_integration` | `event_process` | `launch` | 0.7 | `2026-05-07T13-26-16Z-9598ed` |
+| 3 | `7c06021fb642cee14a3530a1` | 0.9 | 1507 | 6029 | `market_analysis` | `information_need` | `summary` | 0.9 | `2026-05-07T13-26-16Z-9598ed` |
+| 3 | `7c06021fb642cee14a3530a1` | 0.9 | 1507 | 6029 | `slack` | `object_entity` | `product` | 0.8 | `2026-05-07T13-26-16Z-9598ed` |
+| 3 | `7c06021fb642cee14a3530a1` | 0.9 | 1507 | 6029 | `onforcex_smart_actions` | `theme` | `technology` | 0.9 | `2026-05-07T13-26-16Z-9598ed` |
+| 3 | `7c06021fb642cee14a3530a1` | 0.9 | 1507 | 6029 | `2026-06-10` | `time_relevance` | `future` | 0.8 | `2026-05-07T13-26-16Z-9598ed` |
+| 4 | `005497699f70e06a17dceac9` | 0.9 | 1507 | 6029 | `feedback_session` | `event_process` | `decision` | 0.8 | `2026-05-07T13-52-46Z-7ec1b8` |
+| 4 | `005497699f70e06a17dceac9` | 0.9 | 1507 | 6029 | `competitive_analysis` | `information_need` | `comparison` | 0.7 | `2026-05-07T13-52-46Z-7ec1b8` |
+| 4 | `005497699f70e06a17dceac9` | 0.9 | 1507 | 6029 | `user_education` | `information_need` | `null` | 0.6 | `2026-05-07T13-52-46Z-7ec1b8` |
+| 4 | `005497699f70e06a17dceac9` | 0.9 | 1507 | 6029 | `market_research_report` | `object_entity` | `document` | 0.9 | `2026-05-07T13-52-46Z-7ec1b8` |
+| 4 | `005497699f70e06a17dceac9` | 0.9 | 1507 | 6029 | `product_vision_document` | `object_entity` | `document` | 0.9 | `2026-05-07T13-52-46Z-7ec1b8` |
+| 4 | `005497699f70e06a17dceac9` | 0.9 | 1507 | 6029 | `onforceX` | `object_entity` | `product` | 0.8 | `2026-05-07T13-52-46Z-7ec1b8` |
+| 4 | `005497699f70e06a17dceac9` | 0.9 | 1507 | 6029 | `2026_06_13` | `time_relevance` | `future` | 0.9 | `2026-05-07T13-52-46Z-7ec1b8` |
+| 5 | `4437bb6daf1e9501a553dc5d` | 0.6 | 244 | 976 | `meeting_chats` | `event_process` | `decision` | 0.5 | `2026-05-07T13-26-16Z-9598ed` |
+| 5 | `4437bb6daf1e9501a553dc5d` | 0.6 | 244 | 976 | `market_research_document` | `object_entity` | `document` | 0.7 | `2026-05-07T13-26-16Z-9598ed` |
+| 5 | `4437bb6daf1e9501a553dc5d` | 0.6 | 244 | 976 | `product_requirements_document` | `object_entity` | `document` | 0.7 | `2026-05-07T13-26-16Z-9598ed` |
+| 5 | `4437bb6daf1e9501a553dc5d` | 0.6 | 244 | 976 | `product_vision_document` | `object_entity` | `document` | 0.7 | `2026-05-07T13-26-16Z-9598ed` |
+| 5 | `4437bb6daf1e9501a553dc5d` | 0.6 | 244 | 976 | `system_design_document` | `object_entity` | `document` | 0.7 | `2026-05-07T13-26-16Z-9598ed` |
+| 5 | `4437bb6daf1e9501a553dc5d` | 0.6 | 244 | 976 | `technical_specifications_document` | `object_entity` | `document` | 0.7 | `2026-05-07T13-26-16Z-9598ed` |
+| 5 | `4437bb6daf1e9501a553dc5d` | 0.6 | 244 | 976 | `onforcex_project` | `theme` | `technology` | 0.7 | `2026-05-07T13-26-16Z-9598ed` |
+| 5 | `4437bb6daf1e9501a553dc5d` | 0.6 | 244 | 976 | `2026-06-13` | `time_relevance` | `future` | 0.9 | `2026-05-07T13-26-16Z-9598ed` |
+| 5 | `4437bb6daf1e9501a553dc5d` | 0.6 | 244 | 976 | `2026-06-22` | `time_relevance` | `future` | 0.9 | `2026-05-07T13-26-16Z-9598ed` |
+| 5 | `4437bb6daf1e9501a553dc5d` | 0.6 | 244 | 976 | `2026-07-04` | `time_relevance` | `future` | 0.9 | `2026-05-07T13-26-16Z-9598ed` |
+| 5 | `4437bb6daf1e9501a553dc5d` | 0.6 | 244 | 976 | `2026-07-17` | `time_relevance` | `future` | 0.9 | `2026-05-07T13-26-16Z-9598ed` |
+| 5 | `4437bb6daf1e9501a553dc5d` | 0.6 | 244 | 976 | `2026-07-30` | `time_relevance` | `future` | 0.9 | `2026-05-07T13-26-16Z-9598ed` |
+| 6 | `2960d8e4619ac86535c7f888` | 0.5 | 1271 | 5086 | `ai_integration_productivity` | `information_need` | `summary` | 0.6 | `2026-05-07T13-26-16Z-9598ed` |
+| 6 | `2960d8e4619ac86535c7f888` | 0.5 | 1271 | 5086 | `ActionGenie_demo_video` | `object_entity` | `document` | 0.8 | `2026-05-07T13-26-16Z-9598ed` |
+| 6 | `2960d8e4619ac86535c7f888` | 0.5 | 1271 | 5086 | `TensorFlow_repository` | `object_entity` | `dataset` | 0.5 | `2026-05-07T13-26-16Z-9598ed` |
+| 6 | `2960d8e4619ac86535c7f888` | 0.5 | 1271 | 5086 | `spaCy_repository` | `object_entity` | `dataset` | 0.5 | `2026-05-07T13-26-16Z-9598ed` |
+| 6 | `2960d8e4619ac86535c7f888` | 0.5 | 1271 | 5086 | `integrating_ai_in_communication_platforms` | `theme` | `technology` | 0.7 | `2026-05-07T13-26-16Z-9598ed` |
+| 6 | `2960d8e4619ac86535c7f888` | 0.5 | 1271 | 5086 | `ai_task_management_tools` | `theme` | `technology` | 0.6 | `2026-05-07T13-26-16Z-9598ed` |
+| 6 | `2960d8e4619ac86535c7f888` | 0.5 | 1271 | 5086 | `2023` | `time_relevance` | `recent` | 0.9 | `2026-05-07T13-26-16Z-9598ed` |
+| 7 | `e301f7e9611efb661c396761` | 0.7 | 1507 | 6029 | `integration_completed` | `event_process` | `change` | 0.8 | `2026-05-07T13-26-16Z-9598ed` |
+| 7 | `e301f7e9611efb661c396761` | 0.7 | 1507 | 6029 | `pull_request_approval` | `event_process` | `decision` | 0.7 | `2026-05-07T13-26-16Z-9598ed` |
+| 7 | `e301f7e9611efb661c396761` | 0.7 | 1507 | 6029 | `pull_request_summary` | `information_need` | `summary` | 0.7 | `2026-05-07T13-26-16Z-9598ed` |
+| 7 | `e301f7e9611efb661c396761` | 0.7 | 1507 | 6029 | `mattermost_webhook_integration` | `object_entity` | `document` | 0.6 | `2026-05-07T13-26-16Z-9598ed` |
+| 7 | `e301f7e9611efb661c396761` | 0.7 | 1507 | 6029 | `rocket_chat_event_api_integration` | `object_entity` | `document` | 0.6 | `2026-05-07T13-26-16Z-9598ed` |
+| 7 | `e301f7e9611efb661c396761` | 0.7 | 1507 | 6029 | `slack_events_api_integration` | `object_entity` | `document` | 0.6 | `2026-05-07T13-26-16Z-9598ed` |
+| 7 | `e301f7e9611efb661c396761` | 0.7 | 1507 | 6029 | `zulip_bot_event_handling` | `object_entity` | `document` | 0.6 | `2026-05-07T13-26-16Z-9598ed` |
+| 7 | `e301f7e9611efb661c396761` | 0.7 | 1507 | 6029 | `data_pipeline_for_model_training` | `object_entity` | `document` | 0.5 | `2026-05-07T13-26-16Z-9598ed` |
+| 7 | `e301f7e9611efb661c396761` | 0.7 | 1507 | 6029 | `real_time_data_processing` | `theme` | `technology` | 0.8 | `2026-05-07T13-26-16Z-9598ed` |
+| 7 | `e301f7e9611efb661c396761` | 0.7 | 1507 | 6029 | `2025_completed` | `time_relevance` | `completed` | 0.5 | `2026-05-07T13-26-16Z-9598ed` |
+| 7 | `e301f7e9611efb661c396761` | 0.7 | 1507 | 6029 | `2026_future` | `time_relevance` | `future` | 0.5 | `2026-05-07T13-26-16Z-9598ed` |
+| 8 | `6da4c297bca324a46ee67759` | 0.7 | 1507 | 6029 | `document_authors_reviewers` | `event_process` | `publication` | 0.8 | `2026-05-07T13-26-16Z-9598ed` |
+| 8 | `6da4c297bca324a46ee67759` | 0.7 | 1507 | 6029 | `employee_id_query` | `information_need` | `number` | 0.8 | `2026-05-07T13-26-16Z-9598ed` |
+| 8 | `6da4c297bca324a46ee67759` | 0.7 | 1507 | 6029 | `actiongenie_product_documents` | `theme` | `technology` | 0.9 | `2026-05-07T13-26-16Z-9598ed` |
+| 8 | `6da4c297bca324a46ee67759` | 0.7 | 1507 | 6029 | `third_party_integration_features` | `theme` | `technology` | 0.7 | `2026-05-07T13-26-16Z-9598ed` |
+| 8 | `6da4c297bca324a46ee67759` | 0.7 | 1507 | 6029 | `future_scenarios_integration` | `time_relevance` | `future` | 0.6 | `2026-05-07T13-26-16Z-9598ed` |
+| 9 | `1eff2a43f34dddfbd2a9fbe9` | 0.4 | 432 | 1729 | `bug_reporting` | `event_process` | `incident` | 0.7 | `2026-05-07T13-52-46Z-7ec1b8` |
+| 9 | `1eff2a43f34dddfbd2a9fbe9` | 0.4 | 432 | 1729 | `employee_role_in_review` | `information_need` | `null` | 0.6 | `2026-05-07T13-52-46Z-7ec1b8` |
+| 9 | `1eff2a43f34dddfbd2a9fbe9` | 0.4 | 432 | 1729 | `actiongenie` | `object_entity` | `product` | 0.9 | `2026-05-07T13-52-46Z-7ec1b8` |
+| 9 | `1eff2a43f34dddfbd2a9fbe9` | 0.4 | 432 | 1729 | `market_research_report` | `object_entity` | `document` | 0.5 | `2026-05-07T13-52-46Z-7ec1b8` |
+| 9 | `1eff2a43f34dddfbd2a9fbe9` | 0.4 | 432 | 1729 | `product_vision_document` | `object_entity` | `document` | 0.5 | `2026-05-07T13-52-46Z-7ec1b8` |
+| 9 | `1eff2a43f34dddfbd2a9fbe9` | 0.4 | 432 | 1729 | `system_design_document` | `object_entity` | `document` | 0.5 | `2026-05-07T13-52-46Z-7ec1b8` |
+| 9 | `1eff2a43f34dddfbd2a9fbe9` | 0.4 | 432 | 1729 | `technical_specifications_document` | `object_entity` | `document` | 0.5 | `2026-05-07T13-52-46Z-7ec1b8` |
+
+### Final File TAGGED Rollup Edges
+
+This is every `(:File)-[:TAGGED]->(:Tag)` edge after deterministic rollup.
+
+| Tag | Cluster | Canonical | Global W | Chunks | Run |
+|---|---|---|---:|---:|---|
+| `feedback_session` | `event_process` | `decision` | 0.72 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `slack_channel_creation` | `event_process` | `launch` | 0.64 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `ai_integration` | `event_process` | `launch` | 0.63 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `document_authors_reviewers` | `event_process` | `publication` | 0.56 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `integration_completed` | `event_process` | `change` | 0.56 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `pull_request_approval` | `event_process` | `decision` | 0.49 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `user_engagement` | `event_process` | `change` | 0.48 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `meeting_chats` | `event_process` | `decision` | 0.3 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `bug_reporting` | `event_process` | `incident` | 0.28 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `market_analysis` | `information_need` | `summary` | 0.81 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `competitive_analysis` | `information_need` | `comparison` | 0.63 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `employee_id_query` | `information_need` | `number` | 0.56 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `user_education` | `information_need` | `null` | 0.54 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `pull_request_summary` | `information_need` | `summary` | 0.49 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `ai_growth_statistics` | `information_need` | `number` | 0.48 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `ai_integration_productivity` | `information_need` | `summary` | 0.3 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `employee_role_in_review` | `information_need` | `null` | 0.24 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `onforceX` | `object_entity` | `product` | 0.72 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `slack` | `object_entity` | `product` | 0.72 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `customer_identifiers` | `object_entity` | `dataset` | 0.63 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `market_research_report` | `object_entity` | `document` | 0.523 | 3 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `product_vision_document` | `object_entity` | `document` | 0.477 | 3 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `market_research_document` | `object_entity` | `document` | 0.42 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `mattermost_webhook_integration` | `object_entity` | `document` | 0.42 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `product_requirements_document` | `object_entity` | `document` | 0.42 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `rocket_chat_event_api_integration` | `object_entity` | `document` | 0.42 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `slack_events_api_integration` | `object_entity` | `document` | 0.42 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `zulip_bot_event_handling` | `object_entity` | `document` | 0.42 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `ActionGenie_demo_video` | `object_entity` | `document` | 0.4 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `actiongenie` | `object_entity` | `product` | 0.36 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `data_pipeline_for_model_training` | `object_entity` | `document` | 0.35 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `team_identifiers` | `object_entity` | `dataset` | 0.32 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `system_design_document` | `object_entity` | `document` | 0.31 | 2 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `technical_specifications_document` | `object_entity` | `document` | 0.31 | 2 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `TensorFlow_repository` | `object_entity` | `dataset` | 0.25 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `spaCy_repository` | `object_entity` | `dataset` | 0.25 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `onforcex_smart_actions` | `theme` | `technology` | 0.81 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `planning_onForceX` | `theme` | `technology` | 0.72 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `actiongenie_product_documents` | `theme` | `technology` | 0.63 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `real_time_data_processing` | `theme` | `technology` | 0.56 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `third_party_integration_features` | `theme` | `technology` | 0.49 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `onforcex_project` | `theme` | `technology` | 0.42 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `integrating_ai_in_communication_platforms` | `theme` | `technology` | 0.35 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `ai_task_management_tools` | `theme` | `technology` | 0.3 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `2026_06_13` | `time_relevance` | `future` | 0.81 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `2026-06-09` | `time_relevance` | `active` | 0.72 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `2026-06-10` | `time_relevance` | `future` | 0.72 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `2026-06-13` | `time_relevance` | `future` | 0.54 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `2026-06-22` | `time_relevance` | `future` | 0.54 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `2026-07-04` | `time_relevance` | `future` | 0.54 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `2026-07-17` | `time_relevance` | `future` | 0.54 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `2026-07-30` | `time_relevance` | `future` | 0.54 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `2023` | `time_relevance` | `recent` | 0.45 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `future_scenarios_integration` | `time_relevance` | `future` | 0.42 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `2025_completed` | `time_relevance` | `completed` | 0.35 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+| `2026_future` | `time_relevance` | `future` | 0.35 | 1 | `2026-05-07T13-52-46Z-7ec1b8` |
+
+### Final WorkItems
+
+The initial failed schema-invalid state is recorded above under "WorkItem Results For Target File". After the retry, the current WorkItems for this target are all `done`:
+
+| Kind | Target | Ord | Status | Run | In | Out | Ms | Error |
+|---|---|---:|---|---|---:|---:|---:|---|
+| `chunk_extraction` | `41f94ee80a3b23cd1517db28` | 0 | `done` | `2026-05-07T13-26-16Z-9598ed` | 1737 | 111 | 3614 | `null` |
+| `chunk_extraction` | `032c4ca28d9f0f6ad34af945` | 1 | `done` | `2026-05-07T13-26-16Z-9598ed` | 1473 | 103 | 3533 | `null` |
+| `chunk_extraction` | `1c495711230df5cdb2074e3c` | 2 | `done` | `2026-05-07T13-26-16Z-9598ed` | 2994 | 365 | 6912 | `null` |
+| `chunk_extraction` | `7c06021fb642cee14a3530a1` | 3 | `done` | `2026-05-07T13-26-16Z-9598ed` | 2302 | 365 | 7162 | `null` |
+| `chunk_extraction` | `005497699f70e06a17dceac9` | 4 | `done` | `2026-05-07T13-52-46Z-7ec1b8` | 2385 | 505 | 10205 | `null` |
+| `chunk_extraction` | `4437bb6daf1e9501a553dc5d` | 5 | `done` | `2026-05-07T13-26-16Z-9598ed` | 1569 | 674 | 11925 | `null` |
+| `chunk_extraction` | `2960d8e4619ac86535c7f888` | 6 | `done` | `2026-05-07T13-26-16Z-9598ed` | 2585 | 479 | 11688 | `null` |
+| `chunk_extraction` | `e301f7e9611efb661c396761` | 7 | `done` | `2026-05-07T13-26-16Z-9598ed` | 2855 | 727 | 13928 | `null` |
+| `chunk_extraction` | `6da4c297bca324a46ee67759` | 8 | `done` | `2026-05-07T13-26-16Z-9598ed` | 3215 | 378 | 6397 | `null` |
+| `chunk_extraction` | `1eff2a43f34dddfbd2a9fbe9` | 9 | `done` | `2026-05-07T13-52-46Z-7ec1b8` | 1500 | 497 | 8921 | `null` |
+| `file_orchestration` | `960f223de786daa74a7d0f70` |  | `done` | `2026-05-07T13-52-46Z-7ec1b8` | 1709 | 341 | 5364 | `null` |
+
+### Final Canonical Proposals
+
+These came from `canonical_missing=true`, meaning the model emitted a raw tag but did not find a suitable broad canonical in the seed vocabulary.
+
+| Label | Cluster | Ord | Observed | Run | Gloss | Rationale |
+|---|---|---|---:|---|---|---|
+| `employee_role_in_review` | `information_need` | `9` | 1 | `2026-05-07T13-52-46Z-7ec1b8` | Role of employees in the review process of documents. | No broad evidence canonical captures employee roles in document reviews. |
+| `user_education` | `information_need` | `4` | 1 | `2026-05-07T13-52-46Z-7ec1b8` | Strategies for educating users about the product. | No broad evidence canonical captures educational strategy. |
