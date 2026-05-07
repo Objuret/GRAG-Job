@@ -119,6 +119,7 @@ class Chunker:
                 if not stripped:
                     offset += line_len
                     continue
+                content = self._cap_chunk_content(stripped)
                 yield ChunkRecord(
                     chunk_id=self._make_chunk_id(file_id, ordinal, offset),
                     file_id=file_id,
@@ -126,8 +127,8 @@ class Chunker:
                     kind="record",
                     start_offset=offset,
                     end_offset=offset + line_len,
-                    content=stripped,
-                    token_estimate=_est_tokens(stripped),
+                    content=content,
+                    token_estimate=_est_tokens(content),
                     locator={"line": ordinal},
                 )
                 ordinal += 1

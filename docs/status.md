@@ -1,6 +1,6 @@
 # Status
 
-**TL;DR.** On 2026-05-07 the configured Neo4j database (`bonnier`) was dropped/recreated, schema bootstrap was re-run, and preflight completed cleanly against the current `data/raw/` tree. Targeted real-LLM smokes have now exercised chunk extraction, file orchestration, empty chunks, and deterministic rollup.
+**TL;DR.** On 2026-05-07 the configured Neo4j database (`bonnier`) was dropped/recreated, schema bootstrap was re-run, and preflight completed cleanly against the current `data/raw/` tree. The current graph is preflight-only after applying the global chunk content cap across JSON, JSONL, and parquet; no LLM indexing has been run after this final reset.
 
 **When to read this.** Before promising a feature is "done". Before estimating remaining work. After every significant code change, update this doc.
 
@@ -16,14 +16,15 @@ This doc references everything; updates affect `docs/status.md` only.
 |---|---|
 | Fresh DB reset + schema bootstrap | On 2026-05-07 the configured database `bonnier` was dropped/recreated via the `system` database, then [`scripts/bootstrap_schema.py`](../scripts/bootstrap_schema.py) reported `Applied 18 schema statements; merged 32 canonical tags.` |
 | Fresh preflight against current raw data | [`scripts/run_preflight.py`](../scripts/run_preflight.py) reported `files_seen=44`, `files_new=44`, `skipped_no_chunks=3`, `chunks_created=157681`, `work_items_seeded=157722`, `failures=0`. The 3 skipped files are chunkless payloads such as images/archive. |
+| Global chunk content cap | Current graph verification reported `max(size(c.content))=6029`, `max(c.token_estimate)=1507`, `p95(size(c.content))=4549`, `p95(c.token_estimate)=1137`. JSON, JSONL, and parquet are now bounded; the prior FEVEROUS JSONL chunks up to ~98k chars are gone from the current graph. |
 | Parquet preflight for DocVQA | [`indexing/chunker.py`](../indexing/chunker.py) now omits parquet columns whose Arrow type contains binary data, for example image bytes, and chunks the remaining textual columns. This fixed the prior `ArrowNotImplementedError` / `MemoryError` on `VLR-CVC__DocVQA-2026/test.parquet` and `val.parquet` in the fresh preflight. |
-| File-scoped dispatcher smoke | `run_index.py --file-id ...` was added for targeted tests. Two Salesforce product files were run through chunk extraction and file orchestration. Final graph status: 20 chunk WorkItems done, 2 file WorkItems done, 0 failed WorkItems, 92 `HAS_TAG` edges, and 83 `TAGGED` edges. |
-| Empty chunk path | The AnomalyForce smoke produced one valid `empty=true` chunk (`empty_reason='The chunk contains no meaningful information, only an empty array.'`) and the file stage still completed over the 9 non-empty chunks. |
+| File-scoped dispatcher smoke code path | `run_index.py --file-id ...` was added and tested before the final JSONL-cap reset. Those smoke results were intentionally wiped by the final reset, so the current graph has `Run=0`, `HAS_TAG=0`, and `TAGGED=0`. |
 | Pydantic schema enforcement at the agent boundary | [`agents/client.AgentClient.call`](../agents/client.py) validates model output via `schema.model_validate_json` and produces `error_class="schema_invalid"` on failure. Covered by validators in [`agents/schemas.py`](../agents/schemas.py). |
 | Idempotency rules | [`Chunker.chunk_file`](../indexing/chunker.py) skips files that already have chunks; preflight upserts `:Source` and `:File` with `MERGE`; bootstrap uses `IF NOT EXISTS` everywhere. |
 
 ## What is built but not yet end-to-end verified
 
+- **Post-cap LLM smoke.** The file-scoped smoke worked before the final JSONL-cap reset, but has not been re-run against the current capped graph.
 - **Full end-to-end run.** The full corpus has 157681 chunk WorkItems. A complete LLM run has not been attempted after the fresh reset because that would issue a large number of model calls.
 - **Proposal path.** The smoke runs did not deliberately exercise a valid `propose=true` result. The prompt was tightened after repeated invalid `propose=true` + non-null `canonical` outputs.
 
@@ -47,10 +48,10 @@ This doc references everything; updates affect `docs/status.md` only.
 
 ## Last verified action
 
-2026-05-07: dropped/recreated `bonnier`, ran bootstrap, ran preflight with zero failures, then ran targeted Salesforce LLM smokes. Final verification showed 20 chunk WorkItems done, 2 file WorkItems done, 0 failed WorkItems, 92 `HAS_TAG` edges, and 83 `TAGGED` edges.
+2026-05-07: after adding the JSONL content cap, dropped/recreated `bonnier`, ran bootstrap, and ran preflight with zero failures. Final verification showed 157681 chunks, 157681 unrun chunk WorkItems, 41 unrun file WorkItems, no runs, and max chunk content of 6029 chars / 1507 estimated tokens.
 
 ## Next recommended step
 
-1. Decide whether to launch a broader LLM batch, likely with conservative concurrency and cost monitoring.
-2. Watch `schema_invalid`, `http_429`, and `timeout` rates during the next batch; the breaker should abort if they become systemic.
-3. Build the proposal triage CLI or query views once enough tags exist to make review meaningful.
+1. Re-run one targeted post-cap LLM smoke with `run_index.py --file-id ... --chunk-limit 10 --file-limit 1 --concurrency 2`.
+2. If green, launch a broader LLM batch with conservative concurrency and cost monitoring.
+3. Watch `schema_invalid`, `http_429`, and `timeout` rates during the next batch; the breaker should abort if they become systemic.
