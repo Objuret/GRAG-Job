@@ -11,6 +11,7 @@ backend/.venv/
 
 # Backend data payloads
 backend/data/raw/
+graph_export/latest/
 
 # Frontend dependencies and builds
 node_modules/

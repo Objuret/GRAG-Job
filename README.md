@@ -15,6 +15,7 @@ Root is intentionally small: repo-level `README.md`, `AGENTS.md`, `.gitignore`, 
 git clone <this-repo>
 cd repo
 npm install
+npm run backend:install
 npm run dev
 ```
 
@@ -23,21 +24,20 @@ The frontend opens at http://127.0.0.1:5173/.
 Use the root npm commands as the project default:
 
 - `npm install` - install frontend workspace dependencies.
+- `npm run backend:install` - create `.venv` and install backend dependencies.
 - `npm run dev` - start the frontend dev server.
 - `npm run build` - type-check and build the frontend.
+- `npm run graph:import` - import the bundled graph export into an empty Neo4j database.
 
 ## Backend
 
 ```bash
-cd backend
-python -m venv .venv
-. .venv/Scripts/activate
-pip install -r requirements-lock.txt
+npm run backend:install
 
 cp .env.example .env
-python scripts/bootstrap_schema.py
-python scripts/run_preflight.py
-python scripts/run_index.py
+.venv/Scripts/python.exe backend/scripts/bootstrap_schema.py
+.venv/Scripts/python.exe backend/scripts/run_preflight.py
+.venv/Scripts/python.exe backend/scripts/run_index.py
 ```
 
 Backend docs start at [`backend/docs/README.md`](backend/docs/README.md). Agents should start with [`backend/docs/agent_brief.md`](backend/docs/agent_brief.md).
