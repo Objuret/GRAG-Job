@@ -32,7 +32,7 @@ Use the root npm commands as the project default:
 cd backend
 python -m venv .venv
 . .venv/Scripts/activate
-pip install -r requirements.txt
+pip install -r requirements-lock.txt
 
 cp .env.example .env
 python scripts/bootstrap_schema.py

@@ -13,7 +13,7 @@ git clone <this-repo> && cd repo
 cd backend
 python -m venv .venv
 . .venv/Scripts/activate           # Windows; macOS/Linux: . .venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements-lock.txt
 
 cp .env.example .env
 # Fill in: LLM_API_KEY, NEO4J_PASSWORD, NEO4J_DATABASE.

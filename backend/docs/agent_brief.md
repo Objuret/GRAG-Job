@@ -75,7 +75,7 @@ Assumes a populated `.env` (see [`env_and_config.md`](env_and_config.md)) and Ne
 ```bash
 python -m venv .venv
 . .venv/Scripts/activate                         # Windows; Linux: . .venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements-lock.txt
 
 # 1. Apply constraints + indexes + seed canonical tags. Idempotent.
 python scripts/bootstrap_schema.py

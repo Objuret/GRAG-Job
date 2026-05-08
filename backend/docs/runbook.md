@@ -21,7 +21,7 @@ python -m venv .venv
 . .venv/Scripts/activate    # Windows
 # . .venv/bin/activate      # macOS/Linux
 
-pip install -r requirements.txt
+pip install -r requirements-lock.txt
 
 cp .env.example .env
 # Edit .env — set at minimum: LLM_API_KEY, NEO4J_PASSWORD, NEO4J_DATABASE.

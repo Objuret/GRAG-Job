@@ -109,6 +109,7 @@ Operator entry points. Each one is small (initialise → call layer code → clo
 | [`README.md`](../README.md) | Short landing page; points at `docs/`. |
 | [`AGENTS.md`](../AGENTS.md) | Agent pointer file; points at `docs/agent_brief.md`. |
 | [`.env.example`](../.env.example) | Template for `.env`. Documented in [`env_and_config.md`](env_and_config.md). |
-| [`requirements.txt`](../requirements.txt) | Pinned-min-version Python deps. |
+| [`requirements.txt`](../requirements.txt) | Direct Python dependency floor for maintainers updating the lock. |
+| [`requirements-lock.txt`](../requirements-lock.txt) | Fully pinned Python dependency set for reproducible installs. |
 | [root `.gitignore`](../../.gitignore) | Monorepo ignore rules for backend paths such as `backend/data/raw/`, `backend/.env`, bytecode, and virtual environments. |
 | [`pyproject.toml`](../pyproject.toml) | Package metadata (`thesis-pipeline`, Python ≥ 3.10). No build-time deps. |
