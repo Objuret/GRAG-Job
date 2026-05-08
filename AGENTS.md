@@ -1,16 +1,19 @@
 # Agents
 
-This repository is documented in [`docs/`](docs/README.md).
+This is now a monorepo with two project roots:
 
-If you are an AI agent picking up this codebase, start with [`docs/agent_brief.md`](docs/agent_brief.md). The graph schema is the contract; see [`docs/graph_schema.md`](docs/graph_schema.md).
+- [`backend/`](backend/) - the Neo4j-backed Python indexing pipeline.
+- [`frontend/`](frontend/) - the Vite/React workbench interface.
 
-## Hard rules
+## Start Here
 
-- No fallbacks. No mocks. Fail loud.
-- One OpenAI-compatible LLM endpoint (configured via `LLM_*` env; legacy `AGENT_*` aliases honoured, `LLM_*` wins).
-- The agent client never raises — see [`agents/client.py`](agents/client.py); the orchestrator decides what to do with `error_class`.
-- Per-error-class circuit breaker — see [`indexing/breaker.py`](indexing/breaker.py).
-- Worklist drives everything — see [`indexing/worklist.py`](indexing/worklist.py).
-- **Neo4j is the only durable store.** No parquet/JSON side artefacts in the indexing path.
+- Backend work: read [`backend/AGENTS.md`](backend/AGENTS.md), then [`backend/docs/agent_brief.md`](backend/docs/agent_brief.md).
+- Frontend work: read [`frontend/AGENTS.md`](frontend/AGENTS.md), then [`frontend/docs/README.md`](frontend/docs/README.md).
+- Cross-cutting work: read both service-specific `AGENTS.md` files before editing.
 
-Never echo `.env` contents, API keys, or passwords into any file or log.
+## Root Rules
+
+- Keep service-specific code, docs, config templates, and commands inside `backend/` or `frontend/`.
+- Keep only monorepo-wide orientation and ignore rules at the repository root.
+- Never echo `.env` contents, API keys, tokens, or passwords into any file or log.
+- Backend durability still means Neo4j only. Do not add parquet/JSON side artefacts to the indexing path.

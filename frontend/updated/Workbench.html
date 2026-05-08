@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Antigrav Workbench — Redesign</title>
+  <link rel="stylesheet" href="https://esm.sh/@xyflow/react@12.4.4/dist/style.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "react":            "https://esm.sh/react@18.3.1",
+      "react/":           "https://esm.sh/react@18.3.1/",
+      "react-dom":        "https://esm.sh/react-dom@18.3.1",
+      "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+      "@xyflow/react":    "https://esm.sh/@xyflow/react@12.4.4?deps=react@18.3.1,react-dom@18.3.1"
+    }
+  }
+  </script>
+
+  <!-- mock data (plain JS, sets window.AG) -->
+  <script src="data.js"></script>
+
+  <!-- Fetch the JSX, transform with babel, then run as an ES module via blob URL -->
+  <script src="https://unpkg.com/@babel/standalone@7.22.5/babel.min.js"></script>
+  <script>
+    (async () => {
+      const src = await (await fetch('app.jsx')).text();
+      const out = Babel.transform(src, { presets: ['react'], plugins: [] }).code;
+      const url = URL.createObjectURL(new Blob([out], { type: 'text/javascript' }));
+      const m = document.createElement('script');
+      m.type = 'module';
+      m.src = url;
+      document.body.appendChild(m);
+    })();
+  </script>
+</body>
+</html>

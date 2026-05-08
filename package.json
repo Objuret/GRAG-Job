@@ -1,0 +1,13 @@
+{
+  "name": "exjobbet-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "npm --workspace frontend run dev",
+    "build": "npm --workspace frontend run build",
+    "lint": "npm --workspace frontend run lint"
+  },
+  "workspaces": [
+    "frontend"
+  ]
+}

@@ -10,7 +10,7 @@
 
 ## Touched paths
 
-This index touches: `docs/`, root `README.md`, root `AGENTS.md`.
+This index touches: `docs/`, backend `README.md`, backend `AGENTS.md`.
 
 ## Project mission (one paragraph)
 

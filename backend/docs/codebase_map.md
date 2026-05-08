@@ -102,13 +102,13 @@ Operator entry points. Each one is small (initialise → call layer code → clo
 | [`shared/neo4j_client.py`](../shared/neo4j_client.py) | Thin async wrapper around `neo4j.AsyncGraphDatabase`. | `Neo4jClient`, `Neo4jClient.session`, `Neo4jClient.close` | every script and every `indexing/` writer. |
 | [`shared/utils.py`](../shared/utils.py) | Time/hash/JSON helpers. | `utc_now`, `iso_utc`, `stable_short_hash`, `sha256_file`, `hash_tree`, `compare_hash_maps`, `make_json_safe`, `write_json`, `read_json`, `deep_merge`, `find_latest_run_id`, `ensure_dir` | shared across the codebase. |
 
-## Repo-root files
+## Backend-root files
 
 | File | Role |
 |---|---|
 | [`README.md`](../README.md) | Short landing page; points at `docs/`. |
 | [`AGENTS.md`](../AGENTS.md) | Agent pointer file; points at `docs/agent_brief.md`. |
 | [`.env.example`](../.env.example) | Template for `.env`. Documented in [`env_and_config.md`](env_and_config.md). |
-| [`.gitignore`](../.gitignore) | Ignores `data/` payload subdirectories, `.env`, `__pycache__/`, etc. |
 | [`requirements.txt`](../requirements.txt) | Pinned-min-version Python deps. |
+| [root `.gitignore`](../../.gitignore) | Monorepo ignore rules for backend paths such as `backend/data/raw/`, `backend/.env`, bytecode, and virtual environments. |
 | [`pyproject.toml`](../pyproject.toml) | Package metadata (`thesis-pipeline`, Python ≥ 3.10). No build-time deps. |

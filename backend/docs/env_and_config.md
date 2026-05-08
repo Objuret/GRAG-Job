@@ -26,7 +26,7 @@ That means:
 
 - Values come from `.env` first, then process env vars (which override).
 - Unknown keys are ignored (`extra="ignore"`), so `.env` can contain extras like `HF_TOKEN` without breaking config loading.
-- `.env` lives at the repo root and is gitignored.
+- `.env` lives at the backend root (`backend/.env` in the monorepo) and is gitignored.
 
 ## Precedence: `LLM_*` vs `AGENT_*`
 
@@ -67,7 +67,7 @@ agent_base_url: str = Field(
 | Var | Type | Default | Required | Where consumed |
 |---|---|---|---|---|
 | `EMBEDDING_MODEL` | string | `intfloat/e5-small-v2` | No | Read into `Settings.embedding_model`. **Not currently consumed by any code path** — embeddings/vector indexes are deferred. Kept so `.env` template stays stable for the reintroduction. |
-| `DATA_ROOT` | path | `<repo>/data` | No | Read into `Settings.data_root`. [`indexing/preflight.py`](../indexing/preflight.py) calls `scan_raw_tree(settings.data_root)` to walk `data/raw/`. The `data_access/` CLI tools accept `--data-root` to override per-invocation. |
+| `DATA_ROOT` | path | `<backend>/data` | No | Read into `Settings.data_root`. [`indexing/preflight.py`](../indexing/preflight.py) calls `scan_raw_tree(settings.data_root)` to walk `data/raw/`. The `data_access/` CLI tools accept `--data-root` to override per-invocation. |
 
 ### Recognised extras (ignored by Settings, used by other tools)
 

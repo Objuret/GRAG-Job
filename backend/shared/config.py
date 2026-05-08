@@ -22,7 +22,7 @@ def resolve_data_root(value: str | Path | None = None) -> Path:
 
 
 class Settings(BaseSettings):
-    """Runtime settings. Loaded from .env at the repo root and overridable by env vars."""
+    """Runtime settings. Loaded from backend/.env and overridable by env vars."""
 
     model_config = SettingsConfigDict(
         env_file=str(REPO_ROOT / ".env"),

@@ -15,6 +15,7 @@
 ```bash
 git clone <this-repo>
 cd repo
+cd backend
 
 python -m venv .venv
 . .venv/Scripts/activate    # Windows
