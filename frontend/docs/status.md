@@ -10,6 +10,8 @@
 - [x] Catalog (Pipeline / Usage), inspector forms per node kind, edge drawer, bottom lane comparison  
 - [x] Demo lane results via `PRESET_RESULTS` + `SAMPLE_CHUNKS` in `workbenchData.ts`  
 - [x] Themes and CSS tokens (`index.css`)
+- [x] Query modules with chained `topic`, `entities`, `activity`, `temporal`, and `evidence` fragments
+- [x] Undo/redo and clipboard support for canvas editing
 
 ---
 
@@ -18,10 +20,10 @@
 - [ ] HTTP API to Neo4j / retrieval (`docs/api.md`)  
 - [ ] Typed client under `src/api/`  
 - [ ] Replacing demo text with live graph counts and LLM output  
+- [ ] Persisting canvas/module state outside the current browser session
 
 ---
 
-## Removed (cleanup)
+## Inactive / Legacy
 
-- `mockClient.ts` — fake delayed API; unused by `App.jsx`  
-- `components/` + `WorkspaceContext` — alternate TS layout never imported by `main.tsx`  
+- `frontend/updated/` — tracked static prototype files. They are not imported by `src/main.tsx`; the active app is `src/App.jsx`.

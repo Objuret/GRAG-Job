@@ -5,7 +5,7 @@ This repository contains the thesis indexing system and its interface in one tre
 ## Layout
 
 - [`backend/`](backend/) - Python indexing pipeline. It chunks raw datasets, calls one OpenAI-compatible LLM endpoint, and writes the durable graph to Neo4j.
-- [`frontend/`](frontend/) - Vite/React workbench (`src/App.jsx`): two-lane canvas (pipeline vs usage) over synthetic demo data; Neo4j queries are not wired from the browser entrypoint yet.
+- [`frontend/`](frontend/) - Vite/React workbench (`src/App.jsx`): two-lane canvas (pipeline vs usage), draggable query modules, and synthetic demo data; Neo4j queries are not wired from the browser entrypoint yet.
 
 Root is intentionally small: repo-level `README.md`, `AGENTS.md`, `.gitignore`, and Git metadata live here. Service-specific files live under their service folder.
 
@@ -34,7 +34,7 @@ Use the root npm commands as the project default:
 ```bash
 npm run backend:install
 
-cp .env.example .env
+cp backend/.env.example backend/.env
 .venv/Scripts/python.exe backend/scripts/bootstrap_schema.py
 .venv/Scripts/python.exe backend/scripts/run_preflight.py
 .venv/Scripts/python.exe backend/scripts/run_index.py

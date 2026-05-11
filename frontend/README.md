@@ -5,8 +5,10 @@ Vite/React workbench for graph-RAG (`backend/` writes Neo4j; this UI is the expl
 ## Current stack
 
 - **Entry:** `src/main.tsx` → `src/App.jsx`  
-- **Lanes:** Pipeline (Dataset … Clusters) + Usage (Prompt … Output) + bridge edge  
-- **Data:** `src/data/workbenchData.ts` — node registry + demo samples until a query API exists  
+- **Lanes:** Pipeline (Dataset ... Clusters) + Usage (Prompt ... Output) + bridge edge
+- **Query modules:** draggable query containers with fragment steps for `topic`, `entities`, `activity`, `temporal`, and `evidence`
+- **Data:** `src/data/workbenchData.ts` — node/query registry + demo samples until a query API exists
+- **Composition:** `src/query/queryModuleSyntax.ts` — query-fragment Cypher defaults and human-readable summaries
 
 ## Dev
 

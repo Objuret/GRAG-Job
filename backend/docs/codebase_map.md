@@ -4,11 +4,11 @@
 
 **When to read this.** When you know what you want to change and need to find the right file.
 
-**Last updated:** 2026-05-07.
+**Last updated:** 2026-05-11.
 
 ## Touched paths
 
-`agents/`, `indexing/`, `clustering/`, `data_access/`, `prompts/`, `schema/`, `scripts/`, `shared/`.
+`agents/`, `indexing/`, `clustering/`, `data_access/`, `prompts/`, `schema/`, `scripts/`, `shared/`, monorepo `graph_export/`.
 
 ## `agents/`
 
@@ -17,7 +17,7 @@ OpenAI-compatible LLM client and the pydantic schemas every agent call returns.
 | File | Role | Key symbols | Called by |
 |---|---|---|---|
 | [`agents/__init__.py`](../agents/__init__.py) | Package marker. | — | — |
-| [`agents/client.py`](../agents/client.py) | One async HTTP call per `.call()`. **Never raises** — returns `AgentResult` with a typed `error_class`. JSON-mode (`response_format=json_object`). | `AgentConfig`, `AgentClient`, `AgentResult`, `ErrorClass` | [`scripts/run_index.py`](../scripts/run_index.py) (constructs the client), [`indexing/orchestrator.py`](../indexing/orchestrator.py) (calls `agent.call`). |
+| [`agents/client.py`](../agents/client.py) | One async HTTP call per `.call()`. **Never raises** — returns `AgentResult` with a typed `error_class`. Supports JSON mode and structured `json_schema` mode. | `AgentConfig`, `AgentClient`, `AgentResult`, `ErrorClass`, `ResponseFormat` | [`scripts/run_index.py`](../scripts/run_index.py) (constructs the client), [`indexing/orchestrator.py`](../indexing/orchestrator.py), [`scripts/run_tags_only_pilot.py`](../scripts/run_tags_only_pilot.py). |
 | [`agents/schemas.py`](../agents/schemas.py) | Pydantic models the agent returns. The contract between [`prompts/`](../prompts/) and the orchestrator. | `Cluster` (Literal), `Tag`, `ChunkExtraction`, `FileOrchestrationOutput` | [`indexing/orchestrator.py`](../indexing/orchestrator.py), [`indexing/extraction_writer.py`](../indexing/extraction_writer.py), [`indexing/file_writer.py`](../indexing/file_writer.py). |
 
 ## `indexing/`
@@ -67,6 +67,7 @@ LLM system prompts. JSON shapes here MUST match the pydantic schemas in [`agents
 | File | Role | Output schema |
 |---|---|---|
 | [`prompts/extract_chunk.md`](../prompts/extract_chunk.md) | Per-chunk extraction (Stage 1). Five-cluster tag set + chunk description + empty verdict. | `ChunkExtraction` |
+| [`prompts/extract_chunk_tags_only.md`](../prompts/extract_chunk_tags_only.md) | Non-mutating pilot prompt. Five cluster-keyed keyword lists only; no graph writes. | `TagsOnlyExtraction` in [`scripts/run_tags_only_pilot.py`](../scripts/run_tags_only_pilot.py) |
 | [`prompts/file_descriptor.md`](../prompts/file_descriptor.md) | Per-file orchestration (Stage 2). 3-5 sentence file description + chunk_relevance map. | `FileOrchestrationOutput` |
 
 See [`prompts.md`](prompts.md) for editing rules and validation behaviour.
@@ -89,8 +90,13 @@ Operator entry points. Each one is small (initialise → call layer code → clo
 | File | Role |
 |---|---|
 | [`scripts/bootstrap_schema.py`](../scripts/bootstrap_schema.py) | Apply constraints + indexes + seed canonical tags. Idempotent. Reports `Applied N schema statements; merged M canonical tags.` |
+| [`scripts/export_graph_json.py`](../scripts/export_graph_json.py) | Export the current Neo4j graph to portable JSONL files under monorepo `graph_export/latest/`. |
+| [`scripts/import_graph_json.py`](../scripts/import_graph_json.py) | Import a JSONL graph export directory or zip into Neo4j; supports `--wipe`. |
+| [`scripts/migrate_cluster_names.py`](../scripts/migrate_cluster_names.py) | One-time/idempotent data migration from retired cluster strings to `topic`, `entities`, `activity`, `temporal`, `evidence`. Also rewrites proposal IDs derived from cluster names. |
 | [`scripts/run_preflight.py`](../scripts/run_preflight.py) | Run [`indexing.preflight.run_preflight`](../indexing/preflight.py) and print summary + per-file failures. Idempotent. |
 | [`scripts/run_index.py`](../scripts/run_index.py) | The dispatcher. Validates API key → opens Neo4j + agent client → starts a `:Run` → runs orchestrator → records `ok`/`aborted`. Args: `--dataset-id`, `--chunk-limit`, `--file-limit`, `--concurrency`. |
+| [`scripts/run_tags_only_pilot.py`](../scripts/run_tags_only_pilot.py) | Non-mutating tags-only model pilot over sampled chunks. Writes Markdown reports under `backend/.plan/`. |
+| [`scripts/run_tags_only_structured_matrix.py`](../scripts/run_tags_only_structured_matrix.py) | Controlled structured-output model matrix runner for the tags-only pilot. Writes comparison reports under `backend/.plan/`. |
 | [`scripts/verify_graph.py`](../scripts/verify_graph.py) | Quick sanity counts: `:Source`, `:File`, `:Chunk`, unrun WorkItems, `:CanonicalTag` by cluster, file/chunk breakdowns, sample chunk previews. Read-only. |
 
 ## `shared/`

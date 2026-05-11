@@ -99,7 +99,7 @@ Pulled from [`status.md`](status.md). Truthful snapshot:
 - Parquet visual-content path: chunker now omits Arrow columns containing binary data and caps nested JSON conversion, so DocVQA preflights cleanly. Future image-aware indexing still needs a proper visual path.
 - Proposal triage CLI (`python -m clustering.review`) referenced in `canonical_seed.yaml` does not exist yet.
 - Named cluster query views (`by_topic`, `by_evidence`, `recent_active`, `multidim`) are not built.
-- An `exports/` snapshot stage is not built.
+- Portable JSONL graph export/import exists via `scripts/export_graph_json.py`, `scripts/import_graph_json.py`, and `graph_export/grag_graph_latest.zip`; it is an operator snapshot, not an indexing-path side artefact.
 - Full `provenance.json` per run is not written.
 - Vector indexes / embeddings are deferred (see [`schema/vector_indexes.cypher`](../schema/vector_indexes.cypher)).
 - Agent-negotiated chunking (vs Path A deterministic) for long-form sequential files is an explicit future revisit (see [`architecture.md`](architecture.md)).

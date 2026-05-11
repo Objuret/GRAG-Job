@@ -1,6 +1,6 @@
 # Prompts
 
-**TL;DR.** Two LLM prompts are in active use: [`extract_chunk.md`](../prompts/extract_chunk.md) (Stage 1) and [`file_descriptor.md`](../prompts/file_descriptor.md) (Stage 2). Both return a single JSON object validated by a pydantic model in [`agents/schemas.py`](../agents/schemas.py). When you edit a prompt's JSON shape, you **must** update the matching pydantic model in the same change.
+**TL;DR.** Two LLM prompts are in the live indexing path: [`extract_chunk.md`](../prompts/extract_chunk.md) (Stage 1) and [`file_descriptor.md`](../prompts/file_descriptor.md) (Stage 2). [`extract_chunk_tags_only.md`](../prompts/extract_chunk_tags_only.md) is used by non-mutating pilot scripts only. All prompt outputs are validated by pydantic models. When you edit a prompt's JSON shape, you **must** update the matching model in the same change.
 
 **When to read this.** Before editing any file under [`prompts/`](../prompts/). Also before changing [`agents/schemas.py`](../agents/schemas.py).
 
@@ -8,11 +8,11 @@
 
 ## Touched paths
 
-`prompts/`, `agents/schemas.py`, `indexing/orchestrator.py`, `indexing/extraction_writer.py`, `indexing/file_writer.py`.
+`prompts/`, `agents/schemas.py`, `agents/client.py`, `indexing/orchestrator.py`, `indexing/extraction_writer.py`, `indexing/file_writer.py`, `scripts/run_tags_only_pilot.py`.
 
 ## Common ground
 
-- **One LLM call per prompt invocation.** The agent client is configured for `response_format=json_object`. Output must be a single JSON object — no markdown, no prose, no code fences.
+- **One LLM call per prompt invocation.** The indexing path uses JSON mode (`response_format=json_object`). Pilot scripts can request structured output (`response_format=json_schema`) through `AgentClient.call(response_format="structured")`. Output must be a single JSON object — no markdown, no prose, no code fences.
 - **Failure handling lives in the orchestrator.** [`agents/client.py`](../agents/client.py) catches httpx and pydantic errors and returns a typed `error_class`. [`indexing/orchestrator.py`](../indexing/orchestrator.py) marks the WorkItem `failed` with that class. Auto-retry-all on next run picks it up.
 - **Schemas are the contract.** Edit the prompt and the pydantic model together — never one without the other.
 
@@ -110,6 +110,20 @@ This guarantees the rollup at Stage 3 has a relevance value for every chunk that
 - The "use the full 0..1 range" guidance is necessary because models tend to bunch scores around 0.5 when not pushed. Keep that wording.
 - The model **must not** invent or omit chunk_ids. The orchestrator detects both.
 - Don't widen the description beyond ~5 sentences — it lands directly on `:File.description` and is meant to be human-scannable.
+
+## `prompts/extract_chunk_tags_only.md`
+
+### Purpose
+
+Non-mutating model evaluation. Called by [`scripts/run_tags_only_pilot.py`](../scripts/run_tags_only_pilot.py) and [`scripts/run_tags_only_structured_matrix.py`](../scripts/run_tags_only_structured_matrix.py), not by `run_index.py`.
+
+### Output schema
+
+The pilot-local `TagsOnlyExtraction` model has `chunk_end_offset`, `empty`, `empty_reason`, and one list per cluster key: `topic`, `entities`, `activity`, `temporal`, `evidence`. Each list contains `{name, weight}` keyword objects. The cluster is encoded by the parent JSON key, not by a field on each keyword.
+
+### Safety
+
+The pilot reads chunks from Neo4j and writes Markdown reports under `backend/.plan/`. It does not create `WorkItem`, `Run`, `HAS_TAG`, or `TAGGED` records.
 
 ## Editing checklist
 

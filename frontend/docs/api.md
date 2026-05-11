@@ -16,8 +16,11 @@ When a thin query service exists (recommended: Node + `neo4j-driver` in front of
 | `GET` | `/api/files/:id/chunks` | Chunks + `HAS_TAG` for a file |
 | `GET` | `/api/files/:id/tags` | File-level `TAGGED` rollups |
 | `POST` | `/api/retrieval` | Body: `RetrievalConfig` from `src/types/index.ts` — returns `RetrievalResult` |
+| `POST` | `/api/query-plan` | Optional future endpoint: prompt → structured plan fields used by query modules |
 
 Response JSON must match the interfaces in `src/types/index.ts`.
+
+Retrieval/query-plan payloads should use the current cluster dimension names: `topic`, `entities`, `activity`, `temporal`, `evidence`.
 
 ---
 
@@ -31,6 +34,7 @@ Allow the Vite dev origin (`http://localhost:5173`) when the API runs on another
 
 1. Add a small `fetch` client module (e.g. `src/api/client.ts`) with typed methods.  
 2. Replace reads of `workbenchData.ts` for **live** paths (datasets, chunks, retrieval) with that client.  
-3. Keep `workbenchData.ts` for **node metadata** (labels, `STAGE_PAYLOADS` structure) or move that into a static `registry` object only.
+3. Keep `workbenchData.ts` for **node metadata** (labels, query-fragment registry, `STAGE_PAYLOADS` structure) or move that into a static `registry` object only.
+4. Keep `queryModuleSyntax.ts` as the source for default fragment Cypher unless the API returns server-owned templates.
 
-This file used to describe a `mockApi` class; that layer was removed as redundant with no backend and a dead TS shell.
+No HTTP client is present today; add `src/api/client.ts` when the query service exists.
