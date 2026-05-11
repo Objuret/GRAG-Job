@@ -8,7 +8,8 @@
     "lint": "npm --workspace frontend run lint",
     "backend:install": "python -m venv .venv && .venv\\Scripts\\python.exe -m pip install -r backend\\requirements-lock.txt",
     "graph:export": ".venv\\Scripts\\python.exe backend\\scripts\\export_graph_json.py",
-    "graph:import": ".venv\\Scripts\\python.exe backend\\scripts\\import_graph_json.py --input graph_export\\grag_graph_latest.zip"
+    "graph:import": ".venv\\Scripts\\python.exe backend\\scripts\\import_graph_json.py --input graph_export\\grag_graph_latest.zip",
+    "pilot:tags": ".venv\\Scripts\\python.exe backend\\scripts\\run_tags_only_pilot.py --file-id 960f223de786daa74a7d0f70 --concurrency 2"
   },
   "workspaces": [
     "frontend"

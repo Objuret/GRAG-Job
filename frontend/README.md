@@ -1,22 +1,23 @@
 # Antigrav Interface
 
-Vite/React workbench prototype for the thesis pipeline interface.
+Vite/React workbench for graph-RAG (`backend/` writes Neo4j; this UI is the exploration shell).
 
-The app currently uses synthetic mock data only. Keep real datasets, credentials, local paths, and run IDs out of the frontend unless the API/client contract is intentionally changed.
+## Current stack
 
-## Quick Start
+- **Entry:** `src/main.tsx` → `src/App.jsx`  
+- **Lanes:** Pipeline (Dataset … Clusters) + Usage (Prompt … Output) + bridge edge  
+- **Data:** `src/data/workbenchData.ts` — node registry + demo samples until a query API exists  
 
-From the monorepo root:
+## Dev
 
 ```bash
-npm install
+npm install   # from repo root or frontend/
 npm run dev
 ```
 
-The dev server opens at http://127.0.0.1:5173 by default. After installing from the root, `npm run dev` also works inside `frontend/`.
+http://127.0.0.1:5173/
 
 ## Docs
 
-- [`AGENTS.md`](AGENTS.md) - implementation rules for agents and humans.
-- [`docs/README.md`](docs/README.md) - frontend documentation index.
-- [`docs/api.md`](docs/api.md) - current mock API contract and backend swap guide.
+- [`AGENTS.md`](AGENTS.md)  
+- [`docs/README.md`](docs/README.md)  

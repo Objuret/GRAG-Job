@@ -1,4 +1,4 @@
-"""Hosted nano/mini agent client (OpenAI-compatible, JSON-mode).
+"""Hosted nano/mini agent client (OpenAI-compatible, JSON/structured mode).
 
 Configuration comes from `shared.config.Settings`: use `LLM_BASE_URL`
 (recommended) or `AGENT_BASE_URL` for the API root (e.g. `https://api.openai.com/v1`),
@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
-from typing import Generic, Literal, TypeVar
+from typing import Any, Generic, Literal, TypeVar
 
 import httpx
 from pydantic import BaseModel, ValidationError
@@ -33,6 +33,8 @@ ErrorClass = Literal[
     "timeout",
     "network",
 ]
+
+ResponseFormat = Literal["json", "structured"]
 
 
 @dataclass(frozen=True)
@@ -70,17 +72,28 @@ class AgentClient:
         system: str,
         user: str,
         schema: type[T],
+        response_format: ResponseFormat = "json",
+        schema_name: str | None = None,
         call_id: str | None = None,
     ) -> AgentResult[T]:
+        t0 = time.perf_counter()
+        try:
+            response_format_body = self._response_format_body(
+                schema=schema,
+                response_format=response_format,
+                schema_name=schema_name,
+            )
+        except ValueError as e:
+            return self._fail("http_other", str(e), call_id, t0, "")
+
         body = {
             "model": self._cfg.model,
             "messages": [
                 {"role": "system", "content": system},
                 {"role": "user", "content": user},
             ],
-            "response_format": {"type": "json_object"},
+            "response_format": response_format_body,
         }
-        t0 = time.perf_counter()
         try:
             resp = await self._http.post("/chat/completions", json=body)
         except httpx.TimeoutException as e:
@@ -98,12 +111,12 @@ class AgentClient:
             content = data["choices"][0]["message"]["content"]
             usage = data.get("usage", {})
         except Exception as e:
-            return self._fail("http_other", f"malformed response: {e}", call_id, t0, resp.text[:1000])
+            return self._fail("http_other", f"malformed response: {e}", call_id, t0, resp.text)
 
         try:
             parsed = schema.model_validate_json(content)
         except ValidationError as e:
-            return self._fail("schema_invalid", str(e), call_id, t0, content[:2000])
+            return self._fail("schema_invalid", str(e), call_id, t0, content)
 
         return AgentResult(
             parsed=parsed,
@@ -118,7 +131,7 @@ class AgentClient:
 
     def _classify_http(self, resp: httpx.Response, call_id: str | None, t0: float) -> AgentResult:
         s = resp.status_code
-        body_lower = resp.text[:1000].lower()
+        body_lower = resp.text.lower()
         if s == 429:
             cls: ErrorClass = "http_429"
         elif s in (401, 403):
@@ -129,7 +142,7 @@ class AgentClient:
             cls = "http_5xx"
         else:
             cls = "http_other"
-        return self._fail(cls, f"HTTP {s}: {resp.text[:1000]}", call_id, t0, resp.text[:1000])
+        return self._fail(cls, f"HTTP {s}: {resp.text}", call_id, t0, resp.text)
 
     def _fail(self, cls: ErrorClass, msg: str, call_id: str | None, t0: float, raw: str) -> AgentResult:
         return AgentResult(
@@ -145,3 +158,23 @@ class AgentClient:
 
     async def aclose(self) -> None:
         await self._http.aclose()
+
+    @staticmethod
+    def _response_format_body(
+        *,
+        schema: type[BaseModel],
+        response_format: ResponseFormat,
+        schema_name: str | None,
+    ) -> dict[str, Any]:
+        if response_format == "json":
+            return {"type": "json_object"}
+        if response_format == "structured":
+            return {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": schema_name or schema.__name__,
+                    "strict": True,
+                    "schema": schema.model_json_schema(),
+                },
+            }
+        raise ValueError(f"unknown response_format={response_format!r}")

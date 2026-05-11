@@ -42,11 +42,11 @@ FILE_BATCH_SIZE = 50
 
 # Order in which canonical clusters are listed in the chunk prompt.
 CLUSTER_ORDER: tuple[str, ...] = (
-    "theme",
-    "object_entity",
-    "event_process",
-    "time_relevance",
-    "information_need",
+    "topic",
+    "entities",
+    "activity",
+    "temporal",
+    "evidence",
 )
 
 PREV_TAIL_CHARS = 240

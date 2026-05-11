@@ -4,7 +4,7 @@
 
 **When to read this.** Before editing any file under [`prompts/`](../prompts/). Also before changing [`agents/schemas.py`](../agents/schemas.py).
 
-**Last updated:** 2026-05-07.
+**Last updated:** 2026-05-11.
 
 ## Touched paths
 
@@ -28,7 +28,7 @@ Built by [`Orchestrator._render_chunk_user_message`](../indexing/orchestrator.py
 
 - `File: {dataset_id}/{rel_path}  (format={format_family})`
 - `Chunk ordinal: {ordinal}, kind: {kind}, end_offset: {end_offset}`
-- The canonical-vocab block (one line per cluster: `- {cluster}: label1, label2, ...`). Built once per run by `_load_canonical_vocab`. The cluster order is fixed: `theme, object_entity, event_process, time_relevance, information_need`.
+- The canonical-vocab block (one line per cluster: `- {cluster}: label1, label2, ...`). Built once per run by `_load_canonical_vocab`. The cluster order is fixed: `topic, entities, activity, temporal, evidence`.
 - For sequential-mode files (PDF/HTML/DOCX/MD/TXT), if a previous chunk exists, its last 240 characters are included as: `Previous chunk ended with: "...{tail}"` (constant `PREV_TAIL_CHARS = 240`).
 - The chunk content itself, fenced by `---` separators.
 - A trailing line: `Output JSON. Set chunk_end_offset = {end_offset}.`

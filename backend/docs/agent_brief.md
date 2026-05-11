@@ -4,7 +4,7 @@
 
 **When to read this.** First — before touching anything. Re-read it if you've been off this repo for a while.
 
-**Last updated:** 2026-05-07.
+**Last updated:** 2026-05-11.
 
 ## Touched paths
 
@@ -34,11 +34,11 @@ Defined in [`agents/schemas.py`](../agents/schemas.py) as the `Cluster` Literal 
 
 | Cluster | Question for the chunk |
 |---|---|
-| `theme` | What is this chunk about? |
-| `object_entity` | Which specific things (persons, organisations, products, systems, campaigns, documents, datasets) are mentioned? |
-| `event_process` | Which kind of occurrence/process is described (decision, change, incident, launch, measurement, agreement, publication)? |
-| `time_relevance` | When is this relevant (recent, historical, future, active, completed)? |
-| `information_need` | What kind of evidence is supplied (number, quote, cause, summary, comparison, status, confirmed_fact)? |
+| `topic` | What is this chunk about? |
+| `entities` | Which specific concrete things are named or referenced (persons, organisations, products, systems, campaigns, documents, datasets)? |
+| `activity` | Which kind of event, process, or content action is described (decision, change, incident, launch, measurement, agreement, publication)? |
+| `temporal` | When is this relevant for retrieval (recent, historical, future, active, completed), including status posture when no explicit date appears? |
+| `evidence` | What kind of answer material is supplied (number, quote, cause, summary, comparison, status, confirmed_fact)? |
 
 Cluster is stored as a **string property on the `HAS_TAG` and `TAGGED` edges**. There are no `(:Dimension)` nodes. The `(:Tag)` node is unique on `name` only; the cluster lives on the edge.
 
@@ -98,7 +98,7 @@ Pulled from [`status.md`](status.md). Truthful snapshot:
 
 - Parquet visual-content path: chunker now omits Arrow columns containing binary data and caps nested JSON conversion, so DocVQA preflights cleanly. Future image-aware indexing still needs a proper visual path.
 - Proposal triage CLI (`python -m clustering.review`) referenced in `canonical_seed.yaml` does not exist yet.
-- Named cluster query views (`by_theme`, `by_information_need`, `recent_active`, `multidim`) are not built.
+- Named cluster query views (`by_topic`, `by_evidence`, `recent_active`, `multidim`) are not built.
 - An `exports/` snapshot stage is not built.
 - Full `provenance.json` per run is not written.
 - Vector indexes / embeddings are deferred (see [`schema/vector_indexes.cypher`](../schema/vector_indexes.cypher)).

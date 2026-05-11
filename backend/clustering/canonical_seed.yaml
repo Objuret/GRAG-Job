@@ -6,7 +6,7 @@
 #
 # DISCUSS: per-label glosses + synonym lists (currently bare labels only).
 
-theme:
+topic:
   - advertising
   - sports
   - economy
@@ -14,7 +14,7 @@ theme:
   - policy
   - audience_data
 
-object_entity:
+entities:
   - person
   - organization
   - product
@@ -23,7 +23,7 @@ object_entity:
   - document
   - dataset
 
-event_process:
+activity:
   - decision
   - change
   - incident
@@ -32,14 +32,14 @@ event_process:
   - agreement
   - publication
 
-time_relevance:
+temporal:
   - recent
   - historical
   - future
   - active
   - completed
 
-information_need:
+evidence:
   - number
   - quote
   - cause

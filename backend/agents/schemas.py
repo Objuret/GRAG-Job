@@ -14,11 +14,11 @@ from pydantic import BaseModel, Field, model_validator
 
 
 Cluster = Literal[
-    "theme",
-    "object_entity",
-    "event_process",
-    "time_relevance",
-    "information_need",
+    "topic",
+    "entities",
+    "activity",
+    "temporal",
+    "evidence",
 ]
 
 

@@ -130,23 +130,23 @@ export interface ComparisonResult {
 
 /** The five cluster dimensions used for tagging. */
 export type ClusterDimension =
-  | 'theme'
-  | 'object_entity'
-  | 'event_process'
-  | 'time_relevance'
-  | 'information_need';
+  | 'topic'
+  | 'entities'
+  | 'activity'
+  | 'temporal'
+  | 'evidence';
 
 export const ALL_CLUSTERS: ClusterDimension[] = [
-  'theme', 'object_entity', 'event_process', 'time_relevance', 'information_need',
+  'topic', 'entities', 'activity', 'temporal', 'evidence',
 ];
 
 /** Cluster display metadata — labels and short descriptions. */
 export const CLUSTER_META: Record<ClusterDimension, { label: string; hint: string }> = {
-  theme:              { label: 'Theme',              hint: 'What is this about?' },
-  object_entity:      { label: 'Object / Entity',    hint: 'Which things are mentioned?' },
-  event_process:      { label: 'Event / Process',    hint: 'What kind of occurrence?' },
-  time_relevance:     { label: 'Time Relevance',     hint: 'When is this relevant?' },
-  information_need:   { label: 'Information Need',   hint: 'What evidence is supplied?' },
+  topic:     { label: 'Topic',    hint: 'What is this about?' },
+  entities:  { label: 'Entities', hint: 'Which concrete things are named or referenced?' },
+  activity:  { label: 'Activity', hint: 'What kind of event, process, or content action is described?' },
+  temporal:  { label: 'Temporal', hint: 'When is this relevant: recent, historical, future, active, completed?' },
+  evidence:  { label: 'Evidence', hint: 'What kind of answer material is supplied?' },
 };
 
 /** A :Source node — one per dataset in the graph. */
@@ -234,7 +234,7 @@ export interface RetrievalResult {
 export interface WorkspaceState {
   schemaVersion: number;
   workspace: {
-    nodes: any[];       // ReactFlow node list — see WorkspaceContext for serialisation notes
+    nodes: any[];       // ReactFlow node list (optional future persistence)
     edges: any[];
     selectedNodeId: string | null;
     selectedArtifactId: string | null;

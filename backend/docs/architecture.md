@@ -4,7 +4,7 @@
 
 **When to read this.** When you need to understand *why* the code is shaped the way it is, before changing anything load-bearing.
 
-**Last updated:** 2026-05-07.
+**Last updated:** 2026-05-11.
 
 ## Touched paths
 
@@ -34,7 +34,7 @@ Each entry: **Decision** • **Rationale** • **Alternatives considered** • *
 ### D2 — Tag uniqueness on `name` only; cluster on edges
 
 - **Decision.** `(:Tag) REQUIRE n.name IS UNIQUE`. Cluster is a property on `(:Chunk)-[:HAS_TAG]->(:Tag)` and `(:File)-[:TAGGED]->(:Tag)`, not on the node.
-- **Rationale.** Tag names like `q2_2025` can be a `time_relevance` tag in one chunk and a hint of an `event_process` in another. Tying the cluster to the edge keeps the graph honest. It also avoids a combinatorial explosion of `(name, cluster)` Tag nodes.
+- **Rationale.** Tag names like `q2_2025` can be a `temporal` tag in one chunk and a hint of an `activity` in another. Tying the cluster to the edge keeps the graph honest. It also avoids a combinatorial explosion of `(name, cluster)` Tag nodes.
 - **Alternatives.** Composite uniqueness on `(name, cluster)` plus a `(:Dimension)` parent node. Rejected as over-modelling.
 - **Status.** Active. See [`schema/constraints.cypher`](../schema/constraints.cypher).
 

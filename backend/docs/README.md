@@ -4,7 +4,7 @@
 
 **When to read this.** First stop for any new agent or human picking up the codebase. Use this page to choose the right deeper doc.
 
-**Last updated:** 2026-05-07.
+**Last updated:** 2026-05-11.
 
 > **If you are an AI agent picking up this codebase, start by reading [`agent_brief.md`](agent_brief.md).**
 
@@ -14,7 +14,7 @@ This index touches: `docs/`, backend `README.md`, backend `AGENTS.md`.
 
 ## Project mission (one paragraph)
 
-Many noisy, heterogeneous datasets sit between us and any analytical query. The pipeline ingests the raw payload, deterministically splits each file into chunks, asks one OpenAI-compatible LLM to extract a five-cluster tag set per chunk plus a file-level relevance map, and rolls those up into a queryable Neo4j graph. The five clusters (`theme`, `object_entity`, `event_process`, `time_relevance`, `information_need`) are the retrieval dimensions. The graph (`(:Source)-[:CONTAINS]->(:File)-[:HAS_CHUNK]->(:Chunk)-[:HAS_TAG]->(:Tag)` plus a derived `(:File)-[:TAGGED]->(:Tag)`) is the only durable artefact — there are no parquet/JSON side files, no fallbacks, no mocks.
+Many noisy, heterogeneous datasets sit between us and any analytical query. The pipeline ingests the raw payload, deterministically splits each file into chunks, asks one OpenAI-compatible LLM to extract a five-cluster tag set per chunk plus a file-level relevance map, and rolls those up into a queryable Neo4j graph. The five clusters (`topic`, `entities`, `activity`, `temporal`, `evidence`) are the retrieval dimensions. The graph (`(:Source)-[:CONTAINS]->(:File)-[:HAS_CHUNK]->(:Chunk)-[:HAS_TAG]->(:Tag)` plus a derived `(:File)-[:TAGGED]->(:Tag)`) is the only durable artefact — there are no parquet/JSON side files, no fallbacks, no mocks.
 
 ## Reading order for first-time onboarding
 

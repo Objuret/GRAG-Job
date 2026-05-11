@@ -1,28 +1,128 @@
 // Antigrav Workbench — main app (React + xyflow via ESM)
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import {
   ReactFlow, ReactFlowProvider, useNodesState, useEdgesState,
   addEdge, Background, Controls, MiniMap, Handle, Position, NodeResizer,
-  BaseEdge, getBezierPath, EdgeLabelRenderer, useReactFlow,
+  BaseEdge, getBezierPath, EdgeLabelRenderer, useReactFlow, ConnectionMode, MarkerType,
 } from '@xyflow/react';
 
 // ─── Tweak defaults (persisted via __edit_mode_set_keys) ──────────────────
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "defaultTheme": "dark",
   "showMinimap": true,
-  "showEdgeLabels": true,
   "animatedEdges": false,
   "accentColor": "#b189ff",
   "laneGap": 40,
   "defaultTopK": 50
 }/*EDITMODE-END*/;
 
-import { NODE_TYPES, TYPE_LABEL, CLUSTERS, DATASETS, STAGE_PAYLOADS, PRESET_RESULTS, SAMPLE_CHUNKS } from './data/mockData';
-const NT = Object.fromEntries(NODE_TYPES.map(n => [n.id, n]));
+import {
+  NODE_TYPES, QUERY_FRAGMENT_NODES, QUERY_FRAGMENT_CATALOG, QUERY_CONTAINER,
+  PIPELINE_NODES, USAGE_NODES, CLUSTERS, DATASETS, STAGE_PAYLOADS, PRESET_RESULTS, SAMPLE_CHUNKS,
+} from './data/workbenchData';
+import {
+  DEFAULT_MODULE_HEADER,
+  DEFAULT_MODULE_FOOTER,
+  FRAGMENT_TEMPLATE_DEFAULTS,
+  FRAGMENT_HUMAN_DEFAULTS,
+  PLAN_INSERTS,
+  DEMO_PLAN_PREVIEW,
+  composeModuleCypher,
+  composeHumanStory,
+  extractPlanRefs,
+  getFragmentTemplate,
+  getFragmentHumanLine,
+} from './query/queryModuleSyntax';
+const NT = Object.fromEntries([...NODE_TYPES, ...QUERY_FRAGMENT_NODES].map((n) => [n.id, n]));
 
 // ─── helpers ───────────────────────────────────────────────────────────────
 const cls = (...xs) => xs.filter(Boolean).join(' ');
-const uid = (p) => `${p}_${Math.random().toString(36).slice(2,8)}`;
+const uid = (p) => `${p}_${Math.random().toString(36).slice(2, 8)}`;
+
+function isTypingTarget(el) {
+  if (!el || !(el instanceof HTMLElement)) return false;
+  const tag = el.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+  if (el.isContentEditable) return true;
+  return !!el.closest('[contenteditable="true"]');
+}
+
+function cloneSnap(nodes, edges) {
+  return { nodes: JSON.parse(JSON.stringify(nodes)), edges: JSON.parse(JSON.stringify(edges)) };
+}
+
+function collectWithDescendants(nodes, seedIds) {
+  const ids = new Set(seedIds);
+  let added = true;
+  while (added) {
+    added = false;
+    for (const n of nodes) {
+      if (n.parentId && ids.has(n.parentId) && !ids.has(n.id)) {
+        ids.add(n.id);
+        added = true;
+      }
+    }
+  }
+  return ids;
+}
+
+function collectCopyNodes(nodes) {
+  const sel = nodes.filter((n) => n.selected);
+  if (!sel.length) return [];
+  const ids = collectWithDescendants(nodes, sel.map((n) => n.id));
+  return nodes.filter((n) => ids.has(n.id));
+}
+
+function snapClipboard(nodesSubset, allEdges) {
+  const ids = new Set(nodesSubset.map((n) => n.id));
+  const es = allEdges.filter((e) => ids.has(e.source) && ids.has(e.target));
+  return {
+    nodes: nodesSubset.map((n) => JSON.parse(JSON.stringify(n))),
+    edges: es.map((e) => JSON.parse(JSON.stringify(e))),
+  };
+}
+
+function remapPaste(nodes, edges) {
+  const idMap = new Map();
+  const pref = (t) => (t === 'stage' ? 'st' : t === 'lane' ? 'lane' : t === 'queryGroup' ? 'qg' : 'n');
+  for (const n of nodes) idMap.set(n.id, uid(pref(n.type)));
+  const newNodes = nodes.map((n) => ({
+    ...n,
+    id: idMap.get(n.id),
+    parentId: n.parentId && idMap.has(n.parentId) ? idMap.get(n.parentId) : undefined,
+    selected: false,
+  }));
+  const newEdges = edges.map((e) => ({
+    ...e,
+    id: `e_${idMap.get(e.source)}__${idMap.get(e.target)}`,
+    source: idMap.get(e.source),
+    target: idMap.get(e.target),
+  }));
+  return { newNodes, newEdges };
+}
+
+function offsetRoots(nodes, dx, dy) {
+  const ids = new Set(nodes.map((n) => n.id));
+  const roots = nodes.filter((n) => !n.parentId || !ids.has(n.parentId));
+  const rootSet = new Set(roots.map((r) => r.id));
+  return nodes.map((n) =>
+    rootSet.has(n.id) ? { ...n, position: { x: n.position.x + dx, y: n.position.y + dy } } : n
+  );
+}
+
+/** Flow-space point inside some query module bounds (for parenting dropped fragments). */
+function findQueryGroupAt(flowPos, nds) {
+  for (const n of nds) {
+    if (n.type !== 'queryGroup') continue;
+    const w = Number(n.style?.width) || 560;
+    const h = Number(n.style?.height) || 300;
+    const { x, y } = n.position;
+    if (flowPos.x >= x && flowPos.x <= x + w && flowPos.y >= y && flowPos.y <= y + h) return n;
+  }
+  return null;
+}
+
+const FRAGMENT_KINDS = new Set(QUERY_FRAGMENT_NODES.map((n) => n.id));
 const Icon = ({ d, size = 14 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{d}</svg>
 );
@@ -37,27 +137,251 @@ const I = {
   layers:   <Icon d={<><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></>}/>,
   arrow:    <Icon d={<><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></>}/>,
   prompt:   <Icon d={<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></>}/>,
+  lock:     <Icon d={<><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></>}/>,
 };
 
+const DEFAULT_FLOW_EDGE_OPTIONS = {
+  type: 'default',
+  markerEnd: { type: MarkerType.ArrowClosed, width: 13, height: 13, color: 'var(--neutral)' },
+};
+
+const FLOW_SIDES = ['top', 'right', 'bottom', 'left'];
+const FLOW_SIDE_POS = [Position.Top, Position.Right, Position.Bottom, Position.Left];
+const SIDE_TO_POS = Object.fromEntries(FLOW_SIDES.map((s, i) => [s, FLOW_SIDE_POS[i]]));
+
+function portOffsetStyle(positionEnum, frac) {
+  const pct = `${Math.round(Math.min(0.94, Math.max(0.06, frac)) * 100)}%`;
+  if (positionEnum === Position.Top || positionEnum === Position.Bottom) return { left: pct };
+  return { top: pct };
+}
+
+const FLOW_PORT_SPECS = Object.freeze(
+  FLOW_SIDES.flatMap((side) => {
+    const position = SIDE_TO_POS[side];
+    return [
+      { id: `h-${side}-a`, position, style: portOffsetStyle(position, 0.38) },
+      { id: `h-${side}-b`, position, style: portOffsetStyle(position, 0.62) },
+    ];
+  }).sort((a, b) => a.id.localeCompare(b.id)),
+);
+
+function flowNodeConnectable(n) {
+  return n?.type === 'stage' || n?.type === 'queryGroup' || n?.type === 'lane';
+}
+
+function FlowPorts() {
+  return FLOW_PORT_SPECS.map((p) => (
+    <Handle
+      key={p.id}
+      id={p.id}
+      type="source"
+      position={p.position}
+      style={p.style}
+      className="nodrag nopan"
+      isConnectable
+      isConnectableStart
+      isConnectableEnd
+    />
+  ));
+}
+
+function mapEdgesForReactFlow(edgeList, animatedEdges) {
+  const arrow = (err) =>
+    err
+      ? { type: MarkerType.ArrowClosed, width: 13, height: 13, color: 'var(--err)' }
+      : { type: MarkerType.ArrowClosed, width: 13, height: 13, color: 'var(--neutral)' };
+  return edgeList.map((e) => {
+    const invalid = e.className === 'invalid' || e.data?.contractOk === false;
+    const flowPulse = !!e.data?.flowPulse;
+    return {
+      ...e,
+      animated: animatedEdges || flowPulse,
+      className: cls(e.className, flowPulse && 'flow-pulse'),
+      markerEnd: arrow(invalid),
+    };
+  });
+}
+
+function defaultFlowHandles(conn, nodeList) {
+  const s = nodeList.find((n) => n.id === conn.source);
+  const t = nodeList.find((n) => n.id === conn.target);
+  let sourceHandle = conn.sourceHandle ?? null;
+  let targetHandle = conn.targetHandle ?? null;
+  if (flowNodeConnectable(s) && sourceHandle == null) sourceHandle = 'h-right-a';
+  if (flowNodeConnectable(t) && targetHandle == null) targetHandle = 'h-left-a';
+  return { ...conn, sourceHandle, targetHandle };
+}
+
+function connectionContractOk(conn, nodeList) {
+  if (conn.source === conn.target) return false;
+  const a = nodeList.find((n) => n.id === conn.source);
+  const b = nodeList.find((n) => n.id === conn.target);
+  return !!(a && b);
+}
+
+/** Stage ids that belong to a lane container (direct children only). */
+function laneStageIds(nodes, laneId) {
+  return new Set(nodes.filter((n) => n.type === 'stage' && n.parentId === laneId).map((n) => n.id));
+}
+
+/** Read width/height from React Flow `style` (number or `"123px"`) or return null. */
+function readStyleLength(style, key) {
+  if (!style || style[key] == null) return null;
+  const v = style[key];
+  if (typeof v === 'number' && Number.isFinite(v)) return v;
+  if (typeof v === 'string') {
+    const n = parseFloat(v);
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
+}
+
+function laneContentRect(lane) {
+  const fromStyleW = readStyleLength(lane.style, 'width');
+  const fromStyleH = readStyleLength(lane.style, 'height');
+  const mw = lane.measured?.width;
+  const mh = lane.measured?.height;
+  const lw = fromStyleW ?? (Number.isFinite(mw) && mw > 0 ? mw : 600);
+  const lh = fromStyleH ?? (Number.isFinite(mh) && mh > 0 ? mh : 220);
+  return { lw, lh };
+}
+
+/** Prefer measured size; ignore 0×0 (xyflow before first measure). Fall back to explicit node dimensions then stage defaults. */
+function stageBBoxSize(stage) {
+  const mw = stage.measured?.width;
+  const mh = stage.measured?.height;
+  if (Number.isFinite(mw) && mw >= 12 && Number.isFinite(mh) && mh >= 12) return { w: mw, h: mh };
+  const nw = stage.width;
+  const nh = stage.height;
+  if (Number.isFinite(nw) && nw >= 12 && Number.isFinite(nh) && nh >= 12) return { w: nw, h: nh };
+  return { w: 184, h: 116 };
+}
+
+/**
+ * True if this child stage should get `extent: 'parent'` when the lane is locked again.
+ * Uses padded center-in-rect OR meaningful bbox overlap so resized lanes / measured sizes do not false-negative.
+ */
+function stageLockableInsideLane(stage, lane) {
+  const { lw, lh } = laneContentRect(lane);
+  const { w, h } = stageBBoxSize(stage);
+  const { x, y } = stage.position;
+  const pad = 16;
+  const cx = x + w / 2;
+  const cy = y + h / 2;
+  const centerInside =
+    cx >= -pad && cx <= lw + pad && cy >= -pad && cy <= lh + pad;
+
+  const ix0 = Math.max(0, x);
+  const iy0 = Math.max(0, y);
+  const ix1 = Math.min(lw, x + w);
+  const iy1 = Math.min(lh, y + h);
+  const inter = Math.max(0, ix1 - ix0) * Math.max(0, iy1 - iy0);
+  const area = Math.max(w * h, 1);
+  const overlapFrac = inter / area;
+
+  return centerInside || overlapFrac >= 0.22;
+}
+
+/**
+ * Ordered list of stages inside a lane following internal edges (execution order).
+ * Falls back to left-to-right sort if the subgraph is not a simple chain.
+ */
+function getLaneStageChainOrder(laneId, nodes, edges, idSet = null) {
+  const ids = idSet ?? laneStageIds(nodes, laneId);
+  if (!ids.size) return [];
+  const internal = edges.filter((e) => ids.has(e.source) && ids.has(e.target));
+  const targetOf = new Map(internal.map((e) => [e.source, e.target]));
+  const hasIn = new Set(internal.map((e) => e.target));
+  const heads = [...ids].filter((id) => !hasIn.has(id));
+  if (heads.length === 1) {
+    const order = [];
+    let cur = heads[0];
+    const guard = new Set();
+    while (cur && !guard.has(cur)) {
+      guard.add(cur);
+      order.push(cur);
+      cur = targetOf.get(cur);
+    }
+    if (order.length === ids.size) return order;
+  }
+  const byX = [...ids].sort((a, b) => {
+    const na = nodes.find((n) => n.id === a);
+    const nb = nodes.find((n) => n.id === b);
+    return (na?.position?.x ?? 0) - (nb?.position?.x ?? 0);
+  });
+  return byX;
+}
+
+function externalInboundEdges(targetId, laneStageIdSet, edges) {
+  return edges.filter(
+    (e) => e.target === targetId && e.source !== targetId && !laneStageIdSet.has(e.source),
+  );
+}
+
+function findEdgeBetween(edges, source, target) {
+  return edges.find((e) => e.source === source && e.target === target);
+}
+
 // ─── Stage Node component (xyflow custom node) ─────────────────────────────
-const StageNode = React.memo(({ data, selected }) => {
+const StageNode = React.memo(({ id, data, selected }) => {
   const t = NT[data.kind];
   if (!t) return null;
   const payload = STAGE_PAYLOADS[t.id] || {};
-  const cap = data.disabled ? 'unavailable' : (data.running ? 'running' : 'runnable');
+  const phase = data.execPhase || 'idle';
+  const cap = data.disabled
+    ? 'unavailable'
+    : phase === 'running'
+      ? 'running'
+      : phase === 'done'
+        ? 'exec-done'
+        : phase === 'failed'
+          ? 'exec-failed'
+          : 'runnable';
+  const fragMeaning = data.kind?.startsWith('qf_')
+    ? getFragmentHumanLine({ data }, data.kind)
+    : null;
+  const subDisplay = fragMeaning
+    ? (fragMeaning.length > 90 ? `${fragMeaning.slice(0, 90)}…` : fragMeaning)
+    : t.sub;
+  const ringGradId = `execRing_${String(id ?? 'n').replace(/[^a-zA-Z0-9_-]/g, '_')}`;
   return (
-    <div className={cls('node-stage', selected && 'selected', data.disabled && 'disabled')}
+    <div className={cls('node-stage', selected && 'selected', data.disabled && 'disabled', phase === 'running' && 'exec-running')}
          style={{ '--node-accent': t.color }}>
+      {phase === 'running' && (
+        <svg className="node-exec-ring" viewBox="0 0 184 124" preserveAspectRatio="none" aria-hidden>
+          <defs>
+            <linearGradient id={ringGradId} x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="var(--info)" stopOpacity="0.15" />
+              <stop offset="50%" stopColor="var(--info)" stopOpacity="1" />
+              <stop offset="100%" stopColor="var(--info)" stopOpacity="0.15" />
+            </linearGradient>
+          </defs>
+          <rect
+            x="2"
+            y="2"
+            width="180"
+            height="120"
+            rx="10"
+            ry="10"
+            fill="none"
+            stroke={`url(#${ringGradId})`}
+            strokeWidth="3"
+            strokeLinecap="round"
+            pathLength="100"
+            strokeDasharray="18 320"
+            className="node-exec-ring-stroke"
+          />
+        </svg>
+      )}
       <div className="node-accent" />
-      {t.inType && <Handle type="target" position={Position.Left} id="in" />}
-      {t.outType && <Handle type="source" position={Position.Right} id="out" />}
+      <FlowPorts />
       <div className="node-head">
         <div className="node-head-icon">{t.icon}</div>
         <div>
           <div className="node-title">{t.label}</div>
-          <div className="node-subtitle">{t.sub}</div>
+          <div className="node-subtitle" title={fragMeaning || undefined}>{subDisplay}</div>
         </div>
-        {t.id !== 'output' && t.id !== 'dataset' && t.id !== 'prompt' && (
+        {t.id !== 'output' && t.id !== 'dataset' && t.id !== 'prompt' && t.id !== 'qf_start' && (
           <div className={cls('node-toggle', !data.disabled && 'on')}
                onClick={(e) => { e.stopPropagation(); data.onToggle?.(); }} />
         )}
@@ -88,11 +412,28 @@ const StageNode = React.memo(({ data, selected }) => {
 });
 
 // ─── Lane (Group) Node ─────────────────────────────────────────────────────
+const QueryGroupNode = React.memo(({ data, selected }) => (
+  <>
+    <NodeResizer minWidth={320} minHeight={200} isVisible={selected} />
+    <div className={cls('node-query-group', selected && 'selected')}>
+      <FlowPorts />
+      <div className="query-group-head">
+        <span className="query-group-icon">{QUERY_CONTAINER.icon}</span>
+        <input className="query-group-title" defaultValue={data.label || 'Query module'}
+               onPointerDown={(e) => e.stopPropagation()}
+               onChange={(e) => data.onRename?.(e.target.value)} />
+      </div>
+      <div className="query-group-hint">Plan in · step order = query order · candidates out</div>
+    </div>
+  </>
+));
+
 const LaneNode = React.memo(({ data, selected }) => {
   return (
     <>
       <NodeResizer minWidth={600} minHeight={220} isVisible={selected} />
       <div className={cls('node-lane', selected && 'selected')}>
+        <FlowPorts />
         <div className="lane-header">
           <input className="lane-name" defaultValue={data.label || 'Lane'}
                  onPointerDown={(e) => e.stopPropagation()}
@@ -102,7 +443,21 @@ const LaneNode = React.memo(({ data, selected }) => {
             {data.running ? 'running…' : (data.lastRun ? `${data.lastRun}ms` : 'ready')}
           </span>
           <div className="lane-actions">
-            <button className={cls('lane-run', data.running && 'running')}
+            <button
+              type="button"
+              className={cls('lane-lock', data.lockContent !== false && 'is-on')}
+              title={
+                data.lockContent !== false
+                  ? 'Locked: stages still inside the lane stay clamped — click to unlock'
+                  : 'Unlocked: drag stages freely — click lock to clamp stages that overlap the lane interior'
+              }
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={() => data.onSetLockContent?.(!(data.lockContent !== false))}
+            >
+              {I.lock}
+            </button>
+            <button type="button" className={cls('lane-run', data.running && 'running')}
+                    disabled={data.running}
                     onPointerDown={(e) => e.stopPropagation()}
                     onClick={() => data.onRun?.()}>
               {I.play} {data.running ? 'Running' : 'Execute'}
@@ -114,18 +469,23 @@ const LaneNode = React.memo(({ data, selected }) => {
   );
 });
 
-const nodeTypes = { stage: StageNode, lane: LaneNode };
+const nodeTypes = { stage: StageNode, lane: LaneNode, queryGroup: QueryGroupNode };
 
-// ─── Initial canvas: two parallel lanes for A/B ────────────────────────────
+// ─── Initial canvas: pipeline lane (top) + usage lane (bottom) ──────────────
 function buildInitial() {
-  const order = ['prompt','dataset','access','index','tags','clusters','output'];
-  const xStart = 24, xGap = 200, y = 56;
-  const laneW = xStart + order.length * xGap + 24;
-  const laneH = 220;
+  const pipelineOrder = PIPELINE_NODES.map(n => n.id);  // dataset, access, index, tags, clusters
+  const usageOrder    = USAGE_NODES.map(n => n.id);     // prompt, interpreter, graphquery, retrieval, output
+
+  const xStart = 32, xGap = 260, yInner = 72;
+  const maxCols = Math.max(pipelineOrder.length, usageOrder.length);
+  // Reserve room for the last stage (184px wide) + matching right margin so it doesn't kiss the lane edge.
+  const laneW = xStart + (maxCols - 1) * xGap + 184 + 32;
+  const laneH = 244;
+  const laneGap = 56;
 
   const lanes = [
-    { id: 'lane_A', label: 'Lane A — full pipeline', y: 0, disabled: {} },
-    { id: 'lane_B', label: 'Lane B — tags OFF (baseline)', y: laneH + 40, disabled: { tags: true } },
+    { id: 'lane_pipeline', label: 'Pipeline — graph construction', y: 0,              order: pipelineOrder },
+    { id: 'lane_usage',    label: 'Usage — query & retrieval',     y: laneH + laneGap, order: usageOrder },
   ];
 
   const nodes = [];
@@ -135,25 +495,62 @@ function buildInitial() {
     nodes.push({
       id: lane.id, type: 'lane', position: { x: 0, y: lane.y },
       style: { width: laneW, height: laneH, zIndex: -1 },
-      data: { label: lane.label, lastRun: null, running: false },
+      data: { label: lane.label, lastRun: null, running: false, lockContent: true },
       draggable: true, selectable: true,
     });
-    const stageNodes = order.map((kind, i) => ({
+    const stageNodes = lane.order.map((kind, i) => ({
       id: `${lane.id}_${kind}`, type: 'stage',
-      position: { x: xStart + i * xGap, y: y },
+      position: { x: xStart + i * xGap, y: yInner },
       parentId: lane.id, extent: 'parent',
-      data: { kind, disabled: !!lane.disabled[kind], running: false },
+      data: { kind, disabled: false, running: false },
     }));
     nodes.push(...stageNodes);
     for (let i = 0; i < stageNodes.length - 1; i++) {
+      const conn = {
+        source: stageNodes[i].id,
+        target: stageNodes[i + 1].id,
+        sourceHandle: 'h-right-a',
+        targetHandle: 'h-left-a',
+      };
+      const ok = connectionContractOk(conn, nodes);
       edges.push({
-        id: `e_${stageNodes[i].id}__${stageNodes[i+1].id}`,
-        source: stageNodes[i].id, target: stageNodes[i+1].id,
-        sourceHandle: 'out', targetHandle: 'in', type: 'smoothstep', animated: false,
-        data: { type: NT[order[i]].outType, fromKind: order[i], toKind: order[i+1] },
+        id: `e_${stageNodes[i].id}__${stageNodes[i + 1].id}`,
+        ...conn,
+        type: 'default',
+        animated: false,
+        className: ok ? undefined : 'invalid',
+        data: {
+          type: NT[lane.order[i]].outType,
+          fromKind: lane.order[i],
+          toKind: lane.order[i + 1],
+          contractOk: ok,
+        },
       });
     }
   }
+
+  // Empty Query module, seeded but not wired to the lanes — gives a clear starting surface
+  // for fragment drops without making cross-lane wiring assumptions on first paint.
+  const qgW = 620;
+  const qgH = 320;
+  const qgX = Math.max(0, Math.round((laneW - qgW) / 2));
+  const qgY = 2 * laneH + laneGap + 72;
+  nodes.push({
+    id: 'query_module_initial',
+    type: 'queryGroup',
+    position: { x: qgX, y: qgY },
+    style: { width: qgW, height: qgH, zIndex: 0 },
+    data: {
+      label: 'Query module',
+      templateNote: '',
+      headerCypher: DEFAULT_MODULE_HEADER,
+      footerCypher: DEFAULT_MODULE_FOOTER,
+      humanSummary: '',
+    },
+    draggable: true,
+    selectable: true,
+  });
+
   return { nodes, edges };
 }
 
@@ -172,7 +569,7 @@ function WorkbenchApp() {
   const [results, setResults]   = useState({ lane_A: PRESET_RESULTS.full, lane_B: PRESET_RESULTS.baseline });
   const [config, setConfig]     = useState({
     dataset: 'source_alpha_demo',
-    clusters: { theme: true, object_entity: true, event_process: true, time_relevance: true, information_need: true },
+    clusters: { topic: true, entities: true, activity: true, temporal: true, evidence: true },
     canonicalOnly: false, weightThreshold: 0.0, maxChunks: 50, formatFilter: 'All',
   });
   const [outputView, setOutputView] = useState('llm');   // llm | chunks | table
@@ -191,36 +588,244 @@ function WorkbenchApp() {
     return () => window.removeEventListener('message', handler);
   }, []);
 
+  const nodesRef = useRef(nodes);
+  const edgesRef = useRef(edges);
+  /** Keep refs aligned with render state so snapshots never lag one frame behind (fixes undo skipping the last edit). */
+  nodesRef.current = nodes;
+  edgesRef.current = edges;
+
+  const edgesForReactFlow = useMemo(
+    () => mapEdgesForReactFlow(edges, tweaks.animatedEdges),
+    [edges, tweaks.animatedEdges],
+  );
+
+  const canvasRootRef = useRef(null);
+  const clipboardRef = useRef(null);
+  const runLaneAnimRef = useRef(0);
+  const [, setUndoStack] = useState([]);
+  const [, setRedoStack] = useState([]);
+
+  const commitBeforeChange = useCallback(() => {
+    setUndoStack((u) => [...u.slice(-49), cloneSnap(nodesRef.current, edgesRef.current)]);
+    setRedoStack([]);
+  }, []);
+
+  const undo = useCallback(() => {
+    setUndoStack((u) => {
+      if (!u.length) return u;
+      const prev = u[u.length - 1];
+      setRedoStack((r) => [...r, cloneSnap(nodesRef.current, edgesRef.current)]);
+      setNodes(prev.nodes);
+      setEdges(prev.edges);
+      setSelected(null);
+      setEdgeSel(null);
+      return u.slice(0, -1);
+    });
+  }, [setNodes, setEdges]);
+
+  const redo = useCallback(() => {
+    setRedoStack((r) => {
+      if (!r.length) return r;
+      const next = r[r.length - 1];
+      setUndoStack((u) => [...u.slice(-49), cloneSnap(nodesRef.current, edgesRef.current)]);
+      setNodes(next.nodes);
+      setEdges(next.edges);
+      setSelected(null);
+      setEdgeSel(null);
+      return r.slice(0, -1);
+    });
+  }, [setNodes, setEdges]);
+
+  const runLane = useCallback((laneId) => {
+    runLaneAnimRef.current += 1;
+    const token = runLaneAnimRef.current;
+
+    const schedule = (ms, fn) => {
+      window.setTimeout(() => {
+        if (token !== runLaneAnimRef.current) return;
+        fn();
+      }, ms);
+    };
+
+    const clearFlowPulse = () => {
+      setEdges((eds) => eds.map((e) => ({ ...e, data: { ...e.data, flowPulse: false } })));
+    };
+
+    const finishLane = (lastRun) => {
+      setNodes((nds) => nds.map((n) =>
+        (n.id === laneId ? { ...n, data: { ...n.data, running: false, lastRun } } : n),
+      ));
+      clearFlowPulse();
+    };
+
+    const stages = laneStageIds(nodesRef.current, laneId);
+    const order = getLaneStageChainOrder(laneId, nodesRef.current, edgesRef.current, stages);
+    const D_EDGE = 360;
+    const D_NODE = 520;
+    const D_GAP = 160;
+
+    if (!order.length) {
+      setNodes((nds) => nds.map((n) => (n.id === laneId ? { ...n, data: { ...n.data, running: true } } : n)));
+      schedule(700, () => finishLane(720 + Math.floor(Math.random() * 120)));
+      return;
+    }
+
+    const failAt =
+      order.length > 1 && Math.random() < 0.07
+        ? 1 + Math.floor(Math.random() * (order.length - 1))
+        : -1;
+
+    setNodes((nds) => nds.map((n) => {
+      if (n.id === laneId) return { ...n, data: { ...n.data, running: true } };
+      if (n.type === 'stage' && stages.has(n.id))
+        return { ...n, data: { ...n.data, execPhase: 'idle' } };
+      return n;
+    }));
+    clearFlowPulse();
+
+    const setPulseEdgeIds = (edgeIds) => {
+      const want = new Set(edgeIds);
+      setEdges((eds) => eds.map((e) => ({ ...e, data: { ...e.data, flowPulse: want.has(e.id) } })));
+    };
+
+    const go = (i) => {
+      if (token !== runLaneAnimRef.current) return;
+      if (i >= order.length) {
+        const base = 80 + order.length * (D_EDGE + D_NODE + D_GAP);
+        finishLane(base + Math.floor(Math.random() * 450));
+        return;
+      }
+
+      const stageId = order[i];
+      const prevId = i > 0 ? order[i - 1] : null;
+      const pulseIds = [];
+      if (prevId) {
+        const e = findEdgeBetween(edgesRef.current, prevId, stageId);
+        if (e) pulseIds.push(e.id);
+      }
+      for (const e of externalInboundEdges(stageId, stages, edgesRef.current)) {
+        pulseIds.push(e.id);
+      }
+      setPulseEdgeIds(pulseIds);
+
+      schedule(D_EDGE, () => {
+        if (token !== runLaneAnimRef.current) return;
+        clearFlowPulse();
+
+        if (failAt === i) {
+          setNodes((nds) => nds.map((n) => {
+            if (n.id === laneId) return { ...n, data: { ...n.data, running: false, lastRun: null } };
+            if (n.id === stageId && stages.has(n.id))
+              return { ...n, data: { ...n.data, execPhase: 'failed' } };
+            return n;
+          }));
+          return;
+        }
+
+        setNodes((nds) => nds.map((n) =>
+          n.id === stageId && stages.has(n.id)
+            ? { ...n, data: { ...n.data, execPhase: 'running' } }
+            : n,
+        ));
+
+        schedule(D_NODE, () => {
+          if (token !== runLaneAnimRef.current) return;
+          setNodes((nds) => nds.map((n) =>
+            n.id === stageId && stages.has(n.id)
+              ? { ...n, data: { ...n.data, execPhase: 'done' } }
+              : n,
+          ));
+
+          schedule(D_GAP, () => go(i + 1));
+        });
+      });
+    };
+
+    schedule(60, () => go(0));
+  }, [setNodes, setEdges]);
+
+  const patchNodeData = useCallback((id, dataPatch) => {
+    setNodes((nds) => nds.map((n) => (n.id === id ? { ...n, data: { ...n.data, ...dataPatch } } : n)));
+  }, [setNodes]);
+
   // Wire callbacks into nodes (toggle, rename, run, etc.)
-  const wiredNodes = useMemo(() => nodes.map(n => {
+  const wiredNodes = useMemo(() => nodes.map((n) => {
     if (n.type === 'lane') {
       return { ...n, data: { ...n.data,
-        onRename: (v) => setNodes(nds => nds.map(x => x.id === n.id ? { ...x, data: { ...x.data, label: v } } : x)),
+        onRename: (v) => setNodes((nds) => nds.map((x) => (x.id === n.id ? { ...x, data: { ...x.data, label: v } } : x))),
         onRun: () => runLane(n.id),
-      }};
+        onSetLockContent: (lock) => {
+          commitBeforeChange();
+          setNodes((nds) => {
+            const laneNode = nds.find((z) => z.id === n.id && z.type === 'lane');
+            return nds.map((x) => {
+              if (x.id === n.id && x.type === 'lane')
+                return { ...x, data: { ...x.data, lockContent: lock } };
+              if (x.parentId === n.id && x.type === 'stage') {
+                const { extent: _ignore, ...rest } = x;
+                if (!lock) return rest;
+                if (laneNode && stageLockableInsideLane(x, laneNode))
+                  return { ...rest, extent: 'parent' };
+                return rest;
+              }
+              return x;
+            });
+          });
+        },
+      } };
+    }
+    if (n.type === 'queryGroup') {
+      return { ...n, data: { ...n.data,
+        onRename: (v) => setNodes((nds) => nds.map((x) => (x.id === n.id ? { ...x, data: { ...x.data, label: v } } : x))),
+      } };
     }
     if (n.type === 'stage') {
       return { ...n, data: { ...n.data,
-        onToggle: () => setNodes(nds => nds.map(x => x.id === n.id ? { ...x, data: { ...x.data, disabled: !x.data.disabled } } : x)),
-      }};
+        onToggle: () => setNodes((nds) => nds.map((x) => (x.id === n.id ? { ...x, data: { ...x.data, disabled: !x.data.disabled } } : x))),
+      } };
     }
     return n;
-  }), [nodes]);
+  }), [nodes, runLane, setNodes, commitBeforeChange]);
 
   const onConnect = useCallback((c) => {
-    setEdges(eds => addEdge({ ...c, type: 'smoothstep', animated: false }, eds));
-  }, [setEdges]);
+    commitBeforeChange();
+    const conn = defaultFlowHandles(c, nodes);
+    const s = nodes.find((n) => n.id === conn.source);
+    const t = nodes.find((n) => n.id === conn.target);
+    const contractOk = connectionContractOk(conn, nodes);
+    let data = { type: '', fromKind: '', toKind: '', contractOk };
+    if (t?.type === 'queryGroup' && s?.type === 'stage') {
+      data = { type: 'query_plan', fromKind: s?.data?.kind ?? '', toKind: 'queryGroup', contractOk };
+    } else if (s?.type === 'queryGroup' && t?.type === 'stage') {
+      data = { type: 'candidates', fromKind: 'queryGroup', toKind: t?.data?.kind ?? '', contractOk };
+    } else if (s?.type === 'stage' && t?.type === 'stage') {
+      const sKind = NT[s.data.kind], tKind = NT[t.data.kind];
+      if (s.data?.kind === 'clusters' && t.data?.kind === 'graphquery') {
+        data = { type: 'ranked', fromKind: 'clusters', toKind: 'graphquery', contractOk };
+      } else {
+        data = { type: sKind?.outType ?? '', fromKind: s.data.kind, toKind: t.data.kind, contractOk };
+      }
+    }
+    setEdges((eds) =>
+      addEdge(
+        {
+          ...conn,
+          type: 'default',
+          animated: false,
+          className: contractOk ? undefined : 'invalid',
+          data,
+        },
+        eds,
+      ),
+    );
+  }, [commitBeforeChange, setEdges, nodes]);
 
-  const isValidConnection = useCallback(({ source, target, sourceHandle, targetHandle }) => {
-    if (source === target) return false;
-    const s = nodes.find(n => n.id === source);
-    const t = nodes.find(n => n.id === target);
-    if (!s || !t) return false;
-    if (s.type !== 'stage' || t.type !== 'stage') return false;
-    const sKind = NT[s.data.kind], tKind = NT[t.data.kind];
-    if (!sKind?.outType || !tKind?.inType) return false;
-    return sKind.outType === tKind.inType;
-  }, [nodes]);
+  /** Checkpoint before a drag mutates positions (onNodesChange does not go through commitBeforeChange). */
+  const onNodeDragStart = useCallback(() => {
+    commitBeforeChange();
+  }, [commitBeforeChange]);
+
+  const isValidConnection = useCallback(({ source, target }) => source !== target, []);
 
   const onSelectionChange = useCallback(({ nodes: ns, edges: es }) => {
     if (es.length === 1) { setEdgeSel(es[0].id); setSelected(null); return; }
@@ -233,37 +838,261 @@ function WorkbenchApp() {
     e.preventDefault();
     const kind = e.dataTransfer.getData('application/ag-kind');
     if (!kind) return;
-    // Convert pointer coords (screen space) into flow coords, then offset by
-    // half the node's rendered size so the node spawns CENTERED on the pointer.
+    commitBeforeChange();
     const flowPos = rf.screenToFlowPosition({ x: e.clientX, y: e.clientY });
+
+    if (kind === 'queryContainer') {
+      const gid = uid('qg');
+      const gw = 560;
+      const gh = 300;
+      const pos = { x: flowPos.x - gw / 2, y: flowPos.y - gh / 2 };
+      setNodes((nds) => nds.concat(
+        {
+          id: gid,
+          type: 'queryGroup',
+          position: pos,
+          style: { width: gw, height: gh, zIndex: 0 },
+          data: {
+            label: 'Query module',
+            templateNote: '',
+            headerCypher: DEFAULT_MODULE_HEADER,
+            footerCypher: DEFAULT_MODULE_FOOTER,
+            humanSummary: '',
+          },
+          draggable: true,
+          selectable: true,
+        },
+        {
+          id: uid('qf'),
+          type: 'stage',
+          parentId: gid,
+          extent: 'parent',
+          position: { x: 28, y: 72 },
+          data: {
+            kind: 'qf_start',
+            disabled: false,
+            running: false,
+            cypherTemplate: FRAGMENT_TEMPLATE_DEFAULTS.qf_start,
+          },
+          draggable: true,
+          selectable: true,
+        },
+      ));
+      return;
+    }
+
+    if (FRAGMENT_KINDS.has(kind) && kind !== 'qf_start') {
+      setNodes((nds) => {
+        const parent = findQueryGroupAt(flowPos, nds);
+        if (!parent) return nds;
+        const w = 184;
+        const h = 116;
+        const rel = {
+          x: flowPos.x - parent.position.x - w / 2,
+          y: flowPos.y - parent.position.y - h / 2,
+        };
+        return nds.concat({
+          id: uid(kind),
+          type: 'stage',
+          parentId: parent.id,
+          extent: 'parent',
+          position: rel,
+          data: {
+            kind,
+            disabled: false,
+            running: false,
+            cypherTemplate: FRAGMENT_TEMPLATE_DEFAULTS[kind] ?? '',
+          },
+          draggable: true,
+          selectable: true,
+        });
+      });
+      return;
+    }
+
     const isLane = kind === 'lane';
-    const w = isLane ? 720 : 184;   // matches CSS
+    const w = isLane ? 720 : 184;
     const h = isLane ? 240 : 116;
     const pos = { x: flowPos.x - w / 2, y: flowPos.y - h / 2 };
     if (isLane) {
-      setNodes(nds => nds.concat({
+      setNodes((nds) => nds.concat({
         id: uid('lane'), type: 'lane', position: pos,
         style: { width: w, height: h, zIndex: -1 },
-        data: { label: 'New Lane', lastRun: null, running: false },
+        data: { label: 'New Lane', lastRun: null, running: false, lockContent: true },
       }));
     } else {
-      setNodes(nds => nds.concat({
+      setNodes((nds) => nds.concat({
         id: uid(kind), type: 'stage', position: pos,
         data: { kind, disabled: false, running: false },
       }));
     }
-  }, [setNodes, rf]);
+  }, [commitBeforeChange, setNodes, rf]);
 
-  const runLane = (laneId) => {
-    setNodes(nds => nds.map(n => n.id === laneId ? { ...n, data: { ...n.data, running: true } } : n));
-    setTimeout(() => {
-      setNodes(nds => nds.map(n => n.id === laneId
-        ? { ...n, data: { ...n.data, running: false, lastRun: 2840 + Math.floor(Math.random()*400) } }
-        : n));
-    }, 1200);
+  const copySelection = useCallback(() => {
+    const ns = collectCopyNodes(nodesRef.current);
+    if (!ns.length) return;
+    clipboardRef.current = snapClipboard(ns, edgesRef.current);
+  }, []);
+
+  const pasteFromClipboard = useCallback(() => {
+    const clip = clipboardRef.current;
+    if (!clip?.nodes?.length) return;
+    commitBeforeChange();
+    let { newNodes, newEdges } = remapPaste(clip.nodes, clip.edges);
+    newNodes = offsetRoots(newNodes, 40, 40);
+    setNodes((nds) => [...nds.map((n) => ({ ...n, selected: false })), ...newNodes.map((n) => ({ ...n, selected: true }))]);
+    setEdges((eds) => [...eds, ...newEdges]);
+  }, [commitBeforeChange, setNodes, setEdges]);
+
+  const duplicateSelection = useCallback(() => {
+    const ns = collectCopyNodes(nodesRef.current);
+    if (!ns.length) return;
+    const clip = snapClipboard(ns, edgesRef.current);
+    commitBeforeChange();
+    let { newNodes, newEdges } = remapPaste(clip.nodes, clip.edges);
+    newNodes = offsetRoots(newNodes, 24, 24);
+    setNodes((nds) => [...nds.map((n) => ({ ...n, selected: false })), ...newNodes.map((n) => ({ ...n, selected: true }))]);
+    setEdges((eds) => [...eds, ...newEdges]);
+  }, [commitBeforeChange, setNodes, setEdges]);
+
+  const selectAllOnCanvas = useCallback(() => {
+    setNodes((nds) => nds.map((n) => ({ ...n, selected: true })));
+    setEdges((eds) => eds.map((e) => ({ ...e, selected: true })));
+    setSelected(null);
+    setEdgeSel(null);
+  }, [setNodes, setEdges, setSelected, setEdgeSel]);
+
+  const clearCanvasSelection = useCallback(() => {
+    setNodes((nds) => nds.map((n) => (n.selected ? { ...n, selected: false } : n)));
+    setEdges((eds) => eds.map((e) => (e.selected ? { ...e, selected: false } : e)));
+    setSelected(null);
+    setEdgeSel(null);
+  }, [setNodes, setEdges, setSelected, setEdgeSel]);
+
+  const deleteSelection = useCallback(() => {
+    const nds = nodesRef.current;
+    const eds = edgesRef.current;
+    const selectedE = eds.filter((e) => e.selected);
+    if (selectedE.length) {
+      commitBeforeChange();
+      const rm = new Set(selectedE.map((e) => e.id));
+      setEdges((e) => e.filter((x) => !rm.has(x.id)));
+      setEdgeSel(null);
+      return;
+    }
+    if (edgeSel) {
+      commitBeforeChange();
+      setEdges((e) => e.filter((x) => x.id !== edgeSel));
+      setEdgeSel(null);
+      return;
+    }
+    const sel = nds.filter((n) => n.selected);
+    const ids = collectWithDescendants(nds, sel.map((n) => n.id));
+    if (!ids.size) return;
+    commitBeforeChange();
+    setNodes((n) => n.filter((x) => !ids.has(x.id)));
+    setEdges((e) => e.filter((x) => !ids.has(x.source) && !ids.has(x.target)));
+    setSelected(null);
+    setEdgeSel(null);
+  }, [commitBeforeChange, edgeSel, setNodes, setEdges]);
+
+  const runCanvasSelection = useCallback(() => {
+    const nds = nodesRef.current;
+    const sel = nds.filter((n) => n.selected);
+    if (!sel.length) {
+      runLane('lane_pipeline');
+      runLane('lane_usage');
+      return;
+    }
+    const lanes = new Set();
+    for (const n of sel) {
+      if (n.type === 'lane') lanes.add(n.id);
+      else if (n.parentId) {
+        const p = nds.find((x) => x.id === n.parentId);
+        if (p?.type === 'lane') lanes.add(n.parentId);
+      }
+    }
+    lanes.forEach((id) => runLane(id));
+  }, [runLane]);
+
+  const runAll = useCallback(() => {
+    runLane('lane_pipeline');
+    runLane('lane_usage');
+  }, [runLane]);
+
+  const focusCanvas = useCallback(() => {
+    canvasRootRef.current?.focus({ preventScroll: true });
+  }, []);
+
+  const canvasKbRef = useRef({});
+  canvasKbRef.current = {
+    copy: copySelection,
+    paste: pasteFromClipboard,
+    duplicate: duplicateSelection,
+    selectAll: selectAllOnCanvas,
+    clearSelection: clearCanvasSelection,
+    delete: deleteSelection,
+    run: runCanvasSelection,
+    undo,
+    redo,
   };
 
-  const runAll = () => { runLane('lane_A'); runLane('lane_B'); };
+  useEffect(() => {
+    const onKey = (e) => {
+      const typing = isTypingTarget(e.target);
+      const canvasEl = canvasRootRef.current;
+      const inCanvas = !!(canvasEl && (canvasEl === document.activeElement || canvasEl.contains(document.activeElement)));
+      const mod = e.ctrlKey || e.metaKey;
+
+      if (e.key === 'Escape') {
+        if (typing) return;
+        e.preventDefault();
+        canvasKbRef.current.clearSelection();
+        return;
+      }
+
+      if (mod && e.key.toLowerCase() === 'z') {
+        if (typing) return;
+        e.preventDefault();
+        if (e.shiftKey) canvasKbRef.current.redo();
+        else canvasKbRef.current.undo();
+        return;
+      }
+      if (!inCanvas || typing) return;
+      if (mod && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+        canvasKbRef.current.selectAll();
+        return;
+      }
+      if (mod && e.key.toLowerCase() === 'c') {
+        e.preventDefault();
+        canvasKbRef.current.copy();
+        return;
+      }
+      if (mod && e.key.toLowerCase() === 'v') {
+        e.preventDefault();
+        canvasKbRef.current.paste();
+        return;
+      }
+      if (mod && e.key.toLowerCase() === 'd') {
+        e.preventDefault();
+        canvasKbRef.current.duplicate();
+        return;
+      }
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault();
+        canvasKbRef.current.delete();
+        return;
+      }
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        canvasKbRef.current.run();
+        return;
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   // ─── Inspector content ──────────────────────────────────────────────────
   const selNode = selected && nodes.find(n => n.id === selected.id);
@@ -276,37 +1105,68 @@ function WorkbenchApp() {
       <TopStrip {...{ theme, setTheme, prompt, setPrompt, runAll }}/>
       <div className={cls('workbench-main', edgeSel && 'drawer-open')}>
         <Catalog />
-        <div className="canvas" onDrop={onDrop} onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }}>
+        <div
+          ref={canvasRootRef}
+          className="canvas workbench-canvas-focus"
+          tabIndex={0}
+          onMouseDown={(e) => {
+            if (!canvasRootRef.current?.contains(e.target)) return;
+            if (isTypingTarget(e.target)) return;
+            canvasRootRef.current?.focus({ preventScroll: true });
+          }}
+          onDrop={onDrop}
+          onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }}
+        >
           <ReactFlow
             nodes={wiredNodes}
-            edges={edges.map(e => ({
-              ...e,
-              animated: tweaks.animatedEdges,
-              label: tweaks.showEdgeLabels ? (TYPE_LABEL[e.data?.type] || '') : '',
-              labelStyle: { fontSize: 10 }, labelBgStyle: { fill: 'var(--bg-panel)' },
-              labelBgPadding: [4,2], labelBgBorderRadius: 3
-            }))}
+            edges={edgesForReactFlow}
+            connectionMode={ConnectionMode.Loose}
+            nodesConnectable
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             isValidConnection={isValidConnection}
             onSelectionChange={onSelectionChange}
+            onPaneClick={focusCanvas}
+            onNodeClick={focusCanvas}
+            onEdgeClick={focusCanvas}
+            onNodeDragStart={onNodeDragStart}
             nodeTypes={nodeTypes}
-            fitView fitViewOptions={{ padding: 0.18 }}
+            fitView fitViewOptions={{ padding: 0.32, maxZoom: 0.95 }}
             proOptions={{ hideAttribution: true }}
             minZoom={0.4} maxZoom={1.6}
-            selectionOnDrag panOnDrag={[1,2]} panOnScroll
-            defaultEdgeOptions={{ type: 'smoothstep' }}
+            selectionOnDrag
+            panOnDrag={[1, 2]}
+            panOnScroll
+            defaultEdgeOptions={DEFAULT_FLOW_EDGE_OPTIONS}
+            deleteKeyCode={null}
+            nodesFocusable={false}
+            edgesFocusable={false}
           >
             <Background gap={20} size={1.4} />
             <Controls position="bottom-right" showInteractive={false} />
-            {tweaks.showMinimap && <MiniMap pannable zoomable nodeColor={(n) => n.type === 'lane' ? 'var(--bg-surface)' : (NT[n.data?.kind]?.color || 'var(--neutral)')} maskColor="rgba(0,0,0,.4)" />}
+            {tweaks.showMinimap && (
+              <MiniMap
+                pannable
+                zoomable
+                nodeColor={(n) => {
+                  if (n.type === 'lane') return 'var(--bg-surface)';
+                  if (n.type === 'queryGroup') return 'var(--type-query)';
+                  return NT[n.data?.kind]?.color || 'var(--neutral)';
+                }}
+                maskColor="rgba(0,0,0,.4)"
+              />
+            )}
           </ReactFlow>
         </div>
         <Inspector selKind={selKind} selNode={selNode} selPayload={selPayload}
                    config={config} setConfig={setConfig}
                    prompt={prompt} setPrompt={setPrompt}
-                   outputView={outputView} setOutputView={setOutputView} />
+                   outputView={outputView} setOutputView={setOutputView}
+                   queryContainerMeta={QUERY_CONTAINER}
+                   nodes={nodes}
+                   edges={edges}
+                   patchNodeData={patchNodeData} />
         {selEdge && <Drawer edge={selEdge} nodes={nodes} onClose={() => setEdgeSel(null)} />}
       </div>
       <BottomPanel results={results} prompt={prompt} outputView={outputView} setOutputView={setOutputView}/>
@@ -337,7 +1197,6 @@ function TweaksPanel({ tweaks, setTweak, onClose }) {
       <div className="tweaks-body">
         <div className="tweaks-section">Canvas</div>
         <TwToggle label="Show minimap"     value={tweaks.showMinimap}    onChange={v => setTweak('showMinimap', v)}/>
-        <TwToggle label="Edge labels"      value={tweaks.showEdgeLabels} onChange={v => setTweak('showEdgeLabels', v)}/>
         <TwToggle label="Animated edges"   value={tweaks.animatedEdges}  onChange={v => setTweak('animatedEdges', v)}/>
         <div className="tweaks-section">Brand</div>
         <div className="tw-row">
@@ -415,11 +1274,20 @@ function TopStrip({ theme, setTheme, prompt, setPrompt, runAll }) {
 // ─── Catalog ────────────────────────────────────────────────────────────────
 function Catalog() {
   const [q, setQ] = useState('');
-  const filtered = NODE_TYPES.filter(n => !q || n.label.toLowerCase().includes(q.toLowerCase()) || n.id.includes(q.toLowerCase()));
+  const match = (n) => !q || n.label.toLowerCase().includes(q.toLowerCase()) || n.id.includes(q.toLowerCase());
   const onDragStart = (e, kind) => {
     e.dataTransfer.setData('application/ag-kind', kind);
     e.dataTransfer.effectAllowed = 'move';
   };
+  const renderList = (items) => items.filter(match).map(n => (
+    <div key={n.id} className="catalog-item" draggable onDragStart={(e) => onDragStart(e, n.id)}>
+      <div className="catalog-item-icon" style={{ background: n.color }}>{n.icon}</div>
+      <div>
+        <div className="catalog-item-name">{n.label}</div>
+        <div className="catalog-item-type">{n.inType || '—'} → {n.outType || '—'}</div>
+      </div>
+    </div>
+  ));
   return (
     <aside className="catalog">
       <div className="catalog-section">
@@ -430,23 +1298,47 @@ function Catalog() {
         </div>
       </div>
       <div className="catalog-section">
-        <h4>Pipeline Nodes</h4>
+        <h4>Pipeline</h4>
+        <div className="catalog-hint">Graph construction: dataset → indexed, tagged, clustered.</div>
+        <div className="catalog-list">{renderList(PIPELINE_NODES)}</div>
+      </div>
+      <div className="catalog-divider" />
+      <div className="catalog-section">
+        <h4>Usage</h4>
+        <div className="catalog-hint">Query & retrieval: prompt → interpret → query graph → rank → LLM output.</div>
+        <div className="catalog-list">{renderList(USAGE_NODES)}</div>
+      </div>
+      <div className="catalog-divider" />
+      <div className="catalog-section">
+        <h4>Query module</h4>
+        <div className="catalog-hint">Query module: interpreter plan → any <strong>qin</strong> face; <strong>qout</strong> → retrieval. Ports appear on each side; extras on the same edge spread out. Arrows always run from source drag to target drop. Invalid pairs stay linked but draw red.</div>
         <div className="catalog-list">
-          {filtered.map(n => (
-            <div key={n.id} className="catalog-item" draggable onDragStart={(e) => onDragStart(e, n.id)}>
-              <div className="catalog-item-icon" style={{ background: n.color }}>{n.icon}</div>
-              <div>
-                <div className="catalog-item-name">{n.label}</div>
-                <div className="catalog-item-type">{n.inType || '—'} → {n.outType || '—'}</div>
-              </div>
+          <div
+            className="catalog-item"
+            draggable
+            onDragStart={(e) => {
+              e.dataTransfer.setData('application/ag-kind', 'queryContainer');
+              e.dataTransfer.effectAllowed = 'move';
+            }}
+          >
+            <div className="catalog-item-icon" style={{ background: QUERY_CONTAINER.color }}>{QUERY_CONTAINER.icon}</div>
+            <div>
+              <div className="catalog-item-name">{QUERY_CONTAINER.label}</div>
+              <div className="catalog-item-type">{QUERY_CONTAINER.inType} → {QUERY_CONTAINER.outType}</div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
       <div className="catalog-divider" />
       <div className="catalog-section">
+        <h4>Query fragments</h4>
+        <div className="catalog-hint">Drop <strong>inside</strong> a Query module only. Chain start is seeded automatically.</div>
+        <div className="catalog-list">{renderList(QUERY_FRAGMENT_CATALOG)}</div>
+      </div>
+      <div className="catalog-divider" />
+      <div className="catalog-section">
         <h4>Lanes</h4>
-        <div className="catalog-hint">Drag a Lane onto the canvas to create a new runnable A/B branch. Lanes can contain another lane for nested testing.</div>
+        <div className="catalog-hint">Drag a Lane to create a runnable A/B branch.</div>
         <div className="catalog-list">
           <div className="catalog-item" draggable onDragStart={(e) => onDragStart(e, 'lane')}>
             <div className="catalog-item-icon" style={{ background: 'var(--accent)' }}>L</div>
@@ -458,13 +1350,219 @@ function Catalog() {
         </div>
       </div>
       <div className="catalog-divider" />
-      <div className="catalog-hint">Tip: connections only join compatible types — invalid drops will be rejected.</div>
+      <div className="catalog-hint">Tip: connections only join compatible types.</div>
     </aside>
   );
 }
 
+// ─── Query module inspector (meaning first; Cypher under Technical) ─────────
+function QueryGroupInspector({ selNode, queryContainerMeta, nodes, edges, patchNodeData }) {
+  const [tab, setTab] = useState('meaning');
+  const composed = useMemo(() => composeModuleCypher(nodes, edges, selNode.id), [nodes, edges, selNode.id]);
+  const planRefs = useMemo(() => extractPlanRefs(composed.text), [composed.text]);
+  const story = useMemo(
+    () => composeHumanStory(nodes, edges, selNode.id, (k) => NT[k]?.label ?? k),
+    [nodes, edges, selNode.id],
+  );
+
+  return (
+    <aside className="inspector">
+      <div className="insp-head">
+        <div className="insp-title-row">
+          <div className="insp-icon" style={{ background: queryContainerMeta.color }}>{queryContainerMeta.icon}</div>
+          <div>
+            <div className="insp-title">{selNode.data.label || queryContainerMeta.label}</div>
+            <div className="insp-meta">{queryContainerMeta.inType} → {queryContainerMeta.outType}</div>
+          </div>
+        </div>
+      </div>
+      <div className="insp-tabs">
+        {['meaning', 'overview'].map((t) => (
+          <button key={t} type="button" className={cls('insp-tab', tab === t && 'active')} onClick={() => setTab(t)}>
+            {t === 'meaning' ? 'Meaning' : 'Overview'}
+          </button>
+        ))}
+      </div>
+      <div className="insp-body">
+        {tab === 'meaning' && (
+          <>
+            <p className="query-meaning-lead">
+              Wire order on the canvas is execution order. This tab is the readable story of what the query does; open <strong>Technical</strong> below when you need generated Cypher or bindings.
+            </p>
+            <div className="section-head">Intent</div>
+            <div className="field">
+              <label className="field-label">What this module is for<span className="hint">plain language</span></label>
+              <textarea
+                className="field-textarea"
+                rows={3}
+                placeholder="e.g. Pull chunks that match the plan’s topics and entities, within the relevant time window…"
+                value={selNode.data.humanSummary ?? ''}
+                onChange={(e) => patchNodeData(selNode.id, { humanSummary: e.target.value })}
+              />
+            </div>
+            <div className="section-head">Steps (canvas chain)</div>
+            <ol className="query-human-step-list">
+              {story.steps.map((s) => (
+                <li key={s.id}>
+                  <span className="query-human-step-title">{s.title}</span>
+                  <div className="query-human-step-body">{s.body}</div>
+                </li>
+              ))}
+            </ol>
+            {story.warnings.map((w) => (
+              <div key={w} className="query-human-warn">{w}</div>
+            ))}
+            <details className="query-tech-block">
+              <summary className="query-tech-summary">Technical · generated Cypher & bindings</summary>
+              <div className="query-tech-inner">
+                <div className="section-head query-tech-section-head">Header & footer</div>
+                <div className="field">
+                  <label className="field-label">MATCH / preamble</label>
+                  <textarea
+                    className="field-textarea query-syntax-input"
+                    rows={5}
+                    value={selNode.data.headerCypher ?? DEFAULT_MODULE_HEADER}
+                    onChange={(e) => patchNodeData(selNode.id, { headerCypher: e.target.value })}
+                  />
+                </div>
+                <div className="field">
+                  <label className="field-label">RETURN / tail</label>
+                  <textarea
+                    className="field-textarea query-syntax-input"
+                    rows={4}
+                    value={selNode.data.footerCypher ?? DEFAULT_MODULE_FOOTER}
+                    onChange={(e) => patchNodeData(selNode.id, { footerCypher: e.target.value })}
+                  />
+                </div>
+                <div className="field">
+                  <button type="button" className="btn btn-ghost" style={{ fontSize: 11 }}
+                          onClick={() => patchNodeData(selNode.id, { headerCypher: DEFAULT_MODULE_HEADER, footerCypher: DEFAULT_MODULE_FOOTER })}>
+                    Reset header/footer to defaults
+                  </button>
+                </div>
+                <div className="section-head query-tech-section-head">Node order → clause order</div>
+                <div style={{ fontSize: 11, color: 'var(--text-dim)', marginBottom: 8 }}>
+                  {composed.chain.length ? composed.chain.map((c) => NT[c.kind]?.label ?? c.kind).join(' → ') : '—'}
+                </div>
+                {composed.warnings.map((w) => (
+                  <div key={w} style={{ fontSize: 11, color: 'var(--warn)', marginBottom: 8 }}>{w}</div>
+                ))}
+                <div className="section-head query-tech-section-head">Plan fields referenced</div>
+                <div className="query-syntax-chip-row">
+                  {planRefs.length ? planRefs.map((r) => (
+                    <span key={r} className="query-syntax-chip">{r}</span>
+                  )) : <span style={{ fontSize: 11, color: 'var(--text-dim)' }}>None detected</span>}
+                </div>
+                <div className="section-head query-tech-section-head">Assembled Cypher</div>
+                <pre className="query-syntax-preview">{composed.text || '—'}</pre>
+                <div className="section-head query-tech-section-head">Demo binding (preview only)</div>
+                <pre className="query-syntax-preview query-syntax-preview-sub">{JSON.stringify(DEMO_PLAN_PREVIEW, null, 2)}</pre>
+              </div>
+            </details>
+          </>
+        )}
+        {tab === 'overview' && (
+          <>
+            <div className="section-head">How it connects</div>
+            <div style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.55 }}>
+              Left handle brings in the interpreter&apos;s structured <strong>plan</strong>. Inner nodes are steps—left-to-right chain is the order those steps apply. Right handle sends <strong>candidate chunks</strong> to Retrieval. The GUI shows what each step <em>means</em>; Cypher is optional detail under Technical.
+            </div>
+          </>
+        )}
+      </div>
+    </aside>
+  );
+}
+
+function QueryFragmentSyntaxSection({ kind, selNode, nodes, edges, patchNodeData }) {
+  const taRef = useRef(null);
+  const parentId = selNode.parentId;
+  const composed = useMemo(
+    () => (parentId ? composeModuleCypher(nodes, edges, parentId) : null),
+    [nodes, edges, parentId],
+  );
+  const val = getFragmentTemplate(selNode, kind);
+  const defaultWording = FRAGMENT_HUMAN_DEFAULTS[kind] ?? '';
+
+  const insertSnippet = useCallback((text) => {
+    const el = taRef.current;
+    if (!el) return;
+    const a = el.selectionStart ?? el.value.length;
+    const b = el.selectionEnd ?? el.value.length;
+    const before = el.value.slice(0, a);
+    const after = el.value.slice(b);
+    const next = before + text + after;
+    patchNodeData(selNode.id, { cypherTemplate: next });
+    requestAnimationFrame(() => {
+      el.focus();
+      const p = a + text.length;
+      el.setSelectionRange(p, p);
+    });
+  }, [patchNodeData, selNode.id]);
+
+  return (
+    <>
+      <p className="query-meaning-lead">
+        The graph shows <strong>intent</strong> first—this text is what the step does for readers. Expand <strong>Technical</strong> to view or edit the Cypher that implements it (e.g. after you click in or focus the editor).
+      </p>
+      <div className="section-head">Meaning</div>
+      <div className="field">
+        <label className="field-label">What this step does</label>
+        <textarea
+          className="field-textarea"
+          rows={4}
+          placeholder={defaultWording}
+          value={selNode.data.humanNote ?? ''}
+          onChange={(e) => patchNodeData(selNode.id, { humanNote: e.target.value })}
+        />
+      </div>
+      <div className="field">
+        <button type="button" className="btn btn-ghost" style={{ fontSize: 11 }}
+                onClick={() => patchNodeData(selNode.id, { humanNote: '' })}>
+          Restore default wording
+        </button>
+      </div>
+      <details className="query-tech-block">
+        <summary className="query-tech-summary">Technical · Cypher fragment</summary>
+        <div className="query-tech-inner">
+          <div className="field">
+            <label className="field-label">Fragment<span className="hint">after previous step; <code className="query-syntax-code">plan</code> after WITH</span></label>
+            <div className="query-syntax-toolbar">
+              {PLAN_INSERTS.map((p) => (
+                <button key={p.label} type="button" className="query-syntax-pill" onClick={() => insertSnippet(p.text)}>
+                  + {p.label}
+                </button>
+              ))}
+            </div>
+            <textarea
+              ref={taRef}
+              className="field-textarea query-syntax-input"
+              rows={8}
+              value={val}
+              onChange={(e) => patchNodeData(selNode.id, { cypherTemplate: e.target.value })}
+              spellCheck={false}
+            />
+          </div>
+          <div className="field">
+            <button type="button" className="btn btn-ghost" style={{ fontSize: 11 }}
+                    onClick={() => patchNodeData(selNode.id, { cypherTemplate: FRAGMENT_TEMPLATE_DEFAULTS[kind] ?? '' })}>
+              Reset Cypher to default
+            </button>
+          </div>
+        </div>
+      </details>
+      {composed && (
+        <details className="query-tech-block">
+          <summary className="query-tech-summary">Technical · full module Cypher</summary>
+          <pre className="query-syntax-preview">{composed.text}</pre>
+        </details>
+      )}
+    </>
+  );
+}
+
 // ─── Inspector ──────────────────────────────────────────────────────────────
-function Inspector({ selKind, selNode, selPayload, config, setConfig, prompt, setPrompt, outputView, setOutputView }) {
+function Inspector({ selKind, selNode, selPayload, config, setConfig, prompt, setPrompt, outputView, setOutputView, queryContainerMeta, nodes, edges, patchNodeData }) {
   const [tab, setTab] = useState('config');
   if (!selNode) {
     return (
@@ -506,6 +1604,18 @@ function Inspector({ selKind, selNode, selPayload, config, setConfig, prompt, se
     );
   }
 
+  if (selNode.type === 'queryGroup') {
+    return (
+      <QueryGroupInspector
+        selNode={selNode}
+        queryContainerMeta={queryContainerMeta}
+        nodes={nodes}
+        edges={edges}
+        patchNodeData={patchNodeData}
+      />
+    );
+  }
+
   return (
     <aside className="inspector">
       <div className="insp-head">
@@ -525,7 +1635,18 @@ function Inspector({ selKind, selNode, selPayload, config, setConfig, prompt, se
         ))}
       </div>
       <div className="insp-body">
-        {tab === 'config' && <ConfigForm kind={selKind.id} config={config} setConfig={setConfig} prompt={prompt} setPrompt={setPrompt} outputView={outputView} setOutputView={setOutputView}/>}
+        {tab === 'config' && (
+          <ConfigForm
+            kind={selKind.id}
+            config={config}
+            setConfig={setConfig}
+            prompt={prompt}
+            setPrompt={setPrompt}
+            outputView={outputView}
+            setOutputView={setOutputView}
+            syntaxCtx={{ selNode, nodes, edges, patchNodeData }}
+          />
+        )}
         {tab === 'io' && <IOPanel selKind={selKind} selPayload={selPayload}/>}
         {tab === 'tags' && <TagsPanel selPayload={selPayload}/>}
         {tab === 'runtime' && <RuntimePanel selPayload={selPayload}/>}
@@ -534,7 +1655,7 @@ function Inspector({ selKind, selNode, selPayload, config, setConfig, prompt, se
   );
 }
 
-function ConfigForm({ kind, config, setConfig, prompt, setPrompt, outputView, setOutputView }) {
+function ConfigForm({ kind, config, setConfig, prompt, setPrompt, outputView, setOutputView, syntaxCtx }) {
   const set = (patch) => setConfig({ ...config, ...patch });
   if (kind === 'prompt') {
     return (
@@ -642,6 +1763,18 @@ function ConfigForm({ kind, config, setConfig, prompt, setPrompt, outputView, se
     return (
       <>
         <div className="field">
+          <label className="field-label">Active cluster dimensions</label>
+          <div className="cluster-grid">
+            {CLUSTERS.map(c => (
+              <div key={c.id} className={cls('cluster-chip', config.clusters[c.id] && 'on')}
+                   title={c.hint}
+                   onClick={() => set({ clusters: { ...config.clusters, [c.id]: !config.clusters[c.id] } })}>
+                <span className="cluster-chip-dot"/>{c.label}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="field">
           <label className="field-label">Ranking method</label>
           <select className="field-select" defaultValue="weighted">
             <option value="weighted">Weighted sum across clusters</option>
@@ -649,15 +1782,65 @@ function ConfigForm({ kind, config, setConfig, prompt, setPrompt, outputView, se
             <option value="hybrid">Hybrid (weighted + relevance)</option>
           </select>
         </div>
+      </>
+    );
+  }
+  if (kind === 'interpreter') {
+    return (
+      <>
         <div className="field">
-          <label className="field-label">Top-K</label>
-          <input className="field-input" type="number" defaultValue="50"/>
+          <label className="field-label">Interpreter model<span className="hint">analyses the prompt</span></label>
+          <select className="field-select" defaultValue="gpt-5.4">
+            <option>gpt-5.4</option>
+            <option>gpt-5.4-mini</option>
+            <option>gpt-4o-mini</option>
+            <option>claude-4-sonnet</option>
+          </select>
         </div>
         <div className="field">
-          <label className="field-label">Cluster contribution</label>
+          <label className="field-label">Strategy<span className="hint">how to map prompt to graph terms</span></label>
+          <select className="field-select" defaultValue="tag_extraction">
+            <option value="tag_extraction">Extract tags from prompt</option>
+            <option value="embedding_match">Embedding similarity to canonical tags</option>
+            <option value="hybrid">Hybrid (tags + embedding)</option>
+          </select>
+        </div>
+      </>
+    );
+  }
+  if (kind.startsWith('qf_') && syntaxCtx?.selNode && syntaxCtx?.patchNodeData) {
+    return (
+      <QueryFragmentSyntaxSection
+        kind={kind}
+        selNode={syntaxCtx.selNode}
+        nodes={syntaxCtx.nodes}
+        edges={syntaxCtx.edges}
+        patchNodeData={syntaxCtx.patchNodeData}
+      />
+    );
+  }
+  if (kind === 'graphquery') {
+    return (
+      <>
+        <div className="field">
+          <label className="field-label">Query strategy<span className="hint">how to traverse the graph</span></label>
+          <select className="field-select" defaultValue="tag_match">
+            <option value="tag_match">Tag match (Cypher)</option>
+            <option value="vector">Vector similarity</option>
+            <option value="hybrid">Hybrid (tag + vector)</option>
+          </select>
+        </div>
+        <div className="field">
+          <label className="field-label">Max candidates<span className="hint">pre-ranking cap</span></label>
+          <input className="field-input" type="number" value={config.maxChunks} onChange={(e) => set({ maxChunks: +e.target.value })}/>
+        </div>
+        <div className="field">
+          <label className="field-label">Cluster filter<span className="hint">which dimensions to query</span></label>
           <div className="cluster-grid">
             {CLUSTERS.map(c => (
-              <div key={c.id} className={cls('cluster-chip', config.clusters[c.id] && 'on')}>
+              <div key={c.id} className={cls('cluster-chip', config.clusters[c.id] && 'on')}
+                   title={c.hint}
+                   onClick={() => set({ clusters: { ...config.clusters, [c.id]: !config.clusters[c.id] } })}>
                 <span className="cluster-chip-dot"/>{c.label}
               </div>
             ))}
@@ -666,23 +1849,49 @@ function ConfigForm({ kind, config, setConfig, prompt, setPrompt, outputView, se
       </>
     );
   }
+  if (kind === 'retrieval') {
+    return (
+      <>
+        <div className="field">
+          <label className="field-label">Ranking method<span className="hint">how to score candidates</span></label>
+          <select className="field-select" defaultValue="weighted">
+            <option value="weighted">Weighted sum across clusters</option>
+            <option value="rrf">Reciprocal Rank Fusion</option>
+            <option value="relevance">Relevance-to-file only</option>
+          </select>
+        </div>
+        <div className="field">
+          <label className="field-label">Top-K<span className="hint">chunks sent to LLM</span></label>
+          <input className="field-input" type="number" defaultValue="50"/>
+        </div>
+        <div className="field">
+          <label className="field-label">Weight threshold<span className="hint">{config.weightThreshold.toFixed(2)}</span></label>
+          <input className="field-input" type="range" min="0" max="1" step="0.05"
+                 value={config.weightThreshold}
+                 onChange={(e) => set({ weightThreshold: +e.target.value })}/>
+        </div>
+      </>
+    );
+  }
   if (kind === 'output') {
     return (
       <>
+        <div className="field">
+          <label className="field-label">LLM model<span className="hint">for final answer</span></label>
+          <select className="field-select" defaultValue="gpt-5.4">
+            <option>gpt-5.4</option>
+            <option>gpt-5.4-mini</option>
+            <option>gpt-4o-mini</option>
+            <option>claude-4-sonnet</option>
+            <option>llama-3.1-70b</option>
+          </select>
+        </div>
         <div className="field">
           <label className="field-label">View mode<span className="hint">controls bottom panel</span></label>
           <select className="field-select" value={outputView} onChange={(e) => setOutputView(e.target.value)}>
             <option value="llm">LLM Response</option>
             <option value="chunks">Raw Chunks</option>
             <option value="table">Table</option>
-          </select>
-        </div>
-        <div className="field">
-          <label className="field-label">LLM model</label>
-          <select className="field-select" defaultValue="gpt-4o-mini">
-            <option>gpt-4o-mini</option>
-            <option>llama-3.1-70b</option>
-            <option>claude-3.5-sonnet</option>
           </select>
         </div>
       </>
@@ -758,9 +1967,14 @@ function RuntimePanel({ selPayload }) {
 function Drawer({ edge, nodes, onClose }) {
   const sNode = nodes.find(n => n.id === edge.source);
   const tNode = nodes.find(n => n.id === edge.target);
-  const sKind = sNode?.data?.kind ? NT[sNode.data.kind] : null;
-  const tKind = tNode?.data?.kind ? NT[tNode.data.kind] : null;
-  const payload = sKind ? STAGE_PAYLOADS[sKind.id] : null;
+  const sKind = sNode?.type === 'queryGroup'
+    ? { label: 'Query module', outType: 'candidates', inType: null, id: 'queryGroup' }
+    : (sNode?.data?.kind ? NT[sNode.data.kind] : null);
+  const tKind = tNode?.type === 'queryGroup'
+    ? { label: 'Query module', outType: null, inType: 'query_plan', id: 'queryGroup' }
+    : (tNode?.data?.kind ? NT[tNode.data.kind] : null);
+  const payloadKindId = sNode?.type === 'queryGroup' ? null : sKind?.id;
+  const payload = payloadKindId ? STAGE_PAYLOADS[payloadKindId] : null;
   return (
     <aside className="drawer">
       <div className="drawer-head">
@@ -769,6 +1983,11 @@ function Drawer({ edge, nodes, onClose }) {
         <button className="btn btn-ghost btn-icon" onClick={onClose}>{I.close}</button>
       </div>
       <div className="drawer-body">
+        {edge.data?.contractOk === false && (
+          <div className="drawer-warn">
+            This connection does not match the pipeline type rules (shown in red on the canvas).
+          </div>
+        )}
         <div className="drawer-flow">
           <div className="drawer-flow-cell">
             <div className="drawer-flow-name">{sKind?.label || '—'}</div>
@@ -812,13 +2031,17 @@ function Drawer({ edge, nodes, onClose }) {
 }
 function schemaFor(t) {
   switch (t) {
-    case 'prompt': return [{name:'context',type:'string'},{name:'mode',type:'enum'}];
-    case 'source': return [{name:'datasetId',type:'string'},{name:'fileCount',type:'int'},{name:'chunkCount',type:'int'}];
-    case 'files':  return [{name:'fileId',type:'string'},{name:'relPath',type:'string'},{name:'formatFamily',type:'string'}];
+    case 'prompt':     return [{name:'context',type:'string'},{name:'mode',type:'enum'}];
+    case 'source':     return [{name:'datasetId',type:'string'},{name:'fileCount',type:'int'},{name:'chunkCount',type:'int'}];
+    case 'files':      return [{name:'fileId',type:'string'},{name:'relPath',type:'string'},{name:'formatFamily',type:'string'}];
     case 'chunks':
     case 'tagged':
-    case 'ranked': return [{name:'chunkId',type:'string'},{name:'fileId',type:'string'},{name:'content',type:'text'},{name:'tags[]',type:'ChunkTag'},{name:'weight',type:'float'}];
-    case 'result': return [{name:'llmResponse',type:'string'},{name:'tokensIn',type:'int'},{name:'tokensOut',type:'int'},{name:'durationMs',type:'int'}];
+    case 'ranked':
+    case 'candidates':
+    case 'context':    return [{name:'chunkId',type:'string'},{name:'fileId',type:'string'},{name:'content',type:'text'},{name:'tags[]',type:'ChunkTag'},{name:'weight',type:'float'}];
+    case 'query_plan': return [{name:'extractedTags',type:'string[]'},{name:'clusters',type:'ClusterDimension[]'},{name:'strategy',type:'enum'}];
+    case 'frag':       return [{name:'slotId',type:'string'},{name:'boundParams',type:'Record<string, unknown>'}];
+    case 'result':     return [{name:'llmResponse',type:'string'},{name:'tokensIn',type:'int'},{name:'tokensOut',type:'int'},{name:'durationMs',type:'int'}];
     default: return [];
   }
 }

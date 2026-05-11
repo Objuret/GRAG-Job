@@ -1,24 +1,24 @@
 ---
-description: 
+description: Historical scaffold workflow — prefer `frontend/AGENTS.md` + `frontend/docs/architecture.md` for the **current** shape (two-lane canvas in `src/App.jsx`).
 ---
 
 Create the first frontend-only implementation of a local artifact pipeline workbench.
+
+**Current repo state:** the shipped UI is **`src/App.jsx`** with **Pipeline** + **Usage** lanes (see `frontend/docs/architecture.md`). This workflow describes an older generic scaffold; align new work with the two-lane model unless explicitly refactoring.
 
 This is not a dashboard for one fixed pipeline. It is a future-ready workbench for plugging in artifact stages, adapters, inspectors, comparison tools, and execution modules over time.
 
 Use:
 - Vite
-- React
-- TypeScript
+- React (`App.jsx` is JSX; types in `.ts`)
 - @xyflow/react for the workflow canvas
-- lucide-react for icons
-- custom CSS
+- custom CSS (`index.css`)
 
 Core idea:
 - The UI is driven by a typed node registry.
 - Nodes are not hardcoded directly into components.
 - Each node has type, label, category, config schema placeholder, adapter key, allowed inputs, allowed outputs, capability state, and UI panel definition.
-- New node types should be addable by editing registry/mock contract data, not by rewriting the whole app.
+- New node types should be addable by editing `workbenchData.ts`, not by rewriting the whole app.
 
 Create generic node categories:
 - Source
@@ -55,7 +55,7 @@ Build the UI:
 - top environment/status strip
 - run/artifact browser
 - comparison view
-- localStorage workspace persistence
+- localStorage workspace persistence (optional — `WorkspaceContext` exists but **`App.jsx` does not use it** today)
 
 Mock states must include:
 - one runnable node

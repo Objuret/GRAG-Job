@@ -1,6 +1,6 @@
 ﻿# Thesis Indexing Pipeline
 
-Multi-layer indexing/clustering pipeline that takes heterogeneous datasets under `data/raw/`, deterministically chunks every payload file, asks one OpenAI-compatible LLM to extract a five-cluster tag set per chunk plus a file-level relevance map, and rolls everything up into a queryable Neo4j graph. **Neo4j is the only durable artefact.** No fallbacks, no mocks, fail loud.
+Multi-layer indexing/clustering pipeline that takes heterogeneous datasets under `data/raw/`, deterministically chunks every payload file, asks one OpenAI-compatible LLM to extract a five-cluster tag set (`topic`, `entities`, `activity`, `temporal`, `evidence`) per chunk plus a file-level relevance map, and rolls everything up into a queryable Neo4j graph. **Neo4j is the only durable artefact.** No fallbacks, no mocks, fail loud.
 
 ## Documentation
 

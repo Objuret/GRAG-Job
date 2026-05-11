@@ -4,7 +4,7 @@
 
 **When to read this.** Any time you write Cypher, change a writer, or design a new query. This is the source of truth for shape.
 
-**Last updated:** 2026-05-07.
+**Last updated:** 2026-05-11.
 
 ## Touched paths
 
@@ -102,7 +102,7 @@ The seeded vocabulary plus any promoted proposals.
 | Property | Type | Notes |
 |---|---|---|
 | `label` | string | Part of the node key. |
-| `cluster` | string | Part of the node key. One of the five clusters. |
+| `cluster` | string | Part of the node key. One of `topic`, `entities`, `activity`, `temporal`, `evidence`. |
 | `gloss` | string | Optional one-line definition. |
 | `source` | string | `"seed"` for entries from [`clustering/canonical_seed.yaml`](../clustering/canonical_seed.yaml). |
 
@@ -119,7 +119,7 @@ Created when the agent emits a tag with `canonical_missing=True`. Raw tag names 
 |---|---|---|
 | `proposal_id` | string | **UNIQUE constraint.** `stable_short_hash(f"{cluster}:{name}", 24)`. |
 | `label` | string | Same as the tag `name`. |
-| `cluster` | string | One of the five. |
+| `cluster` | string | One of `topic`, `entities`, `activity`, `temporal`, `evidence`. |
 | `gloss` | string | Required when proposing. |
 | `rationale` | string \| null | Optional. |
 | `observed_count` | int | Incremented every time the proposal is re-emitted. |
@@ -207,7 +207,7 @@ The per-chunk tagging edge. **One edge per (chunk, tag-occurrence)** — re-extr
 
 | Property | Type | Notes |
 |---|---|---|
-| `cluster` | string | One of the five clusters. The cluster lives on the **edge**, not the Tag node. |
+| `cluster` | string | One of `topic`, `entities`, `activity`, `temporal`, `evidence`. The cluster lives on the **edge**, not the Tag node. |
 | `canonical_id` | string \| null | The canonical label the agent mapped to, or `null` when proposing. **Indexed.** |
 | `weight_local` | float | Saliency in [0, 1] for this chunk. |
 | `run_id` | string | Run that wrote the edge. |

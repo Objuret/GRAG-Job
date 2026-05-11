@@ -399,11 +399,11 @@ input, select, textarea { font-family: inherit; }
   font-size: 10px; padding: 2px 7px; border-radius: 999px; font-family: var(--font-mono);
   border: 1px solid var(--border); background: var(--bg-surface); color: var(--text-muted);
 }
-.tag-pill[data-cluster="theme"]            { color: var(--type-tags); border-color: color-mix(in srgb, var(--type-tags) 40%, var(--border)); }
-.tag-pill[data-cluster="object_entity"]    { color: var(--info);      border-color: color-mix(in srgb, var(--info) 40%, var(--border)); }
-.tag-pill[data-cluster="event_process"]    { color: var(--warn);      border-color: color-mix(in srgb, var(--warn) 40%, var(--border)); }
-.tag-pill[data-cluster="time_relevance"]   { color: var(--ok);        border-color: color-mix(in srgb, var(--ok) 40%, var(--border)); }
-.tag-pill[data-cluster="information_need"] { color: var(--err);       border-color: color-mix(in srgb, var(--err) 40%, var(--border)); }
+.tag-pill[data-cluster="topic"]     { color: var(--type-tags); border-color: color-mix(in srgb, var(--type-tags) 40%, var(--border)); }
+.tag-pill[data-cluster="entities"]  { color: var(--info);      border-color: color-mix(in srgb, var(--info) 40%, var(--border)); }
+.tag-pill[data-cluster="activity"]  { color: var(--warn);      border-color: color-mix(in srgb, var(--warn) 40%, var(--border)); }
+.tag-pill[data-cluster="temporal"]  { color: var(--ok);        border-color: color-mix(in srgb, var(--ok) 40%, var(--border)); }
+.tag-pill[data-cluster="evidence"]  { color: var(--err);       border-color: color-mix(in srgb, var(--err) 40%, var(--border)); }
 
 /* ─── Drawer (edge payload) ──────────────────────────────────────────────── */
 .drawer {
