@@ -1,0 +1,8 @@
+# Evaluation-only dependencies — not required for the indexing pipeline.
+# Install with: pip install -r requirements-eval.txt
+#
+# These pull in langchain, openai SDK, datasets, and related deps.
+# Keep separate from requirements.txt so the pipeline image stays lean.
+
+ragas>=0.2.0
+openai>=1.30

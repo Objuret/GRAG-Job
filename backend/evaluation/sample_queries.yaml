@@ -1,0 +1,88 @@
+# Sample evaluation queries for the RAGAS harness.
+#
+# Each entry defines a natural-language question and how to retrieve contexts
+# from the graph using the clustering.query layer.
+#
+# query_type values:
+#   canonical    → files_by_canonical(cluster, canonical_id)
+#   recent_active → files_recent_active()
+#   multidim     → files_multidim(constraints)
+#
+# Tune files_limit and chunks_limit per query to control token cost.
+# Defaults (from CLI flags) apply when these keys are absent.
+
+queries:
+
+  # --- theme -----------------------------------------------------------
+
+  - id: q_advertising
+    question: "What advertising-related content is in this corpus?"
+    query_type: canonical
+    cluster: theme
+    canonical_id: advertising
+
+  - id: q_economy
+    question: "What content discusses economic topics or financial matters?"
+    query_type: canonical
+    cluster: theme
+    canonical_id: economy
+
+  - id: q_technology
+    question: "What content covers technology systems or digital products?"
+    query_type: canonical
+    cluster: theme
+    canonical_id: technology
+
+  # --- object_entity ---------------------------------------------------
+
+  - id: q_product
+    question: "What content describes specific products?"
+    query_type: canonical
+    cluster: object_entity
+    canonical_id: product
+
+  - id: q_organization
+    question: "What content mentions organisations or companies?"
+    query_type: canonical
+    cluster: object_entity
+    canonical_id: organization
+
+  # --- information_need ------------------------------------------------
+
+  - id: q_numbers
+    question: "What content contains quantitative data, metrics, or numerical evidence?"
+    query_type: canonical
+    cluster: information_need
+    canonical_id: number
+
+  - id: q_status
+    question: "What content reports on the current status of something?"
+    query_type: canonical
+    cluster: information_need
+    canonical_id: status
+
+  # --- time_relevance --------------------------------------------------
+
+  - id: q_recent_active
+    question: "What is the most recent or currently active content in the corpus?"
+    query_type: recent_active
+
+  # --- multidim --------------------------------------------------------
+
+  - id: q_advertising_recent
+    question: "What recent advertising content is in the corpus?"
+    query_type: multidim
+    constraints:
+      - cluster: theme
+        canonical_id: advertising
+      - cluster: time_relevance
+        canonical_id: recent
+
+  - id: q_economy_numbers
+    question: "What economic content contains numerical evidence or statistics?"
+    query_type: multidim
+    constraints:
+      - cluster: theme
+        canonical_id: economy
+      - cluster: information_need
+        canonical_id: number

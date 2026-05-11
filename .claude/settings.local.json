@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.venv/Scripts/python.exe -c ' *)",
+      "Bash(.venv/Scripts/python.exe -m clustering.query --help)",
+      "PowerShell(cd \"c:\\\\Users\\\\jsand\\\\OneDrive\\\\Dokument\\\\GitHub\\\\GRAG-Job\\\\backend\"; $env:PYTHONPATH = \"c:\\\\Users\\\\jsand\\\\OneDrive\\\\Dokument\\\\GitHub\\\\GRAG-Job\\\\backend\"; & \"c:\\\\Users\\\\jsand\\\\OneDrive\\\\Dokument\\\\GitHub\\\\GRAG-Job\\\\.venv\\\\Scripts\\\\python.exe\" -m clustering.query --help)",
+      "PowerShell(cd \"c:\\\\Users\\\\jsand\\\\OneDrive\\\\Dokument\\\\GitHub\\\\GRAG-Job\\\\backend\"; $env:PYTHONPATH = \"c:\\\\Users\\\\jsand\\\\OneDrive\\\\Dokument\\\\GitHub\\\\GRAG-Job\\\\backend\"; & \"c:\\\\Users\\\\jsand\\\\OneDrive\\\\Dokument\\\\GitHub\\\\GRAG-Job\\\\.venv\\\\Scripts\\\\python.exe\" -m clustering.query multidim --help)",
+      "WebSearch",
+      "WebFetch(domain:docs.ragas.io)"
+    ]
+  }
+}

@@ -11,3 +11,4 @@ CREATE INDEX IF NOT EXISTS FOR (n:CanonicalTag) ON (n.cluster);
 CREATE INDEX IF NOT EXISTS FOR ()-[r:HAS_TAG]-() ON (r.cluster);
 CREATE INDEX IF NOT EXISTS FOR ()-[r:HAS_TAG]-() ON (r.canonical_id);
 CREATE INDEX IF NOT EXISTS FOR ()-[r:TAGGED]-()  ON (r.cluster);
+CREATE INDEX IF NOT EXISTS FOR ()-[r:TAGGED]-()  ON (r.canonical_id);
