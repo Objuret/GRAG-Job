@@ -217,33 +217,21 @@ PILOT_NAME=pilot_002 python -m backend.tagging analyze
 (`PILOT_NAME` is read by `pipeline.py` and selects the run directory; default
 is `pilot_001`.)
 
-### 2.8 Provider — what was specified vs what we used
+### 2.8 Provider — Anthropic Claude Haiku 4.5 with forced tool-use
 
-Brief specified Groq `openai/gpt-oss-120b` with `reasoning_format: "parsed"`
-and `reasoning_effort: "high"`. The motivation was the "format tax" hypothesis
-— open-weight models reason worse when forced into structured JSON output;
-Groq's separate reasoning channel lets the model reason freeform first, then
-format.
+The pilot runs on **`claude-haiku-4-5`** via the Anthropic SDK. Structured
+output is produced by **forced tool-use** (`tool_choice={"type": "tool",
+"name": <schema_name>}`). The JSON schema lives in the tool's `input_schema`
+and is enforced strictly by Anthropic when the tool is forced. Zero
+schema-violation failures across all 23 pilot calls.
 
-In practice: every Groq API key value in `backend/.env` came back 401
-"Invalid API Key" from Groq's own auth layer (verified via raw curl with real
-`x-request-id` headers from Cloudflare). The user's Groq playground worked
-(proving the account was active) but the API keys created never authenticated.
-Root cause never resolved during the pilot.
-
-We fell back to **Anthropic `claude-haiku-4-5`** with structured output via
-**forced tool-use** (`tool_choice={"type": "tool", "name": <schema_name>}`).
-The schema lives in the tool's `input_schema`. This gives reliable structured
-output with strict schema validation.
-
-Important constraint that decided the design: Anthropic's extended-thinking
-mode is INCOMPATIBLE with forced `tool_choice`. You can have a separate
-reasoning channel OR forced structured output, not both. We chose forced
-structured output for reliability (zero schema-violation failures across all
-23 calls).
-
-Consequence: this pilot does NOT test the brief's "reasoning before format"
-hypothesis. The `response_reasoning` field in `io.jsonl` is `null` throughout.
+Important constraint: Anthropic's extended-thinking mode is INCOMPATIBLE with
+forced `tool_choice`. You can have a separate reasoning channel OR forced
+structured output, not both. The pilot chose forced structured output for
+reliability. Consequence: the `response_reasoning` field in `io.jsonl` is
+`null` throughout. If a future iteration wants a model with a visible
+reasoning channel, switch to OpenAI's `gpt-5` series with
+`reasoning_effort: "high"` via the OpenAI SDK.
 
 ---
 
@@ -257,7 +245,6 @@ hypothesis. The `response_reasoning` field in `io.jsonl` is `null` throughout.
 - Tag *weights* are anchoring to a few round values and are not differentiating
   meaningfully — this is the load-bearing finding. See §8.
 - We have NOT scaled to the full 968 chunks because of the anchoring issue.
-- The Groq path remains broken; brief's reasoning-channel hypothesis untested.
 
 ---
 
@@ -578,38 +565,16 @@ Pick one, run pilot_002, compare to pilot_001 analysis.md.
    core tag for this chunk" in that facet. Same for w_chunk_file across the
    file's chunks. Forces strict ordering, no anchoring possible. Schema
    change is local to the extract/score schemas.
-4. **Comparison run with a reasoning-channel model.** Test the brief's actual
-   hypothesis: does giving the model a separate reasoning channel produce
-   more differentiated weights? Requires fixing Groq (see §9.2) OR using
-   OpenAI `gpt-5` / `o3` with `reasoning_effort: high` via the OpenAI SDK.
+4. **Comparison run with a reasoning-channel model.** Does a model with a
+   visible reasoning channel produce more differentiated weights? Use OpenAI
+   `gpt-5` / `o3` with `reasoning_effort: "high"` via the OpenAI SDK.
 
 The user's stated instinct (paraphrased from the conversation that produced
 this design): "force uneven weights" — i.e. option 2 above. They said "maybe
 we just test it and see" — i.e. observe first. Pilot_001 IS that observation;
 the data now supports moving to option 2 or 3.
 
-### 9.2 Resolve the Groq key (independently of 9.1)
-
-`backend/.env` has `GROQ_API_KEY=REDACTED_GROQ_API_KEY`
-and `GROQ_MODEL=openai/gpt-oss-120b`. Every value the user generated returned
-401 from Groq's auth layer (verified via curl — request reaches Groq, real
-`x-request-id` returned, key rejected). The user's Groq playground worked,
-proving account-level features are active.
-
-Possible causes never pinned down:
-- Free tier might require additional verification before API keys
-  authenticate, even though they display.
-- Workspace / organisation mismatch between key creation and API auth.
-- A stale key in the dashboard UI not matching the active one.
-
-If a future agent gets a working Groq key, the pipeline's `pipeline.py`
-needs minor changes: swap `AsyncAnthropic` back to `AsyncGroq`, restore the
-`reasoning_format="parsed"` + `reasoning_effort="high"` params, restore the
-JSON-schema `response_format` shape, restore the strict-mode probe. The
-git history of this file at the time of writing will show the Groq version
-(it was rewritten in place — check `git log -p backend/tagging/pipeline.py`).
-
-### 9.3 Decide what to do about `evidence` on structured data
+### 9.2 Decide what to do about `evidence` on structured data
 
 Three options:
 - Drop the facet entirely for `kind="record"` chunks (cheap; reduces
@@ -622,7 +587,7 @@ Three options:
 The user has not indicated a preference; raise it as a question with a
 proposed default.
 
-### 9.4 Plan the cross-file production run before doing it
+### 9.3 Plan the cross-file production run before doing it
 
 In pilot mode, `describe` only saw sampled chunks per file. In a production
 run, `describe` should run AFTER `extract` has produced descriptions for
@@ -631,7 +596,7 @@ naturally if you run `select` to pick all 968 chunks, but it's worth being
 explicit. Add a `select-all` mode (or a `--all` flag to `select`) that picks
 every chunk, not a sample.
 
-### 9.5 Decide on overwrite vs append for re-extraction at scale
+### 9.4 Decide on overwrite vs append for re-extraction at scale
 
 Currently `extract` wipes existing HAS_TAG edges for the sampled chunks
 before writing fresh ones. Right for pilots. For a production run, decide

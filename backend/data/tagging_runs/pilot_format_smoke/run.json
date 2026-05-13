@@ -1,0 +1,175 @@
+{
+  "pilot_name": "pilot_format_smoke",
+  "created_at": "2026-05-13T17:26:20.597850+00:00",
+  "model": "claude-haiku-4-5",
+  "database": "herb",
+  "dataset_id": "Salesforce__HERB",
+  "sample_size": 14,
+  "selection_mode": "herb_kind_coverage",
+  "selection_seed": 0,
+  "concurrency": 4,
+  "facets": [
+    "topic",
+    "entities",
+    "activity",
+    "temporal",
+    "evidence"
+  ],
+  "chunk_ids": [
+    {
+      "chunk_id": "50cda9a28098b1c41511f138",
+      "file_id": "de316a8f0e6efc6a44598bed",
+      "ordinal": 0,
+      "kind": "product_profile",
+      "token_estimate": 484,
+      "locator_json": "{\"herb\": true, \"product\": \"PersonalizeForce\", \"section\": \"product_profile\", \"chunk_ref\": \"product.PersonalizeForce\"}",
+      "rel_path": "Salesforce__HERB/products/PersonalizeForce.json",
+      "chunk_ref": "product.PersonalizeForce",
+      "parent_ref": ""
+    },
+    {
+      "chunk_id": "c3e7c43bbcc6cd9c8cb9d08f",
+      "file_id": "85c7be7ca8f554f27cd84f35",
+      "ordinal": 6,
+      "kind": "directory_batch",
+      "token_estimate": 803,
+      "locator_json": "{\"herb\": true, \"metadata\": \"employee\", \"index_start\": 120, \"index_end\": 139, \"indices\": [120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139], \"chunk_ref\": \"metadata.employee.items0120-0139\", \"parent_ref\": \"metadata.employee\"}",
+      "rel_path": "Salesforce__HERB/metadata/employee.json",
+      "chunk_ref": "metadata.employee.items0120-0139",
+      "parent_ref": "metadata.employee"
+    },
+    {
+      "chunk_id": "ecb12d19e6ed69edf126a5f4",
+      "file_id": "549f8aa4f5c4e84dfd28750d",
+      "ordinal": 14,
+      "kind": "org_tree",
+      "token_estimate": 1198,
+      "locator_json": "{\"herb\": true, \"metadata\": \"salesforce_team\", \"index\": 8, \"employee_id\": \"eid_97bbf381\", \"chunk_ref\": \"metadata.salesforce_team.item0008\", \"parent_ref\": \"metadata.salesforce_team\"}",
+      "rel_path": "Salesforce__HERB/metadata/salesforce_team.json",
+      "chunk_ref": "metadata.salesforce_team.item0008",
+      "parent_ref": "metadata.salesforce_team"
+    },
+    {
+      "chunk_id": "61dd4352af9ebb4ac43aa785",
+      "file_id": "a506af89d2a13188ed474f69",
+      "ordinal": 77,
+      "kind": "slack_thread_batch",
+      "token_estimate": 811,
+      "locator_json": "{\"herb\": true, \"product\": \"AnomalyForce\", \"section\": \"slack\", \"channel\": \"planning-TableauAnomalyDetection\", \"index_start\": 877, \"index_end\": 892, \"indices\": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892], \"chunk_ref\": \"product.AnomalyForce.slack.planning-TableauAnomalyDetection.items0877-0892\", \"parent_ref\": \"product.AnomalyForce.slack.planning-TableauAnomalyDetection\"}",
+      "rel_path": "Salesforce__HERB/products/AnomalyForce.json",
+      "chunk_ref": "product.AnomalyForce.slack.planning-TableauAnomalyDetection.items0877-0892",
+      "parent_ref": "product.AnomalyForce.slack.planning-TableauAnomalyDetection"
+    },
+    {
+      "chunk_id": "af22624271e11f0ad1aad8c6",
+      "file_id": "88ec39c0ca02a53e7fe48fb1",
+      "ordinal": 99,
+      "kind": "document",
+      "token_estimate": 1168,
+      "locator_json": "{\"herb\": true, \"product\": \"AutoTuneForce\", \"section\": \"documents\", \"index\": 7, \"id\": \"latest_atf_aix_technical_specifications_document\", \"chunk_ref\": \"product.AutoTuneForce.documents.item0007\", \"parent_ref\": \"product.AutoTuneForce.documents\"}",
+      "rel_path": "Salesforce__HERB/products/AutoTuneForce.json",
+      "chunk_ref": "product.AutoTuneForce.documents.item0007",
+      "parent_ref": "product.AutoTuneForce.documents"
+    },
+    {
+      "chunk_id": "269a53029ed958082e606177",
+      "file_id": "0f2dd4137fca0a38b37d5b3b",
+      "ordinal": 115,
+      "kind": "document_part",
+      "token_estimate": 747,
+      "locator_json": "{\"herb\": true, \"product\": \"SearchForce\", \"section\": \"documents\", \"index\": 12, \"id\": \"new_shaix_product_requirements_document\", \"field\": \"content\", \"part\": 1, \"char_range\": [1551, 2899], \"chunk_ref\": \"product.SearchForce.documents.item0012.part01\", \"parent_ref\": \"product.SearchForce.documents.item0012\"}",
+      "rel_path": "Salesforce__HERB/products/SearchForce.json",
+      "chunk_ref": "product.SearchForce.documents.item0012.part01",
+      "parent_ref": "product.SearchForce.documents.item0012"
+    },
+    {
+      "chunk_id": "1baf92212c0df8ab40136fa9",
+      "file_id": "e18eaed9ffbc5210f5be78ef",
+      "ordinal": 114,
+      "kind": "meeting_transcript",
+      "token_estimate": 988,
+      "locator_json": "{\"herb\": true, \"product\": \"CollaborationForce\", \"section\": \"meeting_transcripts\", \"index\": 4, \"id\": \"CForceAIX_planning_5\", \"chunk_ref\": \"product.CollaborationForce.meeting_transcripts.item0004\", \"parent_ref\": \"product.CollaborationForce.meeting_transcripts\"}",
+      "rel_path": "Salesforce__HERB/products/CollaborationForce.json",
+      "chunk_ref": "product.CollaborationForce.meeting_transcripts.item0004",
+      "parent_ref": "product.CollaborationForce.meeting_transcripts"
+    },
+    {
+      "chunk_id": "3fd00ad308e98c5956cb949b",
+      "file_id": "1f1a1c2c864ab4771d57bc51",
+      "ordinal": 121,
+      "kind": "meeting_transcript_part",
+      "token_estimate": 822,
+      "locator_json": "{\"herb\": true, \"product\": \"SearchFlow\", \"section\": \"meeting_transcripts\", \"index\": 0, \"id\": \"product_dev_SearchFlow_1\", \"field\": \"transcript\", \"part\": 1, \"char_range\": [1812, 3581], \"chunk_ref\": \"product.SearchFlow.meeting_transcripts.item0000.part01\", \"parent_ref\": \"product.SearchFlow.meeting_transcripts.item0000\"}",
+      "rel_path": "Salesforce__HERB/products/SearchFlow.json",
+      "chunk_ref": "product.SearchFlow.meeting_transcripts.item0000.part01",
+      "parent_ref": "product.SearchFlow.meeting_transcripts.item0000"
+    },
+    {
+      "chunk_id": "55f987d2ad66dec0b7a236e9",
+      "file_id": "8dbdeea39a6a8a6c32b22a53",
+      "ordinal": 135,
+      "kind": "meeting_chat_batch",
+      "token_estimate": 287,
+      "locator_json": "{\"herb\": true, \"product\": \"ConnectForce\", \"section\": \"meeting_chats\", \"index_start\": 0, \"index_end\": 4, \"indices\": [0, 1, 2, 3, 4], \"chunk_ref\": \"product.ConnectForce.meeting_chats.items0000-0004\", \"parent_ref\": \"product.ConnectForce.meeting_chats\"}",
+      "rel_path": "Salesforce__HERB/products/ConnectForce.json",
+      "chunk_ref": "product.ConnectForce.meeting_chats.items0000-0004",
+      "parent_ref": "product.ConnectForce.meeting_chats"
+    },
+    {
+      "chunk_id": "b2e46a9a49d53d40f5022d19",
+      "file_id": "3621c068f7e76dafe193c97f",
+      "ordinal": 117,
+      "kind": "url_batch",
+      "token_estimate": 757,
+      "locator_json": "{\"herb\": true, \"product\": \"EdgeForce\", \"section\": \"urls\", \"index_start\": 0, \"index_end\": 12, \"indices\": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], \"chunk_ref\": \"product.EdgeForce.urls.items0000-0012\", \"parent_ref\": \"product.EdgeForce.urls\"}",
+      "rel_path": "Salesforce__HERB/products/EdgeForce.json",
+      "chunk_ref": "product.EdgeForce.urls.items0000-0012",
+      "parent_ref": "product.EdgeForce.urls"
+    },
+    {
+      "chunk_id": "92e4a2c5a3d7244674f7f63a",
+      "file_id": "4b5c6a20d903a7b89a9cdf21",
+      "ordinal": 186,
+      "kind": "pr_batch",
+      "token_estimate": 743,
+      "locator_json": "{\"herb\": true, \"product\": \"CollaborateForce\", \"section\": \"prs\", \"index_start\": 132, \"index_end\": 135, \"indices\": [132, 133, 134, 135], \"chunk_ref\": \"product.CollaborateForce.prs.items0132-0135\", \"parent_ref\": \"product.CollaborateForce.prs\"}",
+      "rel_path": "Salesforce__HERB/products/CollaborateForce.json",
+      "chunk_ref": "product.CollaborateForce.prs.items0132-0135",
+      "parent_ref": "product.CollaborateForce.prs"
+    },
+    {
+      "chunk_id": "dc35b5b19a25b1db127a6f20",
+      "file_id": "a506af89d2a13188ed474f69",
+      "ordinal": 157,
+      "kind": "qa_record",
+      "token_estimate": 490,
+      "locator_json": "{\"herb\": true, \"product\": \"AnomalyForce\", \"section\": \"answerable_questions\", \"index\": 15, \"question\": \"Can you provide links to PRs for expanding security measures in AnomalyForce that were not approved?\", \"chunk_ref\": \"product.AnomalyForce.answerable_questions.item0015\", \"parent_ref\": \"product.AnomalyForce.answerable_questions\"}",
+      "rel_path": "Salesforce__HERB/products/AnomalyForce.json",
+      "chunk_ref": "product.AnomalyForce.answerable_questions.item0015",
+      "parent_ref": "product.AnomalyForce.answerable_questions"
+    },
+    {
+      "chunk_id": "e791a30b5e0cb4b0a25cef0c",
+      "file_id": "960f223de786daa74a7d0f70",
+      "ordinal": 200,
+      "kind": "qa_record_part",
+      "token_estimate": 835,
+      "locator_json": "{\"herb\": true, \"product\": \"ActionGenie\", \"section\": \"answerable_questions\", \"index\": 22, \"question\": \"Find the employee ID of engineers who resolved the maximum number of customer bugs in ActionGenie\", \"citation_start\": 0, \"citation_end\": 110, \"chunk_ref\": \"product.ActionGenie.answerable_questions.item0022.citations0000-0110\", \"parent_ref\": \"product.ActionGenie.answerable_questions.item0022\"}",
+      "rel_path": "Salesforce__HERB/products/ActionGenie.json",
+      "chunk_ref": "product.ActionGenie.answerable_questions.item0022.citations0000-0110",
+      "parent_ref": "product.ActionGenie.answerable_questions.item0022"
+    },
+    {
+      "chunk_id": "48eb2fe3c566e6ca3522bd05",
+      "file_id": "e18eaed9ffbc5210f5be78ef",
+      "ordinal": 181,
+      "kind": "unanswerable_question_batch",
+      "token_estimate": 692,
+      "locator_json": "{\"herb\": true, \"product\": \"CollaborationForce\", \"section\": \"unanswerable_questions\", \"index_start\": 0, \"index_end\": 18, \"indices\": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18], \"chunk_ref\": \"product.CollaborationForce.unanswerable_questions.items0000-0018\", \"parent_ref\": \"product.CollaborationForce.unanswerable_questions\"}",
+      "rel_path": "Salesforce__HERB/products/CollaborationForce.json",
+      "chunk_ref": "product.CollaborationForce.unanswerable_questions.items0000-0018",
+      "parent_ref": "product.CollaborationForce.unanswerable_questions"
+    }
+  ],
+  "stages_done": []
+}

@@ -9,6 +9,7 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import random
 import re
 import statistics
 import time
@@ -39,15 +40,34 @@ NEO4J_URI = os.environ["NEO4J_URI"]
 NEO4J_USER = os.environ["NEO4J_USER"]
 NEO4J_PASSWORD = os.environ["NEO4J_PASSWORD"]
 NEO4J_DATABASE = "herb"
+DATASET_ID = "Salesforce__HERB"
 
-PILOT_NAME = os.environ.get("PILOT_NAME", "pilot_001")
+PILOT_NAME = os.environ.get("PILOT_NAME", "pilot_format_smoke")
 RUN_DIR = BACKEND_ROOT / "data" / "tagging_runs" / PILOT_NAME
 RUN_DIR.mkdir(parents=True, exist_ok=True)
 
 CONCURRENCY = 4
-SAMPLE_SIZE = 10
+SAMPLE_SIZE = int(os.environ.get("TAGGING_SAMPLE_SIZE", "14"))
+SELECTION_MODE = os.environ.get("TAGGING_SELECTION_MODE", "herb_kind_coverage")
+SELECTION_SEED = int(os.environ.get("TAGGING_SELECTION_SEED", "0"))
 FACETS = ("topic", "entities", "activity", "temporal", "evidence")
 FILLER = {"data", "information", "content", "record", "text", "chunk", "item"}
+HERB_KIND_PRIORITY = (
+    "product_profile",
+    "directory_batch",
+    "org_tree",
+    "slack_thread_batch",
+    "document",
+    "document_part",
+    "meeting_transcript",
+    "meeting_transcript_part",
+    "meeting_chat_batch",
+    "url_batch",
+    "pr_batch",
+    "qa_record",
+    "qa_record_part",
+    "unanswerable_question_batch",
+)
 
 # ---------- Prompts ----------
 
@@ -67,12 +87,12 @@ Describe the chunk's content in 1–3 sentences.
 
 ## Tags
 
-Concept labels used as search handles. Keep proper names whole.
+For each sentence or clause, identify concept labels. Keep proper names whole.
 
 ## Weights
 
-- **w_chunk** — centrality of this tag to this chunk (1.0 = core, 0.1 = passing mention)
-- **w_facet** — fit of this tag to its facet (1.0 = unambiguous, 0.1 = forced)
+- **w_chunk** — contextual relevance of this tag to the chunk as a whole (1.00 = the chunk is entirely this concept, 0.01 = marginal)
+- **w_facet** — fit of this tag to its facet (1.00 = unambiguous, 0.01 = forced)
 
 A facet may have zero tags. No filler: `data`, `information`, `content`, `record`.
 """
@@ -88,7 +108,7 @@ SCORE_PROMPT = (
     "Return w_chunk_file as a float in [0, 1] with 2 decimals."
 )
 
-# ---------- JSON schemas (sent to Groq response_format) ----------
+# ---------- JSON schemas (sent as Anthropic forced tool input_schema) ----------
 
 TAG_DEF = {
     "type": "object",
@@ -96,8 +116,8 @@ TAG_DEF = {
     "additionalProperties": False,
     "properties": {
         "t": {"type": "string", "minLength": 1},
-        "w_chunk": {"type": "number", "minimum": 0, "maximum": 1},
-        "w_facet": {"type": "number", "minimum": 0, "maximum": 1},
+        "w_chunk": {"type": "number", "minimum": 0.01, "maximum": 1.0},
+        "w_facet": {"type": "number", "minimum": 0.01, "maximum": 1.0},
     },
 }
 
@@ -189,6 +209,302 @@ def clean_tag_name(raw: str) -> str:
     s = re.sub(r"[^a-z0-9]+", "_", s)
     s = s.strip("_")
     return s
+
+
+def parse_locator_json(raw: str | None) -> dict[str, Any]:
+    if not raw:
+        return {}
+    try:
+        obj = json.loads(raw)
+    except json.JSONDecodeError:
+        return {}
+    return obj if isinstance(obj, dict) else {}
+
+
+def enrich_chunk_row(row: dict[str, Any]) -> dict[str, Any]:
+    loc = parse_locator_json(row.get("locator_json"))
+    out = dict(row)
+    out["locator"] = loc
+    out["chunk_ref"] = loc.get("chunk_ref") or row.get("chunk_id")
+    out["parent_ref"] = loc.get("parent_ref") or ""
+    return out
+
+
+def _header_value(content: str, name: str) -> str:
+    prefix = f"{name}: "
+    for line in content.splitlines()[:30]:
+        if line.startswith(prefix):
+            return line[len(prefix):].strip()
+    return ""
+
+
+def _after_marker(content: str, marker: str) -> str:
+    before, sep, after = content.partition(marker)
+    if not sep:
+        return ""
+    return after.strip()
+
+
+def _record_payload(content: str) -> str:
+    for marker in ("Records:\n", "Record:\n"):
+        body = _after_marker(content, marker)
+        if body:
+            return body
+    return content.strip()
+
+
+def _clean_fields(fields: str) -> str:
+    return ", ".join(
+        field.strip()
+        for field in fields.split(",")
+        if field.strip() and field.strip() != "_key"
+    )
+
+
+def _clean_json_line_records(text: str, *, drop_keys: set[str] | None = None) -> str:
+    drop_keys = drop_keys or set()
+    lines: list[str] = []
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        try:
+            parsed = json.loads(stripped)
+        except json.JSONDecodeError:
+            lines.append(stripped)
+            continue
+        if isinstance(parsed, dict):
+            for key in drop_keys:
+                parsed.pop(key, None)
+            lines.append(json.dumps(parsed, ensure_ascii=False, separators=(",", ": ")))
+        else:
+            lines.append(stripped)
+    return "\n".join(lines)
+
+
+def _product_profile_payload(content: str) -> str:
+    start = content.find("{")
+    if start < 0:
+        return content.strip()
+    raw = content[start:].strip()
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError:
+        return raw
+    profile = {
+        "product": parsed.get("product"),
+        "team_employee_count": len(parsed.get("team_employee_ids") or []),
+        "customer_count": len(parsed.get("customer_ids") or []),
+        "section_counts": parsed.get("section_counts") or {},
+    }
+    return json.dumps(profile, ensure_ascii=False, indent=2)
+
+
+def _text_payload(content: str) -> tuple[str, str, str]:
+    metadata = _after_marker(content, "Metadata:\n")
+    if "\n\nField:" in metadata:
+        metadata = metadata.split("\n\nField:", 1)[0].strip()
+    field = _header_value(content, "Field")
+    if "---" not in content:
+        return metadata, field, content.strip()
+    parts = content.split("---")
+    text = parts[1].strip() if len(parts) >= 3 else parts[-1].strip()
+    return metadata, field, text
+
+
+def _source_label(row: dict[str, Any]) -> str:
+    loc = row.get("locator") or {}
+    product = loc.get("product")
+    metadata = loc.get("metadata")
+    if product:
+        return str(product)
+    if metadata:
+        return str(metadata)
+    return "HERB source"
+
+
+def render_chunk_user_message(row: dict[str, Any]) -> str:
+    kind = str(row.get("kind") or "")
+    content = row.get("content") or ""
+    fields = _header_value(content, "Fields")
+    source = _source_label(row)
+
+    if kind == "directory_batch":
+        table = _clean_json_line_records(_record_payload(content), drop_keys={"_key"})
+        label = "personnel directory table" if "employee" in source else "customer directory table"
+        return "\n".join([
+            f"Source: {label}",
+            f"Headers: {_clean_fields(fields)}",
+            "",
+            "Rows:",
+            table,
+        ])
+
+    if kind == "org_tree":
+        return "\n".join([
+            "Source: organization hierarchy record",
+            f"Headers: {fields}",
+            "",
+            "Hierarchy data:",
+            _record_payload(content),
+        ])
+
+    if kind == "product_profile":
+        product = (row.get("locator") or {}).get("product") or _header_value(content, "Product")
+        return "\n".join([
+            f"Source: product profile for {product}",
+            "Use the product name, membership counts, and available section counts.",
+            "",
+            "Profile data:",
+            _product_profile_payload(content),
+        ])
+
+    if kind in {"document", "document_part"}:
+        metadata, field, text = _text_payload(content)
+        source_name = "product document excerpt" if kind.endswith("_part") else "product document"
+        return "\n".join([
+            f"Source: {source_name} from {source}",
+            "Metadata:",
+            metadata,
+            "",
+            f"Text field: {field or 'content'}",
+            "---",
+            text,
+            "---",
+        ])
+
+    if kind in {"meeting_transcript", "meeting_transcript_part"}:
+        metadata, field, text = _text_payload(content)
+        source_name = "meeting transcript excerpt" if kind.endswith("_part") else "meeting transcript"
+        return "\n".join([
+            f"Source: {source_name} for {source}",
+            "Metadata:",
+            metadata,
+            "",
+            f"Transcript field: {field or 'transcript'}",
+            "---",
+            text,
+            "---",
+        ])
+
+    if kind in {"slack_thread_batch", "meeting_chat_batch"}:
+        return "\n".join([
+            f"Source: conversation messages from {source}",
+            "Use message text, participants, timestamps, links, decisions, and requests.",
+            "",
+            "Messages:",
+            _record_payload(content),
+        ])
+
+    if kind == "url_batch":
+        return "\n".join([
+            f"Source: URL/reference list from {source}",
+            f"Headers: {fields}",
+            "",
+            "References:",
+            _record_payload(content),
+        ])
+
+    if kind == "pr_batch":
+        return "\n".join([
+            f"Source: pull request records from {source}",
+            "Use titles, summaries, status, review comments, authors, dates, and links.",
+            "",
+            "Pull requests:",
+            _record_payload(content),
+        ])
+
+    if kind == "qa_record":
+        return "\n".join([
+            f"Source: answerable question record from {source}",
+            "Use the question as the retrieval intent and the answer/citations as evidence.",
+            "",
+            "Question record:",
+            _record_payload(content),
+        ])
+
+    if kind == "qa_record_part":
+        question_answer = _after_marker(content, "Question and answer:\n")
+        citations = ""
+        if "\n\nCitations:\n" in question_answer:
+            question_answer, citations = question_answer.split("\n\nCitations:\n", 1)
+        return "\n".join([
+            f"Source: citation evidence for an answerable question from {source}",
+            "Use the question/answer as context and the citations as supporting evidence.",
+            "",
+            "Question and answer:",
+            question_answer.strip(),
+            "",
+            "Citations:",
+            citations.strip(),
+        ])
+
+    if kind == "unanswerable_question_batch":
+        return "\n".join([
+            f"Source: unanswerable question batch from {source}",
+            "Use the questions as missing-information intents. Do not infer answers.",
+            "",
+            "Questions:",
+            _record_payload(content),
+        ])
+
+    return "\n".join([
+        f"Source: {_source_label(row)}",
+        "",
+        "Evidence:",
+        content.strip(),
+    ])
+
+
+def _kind_order(kind: str) -> tuple[int, str]:
+    try:
+        return (HERB_KIND_PRIORITY.index(kind), kind)
+    except ValueError:
+        return (len(HERB_KIND_PRIORITY), kind)
+
+
+def choose_chunks(rows: list[dict[str, Any]], limit: int) -> list[dict[str, Any]]:
+    if SELECTION_MODE == "all":
+        return sorted(rows, key=lambda r: (r["rel_path"], r["ordinal"], r["chunk_id"]))
+
+    if SELECTION_MODE == "random":
+        # Kept only as an explicit escape hatch. The default is coverage of the
+        # HERB chunk kinds so pilot runs test the new chunk format.
+        ordered = sorted(rows, key=lambda r: r["chunk_id"])
+        random.Random(SELECTION_SEED).shuffle(ordered)
+        return ordered[:limit]
+
+    by_kind: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for row in rows:
+        by_kind[str(row.get("kind") or "")].append(row)
+
+    picks: list[dict[str, Any]] = []
+    picked_ids: set[str] = set()
+    for kind in sorted(by_kind, key=_kind_order):
+        candidates = by_kind[kind]
+        med = statistics.median([int(r.get("token_estimate") or 0) for r in candidates])
+        chosen = sorted(
+            candidates,
+            key=lambda r: (
+                abs(int(r.get("token_estimate") or 0) - med),
+                r["rel_path"],
+                int(r["ordinal"]),
+                r["chunk_id"],
+            ),
+        )[0]
+        picks.append(chosen)
+        picked_ids.add(chosen["chunk_id"])
+        if len(picks) >= limit:
+            return picks
+
+    if len(picks) < limit:
+        remaining = [
+            r for r in rows
+            if r["chunk_id"] not in picked_ids
+        ]
+        remaining.sort(key=lambda r: (r["rel_path"], int(r["ordinal"]), r["chunk_id"]))
+        picks.extend(remaining[: limit - len(picks)])
+    return picks
 
 
 # ---------- Anthropic client ----------
@@ -311,6 +627,66 @@ async def ensure_tag_uniqueness(driver) -> None:
         await s.run("CREATE CONSTRAINT tag_name_unique IF NOT EXISTS FOR (t:Tag) REQUIRE t.name IS UNIQUE")
 
 
+# ---------- Stage: verify_chunks ----------
+
+async def stage_verify_chunks() -> None:
+    """No-API check that the current HERB graph exposes the new chunk format."""
+    driver = neo4j_driver()
+    try:
+        async with driver.session(database=NEO4J_DATABASE) as s:
+            result = await s.run(
+                """
+                MATCH (f:File {dataset_id: $dataset_id})-[:HAS_CHUNK]->(c:Chunk)
+                RETURN c.chunk_id AS chunk_id, c.kind AS kind,
+                       c.ordinal AS ordinal, c.token_estimate AS token_estimate,
+                       c.locator_json AS locator_json, c.content AS content,
+                       f.rel_path AS rel_path
+                ORDER BY c.kind, f.rel_path, c.ordinal
+                """,
+                dataset_id=DATASET_ID,
+            )
+            rows = [enrich_chunk_row(dict(r)) async for r in result]
+    finally:
+        await driver.close()
+
+    by_kind = Counter(row["kind"] for row in rows)
+    missing_ref = [row for row in rows if not row.get("chunk_ref")]
+    missing_kind = [row for row in rows if not row.get("kind")]
+    missing_ref_in_content = [
+        row for row in rows
+        if row.get("chunk_ref") and row["chunk_ref"] not in (row.get("content") or "")
+    ]
+    missing_kind_in_content = [
+        row for row in rows
+        if row.get("kind") and f"Chunk type: {row['kind']}" not in (row.get("content") or "")
+    ]
+
+    print(f"database={NEO4J_DATABASE} dataset={DATASET_ID}")
+    print(f"chunks={len(rows)} kinds={len(by_kind)}")
+    for kind, count in sorted(by_kind.items(), key=lambda kv: _kind_order(kv[0])):
+        print(f"  {kind}: {count}")
+    print(f"missing_kind={len(missing_kind)}")
+    print(f"missing_chunk_ref={len(missing_ref)}")
+    print(f"chunk_ref_not_in_content={len(missing_ref_in_content)}")
+    print(f"chunk_type_not_in_content={len(missing_kind_in_content)}")
+
+    offenders = (
+        missing_kind[:3]
+        + missing_ref[:3]
+        + missing_ref_in_content[:3]
+        + missing_kind_in_content[:3]
+    )
+    for row in offenders[:8]:
+        print(
+            "  offender "
+            f"chunk_id={row['chunk_id']} kind={row.get('kind')} ref={row.get('chunk_ref')} "
+            f"file={row.get('rel_path')} ordinal={row.get('ordinal')}"
+        )
+
+    if missing_kind or missing_ref or missing_ref_in_content or missing_kind_in_content:
+        raise RuntimeError("HERB chunk format verification failed.")
+
+
 # ---------- Stage: select ----------
 
 async def stage_select() -> None:
@@ -319,37 +695,47 @@ async def stage_select() -> None:
         async with driver.session(database=NEO4J_DATABASE) as s:
             result = await s.run(
                 """
-                MATCH (c:Chunk)
-                WHERE coalesce(c.empty, false) = false
-                  AND c.content IS NOT NULL
-                WITH c, rand() AS r
-                ORDER BY r
-                LIMIT $n
-                MATCH (f:File {file_id: c.file_id})
+                MATCH (f:File {dataset_id: $dataset_id})-[:HAS_CHUNK]->(c:Chunk)
+                WHERE c.content IS NOT NULL
                 RETURN c.chunk_id AS chunk_id, c.file_id AS file_id,
-                       c.ordinal AS ordinal, f.rel_path AS rel_path
+                       c.ordinal AS ordinal, c.kind AS kind,
+                       c.token_estimate AS token_estimate,
+                       c.locator_json AS locator_json,
+                       f.rel_path AS rel_path
+                ORDER BY f.rel_path, c.ordinal
                 """,
-                n=SAMPLE_SIZE,
+                dataset_id=DATASET_ID,
             )
-            picks = [dict(r) async for r in result]
+            rows = [enrich_chunk_row(dict(r)) async for r in result]
     finally:
         await driver.close()
+
+    picks = choose_chunks(rows, SAMPLE_SIZE)
 
     run_state = {
         "pilot_name": PILOT_NAME,
         "created_at": now_iso(),
         "model": ANTHROPIC_MODEL,
         "database": NEO4J_DATABASE,
+        "dataset_id": DATASET_ID,
         "sample_size": SAMPLE_SIZE,
+        "selection_mode": SELECTION_MODE,
+        "selection_seed": SELECTION_SEED,
         "concurrency": CONCURRENCY,
         "facets": list(FACETS),
         "chunk_ids": picks,
         "stages_done": [],
     }
     write_run_json(run_state)
-    print(f"Selected {len(picks)} chunks across {len({p['file_id'] for p in picks})} files.")
+    print(
+        f"Selected {len(picks)} chunks across {len({p['file_id'] for p in picks})} files "
+        f"and {len({p['kind'] for p in picks})} chunk kinds."
+    )
     for p in picks:
-        print(f"  - {p['chunk_id']}  ord={p['ordinal']:>4}  file={p['rel_path']}")
+        print(
+            f"  - {p['chunk_id']}  kind={p['kind']:<28} "
+            f"ord={p['ordinal']:>4}  ref={p['chunk_ref']}"
+        )
 
 
 # ---------- Stage: extract ----------
@@ -365,19 +751,27 @@ async def stage_extract() -> None:
         await ensure_tag_uniqueness(driver)
         async with driver.session(database=NEO4J_DATABASE) as s:
             res = await s.run(
-                "MATCH (c:Chunk) WHERE c.chunk_id IN $ids RETURN c.chunk_id AS chunk_id, c.content AS content",
+                """
+                MATCH (c:Chunk) WHERE c.chunk_id IN $ids
+                MATCH (f:File {file_id: c.file_id})
+                RETURN c.chunk_id AS chunk_id, c.content AS content,
+                       c.kind AS kind, c.ordinal AS ordinal,
+                       c.token_estimate AS token_estimate,
+                       c.locator_json AS locator_json,
+                       f.rel_path AS rel_path
+                """,
                 ids=chunk_ids,
             )
-            chunks = {r["chunk_id"]: r["content"] async for r in res}
+            chunks = {r["chunk_id"]: enrich_chunk_row(dict(r)) async for r in res}
 
         caller = ClaudeCaller()
         io_path = RUN_DIR / "io.jsonl"
         err_path = RUN_DIR / "errors.jsonl"
         results: dict[str, dict] = {}
 
-        async def one(chunk_id: str, text: str) -> None:
+        async def one(chunk_id: str, row: dict[str, Any]) -> None:
             parsed, _rec = await caller.call(
-                system=EXTRACT_PROMPT, user=text,
+                system=EXTRACT_PROMPT, user=render_chunk_user_message(row),
                 schema=EXTRACT_SCHEMA, schema_name="chunk_extraction",
                 stage="extract", target_id=chunk_id,
                 io_path=io_path, err_path=err_path,
@@ -393,7 +787,7 @@ async def stage_extract() -> None:
                 return
             results[chunk_id] = {"ok": True, "raw": parsed, "model": model}
 
-        await asyncio.gather(*(one(cid, txt) for cid, txt in chunks.items()))
+        await asyncio.gather(*(one(cid, row) for cid, row in chunks.items()))
 
         # Clean + write to Neo4j
         async with driver.session(database=NEO4J_DATABASE) as s:
@@ -481,7 +875,9 @@ async def stage_describe() -> None:
                 MATCH (c:Chunk) WHERE c.chunk_id IN $ids AND c.description IS NOT NULL
                 MATCH (f:File {file_id: c.file_id})
                 RETURN f.file_id AS file_id, f.rel_path AS rel_path,
-                       c.ordinal AS ordinal, c.description AS description
+                       c.ordinal AS ordinal, c.kind AS kind,
+                       c.locator_json AS locator_json,
+                       c.description AS description
                 ORDER BY f.file_id, c.ordinal
                 """,
                 ids=chunk_ids,
@@ -489,8 +885,9 @@ async def stage_describe() -> None:
             by_file: dict[str, dict] = {}
             async for r in res:
                 fid = r["file_id"]
+                row = enrich_chunk_row(dict(r))
                 by_file.setdefault(fid, {"rel_path": r["rel_path"], "items": []})
-                by_file[fid]["items"].append((r["ordinal"], r["description"]))
+                by_file[fid]["items"].append(row)
 
         caller = ClaudeCaller()
         io_path = RUN_DIR / "io.jsonl"
@@ -498,7 +895,11 @@ async def stage_describe() -> None:
         summaries: dict[str, str] = {}
 
         async def one(file_id: str, info: dict) -> None:
-            lines = "\n".join(f"{i+1}. {desc}" for i, (_, desc) in enumerate(info["items"]))
+            items = sorted(info["items"], key=lambda r: int(r["ordinal"]))
+            lines = "\n".join(
+                f"{i+1}. [{row['kind']} | {row['chunk_ref']}] {row['description']}"
+                for i, row in enumerate(items)
+            )
             user_msg = f"File: {info['rel_path']}\n\nChunk descriptions (in file order):\n{lines}"
             parsed, _rec = await caller.call(
                 system=DESCRIBE_PROMPT, user=user_msg,
@@ -548,11 +949,14 @@ async def stage_score() -> None:
                 MATCH (f:File {file_id: c.file_id})
                 WHERE f.description IS NOT NULL
                 RETURN c.chunk_id AS chunk_id, c.description AS chunk_desc,
+                       c.kind AS kind, c.ordinal AS ordinal,
+                       c.locator_json AS locator_json,
+                       f.rel_path AS rel_path,
                        f.description AS file_summary
                 """,
                 ids=chunk_ids,
             )
-            pairs = [dict(r) async for r in res]
+            pairs = [enrich_chunk_row(dict(r)) async for r in res]
 
         caller = ClaudeCaller()
         io_path = RUN_DIR / "io.jsonl"
@@ -562,6 +966,9 @@ async def stage_score() -> None:
         async def one(row: dict) -> None:
             user_msg = (
                 f"File summary:\n{row['file_summary']}\n\n"
+                f"Chunk kind: {row['kind']}\n"
+                f"Chunk reference: {row['chunk_ref']}\n"
+                f"Parent reference: {row['parent_ref'] or '(none)'}\n\n"
                 f"Chunk description:\n{row['chunk_desc']}"
             )
             parsed, _rec = await caller.call(
@@ -628,6 +1035,8 @@ async def stage_analyze() -> None:
                 OPTIONAL MATCH (c)-[r:HAS_TAG]->(t:Tag)
                 WITH c, f, collect({name: t.name, facet: r.facet, w_chunk: r.w_chunk, w_facet: r.w_facet}) AS edges
                 RETURN c.chunk_id AS chunk_id, c.file_id AS file_id, c.ordinal AS ordinal,
+                       c.kind AS kind, c.token_estimate AS token_estimate,
+                       c.locator_json AS locator_json,
                        c.content AS content, c.description AS description,
                        c.relevance_to_file AS w_chunk_file,
                        f.rel_path AS rel_path, f.description AS file_summary,
@@ -636,7 +1045,7 @@ async def stage_analyze() -> None:
                 """,
                 ids=chunk_ids,
             )
-            rows = [dict(r) async for r in res]
+            rows = [enrich_chunk_row(dict(r)) async for r in res]
     finally:
         await driver.close()
 
@@ -693,19 +1102,35 @@ async def stage_analyze() -> None:
     md.append(f"- Generated: {now_iso()}")
     md.append(f"- Model: `{ANTHROPIC_MODEL}`")
     md.append(f"- Database: `{NEO4J_DATABASE}`")
+    md.append(f"- Dataset: `{DATASET_ID}`")
+    md.append(f"- Selection mode: `{SELECTION_MODE}`")
+    md.append(f"- Selection seed: `{SELECTION_SEED}`")
     md.append(f"- Provider: `{PROVIDER_NAME}` (structured output via forced tool_use)")
-    md.append(f"- Sample: {n_chunks} chunks across {len({r['file_id'] for r in rows})} files\n")
+    md.append(
+        f"- Sample: {n_chunks} chunks across {len({r['file_id'] for r in rows})} files "
+        f"and {len({r['kind'] for r in rows})} chunk kinds\n"
+    )
 
     md.append("## Caveat")
-    md.append("This pilot sampled 10 chunks across some subset of the 33 files. ")
+    md.append("This pilot samples HERB chunks from the current chunk graph. ")
     md.append("File descriptions were generated only from the sampled chunks of each file, ")
     md.append("not from every chunk in the file. The w_chunk_file scores are therefore relative ")
     md.append("to a partial picture of each file. Comparable cross-file scoring requires a full run.\n")
+
+    md.append("## Chunk-format coverage\n")
+    kind_counter = Counter(row["kind"] for row in rows)
+    for kind, count in sorted(kind_counter.items(), key=lambda kv: _kind_order(kv[0])):
+        md.append(f"- `{kind}`: {count}")
+    md.append("")
 
     md.append("## Per-chunk dump\n")
     for row in rows:
         md.append(f"### `{row['chunk_id']}`  (ordinal {row['ordinal']})")
         md.append(f"- file: `{row['rel_path']}`")
+        md.append(f"- kind: `{row['kind']}`")
+        md.append(f"- chunk_ref: `{row['chunk_ref']}`")
+        md.append(f"- parent_ref: `{row['parent_ref'] or ''}`")
+        md.append(f"- token_estimate: `{row['token_estimate']}`")
         md.append(f"- w_chunk_file: `{row['w_chunk_file']}`")
         content_preview = (row["content"] or "")[:400].replace("\n", " ")
         md.append(f"- content (first 400 chars): `{content_preview}`")
@@ -737,11 +1162,13 @@ async def stage_analyze() -> None:
                 "file_summary": row["file_summary"],
                 "chunks": [],
             }
-        files_seen[row["file_id"]]["chunks"].append(row["chunk_id"])
+        files_seen[row["file_id"]]["chunks"].append(row)
     for fid, info in files_seen.items():
         md.append(f"### `{fid}`")
         md.append(f"- rel_path: `{info['rel_path']}`")
         md.append(f"- chunks sampled: {len(info['chunks'])}")
+        refs = ", ".join(f"`{row['kind']}:{row['chunk_ref']}`" for row in info["chunks"])
+        md.append(f"- sampled refs: {refs}")
         md.append(f"- file description: {info['file_summary']}")
         md.append("")
 
@@ -813,6 +1240,7 @@ async def stage_analyze() -> None:
     state["analysis"] = {
         "n_chunks": n_chunks,
         "n_files": len(files_seen),
+        "chunk_kinds_sampled": dict(kind_counter),
         "tag_edges_total": sum(facet_counts.values()),
         "tag_edges_per_facet": dict(facet_counts),
         "unique_tag_names": len({n for _, n in tag_freq.keys()}),

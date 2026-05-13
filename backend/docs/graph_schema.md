@@ -4,7 +4,7 @@
 
 **When to read this.** Any time you write Cypher, change a writer, or design a new query. This is the source of truth for shape.
 
-**Last updated:** 2026-05-11.
+**Last updated:** 2026-05-13.
 
 ## Touched paths
 
@@ -65,12 +65,12 @@ One per deterministic chunk produced by [`indexing/chunker.py`](../indexing/chun
 | `chunk_id` | string | **UNIQUE constraint.** `stable_short_hash(f"{file_id}:{ordinal}:{start_offset}", 24)`. |
 | `file_id` | string | Foreign key to `:File`. |
 | `ordinal` | int | 0-based position within the file. |
-| `kind` | string | `record`, `object`, `section`, `paragraph`, `table`, `image`, `raw`. |
+| `kind` | string | Base kinds: `record`, `object`, `section`, `paragraph`, `table`, `image`, `raw`. HERB-aware kinds include `product_profile`, `directory_batch`, `org_tree`, `slack_thread_batch`, `document`, `document_part`, `meeting_transcript`, `meeting_transcript_part`, `meeting_chat_batch`, `url_batch`, `pr_batch`, `qa_record`, `qa_record_part`, `qa_batch`, `unanswerable_question_batch`. |
 | `start_offset` | int | Byte/char offset within the source file (semantics depend on format). |
 | `end_offset` | int | The agent **must echo this** as `chunk_end_offset` in `ChunkExtraction`. |
 | `content` | string | Full chunk text. Stored directly per [decision D10](architecture.md#d10--storing-chunkcontent-directly-vs-offsets). |
 | `token_estimate` | int | `len(text) // 4`, min 1. |
-| `locator_json` | string | JSON-serialised locator (line, row, char_range, etc.). |
+| `locator_json` | string | JSON-serialised locator (line, row, char_range, HERB `parent_ref`/`chunk_ref`, etc.). |
 | `empty` | bool | Set by ExtractionWriter; `false` initially. |
 | `empty_reason` | string \| null | One-line reason when `empty=true`. |
 | `description` | string \| null | 1-3 sentence chunk description from the agent. |
@@ -97,18 +97,18 @@ One per **distinct tag name** across the corpus. Cluster is on the **edge**, not
 
 ### `:CanonicalTag`
 
-The seeded vocabulary plus any promoted proposals.
+Legacy vocabulary node type from the generic tagger path. HERB preflight/chunking does not create these nodes.
 
 | Property | Type | Notes |
 |---|---|---|
 | `label` | string | Part of the node key. |
 | `cluster` | string | Part of the node key. One of `topic`, `entities`, `activity`, `temporal`, `evidence`. |
 | `gloss` | string | Optional one-line definition. |
-| `source` | string | `"seed"` for entries from [`clustering/canonical_seed.yaml`](../clustering/canonical_seed.yaml). |
+| `source` | string | Legacy source marker. |
 
 - **Constraint:** `REQUIRE (n.label, n.cluster) IS NODE KEY` ([`schema/constraints.cypher`](../schema/constraints.cypher)).
 - **Indexes:** `(n.cluster)`.
-- **Who writes:** [`scripts/bootstrap_schema.py`](../scripts/bootstrap_schema.py) `seed_canonical_tags`. Future: a triage CLI promoting `:CanonicalTagProposal` nodes (TODO).
+- **Who writes:** No active HERB path. The old bootstrap seed path has been removed.
 - **Who reads:** orchestrator's `_load_canonical_vocab` builds the user-message vocabulary block from these.
 
 ### `:CanonicalTagProposal`

@@ -1,18 +1,18 @@
 # Agent Brief
 
-**TL;DR.** This is the minimum context an agent (or new human) needs to be productive in this repo. The pipeline takes raw datasets under `data/raw/`, deterministically chunks each payload file, asks one OpenAI-compatible LLM to tag every chunk in five clusters plus produce a file-level relevance map, and writes everything to Neo4j. There are **no fallbacks, no mocks, no side files**: Neo4j is the only durable store.
+**TL;DR.** This is the minimum context an agent (or new human) needs to be productive in this repo. For HERB, the verified path is currently preflight/chunking only: raw files under `data/raw/Salesforce__HERB/` become `:Source`, `:File`, and `:Chunk` graph content with structural relationships. The old generic LLM tagging path is legacy and is blocked for HERB unless explicitly overridden. There are **no fallbacks, no mocks, no side files**: Neo4j is the only durable store.
 
 **When to read this.** First — before touching anything. Re-read it if you've been off this repo for a while.
 
-**Last updated:** 2026-05-11.
+**Last updated:** 2026-05-13.
 
 ## Touched paths
 
-This brief references: `agents/`, `indexing/`, `prompts/`, `schema/`, `clustering/canonical_seed.yaml`, `scripts/`, `shared/`, `data/raw/`, `data_access/raw/`.
+This brief references: `agents/`, `indexing/`, `prompts/`, `schema/`, `scripts/`, `shared/`, `data/raw/`, `data_access/raw/`.
 
 ## Mission
 
-Bridge heterogeneous, noisy datasets and an LLM with a queryable artefact. Every file in `data/raw/` becomes a chain of `(:Chunk)` nodes; every chunk gets a five-cluster tag set; every file gets a description and a chunk-level relevance map; a deterministic rollup produces `(:File)-[:TAGGED]->(:Tag)` edges with `weight_global`. The graph is the API for any downstream cluster query.
+Bridge heterogeneous, noisy datasets with a queryable graph artefact. Every HERB file becomes a chain of `(:Chunk)` nodes with stable locators and source/file structure. The old generic tag extraction and file rollup code still exists, but it is not the active HERB contract.
 
 ## High-level architecture
 
@@ -20,17 +20,17 @@ Bridge heterogeneous, noisy datasets and an LLM with a queryable artefact. Every
 flowchart LR
     raw["data/raw/<br/>payload files"] --> preflight["preflight<br/>(scan + upsert + chunk + update working file)"]
     preflight --> chunker["Chunker<br/>(per-format deterministic)"]
-    chunker --> orch["Orchestrator<br/>(dispatcher loop)"]
+    chunker -. "legacy/non-HERB only" .-> orch["Orchestrator<br/>(dispatcher loop)"]
     orch -- "stage 1<br/>chunk_extraction" --> ext["ExtractionWriter<br/>(:Chunk)-[:HAS_TAG]->(:Tag)"]
     orch -- "stage 2<br/>file_orchestration" --> fw["FileExtractionWriter<br/>(:Chunk).relevance_to_file<br/>(:File).description"]
     orch -- "stage 3<br/>deterministic" --> rollup["FileRollup<br/>(:File)-[:TAGGED]->(:Tag)"]
 ```
 
-Stage 1 and 2 are LLM-driven. Stage 3 is pure Cypher. See [`architecture.md`](architecture.md#run-lifecycle) for the per-run state machine.
+Stage 1 and 2 are LLM-driven legacy stages. Stage 3 is pure Cypher. HERB work currently stops after preflight/chunking.
 
 ## The five clusters
 
-Defined in [`agents/schemas.py`](../agents/schemas.py) as the `Cluster` Literal and listed in [`clustering/canonical_seed.yaml`](../clustering/canonical_seed.yaml). Each chunk gets 0..N tags per cluster.
+Defined in [`agents/schemas.py`](../agents/schemas.py) as the `Cluster` Literal for the legacy LLM tagging path. HERB chunking does not depend on a canonical seed vocabulary.
 
 | Cluster | Question for the chunk |
 |---|---|
@@ -63,7 +63,6 @@ Cluster is stored as a **string property on the `HAS_TAG` and `TAGGED` edges**. 
 | Circuit breaker thresholds | [`indexing/breaker.py`](../indexing/breaker.py) (`BreakerThresholds`) |
 | Working-file job state transitions | [`indexing/worklist.py`](../indexing/worklist.py) |
 | Per-run lifecycle / abort | [`indexing/runs.py`](../indexing/runs.py), [`scripts/run_index.py`](../scripts/run_index.py) |
-| Canonical vocabulary | [`clustering/canonical_seed.yaml`](../clustering/canonical_seed.yaml) |
 | File rollup math | [`indexing/file_rollup.py`](../indexing/file_rollup.py) |
 | Env vars / config | [`shared/config.py`](../shared/config.py), [`.env.example`](../.env.example) |
 | What is verified working | [`status.md`](status.md) |
@@ -77,13 +76,13 @@ python -m venv .venv
 . .venv/Scripts/activate                         # Windows; Linux: . .venv/bin/activate
 pip install -r requirements-lock.txt
 
-# 1. Apply constraints + indexes + seed canonical tags. Idempotent.
+# 1. Apply constraints + indexes. Idempotent.
 python scripts/bootstrap_schema.py
 
 # 2. Scan data/raw/, upsert (:Source) and (:File), chunk, update working file. Idempotent.
 python scripts/run_preflight.py
 
-# 3. Dispatch agent calls (chunks then files), then deterministic rollup.
+# 3. Legacy generic tagging is blocked for HERB unless explicitly overridden.
 python scripts/run_index.py
 
 # Optional: inspect counts.
@@ -97,7 +96,7 @@ python scripts/verify_graph.py
 Pulled from [`status.md`](status.md). Truthful snapshot:
 
 - Parquet visual-content path: chunker now omits Arrow columns containing binary data and caps nested JSON conversion, so DocVQA preflights cleanly. Future image-aware indexing still needs a proper visual path.
-- Proposal triage CLI (`python -m clustering.review`) referenced in `canonical_seed.yaml` does not exist yet.
+- HERB-specific extraction/tagging is not built yet; do not use the legacy generic tagging path as evidence for HERB quality.
 - Named cluster query views (`by_topic`, `by_evidence`, `recent_active`, `multidim`) are not built.
 - Portable JSONL graph export/import exists via `scripts/export_graph_json.py`, `scripts/import_graph_json.py`, and `graph_export/grag_graph_latest.zip`; it is an operator snapshot, not an indexing-path side artefact.
 - Full `provenance.json` per run is not written.

@@ -4,7 +4,7 @@
 
 **When to read this.** Before running anything that talks to Neo4j or OpenAI; when something fails and you need to recover.
 
-**Last updated:** 2026-05-07.
+**Last updated:** 2026-05-13.
 
 ## Touched paths
 
@@ -58,17 +58,17 @@ Try `neo4j://` first; switch to `bolt://` only if you see `ServiceUnavailable: U
 python scripts/bootstrap_schema.py
 ```
 
-Applies [`schema/constraints.cypher`](../schema/constraints.cypher), [`schema/indexes.cypher`](../schema/indexes.cypher), [`schema/vector_indexes.cypher`](../schema/vector_indexes.cypher) (currently empty), and seeds the canonical tag vocabulary from [`clustering/canonical_seed.yaml`](../clustering/canonical_seed.yaml).
+Applies [`schema/constraints.cypher`](../schema/constraints.cypher), [`schema/indexes.cypher`](../schema/indexes.cypher), and [`schema/vector_indexes.cypher`](../schema/vector_indexes.cypher) (currently empty). It does not seed tag vocabularies.
 
 Expected output (paraphrased):
 
 ```
-Applied 18 schema statements; merged 32 canonical tags.
+Applied 15 schema statements.
 ```
 
-The 18 = 7 uniqueness constraints + 1 NODE KEY + 7 node indexes + 3 relationship indexes (vector_indexes.cypher contributes 0). The 32 = full canonical tag count from the seed YAML.
+The exact count depends on the checked-in schema files.
 
-Idempotent. Re-run after editing schema files or the seed YAML.
+Idempotent. Re-run after editing schema files.
 
 ## 4. Preflight: chunk + seed work
 
@@ -117,13 +117,13 @@ Optional flags:
 - `--file-limit N` — cap file_orchestration working-file items this run.
 - `--concurrency N` — override `LLM_MAX_CONCURRENCY` for this run only.
 
-The script:
+The legacy generic indexing script:
 
 1. Validates `LLM_API_KEY` (or `AGENT_API_KEY`). Missing → exit code 2 with a Swedish/English error.
 2. Opens Neo4j and the agent HTTP client.
 3. Creates a `:Run` node (`status='started'`).
 4. Resets all `failed` working-file items to `unrun` (auto-retry policy).
-5. Loads canonical vocab from `:CanonicalTag` and the prompt files.
+5. Loads the legacy extraction prompt context.
 6. Runs Stage 1 (chunks) → Stage 2 (files) → Stage 3 (deterministic rollup).
 7. Closes everything in `finally`. `:Run.status` becomes `ok` or `aborted`.
 
@@ -132,7 +132,7 @@ Expected console signal:
 ```
 Run started: 2026-05-07T08-12-04Z-9f1a02
 [orchestrator] reset N failed work items to unrun
-[orchestrator] canonical vocab loaded; dataset_id filter = None
+[orchestrator] legacy tag context loaded; dataset_id filter = None
 [orchestrator] chunk stage: processed=200 done=199 failed=1
 ...
 [orchestrator] file stage: processed=50 done=50 failed=0
@@ -145,13 +145,15 @@ Run finished: ok
 
 A `BREAKER TRIPPED:` line on stderr means the orchestrator caught a `BreakerTripped` and the run finished as `aborted`. Exit code 1.
 
+For HERB, `run_index.py` refuses to run the legacy generic tagging path by default. `Salesforce__HERB` is currently preflight/chunking-only until a HERB-specific extraction path exists. The escape hatch `--allow-legacy-herb-tagging` is only for explicit throwaway experiments.
+
 ## 6. Verify
 
 ```bash
 python scripts/verify_graph.py
 ```
 
-Read-only. Prints counts of every node label, working-file items by kind/status, CanonicalTag breakdown by cluster, File breakdown by `format_family`, Chunk breakdown by `kind`, and three sample chunk previews.
+Read-only. Prints source/file/chunk counts, working-file items by kind/status, file breakdown by `format_family`, chunk breakdown by `kind`, and three sample chunk previews.
 
 ## Common failure modes and fixes
 
@@ -200,11 +202,11 @@ Then re-run `bootstrap_schema.py`, `run_preflight.py`, `run_index.py`.
 MATCH (n) DETACH DELETE n;
 ```
 
-Then re-run the bootstrap and onwards. Note: this also drops the canonical tag seeds, so you need bootstrap_schema to re-merge them.
+Then re-run bootstrap and preflight.
 
 ## Cost / token notes
 
 - One LLM call per chunk + one per chunk-bearing file. With a typical small dataset (~500 chunks, ~50 chunk-bearing files), that's ~550 calls per run.
 - `LLM_MAX_CONCURRENCY=32` is the default — high enough to be fast, low enough that 429s are rare on a paid OpenAI account. If the provider rate-limits aggressively, drop to 8–16.
-- Token usage per chunk depends on chunk content size and the canonical-vocab block (currently small — under 500 tokens). The orchestrator records `in_tokens`, `out_tokens`, `duration_ms` per working-file item and sums them on `:Run`.
+- Token usage per chunk depends on chunk content size and prompt context. The orchestrator records `in_tokens`, `out_tokens`, `duration_ms` per working-file item and sums them on `:Run`.
 - Breaker thresholds are documented in [`architecture.md`](architecture.md#d7--tight-circuit-breaker-thresholds-table). Trips abort the run; nothing partial is lost — completed working-file items remain `done`, failed ones are reset on next run.

@@ -4,7 +4,7 @@
 
 **When to read this.** When you know what you want to change and need to find the right file.
 
-**Last updated:** 2026-05-11.
+**Last updated:** 2026-05-13.
 
 ## Touched paths
 
@@ -32,19 +32,18 @@ The core pipeline.
 | [`indexing/runs.py`](../indexing/runs.py) | `(:Run)` repository: `start_run` / `finish_run`, `RunSummary`. | `RunRepository`, `RunSummary`, `make_run_id` | [`scripts/run_index.py`](../scripts/run_index.py). |
 | [`indexing/chunker.py`](../indexing/chunker.py) | Per-format deterministic chunker. Rule: re-chunk only if no chunks exist. | `Chunker`, `ChunkPolicy`, `ChunkRecord`, `dispatch_mode_for` | [`indexing/preflight.py`](../indexing/preflight.py). |
 | [`indexing/preflight.py`](../indexing/preflight.py) | Scan raw catalog → upsert `:Source`/`:File` → chunk → update working file. Per-file fault isolation. | `run_preflight`, `PreflightResult`, `upsert_source_node`, `upsert_file_node` | [`scripts/run_preflight.py`](../scripts/run_preflight.py). |
-| [`indexing/orchestrator.py`](../indexing/orchestrator.py) | Three-stage dispatcher. Concurrency via `asyncio.Semaphore`; breaker observed under a lock. Renders user messages including the canonical-vocab block. | `Orchestrator.run`, `_run_chunk_stage`, `_run_file_stage`, `_load_canonical_vocab`, `CHUNK_BATCH_SIZE`, `FILE_BATCH_SIZE`, `PREV_TAIL_CHARS`, `CLUSTER_ORDER` | [`scripts/run_index.py`](../scripts/run_index.py). |
+| [`indexing/orchestrator.py`](../indexing/orchestrator.py) | Legacy three-stage dispatcher. Concurrency via `asyncio.Semaphore`; breaker observed under a lock. Blocked for HERB by [`scripts/run_index.py`](../scripts/run_index.py) unless explicitly overridden. | `Orchestrator.run`, `_run_chunk_stage`, `_run_file_stage`, `_load_canonical_vocab`, `CHUNK_BATCH_SIZE`, `FILE_BATCH_SIZE`, `PREV_TAIL_CHARS`, `CLUSTER_ORDER` | [`scripts/run_index.py`](../scripts/run_index.py). |
 | [`indexing/extraction_writer.py`](../indexing/extraction_writer.py) | Writes `ChunkExtraction` results. Idempotent: wipes prior `HAS_TAG` edges before re-writing. Creates `:CanonicalTagProposal` nodes for proposals. | `ExtractionWriter.write_chunk_extraction` | [`indexing/orchestrator.py`](../indexing/orchestrator.py). |
 | [`indexing/file_writer.py`](../indexing/file_writer.py) | Writes `FileOrchestrationOutput`. Sets `(:File).description` and `(:Chunk).relevance_to_file`. | `FileExtractionWriter.write_file_orchestration` | [`indexing/orchestrator.py`](../indexing/orchestrator.py). |
 | [`indexing/file_rollup.py`](../indexing/file_rollup.py) | Deterministic rollup `HAS_TAG → TAGGED`, weighted by `relevance_to_file`. Delete-and-rebuild within scope. No agent calls. | `FileRollup.run` | [`indexing/orchestrator.py`](../indexing/orchestrator.py) (Stage 3). |
 
 ## `clustering/`
 
-Canonical tag vocabulary.
+No active HERB clustering implementation lives here. The old canonical seed file has been removed.
 
 | File | Role | Key symbols | Called by |
 |---|---|---|---|
 | [`clustering/__init__.py`](../clustering/__init__.py) | Package marker. | — | — |
-| [`clustering/canonical_seed.yaml`](../clustering/canonical_seed.yaml) | Source of truth for the canonical tag vocabulary. Five top-level keys (one per cluster). Hybrid seed-and-grow: proposals enter only via a triage CLI (TODO). | — | [`scripts/bootstrap_schema.py`](../scripts/bootstrap_schema.py) `seed_canonical_tags`. |
 
 ## `data_access/`
 
@@ -89,15 +88,15 @@ Operator entry points. Each one is small (initialise → call layer code → clo
 
 | File | Role |
 |---|---|
-| [`scripts/bootstrap_schema.py`](../scripts/bootstrap_schema.py) | Apply constraints + indexes + seed canonical tags. Idempotent. Reports `Applied N schema statements; merged M canonical tags.` |
+| [`scripts/bootstrap_schema.py`](../scripts/bootstrap_schema.py) | Apply constraints + indexes. Idempotent. Does not seed tag vocabularies. |
 | [`scripts/export_graph_json.py`](../scripts/export_graph_json.py) | Export the current Neo4j graph to portable JSONL files under monorepo `graph_export/latest/`. |
 | [`scripts/import_graph_json.py`](../scripts/import_graph_json.py) | Import a JSONL graph export directory or zip into Neo4j; supports `--wipe`. |
 | [`scripts/migrate_cluster_names.py`](../scripts/migrate_cluster_names.py) | One-time/idempotent data migration from retired cluster strings to `topic`, `entities`, `activity`, `temporal`, `evidence`. Also rewrites proposal IDs derived from cluster names. |
 | [`scripts/run_preflight.py`](../scripts/run_preflight.py) | Run [`indexing.preflight.run_preflight`](../indexing/preflight.py) and print summary + per-file failures. Idempotent. |
-| [`scripts/run_index.py`](../scripts/run_index.py) | The dispatcher. Validates API key → opens Neo4j + agent client → starts a `:Run` → runs orchestrator → records `ok`/`aborted`. Args: `--dataset-id`, `--chunk-limit`, `--file-limit`, `--concurrency`. |
+| [`scripts/run_index.py`](../scripts/run_index.py) | Legacy dispatcher. Validates API key → opens Neo4j + agent client → starts a `:Run` → runs orchestrator → records `ok`/`aborted`. Refuses HERB unless `--allow-legacy-herb-tagging` is passed. Args: `--dataset-id`, `--chunk-limit`, `--file-limit`, `--concurrency`. |
 | [`scripts/run_tags_only_pilot.py`](../scripts/run_tags_only_pilot.py) | Non-mutating tags-only model pilot over sampled chunks. Writes Markdown reports under `backend/.plan/`. |
 | [`scripts/run_tags_only_structured_matrix.py`](../scripts/run_tags_only_structured_matrix.py) | Controlled structured-output model matrix runner for the tags-only pilot. Writes comparison reports under `backend/.plan/`. |
-| [`scripts/verify_graph.py`](../scripts/verify_graph.py) | Quick sanity counts: `:Source`, `:File`, `:Chunk`, working-file item statuses, `:CanonicalTag` by cluster, file/chunk breakdowns, sample chunk previews. Read-only. |
+| [`scripts/verify_graph.py`](../scripts/verify_graph.py) | Quick sanity counts: `:Source`, `:File`, `:Chunk`, working-file item statuses, file/chunk breakdowns, sample chunk previews. Read-only. |
 
 ## `shared/`
 

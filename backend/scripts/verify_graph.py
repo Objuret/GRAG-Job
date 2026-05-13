@@ -14,8 +14,6 @@ async def main():
         ("Source", "MATCH (n:Source) RETURN count(n) AS n"),
         ("File", "MATCH (n:File) RETURN count(n) AS n"),
         ("Chunk", "MATCH (n:Chunk) RETURN count(n) AS n"),
-        ("CanonicalTag", "MATCH (n:CanonicalTag) RETURN count(n) AS n"),
-        ("CanonicalTag by cluster", "MATCH (n:CanonicalTag) RETURN n.cluster AS cluster, count(n) AS n ORDER BY cluster"),
         ("File breakdown by format_family", "MATCH (n:File) RETURN n.format_family AS ff, count(n) AS n ORDER BY ff"),
         ("Chunk breakdown by kind", "MATCH (n:Chunk) RETURN n.kind AS kind, count(n) AS n ORDER BY kind"),
         ("Sample chunk content", "MATCH (n:Chunk) RETURN n.chunk_id AS id, n.kind AS kind, substring(n.content, 0, 120) AS preview LIMIT 3"),

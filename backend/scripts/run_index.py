@@ -70,6 +70,14 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Override Settings.agent_max_concurrency for this run.",
     )
+    parser.add_argument(
+        "--allow-legacy-herb-tagging",
+        action="store_true",
+        help=(
+            "Explicitly allow the old generic extraction/tagging path against HERB. "
+            "Without this, HERB indexing stops after preflight/chunking."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -78,6 +86,19 @@ async def main() -> None:
     settings = Settings()
     if args.concurrency is not None:
         settings = settings.model_copy(update={"agent_max_concurrency": args.concurrency})
+
+    herb_scope = (
+        settings.neo4j_database.lower() == "herb"
+        or args.dataset_id == "Salesforce__HERB"
+    )
+    if herb_scope and not args.allow_legacy_herb_tagging:
+        print(
+            "ERROR: Refusing to run the legacy generic extraction/tagging path against HERB. "
+            "HERB is currently preflight/chunking-only until a HERB-specific extraction path is built. "
+            "Use --allow-legacy-herb-tagging only for an explicit throwaway experiment.",
+            file=sys.stderr,
+        )
+        sys.exit(2)
 
     if not (settings.agent_api_key and settings.agent_api_key.strip()):
         lines = [

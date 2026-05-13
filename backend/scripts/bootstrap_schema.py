@@ -1,19 +1,16 @@
-"""Bootstrap the Neo4j schema and seed canonical tags.
+"""Bootstrap the Neo4j schema.
 
 Idempotent. Run once per fresh Neo4j install, or any time the schema files or
-canonical_seed.yaml change. Existing data is untouched.
+indexes change. Existing data is untouched.
 
-    python scripts/bootstrap_schema.py [--skip-canonical-seed]
+    python scripts/bootstrap_schema.py
 """
 
 from __future__ import annotations
 
 import asyncio
-import argparse
 import sys
 from pathlib import Path
-
-import yaml
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -24,19 +21,6 @@ from shared.neo4j_client import Neo4jClient
 
 
 SCHEMA_DIR = REPO_ROOT / "schema"
-SEED_PATH = REPO_ROOT / "clustering" / "canonical_seed.yaml"
-
-
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Bootstrap Neo4j schema and optionally seed canonical tags."
-    )
-    parser.add_argument(
-        "--skip-canonical-seed",
-        action="store_true",
-        help="Apply schema only; do not merge CanonicalTag seed nodes.",
-    )
-    return parser.parse_args()
 
 
 def _load_cypher_statements(path: Path) -> list[str]:
@@ -66,48 +50,12 @@ async def apply_schema(client: Neo4jClient) -> int:
     return len(statements)
 
 
-async def seed_canonical_tags(client: Neo4jClient) -> int:
-    if not SEED_PATH.exists():
-        return 0
-    raw = yaml.safe_load(SEED_PATH.read_text(encoding="utf-8")) or {}
-    items: list[dict] = []
-    for cluster, tags in raw.items():
-        for tag in tags or []:
-            if isinstance(tag, str):
-                items.append({"label": tag, "cluster": cluster, "gloss": ""})
-            elif isinstance(tag, dict):
-                label = tag.get("label") or tag.get("name")
-                if not label:
-                    continue
-                items.append({
-                    "label": label,
-                    "cluster": cluster,
-                    "gloss": tag.get("gloss", ""),
-                })
-    if not items:
-        return 0
-
-    async with client.session() as s:
-        await s.run(
-            """
-            UNWIND $items AS item
-            MERGE (c:CanonicalTag {label: item.label, cluster: item.cluster})
-            ON CREATE SET c.gloss = item.gloss, c.source = 'seed'
-            ON MATCH SET c.gloss = item.gloss
-            """,
-            items=items,
-        )
-    return len(items)
-
-
 async def main() -> None:
-    args = parse_args()
     settings = Settings()
     client = Neo4jClient(settings)
     try:
         n_schema = await apply_schema(client)
-        n_tags = 0 if args.skip_canonical_seed else await seed_canonical_tags(client)
-        print(f"Applied {n_schema} schema statements; merged {n_tags} canonical tags.")
+        print(f"Applied {n_schema} schema statements.")
     finally:
         await client.close()
 

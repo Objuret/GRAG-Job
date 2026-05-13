@@ -106,7 +106,7 @@ class Orchestrator:
         self._file_prompt = self._read_prompt("file_descriptor.md")
         await self._load_canonical_vocab()
         print(
-            "[orchestrator] canonical vocab loaded; "
+            "[orchestrator] legacy tag context loaded; "
             f"dataset_id filter = {dataset_id!r}; file_id filter = {file_id!r}"
         )
 

@@ -4,7 +4,7 @@
 
 **When to read this.** Before editing any file under [`prompts/`](../prompts/). Also before changing [`agents/schemas.py`](../agents/schemas.py).
 
-**Last updated:** 2026-05-11.
+**Last updated:** 2026-05-13.
 
 ## Touched paths
 
@@ -28,7 +28,7 @@ Built by [`Orchestrator._render_chunk_user_message`](../indexing/orchestrator.py
 
 - `File: {dataset_id}/{rel_path}  (format={format_family})`
 - `Chunk ordinal: {ordinal}, kind: {kind}, end_offset: {end_offset}`
-- The canonical-vocab block (one line per cluster: `- {cluster}: label1, label2, ...`). Built once per run by `_load_canonical_vocab`. The cluster order is fixed: `topic, entities, activity, temporal, evidence`.
+- Legacy tag context from the orchestrator. This path is blocked for HERB unless explicitly overridden.
 - For sequential-mode files (PDF/HTML/DOCX/MD/TXT), if a previous chunk exists, its last 240 characters are included as: `Previous chunk ended with: "...{tail}"` (constant `PREV_TAIL_CHARS = 240`).
 - The chunk content itself, fenced by `---` separators.
 - A trailing line: `Output JSON. Set chunk_end_offset = {end_offset}.`
@@ -62,7 +62,7 @@ A `schema_invalid` rate of ≥ 20% over 50 calls trips the breaker and aborts th
 ### Editing guidelines
 
 - **Never** change the JSON shape without updating `ChunkExtraction` / `Tag` in [`agents/schemas.py`](../agents/schemas.py) in the same commit.
-- **Never** rename a cluster string without updating the `Cluster` Literal and the canonical seed YAML and the user-message renderer's `CLUSTER_ORDER`.
+- **Never** rename a cluster string without updating the `Cluster` Literal and the user-message renderer's `CLUSTER_ORDER`.
 - The chunk_end_offset echo check is the orchestrator's only way to detect "the model hallucinated a different chunk". Keep the prompt explicit about copying it verbatim.
 - The empty-vs-content invariant is enforced by `ChunkExtraction._validate_empty_vs_content`. Don't add a third state.
 - Missing-canonical proposal tags must set `canonical=null`; normal new raw tag names should still set `canonical_missing=false` and map to the closest broad canonical.

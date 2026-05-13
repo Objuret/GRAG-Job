@@ -4,7 +4,7 @@
 
 **When to read this.** When you need to understand *why* the code is shaped the way it is, before changing anything load-bearing.
 
-**Last updated:** 2026-05-11.
+**Last updated:** 2026-05-13.
 
 ## Touched paths
 
@@ -16,7 +16,7 @@
 |---|---|---|
 | **access** | [`data_access/raw/`](../data_access/raw/) | Sync HF/external sources, scan `data/raw/`, classify file_class (`payload_data` vs `repo_meta_code` vs `cache_meta`), emit a pandas catalog the indexing layer consumes. No Neo4j writes from the access layer beyond what `preflight` does on its behalf. |
 | **indexing** | [`indexing/`](../indexing/) | Chunker, working-file job ledger, Run repository, Orchestrator dispatcher, ExtractionWriter, FileExtractionWriter, deterministic FileRollup, CircuitBreaker. Pre-flight scans the access catalog, writes graph corpus nodes, and updates the local working file. The orchestrator is the only LLM caller. |
-| **clustering** | [`clustering/`](../clustering/) | Canonical tag vocabulary ([`canonical_seed.yaml`](../clustering/canonical_seed.yaml)). Proposal triage (CLI) and named cluster query views are open work — not built. |
+| **clustering** | [`clustering/`](../clustering/) | Future HERB query views. The old canonical seed vocabulary has been removed. |
 
 The `agents/` package is shared infrastructure: a single OpenAI-compatible HTTP client and the pydantic schemas every agent call returns. `shared/` holds config, the async Neo4j wrapper, and small utilities (hashing, time).
 
@@ -148,7 +148,7 @@ Determined per file at preflight by [`dispatch_mode_for`](../indexing/chunker.py
 
 | Format family | Mode | Why |
 |---|---|---|
-| `jsonl`, `json`, `parquet`, `yaml`, `yml`, image, archive, unknown | `parallel` | Records are independent; the agent gets the same canonical vocab and no continuity hint. |
+| `jsonl`, `json`, `parquet`, `yaml`, `yml`, image, archive, unknown | `parallel` | Records are independent; the legacy agent gets no continuity hint. |
 | `pdf`, `html`, `docx`, `md`, `markdown`, `txt`, `text` | `sequential` | Long-form text. The orchestrator passes the previous chunk's tail (last 240 chars) as a continuity hint. Today the dispatcher still issues calls in parallel under the asyncio semaphore — sequential refers to the user-message prompt content, not the call ordering. Real serial dispatch is a future revisit (see D1 alternatives). |
 
 ## Outcome paths per chunk

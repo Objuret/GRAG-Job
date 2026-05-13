@@ -2,6 +2,7 @@
 
 Usage:
     python -m backend.tagging select
+    python -m backend.tagging verify-chunks
     python -m backend.tagging extract
     python -m backend.tagging describe
     python -m backend.tagging score
@@ -16,6 +17,7 @@ import sys
 from . import pipeline
 
 STAGES = {
+    "verify-chunks": pipeline.stage_verify_chunks,
     "select": pipeline.stage_select,
     "extract": pipeline.stage_extract,
     "describe": pipeline.stage_describe,
