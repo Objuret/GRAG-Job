@@ -3,12 +3,13 @@
 Idempotent. Run once per fresh Neo4j install, or any time the schema files or
 canonical_seed.yaml change. Existing data is untouched.
 
-    python scripts/bootstrap_schema.py
+    python scripts/bootstrap_schema.py [--skip-canonical-seed]
 """
 
 from __future__ import annotations
 
 import asyncio
+import argparse
 import sys
 from pathlib import Path
 
@@ -24,6 +25,18 @@ from shared.neo4j_client import Neo4jClient
 
 SCHEMA_DIR = REPO_ROOT / "schema"
 SEED_PATH = REPO_ROOT / "clustering" / "canonical_seed.yaml"
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Bootstrap Neo4j schema and optionally seed canonical tags."
+    )
+    parser.add_argument(
+        "--skip-canonical-seed",
+        action="store_true",
+        help="Apply schema only; do not merge CanonicalTag seed nodes.",
+    )
+    return parser.parse_args()
 
 
 def _load_cypher_statements(path: Path) -> list[str]:
@@ -88,11 +101,12 @@ async def seed_canonical_tags(client: Neo4jClient) -> int:
 
 
 async def main() -> None:
+    args = parse_args()
     settings = Settings()
     client = Neo4jClient(settings)
     try:
         n_schema = await apply_schema(client)
-        n_tags = await seed_canonical_tags(client)
+        n_tags = 0 if args.skip_canonical_seed else await seed_canonical_tags(client)
         print(f"Applied {n_schema} schema statements; merged {n_tags} canonical tags.")
     finally:
         await client.close()

@@ -40,5 +40,5 @@ Many noisy, heterogeneous datasets sit between us and any analytical query. The 
 - **No fallbacks. No mocks.** Fail loud. The agent client never raises; the orchestrator decides. Everywhere else, raise.
 - **One LLM endpoint.** OpenAI-compatible HTTP. Configured via `LLM_*` env (legacy `AGENT_*` honoured). No local model fallback.
 - **Per-error-class circuit breaker.** Tight thresholds (see [`../indexing/breaker.py`](../indexing/breaker.py)).
-- **Worklist drives everything.** `WorkItem` rows in Neo4j are the source of truth for "what to do".
+- **Working-file job ledger drives agent scheduling.** Do not store scheduler rows in the graph.
 - **Neo4j is the only durable store.** No parquet/JSON side artefacts in the indexing path.

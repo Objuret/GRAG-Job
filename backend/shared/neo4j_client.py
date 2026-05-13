@@ -18,6 +18,10 @@ class Neo4jClient:
         )
         self._database = settings.neo4j_database
 
+    @property
+    def database(self) -> str:
+        return self._database
+
     @asynccontextmanager
     async def session(self) -> AsyncIterator[AsyncSession]:
         async with self._driver.session(database=self._database) as session:

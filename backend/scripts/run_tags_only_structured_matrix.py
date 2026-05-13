@@ -3,7 +3,7 @@
 This repeats the ActionGenie tags-only pilot matrix with the same file, chunks,
 and model list as the 20260508_152333 review, but uses the current lean prompt
 and strict structured output mode. It is non-mutating: no graph writes,
-WorkItem changes, or Run nodes.
+working-file changes, or Run nodes.
 """
 
 from __future__ import annotations

@@ -1,4 +1,4 @@
-"""Pre-flight: scan raw datasets, upsert File nodes, chunk, seed WorkItems.
+"""Pre-flight: scan raw datasets, upsert File nodes, chunk, update working file.
 
 Runs before the agent dispatcher. Idempotent — re-running picks up new files
 and skips Files that already have Chunks.
@@ -7,9 +7,7 @@ Filters to file_class == 'payload_data' from the raw scanner.
 
 Per-file fault tolerance: if any step for a single file raises, we log a one-
 line summary, record the failure, and continue with the next file. The
-``file_orchestration`` WorkItem is the LAST step within a file's processing,
-so a chunking failure leaves the File unorchestrated until a future re-run
-where chunking succeeds.
+the working file is only updated after the file has been upserted and chunked.
 """
 
 from __future__ import annotations
@@ -33,7 +31,7 @@ class PreflightResult:
     files_new: int = 0
     files_skipped_no_chunks: int = 0
     chunks_created: int = 0
-    work_items_seeded: int = 0
+    working_items_seeded: int = 0
     failures: list[dict] = field(default_factory=list)
 
 
@@ -124,9 +122,16 @@ def _record_failure(
     )
 
 
-async def run_preflight(settings: Settings, client: Neo4jClient) -> PreflightResult:
+async def run_preflight(
+    settings: Settings,
+    client: Neo4jClient,
+    *,
+    dataset_id_filter: str | None = None,
+) -> PreflightResult:
     catalog = scan_raw_tree(settings.data_root)
     payload = catalog[catalog["file_class"] == "payload_data"]
+    if dataset_id_filter is not None:
+        payload = payload[payload["dataset_id"] == dataset_id_filter]
 
     chunker = Chunker(client)
     worklist = WorkList(client)
@@ -189,7 +194,7 @@ async def run_preflight(settings: Settings, client: Neo4jClient) -> PreflightRes
             # or if the file cannot produce chunks, this file gets no
             # orchestration item this run.
             await worklist.seed_file_orchestration_item(file_id)
-            result.work_items_seeded += seeded_chunk_items + 1
+            result.working_items_seeded += seeded_chunk_items + 1
         except Exception as exc:  # noqa: BLE001 — explicit per-file isolation
             _record_failure(
                 result,

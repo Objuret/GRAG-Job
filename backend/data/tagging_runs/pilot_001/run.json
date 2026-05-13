@@ -1,0 +1,126 @@
+{
+  "pilot_name": "pilot_001",
+  "created_at": "2026-05-12T21:08:30.548879+00:00",
+  "model": "openai/gpt-oss-120b",
+  "database": "herb",
+  "sample_size": 10,
+  "concurrency": 4,
+  "facets": [
+    "topic",
+    "entities",
+    "activity",
+    "temporal",
+    "evidence"
+  ],
+  "chunk_ids": [
+    {
+      "chunk_id": "d7fe4bbf728b7d6b76d5a415",
+      "file_id": "85c7be7ca8f554f27cd84f35",
+      "ordinal": 197,
+      "rel_path": "Salesforce__HERB/metadata/employee.json"
+    },
+    {
+      "chunk_id": "88c460e71accfbd1b112e83f",
+      "file_id": "d17fbfa2d9071000cfcf9a4f",
+      "ordinal": 60,
+      "rel_path": "Salesforce__HERB/metadata/customers_data.json"
+    },
+    {
+      "chunk_id": "c5c0ec5ce3e3fb775fdc814f",
+      "file_id": "85c7be7ca8f554f27cd84f35",
+      "ordinal": 216,
+      "rel_path": "Salesforce__HERB/metadata/employee.json"
+    },
+    {
+      "chunk_id": "a5cfb88f340cc12659fa42e5",
+      "file_id": "85c7be7ca8f554f27cd84f35",
+      "ordinal": 174,
+      "rel_path": "Salesforce__HERB/metadata/employee.json"
+    },
+    {
+      "chunk_id": "bfed7e9e8bd26deeaf8df80c",
+      "file_id": "85c7be7ca8f554f27cd84f35",
+      "ordinal": 93,
+      "rel_path": "Salesforce__HERB/metadata/employee.json"
+    },
+    {
+      "chunk_id": "4552dddeaae01ef9721c9c57",
+      "file_id": "d17fbfa2d9071000cfcf9a4f",
+      "ordinal": 58,
+      "rel_path": "Salesforce__HERB/metadata/customers_data.json"
+    },
+    {
+      "chunk_id": "0c37d412cb740af55a668dee",
+      "file_id": "4b5c6a20d903a7b89a9cdf21",
+      "ordinal": 2,
+      "rel_path": "Salesforce__HERB/products/CollaborateForce.json"
+    },
+    {
+      "chunk_id": "3870d2a9ad0b03eccd4ffbde",
+      "file_id": "85c7be7ca8f554f27cd84f35",
+      "ordinal": 207,
+      "rel_path": "Salesforce__HERB/metadata/employee.json"
+    },
+    {
+      "chunk_id": "db48edbd3d4fa726c6adfd84",
+      "file_id": "85c7be7ca8f554f27cd84f35",
+      "ordinal": 161,
+      "rel_path": "Salesforce__HERB/metadata/employee.json"
+    },
+    {
+      "chunk_id": "ae6661fd144ff3d8c1ddda0b",
+      "file_id": "85c7be7ca8f554f27cd84f35",
+      "ordinal": 150,
+      "rel_path": "Salesforce__HERB/metadata/employee.json"
+    }
+  ],
+  "stages_done": [
+    "extract",
+    "describe",
+    "score",
+    "analyze"
+  ],
+  "analysis": {
+    "n_chunks": 10,
+    "n_files": 3,
+    "tag_edges_total": 84,
+    "tag_edges_per_facet": {
+      "topic": 22,
+      "entities": 31,
+      "activity": 14,
+      "temporal": 3,
+      "evidence": 14
+    },
+    "unique_tag_names": 58,
+    "w_chunk_stats": {
+      "n": 84,
+      "min": 0.3,
+      "max": 1.0,
+      "mean": 0.8333333333333334,
+      "median": 0.9,
+      "stdev": 0.1683840093452303,
+      "distinct_at_2dp": 9
+    },
+    "w_facet_stats": {
+      "n": 84,
+      "min": 0.8,
+      "max": 1.0,
+      "mean": 0.9726190476190476,
+      "median": 1.0,
+      "stdev": 0.047185526625253355,
+      "distinct_at_2dp": 3
+    },
+    "w_chunk_file_stats": {
+      "n": 10,
+      "min": 0.75,
+      "max": 0.95,
+      "mean": 0.8699999999999999,
+      "median": 0.85,
+      "stdev": 0.059999999999999984,
+      "distinct_at_2dp": 3
+    },
+    "round_anchor_pct_w_chunk": 0.9761904761904762,
+    "round_anchor_pct_w_facet": 1.0,
+    "round_anchor_pct_w_chunk_file": 0.0
+  }
+}

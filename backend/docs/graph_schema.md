@@ -31,7 +31,7 @@ One per dataset (`Salesforce__HERB`, `wenhu__hybrid_qa`, …).
 - **Constraint:** `REQUIRE n.source_id IS UNIQUE` ([`schema/constraints.cypher`](../schema/constraints.cypher)).
 - **Indexes:** none beyond the uniqueness constraint.
 - **Who writes:** [`indexing/preflight.py`](../indexing/preflight.py) `upsert_source_node`.
-- **Who reads:** [`indexing/worklist.py`](../indexing/worklist.py) (`pull_unrun_*` with `dataset_id_filter`), [`indexing/orchestrator.py`](../indexing/orchestrator.py).
+- **Who reads:** [`indexing/orchestrator.py`](../indexing/orchestrator.py).
 
 ### `:File`
 
@@ -54,7 +54,7 @@ One per payload file (`file_class == 'payload_data'`).
 - **Constraint:** `REQUIRE n.file_id IS UNIQUE`.
 - **Indexes:** `(n.dataset_id)`, `(n.format_family)`.
 - **Who writes:** preflight (creation, base properties), [`indexing/file_writer.py`](../indexing/file_writer.py) (description), [`indexing/file_rollup.py`](../indexing/file_rollup.py) reads it.
-- **Who reads:** orchestrator (file context), rollup, worklist filtering, [`scripts/verify_graph.py`](../scripts/verify_graph.py).
+- **Who reads:** orchestrator (file context), rollup, [`scripts/verify_graph.py`](../scripts/verify_graph.py).
 
 ### `:Chunk`
 
@@ -80,7 +80,7 @@ One per deterministic chunk produced by [`indexing/chunker.py`](../indexing/chun
 - **Constraint:** `REQUIRE n.chunk_id IS UNIQUE`.
 - **Indexes:** `(n.file_id)`, `(n.empty)`.
 - **Who writes:** [`indexing/chunker.py`](../indexing/chunker.py) (creation), [`indexing/extraction_writer.py`](../indexing/extraction_writer.py) (`empty`, `empty_reason`, `description`), [`indexing/file_writer.py`](../indexing/file_writer.py) (`relevance_to_file`).
-- **Who reads:** orchestrator, worklist (chunk inventory), rollup.
+- **Who reads:** orchestrator, rollup.
 
 ### `:Tag`
 
@@ -132,30 +132,9 @@ Created when the agent emits a tag with `canonical_missing=True`. Raw tag names 
 - **Who writes:** [`indexing/extraction_writer.py`](../indexing/extraction_writer.py).
 - **Who reads:** Future triage CLI (TODO — see [`status.md`](status.md)).
 
-### `:WorkItem`
+### Working File
 
-The "what to do" register. One row per chunk extraction and one per file orchestration for files that have at least one chunk. Files that produce zero chunks have no LLM WorkItem.
-
-| Property | Type | Notes |
-|---|---|---|
-| `work_item_id` | string | **UNIQUE constraint.** `f"{kind}:{target_id}"`. |
-| `kind` | string | `chunk_extraction` or `file_orchestration`. |
-| `target_id` | string | `chunk_id` or `file_id`. |
-| `file_id` | string | The owning file (== `target_id` for `file_orchestration` items). |
-| `status` | string | `unrun`, `done`, `failed`. |
-| `created_at` | iso8601 | Set on create. |
-| `assigned_at` | iso8601 \| null | Stamped when the orchestrator pulls the item. |
-| `completed_at` | iso8601 \| null | Stamped on `mark_done` / `mark_failed`. |
-| `run_id` | string \| null | Most recent toucher; reset to null on `reset_failed_to_unrun`. |
-| `in_tokens`, `out_tokens` | int | Per-call token counts. |
-| `duration_ms` | int | Per-call duration. |
-| `error_class` | string \| null | One of the `ErrorClass` literals or `schema_validation`. |
-| `error_message` | string \| null | Truncated to 5000 chars. |
-
-- **Constraint:** `REQUIRE n.work_item_id IS UNIQUE`.
-- **Indexes:** `(n.status)`, `(n.kind)`.
-- **Who writes:** [`indexing/worklist.py`](../indexing/worklist.py).
-- **Who reads:** orchestrator, `verify_graph.py`.
+Scheduler state is not part of the graph. Chunk/file agent jobs live in `backend/.work/worklist_<neo4j_database>.json`, written by [`indexing/worklist.py`](../indexing/worklist.py). There are no `:WorkItem` nodes in the graph contract.
 
 ### `:Run`
 
@@ -177,7 +156,7 @@ One per `python scripts/run_index.py` invocation.
 - **Constraint:** `REQUIRE n.run_id IS UNIQUE`.
 - **Indexes:** none beyond uniqueness.
 - **Who writes:** [`indexing/runs.py`](../indexing/runs.py).
-- **Who reads:** humans inspecting the graph; the orchestrator stamps `run_id` onto WorkItems but does not re-read `:Run` properties.
+- **Who reads:** humans inspecting the graph.
 
 ## Edge types
 
@@ -185,13 +164,13 @@ One per `python scripts/run_index.py` invocation.
 
 - **Properties:** none.
 - **Who writes:** preflight `upsert_file_node`.
-- **Who reads:** worklist filters; future cluster queries.
+- **Who reads:** future cluster queries.
 
 ### `(:File)-[:HAS_CHUNK]->(:Chunk)`
 
 - **Properties:** none.
 - **Who writes:** [`indexing/chunker.py`](../indexing/chunker.py) `_write_chunks`.
-- **Who reads:** orchestrator, file rollup, worklist seeding.
+- **Who reads:** orchestrator, file rollup.
 
 ### `(:Chunk)-[:NEXT]->(:Chunk)`
 
@@ -233,14 +212,6 @@ Derived edge from the deterministic file rollup. Pure function of `HAS_TAG` + `C
 - **Who writes:** [`indexing/file_rollup.py`](../indexing/file_rollup.py). The rollup **deletes all in-scope `TAGGED` edges first** then creates fresh ones (Cypher MERGE semantics around null `canonical_id` are awkward; pure delete-and-rebuild is safer).
 - **Who reads:** future cluster query views (not built yet — planned under `clustering/queries/`).
 
-### `(:WorkItem)-[:TARGETS]->(:Chunk | :File)`
-
-Pointer from the work register to the work target.
-
-- **Properties:** none.
-- **Who writes:** [`indexing/worklist.py`](../indexing/worklist.py) `seed_chunk_extraction_items`, `seed_file_orchestration_item`.
-- **Who reads:** debugging only — the orchestrator uses `target_id` directly.
-
 ### `(:CanonicalTagProposal)-[:OBSERVED_IN]->(:Chunk)`
 
 One edge per proposing-occurrence; lets us trace where a proposal came from.
@@ -258,8 +229,6 @@ CREATE INDEX IF NOT EXISTS FOR (n:File)         ON (n.dataset_id);
 CREATE INDEX IF NOT EXISTS FOR (n:File)         ON (n.format_family);
 CREATE INDEX IF NOT EXISTS FOR (n:Chunk)        ON (n.file_id);
 CREATE INDEX IF NOT EXISTS FOR (n:Chunk)        ON (n.empty);
-CREATE INDEX IF NOT EXISTS FOR (n:WorkItem)     ON (n.status);
-CREATE INDEX IF NOT EXISTS FOR (n:WorkItem)     ON (n.kind);
 CREATE INDEX IF NOT EXISTS FOR (n:CanonicalTag) ON (n.cluster);
 CREATE INDEX IF NOT EXISTS FOR ()-[r:HAS_TAG]-() ON (r.cluster);
 CREATE INDEX IF NOT EXISTS FOR ()-[r:HAS_TAG]-() ON (r.canonical_id);

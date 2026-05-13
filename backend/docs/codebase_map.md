@@ -28,10 +28,10 @@ The core pipeline.
 |---|---|---|---|
 | [`indexing/__init__.py`](../indexing/__init__.py) | Package marker. | — | — |
 | [`indexing/breaker.py`](../indexing/breaker.py) | Per-error-class circuit breaker. Defaults are the "tight" policy. | `BreakerThresholds`, `CircuitBreaker.observe`, `BreakerTripped` | [`indexing/orchestrator.py`](../indexing/orchestrator.py) (calls `observe` after every agent call). |
-| [`indexing/worklist.py`](../indexing/worklist.py) | `(:WorkItem)` repository. Seed/pull/mark transitions. | `WorkList`, `WorkItemRecord`, `make_work_item_id` | [`indexing/preflight.py`](../indexing/preflight.py) (seeds), [`indexing/orchestrator.py`](../indexing/orchestrator.py) (pulls and marks). |
+| [`indexing/worklist.py`](../indexing/worklist.py) | Local working-file job ledger under `backend/.work/`. Seed/pull/mark transitions. | `WorkList`, `JobRecord`, `make_work_item_id` | [`indexing/preflight.py`](../indexing/preflight.py) (seeds), [`indexing/orchestrator.py`](../indexing/orchestrator.py) (pulls and marks). |
 | [`indexing/runs.py`](../indexing/runs.py) | `(:Run)` repository: `start_run` / `finish_run`, `RunSummary`. | `RunRepository`, `RunSummary`, `make_run_id` | [`scripts/run_index.py`](../scripts/run_index.py). |
 | [`indexing/chunker.py`](../indexing/chunker.py) | Per-format deterministic chunker. Rule: re-chunk only if no chunks exist. | `Chunker`, `ChunkPolicy`, `ChunkRecord`, `dispatch_mode_for` | [`indexing/preflight.py`](../indexing/preflight.py). |
-| [`indexing/preflight.py`](../indexing/preflight.py) | Scan raw catalog → upsert `:Source`/`:File` → chunk → seed WorkItems. Per-file fault isolation. | `run_preflight`, `PreflightResult`, `upsert_source_node`, `upsert_file_node` | [`scripts/run_preflight.py`](../scripts/run_preflight.py). |
+| [`indexing/preflight.py`](../indexing/preflight.py) | Scan raw catalog → upsert `:Source`/`:File` → chunk → update working file. Per-file fault isolation. | `run_preflight`, `PreflightResult`, `upsert_source_node`, `upsert_file_node` | [`scripts/run_preflight.py`](../scripts/run_preflight.py). |
 | [`indexing/orchestrator.py`](../indexing/orchestrator.py) | Three-stage dispatcher. Concurrency via `asyncio.Semaphore`; breaker observed under a lock. Renders user messages including the canonical-vocab block. | `Orchestrator.run`, `_run_chunk_stage`, `_run_file_stage`, `_load_canonical_vocab`, `CHUNK_BATCH_SIZE`, `FILE_BATCH_SIZE`, `PREV_TAIL_CHARS`, `CLUSTER_ORDER` | [`scripts/run_index.py`](../scripts/run_index.py). |
 | [`indexing/extraction_writer.py`](../indexing/extraction_writer.py) | Writes `ChunkExtraction` results. Idempotent: wipes prior `HAS_TAG` edges before re-writing. Creates `:CanonicalTagProposal` nodes for proposals. | `ExtractionWriter.write_chunk_extraction` | [`indexing/orchestrator.py`](../indexing/orchestrator.py). |
 | [`indexing/file_writer.py`](../indexing/file_writer.py) | Writes `FileOrchestrationOutput`. Sets `(:File).description` and `(:Chunk).relevance_to_file`. | `FileExtractionWriter.write_file_orchestration` | [`indexing/orchestrator.py`](../indexing/orchestrator.py). |
@@ -78,8 +78,8 @@ Cypher applied by `bootstrap_schema.py`.
 
 | File | Role |
 |---|---|
-| [`schema/constraints.cypher`](../schema/constraints.cypher) | Uniqueness constraints (Source, File, Chunk, Run, WorkItem, CanonicalTagProposal, Tag) plus the `(label, cluster)` NODE KEY on `:CanonicalTag`. |
-| [`schema/indexes.cypher`](../schema/indexes.cypher) | B-tree indexes on hot lookup properties (File.dataset_id, Chunk.file_id, WorkItem.status, etc.) plus relationship indexes on `HAS_TAG.cluster`, `HAS_TAG.canonical_id`, `TAGGED.cluster`. |
+| [`schema/constraints.cypher`](../schema/constraints.cypher) | Uniqueness constraints (Source, File, Chunk, Run, CanonicalTagProposal, Tag) plus the `(label, cluster)` NODE KEY on `:CanonicalTag`. |
+| [`schema/indexes.cypher`](../schema/indexes.cypher) | B-tree indexes on hot lookup properties (File.dataset_id, Chunk.file_id, etc.) plus relationship indexes on `HAS_TAG.cluster`, `HAS_TAG.canonical_id`, `TAGGED.cluster`. |
 | [`schema/vector_indexes.cypher`](../schema/vector_indexes.cypher) | **Empty** — embeddings deferred. |
 | [`schema/create_database.cypher`](../schema/create_database.cypher) | One statement to create a fresh empty database (`exjobbet_index`) on Neo4j Enterprise. Run from the `system` database in Neo4j Browser; not invoked by any Python script. |
 
@@ -97,7 +97,7 @@ Operator entry points. Each one is small (initialise → call layer code → clo
 | [`scripts/run_index.py`](../scripts/run_index.py) | The dispatcher. Validates API key → opens Neo4j + agent client → starts a `:Run` → runs orchestrator → records `ok`/`aborted`. Args: `--dataset-id`, `--chunk-limit`, `--file-limit`, `--concurrency`. |
 | [`scripts/run_tags_only_pilot.py`](../scripts/run_tags_only_pilot.py) | Non-mutating tags-only model pilot over sampled chunks. Writes Markdown reports under `backend/.plan/`. |
 | [`scripts/run_tags_only_structured_matrix.py`](../scripts/run_tags_only_structured_matrix.py) | Controlled structured-output model matrix runner for the tags-only pilot. Writes comparison reports under `backend/.plan/`. |
-| [`scripts/verify_graph.py`](../scripts/verify_graph.py) | Quick sanity counts: `:Source`, `:File`, `:Chunk`, unrun WorkItems, `:CanonicalTag` by cluster, file/chunk breakdowns, sample chunk previews. Read-only. |
+| [`scripts/verify_graph.py`](../scripts/verify_graph.py) | Quick sanity counts: `:Source`, `:File`, `:Chunk`, working-file item statuses, `:CanonicalTag` by cluster, file/chunk breakdowns, sample chunk previews. Read-only. |
 
 ## `shared/`
 

@@ -4,16 +4,16 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 from shared.config import Settings
 from shared.neo4j_client import Neo4jClient
+from indexing.worklist import WorkList
 
 async def main():
     s = Settings()
     c = Neo4jClient(s)
+    worklist = WorkList(c)
     queries = [
         ("Source", "MATCH (n:Source) RETURN count(n) AS n"),
         ("File", "MATCH (n:File) RETURN count(n) AS n"),
         ("Chunk", "MATCH (n:Chunk) RETURN count(n) AS n"),
-        ("WorkItem unrun chunk_extraction", "MATCH (n:WorkItem) WHERE n.kind='chunk_extraction' AND n.status='unrun' RETURN count(n) AS n"),
-        ("WorkItem unrun file_orchestration", "MATCH (n:WorkItem) WHERE n.kind='file_orchestration' AND n.status='unrun' RETURN count(n) AS n"),
         ("CanonicalTag", "MATCH (n:CanonicalTag) RETURN count(n) AS n"),
         ("CanonicalTag by cluster", "MATCH (n:CanonicalTag) RETURN n.cluster AS cluster, count(n) AS n ORDER BY cluster"),
         ("File breakdown by format_family", "MATCH (n:File) RETURN n.format_family AS ff, count(n) AS n ORDER BY ff"),
@@ -27,6 +27,9 @@ async def main():
                 r = await s_.run(q)
                 async for record in r:
                     print(dict(record))
+        print("\n--- Working file items by kind/status ---")
+        for key, value in sorted((await worklist.counts_by_status()).items()):
+            print({key: value})
     finally:
         await c.close()
 

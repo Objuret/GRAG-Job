@@ -56,13 +56,13 @@ def parse_args() -> argparse.Namespace:
         "--chunk-limit",
         type=int,
         default=None,
-        help="Cap how many chunk_extraction WorkItems to process this run.",
+        help="Cap how many chunk_extraction working-file items to process this run.",
     )
     parser.add_argument(
         "--file-limit",
         type=int,
         default=None,
-        help="Cap how many file_orchestration WorkItems to process this run.",
+        help="Cap how many file_orchestration working-file items to process this run.",
     )
     parser.add_argument(
         "--concurrency",

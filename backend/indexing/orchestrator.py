@@ -1,8 +1,8 @@
 """Agent dispatcher.
 
 Three stages, run in order:
-  1. chunk_extraction WorkItems  -> ChunkExtraction agent calls -> ExtractionWriter.
-  2. file_orchestration WorkItems -> FileOrchestrationOutput agent calls -> FileExtractionWriter.
+  1. chunk_extraction working-file items  -> ChunkExtraction agent calls -> ExtractionWriter.
+  2. file_orchestration working-file items -> FileOrchestrationOutput agent calls -> FileExtractionWriter.
   3. Deterministic FileRollup     -> (:File)-[:TAGGED]->(:Tag) edges.
 
 Concurrency is bounded by an asyncio.Semaphore sized from
@@ -12,10 +12,9 @@ serialisable; if the breaker trips we let ``BreakerTripped`` propagate up to
 the run-level caller, which records the abort in the Run node and exits.
 
 The orchestrator only mutates rows it owns. Per-batch failures (a 500 from the
-agent, a schema validation error, etc.) become ``mark_failed`` rows in the
-WorkItem table and increment the failed counter on ``RunSummary``. The next
-``Orchestrator.run`` call resets all ``failed`` items back to ``unrun`` via
-``WorkList.reset_failed_to_unrun``.
+agent, a schema validation error, etc.) become ``failed`` rows in the local
+working file and increment the failed counter on ``RunSummary``. The next
+``Orchestrator.run`` call resets failed working-file items back to ``unrun``.
 """
 
 from __future__ import annotations
@@ -34,7 +33,7 @@ from .extraction_writer import ExtractionWriter
 from .file_rollup import FileRollup
 from .file_writer import FileExtractionWriter
 from .runs import RunRepository, RunSummary
-from .worklist import WorkItemRecord, WorkList
+from .worklist import JobRecord, WorkList
 
 
 CHUNK_BATCH_SIZE = 200
@@ -199,7 +198,7 @@ class Orchestrator:
                 f"done={self.summary.chunks_done} failed={self.summary.chunks_failed}"
             )
 
-    async def _process_chunk(self, item: WorkItemRecord, run_id: str) -> None:
+    async def _process_chunk(self, item: JobRecord, run_id: str) -> None:
         async with self._semaphore:
             await self._worklist.mark_assigned(item.work_item_id)
 
@@ -378,7 +377,7 @@ class Orchestrator:
                 f"done={self.summary.files_done} failed={self.summary.files_failed}"
             )
 
-    async def _process_file(self, item: WorkItemRecord, run_id: str) -> None:
+    async def _process_file(self, item: JobRecord, run_id: str) -> None:
         async with self._semaphore:
             await self._worklist.mark_assigned(item.work_item_id)
 

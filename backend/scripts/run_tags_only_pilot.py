@@ -2,7 +2,7 @@
 
 Reads chunks from Neo4j, calls the configured OpenAI-compatible LLM endpoint
 with the tags-only prompt, validates JSON locally, and writes a Markdown report
-under backend/.plan. It does not create WorkItems, Runs, HAS_TAG edges, or
+under backend/.plan. It does not create working-file items, Runs, HAS_TAG edges, or
 TAGGED edges.
 
 Output shape: 5 cluster keys (``topic``, ``entities``, ``activity``,
@@ -358,7 +358,7 @@ def render_report(
     lines: list[str] = [
         f"# Tags-Only Model Pilot - {now}",
         "",
-        "Non-mutating pilot. No graph writes, no WorkItem changes, no Run node.",
+        "Non-mutating pilot. No graph writes, no working-file changes, no Run node.",
         "",
         "## Model",
         "",

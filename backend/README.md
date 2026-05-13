@@ -25,7 +25,7 @@ python -m data_access.raw sync
 # Apply schema + seed canonical tags. Idempotent.
 python scripts/bootstrap_schema.py
 
-# Scan data/raw/, upsert :Source/:File, chunk, seed WorkItems. Idempotent.
+# Scan data/raw/, upsert :Source/:File, chunk, update working file. Idempotent.
 python scripts/run_preflight.py
 
 # Dispatch agent calls (chunks then files), then deterministic rollup.

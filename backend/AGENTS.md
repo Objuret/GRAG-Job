@@ -12,7 +12,7 @@ If you are an AI agent picking up this codebase, start with [`docs/agent_brief.m
 - One OpenAI-compatible LLM endpoint (configured via `LLM_*` env; legacy `AGENT_*` aliases honoured, `LLM_*` wins).
 - The agent client never raises — see [`agents/client.py`](agents/client.py); the orchestrator decides what to do with `error_class`.
 - Per-error-class circuit breaker — see [`indexing/breaker.py`](indexing/breaker.py).
-- Worklist drives everything — see [`indexing/worklist.py`](indexing/worklist.py).
+- Working-file job ledger drives agent scheduling — see [`indexing/worklist.py`](indexing/worklist.py).
 - **Neo4j is the only durable store.** No parquet/JSON side artefacts in the indexing path.
 
 Never echo `.env` contents, API keys, or passwords into any file or log.

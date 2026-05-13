@@ -15,7 +15,7 @@
 | Layer | Code | Owns |
 |---|---|---|
 | **access** | [`data_access/raw/`](../data_access/raw/) | Sync HF/external sources, scan `data/raw/`, classify file_class (`payload_data` vs `repo_meta_code` vs `cache_meta`), emit a pandas catalog the indexing layer consumes. No Neo4j writes from the access layer beyond what `preflight` does on its behalf. |
-| **indexing** | [`indexing/`](../indexing/) | Chunker, WorkItem registry, Run repository, Orchestrator dispatcher, ExtractionWriter, FileExtractionWriter, deterministic FileRollup, CircuitBreaker. Pre-flight scans the access catalog and seeds the graph + worklist. The orchestrator is the only LLM caller. |
+| **indexing** | [`indexing/`](../indexing/) | Chunker, working-file job ledger, Run repository, Orchestrator dispatcher, ExtractionWriter, FileExtractionWriter, deterministic FileRollup, CircuitBreaker. Pre-flight scans the access catalog, writes graph corpus nodes, and updates the local working file. The orchestrator is the only LLM caller. |
 | **clustering** | [`clustering/`](../clustering/) | Canonical tag vocabulary ([`canonical_seed.yaml`](../clustering/canonical_seed.yaml)). Proposal triage (CLI) and named cluster query views are open work — not built. |
 
 The `agents/` package is shared infrastructure: a single OpenAI-compatible HTTP client and the pydantic schemas every agent call returns. `shared/` holds config, the async Neo4j wrapper, and small utilities (hashing, time).
@@ -56,12 +56,12 @@ Each entry: **Decision** • **Rationale** • **Alternatives considered** • *
 
 - **Decision.** A single LLM call per chunk produces tags, descriptions, and canonical mapping in one JSON. No follow-up "classify_tag" call in the loop today.
 - **Rationale.** Cheaper, fewer round-trips, fewer breaker-tripping failure modes.
-- **Alternatives.** Two-stage: extraction then classification. Not built. Add a separate prompt + WorkItem kind only if `schema_invalid` / canonical-mapping accuracy demands it.
+- **Alternatives.** Two-stage: extraction then classification. Not built. Add a separate prompt + working-file job kind only if `schema_invalid` / canonical-mapping accuracy demands it.
 - **Status.** Active.
 
-### D6 — Worklist-first model with `WorkItem` register
+### D6 — Working-file job ledger
 
-- **Decision.** Every chunk and every chunk-bearing file has a `(:WorkItem)` row keyed `f"{kind}:{target_id}"`. Files that produce zero chunks are kept as `:File` metadata but do not get file-orchestration work. Status flow: `unrun → done | failed`.
+- **Decision.** Every chunk and every chunk-bearing file has a working-file job keyed `f"{kind}:{target_id}"`. Files that produce zero chunks are kept as `:File` metadata but do not get file-orchestration work. Status flow: `unrun → done | failed`.
 - **Rationale.** A clean, queryable register of "what to do" that survives crashes. Lets us run partial batches with `--chunk-limit` / `--file-limit` and resume. Lets us filter by dataset.
 - **Alternatives.** Compute the worklist on the fly each run from `(:Chunk)`/`(:File)`. Rejected because we lose per-item failure history and assignment timestamps.
 - **Status.** Active. See [`indexing/worklist.py`](../indexing/worklist.py).
@@ -87,7 +87,7 @@ Each entry: **Decision** • **Rationale** • **Alternatives considered** • *
 
 ### D8 — Auto-retry-all on new run start
 
-- **Decision.** [`WorkList.reset_failed_to_unrun`](../indexing/worklist.py) flips every `failed` WorkItem to `unrun` at the start of each run.
+- **Decision.** [`WorkList.reset_failed_to_unrun`](../indexing/worklist.py) flips every `failed` working-file item to `unrun` at the start of each run.
 - **Rationale.** Failures are usually transient (rate limit, validation glitch, agent flake). The cheapest healing strategy is "try again next run". Failure history is not lost — `error_class` is cleared but the `run_id` of the most recent toucher is kept.
 - **Alternatives.** Manual triage list. Rejected — added friction with no payoff at this scale.
 - **Status.** Active.
@@ -97,7 +97,7 @@ Each entry: **Decision** • **Rationale** • **Alternatives considered** • *
 - **Decision.** [`Chunker.chunk_file`](../indexing/chunker.py) checks for existing `(:Chunk)` nodes for the file and returns early when any exist.
 - **Rationale.** Re-running pre-flight should be safe and cheap. Re-chunking risks invalidating extraction results that already reference chunk_ids.
 - **Alternatives.** Always re-chunk and reconcile. Rejected — too easy to silently lose extraction work.
-- **Status.** Active. To re-chunk a file, delete its `(:Chunk)` rows (and their downstream `WorkItem`s) explicitly.
+- **Status.** Active. To re-chunk a file, delete its `(:Chunk)` rows and clear/reseed the matching working-file items explicitly.
 
 ### D10 — Storing `Chunk.content` directly (vs offsets)
 
@@ -108,7 +108,7 @@ Each entry: **Decision** • **Rationale** • **Alternatives considered** • *
 
 ### D11 — Neo4j-only artefact storage
 
-- **Decision.** No parquet/JSON side files in the indexing path. Run summaries live on `(:Run)`. WorkItem token/duration counters live on `(:WorkItem)`.
+- **Decision.** The graph stores corpus artefacts only. Scheduler/job state lives in `backend/.work/worklist_<neo4j_database>.json`, not as graph nodes. Run summaries live on `(:Run)`.
 - **Rationale.** One source of truth. Easier to reason about. Easier to wipe and restart.
 - **Alternatives.** Parallel parquet artefacts on disk (an earlier iteration of this codebase). Rejected.
 - **Status.** Active.
@@ -155,14 +155,14 @@ Determined per file at preflight by [`dispatch_mode_for`](../indexing/chunker.py
 
 The orchestrator handles four outcomes for a chunk_extraction call:
 
-1. **Normal.** `error_class == "ok"`, `parsed.empty == False`, `chunk_end_offset` echoes the graph. Writer sets the description and creates `HAS_TAG` edges. WorkItem → `done`.
-2. **Empty verdict.** `parsed.empty == True` with an `empty_reason`. Writer sets `(:Chunk).empty=true` and clears any prior `HAS_TAG` edges. WorkItem → `done`.
+1. **Normal.** `error_class == "ok"`, `parsed.empty == False`, `chunk_end_offset` echoes the graph. Writer sets the description and creates `HAS_TAG` edges. Working-file item -> `done`.
+2. **Empty verdict.** `parsed.empty == True` with an `empty_reason`. Writer sets `(:Chunk).empty=true` and clears any prior `HAS_TAG` edges. Working-file item -> `done`.
 3. **Missing canonical proposal.** A `Tag` with `canonical_missing=True`, `canonical=null`, and a `gloss`. Writer creates a `(:CanonicalTagProposal)` node with stable `proposal_id` and an `OBSERVED_IN` edge to the chunk. The raw tag `name` is allowed to be new even in normal mapped tags; `canonical_missing` means the broad canonical vocabulary itself lacks a fitting label. The `HAS_TAG` edge has `canonical_id=null` until/unless triage promotes the proposal.
-4. **Validation failure.** `error_class == "ok"` but `chunk_end_offset` doesn't match the graph (or pydantic rejected the JSON, surfaced as `schema_invalid` from the agent client). WorkItem → `failed` with `error_class="schema_validation"` (mismatch case) or `"schema_invalid"` (pydantic case). Auto-reset on next run.
+4. **Validation failure.** `error_class == "ok"` but `chunk_end_offset` doesn't match the graph (or pydantic rejected the JSON, surfaced as `schema_invalid` from the agent client). Working-file item -> `failed` with `error_class="schema_validation"` (mismatch case) or `"schema_invalid"` (pydantic case). Auto-reset on next run.
 
 ## File orchestrator role
 
-After every non-empty chunk in a file has been extracted (or marked failed — failed extractions don't block the file step), the file_orchestration WorkItem becomes pullable. The orchestrator passes the file's chunk inventory (descriptions + tag summaries, **not** raw chunk content) to the LLM. The LLM returns:
+After every non-empty chunk in a file has been extracted (or marked failed — failed extractions don't block the file step), the file_orchestration working-file item becomes pullable. The orchestrator passes the file's chunk inventory (descriptions + tag summaries, **not** raw chunk content) to the LLM. The LLM returns:
 
 - A 3-5 sentence file `description` written to `(:File).description`.
 - A `chunk_relevance` map from `chunk_id` → score in [0, 1] written as `(:Chunk).relevance_to_file`.

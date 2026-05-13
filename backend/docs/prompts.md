@@ -13,14 +13,14 @@
 ## Common ground
 
 - **One LLM call per prompt invocation.** The indexing path uses JSON mode (`response_format=json_object`). Pilot scripts can request structured output (`response_format=json_schema`) through `AgentClient.call(response_format="structured")`. Output must be a single JSON object — no markdown, no prose, no code fences.
-- **Failure handling lives in the orchestrator.** [`agents/client.py`](../agents/client.py) catches httpx and pydantic errors and returns a typed `error_class`. [`indexing/orchestrator.py`](../indexing/orchestrator.py) marks the WorkItem `failed` with that class. Auto-retry-all on next run picks it up.
+- **Failure handling lives in the orchestrator.** [`agents/client.py`](../agents/client.py) catches httpx and pydantic errors and returns a typed `error_class`. [`indexing/orchestrator.py`](../indexing/orchestrator.py) marks the working-file item `failed` with that class. Auto-retry-all on next run picks it up.
 - **Schemas are the contract.** Edit the prompt and the pydantic model together — never one without the other.
 
 ## `prompts/extract_chunk.md`
 
 ### Purpose
 
-Per-chunk extraction. Called for every `chunk_extraction` WorkItem in [`Orchestrator._process_chunk`](../indexing/orchestrator.py). Returns a five-cluster tag set, a 1-3 sentence chunk description, and an optional empty verdict.
+Per-chunk extraction. Called for every `chunk_extraction` working-file item in [`Orchestrator._process_chunk`](../indexing/orchestrator.py). Returns a five-cluster tag set, a 1-3 sentence chunk description, and an optional empty verdict.
 
 ### Inputs the orchestrator injects (in the user message)
 
@@ -52,10 +52,10 @@ class ChunkExtraction(BaseModel):
 
 ### Validation / retry behaviour
 
-The orchestrator marks the WorkItem `failed` when:
+The orchestrator marks the working-file item `failed` when:
 
 - The agent client returns `error_class != "ok"`. Most cases bubble up directly (`http_429`, `http_5xx`, `timeout`, `network`, `http_auth`, `http_quota_exceeded`, `http_other`, `schema_invalid`). The breaker observes every error class.
-- `error_class == "ok"` but `parsed.chunk_end_offset != graph.end_offset`. Marked `failed` with `error_class="schema_validation"` and a message of the form `chunk_end_offset mismatch: agent=X graph=Y`. The breaker is **not** invoked for this synthetic class — it's only reflected in the WorkItem table.
+- `error_class == "ok"` but `parsed.chunk_end_offset != graph.end_offset`. Marked `failed` with `error_class="schema_validation"` and a message of the form `chunk_end_offset mismatch: agent=X graph=Y`. The breaker is **not** invoked for this synthetic class — it's only reflected in the working file.
 
 A `schema_invalid` rate of ≥ 20% over 50 calls trips the breaker and aborts the run.
 
@@ -72,7 +72,7 @@ A `schema_invalid` rate of ≥ 20% over 50 calls trips the breaker and aborts th
 
 ### Purpose
 
-Per-file orchestration. Called for every `file_orchestration` WorkItem in [`Orchestrator._process_file`](../indexing/orchestrator.py). Returns a 3-5 sentence file description and a `chunk_relevance` map covering **every** non-empty chunk_id.
+Per-file orchestration. Called for every `file_orchestration` working-file item in [`Orchestrator._process_file`](../indexing/orchestrator.py). Returns a 3-5 sentence file description and a `chunk_relevance` map covering **every** non-empty chunk_id.
 
 ### Inputs the orchestrator injects
 
@@ -100,7 +100,7 @@ class FileOrchestrationOutput(BaseModel):
 
 ### Validation / retry behaviour
 
-In addition to the standard `error_class` handling, the orchestrator validates that **every** non-empty chunk_id of the file appears as a key in `chunk_relevance` exactly once. Otherwise the WorkItem is marked `failed` with `error_class="schema_validation"` and a message of the form `chunk_relevance must cover every chunk_id exactly once; missing=[...] extra=[...]`.
+In addition to the standard `error_class` handling, the orchestrator validates that **every** non-empty chunk_id of the file appears as a key in `chunk_relevance` exactly once. Otherwise the working-file item is marked `failed` with `error_class="schema_validation"` and a message of the form `chunk_relevance must cover every chunk_id exactly once; missing=[...] extra=[...]`.
 
 This guarantees the rollup at Stage 3 has a relevance value for every chunk that contributed tags. (Files where the orchestrator hasn't run yet still get a sensible default of 0.5 in [`indexing/file_rollup.py`](../indexing/file_rollup.py), but the orchestrated path requires full coverage.)
 
@@ -123,7 +123,7 @@ The pilot-local `TagsOnlyExtraction` model has `chunk_end_offset`, `empty`, `emp
 
 ### Safety
 
-The pilot reads chunks from Neo4j and writes Markdown reports under `backend/.plan/`. It does not create `WorkItem`, `Run`, `HAS_TAG`, or `TAGGED` records.
+The pilot reads chunks from Neo4j and writes Markdown reports under `backend/.plan/`. It does not create working-file items, `Run`, `HAS_TAG`, or `TAGGED` records.
 
 ## Editing checklist
 

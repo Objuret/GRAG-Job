@@ -18,7 +18,7 @@ Bridge heterogeneous, noisy datasets and an LLM with a queryable artefact. Every
 
 ```mermaid
 flowchart LR
-    raw["data/raw/<br/>payload files"] --> preflight["preflight<br/>(scan + upsert + chunk + seed WorkItems)"]
+    raw["data/raw/<br/>payload files"] --> preflight["preflight<br/>(scan + upsert + chunk + update working file)"]
     preflight --> chunker["Chunker<br/>(per-format deterministic)"]
     chunker --> orch["Orchestrator<br/>(dispatcher loop)"]
     orch -- "stage 1<br/>chunk_extraction" --> ext["ExtractionWriter<br/>(:Chunk)-[:HAS_TAG]->(:Tag)"]
@@ -48,8 +48,8 @@ Cluster is stored as a **string property on the `HAS_TAG` and `TAGGED` edges**. 
 2. **One OpenAI-compatible LLM endpoint.** Configured via `LLM_*` env (legacy `AGENT_*` aliases honoured — `LLM_*` wins). See [`env_and_config.md`](env_and_config.md).
 3. **The agent client never raises.** [`agents/client.py`](../agents/client.py) catches every `httpx`/schema error and returns a typed `AgentResult` with an `error_class`. The orchestrator decides what to do.
 4. **Per-error-class circuit breaker.** [`indexing/breaker.py`](../indexing/breaker.py) tracks consecutive counts and rolling-window rates per error class. Trips raise `BreakerTripped`; the orchestrator stops pulling new work and the run finishes as `aborted`.
-5. **Worklist drives everything.** Every chunk and every chunk-bearing file has a `(:WorkItem)` row in Neo4j. Files that produce zero chunks (for example images or archives) are registered as `:File` but skipped by the LLM worklist. The orchestrator pulls `unrun` items and marks them `done` or `failed`. New runs auto-reset all `failed` items to `unrun`.
-6. **Neo4j is the only durable store.** No parquet, no JSON side artefacts in the indexing path. Re-running pre-flight is idempotent (skips files that already have chunks).
+5. **Working file drives agent jobs.** Scheduler state lives in `backend/.work/worklist_<neo4j_database>.json`, not in the graph. Files that produce zero chunks (for example images or archives) are registered as `:File` but skipped by the LLM worklist. The orchestrator pulls `unrun` items and marks them `done` or `failed` in the working file. New runs auto-reset all `failed` items to `unrun`.
+6. **Neo4j is the graph artefact.** Do not put scheduler/job rows in the graph. Re-running pre-flight is idempotent (skips files that already have chunks).
 
 ## Where to look first when changing X
 
@@ -61,7 +61,7 @@ Cluster is stored as a **string property on the `HAS_TAG` and `TAGGED` edges**. 
 | Database constraints / indexes | [`schema/constraints.cypher`](../schema/constraints.cypher), [`schema/indexes.cypher`](../schema/indexes.cypher) |
 | Dispatcher loop / batch sizes | [`indexing/orchestrator.py`](../indexing/orchestrator.py) |
 | Circuit breaker thresholds | [`indexing/breaker.py`](../indexing/breaker.py) (`BreakerThresholds`) |
-| WorkItem state transitions | [`indexing/worklist.py`](../indexing/worklist.py) |
+| Working-file job state transitions | [`indexing/worklist.py`](../indexing/worklist.py) |
 | Per-run lifecycle / abort | [`indexing/runs.py`](../indexing/runs.py), [`scripts/run_index.py`](../scripts/run_index.py) |
 | Canonical vocabulary | [`clustering/canonical_seed.yaml`](../clustering/canonical_seed.yaml) |
 | File rollup math | [`indexing/file_rollup.py`](../indexing/file_rollup.py) |
@@ -80,7 +80,7 @@ pip install -r requirements-lock.txt
 # 1. Apply constraints + indexes + seed canonical tags. Idempotent.
 python scripts/bootstrap_schema.py
 
-# 2. Scan data/raw/, upsert (:Source) and (:File), chunk, seed WorkItems. Idempotent.
+# 2. Scan data/raw/, upsert (:Source) and (:File), chunk, update working file. Idempotent.
 python scripts/run_preflight.py
 
 # 3. Dispatch agent calls (chunks then files), then deterministic rollup.

@@ -1,10 +1,4 @@
-"""Run repository: start_run / finish_run.
-
-A Run node is created at the start of every invocation. Its run_id stamps every
-WorkItem completion that happens during the run. WorkItems persist across runs;
-Run nodes do not (but the run_id reference on WorkItems lets you find the most
-recent toucher).
-"""
+"""Run repository: start_run / finish_run."""
 
 from __future__ import annotations
 
