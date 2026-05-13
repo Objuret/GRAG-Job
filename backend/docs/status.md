@@ -4,7 +4,7 @@
 
 **When to read this.** Before promising a feature is "done". Before estimating remaining work. After every significant code change, update this doc.
 
-**Last updated:** 2026-05-07.
+**Last updated:** 2026-05-13.
 
 ## Touched paths
 
@@ -22,6 +22,8 @@ This doc references everything; updates affect `docs/status.md` only.
 | Missing-canonical proposal path | The retry created two `:CanonicalTagProposal` nodes: `employee_role_in_review` and `user_education`, both in `information_need`. This verifies the `canonical_missing=true` path. |
 | Pydantic schema enforcement at the agent boundary | [`agents/client.AgentClient.call`](../agents/client.py) validates model output via `schema.model_validate_json` and produces `error_class="schema_invalid"` on failure. Covered by validators in [`agents/schemas.py`](../agents/schemas.py). |
 | Idempotency rules | [`Chunker.chunk_file`](../indexing/chunker.py) skips files that already have chunks; preflight upserts `:Source` and `:File` with `MERGE`; bootstrap uses `IF NOT EXISTS` everywhere. |
+| Query layer smoke | [`clustering/query.py`](../clustering/query.py) imports cleanly; `python -m clustering.query --help` works. Named query files live under [`clustering/queries/`](../clustering/queries/). |
+| RAGAS harness smoke | [`evaluation/ragas_eval.py`](../evaluation/ragas_eval.py) compiles; `python -m evaluation.ragas_eval --help` works; [`evaluation/sample_queries.yaml`](../evaluation/sample_queries.yaml) loads 10 query definitions. |
 
 ## What is built but not yet end-to-end verified
 
@@ -31,8 +33,6 @@ This doc references everything; updates affect `docs/status.md` only.
 
 - **Parquet visual-content omission.** [`Chunker._chunk_parquet`](../indexing/chunker.py) now omits Arrow columns that contain binary data, so image bytes are not embedded in `Chunk.content`. This is intentional for prompt/memory safety, but queries over visual content will need a future image-aware path.
 - **Non-binary nested parquet rows.** The chunker now caps string length, list length, and recursion depth during JSON conversion. This prevents the observed DocVQA failures, but future parquet schemas may still need schema-specific flattening for better retrieval quality.
-- **Proposal triage CLI.** [`clustering/canonical_seed.yaml`](../clustering/canonical_seed.yaml) refers to `python -m clustering.review` as the entry point for promoting `:CanonicalTagProposal` nodes into the seed. No such module exists in the repo.
-- **`clustering/queries/*.cypher`.** Not built. Planned named views are `by_theme`, `by_information_need`, `recent_active`, `multidim`.
 - **`exports/`.** Not built. No JSON snapshots are produced anywhere in the live pipeline.
 - **`provenance.json`.** No per-run provenance dump is written today. `:Run` properties cover the basics, but a structured provenance file is not.
 - **Vector indexes / embeddings.** [`schema/vector_indexes.cypher`](../schema/vector_indexes.cypher) is intentionally empty. `EMBEDDING_MODEL` env var is loaded into `Settings.embedding_model` but consumed nowhere.
@@ -53,4 +53,5 @@ This doc references everything; updates affect `docs/status.md` only.
 
 1. Launch a broader but still bounded LLM batch with conservative concurrency and cost monitoring.
 2. Watch `schema_invalid`, `http_429`, and `timeout` rates during that batch.
-3. Start proposal triage only after enough `:CanonicalTagProposal` examples exist to review meaningfully.
+3. Use `python -m clustering.review` after enough `:CanonicalTagProposal` examples exist to review meaningfully.
+4. Run `python -m evaluation.ragas_eval --dry-run` once Stage 1 extraction has produced chunk descriptions, then run a narrow RAGAS sample before a full evaluation.

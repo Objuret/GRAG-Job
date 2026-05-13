@@ -16,7 +16,7 @@
 |---|---|---|
 | **access** | [`data_access/raw/`](../data_access/raw/) | Sync HF/external sources, scan `data/raw/`, classify file_class (`payload_data` vs `repo_meta_code` vs `cache_meta`), emit a pandas catalog the indexing layer consumes. No Neo4j writes from the access layer beyond what `preflight` does on its behalf. |
 | **indexing** | [`indexing/`](../indexing/) | Chunker, WorkItem registry, Run repository, Orchestrator dispatcher, ExtractionWriter, FileExtractionWriter, deterministic FileRollup, CircuitBreaker. Pre-flight scans the access catalog and seeds the graph + worklist. The orchestrator is the only LLM caller. |
-| **clustering** | [`clustering/`](../clustering/) | Canonical tag vocabulary ([`canonical_seed.yaml`](../clustering/canonical_seed.yaml)). Proposal triage (CLI) and named cluster query views are open work — not built. |
+| **clustering** | [`clustering/`](../clustering/) | Canonical tag vocabulary ([`canonical_seed.yaml`](../clustering/canonical_seed.yaml)), proposal triage CLI, named graph query views, and the optional RAGAS evaluation harness. |
 
 The `agents/` package is shared infrastructure: a single OpenAI-compatible HTTP client and the pydantic schemas every agent call returns. `shared/` holds config, the async Neo4j wrapper, and small utilities (hashing, time).
 

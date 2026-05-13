@@ -4,7 +4,7 @@
 
 **When to read this.** First — before touching anything. Re-read it if you've been off this repo for a while.
 
-**Last updated:** 2026-05-07.
+**Last updated:** 2026-05-13.
 
 ## Touched paths
 
@@ -97,8 +97,9 @@ python scripts/verify_graph.py
 Pulled from [`status.md`](status.md). Truthful snapshot:
 
 - Parquet visual-content path: chunker now omits Arrow columns containing binary data and caps nested JSON conversion, so DocVQA preflights cleanly. Future image-aware indexing still needs a proper visual path.
-- Proposal triage CLI (`python -m clustering.review`) referenced in `canonical_seed.yaml` does not exist yet.
-- Named cluster query views (`by_theme`, `by_information_need`, `recent_active`, `multidim`) are not built.
+- Proposal triage CLI (`python -m clustering.review`) exists. Use it to promote `:CanonicalTagProposal` nodes into `clustering/canonical_seed.yaml`.
+- Named cluster query views are implemented under `clustering/queries/` with Python wrappers and CLI in `clustering/query.py`.
+- RAGAS evaluation harness exists under `evaluation/ragas_eval.py`; install optional dependencies from `requirements-eval.txt`.
 - An `exports/` snapshot stage is not built.
 - Full `provenance.json` per run is not written.
 - Vector indexes / embeddings are deferred (see [`schema/vector_indexes.cypher`](../schema/vector_indexes.cypher)).

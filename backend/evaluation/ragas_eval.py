@@ -295,7 +295,7 @@ def _print_report(
 async def _main(args: Any) -> None:
     settings = Settings()
 
-    if not settings.agent_api_key:
+    if not args.dry_run and not settings.agent_api_key:
         print("Error: LLM_API_KEY (or AGENT_API_KEY) is not set.", file=sys.stderr)
         sys.exit(2)
 

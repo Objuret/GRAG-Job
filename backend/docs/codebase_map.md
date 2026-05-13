@@ -4,7 +4,7 @@
 
 **When to read this.** When you know what you want to change and need to find the right file.
 
-**Last updated:** 2026-05-07.
+**Last updated:** 2026-05-13.
 
 ## Touched paths
 
@@ -44,7 +44,20 @@ Canonical tag vocabulary.
 | File | Role | Key symbols | Called by |
 |---|---|---|---|
 | [`clustering/__init__.py`](../clustering/__init__.py) | Package marker. | — | — |
-| [`clustering/canonical_seed.yaml`](../clustering/canonical_seed.yaml) | Source of truth for the canonical tag vocabulary. Five top-level keys (one per cluster). Hybrid seed-and-grow: proposals enter only via a triage CLI (TODO). | — | [`scripts/bootstrap_schema.py`](../scripts/bootstrap_schema.py) `seed_canonical_tags`. |
+| [`clustering/canonical_seed.yaml`](../clustering/canonical_seed.yaml) | Source of truth for the canonical tag vocabulary. Five top-level keys (one per cluster). Hybrid seed-and-grow: proposals enter via the triage CLI. | — | [`scripts/bootstrap_schema.py`](../scripts/bootstrap_schema.py) `seed_canonical_tags`, [`clustering/review.py`](../clustering/review.py). |
+| [`clustering/query.py`](../clustering/query.py) | Typed wrappers and CLI for graph retrieval over derived `TAGGED` edges. | `TagHit`, `FileResult`, `ChunkResult`, `files_by_canonical`, `files_recent_active`, `files_multidim`, `chunks_for_file` | `python -m clustering.query`, [`evaluation/ragas_eval.py`](../evaluation/ragas_eval.py). |
+| [`clustering/review.py`](../clustering/review.py) | Interactive proposal triage. Promotes or rejects `:CanonicalTagProposal` nodes and updates `canonical_seed.yaml` on accept. | `_fetch_proposals`, `_promote`, `_reject`, `_update_seed` | `python -m clustering.review`. |
+| [`clustering/queries/`](../clustering/queries/) | Parameterised Cypher retrieval views for canonical, recent/active, multidim, and chunk-context lookup. | `by_canonical.cypher`, `recent_active.cypher`, `multidim.cypher`, `chunks_for_file.cypher` | [`clustering/query.py`](../clustering/query.py). |
+
+## `evaluation/`
+
+Optional quality checks for retrieval and extraction.
+
+| File | Role | Key symbols | Called by |
+|---|---|---|---|
+| [`evaluation/__init__.py`](../evaluation/__init__.py) | Package marker. | — | — |
+| [`evaluation/sample_queries.yaml`](../evaluation/sample_queries.yaml) | Default RAGAS sample query set covering canonical, temporal, and multidim retrieval. | — | [`evaluation/ragas_eval.py`](../evaluation/ragas_eval.py). |
+| [`evaluation/ragas_eval.py`](../evaluation/ragas_eval.py) | Builds RAGAS `SingleTurnSample`s from graph query results and evaluates faithfulness / answer relevancy. | `QueryDef`, `EvalSample` | `python -m evaluation.ragas_eval`. |
 
 ## `data_access/`
 
@@ -78,7 +91,7 @@ Cypher applied by `bootstrap_schema.py`.
 | File | Role |
 |---|---|
 | [`schema/constraints.cypher`](../schema/constraints.cypher) | Uniqueness constraints (Source, File, Chunk, Run, WorkItem, CanonicalTagProposal, Tag) plus the `(label, cluster)` NODE KEY on `:CanonicalTag`. |
-| [`schema/indexes.cypher`](../schema/indexes.cypher) | B-tree indexes on hot lookup properties (File.dataset_id, Chunk.file_id, WorkItem.status, etc.) plus relationship indexes on `HAS_TAG.cluster`, `HAS_TAG.canonical_id`, `TAGGED.cluster`. |
+| [`schema/indexes.cypher`](../schema/indexes.cypher) | B-tree indexes on hot lookup properties (File.dataset_id, Chunk.file_id, WorkItem.status, etc.) plus relationship indexes on `HAS_TAG.cluster`, `HAS_TAG.canonical_id`, `TAGGED.cluster`, `TAGGED.canonical_id`. |
 | [`schema/vector_indexes.cypher`](../schema/vector_indexes.cypher) | **Empty** — embeddings deferred. |
 | [`schema/create_database.cypher`](../schema/create_database.cypher) | One statement to create a fresh empty database (`exjobbet_index`) on Neo4j Enterprise. Run from the `system` database in Neo4j Browser; not invoked by any Python script. |
 

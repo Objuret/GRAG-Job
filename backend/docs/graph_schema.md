@@ -4,7 +4,7 @@
 
 **When to read this.** Any time you write Cypher, change a writer, or design a new query. This is the source of truth for shape.
 
-**Last updated:** 2026-05-07.
+**Last updated:** 2026-05-13.
 
 ## Touched paths
 
@@ -93,7 +93,7 @@ One per **distinct tag name** across the corpus. Cluster is on the **edge**, not
 - **Constraint:** `REQUIRE n.name IS UNIQUE`.
 - **Indexes:** none beyond uniqueness.
 - **Who writes:** [`indexing/extraction_writer.py`](../indexing/extraction_writer.py) (`MERGE (t:Tag {name: tag.name})`).
-- **Who reads:** rollup, future cluster query views.
+- **Who reads:** rollup, [`clustering/query.py`](../clustering/query.py).
 
 ### `:CanonicalTag`
 
@@ -108,7 +108,7 @@ The seeded vocabulary plus any promoted proposals.
 
 - **Constraint:** `REQUIRE (n.label, n.cluster) IS NODE KEY` ([`schema/constraints.cypher`](../schema/constraints.cypher)).
 - **Indexes:** `(n.cluster)`.
-- **Who writes:** [`scripts/bootstrap_schema.py`](../scripts/bootstrap_schema.py) `seed_canonical_tags`. Future: a triage CLI promoting `:CanonicalTagProposal` nodes (TODO).
+- **Who writes:** [`scripts/bootstrap_schema.py`](../scripts/bootstrap_schema.py) `seed_canonical_tags`; [`clustering/review.py`](../clustering/review.py) promotes accepted `:CanonicalTagProposal` nodes.
 - **Who reads:** orchestrator's `_load_canonical_vocab` builds the user-message vocabulary block from these.
 
 ### `:CanonicalTagProposal`
@@ -130,7 +130,7 @@ Created when the agent emits a tag with `canonical_missing=True`. Raw tag names 
 - **Constraint:** `REQUIRE n.proposal_id IS UNIQUE`.
 - **Indexes:** none beyond uniqueness.
 - **Who writes:** [`indexing/extraction_writer.py`](../indexing/extraction_writer.py).
-- **Who reads:** Future triage CLI (TODO — see [`status.md`](status.md)).
+- **Who reads:** [`clustering/review.py`](../clustering/review.py).
 
 ### `:WorkItem`
 
@@ -229,9 +229,9 @@ Derived edge from the deterministic file rollup. Pure function of `HAS_TAG` + `C
 | `run_id` | string | Run that performed the rollup. |
 | `updated_at` | iso8601 | |
 
-- **Indexes:** `(r.cluster)`.
+- **Indexes:** `(r.cluster)`, `(r.canonical_id)`.
 - **Who writes:** [`indexing/file_rollup.py`](../indexing/file_rollup.py). The rollup **deletes all in-scope `TAGGED` edges first** then creates fresh ones (Cypher MERGE semantics around null `canonical_id` are awkward; pure delete-and-rebuild is safer).
-- **Who reads:** future cluster query views (not built yet — planned under `clustering/queries/`).
+- **Who reads:** [`clustering/query.py`](../clustering/query.py) via query files under [`clustering/queries/`](../clustering/queries/), and [`evaluation/ragas_eval.py`](../evaluation/ragas_eval.py).
 
 ### `(:WorkItem)-[:TARGETS]->(:Chunk | :File)`
 
@@ -247,7 +247,7 @@ One edge per proposing-occurrence; lets us trace where a proposal came from.
 
 - **Properties:** none (the proposal node carries `observed_count`).
 - **Who writes:** [`indexing/extraction_writer.py`](../indexing/extraction_writer.py).
-- **Who reads:** Future triage CLI.
+- **Who reads:** [`clustering/review.py`](../clustering/review.py).
 
 ## Indexes summary
 
@@ -264,6 +264,7 @@ CREATE INDEX IF NOT EXISTS FOR (n:CanonicalTag) ON (n.cluster);
 CREATE INDEX IF NOT EXISTS FOR ()-[r:HAS_TAG]-() ON (r.cluster);
 CREATE INDEX IF NOT EXISTS FOR ()-[r:HAS_TAG]-() ON (r.canonical_id);
 CREATE INDEX IF NOT EXISTS FOR ()-[r:TAGGED]-()  ON (r.cluster);
+CREATE INDEX IF NOT EXISTS FOR ()-[r:TAGGED]-()  ON (r.canonical_id);
 ```
 
 [`schema/vector_indexes.cypher`](../schema/vector_indexes.cypher) is intentionally empty — embeddings are deferred (see [`status.md`](status.md)).
