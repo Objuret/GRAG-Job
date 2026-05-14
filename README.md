@@ -1,57 +1,41 @@
-# Exjobbet Monorepo
+# Thesis monorepo
 
-This repository contains the thesis indexing system and its interface in one tree.
+Two halves of one system:
+
+- **`backend/`** — offline Python pipeline. Chunks raw datasets, tags with LLMs, writes the durable graph to Neo4j.
+- **`frontend/`** — Vite/React workbench. Local-only browser app. Reads the graph and runs prompt interpretation directly from JavaScript (`neo4j-driver` + `@anthropic-ai/sdk`); no HTTP server between them.
+
+Documentation: **[`docs/`](docs/README.md)**. AI agents start at **[`AGENTS.md`](AGENTS.md)**.
+
+## Quick start
+
+```bash
+git clone <this-repo> && cd repo
+
+# Backend pipeline — one-time, builds the Neo4j graph
+cd backend
+python -m venv .venv && . .venv/Scripts/activate           # Linux/macOS: . .venv/bin/activate
+pip install -r requirements-lock.txt
+cp .env.example .env                                       # fill in NEO4J_PASSWORD, ANTHROPIC_API_KEY
+python scripts/bootstrap_schema.py
+python scripts/run_preflight.py
+python -m tagging extract                                  # HERB tagging (current path)
+
+# Frontend — the app
+cd ../
+npm install
+npm run dev                                                # http://127.0.0.1:5173/
+```
 
 ## Layout
 
-- [`backend/`](backend/) - Python indexing pipeline. It chunks raw datasets, calls one OpenAI-compatible LLM endpoint, and writes the durable graph to Neo4j.
-- [`frontend/`](frontend/) - Vite/React workbench (`src/App.jsx`): two-lane canvas (pipeline vs usage), draggable query modules, and synthetic demo data; Neo4j queries are not wired from the browser entrypoint yet.
-
-Root is intentionally small: repo-level `README.md`, `AGENTS.md`, `.gitignore`, and Git metadata live here. Service-specific files live under their service folder.
-
-## Fresh Clone
-
-```bash
-git clone <this-repo>
-cd repo
-npm install
-npm run backend:install
-npm run dev
-```
-
-The frontend opens at http://127.0.0.1:5173/.
-
-Use the root npm commands as the project default:
-
-- `npm install` - install frontend workspace dependencies.
-- `npm run backend:install` - create `.venv` and install backend dependencies.
-- `npm run dev` - start the frontend dev server.
-- `npm run build` - type-check and build the frontend.
-- `npm run graph:import` - import the bundled graph export into an empty Neo4j database.
-
-## Backend
-
-```bash
-npm run backend:install
-
-cp backend/.env.example backend/.env
-.venv/Scripts/python.exe backend/scripts/bootstrap_schema.py
-.venv/Scripts/python.exe backend/scripts/run_preflight.py
-.venv/Scripts/python.exe backend/scripts/run_index.py
-```
-
-Backend docs start at [`backend/docs/README.md`](backend/docs/README.md). Agents should start with [`backend/docs/agent_brief.md`](backend/docs/agent_brief.md).
-
-## Frontend
-
-```bash
-npm run dev
-```
-
-Frontend docs start at [`frontend/docs/README.md`](frontend/docs/README.md). Agents should start with [`frontend/AGENTS.md`](frontend/AGENTS.md).
+- `backend/` — Python indexing pipeline; runs offline to build/refresh the Neo4j graph artefact.
+- `frontend/` — Vite/React workbench (`src/App.jsx`); two-lane canvas, draggable query modules. Browser-direct architecture.
+- `docs/` — project-wide reference. Module-specific docs under `docs/backend/` and `docs/frontend/`. The cross-cutting Neo4j contract is `docs/graph_schema.md`.
+- `graph_export/` — portable graph snapshots; operator artefact, not part of the indexing path.
 
 ## Branches
 
-- `main` - stable history.
-- `dev` - shared integration branch.
-- personal branches - branch from `dev`, for example `djuret/monorepo`.
+- `main` — stable history.
+- `dev` — shared integration.
+- personal branches off `dev` (e.g. `djuret/monorepo`).

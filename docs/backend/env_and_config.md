@@ -1,6 +1,6 @@
 # Environment and Configuration
 
-**TL;DR.** Settings come from `.env` (gitignored) loaded by `pydantic-settings` in [`shared/config.py`](../shared/config.py). The legacy indexing path uses `LLM_*`; legacy `AGENT_*` names work for the same fields and `LLM_*` wins when both are set. The HERB tagging pilot uses `ANTHROPIC_*` directly in `tagging/pipeline.py`. Neo4j is configured via `NEO4J_*`. Embeddings/data root have their own keys. Nothing in this doc echoes secrets.
+**TL;DR.** Settings come from `.env` (gitignored) loaded by `pydantic-settings` in [`shared/config.py`](../../backend/shared/config.py). The legacy indexing path uses `LLM_*`; legacy `AGENT_*` names work for the same fields and `LLM_*` wins when both are set. The HERB tagging pilot uses `ANTHROPIC_*` directly in `tagging/pipeline.py`. Neo4j is configured via `NEO4J_*`. Embeddings/data root have their own keys. Nothing in this doc echoes secrets.
 
 **When to read this.** Before running anything. Whenever you wonder where a setting is consumed.
 
@@ -12,7 +12,7 @@
 
 ## Loading mechanism
 
-[`shared/config.Settings`](../shared/config.py) is a `BaseSettings` subclass with:
+[`shared/config.Settings`](../../backend/shared/config.py) is a `BaseSettings` subclass with:
 
 ```python
 model_config = SettingsConfigDict(
@@ -47,16 +47,16 @@ agent_base_url: str = Field(
 
 | Var | Type | Default | Required | Where consumed |
 |---|---|---|---|---|
-| `LLM_BASE_URL` (or `AGENT_BASE_URL`) | string | `https://api.openai.com/v1` | No | [`agents/client.AgentClient`](../agents/client.py) — passed to `httpx.AsyncClient(base_url=...)`. Must be the API root that exposes `/chat/completions`. For OpenAI: `…/v1`. For other compatible providers: their root. Blank value falls back to default. |
+| `LLM_BASE_URL` (or `AGENT_BASE_URL`) | string | `https://api.openai.com/v1` | No | [`agents/client.AgentClient`](../../backend/agents/client.py) â€” passed to `httpx.AsyncClient(base_url=...)`. Must be the API root that exposes `/chat/completions`. For OpenAI: `â€¦/v1`. For other compatible providers: their root. Blank value falls back to default. |
 | `LLM_MODEL` (or `AGENT_MODEL`) | string | `gpt-4o-mini` | No | Sent as `body["model"]` in every chat completion. Stamped on `:Run.agent_model`. Blank value falls back to default. |
-| `LLM_API_KEY` (or `AGENT_API_KEY`) | string (secret) | empty | **Yes** for `run_index.py` | Sent as `Authorization: Bearer ...`. [`scripts/run_index.py`](../scripts/run_index.py) exits with code 2 if not set. Bootstrap and preflight don't read it. |
+| `LLM_API_KEY` (or `AGENT_API_KEY`) | string (secret) | empty | **Yes** for `run_index.py` | Sent as `Authorization: Bearer ...`. [`scripts/run_index.py`](../../backend/scripts/run_index.py) exits with code 2 if not set. Bootstrap and preflight don't read it. |
 | `LLM_TIMEOUT_SECONDS` (or `AGENT_TIMEOUT_SECONDS`) | float | `30.0` | No | `httpx.AsyncClient(timeout=...)`. Timeouts surface as `error_class="timeout"`. |
-| `LLM_MAX_CONCURRENCY` (or `AGENT_MAX_CONCURRENCY`) | int (≥1) | `32` | No | `Orchestrator._semaphore = asyncio.Semaphore(...)`. Stamped on `:Run.agent_max_concurrency`. CLI override: `python scripts/run_index.py --concurrency N`. |
+| `LLM_MAX_CONCURRENCY` (or `AGENT_MAX_CONCURRENCY`) | int (â‰¥1) | `32` | No | `Orchestrator._semaphore = asyncio.Semaphore(...)`. Stamped on `:Run.agent_max_concurrency`. CLI override: `python scripts/run_index.py --concurrency N`. |
 
 ### HERB tagging pilot (Anthropic Messages API)
 
 These are not read by `shared/config.py`. They are loaded from `.env` by
-[`tagging/pipeline.py`](../tagging/pipeline.py) for the HERB-specific pilot.
+[`tagging/pipeline.py`](../../backend/tagging/pipeline.py) for the HERB-specific pilot.
 
 | Var | Type | Default | Required | Where consumed |
 |---|---|---|---|---|
@@ -71,27 +71,27 @@ These are not read by `shared/config.py`. They are loaded from `.env` by
 
 | Var | Type | Default | Required | Where consumed |
 |---|---|---|---|---|
-| `NEO4J_URI` | string | `neo4j://localhost:7687` | Effectively yes for any DB-touching script | [`shared/neo4j_client.Neo4jClient`](../shared/neo4j_client.py). Use `neo4j://` for routing-aware (recommended); `bolt://` for direct connections. |
+| `NEO4J_URI` | string | `neo4j://localhost:7687` | Effectively yes for any DB-touching script | [`shared/neo4j_client.Neo4jClient`](../../backend/shared/neo4j_client.py). Use `neo4j://` for routing-aware (recommended); `bolt://` for direct connections. |
 | `NEO4J_USER` | string | `neo4j` | Yes | Same. |
 | `NEO4J_PASSWORD` | string (secret) | empty | Yes | Same. |
-| `NEO4J_DATABASE` | string | `neo4j` | Yes (in practice) | Passed to `driver.session(database=...)`. To run against a fresh DB on Enterprise, create it via [`schema/create_database.cypher`](../schema/create_database.cypher) and set this to its name. |
+| `NEO4J_DATABASE` | string | `neo4j` | Yes (in practice) | Passed to `driver.session(database=...)`. To run against a fresh DB on Enterprise, create it via [`schema/create_database.cypher`](../../backend/schema/create_database.cypher) and set this to its name. |
 
 ### Other
 
 | Var | Type | Default | Required | Where consumed |
 |---|---|---|---|---|
-| `EMBEDDING_MODEL` | string | `intfloat/e5-small-v2` | No | Read into `Settings.embedding_model`. **Not currently consumed by any code path** — embeddings/vector indexes are deferred. Kept so `.env` template stays stable for the reintroduction. |
-| `DATA_ROOT` | path | `<backend>/data` | No | Read into `Settings.data_root`. [`indexing/preflight.py`](../indexing/preflight.py) calls `scan_raw_tree(settings.data_root)` to walk `data/raw/`. The `data_access/` CLI tools accept `--data-root` to override per-invocation. |
+| `EMBEDDING_MODEL` | string | `intfloat/e5-small-v2` | No | Read into `Settings.embedding_model`. **Not currently consumed by any code path** â€” embeddings/vector indexes are deferred. Kept so `.env` template stays stable for the reintroduction. |
+| `DATA_ROOT` | path | `<backend>/data` | No | Read into `Settings.data_root`. [`indexing/preflight.py`](../../backend/indexing/preflight.py) calls `scan_raw_tree(settings.data_root)` to walk `data/raw/`. The `data_access/` CLI tools accept `--data-root` to override per-invocation. |
 
 ### Recognised extras (ignored by Settings, used by other tools)
 
 | Var | Where used |
 |---|---|
-| `HF_TOKEN` | [`data_access/raw/__main__.py`](../data_access/raw/__main__.py) — `--hf-token` default for `python -m data_access.raw sync`. Not loaded by `Settings`. |
+| `HF_TOKEN` | [`data_access/raw/__main__.py`](../../backend/data_access/raw/__main__.py) â€” `--hf-token` default for `python -m data_access.raw sync`. Not loaded by `Settings`. |
 
 ## Quick `.env` shape (no secrets here)
 
-See [`.env.example`](../.env.example) for the live template (it carries Swedish + English commentary). Minimum viable shape:
+See [`.env.example`](../../backend/.env.example) for the live template (it carries Swedish + English commentary). Minimum viable shape:
 
 ```dotenv
 LLM_BASE_URL=https://api.openai.com/v1
@@ -101,7 +101,7 @@ LLM_MAX_CONCURRENCY=32
 LLM_TIMEOUT_SECONDS=30
 
 # Required only for the HERB Anthropic tagging pilot API stages.
-ANTHROPIC_API_KEY=sk-ant-replace-with-your-key
+ANTHROPIC_API_KEY=<your Anthropic API key>
 ANTHROPIC_MODEL=claude-haiku-4-5
 
 NEO4J_URI=neo4j://localhost:7687
@@ -114,14 +114,14 @@ EMBEDDING_MODEL=intfloat/e5-small-v2
 
 ## Validation behaviour
 
-- Blank `LLM_BASE_URL` / `LLM_MODEL` (e.g. `LLM_BASE_URL=`) → falls back to the OpenAI defaults via `field_validator(..., mode="before")` in [`shared/config.py`](../shared/config.py).
-- Negative or zero `LLM_MAX_CONCURRENCY` → pydantic raises (the field has `ge=1`).
+- Blank `LLM_BASE_URL` / `LLM_MODEL` (e.g. `LLM_BASE_URL=`) â†’ falls back to the OpenAI defaults via `field_validator(..., mode="before")` in [`shared/config.py`](../../backend/shared/config.py).
+- Negative or zero `LLM_MAX_CONCURRENCY` â†’ pydantic raises (the field has `ge=1`).
 - Missing `LLM_API_KEY` is **only** validated by `scripts/run_index.py`, which prints a bilingual error and exits with code 2 before opening Neo4j or the agent client. Bootstrap and preflight don't need the key.
 
 ## Where settings are stamped onto the graph
 
-- `:Run.agent_model` ← `Settings.agent_model`
-- `:Run.agent_max_concurrency` ← `Settings.agent_max_concurrency` (or the `--concurrency` override)
-- `:Run.git_commit` ← `git rev-parse HEAD` from [`indexing/runs._git_commit`](../indexing/runs.py)
+- `:Run.agent_model` â† `Settings.agent_model`
+- `:Run.agent_max_concurrency` â† `Settings.agent_max_concurrency` (or the `--concurrency` override)
+- `:Run.git_commit` â† `git rev-parse HEAD` from [`indexing/runs._git_commit`](../../backend/indexing/runs.py)
 
 The API key, base URL, and Neo4j password are **never** persisted to the graph or any log line. Don't add new code that does so.

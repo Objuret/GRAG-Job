@@ -1,18 +1,13 @@
-# Agents
+# Backend agents
 
-This backend project is documented in [`docs/`](docs/README.md).
+Offline Python pipeline that builds the Neo4j graph artefact.
 
-Run backend commands from `backend/`. Paths in backend docs are relative to this directory unless they explicitly say monorepo root.
+- Project brief: [`../AGENTS.md`](../AGENTS.md)
+- Docs index: [`../docs/README.md`](../docs/README.md)
+- Backend architecture + decisions: [`../docs/backend/architecture.md`](../docs/backend/architecture.md)
+- Graph contract: [`../docs/graph_schema.md`](../docs/graph_schema.md)
+- Runbook: [`../docs/backend/runbook.md`](../docs/backend/runbook.md)
+- HERB tagging method: [`../docs/backend/herb_tagging_schema.md`](../docs/backend/herb_tagging_schema.md)
+- Live status: [`../docs/backend/status.md`](../docs/backend/status.md)
 
-If you are an AI agent picking up this codebase, start with [`docs/agent_brief.md`](docs/agent_brief.md). The graph schema is the contract; see [`docs/graph_schema.md`](docs/graph_schema.md).
-
-## Hard rules
-
-- No fallbacks. No mocks. Fail loud.
-- The legacy indexing/orchestrator path uses one OpenAI-compatible LLM endpoint (configured via `LLM_*` env; legacy `AGENT_*` aliases honoured, `LLM_*` wins). The HERB tagging pilot is a separate Anthropic-only path; see [`docs/herb_tagging_schema.md`](docs/herb_tagging_schema.md).
-- The agent client never raises — see [`agents/client.py`](agents/client.py); the orchestrator decides what to do with `error_class`.
-- Per-error-class circuit breaker — see [`indexing/breaker.py`](indexing/breaker.py).
-- Working-file job ledger drives agent scheduling — see [`indexing/worklist.py`](indexing/worklist.py).
-- **Neo4j is the only durable store.** No parquet/JSON side artefacts in the indexing path.
-
-Never echo `.env` contents, API keys, or passwords into any file or log.
+Run backend commands from `backend/`. Paths inside docs/backend/ are relative to repo root unless otherwise stated.

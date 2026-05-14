@@ -4,7 +4,7 @@
 **Dataset:** Salesforce__HERB (1 of 4 thesis datasets)
 **Database:** `herb`
 **Model:** `claude-haiku-4-5` (Anthropic Messages API, forced tool_use)
-**Current artefact:** [`backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip`](../data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip)
+**Current artefact:** [`backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip`](../../backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip)
 
 ## Goal
 
@@ -99,7 +99,7 @@ Initial run had 33 errors:
 - 7 files failed score with `max_tokens=4096` truncation on files with > 210
   chunks — the JSON output exceeded the cap and came back malformed.
 
-Both were recovered by [`recovery.py`](../data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z/recovery.py)
+Both were recovered by [`recovery.py`](../../backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z/recovery.py)
 in the snapshot directory:
 - `max_tokens` raised to 8192 in `pipeline.py`.
 - The 26 chunks re-extracted (two-pass) and written to Neo4j.

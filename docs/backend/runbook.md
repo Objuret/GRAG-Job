@@ -43,7 +43,7 @@ Any Neo4j 5.x instance works. Two options:
 CREATE DATABASE exjobbet_index IF NOT EXISTS WAIT;
 ```
 
-Then set `NEO4J_DATABASE=exjobbet_index` in `.env`. The same Cypher lives in [`schema/create_database.cypher`](../schema/create_database.cypher).
+Then set `NEO4J_DATABASE=exjobbet_index` in `.env`. The same Cypher lives in [`schema/create_database.cypher`](../../backend/schema/create_database.cypher).
 
 ### URI choice: `neo4j://` vs `bolt://`
 
@@ -58,7 +58,7 @@ Try `neo4j://` first; switch to `bolt://` only if you see `ServiceUnavailable: U
 python scripts/bootstrap_schema.py
 ```
 
-Applies [`schema/constraints.cypher`](../schema/constraints.cypher), [`schema/indexes.cypher`](../schema/indexes.cypher), and [`schema/vector_indexes.cypher`](../schema/vector_indexes.cypher) (currently empty). It does not seed tag vocabularies.
+Applies [`schema/constraints.cypher`](../../backend/schema/constraints.cypher), [`schema/indexes.cypher`](../../backend/schema/indexes.cypher), and [`schema/vector_indexes.cypher`](../../backend/schema/vector_indexes.cypher) (currently empty). It does not seed tag vocabularies.
 
 Expected output (paraphrased):
 
@@ -161,17 +161,17 @@ Read-only. Prints source/file/chunk counts, working-file items by kind/status, f
 |---|---|---|
 | `neo4j.exceptions.AuthError: ... The client is unauthorized due to authentication failure` | Wrong `NEO4J_USER` / `NEO4J_PASSWORD`. | Check `.env`. Reset password in Neo4j Browser if needed. |
 | `neo4j.exceptions.ServiceUnavailable: Unable to retrieve routing information` | `neo4j://` routing handshake failed. | Switch `NEO4J_URI` to `bolt://localhost:7687`. |
-| `neo4j.exceptions.ConfigurationError: ... database 'exjobbet_index' does not exist` | Multi-DB instance but you skipped the `CREATE DATABASE`. | Run [`schema/create_database.cypher`](../schema/create_database.cypher) from the `system` DB. |
+| `neo4j.exceptions.ConfigurationError: ... database 'exjobbet_index' does not exist` | Multi-DB instance but you skipped the `CREATE DATABASE`. | Run [`schema/create_database.cypher`](../../backend/schema/create_database.cypher) from the `system` DB. |
 | `Schema warnings about deprecated CREATE INDEX syntax` | Older Neo4j version. | Upgrade to 5.x. The bootstrap script tolerates idempotent `IF NOT EXISTS` re-runs. |
 | `FEL: API-nyckel saknas` / `ERROR: Missing API key` | `LLM_API_KEY`/`AGENT_API_KEY` not set. | Set it in `.env` or as an env var. The script exits early with code 2; nothing was written to Neo4j. |
 | `BreakerTripped [http_auth]` | Auth failure to the LLM endpoint. The breaker trips after **1** occurrence. | Verify the API key, base URL, and that the model name is valid for the provider. Re-run. |
 | `BreakerTripped [http_quota_exceeded]` | Provider quota / billing problem. Trips after 1 occurrence. | Top up the provider account or rotate the key. |
 | `BreakerTripped [http_429]` | 30 consecutive 429s. | Lower `LLM_MAX_CONCURRENCY` (e.g. from 32 to 8). Wait, then re-run. The auto-retry-all on next-run start picks up the failed items. |
-| `BreakerTripped [schema_invalid]` | The model is returning JSON that fails pydantic validation > 20% of the last 50 calls. | Inspect failed items in `backend/.work/worklist_<neo4j_database>.json`; their `error_message` shows the validation error. If the prompt drifts, fix [`prompts/extract_chunk.md`](../prompts/extract_chunk.md) **and** [`agents/schemas.py`](../agents/schemas.py) in lockstep. |
+| `BreakerTripped [schema_invalid]` | The model is returning JSON that fails pydantic validation > 20% of the last 50 calls. | Inspect failed items in `backend/.work/worklist_<neo4j_database>.json`; their `error_message` shows the validation error. If the prompt drifts, fix [`prompts/extract_chunk.md`](../../backend/prompts/extract_chunk.md) **and** [`agents/schemas.py`](../../backend/agents/schemas.py) in lockstep. |
 | Preflight: parquet OOM / nested-struct error | Chunker reads pyarrow batches; deeply nested struct rows can still produce huge JSON content per row. | Today the failure is per-file isolated (preflight continues). Skip the file or refactor `_chunk_parquet` to flatten / cap nested values. See [`status.md`](status.md). |
 | Preflight: `_chunk_parquet` reports a chunk too large for Neo4j | Same as above (a single row's JSON exceeds practical size). | Same. Consider truncating `content` in the chunker for parquet rows beyond an ad-hoc cap. |
 | Orchestrator silently does nothing | The worklist is empty (all items already `done`). | Check with `python scripts/verify_graph.py` — look at unrun counts. Add new files under `data/raw/`, re-run preflight. |
-| `chunk_end_offset mismatch` failures | The model echoed a different number than the orchestrator told it to use. | Usually a transient model glitch; the auto-reset policy will retry next run. If sustained, tighten the wording in [`prompts/extract_chunk.md`](../prompts/extract_chunk.md). |
+| `chunk_end_offset mismatch` failures | The model echoed a different number than the orchestrator told it to use. | Usually a transient model glitch; the auto-reset policy will retry next run. If sustained, tighten the wording in [`prompts/extract_chunk.md`](../../backend/prompts/extract_chunk.md). |
 | `chunk_relevance must cover every chunk_id exactly once` | The file orchestrator skipped a `chunk_id` or invented one. | Same — usually transient. If sustained, sharpen the file prompt. |
 
 ## Re-run after partial failure
@@ -180,7 +180,7 @@ You don't need a special command. Just re-run `python scripts/run_index.py`:
 
 1. The orchestrator calls `WorkList.reset_failed_to_unrun` and resets every `failed` item to `unrun`.
 2. Items that were already `done` stay `done` and are not pulled.
-3. Stage 3 (rollup) re-runs and **deletes all in-scope `TAGGED` edges before recreating them** — this is intentional, see [`indexing/file_rollup.py`](../indexing/file_rollup.py). It's safe because TAGGED is a pure derivative of HAS_TAG + relevance_to_file.
+3. Stage 3 (rollup) re-runs and **deletes all in-scope `TAGGED` edges before recreating them** — this is intentional, see [`indexing/file_rollup.py`](../../backend/indexing/file_rollup.py). It's safe because TAGGED is a pure derivative of HAS_TAG + relevance_to_file.
 
 If the same items keep failing run after run, look at their working-file `error_class` and `error_message` to investigate. Don't paper over a real bug with reruns.
 

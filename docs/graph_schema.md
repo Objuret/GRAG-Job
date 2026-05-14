@@ -1,6 +1,6 @@
 # Graph Schema
 
-**TL;DR.** This is the Neo4j artefact contract. Every node label and edge type is documented below with properties, types, constraints, indexes, who writes it, and who reads it. The schema is applied by [`scripts/bootstrap_schema.py`](../scripts/bootstrap_schema.py) reading [`schema/constraints.cypher`](../schema/constraints.cypher), [`schema/indexes.cypher`](../schema/indexes.cypher), [`schema/vector_indexes.cypher`](../schema/vector_indexes.cypher).
+**TL;DR.** This is the Neo4j artefact contract. Every node label and edge type is documented below with properties, types, constraints, indexes, who writes it, and who reads it. The schema is applied by [`scripts/bootstrap_schema.py`](backend/scripts/bootstrap_schema.py) reading [`schema/constraints.cypher`](backend/schema/constraints.cypher), [`schema/indexes.cypher`](backend/schema/indexes.cypher), [`schema/vector_indexes.cypher`](backend/schema/vector_indexes.cypher).
 
 **When to read this.** Any time you write Cypher, change a writer, or design a new query. This is the source of truth for shape.
 
@@ -12,8 +12,8 @@
 
 ## Conventions
 
-- All identifiers are **strings**. Hashes are SHA-256 hex prefixes from [`shared/utils.stable_short_hash`](../shared/utils.py).
-- Timestamps are ISO-8601 UTC strings produced by [`shared/utils.iso_utc`](../shared/utils.py) (e.g. `2026-05-07T08:00:00Z`).
+- All identifiers are **strings**. Hashes are SHA-256 hex prefixes from [`shared/utils.stable_short_hash`](backend/shared/utils.py).
+- Timestamps are ISO-8601 UTC strings produced by [`shared/utils.iso_utc`](backend/shared/utils.py) (e.g. `2026-05-07T08:00:00Z`).
 - "Who writes" / "Who reads" lists the source files; cross-check there for any property you don't see below.
 
 ## Node labels
@@ -28,10 +28,10 @@ One per dataset (`Salesforce__HERB`, `wenhu__hybrid_qa`, …).
 | `dataset_id` | string | Same value as `source_id` today; kept for compatibility. |
 | `created_at` | iso8601 string | Set on create. |
 
-- **Constraint:** `REQUIRE n.source_id IS UNIQUE` ([`schema/constraints.cypher`](../schema/constraints.cypher)).
+- **Constraint:** `REQUIRE n.source_id IS UNIQUE` ([`schema/constraints.cypher`](backend/schema/constraints.cypher)).
 - **Indexes:** none beyond the uniqueness constraint.
-- **Who writes:** [`indexing/preflight.py`](../indexing/preflight.py) `upsert_source_node`.
-- **Who reads:** [`indexing/orchestrator.py`](../indexing/orchestrator.py).
+- **Who writes:** [`indexing/preflight.py`](backend/indexing/preflight.py) `upsert_source_node`.
+- **Who reads:** [`indexing/orchestrator.py`](backend/indexing/orchestrator.py).
 
 ### `:File`
 
@@ -44,21 +44,21 @@ One per payload file (`file_class == 'payload_data'`).
 | `dataset_id` | string | Foreign key to `:Source.source_id`. |
 | `rel_path` | string | Posix-style relative path under `data/raw/`. |
 | `file_path` | string | Absolute resolved path on the host where preflight ran. |
-| `format_family` | string | One of `json`, `jsonl`, `parquet`, `yaml`, `image`, `archive`, `unknown`, etc. (See [`data_access/raw/classification.py`](../data_access/raw/classification.py).) |
+| `format_family` | string | One of `json`, `jsonl`, `parquet`, `yaml`, `image`, `archive`, `unknown`, etc. (See [`data_access/raw/classification.py`](backend/data_access/raw/classification.py).) |
 | `size_bytes` | int | |
-| `dispatch_mode` | string | `parallel` or `sequential`. (See [`indexing/chunker.dispatch_mode_for`](../indexing/chunker.py).) |
+| `dispatch_mode` | string | `parallel` or `sequential`. (See [`indexing/chunker.dispatch_mode_for`](backend/indexing/chunker.py).) |
 | `created_at` | iso8601 | Set on create. |
 | `description` | string \| null | Written by the file orchestrator (Stage 2). |
 | `description_run_id` | string \| null | Run that produced the description. |
 
 - **Constraint:** `REQUIRE n.file_id IS UNIQUE`.
 - **Indexes:** `(n.dataset_id)`, `(n.format_family)`.
-- **Who writes:** preflight (creation, base properties), [`indexing/file_writer.py`](../indexing/file_writer.py) (description), [`indexing/file_rollup.py`](../indexing/file_rollup.py) reads it.
-- **Who reads:** orchestrator (file context), rollup, [`scripts/verify_graph.py`](../scripts/verify_graph.py).
+- **Who writes:** preflight (creation, base properties), [`indexing/file_writer.py`](backend/indexing/file_writer.py) (description), [`indexing/file_rollup.py`](backend/indexing/file_rollup.py) reads it.
+- **Who reads:** orchestrator (file context), rollup, [`scripts/verify_graph.py`](backend/scripts/verify_graph.py).
 
 ### `:Chunk`
 
-One per deterministic chunk produced by [`indexing/chunker.py`](../indexing/chunker.py).
+One per deterministic chunk produced by [`indexing/chunker.py`](backend/indexing/chunker.py).
 
 | Property | Type | Notes |
 |---|---|---|
@@ -68,7 +68,7 @@ One per deterministic chunk produced by [`indexing/chunker.py`](../indexing/chun
 | `kind` | string | Base kinds: `record`, `object`, `section`, `paragraph`, `table`, `image`, `raw`. HERB-aware kinds include `product_profile`, `directory_batch`, `org_tree`, `slack_thread_batch`, `document`, `document_part`, `meeting_transcript`, `meeting_transcript_part`, `meeting_chat_batch`, `url_batch`, `pr_batch`, `qa_record`, `qa_record_part`, `qa_batch`, `unanswerable_question_batch`. |
 | `start_offset` | int | Byte/char offset within the source file (semantics depend on format). |
 | `end_offset` | int | The agent **must echo this** as `chunk_end_offset` in `ChunkExtraction`. |
-| `content` | string | Full chunk text. Stored directly per [decision D10](architecture.md#d10--storing-chunkcontent-directly-vs-offsets). |
+| `content` | string | Full chunk text. Stored directly per [decision D10](backend/architecture.md#d10--storing-chunkcontent-directly-vs-offsets). |
 | `token_estimate` | int | `len(text) // 4`, min 1. |
 | `locator_json` | string | JSON-serialised locator (line, row, char_range, HERB `parent_ref`/`chunk_ref`, etc.). |
 | `empty` | bool | Set by ExtractionWriter; `false` initially. |
@@ -79,12 +79,12 @@ One per deterministic chunk produced by [`indexing/chunker.py`](../indexing/chun
 
 - **Constraint:** `REQUIRE n.chunk_id IS UNIQUE`.
 - **Indexes:** `(n.file_id)`, `(n.empty)`.
-- **Who writes:** [`indexing/chunker.py`](../indexing/chunker.py) (creation), [`indexing/extraction_writer.py`](../indexing/extraction_writer.py) (`empty`, `empty_reason`, `description`), [`indexing/file_writer.py`](../indexing/file_writer.py) (`relevance_to_file`).
+- **Who writes:** [`indexing/chunker.py`](backend/indexing/chunker.py) (creation), [`indexing/extraction_writer.py`](backend/indexing/extraction_writer.py) (`empty`, `empty_reason`, `description`), [`indexing/file_writer.py`](backend/indexing/file_writer.py) (`relevance_to_file`).
 - **Who reads:** orchestrator, rollup.
 
 ### `:Tag`
 
-One per **distinct tag name** across the corpus. Cluster is on the **edge**, not on the node — see [decision D2](architecture.md#d2--tag-uniqueness-on-name-only-cluster-on-edges).
+One per **distinct tag name** across the corpus. Cluster is on the **edge**, not on the node — see [decision D2](backend/architecture.md#d2--tag-uniqueness-on-name-only-cluster-on-edges).
 
 | Property | Type | Notes |
 |---|---|---|
@@ -92,7 +92,7 @@ One per **distinct tag name** across the corpus. Cluster is on the **edge**, not
 
 - **Constraint:** `REQUIRE n.name IS UNIQUE`.
 - **Indexes:** none beyond uniqueness.
-- **Who writes:** [`indexing/extraction_writer.py`](../indexing/extraction_writer.py) (`MERGE (t:Tag {name: tag.name})`).
+- **Who writes:** [`indexing/extraction_writer.py`](backend/indexing/extraction_writer.py) (`MERGE (t:Tag {name: tag.name})`).
 - **Who reads:** rollup, future cluster query views.
 
 ### `:CanonicalTag`
@@ -106,7 +106,7 @@ Legacy vocabulary node type from the generic tagger path. HERB preflight/chunkin
 | `gloss` | string | Optional one-line definition. |
 | `source` | string | Legacy source marker. |
 
-- **Constraint:** `REQUIRE (n.label, n.cluster) IS NODE KEY` ([`schema/constraints.cypher`](../schema/constraints.cypher)).
+- **Constraint:** `REQUIRE (n.label, n.cluster) IS NODE KEY` ([`schema/constraints.cypher`](backend/schema/constraints.cypher)).
 - **Indexes:** `(n.cluster)`.
 - **Who writes:** No active HERB path. The old bootstrap seed path has been removed.
 - **Who reads:** orchestrator's `_load_canonical_vocab` builds the user-message vocabulary block from these.
@@ -129,12 +129,12 @@ Created when the agent emits a tag with `canonical_missing=True`. Raw tag names 
 
 - **Constraint:** `REQUIRE n.proposal_id IS UNIQUE`.
 - **Indexes:** none beyond uniqueness.
-- **Who writes:** [`indexing/extraction_writer.py`](../indexing/extraction_writer.py).
-- **Who reads:** Future triage CLI (TODO — see [`status.md`](status.md)).
+- **Who writes:** [`indexing/extraction_writer.py`](backend/indexing/extraction_writer.py).
+- **Who reads:** Future triage CLI (TODO — see [`status.md`](backend/status.md)).
 
 ### Working File
 
-Scheduler state is not part of the graph. Chunk/file agent jobs live in `backend/.work/worklist_<neo4j_database>.json`, written by [`indexing/worklist.py`](../indexing/worklist.py). There are no `:WorkItem` nodes in the graph contract.
+Scheduler state is not part of the graph. Chunk/file agent jobs live in `backend/.work/worklist_<neo4j_database>.json`, written by [`indexing/worklist.py`](backend/indexing/worklist.py). There are no `:WorkItem` nodes in the graph contract.
 
 ### `:Run`
 
@@ -155,7 +155,7 @@ One per `python scripts/run_index.py` invocation.
 
 - **Constraint:** `REQUIRE n.run_id IS UNIQUE`.
 - **Indexes:** none beyond uniqueness.
-- **Who writes:** [`indexing/runs.py`](../indexing/runs.py).
+- **Who writes:** [`indexing/runs.py`](backend/indexing/runs.py).
 - **Who reads:** humans inspecting the graph.
 
 ## Edge types
@@ -169,7 +169,7 @@ One per `python scripts/run_index.py` invocation.
 ### `(:File)-[:HAS_CHUNK]->(:Chunk)`
 
 - **Properties:** none.
-- **Who writes:** [`indexing/chunker.py`](../indexing/chunker.py) `_write_chunks`.
+- **Who writes:** [`indexing/chunker.py`](backend/indexing/chunker.py) `_write_chunks`.
 - **Who reads:** orchestrator, file rollup.
 
 ### `(:Chunk)-[:NEXT]->(:Chunk)`
@@ -177,7 +177,7 @@ One per `python scripts/run_index.py` invocation.
 Linked-list within a file; ordinal-ordered.
 
 - **Properties:** none.
-- **Who writes:** [`indexing/chunker.py`](../indexing/chunker.py) (the second pass after MERGE-ing the chunk batch).
+- **Who writes:** [`indexing/chunker.py`](backend/indexing/chunker.py) (the second pass after MERGE-ing the chunk batch).
 - **Who reads:** orchestrator's `_load_chunk_context` reads `(prev:Chunk)-[:NEXT]->(c)` to fetch the previous chunk's content for the continuity hint when `dispatch_mode='sequential'`.
 
 ### `(:Chunk)-[:HAS_TAG]->(:Tag)`
@@ -198,9 +198,9 @@ creating fresh ones.
 
 - **Indexes:** `(r.facet)`, `(r.run_id)` for HERB retrieval; legacy indexes may
   still exist on `(r.cluster)` and `(r.canonical_id)`.
-- **Who writes:** HERB pilot [`tagging/pipeline.py`](../tagging/pipeline.py);
-  legacy generic path [`indexing/extraction_writer.py`](../indexing/extraction_writer.py).
-- **Who reads:** planned retrieval API; legacy [`indexing/file_rollup.py`](../indexing/file_rollup.py)
+- **Who writes:** HERB pilot [`tagging/pipeline.py`](backend/tagging/pipeline.py);
+  legacy generic path [`indexing/extraction_writer.py`](backend/indexing/extraction_writer.py).
+- **Who reads:** planned retrieval API; legacy [`indexing/file_rollup.py`](backend/indexing/file_rollup.py)
   reads the old generic shape.
 
 ### `(:File)-[:TAGGED]->(:Tag)`
@@ -219,7 +219,7 @@ not write `TAGGED` rollups; HERB retrieval should read `HAS_TAG` directly.
 | `updated_at` | iso8601 | |
 
 - **Indexes:** `(r.cluster)`.
-- **Who writes:** [`indexing/file_rollup.py`](../indexing/file_rollup.py). The rollup **deletes all in-scope `TAGGED` edges first** then creates fresh ones (Cypher MERGE semantics around null `canonical_id` are awkward; pure delete-and-rebuild is safer).
+- **Who writes:** [`indexing/file_rollup.py`](backend/indexing/file_rollup.py). The rollup **deletes all in-scope `TAGGED` edges first** then creates fresh ones (Cypher MERGE semantics around null `canonical_id` are awkward; pure delete-and-rebuild is safer).
 - **Who reads:** future cluster query views (not built yet — planned under `clustering/queries/`).
 
 ### `(:CanonicalTagProposal)-[:OBSERVED_IN]->(:Chunk)`
@@ -227,12 +227,12 @@ not write `TAGGED` rollups; HERB retrieval should read `HAS_TAG` directly.
 One edge per proposing-occurrence; lets us trace where a proposal came from.
 
 - **Properties:** none (the proposal node carries `observed_count`).
-- **Who writes:** [`indexing/extraction_writer.py`](../indexing/extraction_writer.py).
+- **Who writes:** [`indexing/extraction_writer.py`](backend/indexing/extraction_writer.py).
 - **Who reads:** Future triage CLI.
 
 ## Indexes summary
 
-From [`schema/indexes.cypher`](../schema/indexes.cypher):
+From [`schema/indexes.cypher`](backend/schema/indexes.cypher):
 
 ```cypher
 CREATE INDEX IF NOT EXISTS FOR (n:File)         ON (n.dataset_id);
@@ -247,7 +247,7 @@ CREATE INDEX IF NOT EXISTS FOR ()-[r:HAS_TAG]-() ON (r.canonical_id);
 CREATE INDEX IF NOT EXISTS FOR ()-[r:TAGGED]-()  ON (r.cluster);
 ```
 
-[`schema/vector_indexes.cypher`](../schema/vector_indexes.cypher) is intentionally empty — embeddings are deferred (see [`status.md`](status.md)).
+[`schema/vector_indexes.cypher`](backend/schema/vector_indexes.cypher) is intentionally empty — embeddings are deferred (see [`status.md`](backend/status.md)).
 
 ## Quick reference for property placement
 

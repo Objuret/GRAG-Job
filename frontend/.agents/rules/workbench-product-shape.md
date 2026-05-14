@@ -4,8 +4,8 @@ trigger: always_on
 
 The shipped workbench is **`src/App.jsx`** — two lanes (pipeline vs usage) plus a **Clusters → Graph Query** bridge.
 
-Use synthetic labels in **`src/data/workbenchData.ts`** only; no credentials or machine paths.
+The browser is the whole runtime: it calls Neo4j via `neo4j-driver` (bolt-ws, read-only user) and Anthropic via `@anthropic-ai/sdk` (`dangerouslyAllowBrowser: true`). Live integration goes directly in the workbench or in `src/lib/`.
 
-When Neo4j queries exist, add **`src/api/client.ts`** and shrink demo-only fields — see **`docs/api.md`**.
+Demo state lives in `src/data/workbenchData.ts` using synthetic labels.
 
-Do not reintroduce a fake delayed API layer; call real HTTP or keep UI-local demo state only.
+Two-pass prompt interpretation method: `docs/frontend/query_interpretation_layer.md`.

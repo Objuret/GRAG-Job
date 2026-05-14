@@ -4,9 +4,14 @@
 
 **Entry:** `src/main.tsx` → **`src/App.jsx`**.
 
-Single-file workbench: React Flow canvas, inline catalog, inspector, query-module editor, edge drawer, and bottom comparison strip. **No HTTP client** in-tree yet — demo copy and registry live in **`src/data/workbenchData.ts`**.
+Single-file workbench: React Flow canvas, inline catalog, inspector, query-module editor, edge drawer, and bottom comparison strip. Demo copy and registry live in **`src/data/workbenchData.ts`**.
 
-Indexing / Neo4j writes live in **`backend/`** (Python). A future **Node (or other) query API** should read the same Neo4j database; see `docs/api.md`.
+The app is **local-only**. The browser talks directly to:
+
+- **Neo4j** via [`neo4j-driver`](https://www.npmjs.com/package/neo4j-driver) (bolt-ws to localhost) as a **read-only** Neo4j user.
+- **Anthropic** via [`@anthropic-ai/sdk`](https://www.npmjs.com/package/@anthropic-ai/sdk) with `dangerouslyAllowBrowser: true`. API key in `.env.local` as `VITE_ANTHROPIC_API_KEY`.
+
+There is no HTTP server in the middle. The Python `backend/` is an **offline pipeline** that builds the Neo4j graph; it is not part of running the app.
 
 ---
 
@@ -33,7 +38,6 @@ src/
 ├── data/workbenchData.ts      # Node registry + demo payloads (PRESET_RESULTS, SAMPLE_CHUNKS, …)
 ├── query/queryModuleSyntax.ts # Query fragment defaults and composition helpers
 ├── types/index.ts
-├── api/                       # Placeholder — typed fetch client goes here later
 └── index.css
 ```
 
@@ -46,7 +50,13 @@ workbenchData.ts       ──imports──▶  App.jsx  (registry + demo lane re
 queryModuleSyntax.ts   ──imports──▶  App.jsx  (query module composition)
 ```
 
-When live: **`src/api/client.ts`** (to be added) **`fetch` → query service → Neo4j**.
+When the live path is wired, `App.jsx` will:
+
+1. Use `neo4j-driver` directly to read datasets / files / chunks / tags from the local Neo4j.
+2. Use `@anthropic-ai/sdk` directly for prompt interpretation and answer generation. See [`query_interpretation_layer.md`](query_interpretation_layer.md) for the two-pass method and plan shape.
+3. Display the query plan beside the retrieved results, so the user can see what the model thought the prompt meant.
+
+Field-name discipline: the HERB graph uses `facet`, `w_chunk`, `w_facet`, `relevance_to_file`. Drop legacy `cluster`, `canonicalId`, `weightLocal` from the HERB read path.
 
 ---
 

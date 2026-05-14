@@ -14,10 +14,10 @@
 
 | Layer | Code | Owns |
 |---|---|---|
-| **access** | [`data_access/raw/`](../data_access/raw/) | Sync HF/external sources, scan `data/raw/`, classify file_class (`payload_data` vs `repo_meta_code` vs `cache_meta`), emit a pandas catalog the indexing layer consumes. No Neo4j writes from the access layer beyond what `preflight` does on its behalf. |
-| **indexing** | [`indexing/`](../indexing/) | Chunker, working-file job ledger, Run repository, Orchestrator dispatcher, ExtractionWriter, FileExtractionWriter, deterministic FileRollup, CircuitBreaker. Pre-flight scans the access catalog, writes graph corpus nodes, and updates the local working file. The orchestrator is the only LLM caller. |
-| **tagging** | [`tagging/`](../tagging/) | HERB-specific Anthropic pilot harness. It verifies HERB chunk format, selects bounded samples, renders clean model-facing frames, writes pilot `HAS_TAG` edges, and produces `analysis.md`. |
-| **clustering** | [`clustering/`](../clustering/) | Future HERB query views. The old canonical seed vocabulary has been removed. |
+| **access** | [`data_access/raw/`](../../backend/data_access/raw/) | Sync HF/external sources, scan `data/raw/`, classify file_class (`payload_data` vs `repo_meta_code` vs `cache_meta`), emit a pandas catalog the indexing layer consumes. No Neo4j writes from the access layer beyond what `preflight` does on its behalf. |
+| **indexing** | [`indexing/`](../../backend/indexing/) | Chunker, working-file job ledger, Run repository, Orchestrator dispatcher, ExtractionWriter, FileExtractionWriter, deterministic FileRollup, CircuitBreaker. Pre-flight scans the access catalog, writes graph corpus nodes, and updates the local working file. The orchestrator is the only LLM caller. |
+| **tagging** | [`tagging/`](../../backend/tagging/) | HERB-specific Anthropic pilot harness. It verifies HERB chunk format, selects bounded samples, renders clean model-facing frames, writes pilot `HAS_TAG` edges, and produces `analysis.md`. |
+| **clustering** | [`clustering/`](../../backend/clustering/) | Future HERB query views. The old canonical seed vocabulary has been removed. |
 
 The `agents/` package is shared infrastructure for the legacy indexing path: a single OpenAI-compatible HTTP client and the pydantic schemas those calls return. The HERB tagging pilot currently uses Anthropic directly in `tagging/pipeline.py`; its contract is documented in [`herb_tagging_schema.md`](herb_tagging_schema.md). `shared/` holds config, the async Neo4j wrapper, and small utilities (hashing, time).
 
@@ -27,7 +27,7 @@ Each entry: **Decision** • **Rationale** • **Alternatives considered** • *
 
 ### D1 — Path A deterministic chunker
 
-- **Decision.** Chunks are produced by deterministic, per-format rules in [`indexing/chunker.py`](../indexing/chunker.py). The agent operates on pre-existing `(:Chunk)` rows; it does **not** propose chunk boundaries.
+- **Decision.** Chunks are produced by deterministic, per-format rules in [`indexing/chunker.py`](../../backend/indexing/chunker.py). The agent operates on pre-existing `(:Chunk)` rows; it does **not** propose chunk boundaries.
 - **Rationale.** Reproducibility, idempotency, predictable cost. The agent's job is interpretation, not segmentation.
 - **Alternatives.** Agent-negotiated boundaries for long-form text (where paragraph splits underdetermine semantics). Considered for PDF/HTML/DOCX but deferred — the cost/complexity didn't pay off until we had retrieval-side feedback.
 - **Status.** Active. Revisit for sequential long-form files once we have a query workload to optimise against.
@@ -37,11 +37,11 @@ Each entry: **Decision** • **Rationale** • **Alternatives considered** • *
 - **Decision.** `(:Tag) REQUIRE n.name IS UNIQUE`. Cluster is a property on `(:Chunk)-[:HAS_TAG]->(:Tag)` and `(:File)-[:TAGGED]->(:Tag)`, not on the node.
 - **Rationale.** Tag names like `q2_2025` can be a `temporal` tag in one chunk and a hint of an `activity` in another. Tying the cluster to the edge keeps the graph honest. It also avoids a combinatorial explosion of `(name, cluster)` Tag nodes.
 - **Alternatives.** Composite uniqueness on `(name, cluster)` plus a `(:Dimension)` parent node. Rejected as over-modelling.
-- **Status.** Active. See [`schema/constraints.cypher`](../schema/constraints.cypher).
+- **Status.** Active. See [`schema/constraints.cypher`](../../backend/schema/constraints.cypher).
 
 ### D3 — Dropped `(:Dimension)` nodes; cluster is a string property
 
-- **Decision.** No `(:Dimension)` or `(:Cluster)` node label. Cluster is a string from the `Cluster` Literal in [`agents/schemas.py`](../agents/schemas.py).
+- **Decision.** No `(:Dimension)` or `(:Cluster)` node label. Cluster is a string from the `Cluster` Literal in [`agents/schemas.py`](../../backend/agents/schemas.py).
 - **Rationale.** The set is closed (5 values). A graph node would just add joins for no information. The Pydantic Literal already enforces the closed set at the call boundary.
 - **Alternatives.** First-class `(:Dimension)` node with `[:IN_CLUSTER]` edges. Rejected.
 - **Status.** Active.
@@ -51,7 +51,7 @@ Each entry: **Decision** • **Rationale** • **Alternatives considered** • *
 - **Decision.** Each `(:Chunk)-[:HAS_TAG]->(:Tag)` edge stores `canonical_id` (the canonical the agent mapped to, or `null` when proposing). Aggregation at file-level reads it from the edge.
 - **Rationale.** Per-chunk attribution: the same raw Tag node can be mapped to a canonical from one chunk and treated as missing a canonical from another. The edge is the per-occurrence record.
 - **Alternatives.** Store mapping on the Tag node (one canonical per name globally). Rejected — it conflates extraction events.
-- **Status.** Active. See [`indexing/extraction_writer.py`](../indexing/extraction_writer.py).
+- **Status.** Active. See [`indexing/extraction_writer.py`](../../backend/indexing/extraction_writer.py).
 
 ### D5 — One-shot agent call (extraction + canonical mapping)
 
@@ -65,11 +65,11 @@ Each entry: **Decision** • **Rationale** • **Alternatives considered** • *
 - **Decision.** Every chunk and every chunk-bearing file has a working-file job keyed `f"{kind}:{target_id}"`. Files that produce zero chunks are kept as `:File` metadata but do not get file-orchestration work. Status flow: `unrun → done | failed`.
 - **Rationale.** A clean, queryable register of "what to do" that survives crashes. Lets us run partial batches with `--chunk-limit` / `--file-limit` and resume. Lets us filter by dataset.
 - **Alternatives.** Compute the worklist on the fly each run from `(:Chunk)`/`(:File)`. Rejected because we lose per-item failure history and assignment timestamps.
-- **Status.** Active. See [`indexing/worklist.py`](../indexing/worklist.py).
+- **Status.** Active. See [`indexing/worklist.py`](../../backend/indexing/worklist.py).
 
 ### D7 — Tight circuit-breaker thresholds (table)
 
-- **Decision.** Per-error-class thresholds, codified in [`indexing/breaker.py`](../indexing/breaker.py). Trip first, debug later.
+- **Decision.** Per-error-class thresholds, codified in [`indexing/breaker.py`](../../backend/indexing/breaker.py). Trip first, debug later.
 
 | Error class | Trigger |
 |---|---|
@@ -88,14 +88,14 @@ Each entry: **Decision** • **Rationale** • **Alternatives considered** • *
 
 ### D8 — Auto-retry-all on new run start
 
-- **Decision.** [`WorkList.reset_failed_to_unrun`](../indexing/worklist.py) flips every `failed` working-file item to `unrun` at the start of each run.
+- **Decision.** [`WorkList.reset_failed_to_unrun`](../../backend/indexing/worklist.py) flips every `failed` working-file item to `unrun` at the start of each run.
 - **Rationale.** Failures are usually transient (rate limit, validation glitch, agent flake). The cheapest healing strategy is "try again next run". Failure history is not lost — `error_class` is cleared but the `run_id` of the most recent toucher is kept.
 - **Alternatives.** Manual triage list. Rejected — added friction with no payoff at this scale.
 - **Status.** Active.
 
 ### D9 — "Re-chunk only if no chunks exist" idempotency
 
-- **Decision.** [`Chunker.chunk_file`](../indexing/chunker.py) checks for existing `(:Chunk)` nodes for the file and returns early when any exist.
+- **Decision.** [`Chunker.chunk_file`](../../backend/indexing/chunker.py) checks for existing `(:Chunk)` nodes for the file and returns early when any exist.
 - **Rationale.** Re-running pre-flight should be safe and cheap. Re-chunking risks invalidating extraction results that already reference chunk_ids.
 - **Alternatives.** Always re-chunk and reconcile. Rejected — too easy to silently lose extraction work.
 - **Status.** Active. To re-chunk a file, delete its `(:Chunk)` rows and clear/reseed the matching working-file items explicitly.
@@ -145,7 +145,7 @@ The breaker exception unwinds straight up to `scripts/run_index.py`, which alway
 
 ## Dispatch modes
 
-Determined per file at preflight by [`dispatch_mode_for`](../indexing/chunker.py) and stored as `(:File).dispatch_mode`.
+Determined per file at preflight by [`dispatch_mode_for`](../../backend/indexing/chunker.py) and stored as `(:File).dispatch_mode`.
 
 | Format family | Mode | Why |
 |---|---|---|
@@ -176,4 +176,4 @@ The orchestrator validates that every expected `chunk_id` (non-empty chunks for 
 weight_global = sum(coalesce(c.relevance_to_file, 0.5) * r.weight_local) / count(c)
 ```
 
-per `(file, tag, cluster, canonical_id)` group. Files whose orchestrator hasn't run yet still get a sensible rollup via the `0.5` default (see [`indexing/file_rollup.py`](../indexing/file_rollup.py)).
+per `(file, tag, cluster, canonical_id)` group. Files whose orchestrator hasn't run yet still get a sensible rollup via the `0.5` default (see [`indexing/file_rollup.py`](../../backend/indexing/file_rollup.py)).

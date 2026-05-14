@@ -17,10 +17,14 @@
 
 ## Not wired
 
-- [ ] HTTP API to Neo4j / retrieval (`docs/api.md`)  
-- [ ] Typed client under `src/api/`  
-- [ ] Replacing demo text with live graph counts and LLM output  
-- [ ] Persisting canvas/module state outside the current browser session
+- [ ] Browser-direct Neo4j read via `neo4j-driver` (replaces demo dataset/file/chunk/tag reads)
+- [ ] Browser-direct Anthropic interpretation via `@anthropic-ai/sdk` (two-pass: handles → 5-facet → derived `w_query`)
+- [ ] Cypher retrieval scoring per the deterministic weighted-overlap formula
+- [ ] Answer call (Anthropic) over retrieved chunks per `answer_job` mode
+- [ ] Field-name pass: drop legacy `cluster`/`canonicalId`/`weightLocal` for HERB
+- [ ] Persisting canvas/module state across browser sessions
+
+See [`plans.md`](plans.md) for the order, and the spec for interpretation/retrieval at [`query_interpretation_layer.md`](query_interpretation_layer.md).
 
 ---
 

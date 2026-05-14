@@ -1,8 +1,8 @@
 # Prompts
 
-**TL;DR.** Two LLM prompts are in the live indexing path: [`extract_chunk.md`](../prompts/extract_chunk.md) (Stage 1) and [`file_descriptor.md`](../prompts/file_descriptor.md) (Stage 2). [`extract_chunk_tags_only.md`](../prompts/extract_chunk_tags_only.md) is used by non-mutating pilot scripts only. The HERB tagging pilot has its own Anthropic structured-output contract in [`herb_tagging_schema.md`](herb_tagging_schema.md). All prompt outputs are validated by pydantic models. When you edit a prompt's JSON shape, you **must** update the matching model in the same change.
+**TL;DR.** Two LLM prompts are in the live indexing path: [`extract_chunk.md`](../../backend/prompts/extract_chunk.md) (Stage 1) and [`file_descriptor.md`](../../backend/prompts/file_descriptor.md) (Stage 2). [`extract_chunk_tags_only.md`](../../backend/prompts/extract_chunk_tags_only.md) is used by non-mutating pilot scripts only. The HERB tagging pilot has its own Anthropic structured-output contract in [`herb_tagging_schema.md`](herb_tagging_schema.md). All prompt outputs are validated by pydantic models. When you edit a prompt's JSON shape, you **must** update the matching model in the same change.
 
-**When to read this.** Before editing any file under [`prompts/`](../prompts/). Also before changing [`agents/schemas.py`](../agents/schemas.py).
+**When to read this.** Before editing any file under [`prompts/`](../../backend/prompts/). Also before changing [`agents/schemas.py`](../../backend/agents/schemas.py).
 
 **Last updated:** 2026-05-13.
 
@@ -15,18 +15,18 @@
 - **HERB model input must stay uncontaminated.** For HERB tagging, do not send internal chunk ids, chunk refs, locator JSON, file paths, or implementation labels as model evidence. The exact input/output schema and weight rationale live in [`herb_tagging_schema.md`](herb_tagging_schema.md).
 
 - **One LLM call per prompt invocation.** The indexing path uses JSON mode (`response_format=json_object`). Pilot scripts can request structured output (`response_format=json_schema`) through `AgentClient.call(response_format="structured")`. Output must be a single JSON object — no markdown, no prose, no code fences.
-- **Failure handling lives in the orchestrator.** [`agents/client.py`](../agents/client.py) catches httpx and pydantic errors and returns a typed `error_class`. [`indexing/orchestrator.py`](../indexing/orchestrator.py) marks the working-file item `failed` with that class. Auto-retry-all on next run picks it up.
+- **Failure handling lives in the orchestrator.** [`agents/client.py`](../../backend/agents/client.py) catches httpx and pydantic errors and returns a typed `error_class`. [`indexing/orchestrator.py`](../../backend/indexing/orchestrator.py) marks the working-file item `failed` with that class. Auto-retry-all on next run picks it up.
 - **Schemas are the contract.** Edit the prompt and the pydantic model together — never one without the other.
 
 ## `prompts/extract_chunk.md`
 
 ### Purpose
 
-Per-chunk extraction. Called for every `chunk_extraction` working-file item in [`Orchestrator._process_chunk`](../indexing/orchestrator.py). Returns a five-cluster tag set, a 1-3 sentence chunk description, and an optional empty verdict.
+Per-chunk extraction. Called for every `chunk_extraction` working-file item in [`Orchestrator._process_chunk`](../../backend/indexing/orchestrator.py). Returns a five-cluster tag set, a 1-3 sentence chunk description, and an optional empty verdict.
 
 ### Inputs the orchestrator injects (in the user message)
 
-Built by [`Orchestrator._render_chunk_user_message`](../indexing/orchestrator.py):
+Built by [`Orchestrator._render_chunk_user_message`](../../backend/indexing/orchestrator.py):
 
 - `File: {dataset_id}/{rel_path}  (format={format_family})`
 - `Chunk ordinal: {ordinal}, kind: {kind}, end_offset: {end_offset}`
@@ -39,7 +39,7 @@ The system message is the prompt file's body verbatim.
 
 ### Output schema
 
-[`ChunkExtraction`](../agents/schemas.py):
+[`ChunkExtraction`](../../backend/agents/schemas.py):
 
 ```python
 class ChunkExtraction(BaseModel):
@@ -50,7 +50,7 @@ class ChunkExtraction(BaseModel):
     tags: list[Tag] = Field(default_factory=list)
 ```
 
-`Tag.name` is the raw, specific extracted tag and may be new. `Tag.canonical` maps that raw tag to the broad controlled vocabulary. `Tag` requires either `canonical` set (mapped to a known canonical) **or** `canonical_missing=True` with a `gloss` when no broad canonical fits. See the model validators in [`agents/schemas.py`](../agents/schemas.py).
+`Tag.name` is the raw, specific extracted tag and may be new. `Tag.canonical` maps that raw tag to the broad controlled vocabulary. `Tag` requires either `canonical` set (mapped to a known canonical) **or** `canonical_missing=True` with a `gloss` when no broad canonical fits. See the model validators in [`agents/schemas.py`](../../backend/agents/schemas.py).
 
 ### Validation / retry behaviour
 
@@ -63,10 +63,10 @@ A `schema_invalid` rate of ≥ 20% over 50 calls trips the breaker and aborts th
 
 ### Editing guidelines
 
-- **Never** change the JSON shape without updating `ChunkExtraction` / `Tag` in [`agents/schemas.py`](../agents/schemas.py) in the same commit.
-- **Never** rename a cluster string without updating the `Cluster` Literal and the user-message renderer's `CLUSTER_ORDER`.
+- When the JSON shape changes, update `ChunkExtraction` / `Tag` in [`agents/schemas.py`](../../backend/agents/schemas.py) in the same commit.
+- When renaming a cluster string, update the `Cluster` Literal and the user-message renderer's `CLUSTER_ORDER` together.
 - The chunk_end_offset echo check is the orchestrator's only way to detect "the model hallucinated a different chunk". Keep the prompt explicit about copying it verbatim.
-- The empty-vs-content invariant is enforced by `ChunkExtraction._validate_empty_vs_content`. Don't add a third state.
+- The empty-vs-content invariant is two states: `empty=true` with an `empty_reason`, or `empty=false` with content + tags. The validator `ChunkExtraction._validate_empty_vs_content` enforces it.
 - Missing-canonical proposal tags must set `canonical=null`; normal new raw tag names should still set `canonical_missing=false` and map to the closest broad canonical.
 - Keep tag count guidance ("3-10 typical") in sync with what the breaker can absorb. A surge of 30+ tags per chunk inflates token cost without improving retrieval.
 
@@ -74,11 +74,11 @@ A `schema_invalid` rate of ≥ 20% over 50 calls trips the breaker and aborts th
 
 ### Purpose
 
-Per-file orchestration. Called for every `file_orchestration` working-file item in [`Orchestrator._process_file`](../indexing/orchestrator.py). Returns a 3-5 sentence file description and a `chunk_relevance` map covering **every** non-empty chunk_id.
+Per-file orchestration. Called for every `file_orchestration` working-file item in [`Orchestrator._process_file`](../../backend/indexing/orchestrator.py). Returns a 3-5 sentence file description and a `chunk_relevance` map covering **every** non-empty chunk_id.
 
 ### Inputs the orchestrator injects
 
-Built by [`Orchestrator._render_file_user_message`](../indexing/orchestrator.py):
+Built by [`Orchestrator._render_file_user_message`](../../backend/indexing/orchestrator.py):
 
 - `File: {dataset_id}/{rel_path}  (format={format_family})`
 - `Chunks (non-empty): N`
@@ -90,7 +90,7 @@ The model **does not see raw chunk content** — only the descriptions and tag s
 
 ### Output schema
 
-[`FileOrchestrationOutput`](../agents/schemas.py):
+[`FileOrchestrationOutput`](../../backend/agents/schemas.py):
 
 ```python
 class FileOrchestrationOutput(BaseModel):
@@ -104,20 +104,20 @@ class FileOrchestrationOutput(BaseModel):
 
 In addition to the standard `error_class` handling, the orchestrator validates that **every** non-empty chunk_id of the file appears as a key in `chunk_relevance` exactly once. Otherwise the working-file item is marked `failed` with `error_class="schema_validation"` and a message of the form `chunk_relevance must cover every chunk_id exactly once; missing=[...] extra=[...]`.
 
-This guarantees the rollup at Stage 3 has a relevance value for every chunk that contributed tags. (Files where the orchestrator hasn't run yet still get a sensible default of 0.5 in [`indexing/file_rollup.py`](../indexing/file_rollup.py), but the orchestrated path requires full coverage.)
+This guarantees the rollup at Stage 3 has a relevance value for every chunk that contributed tags. (Files where the orchestrator hasn't run yet still get a sensible default of 0.5 in [`indexing/file_rollup.py`](../../backend/indexing/file_rollup.py), but the orchestrated path requires full coverage.)
 
 ### Editing guidelines
 
-- Don't change the chunk_relevance key shape (must be a string `chunk_id`). The orchestrator does set-equality on the keys; renaming would silently break every file.
-- The "use the full 0..1 range" guidance is necessary because models tend to bunch scores around 0.5 when not pushed. Keep that wording.
-- The model **must not** invent or omit chunk_ids. The orchestrator detects both.
-- Don't widen the description beyond ~5 sentences — it lands directly on `:File.description` and is meant to be human-scannable.
+- Keep the chunk_relevance key shape as a string `chunk_id`. The orchestrator does set-equality on the keys; renaming silently breaks every file.
+- Keep the "use the full 0..1 range" guidance — without it models bunch scores around 0.5.
+- Every non-empty `chunk_id` must appear exactly once. The orchestrator detects both missing and invented keys.
+- Keep the description at ~5 sentences max — it lands directly on `:File.description` and is meant to be human-scannable.
 
 ## `prompts/extract_chunk_tags_only.md`
 
 ### Purpose
 
-Non-mutating model evaluation. Called by [`scripts/run_tags_only_pilot.py`](../scripts/run_tags_only_pilot.py) and [`scripts/run_tags_only_structured_matrix.py`](../scripts/run_tags_only_structured_matrix.py), not by `run_index.py`.
+Non-mutating model evaluation. Called by [`scripts/run_tags_only_pilot.py`](../../backend/scripts/run_tags_only_pilot.py) and [`scripts/run_tags_only_structured_matrix.py`](../../backend/scripts/run_tags_only_structured_matrix.py), not by `run_index.py`.
 
 ### Output schema
 
@@ -131,8 +131,8 @@ The pilot reads chunks from Neo4j and writes Markdown reports under `backend/.pl
 
 When you change any prompt:
 
-- [ ] Pydantic model in [`agents/schemas.py`](../agents/schemas.py) matches the JSON shape, including required vs optional fields and value bounds.
+- [ ] Pydantic model in [`agents/schemas.py`](../../backend/agents/schemas.py) matches the JSON shape, including required vs optional fields and value bounds.
 - [ ] Orchestrator's user-message renderer (`_render_chunk_user_message` or `_render_file_user_message`) injects all the variables the prompt expects.
 - [ ] The chunk_end_offset echo (Stage 1) and chunk_relevance key set (Stage 2) checks still hold.
-- [ ] Cluster names in the prompt match the `Cluster` Literal in [`agents/schemas.py`](../agents/schemas.py).
-- [ ] `prompts.md` (this doc) and any cross-linked sections in [`agent_brief.md`](agent_brief.md) / [`architecture.md`](architecture.md) are updated.
+- [ ] Cluster names in the prompt match the `Cluster` Literal in [`agents/schemas.py`](../../backend/agents/schemas.py).
+- [ ] `prompts.md` (this doc) and any cross-linked sections in [`agent_brief.md`](../../AGENTS.md) / [`architecture.md`](architecture.md) are updated.
