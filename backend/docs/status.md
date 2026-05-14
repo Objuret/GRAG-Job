@@ -1,10 +1,10 @@
 # Status
 
-**TL;DR.** HERB is currently verified as a fresh chunk graph plus a no-API tagging smoke setup. The `herb` database contains the fresh `Salesforce__HERB` `:Source`, `:File`, and `:Chunk` artefacts, the HERB-specific Anthropic tagging harness has selected `pilot_format_smoke`, and the old generic extraction/tagging path is blocked for HERB unless explicitly overridden.
+**TL;DR.** HERB's current main artefact is the full-corpus `pilot_full_herb` snapshot archive at `backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip`, backed by the live `herb` Neo4j database. Older smoke runs and loose run directories are build/history: useful for design archaeology, not the thing to ship. The old generic extraction/tagging path remains blocked for HERB unless explicitly overridden.
 
 **When to read this.** Before promising a feature is "done". Before estimating remaining work. After every significant code change, update this doc.
 
-**Last updated:** 2026-05-13.
+**Last updated:** 2026-05-14.
 
 ## Touched paths
 
@@ -24,13 +24,19 @@ This doc references everything; updates affect `docs/status.md` only.
 | Pydantic schema enforcement at the agent boundary | [`agents/client.AgentClient.call`](../agents/client.py) validates model output via `schema.model_validate_json` and produces `error_class="schema_invalid"` on failure. Covered by validators in [`agents/schemas.py`](../agents/schemas.py). |
 | Idempotency rules | [`Chunker.chunk_file`](../indexing/chunker.py) skips files that already have chunks; preflight upserts `:Source` and `:File` with `MERGE`; bootstrap uses `IF NOT EXISTS` everywhere. |
 
+## Current HERB artefact
+
+Treat `backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip` as the portable current HERB result. It contains the completed full-corpus run metadata, API I/O logs, recovery logs, final analysis, and final Neo4j JSONL exports after gap recovery. The checked-out `herb` Neo4j database should match that run under `run_id = "pilot_full_herb"`, but the zip is the committed archive to move between machines or branches.
+
+The unzipped `backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z/` directory, `pilot_full_herb/`, and the smoke folders are local build/history unless someone explicitly chooses to re-materialize or inspect them.
+
 ## What is built but not yet end-to-end verified
 
 - **HERB-aware chunking.** [`indexing/chunker.py`](../indexing/chunker.py) now chunks `Salesforce__HERB` by actual product/metadata evidence sections instead of one JSON row per chunk. HERB chunks include stable `parent_ref`/`chunk_ref` locators (for example `product.ActionGenie.documents.item0001.part00`) and split instead of truncating when the token budget is hit. After clearing the prior HERB chunks and HERB worklist items in the `herb` database, `NEO4J_DATABASE=herb python scripts/run_preflight.py --dataset-id Salesforce__HERB` wrote 5843 chunks and seeded 5876 work items with zero failures. Graph verification reported `max(token_estimate)=1450`, zero truncation markers, zero missing refs, and zero duplicate `chunk_ref` values per file.
 - **HERB tagging pilot execution.** Multiple HERB tagging pilots are verified end-to-end on the Anthropic Haiku 4.5 path:
   - `pilot_format_smoke` — 14 chunks across all 14 HERB evidence kinds. Validated the two-pass extract design, kind-specific frames, multi-facet emergence, and the derived `compute_w_chunk` formula.
   - `pilot_batch_smoke` — 15 chunks across 3 files (5 per file). Validated batched-per-file scoring (`w_chunk_file` differentiation across same-file chunks).
-  - `pilot_full_herb` — full HERB corpus run: 5843 chunks across 33 files. 100% extract coverage, 100% score coverage after recovery. 255,288 `:HAS_TAG` edges, 25,896 unique tag names. ~$72 in API spend on the main run plus ~$0.67 on gap-recovery. Snapshot frozen at `backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z/`.
+  - `pilot_full_herb` — current main HERB artefact: 5843 chunks across 33 files. 100% extract coverage, 100% score coverage after recovery. 255,288 `:HAS_TAG` edges, 25,896 unique tag names. ~$72 in API spend on the main run plus ~$0.67 on gap-recovery. Portable archive: `backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip`.
 - **Full corpus complete on HERB.** Other datasets (DocVQA, FEVEROUS, etc.) still pending — this was scoped to HERB only.
 
 ## Known gaps
@@ -54,7 +60,7 @@ This doc references everything; updates affect `docs/status.md` only.
 
 ## Last verified action
 
-2026-05-14: completed `pilot_full_herb` — full HERB corpus tagging through the Anthropic two-pass extract + batched score pipeline. Final coverage 5843/5843 chunks with descriptions, 5843/5843 with `relevance_to_file` scores, 255,288 `HAS_TAG` edges across 25,896 unique tag names. Snapshot frozen at `backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z/` and zipped for archive. Details in [`pilot_full_herb_report.md`](pilot_full_herb_report.md).
+2026-05-14: completed `pilot_full_herb` — full HERB corpus tagging through the Anthropic two-pass extract + batched score pipeline. Final coverage 5843/5843 chunks with descriptions, 5843/5843 with `relevance_to_file` scores, 255,288 `HAS_TAG` edges across 25,896 unique tag names. The current portable artefact is `backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip`; loose run directories are build/history. Details in [`pilot_full_herb_report.md`](pilot_full_herb_report.md).
 
 ## Next recommended step
 

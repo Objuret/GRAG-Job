@@ -1,10 +1,10 @@
 # Agent Brief
 
-**TL;DR.** This is the minimum context an agent (or new human) needs to be productive in this repo. For HERB, the verified base is the fresh chunk graph: raw files under `data/raw/Salesforce__HERB/` become `:Source`, `:File`, and `:Chunk` graph content with structural relationships. HERB tagging now has a separate Anthropic pilot harness under `tagging/`; the old generic `run_index.py` LLM path is legacy and is blocked for HERB unless explicitly overridden. There are **no fallbacks, no mocks, no side files**: Neo4j is the only durable store.
+**TL;DR.** This is the minimum context an agent (or new human) needs to be productive in this repo. For HERB, the current main result is the full-corpus snapshot archive `data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip`, backed by the live `herb` Neo4j database under `run_id = "pilot_full_herb"`. HERB tagging uses the separate Anthropic harness under `tagging/`; the old generic `run_index.py` LLM path is legacy and blocked for HERB unless explicitly overridden. There are **no fallbacks, no mocks, no indexing-path side files**: Neo4j is the only durable store, and the zip is the portable archive of the completed HERB run.
 
 **When to read this.** First — before touching anything. Re-read it if you've been off this repo for a while.
 
-**Last updated:** 2026-05-13.
+**Last updated:** 2026-05-14.
 
 ## Touched paths
 
@@ -12,7 +12,7 @@ This brief references: `agents/`, `indexing/`, `prompts/`, `schema/`, `scripts/`
 
 ## Mission
 
-Bridge heterogeneous, noisy datasets with a queryable graph artefact. Every HERB file becomes a chain of `(:Chunk)` nodes with stable locators and source/file structure. The old generic tag extraction and file rollup code still exists, but it is not the active HERB tagging contract; HERB tagging experiments use the dedicated Anthropic pilot in `tagging/`.
+Bridge heterogeneous, noisy datasets with a queryable graph artefact. Every HERB file becomes a chain of `(:Chunk)` nodes with stable locators and source/file structure. The current HERB semantic layer is the completed `pilot_full_herb` run, archived at `data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip`; older pilot folders are build/history. The old generic tag extraction and file rollup code still exists, but it is not the active HERB tagging contract.
 
 ## High-level architecture
 
@@ -57,6 +57,7 @@ Cluster is stored as a **string property on the `HAS_TAG` and `TAGGED` edges**. 
 |---|---|
 | Agent prompts (system messages) | [`prompts/extract_chunk.md`](../prompts/extract_chunk.md), [`prompts/file_descriptor.md`](../prompts/file_descriptor.md) |
 | HERB tagging model input/output contract | [`herb_tagging_schema.md`](herb_tagging_schema.md), [`herb_tagging_frames.md`](herb_tagging_frames.md) |
+| Current HERB run artefact | [`pilot_full_herb_report.md`](pilot_full_herb_report.md), `data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip` |
 | Tag / extraction JSON schema | [`agents/schemas.py`](../agents/schemas.py) (`Tag`, `ChunkExtraction`, `FileOrchestrationOutput`) |
 | Chunking strategy per format | [`indexing/chunker.py`](../indexing/chunker.py) (`Chunker._produce_chunks`) |
 | Database constraints / indexes | [`schema/constraints.cypher`](../schema/constraints.cypher), [`schema/indexes.cypher`](../schema/indexes.cypher) |
@@ -102,7 +103,7 @@ python scripts/verify_graph.py
 Pulled from [`status.md`](status.md). Truthful snapshot:
 
 - Parquet visual-content path: chunker now omits Arrow columns containing binary data and caps nested JSON conversion, so DocVQA preflights cleanly. Future image-aware indexing still needs a proper visual path.
-- HERB-specific extraction/tagging exists as a bounded Anthropic pilot harness, not as a completed production-quality full run. Do not use the legacy generic tagging path as evidence for HERB quality.
+- HERB-specific extraction/tagging has a completed full-corpus run for HERB (`pilot_full_herb`). Treat `data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip` plus the live `herb` database as the current artefact; treat older smoke runs and loose pilot directories as history.
 - Named cluster query views (`by_topic`, `by_evidence`, `recent_active`, `multidim`) are not built.
 - Portable JSONL graph export/import exists via `scripts/export_graph_json.py`, `scripts/import_graph_json.py`, and `graph_export/grag_graph_latest.zip`; it is an operator snapshot, not an indexing-path side artefact.
 - Full `provenance.json` per run is not written.

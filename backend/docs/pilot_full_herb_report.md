@@ -4,7 +4,7 @@
 **Dataset:** Salesforce__HERB (1 of 4 thesis datasets)
 **Database:** `herb`
 **Model:** `claude-haiku-4-5` (Anthropic Messages API, forced tool_use)
-**Snapshot:** [`backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z/`](../data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z/)
+**Current artefact:** [`backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip`](../data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip)
 
 ## Goal
 
@@ -131,7 +131,14 @@ Final state: 5843 / 5843 chunks complete. Recovery cost: ~$0.67.
 
 ## Artefacts
 
-Everything from this run is preserved (read-only intent) at:
+The committed, portable artefact for the completed HERB run is:
+
+```
+backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip
+```
+
+Expand it locally when you need the full run directory. Its expected expanded
+layout is:
 
 ```
 backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z/
@@ -155,11 +162,10 @@ backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z/
 └── neo4j_chunks_final.jsonl        # 100%-coverage final chunk export
 ```
 
-A zipped archive of the snapshot is at:
-
-```
-backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip
-```
+The loose expanded directory, `pilot_full_herb/`, and earlier smoke-run
+folders are build/history working material unless explicitly re-materialized
+from the zip for inspection. The zip is the thing to push, move, and treat as
+the current HERB snapshot.
 
 The Neo4j `herb` database remains live with this run's outputs written under
 `run_id = "pilot_full_herb"`. The snapshot lets the run be reconstructed even
