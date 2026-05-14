@@ -1,12 +1,12 @@
 """CLI for the HERB tagging pilot.
 
 Usage:
-    python -m backend.tagging select
-    python -m backend.tagging verify-chunks
-    python -m backend.tagging extract
-    python -m backend.tagging describe
-    python -m backend.tagging score
-    python -m backend.tagging analyze
+    python -m tagging select
+    python -m tagging verify-chunks
+    python -m tagging extract
+    python -m tagging describe
+    python -m tagging score
+    python -m tagging analyze
 """
 
 from __future__ import annotations

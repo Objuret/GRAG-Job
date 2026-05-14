@@ -8,11 +8,11 @@
 
 ## Touched paths
 
-`agents/`, `indexing/`, `clustering/`, `data_access/`, `prompts/`, `schema/`, `scripts/`, `shared/`, monorepo `graph_export/`.
+`agents/`, `indexing/`, `tagging/`, `clustering/`, `data_access/`, `prompts/`, `schema/`, `scripts/`, `shared/`, monorepo `graph_export/`.
 
 ## `agents/`
 
-OpenAI-compatible LLM client and the pydantic schemas every agent call returns.
+OpenAI-compatible LLM client and the pydantic schemas the legacy indexing path returns. HERB tagging uses the separate `tagging/` Anthropic pilot.
 
 | File | Role | Key symbols | Called by |
 |---|---|---|---|
@@ -44,6 +44,17 @@ No active HERB clustering implementation lives here. The old canonical seed file
 | File | Role | Key symbols | Called by |
 |---|---|---|---|
 | [`clustering/__init__.py`](../clustering/__init__.py) | Package marker. | — | — |
+
+## `tagging/`
+
+HERB-specific Anthropic tagging pilot. This is separate from the legacy
+`indexing/orchestrator.py` path.
+
+| File | Role | Key symbols | Called by |
+|---|---|---|---|
+| [`tagging/__init__.py`](../tagging/__init__.py) | Package marker. | - | - |
+| [`tagging/__main__.py`](../tagging/__main__.py) | CLI for `python -m tagging verify-chunks|select|extract|describe|score|analyze`. | `STAGES`, `main` | shell. |
+| [`tagging/pipeline.py`](../tagging/pipeline.py) | HERB pilot pipeline: sample selection, model-facing frame rendering, Anthropic forced-tool calls, graph writes, and analysis report generation. | `stage_verify_chunks`, `stage_select`, `stage_extract`, `stage_describe`, `stage_score`, `stage_analyze`, `render_chunk_user_message`, `ClaudeCaller` | [`tagging/__main__.py`](../tagging/__main__.py). |
 
 ## `data_access/`
 

@@ -1,7 +1,7 @@
 """HERB semantic tagging pilot — single-file pipeline.
 
-Stages: select | extract | describe | score | analyze
-Run via: python -m backend.tagging <stage>
+Stages: verify-chunks | select | extract | describe | score | analyze
+Run from backend/: python -m tagging <stage>
 """
 
 from __future__ import annotations
@@ -16,12 +16,12 @@ import time
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from dotenv import load_dotenv
 from anthropic import AsyncAnthropic
 from neo4j import AsyncGraphDatabase
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, ValidationError
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 BACKEND_ROOT = REPO_ROOT / "backend"
@@ -52,6 +52,27 @@ SELECTION_MODE = os.environ.get("TAGGING_SELECTION_MODE", "herb_kind_coverage")
 SELECTION_SEED = int(os.environ.get("TAGGING_SELECTION_SEED", "0"))
 FACETS = ("topic", "entities", "activity", "temporal", "evidence")
 FILLER = {"data", "information", "content", "record", "text", "chunk", "item"}
+MULTI_FACET_THRESHOLD = 0.50
+COVERAGE_ALPHA = 0.25
+
+
+def compute_w_chunk(facets: dict[str, float]) -> float:
+    """w_chunk = strength * coverage_bonus
+    strength       = sqrt(sum(f^2) / N)
+    coverage_bonus = ((sum(f))^2 / (N * sum(f^2))) ^ COVERAGE_ALPHA
+    """
+    import math
+    values = list(facets.values())
+    n = len(values)
+    if n == 0:
+        return 0.0
+    s = sum(values)
+    s2 = sum(f * f for f in values)
+    if s2 == 0:
+        return 0.0
+    strength = math.sqrt(s2 / n)
+    coverage_bonus = ((s * s) / (n * s2)) ** COVERAGE_ALPHA
+    return strength * coverage_bonus
 HERB_KIND_PRIORITY = (
     "product_profile",
     "directory_batch",
@@ -73,9 +94,22 @@ HERB_KIND_PRIORITY = (
 
 EXTRACT_PROMPT = """## Description
 
-Describe the chunk's content in 1–3 sentences.
+Describe the chunk's content in 1-3 sentences.
 
-## Five facets
+## Tags
+
+List the retrieval handles present in the chunk: people, organisations, products, places, dated events, decisions, document subjects, evidence types.
+
+Keep proper names whole. Include central concepts and peripheral lookup handles.
+
+A retrieval handle is NOT a common verb, preposition, transitional word, sentence fragment, or generic category like "report" or "discussion".
+
+Do not invent concepts the text does not contain.
+"""
+
+SCORE_TAGS_PROMPT = """For each tag, weight its fit to every facet.
+
+## Facets
 
 | Facet    | Captures                                                                                    |
 |----------|---------------------------------------------------------------------------------------------|
@@ -85,41 +119,22 @@ Describe the chunk's content in 1–3 sentences.
 | temporal | Dates and time expressions present verbatim in the text                                     |
 | evidence | Kind of information: definition, example, metric, argument, procedure, case_study, raw_data |
 
-## Tags
-
-For each sentence or clause, identify concept labels. Keep proper names whole.
-
 ## Weights
 
-- **w_chunk** — contextual relevance of this tag to the chunk as a whole (1.00 = the chunk is entirely this concept, 0.01 = marginal)
-- **w_facet** — fit of this tag to its facet (1.00 = unambiguous, 0.01 = forced)
-
-A facet may have zero tags. No filler: `data`, `information`, `content`, `record`.
+- `facets.<name>` — fit of this tag to that facet (1.00 = unambiguous, 0.00 = does not belong).
 """
 
 DESCRIBE_PROMPT = (
-    "Describe the file's central concerns in 2–3 sentences, "
+    "Describe the file's central concerns in 2-3 sentences, "
     "based on the chunk descriptions provided."
 )
 
 SCORE_PROMPT = (
-    "Score how representative this chunk is of the file "
-    "(1.0 = core example, 0.0 = off-topic). "
-    "Return w_chunk_file as a float in [0, 1] with 2 decimals."
+    "For each numbered chunk, score how representative it is of the file. "
+    "1.00 = core example, 0.00 = off-topic."
 )
 
 # ---------- JSON schemas (sent as Anthropic forced tool input_schema) ----------
-
-TAG_DEF = {
-    "type": "object",
-    "required": ["t", "w_chunk", "w_facet"],
-    "additionalProperties": False,
-    "properties": {
-        "t": {"type": "string", "minLength": 1},
-        "w_chunk": {"type": "number", "minimum": 0.01, "maximum": 1.0},
-        "w_facet": {"type": "number", "minimum": 0.01, "maximum": 1.0},
-    },
-}
 
 EXTRACT_SCHEMA = {
     "type": "object",
@@ -128,10 +143,33 @@ EXTRACT_SCHEMA = {
     "properties": {
         "description": {"type": "string", "minLength": 1},
         "tags": {
-            "type": "object",
-            "required": list(FACETS),
-            "additionalProperties": False,
-            "properties": {f: {"type": "array", "items": TAG_DEF} for f in FACETS},
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+        },
+    },
+}
+
+SCORE_TAGS_SCHEMA = {
+    "type": "object",
+    "required": ["scores"],
+    "additionalProperties": False,
+    "properties": {
+        "scores": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": ["t", "facets"],
+                "additionalProperties": False,
+                "properties": {
+                    "t": {"type": "string", "minLength": 1},
+                    "facets": {
+                        "type": "object",
+                        "required": list(FACETS),
+                        "additionalProperties": False,
+                        "properties": {f: {"type": "number", "minimum": 0, "maximum": 1} for f in FACETS},
+                    },
+                },
+            },
         },
     },
 }
@@ -145,39 +183,63 @@ DESCRIBE_SCHEMA = {
 
 SCORE_SCHEMA = {
     "type": "object",
-    "required": ["w_chunk_file"],
+    "required": ["scores"],
     "additionalProperties": False,
-    "properties": {"w_chunk_file": {"type": "number", "minimum": 0, "maximum": 1}},
+    "properties": {
+        "scores": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": ["i", "w_chunk_file"],
+                "additionalProperties": False,
+                "properties": {
+                    "i": {"type": "integer", "minimum": 1},
+                    "w_chunk_file": {"type": "number", "minimum": 0, "maximum": 1},
+                },
+            },
+        },
+    },
 }
 
 
 # ---------- Pydantic models (post-validation) ----------
 
-class TagOut(BaseModel):
-    t: str
-    w_chunk: float = Field(ge=0, le=1)
-    w_facet: float = Field(ge=0, le=1)
-
-
-class FacetsOut(BaseModel):
-    topic: list[TagOut] = []
-    entities: list[TagOut] = []
-    activity: list[TagOut] = []
-    temporal: list[TagOut] = []
-    evidence: list[TagOut] = []
-
-
 class ExtractOut(BaseModel):
     description: str
-    tags: FacetsOut
+    tags: list[str]
+
+
+class FacetScores(BaseModel):
+    topic: float
+    entities: float
+    activity: float
+    temporal: float
+    evidence: float
+
+    def as_dict(self) -> dict[str, float]:
+        return {f: getattr(self, f) for f in FACETS}
+
+
+class TagScore(BaseModel):
+    t: str
+    facets: FacetScores
+
+
+class ScoreTagsOut(BaseModel):
+    scores: list[TagScore]
 
 
 class DescribeOut(BaseModel):
     file_summary: str
 
 
+class ChunkScoreItem(BaseModel):
+    i: int
+    w_chunk_file: float
+
+
 class ScoreOut(BaseModel):
-    w_chunk_file: float = Field(ge=0, le=1)
+    scores: list[ChunkScoreItem]
 
 
 # ---------- Utilities ----------
@@ -519,7 +581,7 @@ class ClaudeCaller:
     async def _raw_call(self, *, system: str, user: str, schema: dict, schema_name: str) -> Any:
         return await self.client.messages.create(
             model=ANTHROPIC_MODEL,
-            max_tokens=4096,
+            max_tokens=8192,
             system=system,
             messages=[{"role": "user", "content": user}],
             tools=[{
@@ -770,26 +832,66 @@ async def stage_extract() -> None:
         results: dict[str, dict] = {}
 
         async def one(chunk_id: str, row: dict[str, Any]) -> None:
-            parsed, _rec = await caller.call(
-                system=EXTRACT_PROMPT, user=render_chunk_user_message(row),
+            frame = render_chunk_user_message(row)
+
+            # Pass 1: extract tag strings + description.
+            parsed1, _ = await caller.call(
+                system=EXTRACT_PROMPT, user=frame,
                 schema=EXTRACT_SCHEMA, schema_name="chunk_extraction",
                 stage="extract", target_id=chunk_id,
                 io_path=io_path, err_path=err_path,
             )
-            if parsed is None:
+            if parsed1 is None:
                 results[chunk_id] = {"ok": False}
                 return
             try:
-                model = ExtractOut.model_validate(parsed)
+                extract_model = ExtractOut.model_validate(parsed1)
             except ValidationError as e:
                 append_jsonl(err_path, {"stage": "extract", "target_id": chunk_id, "error": f"pydantic: {e}"})
                 results[chunk_id] = {"ok": False}
                 return
-            results[chunk_id] = {"ok": True, "raw": parsed, "model": model}
+
+            # Clean + dedupe tag names before pass 2 so the model sees canonical strings.
+            cleaned_names: list[str] = []
+            seen: set[str] = set()
+            for raw in extract_model.tags:
+                name = clean_tag_name(raw)
+                if not name or name in FILLER or name in seen:
+                    continue
+                seen.add(name)
+                cleaned_names.append(name)
+
+            if not cleaned_names:
+                results[chunk_id] = {"ok": True, "description": extract_model.description, "scores": []}
+                return
+
+            # Pass 2: score each cleaned tag against chunk + each facet.
+            tag_lines = "\n".join(f"- {n}" for n in cleaned_names)
+            user2 = f"Chunk:\n{frame}\n\nTags:\n{tag_lines}"
+            parsed2, _ = await caller.call(
+                system=SCORE_TAGS_PROMPT, user=user2,
+                schema=SCORE_TAGS_SCHEMA, schema_name="tag_scoring",
+                stage="score_tags", target_id=chunk_id,
+                io_path=io_path, err_path=err_path,
+            )
+            if parsed2 is None:
+                results[chunk_id] = {"ok": False}
+                return
+            try:
+                scores_model = ScoreTagsOut.model_validate(parsed2)
+            except ValidationError as e:
+                append_jsonl(err_path, {"stage": "score_tags", "target_id": chunk_id, "error": f"pydantic: {e}"})
+                results[chunk_id] = {"ok": False}
+                return
+
+            results[chunk_id] = {
+                "ok": True,
+                "description": extract_model.description,
+                "scores": scores_model.scores,
+            }
 
         await asyncio.gather(*(one(cid, row) for cid, row in chunks.items()))
 
-        # Clean + write to Neo4j
         async with driver.session(database=NEO4J_DATABASE) as s:
             # Wipe prior HAS_TAG edges for these chunks (re-run safety)
             await s.run(
@@ -799,39 +901,33 @@ async def stage_extract() -> None:
             for chunk_id, out in results.items():
                 if not out.get("ok"):
                     continue
-                model: ExtractOut = out["model"]
-                # Cleaned tag tuples per facet
-                cleaned_edges: list[dict] = []
-                for facet in FACETS:
-                    facet_tags = getattr(model.tags, facet)
-                    # dedupe by cleaned name, keep max w_chunk
-                    by_name: dict[str, TagOut] = {}
-                    for tg in facet_tags:
-                        name = clean_tag_name(tg.t)
-                        if not name or name in FILLER:
-                            continue
-                        prev = by_name.get(name)
-                        if prev is None or tg.w_chunk > prev.w_chunk:
-                            by_name[name] = TagOut(
-                                t=name,
-                                w_chunk=round(tg.w_chunk, 2),
-                                w_facet=round(tg.w_facet, 2),
-                            )
-                    for tg in by_name.values():
-                        cleaned_edges.append({
-                            "name": tg.t,
-                            "facet": facet,
-                            "w_chunk": tg.w_chunk,
-                            "w_facet": tg.w_facet,
-                        })
-
                 await s.run(
                     """
                     MATCH (c:Chunk {chunk_id: $chunk_id})
                     SET c.description = $description
                     """,
-                    chunk_id=chunk_id, description=model.description,
+                    chunk_id=chunk_id, description=out["description"],
                 )
+                cleaned_edges: list[dict] = []
+                for ts in out["scores"]:
+                    name = clean_tag_name(ts.t)
+                    if not name or name in FILLER:
+                        continue
+                    facets = ts.facets.as_dict()
+                    w_chunk = round(compute_w_chunk(facets), 2)
+                    primary = max(facets, key=facets.get)
+                    written: set[str] = set()
+                    for facet, fit in facets.items():
+                        if facet == primary or fit >= MULTI_FACET_THRESHOLD:
+                            if facet in written:
+                                continue
+                            cleaned_edges.append({
+                                "name": name,
+                                "facet": facet,
+                                "w_chunk": w_chunk,
+                                "w_facet": round(float(fit), 2),
+                            })
+                            written.add(facet)
                 if cleaned_edges:
                     await s.run(
                         """
@@ -849,7 +945,7 @@ async def stage_extract() -> None:
                     )
 
         ok = sum(1 for v in results.values() if v.get("ok"))
-        print(f"extract: {ok}/{len(chunks)} chunks succeeded")
+        print(f"extract: {ok}/{len(chunks)} chunks succeeded (two-pass)")
         state.setdefault("stages_done", [])
         if "extract" not in state["stages_done"]:
             state["stages_done"].append("extract")
@@ -897,10 +993,13 @@ async def stage_describe() -> None:
         async def one(file_id: str, info: dict) -> None:
             items = sorted(info["items"], key=lambda r: int(r["ordinal"]))
             lines = "\n".join(
-                f"{i+1}. [{row['kind']} | {row['chunk_ref']}] {row['description']}"
+                f"{i+1}. {row['description']}"
                 for i, row in enumerate(items)
             )
-            user_msg = f"File: {info['rel_path']}\n\nChunk descriptions (in file order):\n{lines}"
+            user_msg = "\n".join([
+                "Evidence summaries from this file, in source order:",
+                lines,
+            ])
             parsed, _rec = await caller.call(
                 system=DESCRIBE_PROMPT, user=user_msg,
                 schema=DESCRIBE_SCHEMA, schema_name="file_description",
@@ -951,6 +1050,7 @@ async def stage_score() -> None:
                 RETURN c.chunk_id AS chunk_id, c.description AS chunk_desc,
                        c.kind AS kind, c.ordinal AS ordinal,
                        c.locator_json AS locator_json,
+                       c.file_id AS file_id,
                        f.rel_path AS rel_path,
                        f.description AS file_summary
                 """,
@@ -958,43 +1058,64 @@ async def stage_score() -> None:
             )
             pairs = [enrich_chunk_row(dict(r)) async for r in res]
 
+        # Group chunks by file so each file is one batched call.
+        by_file: dict[str, dict[str, Any]] = {}
+        for row in pairs:
+            f_id = row.get("file_id") or row.get("rel_path")
+            entry = by_file.setdefault(f_id, {
+                "rel_path": row["rel_path"],
+                "file_summary": row["file_summary"],
+                "chunks": [],
+            })
+            entry["chunks"].append(row)
+
         caller = ClaudeCaller()
         io_path = RUN_DIR / "io.jsonl"
         err_path = RUN_DIR / "errors.jsonl"
         scores: dict[str, float] = {}
 
-        async def one(row: dict) -> None:
+        async def one(file_key: str, info: dict[str, Any]) -> None:
+            chunks_sorted = sorted(info["chunks"], key=lambda r: int(r.get("ordinal") or 0))
+            idx_to_chunk_id = {i + 1: r["chunk_id"] for i, r in enumerate(chunks_sorted)}
+            lines = "\n".join(
+                f"{i + 1}. {r['chunk_desc']}" for i, r in enumerate(chunks_sorted)
+            )
             user_msg = (
-                f"File summary:\n{row['file_summary']}\n\n"
-                f"Chunk kind: {row['kind']}\n"
-                f"Chunk reference: {row['chunk_ref']}\n"
-                f"Parent reference: {row['parent_ref'] or '(none)'}\n\n"
-                f"Chunk description:\n{row['chunk_desc']}"
+                f"File summary:\n{info['file_summary']}\n\n"
+                f"Chunks:\n{lines}"
             )
             parsed, _rec = await caller.call(
                 system=SCORE_PROMPT, user=user_msg,
                 schema=SCORE_SCHEMA, schema_name="chunk_file_score",
-                stage="score", target_id=row["chunk_id"],
+                stage="score", target_id=str(file_key),
                 io_path=io_path, err_path=err_path,
             )
             if parsed is None:
                 return
             try:
                 m = ScoreOut.model_validate(parsed)
-                scores[row["chunk_id"]] = round(m.w_chunk_file, 2)
+                for item in m.scores:
+                    cid = idx_to_chunk_id.get(item.i)
+                    if cid is None:
+                        continue
+                    scores[cid] = round(float(item.w_chunk_file), 2)
             except ValidationError as e:
-                append_jsonl(err_path, {"stage": "score", "target_id": row["chunk_id"], "error": f"pydantic: {e}"})
+                append_jsonl(err_path, {"stage": "score", "target_id": str(file_key), "error": f"pydantic: {e}"})
 
-        await asyncio.gather(*(one(p) for p in pairs))
+        await asyncio.gather(*(one(k, info) for k, info in by_file.items()))
 
         async with driver.session(database=NEO4J_DATABASE) as s:
-            for cid, sc in scores.items():
+            for cid, score in scores.items():
                 await s.run(
-                    "MATCH (c:Chunk {chunk_id: $cid}) SET c.relevance_to_file = $s",
-                    cid=cid, s=sc,
+                    """
+                    MATCH (c:Chunk {chunk_id: $cid})
+                    SET c.relevance_to_file = $score
+                    REMOVE c.relevance_to_file_rank
+                    """,
+                    cid=cid, score=score,
                 )
 
-        print(f"score: wrote w_chunk_file for {len(scores)}/{len(pairs)} chunks")
+        print(f"score: wrote w_chunk_file for {len(scores)}/{len(pairs)} chunks across {len(by_file)} files (batched)")
         if "score" not in state["stages_done"]:
             state["stages_done"].append("score")
         write_run_json(state)
@@ -1004,19 +1125,35 @@ async def stage_score() -> None:
 
 # ---------- Stage: analyze ----------
 
-def _hist(values: list[float], bins: int = 11) -> list[tuple[str, int]]:
-    edges = [i / (bins - 1) for i in range(bins)]
-    counts = [0] * (bins - 1)
+def _hist(values: list[float], bin_width: float = 0.05) -> list[tuple[str, int]]:
+    """Histogram with fixed-width bins covering [0, 1]. Last bin is inclusive."""
+    n_bins = int(round(1.0 / bin_width))
+    counts = [0] * n_bins
     for v in values:
-        for i in range(bins - 1):
-            lo, hi = edges[i], edges[i + 1]
-            if (i == bins - 2 and lo <= v <= hi) or (lo <= v < hi):
-                counts[i] += 1
-                break
-    return [
-        (f"[{edges[i]:.1f}, {edges[i+1]:.1f}{']' if i == bins-2 else ')'}", counts[i])
-        for i in range(bins - 1)
-    ]
+        if v < 0 or v > 1:
+            continue
+        idx = min(int(v / bin_width), n_bins - 1)
+        counts[idx] += 1
+    out: list[tuple[str, int]] = []
+    for i in range(n_bins):
+        lo = i * bin_width
+        hi = (i + 1) * bin_width
+        closer = "]" if i == n_bins - 1 else ")"
+        out.append((f"[{lo:.2f}, {hi:.2f}{closer}", counts[i]))
+    return out
+
+
+def _anchor_table(vals: list[float]) -> list[tuple[float, int, float]]:
+    """For each multiple of 0.1 in [0, 1], count values within 0.025 of it."""
+    if not vals:
+        return []
+    rows: list[tuple[float, int, float]] = []
+    for k in range(0, 11):
+        anchor = k / 10.0
+        cnt = sum(1 for v in vals if abs(v - anchor) < 0.025)
+        pct = cnt / len(vals) * 100
+        rows.append((anchor, cnt, pct))
+    return rows
 
 
 async def stage_analyze() -> None:
@@ -1033,7 +1170,12 @@ async def stage_analyze() -> None:
                 MATCH (c:Chunk) WHERE c.chunk_id IN $ids
                 OPTIONAL MATCH (f:File {file_id: c.file_id})
                 OPTIONAL MATCH (c)-[r:HAS_TAG]->(t:Tag)
-                WITH c, f, collect({name: t.name, facet: r.facet, w_chunk: r.w_chunk, w_facet: r.w_facet}) AS edges
+                WITH c, f, collect({
+                    name: t.name,
+                    facet: r.facet,
+                    w_chunk: r.w_chunk,
+                    w_facet: r.w_facet
+                }) AS edges
                 RETURN c.chunk_id AS chunk_id, c.file_id AS file_id, c.ordinal AS ordinal,
                        c.kind AS kind, c.token_estimate AS token_estimate,
                        c.locator_json AS locator_json,
@@ -1056,84 +1198,73 @@ async def stage_analyze() -> None:
     facet_counts: Counter = Counter()
     facet_chunks_with_tags: dict[str, int] = defaultdict(int)
     tag_freq: Counter = Counter()
-    rounded_anchors_w_chunk = Counter()
-    rounded_anchors_w_facet = Counter()
-    rounded_anchors_w_chunk_file = Counter()
+    tags_per_chunk: list[int] = []
+    tag_facet_set: dict[str, set[str]] = defaultdict(set)  # tag_name -> {facets}
+    w_chunk_by_kind: dict[str, list[float]] = defaultdict(list)
 
     for row in rows:
         if row["w_chunk_file"] is not None:
-            v = row["w_chunk_file"]
-            all_w_chunk_file.append(v)
-            rounded_anchors_w_chunk_file[round(v, 1)] += 1
-        for e in row["edges"] or []:
-            if e.get("name") is None:
-                continue
+            all_w_chunk_file.append(row["w_chunk_file"])
+        edges = [e for e in (row["edges"] or []) if e.get("name")]
+        tags_per_chunk.append(len(edges))
+        for e in edges:
             facet_counts[e["facet"]] += 1
             tag_freq[(e["facet"], e["name"])] += 1
+            tag_facet_set[e["name"]].add(e["facet"])
             all_w_chunk.append(e["w_chunk"])
             all_w_facet.append(e["w_facet"])
-            rounded_anchors_w_chunk[round(e["w_chunk"], 1)] += 1
-            rounded_anchors_w_facet[round(e["w_facet"], 1)] += 1
+            w_chunk_by_kind[row["kind"]].append(e["w_chunk"])
         for facet in FACETS:
-            if any(e and e.get("facet") == facet and e.get("name") for e in (row["edges"] or [])):
+            if any(e.get("facet") == facet for e in edges):
                 facet_chunks_with_tags[facet] += 1
 
     n_chunks = len(rows)
+    multi_facet_tags = {name: facets for name, facets in tag_facet_set.items() if len(facets) >= 2}
+    telegram_chunks = [c for c, n in zip(rows, tags_per_chunk) if n > 25]
 
     def stats_block(name: str, vals: list[float]) -> str:
         if not vals:
             return f"### {name}\n(no values)\n"
-        out = [
+        distinct = len({round(v, 2) for v in vals})
+        lines = [
             f"### {name}",
             f"- n = {len(vals)}",
             f"- min/median/max = {min(vals):.2f} / {statistics.median(vals):.2f} / {max(vals):.2f}",
             f"- mean = {statistics.fmean(vals):.3f}",
             f"- stdev = {statistics.pstdev(vals):.3f}" if len(vals) > 1 else "- stdev = n/a",
-            f"- distinct values = {len(set(round(v, 2) for v in vals))}",
-            "- histogram (0.1 bins):",
+            f"- distinct values at 2dp = {distinct}",
+            "- histogram (0.05 bins):",
         ]
+        max_count = max((c for _, c in _hist(vals)), default=0)
         for label, c in _hist(vals):
-            bar = "#" * c
-            out.append(f"    {label:>12} {c:>3} {bar}")
-        return "\n".join(out) + "\n"
+            bar_len = int(40 * c / max_count) if max_count > 0 else 0
+            lines.append(f"    {label:>14} {c:>3} {'#' * bar_len}")
+        return "\n".join(lines) + "\n"
 
     md: list[str] = []
     md.append(f"# HERB Tagging Pilot — `{PILOT_NAME}`\n")
     md.append(f"- Generated: {now_iso()}")
     md.append(f"- Model: `{ANTHROPIC_MODEL}`")
+    md.append(f"- Provider: `{PROVIDER_NAME}` (structured output via forced tool_use)")
     md.append(f"- Database: `{NEO4J_DATABASE}`")
     md.append(f"- Dataset: `{DATASET_ID}`")
     md.append(f"- Selection mode: `{SELECTION_MODE}`")
-    md.append(f"- Selection seed: `{SELECTION_SEED}`")
-    md.append(f"- Provider: `{PROVIDER_NAME}` (structured output via forced tool_use)")
     md.append(
         f"- Sample: {n_chunks} chunks across {len({r['file_id'] for r in rows})} files "
         f"and {len({r['kind'] for r in rows})} chunk kinds\n"
     )
 
-    md.append("## Caveat")
-    md.append("This pilot samples HERB chunks from the current chunk graph. ")
-    md.append("File descriptions were generated only from the sampled chunks of each file, ")
-    md.append("not from every chunk in the file. The w_chunk_file scores are therefore relative ")
-    md.append("to a partial picture of each file. Comparable cross-file scoring requires a full run.\n")
-
-    md.append("## Chunk-format coverage\n")
-    kind_counter = Counter(row["kind"] for row in rows)
-    for kind, count in sorted(kind_counter.items(), key=lambda kv: _kind_order(kv[0])):
-        md.append(f"- `{kind}`: {count}")
-    md.append("")
-
+    # Per-chunk dump
     md.append("## Per-chunk dump\n")
     for row in rows:
         md.append(f"### `{row['chunk_id']}`  (ordinal {row['ordinal']})")
         md.append(f"- file: `{row['rel_path']}`")
         md.append(f"- kind: `{row['kind']}`")
-        md.append(f"- chunk_ref: `{row['chunk_ref']}`")
-        md.append(f"- parent_ref: `{row['parent_ref'] or ''}`")
+        md.append(f"- chunk_ref: `{row.get('chunk_ref') or ''}`")
         md.append(f"- token_estimate: `{row['token_estimate']}`")
         md.append(f"- w_chunk_file: `{row['w_chunk_file']}`")
-        content_preview = (row["content"] or "")[:400].replace("\n", " ")
-        md.append(f"- content (first 400 chars): `{content_preview}`")
+        preview = (row["content"] or "")[:400].replace("\n", " ")
+        md.append(f"- content (first 400 chars): `{preview}`")
         md.append(f"- description: {row['description']}")
         edges = [e for e in (row["edges"] or []) if e.get("name")]
         if edges:
@@ -1147,12 +1278,16 @@ async def stage_analyze() -> None:
                     md.append(f"    - **{facet}**: (none)")
                     continue
                 ts_sorted = sorted(ts, key=lambda x: -x["w_chunk"])
-                items = ", ".join(f"`{t['name']}` (w_c={t['w_chunk']}, w_f={t['w_facet']})" for t in ts_sorted)
+                items = ", ".join(
+                    f"`{t['name']}` (w_c={t['w_chunk']}, w_f={t['w_facet']})"
+                    for t in ts_sorted
+                )
                 md.append(f"    - **{facet}**: {items}")
         else:
             md.append("- tags: (none)")
         md.append("")
 
+    # Per-file dump
     md.append("## Per-file dump\n")
     files_seen: dict[str, dict] = {}
     for row in rows:
@@ -1167,19 +1302,34 @@ async def stage_analyze() -> None:
         md.append(f"### `{fid}`")
         md.append(f"- rel_path: `{info['rel_path']}`")
         md.append(f"- chunks sampled: {len(info['chunks'])}")
-        refs = ", ".join(f"`{row['kind']}:{row['chunk_ref']}`" for row in info["chunks"])
+        refs = ", ".join(f"`{row['kind']}:{row.get('chunk_ref') or ''}`" for row in info["chunks"])
         md.append(f"- sampled refs: {refs}")
         md.append(f"- file description: {info['file_summary']}")
         md.append("")
 
+    # Tag stats
     md.append("## Tag stats\n")
-    md.append(f"- total tag-edges: {sum(facet_counts.values())}")
-    md.append(f"- unique tag names (across facets): {len({n for _, n in tag_freq.keys()})}")
+    md.append(f"- total HAS_TAG edges: {sum(facet_counts.values())}")
+    md.append(f"- unique tag names: {len(tag_facet_set)}")
     md.append("- edges per facet:")
     for facet in FACETS:
-        md.append(f"    - {facet}: {facet_counts.get(facet, 0)} edges, "
-                  f"{facet_chunks_with_tags.get(facet, 0)}/{n_chunks} chunks have ≥1 tag")
-    md.append("")
+        md.append(
+            f"    - {facet}: {facet_counts.get(facet, 0)} edges, "
+            f"{facet_chunks_with_tags.get(facet, 0)}/{n_chunks} chunks have ≥1 tag"
+        )
+    if tags_per_chunk:
+        md.append(
+            f"- tags-per-chunk: min={min(tags_per_chunk)} median={int(statistics.median(tags_per_chunk))} max={max(tags_per_chunk)}"
+        )
+    md.append(f"- telegram-mode chunks (>25 tags): {len(telegram_chunks)}")
+    md.append(
+        f"- tags appearing in ≥2 facets: {len(multi_facet_tags)} "
+        f"({100*len(multi_facet_tags)/max(1,len(tag_facet_set)):.1f}% of unique names)"
+    )
+    if multi_facet_tags:
+        md.append("- multi-facet examples (up to 10):")
+        for name, facets in list(multi_facet_tags.items())[:10]:
+            md.append(f"    - `{name}`: {sorted(facets)}")
     top = tag_freq.most_common(20)
     if top:
         md.append("- top tag occurrences (facet/name → count):")
@@ -1187,30 +1337,43 @@ async def stage_analyze() -> None:
             md.append(f"    - {facet}/`{name}`: {cnt}")
     md.append("")
 
+    # Weight distributions
     md.append("## Weight distributions\n")
     md.append(stats_block("w_chunk (per-tag centrality)", all_w_chunk))
     md.append(stats_block("w_facet (per-tag facet-fit)", all_w_facet))
     md.append(stats_block("w_chunk_file (per-chunk file representativeness)", all_w_chunk_file))
 
-    md.append("## Round-number anchoring check\n")
-    md.append("If the model anchors to round values, you'll see most mass at multiples of 0.1.\n")
+    # Round-anchoring check
+    md.append("## Round-anchoring check\n")
+    md.append("Fraction of values within 0.025 of each multiple of 0.1.\n")
 
-    def anchor_table(name: str, counter: Counter, total: int) -> str:
-        if total == 0:
+    def anchor_section(name: str, vals: list[float]) -> str:
+        rows_ = _anchor_table(vals)
+        if not rows_:
             return f"### {name}\n(no data)\n"
-        lines = [f"### {name}"]
-        for v in sorted(counter):
-            cnt = counter[v]
-            pct = cnt / total * 100
+        lines = [f"### {name}  (n = {len(vals)})"]
+        for anchor, cnt, pct in rows_:
             bar = "#" * int(pct / 2)
-            lines.append(f"- {v:.1f}: {cnt:>3}  ({pct:5.1f}%)  {bar}")
+            lines.append(f"- {anchor:.1f}: {cnt:>3}  ({pct:5.1f}%)  {bar}")
         return "\n".join(lines) + "\n"
 
-    md.append(anchor_table("w_chunk → nearest 0.1", rounded_anchors_w_chunk, sum(rounded_anchors_w_chunk.values())))
-    md.append(anchor_table("w_facet → nearest 0.1", rounded_anchors_w_facet, sum(rounded_anchors_w_facet.values())))
-    md.append(anchor_table("w_chunk_file → nearest 0.1", rounded_anchors_w_chunk_file, sum(rounded_anchors_w_chunk_file.values())))
+    md.append(anchor_section("w_chunk", all_w_chunk))
+    md.append(anchor_section("w_facet", all_w_facet))
+    md.append(anchor_section("w_chunk_file", all_w_chunk_file))
 
-    # Cost/perf
+    # Cross-tab: weights by evidence kind
+    md.append("## Cross-tab: w_chunk by evidence kind\n")
+    md.append("| kind | n_tags | mean(w_chunk) | distinct values (2dp) |")
+    md.append("|---|---:|---:|---:|")
+    for kind in sorted(w_chunk_by_kind, key=_kind_order):
+        vals = w_chunk_by_kind[kind]
+        if not vals:
+            continue
+        distinct = len({round(v, 2) for v in vals})
+        md.append(f"| `{kind}` | {len(vals)} | {statistics.fmean(vals):.3f} | {distinct} |")
+    md.append("")
+
+    # Cost / perf
     io_path = RUN_DIR / "io.jsonl"
     total_prompt = total_completion = total_ms = 0
     n_calls = 0
@@ -1231,7 +1394,27 @@ async def stage_analyze() -> None:
     md.append(f"- calls per stage: {dict(by_stage)}")
     md.append(f"- total prompt tokens: {total_prompt}")
     md.append(f"- total completion tokens: {total_completion}")
-    md.append(f"- summed duration: {total_ms} ms ({total_ms/1000:.1f} s)")
+    md.append(f"- summed duration: {total_ms} ms ({total_ms/1000:.1f} s)\n")
+
+    # Verdict markers
+    md.append("## Verdict markers\n")
+
+    def _frac(vals: list[float], lo: float, hi: float) -> float:
+        return (sum(1 for v in vals if lo <= v < hi) / len(vals)) if vals else 0.0
+
+    def _on_anchor_frac(vals: list[float]) -> float:
+        return (sum(1 for v in vals if abs(v * 10 - round(v * 10)) < 0.05) / len(vals)) if vals else 0.0
+
+    md.append(f"- w_chunk distinct values at 2dp: **{len({round(v, 2) for v in all_w_chunk})}**")
+    md.append(f"- w_facet distinct values at 2dp: **{len({round(v, 2) for v in all_w_facet})}**")
+    md.append(f"- w_chunk_file distinct values at 2dp: **{len({round(v, 2) for v in all_w_chunk_file})}**")
+    md.append(f"- fraction of w_chunk in [0.10, 0.50): **{100*_frac(all_w_chunk, 0.10, 0.50):.1f}%**")
+    md.append(f"- fraction of w_chunk on a multiple of 0.1 (anchoring rate): **{100*_on_anchor_frac(all_w_chunk):.1f}%**")
+    md.append(f"- telegram-mode triggered: **{'yes' if telegram_chunks else 'no'}**")
+    md.append(
+        f"- multi-facet tag rate: **{100*len(multi_facet_tags)/max(1,len(tag_facet_set)):.1f}%** "
+        f"of unique tag names appear in ≥2 facets"
+    )
     md.append("")
 
     out = "\n".join(md)
@@ -1240,16 +1423,20 @@ async def stage_analyze() -> None:
     state["analysis"] = {
         "n_chunks": n_chunks,
         "n_files": len(files_seen),
-        "chunk_kinds_sampled": dict(kind_counter),
+        "chunk_kinds_sampled": dict(Counter(row["kind"] for row in rows)),
         "tag_edges_total": sum(facet_counts.values()),
         "tag_edges_per_facet": dict(facet_counts),
-        "unique_tag_names": len({n for _, n in tag_freq.keys()}),
+        "unique_tag_names": len(tag_facet_set),
+        "multi_facet_tag_count": len(multi_facet_tags),
+        "tags_per_chunk_min": min(tags_per_chunk) if tags_per_chunk else 0,
+        "tags_per_chunk_median": int(statistics.median(tags_per_chunk)) if tags_per_chunk else 0,
+        "tags_per_chunk_max": max(tags_per_chunk) if tags_per_chunk else 0,
+        "telegram_mode_chunks": len(telegram_chunks),
         "w_chunk_stats": _basic_stats(all_w_chunk),
         "w_facet_stats": _basic_stats(all_w_facet),
         "w_chunk_file_stats": _basic_stats(all_w_chunk_file),
-        "round_anchor_pct_w_chunk": _anchor_pct(all_w_chunk),
-        "round_anchor_pct_w_facet": _anchor_pct(all_w_facet),
-        "round_anchor_pct_w_chunk_file": _anchor_pct(all_w_chunk_file),
+        "w_chunk_on_anchor_pct": _on_anchor_frac(all_w_chunk) * 100,
+        "w_chunk_low_range_pct": _frac(all_w_chunk, 0.10, 0.50) * 100,
     }
     if "analyze" not in state["stages_done"]:
         state["stages_done"].append("analyze")
@@ -1269,11 +1456,3 @@ def _basic_stats(vals: list[float]) -> dict:
         "stdev": statistics.pstdev(vals) if len(vals) > 1 else None,
         "distinct_at_2dp": len(set(round(v, 2) for v in vals)),
     }
-
-
-def _anchor_pct(vals: list[float]) -> float | None:
-    """Fraction of values within 0.005 of a multiple of 0.1."""
-    if not vals:
-        return None
-    on_anchor = sum(1 for v in vals if abs(v * 10 - round(v * 10)) < 0.05)
-    return on_anchor / len(vals)

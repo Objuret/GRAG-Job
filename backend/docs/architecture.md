@@ -16,9 +16,10 @@
 |---|---|---|
 | **access** | [`data_access/raw/`](../data_access/raw/) | Sync HF/external sources, scan `data/raw/`, classify file_class (`payload_data` vs `repo_meta_code` vs `cache_meta`), emit a pandas catalog the indexing layer consumes. No Neo4j writes from the access layer beyond what `preflight` does on its behalf. |
 | **indexing** | [`indexing/`](../indexing/) | Chunker, working-file job ledger, Run repository, Orchestrator dispatcher, ExtractionWriter, FileExtractionWriter, deterministic FileRollup, CircuitBreaker. Pre-flight scans the access catalog, writes graph corpus nodes, and updates the local working file. The orchestrator is the only LLM caller. |
+| **tagging** | [`tagging/`](../tagging/) | HERB-specific Anthropic pilot harness. It verifies HERB chunk format, selects bounded samples, renders clean model-facing frames, writes pilot `HAS_TAG` edges, and produces `analysis.md`. |
 | **clustering** | [`clustering/`](../clustering/) | Future HERB query views. The old canonical seed vocabulary has been removed. |
 
-The `agents/` package is shared infrastructure: a single OpenAI-compatible HTTP client and the pydantic schemas every agent call returns. `shared/` holds config, the async Neo4j wrapper, and small utilities (hashing, time).
+The `agents/` package is shared infrastructure for the legacy indexing path: a single OpenAI-compatible HTTP client and the pydantic schemas those calls return. The HERB tagging pilot currently uses Anthropic directly in `tagging/pipeline.py`; its contract is documented in [`herb_tagging_schema.md`](herb_tagging_schema.md). `shared/` holds config, the async Neo4j wrapper, and small utilities (hashing, time).
 
 ## Decision log
 
@@ -113,9 +114,9 @@ Each entry: **Decision** • **Rationale** • **Alternatives considered** • *
 - **Alternatives.** Parallel parquet artefacts on disk (an earlier iteration of this codebase). Rejected.
 - **Status.** Active.
 
-### D12 — Hosted nano/mini LLM (no local fallback)
+### D12 — Hosted model provider, no local fallback
 
-- **Decision.** One OpenAI-compatible HTTP endpoint via httpx. Configured by `LLM_*` env (legacy `AGENT_*` aliases honoured).
+- **Decision.** The legacy indexing path uses one OpenAI-compatible HTTP endpoint via httpx, configured by `LLM_*` env (legacy `AGENT_*` aliases honoured). The HERB tagging pilot uses one Anthropic Messages API provider via `ANTHROPIC_*`.
 - **Rationale.** Reproducibility. Hosted models are stable enough for a thesis-scale workload. Local fallback paths historically rotted faster than they helped.
 - **Alternatives.** Local inference (vLLM/Ollama) as a fallback. Rejected — see "no fallbacks" rule.
 - **Status.** Active.

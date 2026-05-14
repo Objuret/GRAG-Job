@@ -8,6 +8,9 @@ HERB tagging should not ask the model to infer how to read a chunk from internal
 pipeline labels. The chunker and tagging harness know the source shape; they
 must choose the right interpretation frame before making the model call.
 
+For the exact model-facing input/output contract and weight semantics, see
+[`herb_tagging_schema.md`](herb_tagging_schema.md).
+
 The model should receive only information that helps it describe and tag the
 evidence. Internal IDs, chunk refs, file paths, and chunk-kind names are kept in
 `run.json`, Neo4j properties, and analysis reports for operator traceability.
@@ -175,24 +178,26 @@ Interpretation:
 - `render_chunk_user_message()` maps internal chunk shape to an agent-facing
   frame.
 - `stage_extract()` sends only that rendered frame to the model.
-- `stage_describe()`, `stage_score()`, and `stage_analyze()` keep refs/kinds for
-  operator reporting, not as primary extraction evidence.
+- `stage_describe()` and `stage_score()` send only descriptions/summaries to the
+  model.
+- `stage_analyze()` keeps refs/kinds for operator reporting, not as model
+  evidence.
 
 The current clean HERB graph has no tag outputs. A tagging pilot should start
 with:
 
 ```powershell
-py -3.12 -m backend.tagging verify-chunks
-py -3.12 -m backend.tagging select
+py -3.12 -m tagging verify-chunks
+py -3.12 -m tagging select
 ```
 
 Only after inspecting the selected frame coverage should the operator run:
 
 ```powershell
-py -3.12 -m backend.tagging extract
-py -3.12 -m backend.tagging describe
-py -3.12 -m backend.tagging score
-py -3.12 -m backend.tagging analyze
+py -3.12 -m tagging extract
+py -3.12 -m tagging describe
+py -3.12 -m tagging score
+py -3.12 -m tagging analyze
 ```
 
 ## Open Design Questions
@@ -201,7 +206,7 @@ py -3.12 -m backend.tagging analyze
   section/file-level tags later.
 - Whether `evidence` should be suppressed or redefined for thin structured
   tables where every row is inherently structured evidence.
-- Whether float weights should survive, or be replaced by ordinal ranks after
-  the weight anchoring observed in `pilot_001` and `pilot_002`.
+- Whether the current ordinal rank buckets and deterministic numeric mappings
+  need calibration after the smoke run.
 - Whether file descriptions should be generated only after all chunks in a file
   are extracted, instead of from pilot samples.

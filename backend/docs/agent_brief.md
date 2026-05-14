@@ -1,6 +1,6 @@
 # Agent Brief
 
-**TL;DR.** This is the minimum context an agent (or new human) needs to be productive in this repo. For HERB, the verified path is currently preflight/chunking only: raw files under `data/raw/Salesforce__HERB/` become `:Source`, `:File`, and `:Chunk` graph content with structural relationships. The old generic LLM tagging path is legacy and is blocked for HERB unless explicitly overridden. There are **no fallbacks, no mocks, no side files**: Neo4j is the only durable store.
+**TL;DR.** This is the minimum context an agent (or new human) needs to be productive in this repo. For HERB, the verified base is the fresh chunk graph: raw files under `data/raw/Salesforce__HERB/` become `:Source`, `:File`, and `:Chunk` graph content with structural relationships. HERB tagging now has a separate Anthropic pilot harness under `tagging/`; the old generic `run_index.py` LLM path is legacy and is blocked for HERB unless explicitly overridden. There are **no fallbacks, no mocks, no side files**: Neo4j is the only durable store.
 
 **When to read this.** First — before touching anything. Re-read it if you've been off this repo for a while.
 
@@ -8,11 +8,11 @@
 
 ## Touched paths
 
-This brief references: `agents/`, `indexing/`, `prompts/`, `schema/`, `scripts/`, `shared/`, `data/raw/`, `data_access/raw/`.
+This brief references: `agents/`, `indexing/`, `prompts/`, `schema/`, `scripts/`, `shared/`, `tagging/`, `data/raw/`, `data_access/raw/`.
 
 ## Mission
 
-Bridge heterogeneous, noisy datasets with a queryable graph artefact. Every HERB file becomes a chain of `(:Chunk)` nodes with stable locators and source/file structure. The old generic tag extraction and file rollup code still exists, but it is not the active HERB contract.
+Bridge heterogeneous, noisy datasets with a queryable graph artefact. Every HERB file becomes a chain of `(:Chunk)` nodes with stable locators and source/file structure. The old generic tag extraction and file rollup code still exists, but it is not the active HERB tagging contract; HERB tagging experiments use the dedicated Anthropic pilot in `tagging/`.
 
 ## High-level architecture
 
@@ -26,7 +26,7 @@ flowchart LR
     orch -- "stage 3<br/>deterministic" --> rollup["FileRollup<br/>(:File)-[:TAGGED]->(:Tag)"]
 ```
 
-Stage 1 and 2 are LLM-driven legacy stages. Stage 3 is pure Cypher. HERB work currently stops after preflight/chunking.
+Stage 1 and 2 are LLM-driven legacy stages. Stage 3 is pure Cypher. For HERB, `run_index.py` is blocked by default; the current HERB tagging work runs through `python -m tagging <stage>` from `backend/` and is documented in [`herb_tagging_schema.md`](herb_tagging_schema.md).
 
 ## The five clusters
 
@@ -44,8 +44,8 @@ Cluster is stored as a **string property on the `HAS_TAG` and `TAGGED` edges**. 
 
 ## Hard rules
 
-1. **No fallbacks. No mocks.** The pipeline fails loud. There is exactly one LLM endpoint; if it's down, you abort.
-2. **One OpenAI-compatible LLM endpoint.** Configured via `LLM_*` env (legacy `AGENT_*` aliases honoured — `LLM_*` wins). See [`env_and_config.md`](env_and_config.md).
+1. **No fallbacks. No mocks.** The pipeline fails loud. Each runner has exactly one configured model provider; if it is down, you abort.
+2. **One LLM path per runner.** The legacy indexing/orchestrator path uses one OpenAI-compatible endpoint configured via `LLM_*` env (legacy `AGENT_*` aliases honoured; `LLM_*` wins). The HERB tagging pilot uses Anthropic directly via `ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL`. See [`env_and_config.md`](env_and_config.md) and [`herb_tagging_schema.md`](herb_tagging_schema.md).
 3. **The agent client never raises.** [`agents/client.py`](../agents/client.py) catches every `httpx`/schema error and returns a typed `AgentResult` with an `error_class`. The orchestrator decides what to do.
 4. **Per-error-class circuit breaker.** [`indexing/breaker.py`](../indexing/breaker.py) tracks consecutive counts and rolling-window rates per error class. Trips raise `BreakerTripped`; the orchestrator stops pulling new work and the run finishes as `aborted`.
 5. **Working file drives agent jobs.** Scheduler state lives in `backend/.work/worklist_<neo4j_database>.json`, not in the graph. Files that produce zero chunks (for example images or archives) are registered as `:File` but skipped by the LLM worklist. The orchestrator pulls `unrun` items and marks them `done` or `failed` in the working file. New runs auto-reset all `failed` items to `unrun`.
@@ -56,6 +56,7 @@ Cluster is stored as a **string property on the `HAS_TAG` and `TAGGED` edges**. 
 | You want to change… | Look in… |
 |---|---|
 | Agent prompts (system messages) | [`prompts/extract_chunk.md`](../prompts/extract_chunk.md), [`prompts/file_descriptor.md`](../prompts/file_descriptor.md) |
+| HERB tagging model input/output contract | [`herb_tagging_schema.md`](herb_tagging_schema.md), [`herb_tagging_frames.md`](herb_tagging_frames.md) |
 | Tag / extraction JSON schema | [`agents/schemas.py`](../agents/schemas.py) (`Tag`, `ChunkExtraction`, `FileOrchestrationOutput`) |
 | Chunking strategy per format | [`indexing/chunker.py`](../indexing/chunker.py) (`Chunker._produce_chunks`) |
 | Database constraints / indexes | [`schema/constraints.cypher`](../schema/constraints.cypher), [`schema/indexes.cypher`](../schema/indexes.cypher) |
@@ -66,6 +67,7 @@ Cluster is stored as a **string property on the `HAS_TAG` and `TAGGED` edges**. 
 | File rollup math | [`indexing/file_rollup.py`](../indexing/file_rollup.py) |
 | Env vars / config | [`shared/config.py`](../shared/config.py), [`.env.example`](../.env.example) |
 | What is verified working | [`status.md`](status.md) |
+| HERB tagging pilot CLI | [`tagging/__main__.py`](../tagging/__main__.py), [`tagging/pipeline.py`](../tagging/pipeline.py) |
 
 ## End-to-end run (concrete commands)
 
@@ -85,6 +87,10 @@ python scripts/run_preflight.py
 # 3. Legacy generic tagging is blocked for HERB unless explicitly overridden.
 python scripts/run_index.py
 
+# Optional HERB tagging pilot mechanics/smoke path.
+python -m tagging verify-chunks
+python -m tagging select
+
 # Optional: inspect counts.
 python scripts/verify_graph.py
 ```
@@ -96,7 +102,7 @@ python scripts/verify_graph.py
 Pulled from [`status.md`](status.md). Truthful snapshot:
 
 - Parquet visual-content path: chunker now omits Arrow columns containing binary data and caps nested JSON conversion, so DocVQA preflights cleanly. Future image-aware indexing still needs a proper visual path.
-- HERB-specific extraction/tagging is not built yet; do not use the legacy generic tagging path as evidence for HERB quality.
+- HERB-specific extraction/tagging exists as a bounded Anthropic pilot harness, not as a completed production-quality full run. Do not use the legacy generic tagging path as evidence for HERB quality.
 - Named cluster query views (`by_topic`, `by_evidence`, `recent_active`, `multidim`) are not built.
 - Portable JSONL graph export/import exists via `scripts/export_graph_json.py`, `scripts/import_graph_json.py`, and `graph_export/grag_graph_latest.zip`; it is an operator snapshot, not an indexing-path side artefact.
 - Full `provenance.json` per run is not written.

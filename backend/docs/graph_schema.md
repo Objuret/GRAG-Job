@@ -182,22 +182,32 @@ Linked-list within a file; ordinal-ordered.
 
 ### `(:Chunk)-[:HAS_TAG]->(:Tag)`
 
-The per-chunk tagging edge. **One edge per (chunk, tag-occurrence)** — re-extracting a chunk wipes existing edges before creating fresh ones.
+The per-chunk tagging edge. **One edge per (chunk, tag, facet) occurrence** in
+the current HERB pilot. Re-extracting a chunk wipes existing edges before
+creating fresh ones.
 
 | Property | Type | Notes |
 |---|---|---|
-| `cluster` | string | One of `topic`, `entities`, `activity`, `temporal`, `evidence`. The cluster lives on the **edge**, not the Tag node. |
-| `canonical_id` | string \| null | The canonical label the agent mapped to, or `null` when proposing. **Indexed.** |
-| `weight_local` | float | Saliency in [0, 1] for this chunk. |
+| `facet` | string | HERB facet: `topic`, `entities`, `activity`, `temporal`, or `evidence`. |
+| `w_chunk` | float | HERB derived centrality score computed from the five-facet vector. |
+| `w_facet` | float | HERB model-emitted fit score for this tag/facet edge. |
 | `run_id` | string | Run that wrote the edge. |
+| `cluster` | string \| null | Legacy generic tagger field; not written by current HERB pilot. |
+| `canonical_id` | string \| null | Legacy generic tagger field; not written by current HERB pilot. |
+| `weight_local` | float \| null | Legacy generic tagger field; not written by current HERB pilot. |
 
-- **Indexes:** `(r.cluster)`, `(r.canonical_id)`.
-- **Who writes:** [`indexing/extraction_writer.py`](../indexing/extraction_writer.py) `_write_non_empty`.
-- **Who reads:** [`indexing/file_rollup.py`](../indexing/file_rollup.py), orchestrator's file_context loader (chunk inventory).
+- **Indexes:** `(r.facet)`, `(r.run_id)` for HERB retrieval; legacy indexes may
+  still exist on `(r.cluster)` and `(r.canonical_id)`.
+- **Who writes:** HERB pilot [`tagging/pipeline.py`](../tagging/pipeline.py);
+  legacy generic path [`indexing/extraction_writer.py`](../indexing/extraction_writer.py).
+- **Who reads:** planned retrieval API; legacy [`indexing/file_rollup.py`](../indexing/file_rollup.py)
+  reads the old generic shape.
 
 ### `(:File)-[:TAGGED]->(:Tag)`
 
-Derived edge from the deterministic file rollup. Pure function of `HAS_TAG` + `Chunk.relevance_to_file`.
+Legacy derived edge from the deterministic file rollup. Pure function of the
+legacy `HAS_TAG` shape + `Chunk.relevance_to_file`. The current HERB pilot does
+not write `TAGGED` rollups; HERB retrieval should read `HAS_TAG` directly.
 
 | Property | Type | Notes |
 |---|---|---|
@@ -230,6 +240,8 @@ CREATE INDEX IF NOT EXISTS FOR (n:File)         ON (n.format_family);
 CREATE INDEX IF NOT EXISTS FOR (n:Chunk)        ON (n.file_id);
 CREATE INDEX IF NOT EXISTS FOR (n:Chunk)        ON (n.empty);
 CREATE INDEX IF NOT EXISTS FOR (n:CanonicalTag) ON (n.cluster);
+CREATE INDEX IF NOT EXISTS FOR ()-[r:HAS_TAG]-() ON (r.facet);
+CREATE INDEX IF NOT EXISTS FOR ()-[r:HAS_TAG]-() ON (r.run_id);
 CREATE INDEX IF NOT EXISTS FOR ()-[r:HAS_TAG]-() ON (r.cluster);
 CREATE INDEX IF NOT EXISTS FOR ()-[r:HAS_TAG]-() ON (r.canonical_id);
 CREATE INDEX IF NOT EXISTS FOR ()-[r:TAGGED]-()  ON (r.cluster);
@@ -243,7 +255,10 @@ CREATE INDEX IF NOT EXISTS FOR ()-[r:TAGGED]-()  ON (r.cluster);
 |---|---|---|
 | `dispatch_mode` | `:File` property | Determined per file at preflight; the orchestrator branches on it. |
 | `relevance_to_file` | `:Chunk` property | Per-chunk score from the file orchestrator. Used by rollup. |
-| `weight_local` | `(:Chunk)-[:HAS_TAG]->(:Tag)` edge property | Per-chunk tag saliency. |
-| `weight_global` | `(:File)-[:TAGGED]->(:Tag)` edge property | Aggregate of `relevance_to_file * weight_local`. |
-| `canonical_id` | `(:Chunk)-[:HAS_TAG]->(:Tag)` and `(:File)-[:TAGGED]->(:Tag)` edges | Per-attribution mapping; `null` when the tag is a proposal. |
-| `cluster` | `(:Chunk)-[:HAS_TAG]->(:Tag)` and `(:File)-[:TAGGED]->(:Tag)` edges | The same Tag name can be in different clusters across occurrences. |
+| `facet` | HERB `(:Chunk)-[:HAS_TAG]->(:Tag)` edge property | The retrieval dimension for the tag occurrence. |
+| `w_chunk` | HERB `(:Chunk)-[:HAS_TAG]->(:Tag)` edge property | Derived centrality of the tag in the chunk. |
+| `w_facet` | HERB `(:Chunk)-[:HAS_TAG]->(:Tag)` edge property | Fit of the tag to this facet. |
+| `weight_local` | Legacy `(:Chunk)-[:HAS_TAG]->(:Tag)` edge property | Per-chunk tag saliency in the old generic path. |
+| `weight_global` | Legacy `(:File)-[:TAGGED]->(:Tag)` edge property | Aggregate of `relevance_to_file * weight_local`. |
+| `canonical_id` | Legacy `(:Chunk)-[:HAS_TAG]->(:Tag)` and `(:File)-[:TAGGED]->(:Tag)` edges | Per-attribution mapping; `null` when the tag is a proposal. |
+| `cluster` | Legacy `(:Chunk)-[:HAS_TAG]->(:Tag)` and `(:File)-[:TAGGED]->(:Tag)` edges | The same Tag name can be in different clusters across occurrences. |

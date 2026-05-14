@@ -1,14 +1,14 @@
 # Environment and Configuration
 
-**TL;DR.** Settings come from `.env` (gitignored) loaded by `pydantic-settings` in [`shared/config.py`](../shared/config.py). The recommended prefix is `LLM_*`; legacy `AGENT_*` names work for the same fields and `LLM_*` wins when both are set. Neo4j is configured via `NEO4J_*`. Embeddings/data root have their own keys. Nothing in this doc echoes secrets.
+**TL;DR.** Settings come from `.env` (gitignored) loaded by `pydantic-settings` in [`shared/config.py`](../shared/config.py). The legacy indexing path uses `LLM_*`; legacy `AGENT_*` names work for the same fields and `LLM_*` wins when both are set. The HERB tagging pilot uses `ANTHROPIC_*` directly in `tagging/pipeline.py`. Neo4j is configured via `NEO4J_*`. Embeddings/data root have their own keys. Nothing in this doc echoes secrets.
 
 **When to read this.** Before running anything. Whenever you wonder where a setting is consumed.
 
-**Last updated:** 2026-05-07.
+**Last updated:** 2026-05-13.
 
 ## Touched paths
 
-`shared/config.py`, `.env.example`, `scripts/run_index.py`, `scripts/bootstrap_schema.py`, `scripts/run_preflight.py`, `agents/client.py`, `shared/neo4j_client.py`.
+`shared/config.py`, `.env.example`, `scripts/run_index.py`, `scripts/bootstrap_schema.py`, `scripts/run_preflight.py`, `agents/client.py`, `shared/neo4j_client.py`, `tagging/pipeline.py`.
 
 ## Loading mechanism
 
@@ -53,6 +53,20 @@ agent_base_url: str = Field(
 | `LLM_TIMEOUT_SECONDS` (or `AGENT_TIMEOUT_SECONDS`) | float | `30.0` | No | `httpx.AsyncClient(timeout=...)`. Timeouts surface as `error_class="timeout"`. |
 | `LLM_MAX_CONCURRENCY` (or `AGENT_MAX_CONCURRENCY`) | int (≥1) | `32` | No | `Orchestrator._semaphore = asyncio.Semaphore(...)`. Stamped on `:Run.agent_max_concurrency`. CLI override: `python scripts/run_index.py --concurrency N`. |
 
+### HERB tagging pilot (Anthropic Messages API)
+
+These are not read by `shared/config.py`. They are loaded from `.env` by
+[`tagging/pipeline.py`](../tagging/pipeline.py) for the HERB-specific pilot.
+
+| Var | Type | Default | Required | Where consumed |
+|---|---|---|---|---|
+| `ANTHROPIC_API_KEY` | string (secret) | none | **Yes** for `python -m tagging extract/describe/score` | Passed to `anthropic.AsyncAnthropic`. Never log or commit it. |
+| `ANTHROPIC_MODEL` | string | `claude-haiku-4-5` | No | Anthropic model used by `ClaudeCaller`; aliases `claude-4-5-haiku` and `claude-haiku-4.5` normalize to `claude-haiku-4-5`. |
+| `PILOT_NAME` | string | `pilot_format_smoke` | No | Run directory under `data/tagging_runs/`. |
+| `TAGGING_SAMPLE_SIZE` | int | `14` | No | Number of selected chunks for `select`. |
+| `TAGGING_SELECTION_MODE` | string | `herb_kind_coverage` | No | Selection strategy. Default chooses one representative chunk per HERB evidence shape. |
+| `TAGGING_SELECTION_SEED` | int | `0` | No | Deterministic seed for random selection mode. |
+
 ### Neo4j
 
 | Var | Type | Default | Required | Where consumed |
@@ -85,6 +99,10 @@ LLM_MODEL=gpt-4o-mini
 LLM_API_KEY=...                # required for run_index.py
 LLM_MAX_CONCURRENCY=32
 LLM_TIMEOUT_SECONDS=30
+
+# Required only for the HERB Anthropic tagging pilot API stages.
+ANTHROPIC_API_KEY=sk-ant-replace-with-your-key
+ANTHROPIC_MODEL=claude-haiku-4-5
 
 NEO4J_URI=neo4j://localhost:7687
 NEO4J_USER=neo4j

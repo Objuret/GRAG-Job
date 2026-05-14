@@ -1,6 +1,6 @@
 # Prompts
 
-**TL;DR.** Two LLM prompts are in the live indexing path: [`extract_chunk.md`](../prompts/extract_chunk.md) (Stage 1) and [`file_descriptor.md`](../prompts/file_descriptor.md) (Stage 2). [`extract_chunk_tags_only.md`](../prompts/extract_chunk_tags_only.md) is used by non-mutating pilot scripts only. All prompt outputs are validated by pydantic models. When you edit a prompt's JSON shape, you **must** update the matching model in the same change.
+**TL;DR.** Two LLM prompts are in the live indexing path: [`extract_chunk.md`](../prompts/extract_chunk.md) (Stage 1) and [`file_descriptor.md`](../prompts/file_descriptor.md) (Stage 2). [`extract_chunk_tags_only.md`](../prompts/extract_chunk_tags_only.md) is used by non-mutating pilot scripts only. The HERB tagging pilot has its own Anthropic structured-output contract in [`herb_tagging_schema.md`](herb_tagging_schema.md). All prompt outputs are validated by pydantic models. When you edit a prompt's JSON shape, you **must** update the matching model in the same change.
 
 **When to read this.** Before editing any file under [`prompts/`](../prompts/). Also before changing [`agents/schemas.py`](../agents/schemas.py).
 
@@ -11,6 +11,8 @@
 `prompts/`, `agents/schemas.py`, `agents/client.py`, `indexing/orchestrator.py`, `indexing/extraction_writer.py`, `indexing/file_writer.py`, `scripts/run_tags_only_pilot.py`.
 
 ## Common ground
+
+- **HERB model input must stay uncontaminated.** For HERB tagging, do not send internal chunk ids, chunk refs, locator JSON, file paths, or implementation labels as model evidence. The exact input/output schema and weight rationale live in [`herb_tagging_schema.md`](herb_tagging_schema.md).
 
 - **One LLM call per prompt invocation.** The indexing path uses JSON mode (`response_format=json_object`). Pilot scripts can request structured output (`response_format=json_schema`) through `AgentClient.call(response_format="structured")`. Output must be a single JSON object — no markdown, no prose, no code fences.
 - **Failure handling lives in the orchestrator.** [`agents/client.py`](../agents/client.py) catches httpx and pydantic errors and returns a typed `error_class`. [`indexing/orchestrator.py`](../indexing/orchestrator.py) marks the working-file item `failed` with that class. Auto-retry-all on next run picks it up.

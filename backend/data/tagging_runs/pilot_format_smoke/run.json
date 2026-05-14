@@ -171,5 +171,73 @@
       "parent_ref": "product.CollaborationForce.unanswerable_questions"
     }
   ],
-  "stages_done": []
+  "stages_done": [
+    "extract",
+    "describe",
+    "score",
+    "analyze"
+  ],
+  "analysis": {
+    "n_chunks": 14,
+    "n_files": 12,
+    "chunk_kinds_sampled": {
+      "document_part": 1,
+      "meeting_transcript_part": 1,
+      "url_batch": 1,
+      "pr_batch": 1,
+      "org_tree": 1,
+      "directory_batch": 1,
+      "document": 1,
+      "meeting_chat_batch": 1,
+      "qa_record_part": 1,
+      "slack_thread_batch": 1,
+      "qa_record": 1,
+      "product_profile": 1,
+      "meeting_transcript": 1,
+      "unanswerable_question_batch": 1
+    },
+    "tag_edges_total": 601,
+    "tag_edges_per_facet": {
+      "topic": 186,
+      "entities": 201,
+      "activity": 84,
+      "evidence": 114,
+      "temporal": 16
+    },
+    "unique_tag_names": 243,
+    "multi_facet_tag_count": 174,
+    "tags_per_chunk_min": 19,
+    "tags_per_chunk_median": 41,
+    "tags_per_chunk_max": 74,
+    "telegram_mode_chunks": 13,
+    "w_chunk_stats": {
+      "n": 601,
+      "min": 0.29,
+      "max": 0.76,
+      "mean": 0.5169883527454242,
+      "median": 0.52,
+      "stdev": 0.11923807557293993,
+      "distinct_at_2dp": 45
+    },
+    "w_facet_stats": {
+      "n": 601,
+      "min": 0.5,
+      "max": 1.0,
+      "mean": 0.8178036605657238,
+      "median": 0.85,
+      "stdev": 0.1625478341574027,
+      "distinct_at_2dp": 10
+    },
+    "w_chunk_file_stats": {
+      "n": 14,
+      "min": 0.85,
+      "max": 1.0,
+      "mean": 0.9571428571428572,
+      "median": 0.95,
+      "stdev": 0.04948716593053936,
+      "distinct_at_2dp": 3
+    },
+    "w_chunk_on_anchor_pct": 18.80199667221298,
+    "w_chunk_low_range_pct": 41.26455906821963
+  }
 }

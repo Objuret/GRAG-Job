@@ -145,7 +145,7 @@ Run finished: ok
 
 A `BREAKER TRIPPED:` line on stderr means the orchestrator caught a `BreakerTripped` and the run finished as `aborted`. Exit code 1.
 
-For HERB, `run_index.py` refuses to run the legacy generic tagging path by default. `Salesforce__HERB` is currently preflight/chunking-only until a HERB-specific extraction path exists. The escape hatch `--allow-legacy-herb-tagging` is only for explicit throwaway experiments.
+For HERB, `run_index.py` refuses to run the legacy generic tagging path by default. HERB-specific tagging experiments use the separate Anthropic pilot CLI (`python -m tagging <stage>` from `backend/`) documented in [`herb_tagging_schema.md`](herb_tagging_schema.md). The escape hatch `--allow-legacy-herb-tagging` is only for explicit throwaway experiments.
 
 ## 6. Verify
 

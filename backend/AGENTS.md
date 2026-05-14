@@ -9,7 +9,7 @@ If you are an AI agent picking up this codebase, start with [`docs/agent_brief.m
 ## Hard rules
 
 - No fallbacks. No mocks. Fail loud.
-- One OpenAI-compatible LLM endpoint (configured via `LLM_*` env; legacy `AGENT_*` aliases honoured, `LLM_*` wins).
+- The legacy indexing/orchestrator path uses one OpenAI-compatible LLM endpoint (configured via `LLM_*` env; legacy `AGENT_*` aliases honoured, `LLM_*` wins). The HERB tagging pilot is a separate Anthropic-only path; see [`docs/herb_tagging_schema.md`](docs/herb_tagging_schema.md).
 - The agent client never raises — see [`agents/client.py`](agents/client.py); the orchestrator decides what to do with `error_class`.
 - Per-error-class circuit breaker — see [`indexing/breaker.py`](indexing/breaker.py).
 - Working-file job ledger drives agent scheduling — see [`indexing/worklist.py`](indexing/worklist.py).
