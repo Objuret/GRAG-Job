@@ -1,0 +1,1 @@
+- [Active development branch + live frontend layout](project_active_branch.md) — djuret/monorepo at A:\exjobbet\repo; live frontend is flat App.jsx + workbenchData.ts (empty components/ dirs are not real)
