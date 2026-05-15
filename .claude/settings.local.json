@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls \"A:\\\\exjobbet\\\\repo\\\\backend\\\\\" 2>/dev/null || dir \"A:\\\\exjobbet\\\\repo\\\\backend\\\\\")",
+      "Bash(ls \"A:/exjobbet/repo/backend/\")",
+      "Read(//a/exjobbet/repo/**)",
+      "Bash(python -c \"import groq; print\\('groq', groq.__version__\\); import neo4j; print\\('neo4j', neo4j.__version__\\); import dotenv; print\\('dotenv ok'\\); import pydantic; print\\('pydantic', pydantic.__version__\\)\")",
+      "Bash(pip install *)",
+      "Bash(python -c ' *)",
+      "Bash(mkdir -p \"A:/exjobbet/repo/backend/tagging\" \"A:/exjobbet/repo/backend/data/tagging_runs\")",
+      "Bash(python -m backend.tagging select)",
+      "Bash(python -c \"import sys, json; d=json.load\\(sys.stdin\\); print\\('chunks:', len\\(d['chunk_ids']\\), 'stages_done:', d.get\\('stages_done'\\)\\)\")",
+      "Bash(python -m backend.tagging extract)",
+      "Bash(python -m backend.tagging describe)",
+      "Bash(python -m backend.tagging score)",
+      "Bash(python -m backend.tagging analyze)",
+      "Bash(find \"A:/exjobbet\" -maxdepth 6 -iname \"*herb*\" 2>&1 | head -20)",
+      "Bash(python -c \"from backend.tagging import pipeline; print\\('ok'\\)\")",
+      "Bash(PILOT_NAME=pilot_format_smoke python -m backend.tagging extract)",
+      "Bash(PILOT_NAME=pilot_format_smoke python -m backend.tagging describe)",
+      "Bash(PILOT_NAME=pilot_format_smoke python -m backend.tagging score)",
+      "Bash(PILOT_NAME=pilot_format_smoke python -m backend.tagging analyze)",
+      "Bash(rm -f backend/data/tagging_runs/pilot_format_smoke/io.jsonl backend/data/tagging_runs/pilot_format_smoke/errors.jsonl backend/data/tagging_runs/pilot_format_smoke/analysis.md)",
+      "Bash(PILOT_NAME=pilot_batch_smoke python -m backend.tagging extract)",
+      "Bash(PILOT_NAME=pilot_batch_smoke python -m backend.tagging describe)",
+      "Bash(PILOT_NAME=pilot_batch_smoke python -m backend.tagging score)",
+      "Bash(PILOT_NAME=pilot_batch_smoke python -m backend.tagging analyze)"
+    ]
+  }
+}
