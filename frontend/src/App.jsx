@@ -33,7 +33,14 @@ import {
   getFragmentTemplate,
   getFragmentHumanLine,
 } from './query/queryModuleSyntax';
+import { interpretPrompt } from './services/interpreter';
+import { retrieveChunks, retrieveBaseline } from './services/retrieval';
+import { generateAnswer } from './services/answer';
+import { fetchDatasetStats } from './services/neo4j';
 const NT = Object.fromEntries([...NODE_TYPES, ...QUERY_FRAGMENT_NODES].map((n) => [n.id, n]));
+
+const DONE_GRAPH_DATABASE = 'herb';
+const DONE_GRAPH_RUN_ID = 'pilot_full_herb';
 
 // ─── helpers ───────────────────────────────────────────────────────────────
 const cls = (...xs) => xs.filter(Boolean).join(' ');
@@ -554,6 +561,37 @@ function buildInitial() {
   return { nodes, edges };
 }
 
+// ─── Fixed local graph/runtime config (override via Vite env only) ──────────
+const defaultConnConfig = {
+  neo4jUri:       (typeof import.meta !== 'undefined' && import.meta.env?.VITE_NEO4J_URI)        || 'bolt://localhost:7687',
+  neo4jUser:      (typeof import.meta !== 'undefined' && import.meta.env?.VITE_NEO4J_USER)       || 'neo4j',
+  neo4jPassword:  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_NEO4J_PASSWORD)   || '',
+  neo4jDatabase:  DONE_GRAPH_DATABASE,
+  openaiApiKey:   (typeof import.meta !== 'undefined' && import.meta.env?.VITE_OPENAI_API_KEY)   || '',
+  anthropicApiKey:(typeof import.meta !== 'undefined' && import.meta.env?.VITE_ANTHROPIC_API_KEY)|| '',
+  model:          (typeof import.meta !== 'undefined' && import.meta.env?.VITE_MODEL)            || 'claude-haiku-4-5',
+};
+
+function normalizeConnConfig(cfg = {}) {
+  return { ...defaultConnConfig, ...(cfg || {}), neo4jDatabase: DONE_GRAPH_DATABASE };
+}
+
+function toDatasetOptions(stats) {
+  const rows = stats
+    .filter((s) => s?.sourceId && !s.sourceId.endsWith('_demo') && s.fileCount > 0)
+    .map((s) => ({
+      id: s.sourceId,
+      files: s.fileCount,
+      chunks: s.chunkCount,
+      tags: s.tagCount,
+    }));
+  return rows.length ? rows : DATASETS;
+}
+
+function fmtCount(v) {
+  return typeof v === 'number' ? v.toLocaleString() : '0';
+}
+
 // ─── App ───────────────────────────────────────────────────────────────────
 function WorkbenchApp() {
   const initial = useMemo(buildInitial, []);
@@ -568,11 +606,16 @@ function WorkbenchApp() {
   const rf = useReactFlow();
   const [results, setResults]   = useState({ lane_A: PRESET_RESULTS.full, lane_B: PRESET_RESULTS.baseline });
   const [config, setConfig]     = useState({
-    dataset: 'source_alpha_demo',
+    dataset: DATASETS[0]?.id || 'Salesforce__HERB',
     clusters: { topic: true, entities: true, activity: true, temporal: true, evidence: true },
     canonicalOnly: false, weightThreshold: 0.0, maxChunks: 50, formatFilter: 'All',
   });
   const [outputView, setOutputView] = useState('llm');   // llm | chunks | table
+  const connConfig = useMemo(() => normalizeConnConfig(), []);
+  const [datasetOptions, setDatasetOptions] = useState(DATASETS);
+  const [datasetLoadState, setDatasetLoadState] = useState({ loading: false, error: null, source: 'fallback' });
+  const [pipelineRunning, setPipelineRunning] = useState(false);
+  const [pipelineError, setPipelineError] = useState(null);
 
   useEffect(() => { document.documentElement.setAttribute('data-theme', theme); }, [theme]);
   useEffect(() => { document.documentElement.style.setProperty('--accent', tweaks.accentColor); }, [tweaks.accentColor]);
@@ -748,12 +791,100 @@ function WorkbenchApp() {
     setNodes((nds) => nds.map((n) => (n.id === id ? { ...n, data: { ...n.data, ...dataPatch } } : n)));
   }, [setNodes]);
 
+  useEffect(() => {
+    let live = true;
+    const neo4jCfg = {
+      uri: connConfig.neo4jUri,
+      user: connConfig.neo4jUser,
+      password: connConfig.neo4jPassword,
+      database: DONE_GRAPH_DATABASE,
+    };
+
+    setDatasetLoadState({ loading: true, error: null, source: 'graph' });
+    fetchDatasetStats(neo4jCfg, DONE_GRAPH_RUN_ID)
+      .then((stats) => {
+        if (!live) return;
+        const options = toDatasetOptions(stats);
+        setDatasetOptions(options);
+        setDatasetLoadState({ loading: false, error: null, source: stats.length ? 'graph' : 'fallback' });
+        setConfig((prev) => (
+          options.some((d) => d.id === prev.dataset) ? prev : { ...prev, dataset: options[0]?.id || DATASETS[0]?.id }
+        ));
+      })
+      .catch((err) => {
+        if (!live) return;
+        setDatasetOptions(DATASETS);
+        setDatasetLoadState({ loading: false, error: err?.message || String(err), source: 'fallback' });
+        setConfig((prev) => (
+          DATASETS.some((d) => d.id === prev.dataset) ? prev : { ...prev, dataset: DATASETS[0]?.id || 'Salesforce__HERB' }
+        ));
+      });
+
+    return () => { live = false; };
+  }, [connConfig.neo4jUri, connConfig.neo4jUser, connConfig.neo4jPassword]);
+
+  const runPipeline = useCallback(async () => {
+    const needsOpenAI = !connConfig.model.startsWith('claude');
+    const activeKey = needsOpenAI ? connConfig.openaiApiKey : connConfig.anthropicApiKey;
+    if (!activeKey) {
+      const which = needsOpenAI ? 'OpenAI' : 'Anthropic';
+      setPipelineError(`${which} API key not set in Vite env.`);
+      return;
+    }
+    setPipelineRunning(true);
+    setPipelineError(null);
+    const t0 = Date.now();
+    try {
+      const datasetId = config.dataset || datasetOptions[0]?.id || DATASETS[0]?.id || null;
+      const neo4jCfg = {
+        uri: connConfig.neo4jUri,
+        user: connConfig.neo4jUser,
+        password: connConfig.neo4jPassword,
+        database: DONE_GRAPH_DATABASE,
+      };
+      const plan = await interpretPrompt(prompt, connConfig.model, connConfig.openaiApiKey, connConfig.anthropicApiKey, datasetId);
+      const [chunks, bChunks] = await Promise.all([
+        retrieveChunks(plan, neo4jCfg),
+        retrieveBaseline(plan.filters.limit, neo4jCfg, datasetId),
+      ]);
+      const [ansA, ansB] = await Promise.all([
+        generateAnswer(prompt, plan, chunks, connConfig.model, connConfig.openaiApiKey, connConfig.anthropicApiKey),
+        generateAnswer(prompt, plan, bChunks, connConfig.model, connConfig.openaiApiKey, connConfig.anthropicApiKey),
+      ]);
+      const topFacets = [...new Set(
+        plan.tags.flatMap(t => Object.entries(t.facets).filter(([, v]) => v >= 0.5).map(([k]) => k))
+      )].slice(0, 4);
+      const elapsed = Date.now() - t0;
+      setResults({
+        lane_A: {
+          chunks: chunks.length, response: ansA.response,
+          tokensIn: ansA.tokensIn, tokensOut: ansA.tokensOut, durationMs: elapsed,
+          topClusters: topFacets, plan, retrievedChunks: chunks,
+        },
+        lane_B: {
+          chunks: bChunks.length, response: ansB.response,
+          tokensIn: ansB.tokensIn, tokensOut: ansB.tokensOut, durationMs: elapsed,
+          topClusters: [], plan: null, retrievedChunks: bChunks,
+        },
+      });
+    } catch (err) {
+      setPipelineError(err?.message || String(err));
+    } finally {
+      setPipelineRunning(false);
+    }
+  }, [prompt, connConfig, config.dataset, datasetOptions]);
+
+  const runLaneWithActualWork = useCallback((laneId) => {
+    runLane(laneId);
+    if (laneId === 'lane_usage') runPipeline();
+  }, [runLane, runPipeline]);
+
   // Wire callbacks into nodes (toggle, rename, run, etc.)
   const wiredNodes = useMemo(() => nodes.map((n) => {
     if (n.type === 'lane') {
       return { ...n, data: { ...n.data,
         onRename: (v) => setNodes((nds) => nds.map((x) => (x.id === n.id ? { ...x, data: { ...x.data, label: v } } : x))),
-        onRun: () => runLane(n.id),
+        onRun: () => runLaneWithActualWork(n.id),
         onSetLockContent: (lock) => {
           commitBeforeChange();
           setNodes((nds) => {
@@ -785,7 +916,7 @@ function WorkbenchApp() {
       } };
     }
     return n;
-  }), [nodes, runLane, setNodes, commitBeforeChange]);
+  }), [nodes, runLaneWithActualWork, setNodes, commitBeforeChange]);
 
   const onConnect = useCallback((c) => {
     commitBeforeChange();
@@ -1018,7 +1149,8 @@ function WorkbenchApp() {
   const runAll = useCallback(() => {
     runLane('lane_pipeline');
     runLane('lane_usage');
-  }, [runLane]);
+    runPipeline();
+  }, [runLane, runPipeline]);
 
   const focusCanvas = useCallback(() => {
     canvasRootRef.current?.focus({ preventScroll: true });
@@ -1102,7 +1234,7 @@ function WorkbenchApp() {
 
   return (
     <div className={cls('workbench', edgeSel && 'drawer-open')}>
-      <TopStrip {...{ theme, setTheme, prompt, setPrompt, runAll }}/>
+      <TopStrip {...{ theme, setTheme, prompt, setPrompt, runAll, pipelineRunning }}/>
       <div className={cls('workbench-main', edgeSel && 'drawer-open')}>
         <Catalog />
         <div
@@ -1161,6 +1293,7 @@ function WorkbenchApp() {
         </div>
         <Inspector selKind={selKind} selNode={selNode} selPayload={selPayload}
                    config={config} setConfig={setConfig}
+                   datasetOptions={datasetOptions} datasetLoadState={datasetLoadState}
                    prompt={prompt} setPrompt={setPrompt}
                    outputView={outputView} setOutputView={setOutputView}
                    queryContainerMeta={QUERY_CONTAINER}
@@ -1169,7 +1302,8 @@ function WorkbenchApp() {
                    patchNodeData={patchNodeData} />
         {selEdge && <Drawer edge={selEdge} nodes={nodes} onClose={() => setEdgeSel(null)} />}
       </div>
-      <BottomPanel results={results} prompt={prompt} outputView={outputView} setOutputView={setOutputView}/>
+      <BottomPanel results={results} prompt={prompt} outputView={outputView} setOutputView={setOutputView}
+                   pipelineRunning={pipelineRunning} pipelineError={pipelineError}/>
       {tweaksOpen && <TweaksPanel tweaks={tweaks} setTweak={setTweak} onClose={() => { setTweaksOpen(false); window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*'); }}/>}
     </div>
   );
@@ -1234,7 +1368,7 @@ function TwToggle({ label, value, onChange }) {
 }
 
 // ─── Top Strip ──────────────────────────────────────────────────────────────
-function TopStrip({ theme, setTheme, prompt, setPrompt, runAll }) {
+function TopStrip({ theme, setTheme, prompt, setPrompt, runAll, pipelineRunning }) {
   const themes = [
     { id: 'dark',      label: 'Dark Synth', bg: '#0e1322',  fg: '#b189ff' },
     { id: 'light',     label: 'Commodore',  bg: '#c8c0b4',  fg: '#4b559f' },
@@ -1266,7 +1400,9 @@ function TopStrip({ theme, setTheme, prompt, setPrompt, runAll }) {
       </div>
       <button className="btn btn-ghost btn-icon" title="Reset workspace"
               onClick={() => window.location.reload()}>{I.reset}</button>
-      <button className="btn btn-primary" onClick={runAll}>{I.play} Execute All</button>
+      <button className="btn btn-primary" disabled={pipelineRunning} onClick={runAll}>
+        {pipelineRunning ? I.zap : I.play} {pipelineRunning ? 'Running…' : 'Execute All'}
+      </button>
     </div>
   );
 }
@@ -1562,7 +1698,7 @@ function QueryFragmentSyntaxSection({ kind, selNode, nodes, edges, patchNodeData
 }
 
 // ─── Inspector ──────────────────────────────────────────────────────────────
-function Inspector({ selKind, selNode, selPayload, config, setConfig, prompt, setPrompt, outputView, setOutputView, queryContainerMeta, nodes, edges, patchNodeData }) {
+function Inspector({ selKind, selNode, selPayload, config, setConfig, datasetOptions, datasetLoadState, prompt, setPrompt, outputView, setOutputView, queryContainerMeta, nodes, edges, patchNodeData }) {
   const [tab, setTab] = useState('config');
   if (!selNode) {
     return (
@@ -1640,6 +1776,8 @@ function Inspector({ selKind, selNode, selPayload, config, setConfig, prompt, se
             kind={selKind.id}
             config={config}
             setConfig={setConfig}
+            datasetOptions={datasetOptions}
+            datasetLoadState={datasetLoadState}
             prompt={prompt}
             setPrompt={setPrompt}
             outputView={outputView}
@@ -1655,7 +1793,7 @@ function Inspector({ selKind, selNode, selPayload, config, setConfig, prompt, se
   );
 }
 
-function ConfigForm({ kind, config, setConfig, prompt, setPrompt, outputView, setOutputView, syntaxCtx }) {
+function ConfigForm({ kind, config, setConfig, datasetOptions, datasetLoadState, prompt, setPrompt, outputView, setOutputView, syntaxCtx }) {
   const set = (patch) => setConfig({ ...config, ...patch });
   if (kind === 'prompt') {
     return (
@@ -1676,19 +1814,27 @@ function ConfigForm({ kind, config, setConfig, prompt, setPrompt, outputView, se
     );
   }
   if (kind === 'dataset') {
-    const ds = DATASETS.find(d => d.id === config.dataset) || DATASETS[0];
+    const options = datasetOptions?.length ? datasetOptions : DATASETS;
+    const ds = options.find(d => d.id === config.dataset) || options[0];
+    const datasetValue = ds?.id || '';
     return (
       <>
         <div className="field">
           <label className="field-label">Source<span className="hint">:Source node in graph</span></label>
-          <select className="field-select" value={config.dataset} onChange={(e) => set({ dataset: e.target.value })}>
-            {DATASETS.map(d => <option key={d.id} value={d.id}>{d.id}</option>)}
+          <select className="field-select" value={datasetValue} onChange={(e) => set({ dataset: e.target.value })}>
+            {options.map(d => <option key={d.id} value={d.id}>{d.id}</option>)}
           </select>
+          {datasetLoadState?.error && (
+            <div className="tweaks-hint" style={{ marginTop: 6 }}>Using raw dataset list; Neo4j source lookup is unavailable.</div>
+          )}
+          {datasetLoadState?.loading && (
+            <div className="tweaks-hint" style={{ marginTop: 6 }}>Loading graph sources...</div>
+          )}
         </div>
         <div className="stat-grid">
-          <div className="stat-card"><div className="stat-card-label">Files</div><div className="stat-card-val">{ds.files}</div></div>
-          <div className="stat-card"><div className="stat-card-label">Chunks</div><div className="stat-card-val">{ds.chunks}</div></div>
-          <div className="stat-card"><div className="stat-card-label">Tags</div><div className="stat-card-val">{ds.tags}</div></div>
+          <div className="stat-card"><div className="stat-card-label">Files</div><div className="stat-card-val">{fmtCount(ds?.files)}</div></div>
+          <div className="stat-card"><div className="stat-card-label">Chunks</div><div className="stat-card-val">{fmtCount(ds?.chunks)}</div></div>
+          <div className="stat-card"><div className="stat-card-label">Tags</div><div className="stat-card-val">{fmtCount(ds?.tags)}</div></div>
           <div className="stat-card"><div className="stat-card-label">Adapter</div><div className="stat-card-val" style={{fontSize:11}}>neo4j_driver</div></div>
         </div>
       </>
@@ -1790,11 +1936,12 @@ function ConfigForm({ kind, config, setConfig, prompt, setPrompt, outputView, se
       <>
         <div className="field">
           <label className="field-label">Interpreter model<span className="hint">analyses the prompt</span></label>
-          <select className="field-select" defaultValue="gpt-5.4">
-            <option>gpt-5.4</option>
-            <option>gpt-5.4-mini</option>
+          <select className="field-select" defaultValue="claude-haiku-4-5">
+            <option>claude-haiku-4-5</option>
+            <option>claude-sonnet-4-5</option>
+            <option>claude-opus-4-6</option>
             <option>gpt-4o-mini</option>
-            <option>claude-4-sonnet</option>
+            <option>gpt-4o</option>
           </select>
         </div>
         <div className="field">
@@ -1878,12 +2025,12 @@ function ConfigForm({ kind, config, setConfig, prompt, setPrompt, outputView, se
       <>
         <div className="field">
           <label className="field-label">LLM model<span className="hint">for final answer</span></label>
-          <select className="field-select" defaultValue="gpt-5.4">
-            <option>gpt-5.4</option>
-            <option>gpt-5.4-mini</option>
+          <select className="field-select" defaultValue="claude-haiku-4-5">
+            <option>claude-haiku-4-5</option>
+            <option>claude-sonnet-4-5</option>
+            <option>claude-opus-4-6</option>
             <option>gpt-4o-mini</option>
-            <option>claude-4-sonnet</option>
-            <option>llama-3.1-70b</option>
+            <option>gpt-4o</option>
           </select>
         </div>
         <div className="field">
@@ -2047,7 +2194,7 @@ function schemaFor(t) {
 }
 
 // ─── Bottom Panel (lane comparison) ─────────────────────────────────────────
-function BottomPanel({ results, prompt, outputView, setOutputView }) {
+function BottomPanel({ results, prompt, outputView, setOutputView, pipelineRunning, pipelineError }) {
   const a = results.lane_A, b = results.lane_B;
   return (
     <section className="bottom">
@@ -2056,50 +2203,92 @@ function BottomPanel({ results, prompt, outputView, setOutputView }) {
         <div className="bottom-tab" style={{opacity:.6}}>Logs</div>
         <div className="bottom-tab" style={{opacity:.6}}>Run history</div>
         <div style={{flex:1}}/>
+        {pipelineRunning && (
+          <span style={{fontSize:11,color:'var(--accent)',marginRight:12,animation:'pulse 1.2s infinite'}}>
+            {I.zap} Running pipeline…
+          </span>
+        )}
+        {pipelineError && !pipelineRunning && (
+          <span style={{fontSize:11,color:'var(--err)',marginRight:12,maxWidth:320,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}
+                title={pipelineError}>
+            ⚠ {pipelineError}
+          </span>
+        )}
         <div className="bottom-pane-mode">
           {[['llm','LLM'],['chunks','Chunks'],['table','Table']].map(([k,l]) =>
             <button key={k} className={cls(outputView === k && 'active')} onClick={() => setOutputView(k)}>{l}</button>)}
         </div>
       </div>
       <div className="bottom-body">
-        <ResultPane label="Lane A" tone="full" data={a} view={outputView}/>
-        <ResultPane label="Lane B" tone="baseline" data={b} view={outputView}/>
+        <ResultPane label="Lane A — HERB tags" tone="full" data={a} view={outputView}/>
+        <ResultPane label="Lane B — baseline (no tags)" tone="baseline" data={b} view={outputView}/>
       </div>
     </section>
   );
 }
 function ResultPane({ label, tone, data, view }) {
   if (!data) return <div className="bottom-pane"><div className="bottom-pane-empty">Run the lane to see results.</div></div>;
+  const liveChunks = data.retrievedChunks;
   return (
     <div className="bottom-pane">
       <div className="bottom-pane-head">
         <span className="lane-tag">{label}</span>
-        <span>tags {tone === 'full' ? 'ON' : 'OFF'} · clusters {tone === 'full' ? 'ON' : 'OFF'}</span>
       </div>
       <div className="bottom-pane-stats">
         <span>{data.chunks} chunks</span>
         <span>{data.tokensIn} → {data.tokensOut} tok</span>
         <span>{data.durationMs}ms</span>
       </div>
-      {view === 'llm' && <div className="bottom-pane-resp">{data.response}</div>}
+      {view === 'llm' && (
+        <>
+          {data.plan && (
+            <div style={{fontSize:10.5,color:'var(--text-dim)',fontFamily:'var(--font-mono)',marginBottom:6,padding:'4px 6px',background:'var(--bg-card)',borderRadius:4}}>
+              <strong style={{color:'var(--text-muted)'}}>Plan:</strong> {data.plan.description}
+              {' · '}
+              {data.plan.tags.slice(0,5).map(t => (
+                <span key={t.t} className="tag-pill" style={{fontSize:9.5,marginRight:2}}>{t.t} {t.w_query.toFixed(2)}</span>
+              ))}
+              {data.plan.tags.length > 5 && <span style={{color:'var(--text-dim)'}}> +{data.plan.tags.length-5} more</span>}
+            </div>
+          )}
+          <div className="bottom-pane-resp">{data.response}</div>
+        </>
+      )}
       {view === 'chunks' && (
         <div className="sample-table">
-          <div className="sample-row head"><span className="col col-id">id</span><span className="col">preview</span><span className="col col-w">w</span></div>
-          {SAMPLE_CHUNKS.slice(0, tone === 'full' ? 4 : 5).map((c,i) => (
-            <div key={i} className="sample-row"><span className="col col-id">{c.id}</span><span className="col" title={c.preview}>{c.preview}</span><span className="col col-w">{c.rel.toFixed(2)}</span></div>
-          ))}
+          <div className="sample-row head">
+            <span className="col col-id">score</span>
+            <span className="col">description / content</span>
+            <span className="col col-w">rel</span>
+          </div>
+          {(liveChunks ?? SAMPLE_CHUNKS.slice(0, tone === 'full' ? 4 : 5)).map((c, i) => {
+            const isLive = !!liveChunks;
+            const preview = isLive ? (c.description || c.content || '').slice(0, 90) : c.preview;
+            const score   = isLive ? c.score?.toFixed(3) : c.rel?.toFixed(2);
+            const rel     = isLive ? (c.relevanceToFile?.toFixed(2) ?? '—') : c.rel?.toFixed(2);
+            const title   = isLive ? (c.content || '') : c.preview;
+            return (
+              <div key={i} className="sample-row">
+                <span className="col col-id">{score}</span>
+                <span className="col" title={title}>{preview}</span>
+                <span className="col col-w">{rel}</span>
+              </div>
+            );
+          })}
         </div>
       )}
       {view === 'table' && (
         <div className="sample-table">
-          <div className="sample-row head"><span className="col col-id">metric</span><span className="col">value</span><span className="col col-w">δ</span></div>
-          <div className="sample-row"><span className="col col-id">precision</span><span className="col">{tone === 'full' ? '0.84' : '0.61'}</span><span className="col col-w pos">{tone === 'full' ? '+0.23' : ''}</span></div>
-          <div className="sample-row"><span className="col col-id">recall</span><span className="col">{tone === 'full' ? '0.79' : '0.91'}</span><span className="col col-w" style={{color:'var(--err)'}}>{tone === 'full' ? '-0.12' : ''}</span></div>
-          <div className="sample-row"><span className="col col-id">tokens</span><span className="col">{data.tokensIn + data.tokensOut}</span><span className="col col-w"></span></div>
+          <div className="sample-row head"><span className="col col-id">metric</span><span className="col">value</span><span className="col col-w"></span></div>
+          <div className="sample-row"><span className="col col-id">chunks</span><span className="col">{data.chunks}</span><span className="col col-w"></span></div>
+          <div className="sample-row"><span className="col col-id">tokens in</span><span className="col">{data.tokensIn}</span><span className="col col-w"></span></div>
+          <div className="sample-row"><span className="col col-id">tokens out</span><span className="col">{data.tokensOut}</span><span className="col col-w"></span></div>
+          <div className="sample-row"><span className="col col-id">duration</span><span className="col">{data.durationMs}ms</span><span className="col col-w"></span></div>
+          {data.plan && <div className="sample-row"><span className="col col-id">plan tags</span><span className="col">{data.plan.tags.length}</span><span className="col col-w"></span></div>}
         </div>
       )}
       {data.topClusters?.length > 0 && (
-        <div className="tag-row">
+        <div className="tag-row" style={{marginTop:4}}>
           {data.topClusters.map(c => <span key={c} className="tag-pill" data-cluster={c}>{c}</span>)}
         </div>
       )}

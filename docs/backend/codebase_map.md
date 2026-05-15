@@ -4,7 +4,7 @@
 
 **When to read this.** When you know what you want to change and need to find the right file.
 
-**Last updated:** 2026-05-13.
+**Last updated:** 2026-05-14.
 
 ## Touched paths
 
@@ -17,8 +17,8 @@ OpenAI-compatible LLM client and the pydantic schemas the legacy indexing path r
 | File | Role | Key symbols | Called by |
 |---|---|---|---|
 | [`agents/__init__.py`](../../backend/agents/__init__.py) | Package marker. | — | — |
-| [`agents/client.py`](../../backend/agents/client.py) | One async HTTP call per `.call()`. **Never raises** — returns `AgentResult` with a typed `error_class`. Supports JSON mode and structured `json_schema` mode. | `AgentConfig`, `AgentClient`, `AgentResult`, `ErrorClass`, `ResponseFormat` | [`scripts/run_index.py`](../../backend/scripts/run_index.py) (constructs the client), [`indexing/orchestrator.py`](../../backend/indexing/orchestrator.py), [`scripts/run_tags_only_pilot.py`](../../backend/scripts/run_tags_only_pilot.py). |
-| [`agents/schemas.py`](../../backend/agents/schemas.py) | Pydantic models the agent returns. The contract between [`prompts/`](../../backend/prompts/) and the orchestrator. | `Cluster` (Literal), `Tag`, `ChunkExtraction`, `FileOrchestrationOutput` | [`indexing/orchestrator.py`](../../backend/indexing/orchestrator.py), [`indexing/extraction_writer.py`](../../backend/indexing/extraction_writer.py), [`indexing/file_writer.py`](../../backend/indexing/file_writer.py). |
+| [`agents/client.py`](../../backend/agents/client.py) | **Shim** → loads archived client from [`quarantine/legacy_mirror/backend/agents/client.py`](../../quarantine/legacy_mirror/backend/agents/client.py). OpenAI-compatible; legacy path only. | `AgentConfig`, `AgentClient`, `AgentResult` | [`scripts/run_index.py`](../../backend/scripts/run_index.py), [`indexing/orchestrator.py`](../../backend/indexing/orchestrator.py). |
+| [`agents/schemas.py`](../../backend/agents/schemas.py) | **Shim** → loads archived schemas from `quarantine/legacy_mirror/.../schemas.py`. | `Cluster`, `Tag`, `ChunkExtraction`, `FileOrchestrationOutput` | [`indexing/orchestrator.py`](../../backend/indexing/orchestrator.py), writers. |
 
 ## `indexing/`
 
@@ -31,11 +31,11 @@ The core pipeline.
 | [`indexing/worklist.py`](../../backend/indexing/worklist.py) | Local working-file job ledger under `backend/.work/`. Seed/pull/mark transitions. | `WorkList`, `JobRecord`, `make_work_item_id` | [`indexing/preflight.py`](../../backend/indexing/preflight.py) (seeds), [`indexing/orchestrator.py`](../../backend/indexing/orchestrator.py) (pulls and marks). |
 | [`indexing/runs.py`](../../backend/indexing/runs.py) | `(:Run)` repository: `start_run` / `finish_run`, `RunSummary`. | `RunRepository`, `RunSummary`, `make_run_id` | [`scripts/run_index.py`](../../backend/scripts/run_index.py). |
 | [`indexing/chunker.py`](../../backend/indexing/chunker.py) | Per-format deterministic chunker. Rule: re-chunk only if no chunks exist. | `Chunker`, `ChunkPolicy`, `ChunkRecord`, `dispatch_mode_for` | [`indexing/preflight.py`](../../backend/indexing/preflight.py). |
-| [`indexing/preflight.py`](../../backend/indexing/preflight.py) | Scan raw catalog → upsert `:Source`/`:File` → chunk → update working file. Per-file fault isolation. | `run_preflight`, `PreflightResult`, `upsert_source_node`, `upsert_file_node` | [`scripts/run_preflight.py`](../../backend/scripts/run_preflight.py). |
-| [`indexing/orchestrator.py`](../../backend/indexing/orchestrator.py) | Legacy three-stage dispatcher. Concurrency via `asyncio.Semaphore`; breaker observed under a lock. Blocked for HERB by [`scripts/run_index.py`](../../backend/scripts/run_index.py) unless explicitly overridden. | `Orchestrator.run`, `_run_chunk_stage`, `_run_file_stage`, `_load_canonical_vocab`, `CHUNK_BATCH_SIZE`, `FILE_BATCH_SIZE`, `PREV_TAIL_CHARS`, `CLUSTER_ORDER` | [`scripts/run_index.py`](../../backend/scripts/run_index.py). |
-| [`indexing/extraction_writer.py`](../../backend/indexing/extraction_writer.py) | Writes `ChunkExtraction` results. Idempotent: wipes prior `HAS_TAG` edges before re-writing. Creates `:CanonicalTagProposal` nodes for proposals. | `ExtractionWriter.write_chunk_extraction` | [`indexing/orchestrator.py`](../../backend/indexing/orchestrator.py). |
-| [`indexing/file_writer.py`](../../backend/indexing/file_writer.py) | Writes `FileOrchestrationOutput`. Sets `(:File).description` and `(:Chunk).relevance_to_file`. | `FileExtractionWriter.write_file_orchestration` | [`indexing/orchestrator.py`](../../backend/indexing/orchestrator.py). |
-| [`indexing/file_rollup.py`](../../backend/indexing/file_rollup.py) | Deterministic rollup `HAS_TAG → TAGGED`, weighted by `relevance_to_file`. Delete-and-rebuild within scope. No agent calls. | `FileRollup.run` | [`indexing/orchestrator.py`](../../backend/indexing/orchestrator.py) (Stage 3). |
+| [`indexing/preflight.py`](../../backend/indexing/preflight.py) | **Access layer:** scan → upsert `:Source`/`:File`. **Indexing:** chunk → seed worklist. Per-file fault isolation. | `run_preflight`, `PreflightResult`, `upsert_source_node`, `upsert_file_node` | [`scripts/run_preflight.py`](../../backend/scripts/run_preflight.py). |
+| [`indexing/orchestrator.py`](../../backend/indexing/orchestrator.py) | **Shim** → [`quarantine/legacy_mirror/.../orchestrator_legacy.py`](../../quarantine/legacy_mirror/backend/indexing/orchestrator_legacy.py). Legacy three-stage dispatcher. Blocked for HERB unless `--allow-legacy-herb-tagging`. | `Orchestrator`, batch constants | [`scripts/run_index.py`](../../backend/scripts/run_index.py). |
+| [`indexing/extraction_writer.py`](../../backend/indexing/extraction_writer.py) | **Shim** → `quarantine/legacy_mirror/.../extraction_writer_legacy.py`. | `ExtractionWriter` | Orchestrator. |
+| [`indexing/file_writer.py`](../../backend/indexing/file_writer.py) | **Shim** → `.../file_writer_legacy.py`. | `FileExtractionWriter` | Orchestrator. |
+| [`indexing/file_rollup.py`](../../backend/indexing/file_rollup.py) | **Shim** → `.../file_rollup_legacy.py`. | `FileRollup.run` | Orchestrator. |
 
 ## `clustering/`
 
@@ -58,7 +58,7 @@ HERB-specific Anthropic tagging pilot. This is separate from the legacy
 
 ## `data_access/`
 
-Upstream layer — data sync, classification, profiling. Indexing only consumes the catalog returned by `scan_raw_tree`.
+**Access layer** — most of the inventory side: sync, scan, classification, payload rules, `raw_dataset_runs` catalogues. The `:Source` / `:File` Neo4j upsert that completes the access layer lives in [`indexing/preflight.py`](../../backend/indexing/preflight.py); see [`docs/backend/architecture.md`](architecture.md) (“Access layer”). Indexing consumes `scan_raw_tree` and then segments into `(:Chunk)`.
 
 | File | Role | Key symbols | Called by |
 |---|---|---|---|
@@ -104,8 +104,8 @@ Operator entry points. Each one is small (initialise → call layer code → clo
 | [`scripts/import_graph_json.py`](../../backend/scripts/import_graph_json.py) | Import a JSONL graph export directory or zip into Neo4j; supports `--wipe`. |
 | [`scripts/migrate_cluster_names.py`](../../backend/scripts/migrate_cluster_names.py) | One-time/idempotent data migration from retired cluster strings to `topic`, `entities`, `activity`, `temporal`, `evidence`. Also rewrites proposal IDs derived from cluster names. |
 | [`scripts/run_preflight.py`](../../backend/scripts/run_preflight.py) | Run [`indexing.preflight.run_preflight`](../../backend/indexing/preflight.py) and print summary + per-file failures. Idempotent. |
-| [`scripts/run_index.py`](../../backend/scripts/run_index.py) | Legacy dispatcher. Validates API key → opens Neo4j + agent client → starts a `:Run` → runs orchestrator → records `ok`/`aborted`. Refuses HERB unless `--allow-legacy-herb-tagging` is passed. Args: `--dataset-id`, `--chunk-limit`, `--file-limit`, `--concurrency`. |
-| [`scripts/run_tags_only_pilot.py`](../../backend/scripts/run_tags_only_pilot.py) | Non-mutating tags-only model pilot over sampled chunks. Writes Markdown reports under `backend/.plan/`. |
+| [`scripts/run_index.py`](../../backend/scripts/run_index.py) | **Shim** (`runpy` → `quarantine/legacy_mirror/.../run_index_legacy.py`). Legacy dispatcher; refuses HERB unless `--allow-legacy-herb-tagging`. |
+| [`scripts/run_tags_only_pilot.py`](../../backend/scripts/run_tags_only_pilot.py) | **Shim** (`runpy` → `quarantine/legacy_mirror/.../run_tags_only_pilot_legacy.py`). Non-mutating pilot. |
 | [`scripts/run_tags_only_structured_matrix.py`](../../backend/scripts/run_tags_only_structured_matrix.py) | Controlled structured-output model matrix runner for the tags-only pilot. Writes comparison reports under `backend/.plan/`. |
 | [`scripts/verify_graph.py`](../../backend/scripts/verify_graph.py) | Quick sanity counts: `:Source`, `:File`, `:Chunk`, working-file item statuses, file/chunk breakdowns, sample chunk previews. Read-only. |
 
@@ -116,7 +116,8 @@ Operator entry points. Each one is small (initialise → call layer code → clo
 | [`shared/__init__.py`](../../backend/shared/__init__.py) | Package marker. | — | — |
 | [`shared/config.py`](../../backend/shared/config.py) | `pydantic-settings`-backed `Settings` loaded from `.env`. Aliases `LLM_*` ↔ `AGENT_*` (LLM wins). | `Settings`, `REPO_ROOT`, `DEFAULT_DATA_ROOT`, `resolve_data_root` | every script and `indexing/runs.py`. |
 | [`shared/neo4j_client.py`](../../backend/shared/neo4j_client.py) | Thin async wrapper around `neo4j.AsyncGraphDatabase`. | `Neo4jClient`, `Neo4jClient.session`, `Neo4jClient.close` | every script and every `indexing/` writer. |
-| [`shared/utils.py`](../../backend/shared/utils.py) | Time/hash/JSON helpers. | `utc_now`, `iso_utc`, `stable_short_hash`, `sha256_file`, `hash_tree`, `compare_hash_maps`, `make_json_safe`, `write_json`, `read_json`, `deep_merge`, `find_latest_run_id`, `ensure_dir` | shared across the codebase. |
+| [`shared/error_class.py`](../../backend/shared/error_class.py) | `ErrorClass` literal for `indexing/breaker.py` (decoupled from `agents/`). | `ErrorClass` | [`indexing/breaker.py`](../../backend/indexing/breaker.py), [`agents/client.py`](../../backend/agents/client.py) (archived copy). |
+| [`shared/legacy_mirror_boot.py`](../../backend/shared/legacy_mirror_boot.py) | `importlib` helper to load quarantined legacy modules from `quarantine/legacy_mirror/backend/`. | `load_module` | [`indexing/orchestrator.py`](../../backend/indexing/orchestrator.py) shim, other indexing shims. |
 
 ## Backend-root files
 

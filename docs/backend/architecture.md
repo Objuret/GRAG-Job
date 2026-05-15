@@ -1,23 +1,39 @@
 # Architecture
 
-**TL;DR.** The pipeline has three logical layers — **access** (raw inventory), **indexing** (chunk → tag → file rollup, with an LLM in the middle), and **clustering** (the canonical-tag vocabulary plus future query views). Everything durable lives in Neo4j. This doc captures the design decisions that produced the current shape, the run lifecycle, and the dispatch strategy.
+**TL;DR.** The pipeline has three logical layers — **access** (join raw bytes to graph-addressable corpus identity via inventory, typing, stable keys, and `:Source` / `:File` anchors), **indexing** (segment into `(:Chunk)` with locators, job ledger, LLM extraction/tagging, rollups), and **clustering** (the canonical-tag vocabulary plus future query views). Everything durable lives in Neo4j. This doc captures the design decisions that produced the current shape, the run lifecycle, and the dispatch strategy.
 
 **When to read this.** When you need to understand *why* the code is shaped the way it is, before changing anything load-bearing.
 
-**Last updated:** 2026-05-13.
+## Thesis scope (HERB) and quarantine
+
+**HERB in use:** **`Salesforce__HERB`** under `data/raw/`, Neo4j database **`herb`**, semantic run **`pilot_full_herb`**. Live path: **access layer** (inventory + `:Source` / `:File`) → **`run_preflight`** (HERB-aware chunking, `locator_json`, worklist seed) → **`python -m tagging`** ([`tagging/pipeline.py`](../../backend/tagging/pipeline.py), Anthropic two-pass). HERB contracts and results: [`herb_tagging_schema.md`](herb_tagging_schema.md), [`herb_tagging_frames.md`](herb_tagging_frames.md), [`pilot_full_herb_report.md`](pilot_full_herb_report.md). HERB-first navigation (legacy quarantined in one place): [`../system_map.md`](../system_map.md).
+
+**Quarantine (not the HERB thesis delivery):** **`scripts/run_index.py`**, **`indexing/orchestrator.py`**, **`agents/`**, and the **`prompts/extract_chunk.md`** / **`file_descriptor.md`** pipeline are the **legacy generic three-stage indexer** (OpenAI-compatible). They **refuse HERB** unless `--allow-legacy-herb-tagging`. Other datasets in [`data_access/raw/registry.py`](../../backend/data_access/raw/registry.py) are **out of scope** for HERB unless explicitly revived. In the **Layers** table and **Decision log** below, treat orchestrator / `ChunkExtraction` / file-stage writers as **legacy** unless the text explicitly says HERB — for HERB, **LLM semantics** live in **`tagging/`**, not the orchestrator.
+
+**Last updated:** 2026-05-14.
 
 ## Touched paths
 
 `agents/`, `indexing/`, `clustering/`, `schema/`, `prompts/`, `data_access/`, `shared/`.
 
+## Access layer
+
+The **access layer** is neither “the raw tree by itself” nor “semantic indexing.” It **connects** heterogeneous files on disk to a **graph-addressable corpus**: stable identity, cryptographic and path pointers, format and split metadata, dataset-specific rules for what counts as payload versus repo or cache noise, and the durable **`(:Source)`–`(:File)`** surface that downstream stages attach to (see [`graph_schema.md`](../graph_schema.md) for properties such as `file_id`, `sha256`, `rel_path`, `file_path`, `format_family`, `dispatch_mode`).
+
+Responsibilities include: syncing sources into `data/raw/`; full-tree **scan** with per-file **classification** (`payload_data` vs `repo_meta_code` vs `cache_meta`); **format family** and **split** inference; **SHA-256** and paths; per-dataset **payload discovery**; optional **`raw_dataset_runs/`** catalogues (`raw_file_catalog`, `dataset_payload_catalog`, `dataset_profile`). The access layer **completes** when every in-corpus file has a corresponding **`(:File)`** (and its **`(:Source)`**) so the graph can be joined back to bytes.
+
+**Implementation note.** Most of that logic lives under [`data_access/raw/`](../../backend/data_access/raw/). The **Neo4j upsert** of `:Source` / `:File` is implemented in [`indexing/preflight.py`](../../backend/indexing/preflight.py) because it shares the same scan-driven loop as chunking; conceptually that upsert is still the **access layer**, not segmentation or LLM work. Chunk creation, `locator_json`, worklist seeding, orchestration, and writers are **indexing** (below).
+
 ## Layers and ownership
 
 | Layer | Code | Owns |
 |---|---|---|
-| **access** | [`data_access/raw/`](../../backend/data_access/raw/) | Sync HF/external sources, scan `data/raw/`, classify file_class (`payload_data` vs `repo_meta_code` vs `cache_meta`), emit a pandas catalog the indexing layer consumes. No Neo4j writes from the access layer beyond what `preflight` does on its behalf. |
-| **indexing** | [`indexing/`](../../backend/indexing/) | Chunker, working-file job ledger, Run repository, Orchestrator dispatcher, ExtractionWriter, FileExtractionWriter, deterministic FileRollup, CircuitBreaker. Pre-flight scans the access catalog, writes graph corpus nodes, and updates the local working file. The orchestrator is the only LLM caller. |
+| **access** | [`data_access/raw/`](../../backend/data_access/raw/) plus the **`:Source` / `:File` upsert** stage in [`indexing/preflight.py`](../../backend/indexing/preflight.py) | Connect raw corpus to graph anchors: sync, scan, classify, hashes and paths, payload rules, `raw_dataset_runs` artefacts, and durable file/source nodes with join keys. Not chunk text, not tags, not the orchestrator. |
+| **indexing** | [`indexing/`](../../backend/indexing/) | Deterministic **`:Chunk`** segmentation and **`locator_json`**, working-file **job ledger**, **Run** repository, **Orchestrator** (legacy path), **ExtractionWriter** / **FileExtractionWriter**, **FileRollup**, **CircuitBreaker**. **Preflight** finishes the access layer (file upsert) and then runs indexing (chunk + worklist seed) in one script (`scripts/run_preflight.py`). The orchestrator is the only LLM caller on the legacy path. |
 | **tagging** | [`tagging/`](../../backend/tagging/) | HERB-specific Anthropic pilot harness. It verifies HERB chunk format, selects bounded samples, renders clean model-facing frames, writes pilot `HAS_TAG` edges, and produces `analysis.md`. |
 | **clustering** | [`clustering/`](../../backend/clustering/) | Future HERB query views. The old canonical seed vocabulary has been removed. |
+
+> **HERB read of this table:** For the thesis path, **indexing** means **`:Chunk` + `locator_json` + worklist** from `preflight` only. The **Orchestrator / ExtractionWriter / FileRollup** branch is **legacy** (quarantined); HERB LLM work is **`tagging/`**, not `run_index.py`.
 
 The `agents/` package is shared infrastructure for the legacy indexing path: a single OpenAI-compatible HTTP client and the pydantic schemas those calls return. The HERB tagging pilot currently uses Anthropic directly in `tagging/pipeline.py`; its contract is documented in [`herb_tagging_schema.md`](herb_tagging_schema.md). `shared/` holds config, the async Neo4j wrapper, and small utilities (hashing, time).
 

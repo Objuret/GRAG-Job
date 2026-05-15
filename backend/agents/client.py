@@ -1,180 +1,30 @@
-"""Hosted nano/mini agent client (OpenAI-compatible, JSON/structured mode).
+"""OpenAI-compatible agent client (legacy orchestrator path).
 
-Configuration comes from `shared.config.Settings`: use `LLM_BASE_URL`
-(recommended) or `AGENT_BASE_URL` for the API root (e.g. `https://api.openai.com/v1`),
-not a vague "agent URL"—that value is the HTTP base passed to httpx for
-`/chat/completions`.
-
-One HTTP call per .call(). Never raises for HTTP/schema errors;
-returns AgentResult with a typed error_class. Retries, concurrency,
-worklist scheduling, and circuit-breaking are orchestrator concerns.
+Implementation: ``quarantine/legacy_mirror/backend/agents/client.py`` (archived copy).
 """
 
 from __future__ import annotations
 
-import time
-from dataclasses import dataclass
-from typing import Any, Generic, Literal, TypeVar
+import importlib.util
+import sys
+from pathlib import Path
 
-import httpx
-from pydantic import BaseModel, ValidationError
+_LEGACY = (
+    Path(__file__).resolve().parents[2]
+    / "quarantine"
+    / "legacy_mirror"
+    / "backend"
+    / "agents"
+    / "client.py"
+)
+_spec = importlib.util.spec_from_file_location("agents.client", _LEGACY)
+_module = importlib.util.module_from_spec(_spec)
+assert _spec.loader
+sys.modules["agents.client"] = _module
+_spec.loader.exec_module(_module)
 
-T = TypeVar("T", bound=BaseModel)
+AgentClient = _module.AgentClient
+AgentConfig = _module.AgentConfig
+AgentResult = _module.AgentResult
 
-
-ErrorClass = Literal[
-    "ok",
-    "http_429",
-    "http_auth",
-    "http_quota_exceeded",
-    "http_5xx",
-    "http_other",
-    "schema_invalid",
-    "timeout",
-    "network",
-]
-
-ResponseFormat = Literal["json", "structured"]
-
-
-@dataclass(frozen=True)
-class AgentConfig:
-    base_url: str
-    model: str
-    api_key: str
-    timeout_seconds: float = 30.0
-
-
-@dataclass(frozen=True)
-class AgentResult(Generic[T]):
-    parsed: T | None
-    error_class: ErrorClass
-    error_message: str | None
-    raw_text: str
-    in_tokens: int
-    out_tokens: int
-    duration_ms: int
-    call_id: str | None
-
-
-class AgentClient:
-    def __init__(self, cfg: AgentConfig) -> None:
-        self._cfg = cfg
-        self._http = httpx.AsyncClient(
-            base_url=cfg.base_url,
-            timeout=cfg.timeout_seconds,
-            headers={"Authorization": f"Bearer {cfg.api_key}"},
-        )
-
-    async def call(
-        self,
-        *,
-        system: str,
-        user: str,
-        schema: type[T],
-        response_format: ResponseFormat = "json",
-        schema_name: str | None = None,
-        call_id: str | None = None,
-    ) -> AgentResult[T]:
-        t0 = time.perf_counter()
-        try:
-            response_format_body = self._response_format_body(
-                schema=schema,
-                response_format=response_format,
-                schema_name=schema_name,
-            )
-        except ValueError as e:
-            return self._fail("http_other", str(e), call_id, t0, "")
-
-        body = {
-            "model": self._cfg.model,
-            "messages": [
-                {"role": "system", "content": system},
-                {"role": "user", "content": user},
-            ],
-            "response_format": response_format_body,
-        }
-        try:
-            resp = await self._http.post("/chat/completions", json=body)
-        except httpx.TimeoutException as e:
-            return self._fail("timeout", str(e), call_id, t0, "")
-        except httpx.NetworkError as e:
-            return self._fail("network", str(e), call_id, t0, "")
-        except httpx.HTTPError as e:
-            return self._fail("http_other", str(e), call_id, t0, "")
-
-        if resp.status_code != 200:
-            return self._classify_http(resp, call_id, t0)
-
-        try:
-            data = resp.json()
-            content = data["choices"][0]["message"]["content"]
-            usage = data.get("usage", {})
-        except Exception as e:
-            return self._fail("http_other", f"malformed response: {e}", call_id, t0, resp.text)
-
-        try:
-            parsed = schema.model_validate_json(content)
-        except ValidationError as e:
-            return self._fail("schema_invalid", str(e), call_id, t0, content)
-
-        return AgentResult(
-            parsed=parsed,
-            error_class="ok",
-            error_message=None,
-            raw_text=content,
-            in_tokens=int(usage.get("prompt_tokens", 0)),
-            out_tokens=int(usage.get("completion_tokens", 0)),
-            duration_ms=int((time.perf_counter() - t0) * 1000),
-            call_id=call_id,
-        )
-
-    def _classify_http(self, resp: httpx.Response, call_id: str | None, t0: float) -> AgentResult:
-        s = resp.status_code
-        body_lower = resp.text.lower()
-        if s == 429:
-            cls: ErrorClass = "http_429"
-        elif s in (401, 403):
-            cls = "http_auth"
-        elif s == 402 or "quota" in body_lower or "insufficient_quota" in body_lower:
-            cls = "http_quota_exceeded"
-        elif 500 <= s < 600:
-            cls = "http_5xx"
-        else:
-            cls = "http_other"
-        return self._fail(cls, f"HTTP {s}: {resp.text}", call_id, t0, resp.text)
-
-    def _fail(self, cls: ErrorClass, msg: str, call_id: str | None, t0: float, raw: str) -> AgentResult:
-        return AgentResult(
-            parsed=None,
-            error_class=cls,
-            error_message=msg,
-            raw_text=raw,
-            in_tokens=0,
-            out_tokens=0,
-            duration_ms=int((time.perf_counter() - t0) * 1000),
-            call_id=call_id,
-        )
-
-    async def aclose(self) -> None:
-        await self._http.aclose()
-
-    @staticmethod
-    def _response_format_body(
-        *,
-        schema: type[BaseModel],
-        response_format: ResponseFormat,
-        schema_name: str | None,
-    ) -> dict[str, Any]:
-        if response_format == "json":
-            return {"type": "json_object"}
-        if response_format == "structured":
-            return {
-                "type": "json_schema",
-                "json_schema": {
-                    "name": schema_name or schema.__name__,
-                    "strict": True,
-                    "schema": schema.model_json_schema(),
-                },
-            }
-        raise ValueError(f"unknown response_format={response_format!r}")
+__all__ = ["AgentClient", "AgentConfig", "AgentResult"]

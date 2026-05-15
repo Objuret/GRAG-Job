@@ -8,6 +8,8 @@ Local-only Vite/React workbench. The browser talks directly to Neo4j (`neo4j-dri
 - Graph contract: [`../docs/graph_schema.md`](../docs/graph_schema.md)
 - Status / plans: [`../docs/frontend/status.md`](../docs/frontend/status.md), [`../docs/frontend/plans.md`](../docs/frontend/plans.md)
 
+The canvas **Pipeline** lane (Dataset → Access Layer → …) uses the same **access layer** vs **indexing** vocabulary as [`../docs/backend/architecture.md`](../docs/backend/architecture.md) and [`../docs/frontend/architecture.md`](../docs/frontend/architecture.md).
+
 ## Source layout
 
 ```

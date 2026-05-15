@@ -7,9 +7,19 @@ Project-wide brief for the thesis monorepo. Two halves:
 
 All production documentation lives in [`docs/`](docs/README.md).
 
+**Cross-cutting map (HERB-first; legacy quarantined inside):** [`docs/system_map.md`](docs/system_map.md) — use when the answer spans backend, frontend, and Neo4j.
+
+**Agent / Cursor indexing:** **`quarantine/legacy_mirror/`** and **`backend/prompts/`** are **`.cursorignore`d** (see [`quarantine/DO_NOT_READ_UNLESS_LEGACY.md`](quarantine/DO_NOT_READ_UNLESS_LEGACY.md)). Do not open the mirror or legacy prompts unless the user **explicitly** asks for the old generic indexer. **Small shims** at `backend/indexing/orchestrator.py`, `backend/agents/client.py`, etc. load the mirror at runtime — those shim files are short and HERB-safe to read.
+
 ## Mission
 
 Bridge heterogeneous, noisy datasets with a queryable graph artefact. Every payload file becomes a chain of `(:Chunk)` nodes with stable locators and source/file structure. The current HERB semantic layer is the completed `pilot_full_herb` run, archived at `backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip` and live in the `herb` Neo4j database under `run_id = "pilot_full_herb"`. The frontend reads that graph and runs prompt interpretation in the browser.
+
+## Thesis scope (HERB only)
+
+**What counts for the thesis delivery:** **`Salesforce__HERB`** → Neo4j **`herb`** → `bootstrap_schema` + `run_preflight` + **`python -m tagging extract`** → graph under **`pilot_full_herb`**. Cross-cutting map: [`docs/system_map.md`](docs/system_map.md) (HERB-first; legacy quarantined there).
+
+**Quarantined for HERB reading:** `python scripts/run_index.py` and **`indexing/orchestrator.py`** (legacy generic three-stage path; blocked for HERB unless `--allow-legacy-herb-tagging`). Other datasets under `data/raw/` are out of scope unless you explicitly revive them.
 
 ## Hard rules
 
@@ -27,13 +37,15 @@ Bridge heterogeneous, noisy datasets with a queryable graph artefact. Every payl
 
 ```mermaid
 flowchart LR
-    raw["backend/data/raw/<br/>payload files"] --> preflight["preflight<br/>(scan + upsert + chunk + seed worklist)"]
-    preflight --> herb["tagging/pipeline.py<br/>(HERB Anthropic two-pass)"]
-    preflight -. "legacy/non-HERB only" .-> orch["indexing/orchestrator.py<br/>(legacy three-stage dispatcher)"]
-    herb --> graph["Neo4j<br/>(:Source)-[:CONTAINS]->(:File)-[:HAS_CHUNK]->(:Chunk)-[:HAS_TAG]->(:Tag)"]
-    orch --> graph
-    graph --> browser["frontend (browser)<br/>neo4j-driver + @anthropic-ai/sdk<br/>prompt interpretation + retrieval"]
+    raw["backend/data/raw/<br/>Salesforce__HERB"] --> preflight["preflight<br/>access layer + chunk + seed worklist"]
+    preflight --> herb["python -m tagging<br/>HERB Anthropic two-pass"]
+    herb --> graph["Neo4j herb<br/>pilot_full_herb"]
+    graph --> browser["frontend<br/>neo4j-driver + Anthropic SDK"]
 ```
+
+**Legacy (quarantined for HERB):** `indexing/orchestrator.py` + `scripts/run_index.py` — generic OpenAI-compatible indexer, not used on HERB unless explicitly forced. Diagram omitted on purpose.
+
+**Access layer** connects the raw tree and graph-addressable corpus identity (`:Source` / `:File`, hashes, paths, classification, payload rules). It lives mainly in `backend/data_access/raw/` and the file-upsert portion of `backend/indexing/preflight.py` (same entrypoint as chunking). **Indexing** for HERB means chunk + locators + worklist seed in that same preflight step, then HERB tagging. Full definition: [`docs/backend/architecture.md`](docs/backend/architecture.md) (“Access layer”).
 
 ## The five facets
 
@@ -49,6 +61,7 @@ Same five facets are used by HERB chunk tagging and browser-side prompt interpre
 
 ## Where to look
 
+- **Joint map (start here for cross-cutting questions):** [`docs/system_map.md`](docs/system_map.md)
 - Graph contract: [`docs/graph_schema.md`](docs/graph_schema.md)
 - Backend architecture + decision log: [`docs/backend/architecture.md`](docs/backend/architecture.md)
 - Frontend architecture: [`docs/frontend/architecture.md`](docs/frontend/architecture.md)
@@ -57,24 +70,25 @@ Same five facets are used by HERB chunk tagging and browser-side prompt interpre
 - Current HERB artefact: [`docs/backend/pilot_full_herb_report.md`](docs/backend/pilot_full_herb_report.md)
 - Backend runbook + env: [`docs/backend/runbook.md`](docs/backend/runbook.md), [`docs/backend/env_and_config.md`](docs/backend/env_and_config.md)
 - Backend file-by-file map: [`docs/backend/codebase_map.md`](docs/backend/codebase_map.md)
-- LLM prompts catalogue: [`docs/backend/prompts.md`](docs/backend/prompts.md)
+- LLM prompts (**legacy** generic indexer): [`docs/backend/prompts.md`](docs/backend/prompts.md) — HERB uses [`docs/backend/herb_tagging_schema.md`](docs/backend/herb_tagging_schema.md) + `tagging/`, not these prompts.
 - Live status: [`docs/backend/status.md`](docs/backend/status.md), [`docs/frontend/status.md`](docs/frontend/status.md)
 - Next steps: [`docs/frontend/plans.md`](docs/frontend/plans.md)
 
-## End-to-end (backend pipeline)
+## End-to-end (backend — HERB thesis path)
 
 ```bash
 cd backend
 python -m venv .venv && . .venv/Scripts/activate         # Linux/macOS: . .venv/bin/activate
 pip install -r requirements-lock.txt
-cp .env.example .env                                      # set NEO4J_PASSWORD, ANTHROPIC_API_KEY, LLM_API_KEY
+cp .env.example .env                                      # NEO4J_PASSWORD, ANTHROPIC_API_KEY; use NEO4J_DATABASE=herb for HERB
 
 python scripts/bootstrap_schema.py                        # idempotent
-python scripts/run_preflight.py                           # idempotent
+python scripts/run_preflight.py --dataset-id Salesforce__HERB   # idempotent
 python -m tagging extract                                 # HERB Anthropic pilot (current path)
-python scripts/run_index.py                               # legacy generic path; refuses HERB unless --allow-legacy-herb-tagging
 python scripts/verify_graph.py                            # read-only counts
 ```
+
+**Quarantined (not HERB thesis path):** `python scripts/run_index.py` — legacy generic indexer; refuses HERB unless `--allow-legacy-herb-tagging`.
 
 ## End-to-end (frontend)
 

@@ -66,9 +66,10 @@ export const CLUSTERS = [
 ];
 
 export const DATASETS = [
-  { id: 'source_alpha_demo', files: 12, chunks: 847, tags: 234 },
-  { id: 'source_beta_demo',  files: 5,  chunks: 312, tags: 98 },
-  { id: 'source_gamma_demo', files: 28, chunks: 2103, tags: 512 },
+  { id: 'Salesforce__HERB', files: 33, chunks: 5843, tags: 25896 },
+  { id: 'fever__feverous', files: 0, chunks: 0, tags: 0 },
+  { id: 'VLR-CVC__DocVQA-2026', files: 0, chunks: 0, tags: 0 },
+  { id: 'wenhu__hybrid_qa', files: 0, chunks: 0, tags: 0 },
 ];
 
 export const SAMPLE_FILES = [
@@ -111,9 +112,9 @@ export const SAMPLE_CHUNKS = [
 
 export const STAGE_PAYLOADS: Record<string, { inCount: number | null; outCount: number | null; sample: { id: string; val: string; w: string | number }[] }> = {
   dataset: {
-    inCount: null, outCount: 12,
+    inCount: null, outCount: 4,
     sample: [
-      { id: 'source_alpha_demo', val: '12 files, 847 chunks, 234 tags', w: '—' },
+      { id: 'Salesforce__HERB', val: '33 files, 5,843 chunks, 25,896 tags', w: '—' },
     ],
   },
   access: {

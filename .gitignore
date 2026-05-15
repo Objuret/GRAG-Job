@@ -9,10 +9,19 @@ __pycache__/
 .venv/
 backend/.venv/
 
+# Local agent / planning noise (not part of thesis delivery)
+.claude/
+backend/.plan/
+
+# Quarantined legacy implementation (not part of HERB thesis delivery)
+quarantine/legacy_mirror/
+
 # Backend data payloads
 backend/data/raw/
 backend/.work/
+backend/data/tagging_runs/*/
 graph_export/latest/
+graph_export/*.pre_cluster_rename_*.zip
 
 # Frontend dependencies and builds
 node_modules/

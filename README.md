@@ -5,7 +5,7 @@ Two halves of one system:
 - **`backend/`** — offline Python pipeline. Chunks raw datasets, tags with LLMs, writes the durable graph to Neo4j.
 - **`frontend/`** — Vite/React workbench. Local-only browser app. Reads the graph and runs prompt interpretation directly from JavaScript (`neo4j-driver` + `@anthropic-ai/sdk`); no HTTP server between them.
 
-Documentation: **[`docs/`](docs/README.md)**. AI agents start at **[`AGENTS.md`](AGENTS.md)**.
+Documentation: **[`docs/`](docs/README.md)**. AI agents start at **[`AGENTS.md`](AGENTS.md)**. **HERB-first** joint map: **[`docs/system_map.md`](docs/system_map.md)**. **Legacy stack:** excluded from Cursor indexing via **`.cursorignore`** — manifest [`quarantine/DO_NOT_READ_UNLESS_LEGACY.md`](quarantine/DO_NOT_READ_UNLESS_LEGACY.md).
 
 ## Quick start
 

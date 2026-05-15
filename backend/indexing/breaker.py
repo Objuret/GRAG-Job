@@ -15,7 +15,7 @@ from collections import deque
 from dataclasses import dataclass, field
 from typing import Deque
 
-from agents.client import ErrorClass
+from shared.error_class import ErrorClass
 
 
 class BreakerTripped(Exception):

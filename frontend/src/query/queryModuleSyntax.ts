@@ -12,30 +12,31 @@ LIMIT coalesce($limit, 50)`;
 /** Seeded defaults when a fragment is created; users edit per-node `data.cypherTemplate`. */
 export const FRAGMENT_TEMPLATE_DEFAULTS: Record<string, string> = {
   qf_start: 'WITH $plan AS plan',
-  qf_topic: `AND ANY(tag IN coalesce(plan.topic_tags, []) WHERE EXISTS((c)-[:HAS_TAG {cluster: 'topic'}]->(:Tag {name: tag})))`,
-  qf_entities: `AND ANY(tag IN coalesce(plan.entities, []) WHERE EXISTS((c)-[:HAS_TAG {cluster: 'entities'}]->(:Tag {name: tag})))`,
-  qf_activity: `AND ANY(tag IN coalesce(plan.activity_tags, []) WHERE EXISTS((c)-[:HAS_TAG {cluster: 'activity'}]->(:Tag {name: tag})))`,
-  qf_temporal: `AND ANY(tag IN coalesce(plan.temporal_tags, []) WHERE EXISTS((c)-[:HAS_TAG {cluster: 'temporal'}]->(:Tag {name: tag})))`,
-  qf_evidence: `AND ANY(tag IN coalesce(plan.evidence_tags, []) WHERE EXISTS((c)-[:HAS_TAG {cluster: 'evidence'}]->(:Tag {name: tag})))`,
+  qf_topic: `AND ANY(tag IN [t IN plan.tags WHERE t.facets.topic >= 0.5 | t.t] WHERE EXISTS((c)-[:HAS_TAG {facet: 'topic'}]->(:Tag {name: tag})))`,
+  qf_entities: `AND ANY(tag IN [t IN plan.tags WHERE t.facets.entities >= 0.5 | t.t] WHERE EXISTS((c)-[:HAS_TAG {facet: 'entities'}]->(:Tag {name: tag})))`,
+  qf_activity: `AND ANY(tag IN [t IN plan.tags WHERE t.facets.activity >= 0.5 | t.t] WHERE EXISTS((c)-[:HAS_TAG {facet: 'activity'}]->(:Tag {name: tag})))`,
+  qf_temporal: `AND ANY(tag IN [t IN plan.tags WHERE t.facets.temporal >= 0.5 | t.t] WHERE EXISTS((c)-[:HAS_TAG {facet: 'temporal'}]->(:Tag {name: tag})))`,
+  qf_evidence: `AND ANY(tag IN [t IN plan.tags WHERE t.facets.evidence >= 0.5 | t.t] WHERE EXISTS((c)-[:HAS_TAG {facet: 'evidence'}]->(:Tag {name: tag})))`,
 };
 
 /** Snippets for “insert at cursor” in the template editor (interpreter binds `$plan`). */
 export const PLAN_INSERTS: { label: string; text: string }[] = [
   { label: 'WITH plan', text: 'WITH $plan AS plan' },
-  { label: 'topic_tags', text: 'plan.topic_tags' },
-  { label: 'entities', text: 'plan.entities' },
-  { label: 'activity_tags', text: 'plan.activity_tags' },
-  { label: 'temporal_tags', text: 'plan.temporal_tags' },
-  { label: 'evidence_tags', text: 'plan.evidence_tags' },
+  { label: 'plan.tags', text: 'plan.tags' },
+  { label: 'topic ≥ 0.5', text: "[t IN plan.tags WHERE t.facets.topic >= 0.5 | t.t]" },
+  { label: 'entities ≥ 0.5', text: "[t IN plan.tags WHERE t.facets.entities >= 0.5 | t.t]" },
+  { label: 'facet: topic', text: "[:HAS_TAG {facet: 'topic'}]" },
   { label: 'limit', text: '$limit' },
 ];
 
 export const DEMO_PLAN_PREVIEW = {
-  topic_tags: ['revenue_analysis', 'market_expansion'],
-  entities: ['acme_corp'],
-  activity_tags: ['product_launch'],
-  temporal_tags: ['q2_2025'],
-  evidence_tags: ['comparison'],
+  description: 'Q2 revenue trends and changes',
+  tags: [
+    { t: 'revenue_analysis', w_query: 0.72, facets: { topic: 0.9, entities: 0.1, activity: 0.3, temporal: 0.2, evidence: 0.3 } },
+    { t: 'market_expansion',  w_query: 0.58, facets: { topic: 0.8, entities: 0.1, activity: 0.6, temporal: 0.1, evidence: 0.1 } },
+    { t: 'q2_2025',           w_query: 0.50, facets: { topic: 0.1, entities: 0.0, activity: 0.1, temporal: 0.9, evidence: 0.1 } },
+  ],
+  filters: { dataset_id: null, limit: 20 },
 };
 
 /**

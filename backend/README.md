@@ -1,31 +1,29 @@
 # Thesis indexing pipeline
 
-Offline Python pipeline. Chunks raw datasets under `data/raw/`, tags chunks with LLMs (HERB via Anthropic; legacy generic path via OpenAI-compatible HTTP), and writes the durable graph to Neo4j. Neo4j is the only durable artefact.
+Offline Python pipeline. **HERB (thesis path):** chunk under `data/raw/`, preflight, **`python -m tagging extract`** (Anthropic) → Neo4j. Neo4j is the only durable artefact.
 
 ```bash
 cd backend
 python -m venv .venv && . .venv/Scripts/activate    # Linux/macOS: . .venv/bin/activate
 pip install -r requirements-lock.txt
-cp .env.example .env                                 # set NEO4J_PASSWORD, ANTHROPIC_API_KEY, LLM_API_KEY
+cp .env.example .env                                 # NEO4J_PASSWORD, ANTHROPIC_API_KEY; use NEO4J_DATABASE=herb for HERB
 
 python scripts/bootstrap_schema.py
-python scripts/run_preflight.py
+python scripts/run_preflight.py --dataset-id Salesforce__HERB
 python -m tagging extract                            # HERB Anthropic path (current)
-python scripts/verify_graph.py                       # read-only counts
+python scripts/verify_graph.py                         # read-only counts
 ```
 
-`scripts/run_index.py` runs the legacy generic tagging path; it refuses HERB unless `--allow-legacy-herb-tagging` is passed.
+**Legacy:** `scripts/run_index.py` and the OpenAI-compatible stack under `agents/`, `prompts/`, and orchestrator-related `indexing/` files are **quarantined** from default Cursor indexing — see repo root **`.cursorignore`** and [`../quarantine/DO_NOT_READ_UNLESS_LEGACY.md`](../quarantine/DO_NOT_READ_UNLESS_LEGACY.md). Do not use for HERB unless explicitly forced.
 
-Docs: [`../docs/`](../docs/README.md) (backend-specific under `../docs/backend/`). Agents: [`../AGENTS.md`](../AGENTS.md).
+Docs: [`../docs/`](../docs/README.md). Agents: [`../AGENTS.md`](../AGENTS.md). HERB map: [`../docs/system_map.md`](../docs/system_map.md).
 
-## Layout
+## Layout (HERB-relevant first)
 
-- `agents/` — single OpenAI-compatible HTTP client and pydantic schemas (legacy path).
-- `indexing/` — chunker, worklist, runs, orchestrator, writers, deterministic rollup, circuit breaker.
 - `tagging/` — HERB Anthropic tagging pilot harness.
-- `clustering/` — placeholder for future HERB query views.
-- `data_access/` — dataset sync, raw-tree scan, classification.
-- `prompts/` — LLM system prompts (one per orchestrator stage; plus pilot variants).
+- `data_access/` — dataset sync, raw-tree scan, classification (access layer inventory).
+- `indexing/` — **HERB:** `chunker`, `preflight`, `worklist`, `runs`, `breaker`. **Legacy (quarantined):** orchestrator, extraction/file writers, rollup — see quarantine manifest.
 - `schema/` — Cypher constraints/indexes applied at bootstrap.
-- `scripts/` — operator entry points.
-- `shared/` — config, async Neo4j wrapper, small utilities.
+- `scripts/` — operator entry points (`run_preflight`, `verify_graph`, …).
+- `shared/` — config, async Neo4j wrapper, **`error_class`** (breaker types decoupled from `agents/`), small utilities.
+- `clustering/` — placeholder for future HERB query views.

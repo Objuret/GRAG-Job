@@ -23,6 +23,8 @@ There is no HTTP server in the middle. The Python `backend/` is an **offline pip
 
 **Bridge:** Clusters → Graph Query (dashed).
 
+In this canvas, the pipeline node **Access Layer** names the backend **access layer** (inventory, typing, stable keys, paths, payload rules, and `:Source` / `:File` anchors so the graph points at real files). It is not “only” a folder listing and not semantic tagging. **Index Layer** and later boxes align with segmentation into chunks/locators and downstream semantic graph work; see [`docs/backend/architecture.md`](../backend/architecture.md) (“Access layer” and “Layers and ownership”).
+
 Registry splits: `PIPELINE_NODES`, `USAGE_NODES`, combined as `NODE_TYPES`.
 
 **Query modules:** draggable `queryGroup` containers can sit between Interpreter and Graph Query. A module gets an auto-seeded `qf_start` fragment and can contain chained fragment nodes for `topic`, `entities`, `activity`, `temporal`, and `evidence`. The inspector has a plain-language view plus a technical Cypher view.
