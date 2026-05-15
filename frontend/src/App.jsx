@@ -18,7 +18,7 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 
 import {
   NODE_TYPES, QUERY_FRAGMENT_NODES, QUERY_FRAGMENT_CATALOG, QUERY_CONTAINER,
-  PIPELINE_NODES, USAGE_NODES, CLUSTERS, DATASETS, STAGE_PAYLOADS, PRESET_RESULTS, SAMPLE_CHUNKS,
+  PIPELINE_NODES, USAGE_NODES, FACETS, DATASETS, STAGE_PAYLOADS, PRESET_RESULTS, SAMPLE_CHUNKS,
 } from './data/workbenchData';
 import {
   DEFAULT_MODULE_HEADER,
@@ -430,7 +430,7 @@ const QueryGroupNode = React.memo(({ data, selected }) => (
                onPointerDown={(e) => e.stopPropagation()}
                onChange={(e) => data.onRename?.(e.target.value)} />
       </div>
-      <div className="query-group-hint">Plan in · step order = query order · candidates out</div>
+      <div className="query-group-hint">Plan in · step order = query order · graph query out</div>
     </div>
   </>
 ));
@@ -480,8 +480,8 @@ const nodeTypes = { stage: StageNode, lane: LaneNode, queryGroup: QueryGroupNode
 
 // ─── Initial canvas: pipeline lane (top) + usage lane (bottom) ──────────────
 function buildInitial() {
-  const pipelineOrder = PIPELINE_NODES.map(n => n.id);  // dataset, access, index, tags, clusters
-  const usageOrder    = USAGE_NODES.map(n => n.id);     // prompt, interpreter, graphquery, retrieval, output
+  const pipelineOrder = PIPELINE_NODES.map(n => n.id);  // dataset, access, index, tags, facets
+  const usageOrder    = USAGE_NODES.map(n => n.id);     // prompt, interpreter, retrieval, graphquery, output
 
   const xStart = 32, xGap = 260, yInner = 72;
   const maxCols = Math.max(pipelineOrder.length, usageOrder.length);
@@ -492,7 +492,7 @@ function buildInitial() {
 
   const lanes = [
     { id: 'lane_pipeline', label: 'Pipeline — graph construction', y: 0,              order: pipelineOrder },
-    { id: 'lane_usage',    label: 'Usage — query & retrieval',     y: laneH + laneGap, order: usageOrder },
+    { id: 'lane_usage',    label: 'Usage — retrieval & graph query', y: laneH + laneGap, order: usageOrder },
   ];
 
   const nodes = [];
@@ -592,6 +592,16 @@ function fmtCount(v) {
   return typeof v === 'number' ? v.toLocaleString() : '0';
 }
 
+const DEFAULT_FACET_STATE = Object.fromEntries(FACETS.map((f) => [f.id, true]));
+
+function activeFacetsFromConfig(config) {
+  return FACETS.filter((f) => config.facets?.[f.id]).map((f) => f.id);
+}
+
+function pipelineStageDisabled(nodes, kind) {
+  return nodes.some((n) => n.id === `lane_pipeline_${kind}` && n.data?.disabled);
+}
+
 // ─── App ───────────────────────────────────────────────────────────────────
 function WorkbenchApp() {
   const initial = useMemo(buildInitial, []);
@@ -607,8 +617,13 @@ function WorkbenchApp() {
   const [results, setResults]   = useState({ lane_A: PRESET_RESULTS.full, lane_B: PRESET_RESULTS.baseline });
   const [config, setConfig]     = useState({
     dataset: DATASETS[0]?.id || 'Salesforce__HERB',
-    clusters: { topic: true, entities: true, activity: true, temporal: true, evidence: true },
-    canonicalOnly: false, weightThreshold: 0.0, maxChunks: 50, formatFilter: 'All',
+    facets: DEFAULT_FACET_STATE,
+    tagsEnabled: true,
+    retrievalStrategy: 'weighted',
+    weightThreshold: 0.0,
+    minRelevanceToFile: 0.0,
+    maxChunks: 50,
+    formatFilter: 'All',
   });
   const [outputView, setOutputView] = useState('llm');   // llm | chunks | table
   const connConfig = useMemo(() => normalizeConnConfig(), []);
@@ -836,6 +851,16 @@ function WorkbenchApp() {
     const t0 = Date.now();
     try {
       const datasetId = config.dataset || datasetOptions[0]?.id || DATASETS[0]?.id || null;
+      const limit = Math.max(1, Number(config.maxChunks) || 20);
+      const retrievalOptions = {
+        activeFacets: activeFacetsFromConfig(config),
+        tagsEnabled: config.tagsEnabled && !pipelineStageDisabled(nodesRef.current, 'tags'),
+        minWChunk: Number(config.weightThreshold) || 0,
+        minRelevanceToFile: Number(config.minRelevanceToFile) || 0,
+        limit,
+        datasetId,
+        strategy: config.retrievalStrategy,
+      };
       const neo4jCfg = {
         uri: connConfig.neo4jUri,
         user: connConfig.neo4jUser,
@@ -843,28 +868,30 @@ function WorkbenchApp() {
         database: DONE_GRAPH_DATABASE,
       };
       const plan = await interpretPrompt(prompt, connConfig.model, connConfig.openaiApiKey, connConfig.anthropicApiKey, datasetId);
+      const scopedPlan = { ...plan, filters: { ...plan.filters, dataset_id: datasetId, limit } };
       const [chunks, bChunks] = await Promise.all([
-        retrieveChunks(plan, neo4jCfg),
-        retrieveBaseline(plan.filters.limit, neo4jCfg, datasetId),
+        retrieveChunks(scopedPlan, neo4jCfg, retrievalOptions),
+        retrieveBaseline(limit, neo4jCfg, datasetId),
       ]);
       const [ansA, ansB] = await Promise.all([
-        generateAnswer(prompt, plan, chunks, connConfig.model, connConfig.openaiApiKey, connConfig.anthropicApiKey),
-        generateAnswer(prompt, plan, bChunks, connConfig.model, connConfig.openaiApiKey, connConfig.anthropicApiKey),
+        generateAnswer(prompt, scopedPlan, chunks, connConfig.model, connConfig.openaiApiKey, connConfig.anthropicApiKey),
+        generateAnswer(prompt, scopedPlan, bChunks, connConfig.model, connConfig.openaiApiKey, connConfig.anthropicApiKey),
       ]);
+      const activeFacetSet = new Set(retrievalOptions.activeFacets);
       const topFacets = [...new Set(
-        plan.tags.flatMap(t => Object.entries(t.facets).filter(([, v]) => v >= 0.5).map(([k]) => k))
+        scopedPlan.tags.flatMap(t => Object.entries(t.facets).filter(([k, v]) => activeFacetSet.has(k) && v >= 0.5).map(([k]) => k))
       )].slice(0, 4);
       const elapsed = Date.now() - t0;
       setResults({
         lane_A: {
           chunks: chunks.length, response: ansA.response,
           tokensIn: ansA.tokensIn, tokensOut: ansA.tokensOut, durationMs: elapsed,
-          topClusters: topFacets, plan, retrievedChunks: chunks,
+          topFacets, plan: scopedPlan, retrievedChunks: chunks,
         },
         lane_B: {
           chunks: bChunks.length, response: ansB.response,
           tokensIn: ansB.tokensIn, tokensOut: ansB.tokensOut, durationMs: elapsed,
-          topClusters: [], plan: null, retrievedChunks: bChunks,
+          topFacets: [], plan: null, retrievedChunks: bChunks,
         },
       });
     } catch (err) {
@@ -872,7 +899,7 @@ function WorkbenchApp() {
     } finally {
       setPipelineRunning(false);
     }
-  }, [prompt, connConfig, config.dataset, datasetOptions]);
+  }, [prompt, connConfig, config, datasetOptions]);
 
   const runLaneWithActualWork = useCallback((laneId) => {
     runLane(laneId);
@@ -926,13 +953,13 @@ function WorkbenchApp() {
     const contractOk = connectionContractOk(conn, nodes);
     let data = { type: '', fromKind: '', toKind: '', contractOk };
     if (t?.type === 'queryGroup' && s?.type === 'stage') {
-      data = { type: 'query_plan', fromKind: s?.data?.kind ?? '', toKind: 'queryGroup', contractOk };
+      data = { type: s?.data?.kind ? (NT[s.data.kind]?.outType ?? '') : '', fromKind: s?.data?.kind ?? '', toKind: 'queryGroup', contractOk };
     } else if (s?.type === 'queryGroup' && t?.type === 'stage') {
-      data = { type: 'candidates', fromKind: 'queryGroup', toKind: t?.data?.kind ?? '', contractOk };
+      data = { type: QUERY_CONTAINER.outType, fromKind: 'queryGroup', toKind: t?.data?.kind ?? '', contractOk };
     } else if (s?.type === 'stage' && t?.type === 'stage') {
       const sKind = NT[s.data.kind], tKind = NT[t.data.kind];
-      if (s.data?.kind === 'clusters' && t.data?.kind === 'graphquery') {
-        data = { type: 'ranked', fromKind: 'clusters', toKind: 'graphquery', contractOk };
+      if (s.data?.kind === 'facets' && t.data?.kind === 'graphquery') {
+        data = { type: 'graph_scope', fromKind: 'facets', toKind: 'graphquery', contractOk };
       } else {
         data = { type: sKind?.outType ?? '', fromKind: s.data.kind, toKind: t.data.kind, contractOk };
       }
@@ -1435,19 +1462,19 @@ function Catalog() {
       </div>
       <div className="catalog-section">
         <h4>Pipeline</h4>
-        <div className="catalog-hint">Graph construction: dataset → indexed, tagged, clustered.</div>
+        <div className="catalog-hint">Graph construction: dataset → access layer → graph → tags → facets.</div>
         <div className="catalog-list">{renderList(PIPELINE_NODES)}</div>
       </div>
       <div className="catalog-divider" />
       <div className="catalog-section">
         <h4>Usage</h4>
-        <div className="catalog-hint">Query & retrieval: prompt → interpret → query graph → rank → LLM output.</div>
+        <div className="catalog-hint">Query & retrieval: prompt → interpret → retrieve → query graph → LLM output.</div>
         <div className="catalog-list">{renderList(USAGE_NODES)}</div>
       </div>
       <div className="catalog-divider" />
       <div className="catalog-section">
         <h4>Query module</h4>
-        <div className="catalog-hint">Query module: interpreter plan → any <strong>qin</strong> face; <strong>qout</strong> → retrieval. Ports appear on each side; extras on the same edge spread out. Arrows always run from source drag to target drop. Invalid pairs stay linked but draw red.</div>
+        <div className="catalog-hint">Query module: retrieval plan → any <strong>qin</strong> face; <strong>qout</strong> → graph query. Ports appear on each side; extras on the same edge spread out. Arrows always run from source drag to target drop. Invalid pairs stay linked but draw red.</div>
         <div className="catalog-list">
           <div
             className="catalog-item"
@@ -1601,7 +1628,7 @@ function QueryGroupInspector({ selNode, queryContainerMeta, nodes, edges, patchN
           <>
             <div className="section-head">How it connects</div>
             <div style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.55 }}>
-              Left handle brings in the interpreter&apos;s structured <strong>plan</strong>. Inner nodes are steps—left-to-right chain is the order those steps apply. Right handle sends <strong>candidate chunks</strong> to Retrieval. The GUI shows what each step <em>means</em>; Cypher is optional detail under Technical.
+              Left handle brings in the retrieval <strong>plan</strong>. Inner nodes are steps—left-to-right chain is the order those steps apply. Right handle sends the query plan to Graph Query. The GUI shows what each step <em>means</em>; Cypher is optional detail under Technical.
             </div>
           </>
         )}
@@ -1860,16 +1887,12 @@ function ConfigForm({ kind, config, setConfig, datasetOptions, datasetLoadState,
     return (
       <>
         <div className="field">
-          <label className="field-label">Max chunks<span className="hint">cap retrieval depth</span></label>
-          <input className="field-input" type="number" value={config.maxChunks} onChange={(e) => set({ maxChunks: +e.target.value })}/>
+          <label className="field-label">Graph database<span className="hint">Neo4j</span></label>
+          <input className="field-input" value={DONE_GRAPH_DATABASE} readOnly/>
         </div>
         <div className="field">
-          <label className="field-label">Strategy</label>
-          <select className="field-select" defaultValue="dense">
-            <option value="dense">Dense vector (default)</option>
-            <option value="bm25">BM25</option>
-            <option value="hybrid">Hybrid (dense + BM25)</option>
-          </select>
+          <label className="field-label">Run id<span className="hint">semantic graph</span></label>
+          <input className="field-input" value={DONE_GRAPH_RUN_ID} readOnly/>
         </div>
       </>
     );
@@ -1878,13 +1901,20 @@ function ConfigForm({ kind, config, setConfig, datasetOptions, datasetLoadState,
     return (
       <>
         <div className="field">
-          <label className="field-label">Active cluster dimensions</label>
-          <div className="cluster-grid">
-            {CLUSTERS.map(c => (
-              <div key={c.id} className={cls('cluster-chip', config.clusters[c.id] && 'on')}
+          <label className="field-label">Tag edges</label>
+          <select className="field-select" value={config.tagsEnabled ? 'on' : 'off'} onChange={(e) => set({ tagsEnabled: e.target.value === 'on' })}>
+            <option value="on">Use HAS_TAG edges</option>
+            <option value="off">Ignore tags</option>
+          </select>
+        </div>
+        <div className="field">
+          <label className="field-label">Active facets</label>
+          <div className="facet-grid">
+            {FACETS.map(c => (
+              <div key={c.id} className={cls('facet-chip', config.facets[c.id] && 'on')}
                    title={c.hint}
-                   onClick={() => set({ clusters: { ...config.clusters, [c.id]: !config.clusters[c.id] } })}>
-                <span className="cluster-chip-dot"/>{c.label}
+                   onClick={() => set({ facets: { ...config.facets, [c.id]: !config.facets[c.id] } })}>
+                <span className="facet-chip-dot"/>{c.label}
               </div>
             ))}
           </div>
@@ -1895,38 +1925,29 @@ function ConfigForm({ kind, config, setConfig, datasetOptions, datasetLoadState,
                  value={config.weightThreshold}
                  onChange={(e) => set({ weightThreshold: +e.target.value })}/>
         </div>
-        <div className="field">
-          <label className="field-label">Canonical tags only</label>
-          <select className="field-select" value={config.canonicalOnly ? 'yes' : 'no'} onChange={(e) => set({ canonicalOnly: e.target.value === 'yes' })}>
-            <option value="no">No — include proposals</option>
-            <option value="yes">Yes — canonical only</option>
-          </select>
-        </div>
       </>
     );
   }
-  if (kind === 'clusters') {
+  if (kind === 'facets') {
     return (
       <>
         <div className="field">
-          <label className="field-label">Active cluster dimensions</label>
-          <div className="cluster-grid">
-            {CLUSTERS.map(c => (
-              <div key={c.id} className={cls('cluster-chip', config.clusters[c.id] && 'on')}
+          <label className="field-label">Facet view</label>
+          <select className="field-select" defaultValue="pass_through">
+            <option value="pass_through">Pass through active facets</option>
+          </select>
+        </div>
+        <div className="field">
+          <label className="field-label">Active facets</label>
+          <div className="facet-grid">
+            {FACETS.map(c => (
+              <div key={c.id} className={cls('facet-chip', config.facets[c.id] && 'on')}
                    title={c.hint}
-                   onClick={() => set({ clusters: { ...config.clusters, [c.id]: !config.clusters[c.id] } })}>
-                <span className="cluster-chip-dot"/>{c.label}
+                   onClick={() => set({ facets: { ...config.facets, [c.id]: !config.facets[c.id] } })}>
+                <span className="facet-chip-dot"/>{c.label}
               </div>
             ))}
           </div>
-        </div>
-        <div className="field">
-          <label className="field-label">Ranking method</label>
-          <select className="field-select" defaultValue="weighted">
-            <option value="weighted">Weighted sum across clusters</option>
-            <option value="max">Max weight per cluster</option>
-            <option value="hybrid">Hybrid (weighted + relevance)</option>
-          </select>
         </div>
       </>
     );
@@ -1948,7 +1969,7 @@ function ConfigForm({ kind, config, setConfig, datasetOptions, datasetLoadState,
           <label className="field-label">Strategy<span className="hint">how to map prompt to graph terms</span></label>
           <select className="field-select" defaultValue="tag_extraction">
             <option value="tag_extraction">Extract tags from prompt</option>
-            <option value="embedding_match">Embedding similarity to canonical tags</option>
+            <option value="embedding_match">Embedding similarity to graph tags</option>
             <option value="hybrid">Hybrid (tags + embedding)</option>
           </select>
         </div>
@@ -1970,28 +1991,12 @@ function ConfigForm({ kind, config, setConfig, datasetOptions, datasetLoadState,
     return (
       <>
         <div className="field">
-          <label className="field-label">Query strategy<span className="hint">how to traverse the graph</span></label>
-          <select className="field-select" defaultValue="tag_match">
-            <option value="tag_match">Tag match (Cypher)</option>
-            <option value="vector">Vector similarity</option>
-            <option value="hybrid">Hybrid (tag + vector)</option>
-          </select>
+          <label className="field-label">Cypher target<span className="hint">read-only</span></label>
+          <input className="field-input" value="(:Chunk)-[:HAS_TAG]->(:Tag)" readOnly/>
         </div>
         <div className="field">
-          <label className="field-label">Max candidates<span className="hint">pre-ranking cap</span></label>
-          <input className="field-input" type="number" value={config.maxChunks} onChange={(e) => set({ maxChunks: +e.target.value })}/>
-        </div>
-        <div className="field">
-          <label className="field-label">Cluster filter<span className="hint">which dimensions to query</span></label>
-          <div className="cluster-grid">
-            {CLUSTERS.map(c => (
-              <div key={c.id} className={cls('cluster-chip', config.clusters[c.id] && 'on')}
-                   title={c.hint}
-                   onClick={() => set({ clusters: { ...config.clusters, [c.id]: !config.clusters[c.id] } })}>
-                <span className="cluster-chip-dot"/>{c.label}
-              </div>
-            ))}
-          </div>
+          <label className="field-label">Run id<span className="hint">edge filter</span></label>
+          <input className="field-input" value={DONE_GRAPH_RUN_ID} readOnly/>
         </div>
       </>
     );
@@ -2001,21 +2006,26 @@ function ConfigForm({ kind, config, setConfig, datasetOptions, datasetLoadState,
       <>
         <div className="field">
           <label className="field-label">Ranking method<span className="hint">how to score candidates</span></label>
-          <select className="field-select" defaultValue="weighted">
-            <option value="weighted">Weighted sum across clusters</option>
-            <option value="rrf">Reciprocal Rank Fusion</option>
+          <select className="field-select" value={config.retrievalStrategy} onChange={(e) => set({ retrievalStrategy: e.target.value })}>
+            <option value="weighted">Weighted sum across facets</option>
             <option value="relevance">Relevance-to-file only</option>
           </select>
         </div>
         <div className="field">
-          <label className="field-label">Top-K<span className="hint">chunks sent to LLM</span></label>
-          <input className="field-input" type="number" defaultValue="50"/>
+          <label className="field-label">Max chunks<span className="hint">chunks sent to LLM</span></label>
+          <input className="field-input" type="number" value={config.maxChunks} onChange={(e) => set({ maxChunks: +e.target.value })}/>
         </div>
         <div className="field">
-          <label className="field-label">Weight threshold<span className="hint">{config.weightThreshold.toFixed(2)}</span></label>
+          <label className="field-label">Min tag weight<span className="hint">{config.weightThreshold.toFixed(2)}</span></label>
           <input className="field-input" type="range" min="0" max="1" step="0.05"
                  value={config.weightThreshold}
                  onChange={(e) => set({ weightThreshold: +e.target.value })}/>
+        </div>
+        <div className="field">
+          <label className="field-label">Min file relevance<span className="hint">{config.minRelevanceToFile.toFixed(2)}</span></label>
+          <input className="field-input" type="range" min="0" max="1" step="0.05"
+                 value={config.minRelevanceToFile}
+                 onChange={(e) => set({ minRelevanceToFile: +e.target.value })}/>
         </div>
       </>
     );
@@ -2070,19 +2080,18 @@ function IOPanel({ selKind, selPayload }) {
   );
 }
 
-function TagsPanel({ selPayload }) {
-  const samples = (selPayload?.sample || []).slice(0,3);
+function TagsPanel() {
   return (
     <>
-      <div className="section-head">Top tags by cluster</div>
-      {CLUSTERS.map(c => {
-        const tags = SAMPLE_CHUNKS.flatMap(ch => ch.tags).filter(t => t.cluster === c.id).slice(0,4);
+      <div className="section-head">Top tags by facet</div>
+      {FACETS.map(c => {
+        const tags = SAMPLE_CHUNKS.flatMap(ch => ch.tags).filter(t => t.facet === c.id).slice(0,4);
         if (tags.length === 0) return null;
         return (
           <div key={c.id}>
             <div style={{fontSize:10.5,color:'var(--text-dim)',fontFamily:'var(--font-mono)',marginBottom:4}}>{c.label}</div>
             <div className="tag-row">
-              {tags.map((t,i) => <span key={i} className="tag-pill" data-cluster={t.cluster}>{t.name} · {t.w.toFixed(2)}</span>)}
+              {tags.map((t,i) => <span key={i} className="tag-pill" data-facet={t.facet}>{t.name} · {t.w.toFixed(2)}</span>)}
             </div>
           </div>
         );
@@ -2115,10 +2124,10 @@ function Drawer({ edge, nodes, onClose }) {
   const sNode = nodes.find(n => n.id === edge.source);
   const tNode = nodes.find(n => n.id === edge.target);
   const sKind = sNode?.type === 'queryGroup'
-    ? { label: 'Query module', outType: 'candidates', inType: null, id: 'queryGroup' }
+    ? { label: 'Query module', outType: QUERY_CONTAINER.outType, inType: null, id: 'queryGroup' }
     : (sNode?.data?.kind ? NT[sNode.data.kind] : null);
   const tKind = tNode?.type === 'queryGroup'
-    ? { label: 'Query module', outType: null, inType: 'query_plan', id: 'queryGroup' }
+    ? { label: 'Query module', outType: null, inType: QUERY_CONTAINER.inType, id: 'queryGroup' }
     : (tNode?.data?.kind ? NT[tNode.data.kind] : null);
   const payloadKindId = sNode?.type === 'queryGroup' ? null : sKind?.id;
   const payload = payloadKindId ? STAGE_PAYLOADS[payloadKindId] : null;
@@ -2181,12 +2190,11 @@ function schemaFor(t) {
     case 'prompt':     return [{name:'context',type:'string'},{name:'mode',type:'enum'}];
     case 'source':     return [{name:'datasetId',type:'string'},{name:'fileCount',type:'int'},{name:'chunkCount',type:'int'}];
     case 'files':      return [{name:'fileId',type:'string'},{name:'relPath',type:'string'},{name:'formatFamily',type:'string'}];
-    case 'chunks':
-    case 'tagged':
-    case 'ranked':
-    case 'candidates':
-    case 'context':    return [{name:'chunkId',type:'string'},{name:'fileId',type:'string'},{name:'content',type:'text'},{name:'tags[]',type:'ChunkTag'},{name:'weight',type:'float'}];
-    case 'query_plan': return [{name:'extractedTags',type:'string[]'},{name:'clusters',type:'ClusterDimension[]'},{name:'strategy',type:'enum'}];
+    case 'graph':      return [{name:'source',type:'Source'},{name:'files[]',type:'File[]'},{name:'chunks[]',type:'Chunk[]'}];
+    case 'graph_scope':return [{name:'tagsEnabled',type:'boolean'},{name:'facets',type:'FacetDimension[]'}];
+    case 'retrieval_plan': return [{name:'queryPlan',type:'QueryPlan'},{name:'facets',type:'FacetDimension[]'},{name:'limit',type:'int'}];
+    case 'context':    return [{name:'chunkId',type:'string'},{name:'fileId',type:'string'},{name:'content',type:'text'},{name:'tags[]',type:'ChunkTag'},{name:'score',type:'float'}];
+    case 'query_plan': return [{name:'extractedTags',type:'string[]'},{name:'facets',type:'FacetDimension[]'},{name:'strategy',type:'enum'}];
     case 'frag':       return [{name:'slotId',type:'string'},{name:'boundParams',type:'Record<string, unknown>'}];
     case 'result':     return [{name:'llmResponse',type:'string'},{name:'tokensIn',type:'int'},{name:'tokensOut',type:'int'},{name:'durationMs',type:'int'}];
     default: return [];
@@ -2287,9 +2295,9 @@ function ResultPane({ label, tone, data, view }) {
           {data.plan && <div className="sample-row"><span className="col col-id">plan tags</span><span className="col">{data.plan.tags.length}</span><span className="col col-w"></span></div>}
         </div>
       )}
-      {data.topClusters?.length > 0 && (
+      {data.topFacets?.length > 0 && (
         <div className="tag-row" style={{marginTop:4}}>
-          {data.topClusters.map(c => <span key={c} className="tag-pill" data-cluster={c}>{c}</span>)}
+          {data.topFacets.map(c => <span key={c} className="tag-pill" data-facet={c}>{c}</span>)}
         </div>
       )}
     </div>

@@ -1,4 +1,5 @@
 import neo4j from 'neo4j-driver';
+import type { FacetDimension } from '../types';
 import type { Neo4jConfig } from './neo4j';
 import type { QueryPlan, QueryTag } from './interpreter';
 import { intVal, withSession } from './neo4j';
@@ -13,6 +14,17 @@ export interface RetrievedChunk {
 }
 
 const DONE_GRAPH_RUN_ID = 'pilot_full_herb';
+const ALL_FACETS: FacetDimension[] = ['topic', 'entities', 'activity', 'temporal', 'evidence'];
+
+export interface RetrievalOptions {
+  activeFacets?: FacetDimension[];
+  tagsEnabled?: boolean;
+  minWChunk?: number;
+  minRelevanceToFile?: number;
+  limit?: number;
+  datasetId?: string | null;
+  strategy?: string;
+}
 
 // Weighted overlap: score = Σ qt.w_query * qt.facets[edge.facet] * edge.w_chunk * edge.w_facet * coalesce(chunk.relevance_to_file, 1)
 const SCORE_CYPHER = `
@@ -22,6 +34,9 @@ MATCH (c)-[r:HAS_TAG]->(t:Tag {name: qt.t})
 WHERE coalesce(c.empty, false) = false
   AND ($datasetId IS NULL OR f.dataset_id = $datasetId)
   AND r.run_id = $runId
+  AND r.facet IN $activeFacets
+  AND coalesce(r.w_chunk, 0.0) >= $minWChunk
+  AND coalesce(c.relevance_to_file, 1.0) >= $minRelevanceToFile
 WITH c, r, qt,
      CASE r.facet
        WHEN 'topic'    THEN qt.topic
@@ -83,13 +98,35 @@ function toQueryTagParams(tags: QueryTag[]) {
   }));
 }
 
-export async function retrieveChunks(plan: QueryPlan, cfg: Neo4jConfig): Promise<RetrievedChunk[]> {
-  if (!plan.tags.length) return [];
+function retrievalLimit(plan: QueryPlan, options?: RetrievalOptions): number {
+  const raw = Number(options?.limit ?? plan.filters.limit ?? 20);
+  return Math.max(1, Math.min(500, Number.isFinite(raw) ? raw : 20));
+}
+
+function retrievalDataset(plan: QueryPlan, options?: RetrievalOptions): string | null {
+  return options?.datasetId ?? plan.filters.dataset_id ?? null;
+}
+
+function activeFacets(options?: RetrievalOptions): FacetDimension[] {
+  if (!options?.activeFacets) return ALL_FACETS;
+  return options.activeFacets.filter((f): f is FacetDimension => ALL_FACETS.includes(f as FacetDimension));
+}
+
+export async function retrieveChunks(plan: QueryPlan, cfg: Neo4jConfig, options: RetrievalOptions = {}): Promise<RetrievedChunk[]> {
+  const limit = retrievalLimit(plan, options);
+  const datasetId = retrievalDataset(plan, options);
+  const facets = activeFacets(options);
+  if (options.strategy === 'relevance') return retrieveBaseline(limit, cfg, datasetId);
+  if (options.tagsEnabled === false) return retrieveBaseline(limit, cfg, datasetId);
+  if (!plan.tags.length || !facets.length) return [];
   return withSession(cfg, async (session) => {
     const result = await session.run(SCORE_CYPHER, {
       queryTags: toQueryTagParams(plan.tags),
-      limit: neo4j.int(plan.filters.limit),
-      datasetId: plan.filters.dataset_id,
+      activeFacets: facets,
+      minWChunk: Number(options.minWChunk ?? plan.filters.min_w_chunk ?? 0),
+      minRelevanceToFile: Number(options.minRelevanceToFile ?? plan.filters.min_relevance_to_file ?? 0),
+      limit: neo4j.int(limit),
+      datasetId,
       runId: DONE_GRAPH_RUN_ID,
     });
     return result.records.map(rec => {

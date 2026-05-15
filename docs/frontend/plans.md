@@ -5,5 +5,5 @@
 3. **Retrieval scoring in Cypher.** Translate the deterministic weighted-overlap formula into a Cypher query the browser issues. Surface the query plan in the UI beside the retrieved chunks.
 4. **Answer call.** Third Anthropic call: retrieved chunks + plan → answer per `answer_job.mode`, defaults `evidence_policy=retrieved_only`, `missing_evidence_policy=say_insufficient_evidence`.
 5. **Replace demo state.** Once live calls return, trim `PRESET_RESULTS` / `SAMPLE_CHUNKS` from `workbenchData.ts` — keep only node-registry/UI metadata.
-6. **Field-name pass.** Drop legacy `cluster`, `canonicalId`, `weightLocal` from `types/index.ts` and `workbenchData.ts` in favour of the HERB names.
+6. **Field-name pass.** Keep `types/index.ts` and `workbenchData.ts` on the HERB graph names: `facet`, `w_chunk`, `w_facet`, and `relevance_to_file`.
 7. **Persistence.** Save canvas/module state to `localStorage` (or skip — it's local-only).

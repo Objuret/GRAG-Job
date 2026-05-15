@@ -17,17 +17,17 @@ There is no HTTP server in the middle. The Python `backend/` is an **offline pip
 
 ## Canvas: two lanes + bridge
 
-**Pipeline:** Dataset → Access Layer → Index Layer → Tags → Clusters  
+**Pipeline:** Dataset → Access Layer → Index Layer → Tags → Facets  
 
-**Usage:** Prompt → Interpreter → Graph Query → Retrieval → Output  
+**Usage:** Prompt → Interpreter → Retrieval → Graph Query → Output  
 
-**Bridge:** Clusters → Graph Query (dashed).
+**Bridge:** Facets → Graph Query (dashed).
 
-In this canvas, the pipeline node **Access Layer** names the backend **access layer** (inventory, typing, stable keys, paths, payload rules, and `:Source` / `:File` anchors so the graph points at real files). It is not “only” a folder listing and not semantic tagging. **Index Layer** and later boxes align with segmentation into chunks/locators and downstream semantic graph work; see [`docs/backend/architecture.md`](../backend/architecture.md) (“Access layer” and “Layers and ownership”).
+In this canvas, the pipeline node **Access Layer** names the backend **access layer** (inventory, typing, stable keys, paths, payload rules, and `:Source` / `:File` anchors so the graph points at real files). It is not “only” a folder listing and not semantic tagging. **Index Layer** is the Neo4j graph artefact. **Tags** and **Facets** are graph-scope controls used to include, remove, or compare `HAS_TAG` facet dimensions.
 
 Registry splits: `PIPELINE_NODES`, `USAGE_NODES`, combined as `NODE_TYPES`.
 
-**Query modules:** draggable `queryGroup` containers can sit between Interpreter and Graph Query. A module gets an auto-seeded `qf_start` fragment and can contain chained fragment nodes for `topic`, `entities`, `activity`, `temporal`, and `evidence`. The inspector has a plain-language view plus a technical Cypher view.
+**Query modules:** draggable `queryGroup` containers can sit between Retrieval and Graph Query. A module gets an auto-seeded `qf_start` fragment and can contain chained fragment nodes for `topic`, `entities`, `activity`, `temporal`, and `evidence`. The inspector has a plain-language view plus a technical Cypher view.
 
 ---
 
@@ -58,7 +58,7 @@ When the live path is wired, `App.jsx` will:
 2. Use `@anthropic-ai/sdk` directly for prompt interpretation and answer generation. See [`query_interpretation_layer.md`](query_interpretation_layer.md) for the two-pass method and plan shape.
 3. Display the query plan beside the retrieved results, so the user can see what the model thought the prompt meant.
 
-Field-name discipline: the HERB graph uses `facet`, `w_chunk`, `w_facet`, `relevance_to_file`. Drop legacy `cluster`, `canonicalId`, `weightLocal` from the HERB read path.
+Field-name discipline: the HERB graph uses `facet`, `w_chunk`, `w_facet`, `relevance_to_file`; the frontend read path should use those names.
 
 ---
 

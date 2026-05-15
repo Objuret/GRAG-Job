@@ -362,16 +362,16 @@ input, select, textarea { font-family: inherit; }
   background-position: calc(100% - 14px) 14px, calc(100% - 9px) 14px;
   background-size: 5px 5px; background-repeat: no-repeat;
 }
-.cluster-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.cluster-chip {
+.facet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.facet-chip {
   display: flex; align-items: center; gap: 6px; padding: 7px 9px;
   background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--r-md);
   font-size: 11px; color: var(--text-muted); cursor: pointer;
   transition: all .12s var(--ease);
 }
-.cluster-chip:hover { background: var(--bg-hover); }
-.cluster-chip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
-.cluster-chip-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .7; }
+.facet-chip:hover { background: var(--bg-hover); }
+.facet-chip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.facet-chip-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .7; }
 
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .stat-card {
@@ -399,11 +399,11 @@ input, select, textarea { font-family: inherit; }
   font-size: 10px; padding: 2px 7px; border-radius: 999px; font-family: var(--font-mono);
   border: 1px solid var(--border); background: var(--bg-surface); color: var(--text-muted);
 }
-.tag-pill[data-cluster="topic"]     { color: var(--type-tags); border-color: color-mix(in srgb, var(--type-tags) 40%, var(--border)); }
-.tag-pill[data-cluster="entities"]  { color: var(--info);      border-color: color-mix(in srgb, var(--info) 40%, var(--border)); }
-.tag-pill[data-cluster="activity"]  { color: var(--warn);      border-color: color-mix(in srgb, var(--warn) 40%, var(--border)); }
-.tag-pill[data-cluster="temporal"]  { color: var(--ok);        border-color: color-mix(in srgb, var(--ok) 40%, var(--border)); }
-.tag-pill[data-cluster="evidence"]  { color: var(--err);       border-color: color-mix(in srgb, var(--err) 40%, var(--border)); }
+.tag-pill[data-facet="topic"]     { color: var(--type-tags); border-color: color-mix(in srgb, var(--type-tags) 40%, var(--border)); }
+.tag-pill[data-facet="entities"]  { color: var(--info);      border-color: color-mix(in srgb, var(--info) 40%, var(--border)); }
+.tag-pill[data-facet="activity"]  { color: var(--warn);      border-color: color-mix(in srgb, var(--warn) 40%, var(--border)); }
+.tag-pill[data-facet="temporal"]  { color: var(--ok);        border-color: color-mix(in srgb, var(--ok) 40%, var(--border)); }
+.tag-pill[data-facet="evidence"]  { color: var(--err);       border-color: color-mix(in srgb, var(--err) 40%, var(--border)); }
 
 /* ─── Drawer (edge payload) ──────────────────────────────────────────────── */
 .drawer {

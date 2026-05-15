@@ -1,17 +1,18 @@
 /**
  * Composes parameterized Cypher for a Query module from chained fragment nodes.
- * Fragments use `plan` after `WITH $plan AS plan` (see qf_start default).
+ * Fragments use `plan` after the module header binds `WITH $plan AS plan`.
  */
 
-export const DEFAULT_MODULE_HEADER = `MATCH (c:Chunk)
-WHERE true`;
+export const DEFAULT_MODULE_HEADER = `WITH $plan AS plan
+MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk)
+WHERE coalesce(c.empty, false) = false`;
 
-export const DEFAULT_MODULE_FOOTER = `RETURN c.id AS chunkId, c.text AS preview
+export const DEFAULT_MODULE_FOOTER = `RETURN c.chunk_id AS chunkId, left(c.content, 240) AS preview
 LIMIT coalesce($limit, 50)`;
 
 /** Seeded defaults when a fragment is created; users edit per-node `data.cypherTemplate`. */
 export const FRAGMENT_TEMPLATE_DEFAULTS: Record<string, string> = {
-  qf_start: 'WITH $plan AS plan',
+  qf_start: '',
   qf_topic: `AND ANY(tag IN [t IN plan.tags WHERE t.facets.topic >= 0.5 | t.t] WHERE EXISTS((c)-[:HAS_TAG {facet: 'topic'}]->(:Tag {name: tag})))`,
   qf_entities: `AND ANY(tag IN [t IN plan.tags WHERE t.facets.entities >= 0.5 | t.t] WHERE EXISTS((c)-[:HAS_TAG {facet: 'entities'}]->(:Tag {name: tag})))`,
   qf_activity: `AND ANY(tag IN [t IN plan.tags WHERE t.facets.activity >= 0.5 | t.t] WHERE EXISTS((c)-[:HAS_TAG {facet: 'activity'}]->(:Tag {name: tag})))`,

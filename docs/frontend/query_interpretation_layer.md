@@ -29,7 +29,7 @@ Important facts for retrieval:
 - The model did not emit `w_chunk`; the pipeline derived it from the five-facet vector.
 - A tag can appear on multiple facet edges for the same chunk.
 - `Chunk.relevance_to_file` is a comparative file-representativeness score.
-- There are no HERB `cluster`, `canonical_id`, or `weight_local` fields in the current pilot graph contract. **Do not use those legacy names** for HERB retrieval.
+- The current pilot graph contract uses the HERB names only. **Do not use legacy generic-tagger field names** for HERB retrieval.
 
 ## Principle
 
@@ -191,5 +191,5 @@ missing_evidence_policy = say_insufficient_evidence
 
 - Pass 1, Pass 2, and the answer call are three separate Anthropic calls in the browser. Keep them separate so the plan stays inspectable between steps.
 - The UI must display the query plan beside the retrieved results.
-- Field-name discipline: HERB graph uses `facet`, `w_chunk`, `w_facet`, `relevance_to_file`. Do not use legacy `cluster`, `canonical_id`, `weight_local` for HERB retrieval.
+- Field-name discipline: HERB graph uses `facet`, `w_chunk`, `w_facet`, `relevance_to_file`.
 - Tag lookup/autocomplete against the live `:Tag` vocabulary is a useful next step — the model's prompt tags will often need grounding against real corpus tag names.

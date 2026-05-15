@@ -6,7 +6,7 @@
 
 ## Built
 
-- [x] Two-lane canvas (pipeline + usage) + Clusters → Graph Query bridge  
+- [x] Two-lane canvas (pipeline + usage) + Facets → Graph Query bridge  
 - [x] Catalog (Pipeline / Usage), inspector forms per node kind, edge drawer, bottom lane comparison  
 - [x] Demo lane results via `PRESET_RESULTS` + `SAMPLE_CHUNKS` in `workbenchData.ts`  
 - [x] Themes and CSS tokens (`index.css`)
@@ -21,7 +21,7 @@
 - [ ] Browser-direct Anthropic interpretation via `@anthropic-ai/sdk` (two-pass: handles → 5-facet → derived `w_query`)
 - [ ] Cypher retrieval scoring per the deterministic weighted-overlap formula
 - [ ] Answer call (Anthropic) over retrieved chunks per `answer_job` mode
-- [ ] Field-name pass: drop legacy `cluster`/`canonicalId`/`weightLocal` for HERB
+- [x] Field-name pass: use HERB `facet`, `w_chunk`, `w_facet`, `relevance_to_file` names in the frontend model
 - [ ] Persisting canvas/module state across browser sessions
 
 See [`plans.md`](plans.md) for the order, and the spec for interpretation/retrieval at [`query_interpretation_layer.md`](query_interpretation_layer.md).
