@@ -2,25 +2,10 @@
 trigger: always_on
 ---
 
-Build a frontend-only local workbench prototype for a layered thesis artifact pipeline.
+The shipped workbench is **`src/App.jsx`** — two lanes (pipeline vs usage) plus a **Clusters → Graph Query** bridge.
 
-The app must be self-contained and run entirely from synthetic mock data. Use generic labels only. Do not include machine-specific paths, real run IDs, real credentials, real repository names, or real dataset names.
+The browser is the whole runtime: it calls Neo4j via `neo4j-driver` (bolt-ws, read-only user) and Anthropic via `@anthropic-ai/sdk` (`dangerouslyAllowBrowser: true`). Live integration goes directly in the workbench or in `src/lib/`.
 
-The purpose is to design a future-ready interface architecture:
-- typed node registry
-- typed API contracts
-- mock API client
-- adapter-ready execution model
-- explicit layer/run validity states
-- artifact inspection
-- completed-run comparison
-- workspace persistence
+Demo state lives in `src/data/workbenchData.ts` using synthetic labels.
 
-The UI must be honest about capability:
-- runnable
-- inspectable only
-- unavailable
-- invalid
-- not materialized yet
-
-Do not present unavailable or invalid layers as runnable.
+Two-pass prompt interpretation method: `docs/frontend/query_interpretation_layer.md`.

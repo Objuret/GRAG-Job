@@ -5,7 +5,7 @@ export type StageCategory =
   | 'Access Layer'
   | 'Index Layer'
   | 'Tagging'
-  | 'Clustering';
+  | 'Facets';
 
 export type CapabilityState = 'runnable' | 'inspectable' | 'unavailable' | 'pending';
 export type ArtifactState   = 'valid' | 'invalid' | 'partial' | 'missing' | 'stale';
@@ -128,25 +128,25 @@ export interface ComparisonResult {
 // These mirror the finished Neo4j graph built by GRAG-Job.
 // The frontend queries this graph — it does not build it.
 
-/** The five cluster dimensions used for tagging. */
-export type ClusterDimension =
-  | 'theme'
-  | 'object_entity'
-  | 'event_process'
-  | 'time_relevance'
-  | 'information_need';
+/** The five HERB facets used for tagging and retrieval. */
+export type FacetDimension =
+  | 'topic'
+  | 'entities'
+  | 'activity'
+  | 'temporal'
+  | 'evidence';
 
-export const ALL_CLUSTERS: ClusterDimension[] = [
-  'theme', 'object_entity', 'event_process', 'time_relevance', 'information_need',
+export const ALL_FACETS: FacetDimension[] = [
+  'topic', 'entities', 'activity', 'temporal', 'evidence',
 ];
 
-/** Cluster display metadata — labels and short descriptions. */
-export const CLUSTER_META: Record<ClusterDimension, { label: string; hint: string }> = {
-  theme:              { label: 'Theme',              hint: 'What is this about?' },
-  object_entity:      { label: 'Object / Entity',    hint: 'Which things are mentioned?' },
-  event_process:      { label: 'Event / Process',    hint: 'What kind of occurrence?' },
-  time_relevance:     { label: 'Time Relevance',     hint: 'When is this relevant?' },
-  information_need:   { label: 'Information Need',   hint: 'What evidence is supplied?' },
+/** Facet display metadata - labels and short descriptions. */
+export const FACET_META: Record<FacetDimension, { label: string; hint: string }> = {
+  topic:     { label: 'Topic',    hint: 'What is this about?' },
+  entities:  { label: 'Entities', hint: 'Which concrete things are named or referenced?' },
+  activity:  { label: 'Activity', hint: 'What kind of event, process, or content action is described?' },
+  temporal:  { label: 'Temporal', hint: 'When is this relevant: recent, historical, future, active, completed?' },
+  evidence:  { label: 'Evidence', hint: 'What kind of answer material is supplied?' },
 };
 
 /** A :Source node — one per dataset in the graph. */
@@ -182,33 +182,29 @@ export interface GragChunk {
 /** A (:Chunk)-[:HAS_TAG]->(:Tag) edge. */
 export interface ChunkTag {
   tagName: string;
-  cluster: ClusterDimension;
-  weightLocal: number;
-  canonicalId: string | null;
+  facet: FacetDimension;
+  wChunk: number;
+  wFacet: number;
 }
 
-/** Aggregated (:File)-[:TAGGED]->(:Tag) edge. */
+/** Optional file-level tag summary derived from (:Chunk)-[:HAS_TAG]->(:Tag). */
 export interface FileTagSummary {
   tagName: string;
-  cluster: ClusterDimension;
-  weightGlobal: number;
+  facet: FacetDimension;
+  wFacet: number;
   nChunks: number;
-  canonicalId: string | null;
 }
 
-/** A :CanonicalTag node — the seeded vocabulary. */
-export interface CanonicalTag {
-  label: string;
-  cluster: ClusterDimension;
-  gloss: string;
+/** A :Tag node in the HERB graph. */
+export interface GraphTag {
+  name: string;
 }
 
 /** Configuration for one retrieval pipeline line. */
 export interface RetrievalConfig {
   datasetId: string;
   prompt: string;
-  enabledClusters: ClusterDimension[];
-  canonicalOnly: boolean;
+  enabledFacets: FacetDimension[];
   weightThreshold: number;
   maxChunks: number;
   formatFilter: string[];
@@ -234,7 +230,7 @@ export interface RetrievalResult {
 export interface WorkspaceState {
   schemaVersion: number;
   workspace: {
-    nodes: any[];       // ReactFlow node list — see WorkspaceContext for serialisation notes
+    nodes: any[];       // ReactFlow node list (optional future persistence)
     edges: any[];
     selectedNodeId: string | null;
     selectedArtifactId: string | null;
