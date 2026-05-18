@@ -77,8 +77,33 @@ One per deterministic chunk produced by [`indexing/chunker.py`](backend/indexing
 | `relevance_to_file` | float \| null | In [0, 1]. Written by FileExtractionWriter. |
 | `created_at` | iso8601 | Set on create by chunker. |
 
+**Hard fields (materialized).** Written by `python -m tagging materialize` ([`tagging/pipeline.py`](backend/tagging/pipeline.py) `stage_materialize`), no LLM, idempotent. Two parts with different dependencies (stated honestly, not papered over):
+
+- **Scalars — pre-tagging.** Lifted from the keys the chunker already parsed into `locator_json`. Depends only on chunking.
+- **`years` — post-tagging.** A denormalized projection of the literal 4-digit year tokens in this chunk's `temporal`-facet `:Tag` names (`2023_2028` → `[2023, 2028]`; **no range expansion**). Needs `extract` to have written `HAS_TAG` edges; the tags stay authoritative, this is a fast-filter copy. The earlier regex-over-`content` `years` (which scraped IDs/ports/prices) was removed.
+
+Retrieval hard-gates on these **before** any tag/embedding scoring. Does not affect tagging (see the Non-Contamination clarification in [`herb_tagging_frames.md`](backend/herb_tagging_frames.md)).
+
+| Property | Type | Notes |
+|---|---|---|
+| `product` | string \| null | Product the chunk belongs to (`locator.product`). |
+| `section` | string \| null | HERB section (`slack`, `documents`, `prs`, `answerable_questions`, …). |
+| `channel` | string \| null | Slack channel (slack chunks only). |
+| `employee_id` | string \| null | `eid_…` (org-tree chunks). |
+| `parent_ref` / `chunk_ref` | string \| null | HERB tree address (exact navigation). |
+| `metadata_section` | string \| null | Corpus-level table marker (`locator.metadata`, e.g. `salesforce_team`). |
+| `subsection` | string \| null | Org-tree subsection. |
+| `doc_field` | string \| null | Source text field for document/transcript parts (`locator.field`). |
+| `item_index` | int \| null | `locator.index`. |
+| `msg_index_start` / `msg_index_end` | int \| null | Batch message range (`locator.index_start`/`index_end`). |
+| `part_index` | int \| null | `locator.part` for `*_part` chunks. |
+| `question` | string \| null | QA question text (qa chunks). |
+| `years` | list<int> \| absent | Literal 4-digit years from this chunk's `temporal`-facet tag names; absent (not `[]`) when none. |
+
+All scalars are sparse: a property is **absent** on a chunk that had no value (Neo4j drops `null` on `SET +=`). `years` follows the same rule — absent, never an empty list.
+
 - **Constraint:** `REQUIRE n.chunk_id IS UNIQUE`.
-- **Indexes:** `(n.file_id)`, `(n.empty)`.
+- **Indexes:** `(n.file_id)`, `(n.empty)`, `(n.kind)`, plus RANGE on the **four gated** scalars only (`product`, `section`, `channel`, `employee_id`) and the `chunk_fulltext` FULLTEXT index on `[content, description, question]`. The other scalar hard fields are materialized and queryable but **deliberately not indexed** (retrieval does not filter on them; an earlier version indexed them and that unused surface was removed). `years` is a list — not range-indexable; scanned (corpus is small). See [`schema/indexes.cypher`](backend/schema/indexes.cypher).
 - **Who writes:** [`indexing/chunker.py`](backend/indexing/chunker.py) (creation), [`indexing/extraction_writer.py`](backend/indexing/extraction_writer.py) (`empty`, `empty_reason`, `description`), [`indexing/file_writer.py`](backend/indexing/file_writer.py) (`relevance_to_file`).
 - **Who reads:** orchestrator, rollup.
 
@@ -245,9 +270,13 @@ CREATE INDEX IF NOT EXISTS FOR ()-[r:HAS_TAG]-() ON (r.run_id);
 CREATE INDEX IF NOT EXISTS FOR ()-[r:HAS_TAG]-() ON (r.cluster);
 CREATE INDEX IF NOT EXISTS FOR ()-[r:HAS_TAG]-() ON (r.canonical_id);
 CREATE INDEX IF NOT EXISTS FOR ()-[r:TAGGED]-()  ON (r.cluster);
+
+// HERB hard-field gate (materialize stage) — only the gated fields:
+CREATE INDEX chunk_product/section/channel/employee_id/kind ...;
+CREATE FULLTEXT INDEX chunk_fulltext FOR (c:Chunk) ON EACH [c.content, c.description, c.question];
 ```
 
-[`schema/vector_indexes.cypher`](backend/schema/vector_indexes.cypher) is intentionally empty — embeddings are deferred (see [`status.md`](backend/status.md)).
+`schema/vector_indexes.cypher` is **no longer empty**: it creates `tag_embedding`, the native 384-d cosine VECTOR index on `:Tag(embedding)` written by `python -m tagging embed-tags` (the prompt-tag grounding bridge). Embeddings are live, not deferred — the older "deferred" note is obsolete.
 
 ## Quick reference for property placement
 

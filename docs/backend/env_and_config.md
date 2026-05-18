@@ -80,7 +80,7 @@ These are not read by `shared/config.py`. They are loaded from `.env` by
 
 | Var | Type | Default | Required | Where consumed |
 |---|---|---|---|---|
-| `EMBEDDING_MODEL` | string | `intfloat/e5-small-v2` | No | Read into `Settings.embedding_model`. **Consumed by the `embed-tags` tagging stage** (`tagging/pipeline.py:stage_embed_tags`) which writes `Tag.embedding`; the browser uses the same model id for prompt-tag grounding. â€” backend and browser must use this same model id or the vectors are not comparable. |
+| `EMBEDDING_MODEL` | string | `intfloat/e5-small-v2` | No | Read into `Settings.embedding_model`. **Consumed by the `embed-tags` tagging stage** (`tagging/pipeline.py:stage_embed_tags`) which writes `Tag.embedding`; the browser uses the same model for prompt-tag grounding — bundled at `frontend/public/models/Xenova/e5-small-v2/` (full fp32, loaded local-only, no runtime HF fetch). Backend and browser must use this same model or the vectors are not comparable; fp32 on both sides gives exact parity (verified cosine ≈ 1.0). If you change this id, re-export and re-bundle the matching browser model. |
 | `DATA_ROOT` | path | `<backend>/data` | No | Read into `Settings.data_root`. [`indexing/preflight.py`](../../backend/indexing/preflight.py) calls `scan_raw_tree(settings.data_root)` to walk `data/raw/`. The `data_access/` CLI tools accept `--data-root` to override per-invocation. |
 
 ### Recognised extras (ignored by Settings, used by other tools)

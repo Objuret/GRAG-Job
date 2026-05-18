@@ -3,6 +3,7 @@
 Usage:
     python -m tagging select
     python -m tagging verify-chunks
+    python -m tagging materialize
     python -m tagging extract
     python -m tagging describe
     python -m tagging score
@@ -20,6 +21,7 @@ from . import pipeline
 STAGES = {
     "verify-chunks": pipeline.stage_verify_chunks,
     "select": pipeline.stage_select,
+    "materialize": pipeline.stage_materialize,
     "extract": pipeline.stage_extract,
     "describe": pipeline.stage_describe,
     "score": pipeline.stage_score,

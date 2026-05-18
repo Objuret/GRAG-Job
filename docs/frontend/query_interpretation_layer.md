@@ -1,8 +1,14 @@
 # Prompt Interpretation Method
 
-**Status:** algorithmic spec; runs in the browser as part of the local-only workbench. No HTTP layer.
+**Status:** algorithmic spec; runs in the browser as part of the local-only
+workbench. No HTTP layer. Implementing code (`src/services/*`) is **uncommitted**
+(working tree only). Its graph prerequisites are **verified present on the live
+`herb` graph** (2026-05-18: materialized hard fields on 5843 chunks,
+`chunk_fulltext` + `tag_embedding` indexes ONLINE, 25,896 `:Tag` embedded — see
+[`status.md`](status.md)). Not separately re-verified: a full browser
+prompt → answer click-through.
 
-**Last updated:** 2026-05-14.
+**Last updated:** 2026-05-18.
 
 ## Purpose
 
@@ -46,22 +52,43 @@ Retrieval becomes a comparison between two similar semantic objects:
 query tag vector  <->  chunk tag vector
 ```
 
-## Pass 1: Prompt tag extraction
+## Pass 1: Describe, then extract
 
-Anthropic call. Input: the user prompt. Output:
+Anthropic call. Input: the user prompt. The model works in three steps in one
+call: **(1)** write `description` — a concise, self-contained statement of the
+underlying information need (not a restatement of the question); **(2)** derive
+`tags` *from that description*; **(3)** extract `gate` — hard structured
+constraints, **only** when the query explicitly names them (else `null` / `[]`;
+the model must not guess). Description first is deliberate: it is the
+prompt-side embedding context (the analogue of corpus chunk descriptions in
+grounding), so it must be faithful and self-contained, not incidental.
 
 ```json
 {
-  "description": "Find unapproved pull request links related to expanding security measures in AnomalyForce.",
+  "description": "The user wants links to GitHub pull requests in AnomalyForce that expand security measures and have not been approved.",
   "tags": [
     "AnomalyForce",
     "security measures expansion",
     "pull requests",
     "not approved",
     "GitHub links"
-  ]
+  ],
+  "gate": {
+    "product": "AnomalyForce",
+    "section": "prs",
+    "channel": null,
+    "employee_id": null,
+    "years": []
+  }
 }
 ```
+
+`gate` maps to the materialized `:Chunk` hard fields (see
+[`../graph_schema.md`](../graph_schema.md), "Hard fields"). `section` is
+normalised to the corpus enum (`slack`, `documents`, `meeting_transcripts`,
+`meeting_chats`, `prs`, `urls`, `answerable_questions`,
+`unanswerable_questions`, `product_profile`); synonyms like "pull requests" →
+`prs`, "chat" → `slack` are mapped, unknown sections dropped to `null`.
 
 No facets, no weights — just handles. Cleaning rule (same as HERB):
 
@@ -156,17 +183,48 @@ The interpreter returns one complete, inspectable object. The UI must display it
 
 ## Retrieval scoring
 
-Two steps, both executed from the browser:
+All steps execute from the browser.
 
-**1. Grounding (vector kNN).** Each prompt tag is embedded with
-`intfloat/e5-small-v2` via `@xenova/transformers` (e5 `query:` prefix) — the
-same model the backend `embed-tags` stage used to embed every `:Tag`
-(`passage:` prefix). `db.index.vector.queryNodes('tag_embedding', k, vec)`
-returns the nearest real corpus tag names with cosine `sim`. This replaces
-exact cleaned-name equality, which only ever matched coincidental identical
-strings. `k` (grounding depth) and `min_sim` are user controls on the
-Interpreter node ("effort"). Exact-name and the legacy path are equivalent to
-`sim = 1.0`.
+**0. Hard gate (deterministic, pre-scoring).** Before any tag or embedding
+work, the plan's `gate` is compiled to a Cypher `WHERE` fragment ANDed onto
+the `:Chunk` — equality on the materialized scalar hard fields (`product`,
+`section`, `channel`, `employee_id`) and `any(year ∈ gate.years ∈ c.years)`.
+Every set value is first validated against the live corpus: a constraint that
+matches zero chunks raises a loud error listing the valid values (or, for
+years, the corpus year range) — it is never silently dropped to "scan
+everything". The gate is then applied to every retrieval path below.
+
+**1. Grounding (vector kNN).** Each prompt tag is embedded **symmetrically
+with the corpus side**: `passage: <readable tag name>. <prompt description>`,
+whitespace-collapsed and capped at 900 chars, via `@xenova/transformers`
+running the same `intfloat/e5-small-v2` weights the backend `embed-tags` stage
+used. The model is **bundled into the app** at
+`frontend/public/models/Xenova/e5-small-v2/` (the ONNX port of the same
+weights) and loaded **local-only** — `services/embeddings.ts` sets
+`env.allowRemoteModels = false`, `env.localModelPath = '/models'`, so there is
+no runtime Hugging Face fetch (the browser analogue of the backend's on-disk
+HF cache). It loads the **full fp32** `onnx/model.onnx` with `quantized: false`,
+not the int8 default, so browser vectors match the backend's fp32
+sentence-transformers vectors exactly — verified: cosine `1.00000000`,
+max per-dimension diff `~1e-7` on an identical `passage:` input. The backend
+embeds a `:Tag` as `passage: <name>. <its most-central chunk
+descriptions>`; the prompt side substitutes the Pass-1 prompt description for
+those chunk descriptions, so both vectors are the same kind of object (name +
+description prose, same prefix). The earlier asymmetric `query:`-vs-`passage:`
+form is gone — comparing a 2-word query string against context-laden passage
+vectors collapsed cosine similarities into a narrow, non-discriminative band.
+`db.index.vector.queryNodes('tag_embedding', k, vec)` returns the nearest real
+corpus tag names with cosine `sim`. `k` (grounding depth) and `min_sim` are
+user controls on the Interpreter node ("effort"). Note `min_sim` is a coarse
+floor: e5-small cosine on this corpus is compressed (~0.8 mean to random
+tags), so grounding leans on top-k ranking, not the absolute threshold.
+
+Grounding is the **only** path. There is no exact-name match and no silent
+fallback: if the `tag_embedding` index or `:Tag` embeddings are missing, or
+grounding yields no match above `min_sim`, retrieval throws a loud error
+telling the operator to run `python -m tagging embed-tags`. A broken or
+unembedded graph must fail visibly, never degrade into coincidental
+string-equality matches.
 
 **2. Deterministic weighted overlap**, in Cypher, over the grounded tags:
 
@@ -176,13 +234,25 @@ score += query_tag.w_query
        * chunk_edge.w_chunk
        * chunk_edge.w_facet
        * coalesce(chunk.relevance_to_file, 1.0)
-       * coalesce(grounding_sim, 1.0)
+       * grounding_sim
 ```
 
 A grounded corpus tag inherits its prompt tag's facet vector and `w_query`;
 the grounding `sim` is folded into the weight so weak matches contribute
-less. If the `tag_embedding` index is absent the code falls back to
-exact-name match (`sim = 1.0`) so retrieval still functions.
+less. `sim` is always a real cosine similarity from the vector index — there
+is no `sim = 1.0` exact-name shortcut.
+
+**3. Lexical recall (gated full-text).** Tag scoring caps recall at tagger
+coverage: a chunk whose body literally states a term (e.g. a year) is
+unreachable if no matching tag was ever minted. To close that gap, a gated
+query against the `chunk_fulltext` index (`content`, `description`,
+`question`) runs over the prompt's tag terms plus any explicit year literals,
+under the same hard gate. When the prompt produced a usable gate but **no**
+usable tags, this is the sole retrieval path (with a plan warning, so it is
+never silent). When tags exist **and** the gate carries explicit years, the
+lexical hits are unioned after the semantic hits, deduped by `chunkId`;
+Lucene and tag scores are not comparable, so they are not interleaved by
+score.
 
 The full grounding map (prompt tag → matched corpus tags + sims) is attached
 to the plan as `grounding` and shown beside the results.
@@ -211,4 +281,4 @@ missing_evidence_policy = say_insufficient_evidence
 - Pass 1, Pass 2, and the answer call are three separate Anthropic calls in the browser. Keep them separate so the plan stays inspectable between steps.
 - The UI must display the query plan beside the retrieved results.
 - Field-name discipline: HERB graph uses `facet`, `w_chunk`, `w_facet`, `relevance_to_file`.
-- Prompt-tag grounding against the live `:Tag` vocabulary is implemented via the vector index (see Retrieval scoring). Embedding model id must be identical backend (`sentence-transformers`) and browser (`@xenova/transformers`), enforced by `Tag.embedding_model`.
+- Prompt-tag grounding against the live `:Tag` vocabulary is implemented via the vector index (see Retrieval scoring). Embedding model id must be identical backend (`sentence-transformers`) and browser (`@xenova/transformers`), enforced by `Tag.embedding_model`. The browser model is bundled (`frontend/public/models/Xenova/e5-small-v2/`, full fp32, loaded local-only — no runtime HF fetch); fp32 + identical `passage:` construction give exact backend parity (cosine ≈ 1.0).

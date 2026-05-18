@@ -24,7 +24,16 @@ it is doing. Internal pipeline machinery is never sent as model evidence:
 - implementation labels such as "Chunk kind" or "Chunk reference"
 
 Those values stay in Neo4j, `run.json`, `io.jsonl`, and `analysis.md` for
-traceability. A single irrelevant word in repeated prompt context can become
+traceability.
+
+**Scope of this rule (important).** Non-Contamination governs only what is
+sent to the *tagging model as evidence*. It does **not** mean hard structured
+fields are kept out of the graph as queryable data. They are deliberately
+materialized as indexed `:Chunk` properties by the `materialize` stage so
+retrieval can hard-gate on them *before* tagging — see the `materialize`
+section below and [`graph_schema.md`](graph_schema.md). Keeping field names out
+of the model prompt and exposing them as a query surface are independent
+goals; both hold. A single irrelevant word in repeated prompt context can become
 a repeated semantic feature, so the default is to exclude it unless it is
 actual source evidence.
 
@@ -66,8 +75,20 @@ returned structured data plus `analysis.md`.
 ## Stages
 
 ```text
-select -> extract -> describe -> score -> embed-tags -> analyze
+select -> extract -> describe -> score -> embed-tags -> materialize -> analyze
 ```
+
+`materialize` is deterministic and makes no LLM calls. It has two parts with
+**different dependencies** — do not pretend it is purely pre-tagging:
+
+- **Scalars** (locator-derived) depend only on chunking and could run any time.
+- **`years`** is projected from each chunk's `temporal`-facet tag names, so it
+  depends on `extract`. Running `materialize` after `extract` (shown above)
+  populates both in one pass. If run before `extract`, scalars are written and
+  `years` is simply empty until a later re-run — the stage says so and is safe
+  to repeat.
+
+It processes the whole HERB graph, not the `select` sample.
 
 `extract` is **two-pass internally** — see Stage 1 below. `describe` and
 `score` are single-call per file. `embed-tags` and `analyze` make no LLM API
@@ -372,6 +393,36 @@ ones. The same `(chunk, tag)` pair may have multiple edges — one per
 
 `errors.jsonl` is only created when an API call fails.
 `run.json` holds pilot metadata, the selected chunk IDs, and `stages_done`.
+
+## Stage: Materialize — hard structured fields (no LLM)
+
+`python -m tagging materialize`. Lifts the structured keys the chunker already
+parsed into `locator_json` into typed, indexed `:Chunk` properties, plus a
+best-effort `years` list parsed from the chunk body. This is the user's
+intended design: hard fields exist as a queryable, deterministic gate **before**
+tagging — retrieval filters on them before any tag/embedding work
+([`../frontend/query_interpretation_layer.md`](../frontend/query_interpretation_layer.md)).
+
+- Reads every `:Chunk` under `File.dataset_id = Salesforce__HERB` plus its
+  `temporal`-facet tag names. No sampling, no API.
+- `derive_chunk_fields(locator)` → the locator scalars in the `:Chunk`
+  "Hard fields" table in [`graph_schema.md`](graph_schema.md). Every key is
+  always written (value or `null`); a `null` in `SET c += map` **removes** the
+  property, so a re-run after re-chunking clears fields that no longer apply.
+- `years_from_tag_names(names)` → sorted unique literal 4-digit tokens
+  (`1800–2099`) in the temporal tag names, capped 64, **`None` when empty**
+  (so the property is absent — same sparse rule as every scalar, no empty-list
+  sentinel). No range expansion: `2023_2028` → `[2023, 2028]`.
+- `SET c += row.fields` in 500-row batches.
+- `ensure_hard_field_indexes` creates indexes only for the four gated scalars
+  (`product`, `section`, `channel`, `employee_id`) + `kind` + the
+  `chunk_fulltext` index, and **drops** the obsolete `chunk_parent_ref`/
+  `chunk_chunk_ref`/`chunk_metadata_section`/`chunk_subsection`/
+  `chunk_doc_field` indexes a prior version created but nothing queries.
+  Mirrors [`../../backend/schema/indexes.cypher`](../../backend/schema/indexes.cypher).
+- Idempotent (verified: two consecutive live runs produced identical
+  coverage). Prints per-field coverage and records `materialize` in
+  `run.json` `stages_done`.
 
 ## Stage: Embed-tags — tag grounding bridge (no LLM)
 

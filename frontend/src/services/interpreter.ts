@@ -14,12 +14,29 @@ export interface QueryTag {
   w_query: number;
 }
 
+/**
+ * Hard structured constraints, applied as a deterministic gate BEFORE any
+ * tag/embedding scoring (see retrieval.ts). Values map to materialized
+ * `:Chunk` properties written by `python -m tagging materialize`. Only set
+ * when the user's query explicitly names the constraint; retrieval validates
+ * each value against the live corpus enum and FAILS LOUD on an unknown value
+ * (no silent "ignore the filter and scan everything" fallback).
+ */
+export interface HardGate {
+  product: string | null;
+  section: string | null;
+  channel: string | null;
+  employee_id: string | null;
+  years: number[];
+}
+
 export interface QueryFilters {
   dataset_id: string | null;
   file_ids: string[];
   min_w_chunk: number;
   min_relevance_to_file: number;
   limit: number;
+  gate: HardGate;
 }
 
 /** Per prompt tag, the corpus :Tag names it grounded to (vector kNN). */
@@ -89,9 +106,36 @@ function extractJson(text: string): unknown {
   throw new Error('Unterminated JSON object in model output: ' + text.slice(0, 200));
 }
 
+const EMPTY_GATE: HardGate = {
+  product: null, section: null, channel: null, employee_id: null, years: [],
+};
 const DEFAULT_FILTERS: QueryFilters = {
   dataset_id: null, file_ids: [], min_w_chunk: 0, min_relevance_to_file: 0, limit: 20,
+  gate: EMPTY_GATE,
 };
+
+const GATE_SECTIONS = [
+  'slack', 'documents', 'meeting_transcripts', 'meeting_chats', 'prs',
+  'urls', 'answerable_questions', 'unanswerable_questions', 'product_profile',
+];
+
+/** Normalise the model's loose gate object into a strict HardGate. */
+function parseGate(raw: unknown): HardGate {
+  const g = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+  const str = (v: unknown): string | null =>
+    typeof v === 'string' && v.trim() ? v.trim() : null;
+  const section = str(g.section);
+  const years = Array.isArray(g.years)
+    ? [...new Set(g.years.map(Number).filter(y => Number.isInteger(y) && y >= 1000 && y <= 9999))]
+    : [];
+  return {
+    product: str(g.product),
+    section: section && GATE_SECTIONS.includes(section) ? section : null,
+    channel: str(g.channel),
+    employee_id: str(g.employee_id),
+    years,
+  };
+}
 const DEFAULT_ANSWER_JOB = {
   mode: 'direct_answer',
   evidence_policy: 'retrieved_only',
@@ -108,18 +152,33 @@ export async function interpretPrompt(
   const call = (messages: Parameters<typeof chat>[0], maxTokens: number) =>
     chat(messages, model, openaiKey, anthropicKey, { maxTokens, jsonMode: true });
 
-  // Pass 1 — extract flat tags
+  // Pass 1 — describe the information need first, then derive tags from it.
+  // The description is not incidental: it becomes the prompt-side embedding
+  // context (mirroring corpus chunk descriptions), so it must be a faithful,
+  // self-contained statement of what the user wants to find.
   const p1 = await call([
     {
       role: 'system',
       content:
-        'Extract retrieval handles from a user query. Return ONLY valid JSON: {"description":"...","tags":["tag1","tag2"]}. ' +
-        'Tags are specific noun phrases, entities, or actions. No generic filler words.',
+        'You interpret a user query for graph retrieval. Work in two steps. ' +
+        'STEP 1: write "description" — a concise, self-contained 1–3 sentence statement of the ' +
+        'underlying information need (what the user actually wants to find, including implied entities/scope), ' +
+        'in plain declarative prose, not a restatement of the question. ' +
+        'STEP 2: derive "tags" FROM that description — specific noun phrases, named entities, systems, or actions. ' +
+        'No generic filler words. ' +
+        'STEP 3: extract "gate" — hard structured constraints ONLY when the query explicitly names them, else null/[]. ' +
+        'Fields: product (a "*Force"/"*Genie"-style product name if named), ' +
+        `section (one of: ${GATE_SECTIONS.join(', ')} — map synonyms, e.g. "pull requests"->prs, "chat"->slack), ` +
+        'channel (a Slack channel name if given), employee_id (an "eid_..." id if given), ' +
+        'years (array of 4-digit years explicitly mentioned). ' +
+        'Do NOT guess values that are not in the query. ' +
+        'Return ONLY valid JSON: {"description":"...","tags":["tag1"],"gate":{"product":null,"section":null,"channel":null,"employee_id":null,"years":[]}}.',
     },
-    { role: 'user', content: `Extract retrieval tags from: ${prompt}` },
+    { role: 'user', content: `User query: ${prompt}` },
   ], 512);
 
-  const p1json = extractJson(p1.text) as { description?: string; tags?: string[] };
+  const p1json = extractJson(p1.text) as { description?: string; tags?: string[]; gate?: unknown };
+  const gate = parseGate(p1json.gate);
   const rawTags = (p1json.tags ?? []).map(cleanTag).filter(t => t.length > 1 && !FILLER.has(t));
   const description = p1json.description ?? prompt;
 
@@ -127,7 +186,7 @@ export async function interpretPrompt(
     return {
       description,
       tags: [],
-      filters: { ...DEFAULT_FILTERS, dataset_id: datasetId },
+      filters: { ...DEFAULT_FILTERS, dataset_id: datasetId, gate },
       answer_job: DEFAULT_ANSWER_JOB,
       warnings: ['No tags extracted from prompt — try a more specific query.'],
     };
@@ -160,7 +219,7 @@ export async function interpretPrompt(
   return {
     description,
     tags,
-    filters: { ...DEFAULT_FILTERS, dataset_id: datasetId },
+    filters: { ...DEFAULT_FILTERS, dataset_id: datasetId, gate },
     answer_job: DEFAULT_ANSWER_JOB,
     warnings: [],
   };

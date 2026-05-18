@@ -17,6 +17,15 @@ evidence. Internal IDs, chunk refs, file paths, and chunk-kind names are kept in
 They are not part of the semantic extraction request unless the value itself is
 content evidence.
 
+**This is a tagger-prompt rule, not a graph-modelling rule.** Hard structured
+fields (`product`, `section`, `channel`, `employee_id`, `years`, …) are
+deliberately materialized as indexed, queryable `:Chunk` properties by the
+`materialize` stage so retrieval can hard-gate on them *before* tagging. Keeping
+those values out of the model prompt and exposing them as a query surface are
+independent goals — both hold. See
+[`herb_tagging_schema.md`](herb_tagging_schema.md) (Materialize stage) and
+[`graph_schema.md`](graph_schema.md) (`:Chunk` hard fields).
+
 ## Why
 
 The first HERB tagging pilots (`pilot_001`, `pilot_002`) proved the mechanics of

@@ -19,7 +19,6 @@ from pathlib import Path
 from typing import Any, Literal
 
 from dotenv import load_dotenv
-from anthropic import AsyncAnthropic
 from neo4j import AsyncGraphDatabase
 from pydantic import BaseModel, ValidationError
 
@@ -56,9 +55,11 @@ MULTI_FACET_THRESHOLD = 0.50
 COVERAGE_ALPHA = 0.25
 
 # Tag embedding (grounding bridge between prompt tags and corpus tags).
-# intfloat/e5-* models require the "passage:"/"query:" prefix convention;
-# the corpus side embeds tags as passages, the browser embeds prompt tags
-# as queries with the SAME model so the vectors are comparable.
+# intfloat/e5-* models use the "passage:"/"query:" prefix convention; here
+# BOTH sides use "passage:" — the corpus embeds tags as passages and the
+# browser embeds prompt tags as passages too (name + description prose), with
+# the SAME model, so the vectors are directly comparable. The browser runs the
+# bundled fp32 ONNX port local-only; fp32 on both sides gives exact parity.
 EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL", "intfloat/e5-small-v2")
 EMBEDDING_DIM = int(os.environ.get("EMBEDDING_DIM", "384"))
 EMBED_CONTEXT_CHUNKS = 4   # representative chunk descriptions per tag
@@ -584,6 +585,10 @@ class ClaudeCaller:
     """Anthropic Messages API wrapper using forced tool_use for structured output."""
 
     def __init__(self) -> None:
+        # Lazy import: only the LLM tagging stages need the Anthropic SDK.
+        # Key-free stages (e.g. embed-tags) must not require it to be installed.
+        from anthropic import AsyncAnthropic
+
         self.client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
         self.sem = asyncio.Semaphore(CONCURRENCY)
 
@@ -790,6 +795,186 @@ async def stage_embed_tags() -> None:
             state["stages_done"].append("embed-tags")
         write_run_json(state)
         print(f"embed-tags: embedded {len(payload)} tags with {EMBEDDING_MODEL} (dim={EMBEDDING_DIM})")
+    finally:
+        await driver.close()
+
+
+# ---------- Stage: materialize (hard structured fields) ----------
+#
+# Deterministic, no-LLM. Two parts, different dependencies — stated honestly:
+#
+#  A. Locator scalars (PRE-tagging). Lifts the structured fields the chunker
+#     already parsed into `locator_json` onto :Chunk. Depends only on chunking.
+#  B. `years` (POST-tagging). A denormalised projection of the literal 4-digit
+#     year tokens in this chunk's `temporal`-facet :Tag names, for fast scalar
+#     filtering. Depends on `extract` having written HAS_TAG edges. The tags
+#     remain authoritative and untouched; this is a quick-filter copy.
+#
+# The earlier `years` was a regex over raw `content` — it scraped IDs, ports
+# and prices as "years". Removed. Year info now rides the model-curated
+# temporal tags, which already exist and are embedded.
+#
+# This does NOT violate the Non-Contamination Rule: that rule governs what is
+# sent to the *tagging model* as evidence. Field names are still kept out of
+# the model prompt by `render_chunk_user_message`. Materialising them as
+# queryable graph properties is a separate, independent concern.
+
+# Scalar props written onto :Chunk from locator_json. All materialised; only
+# GATE_INDEXED_FIELDS get an index (they are what retrieval actually filters
+# on — indexing the rest was unused surface and has been removed).
+MATERIALIZE_SCALAR_FIELDS = (
+    "product",
+    "section",
+    "channel",
+    "employee_id",
+    "parent_ref",
+    "chunk_ref",
+    "metadata_section",
+    "subsection",
+    "doc_field",
+    "question",
+)
+MATERIALIZE_INT_FIELDS = ("item_index", "msg_index_start", "msg_index_end", "part_index")
+
+# Only these are gateable in retrieval.ts, so only these are indexed.
+GATE_INDEXED_FIELDS = ("product", "section", "channel", "employee_id")
+# Indexes created by an earlier version that nothing queries — dropped so the
+# index surface matches what is actually used.
+_OBSOLETE_CHUNK_INDEXES = (
+    "chunk_parent_ref", "chunk_chunk_ref", "chunk_metadata_section",
+    "chunk_subsection", "chunk_doc_field",
+)
+
+# 4-digit year token inside a temporal tag name (1800–2099).
+_TAG_YEAR_RE = re.compile(r"(?:18|19|20)\d{2}")
+
+
+def _opt_int(value: Any) -> int | None:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def derive_chunk_fields(locator: dict[str, Any]) -> dict[str, Any]:
+    """Locator-only scalar hard fields (part A — pre-tagging).
+
+    Every key is always present (value or None). A None in a Neo4j
+    `SET c += map` removes that property, so a re-run after re-chunking
+    reliably clears fields that no longer apply.
+    """
+    return {
+        "product": locator.get("product"),
+        "section": locator.get("section"),
+        "channel": locator.get("channel"),
+        "employee_id": locator.get("employee_id"),
+        "parent_ref": locator.get("parent_ref"),
+        "chunk_ref": locator.get("chunk_ref"),
+        # `metadata` in locator marks corpus-level tables (e.g. salesforce_team).
+        "metadata_section": locator.get("metadata"),
+        "subsection": locator.get("subsection"),
+        "doc_field": locator.get("field"),
+        "item_index": _opt_int(locator.get("index")),
+        "msg_index_start": _opt_int(locator.get("index_start")),
+        "msg_index_end": _opt_int(locator.get("index_end")),
+        "part_index": _opt_int(locator.get("part")),
+        "question": locator.get("question"),
+    }
+
+
+def years_from_tag_names(names: list[str]) -> list[int] | None:
+    """Literal 4-digit year tokens in temporal tag names. No range expansion:
+    `2023_2028` -> [2023, 2028], NOT 2023..2028. Returns None when empty so
+    the property is absent (same rule as every scalar — no empty-list sentinel).
+    """
+    years = sorted({int(y) for n in names for y in _TAG_YEAR_RE.findall(n or "")})
+    return years[:64] or None
+
+
+async def ensure_hard_field_indexes(driver) -> None:
+    """Create only the indexes retrieval uses; drop the obsolete ones.
+    Idempotent; fails loud on a real DB error."""
+    async with driver.session(database=NEO4J_DATABASE) as s:
+        for field in GATE_INDEXED_FIELDS:
+            await s.run(
+                f"CREATE INDEX chunk_{field} IF NOT EXISTS FOR (c:Chunk) ON (c.{field})"
+            )
+        await s.run("CREATE INDEX chunk_kind IF NOT EXISTS FOR (c:Chunk) ON (c.kind)")
+        # Lexical recall over the extracted text (the no-tags / literal path).
+        await s.run(
+            """
+            CREATE FULLTEXT INDEX chunk_fulltext IF NOT EXISTS
+            FOR (c:Chunk) ON EACH [c.content, c.description, c.question]
+            """
+        )
+        for name in _OBSOLETE_CHUNK_INDEXES:
+            await s.run(f"DROP INDEX {name} IF EXISTS")
+
+
+async def stage_materialize() -> None:
+    """Write hard structured fields onto :Chunk. No LLM calls. Idempotent.
+
+    Part A (locator scalars) is pre-tagging. Part B (`years`) projects this
+    chunk's temporal-facet tag names and therefore needs `extract` to have
+    run; if no HAS_TAG edges exist yet it simply writes no years and says so.
+    Safe to re-run after re-chunking or re-tagging.
+    """
+    driver = neo4j_driver()
+    try:
+        await ensure_hard_field_indexes(driver)
+        async with driver.session(database=NEO4J_DATABASE) as s:
+            res = await s.run(
+                """
+                MATCH (f:File {dataset_id: $dataset_id})-[:HAS_CHUNK]->(c:Chunk)
+                OPTIONAL MATCH (c)-[r:HAS_TAG {facet: 'temporal'}]->(t:Tag)
+                RETURN c.chunk_id AS chunk_id, c.locator_json AS locator_json,
+                       [n IN collect(t.name) WHERE n IS NOT NULL] AS temporal_tags
+                """,
+                dataset_id=DATASET_ID,
+            )
+            rows = [dict(r) async for r in res]
+
+        payload: list[dict[str, Any]] = []
+        for row in rows:
+            loc = parse_locator_json(row.get("locator_json"))
+            fields = derive_chunk_fields(loc)
+            fields["years"] = years_from_tag_names(row.get("temporal_tags") or [])
+            payload.append({"chunk_id": row["chunk_id"], "fields": fields})
+
+        written = 0
+        async with driver.session(database=NEO4J_DATABASE) as s:
+            for i in range(0, len(payload), 500):
+                batch = payload[i:i + 500]
+                await s.run(
+                    """
+                    UNWIND $rows AS row
+                    MATCH (c:Chunk {chunk_id: row.chunk_id})
+                    SET c += row.fields
+                    """,
+                    rows=batch,
+                )
+                written += len(batch)
+
+        coverage = Counter()
+        year_chunks = 0
+        for p in payload:
+            for k, v in p["fields"].items():
+                if k == "years":
+                    if v:
+                        year_chunks += 1
+                elif v not in (None, ""):
+                    coverage[k] += 1
+        print(f"materialize: wrote hard fields for {written} chunks")
+        for k in (*MATERIALIZE_SCALAR_FIELDS, *MATERIALIZE_INT_FIELDS):
+            tag = " [indexed]" if k in GATE_INDEXED_FIELDS else ""
+            print(f"  {k}: {coverage.get(k, 0)}/{written}{tag}")
+        print(f"  years (from temporal tags): {year_chunks}/{written}")
+
+        state = read_run_json()
+        state.setdefault("stages_done", [])
+        if "materialize" not in state["stages_done"]:
+            state["stages_done"].append("materialize")
+        write_run_json(state)
     finally:
         await driver.close()
 

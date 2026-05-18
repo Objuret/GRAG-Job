@@ -1,11 +1,84 @@
 import neo4j from 'neo4j-driver';
 import type { FacetDimension } from '../types';
 import type { Neo4jConfig } from './neo4j';
-import type { QueryPlan, QueryTag } from './interpreter';
+import type { HardGate, QueryPlan, QueryTag } from './interpreter';
 import { intVal, withSession } from './neo4j';
 import { embedPromptTags } from './embeddings';
 
 const TAG_VECTOR_INDEX = 'tag_embedding';
+const CHUNK_FULLTEXT_INDEX = 'chunk_fulltext';
+
+type Session = Parameters<Parameters<typeof withSession>[1]>[0];
+
+/**
+ * Build the deterministic hard-gate WHERE fragment + params from the plan's
+ * structured constraints. Materialized by `python -m tagging materialize`.
+ * The fragment is ANDed onto `c` (the :Chunk) and runs BEFORE any tag or
+ * embedding work. Empty when no constraint is set.
+ */
+function buildGate(gate: HardGate): { clause: string; params: Record<string, unknown>; active: boolean } {
+  const parts: string[] = [];
+  const params: Record<string, unknown> = {};
+  for (const f of ['product', 'section', 'channel', 'employee_id'] as const) {
+    const v = gate[f];
+    if (v) { parts.push(`AND c.${f} = $g_${f}`); params[`g_${f}`] = v; }
+  }
+  if (gate.years.length) {
+    params.g_years = gate.years.map(y => neo4j.int(y));
+    parts.push('AND any(y IN $g_years WHERE y IN c.years)');
+  }
+  return { clause: parts.join('\n  '), params, active: parts.length > 0 };
+}
+
+/**
+ * Validate every set gate value against the live corpus. A constraint that
+ * matches zero chunks is a hard error, not a silent "scan everything"
+ * fallback — the user asked for something the corpus does not contain and
+ * must be told, with the valid values where the set is enumerable.
+ */
+async function validateGate(session: Session, gate: HardGate, datasetId: string | null): Promise<void> {
+  const ds = '($datasetId IS NULL OR f.dataset_id = $datasetId)';
+  for (const f of ['product', 'section', 'channel', 'employee_id'] as const) {
+    const v = gate[f];
+    if (!v) continue;
+    const res = await session.run(
+      `MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk) WHERE ${ds} AND c.${f} = $v RETURN count(c) AS n`,
+      { v, datasetId },
+    );
+    if ((intVal(res.records[0]?.get('n')) ?? 0) === 0) {
+      const enumRes = await session.run(
+        `MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk) WHERE ${ds} AND c.${f} IS NOT NULL
+         RETURN DISTINCT c.${f} AS v ORDER BY v LIMIT 60`,
+        { datasetId },
+      );
+      const valid = enumRes.records.map(r => r.get('v') as string);
+      throw new Error(
+        `Hard-gate filter ${f}="${v}" matches no chunks in the corpus. ` +
+        `Valid ${f} values: ${valid.length ? valid.join(', ') : '(none materialized — run \`python -m tagging materialize\`)'}.`,
+      );
+    }
+  }
+  if (gate.years.length) {
+    const res = await session.run(
+      `MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk)
+       WHERE ${ds} AND any(y IN $ys WHERE y IN c.years) RETURN count(c) AS n`,
+      { ys: gate.years.map(y => neo4j.int(y)), datasetId },
+    );
+    if ((intVal(res.records[0]?.get('n')) ?? 0) === 0) {
+      const rng = await session.run(
+        `MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk) WHERE ${ds} AND c.years IS NOT NULL
+         UNWIND c.years AS y RETURN min(y) AS lo, max(y) AS hi`,
+        { datasetId },
+      );
+      const lo = intVal(rng.records[0]?.get('lo'));
+      const hi = intVal(rng.records[0]?.get('hi'));
+      throw new Error(
+        `Hard-gate years=[${gate.years.join(', ')}] match no chunk text in the corpus` +
+        (lo != null ? ` (corpus year range ${lo}–${hi}).` : '.'),
+      );
+    }
+  }
+}
 
 /** One prompt tag → the corpus :Tag names it grounded to, with cosine sim. */
 export interface GroundedTag {
@@ -34,17 +107,16 @@ export interface RetrievalOptions {
   datasetId?: string | null;
   strategy?: string;
   /** Tag-grounding knobs (the interpreter "effort" control). */
-  groundTags?: boolean;     // default true; false → legacy exact-name match
   groundingK?: number;      // nearest corpus tags per prompt tag (default 10)
   minSim?: number;          // drop matches below this cosine sim (default 0.78)
 }
 
 // Weighted overlap, with the grounding similarity folded in:
 // score = Σ qt.w_query * qt.facets[edge.facet] * edge.w_chunk * edge.w_facet
-//           * coalesce(chunk.relevance_to_file, 1) * coalesce(qt.sim, 1)
-// Query tags are grounded corpus :Tag names (qt.name); an exact-name fallback
-// passes sim = 1.0 so the same Cypher serves both paths.
-const SCORE_CYPHER = `
+//           * coalesce(chunk.relevance_to_file, 1) * qt.sim
+// Query tags are always grounded corpus :Tag names (qt.name) with a real
+// cosine sim. There is no exact-name path.
+const scoreCypher = (gate: string) => `
 UNWIND $queryTags AS qt
 MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk)
 MATCH (c)-[r:HAS_TAG]->(t:Tag {name: qt.name})
@@ -54,6 +126,7 @@ WHERE coalesce(c.empty, false) = false
   AND r.facet IN $activeFacets
   AND coalesce(r.w_chunk, 0.0) >= $minWChunk
   AND coalesce(c.relevance_to_file, 1.0) >= $minRelevanceToFile
+  ${gate}
 WITH c, r, qt,
      CASE r.facet
        WHEN 'topic'    THEN qt.topic
@@ -66,7 +139,7 @@ WITH c, r, qt,
 WITH c,
      sum(qt.w_query * facetScore * r.w_chunk * r.w_facet
          * coalesce(c.relevance_to_file, 1.0)
-         * coalesce(qt.sim, 1.0)) AS score
+         * qt.sim) AS score
 WHERE score > 0
 RETURN c.chunk_id   AS chunkId,
        c.file_id    AS fileId,
@@ -78,11 +151,12 @@ ORDER BY score DESC
 LIMIT $limit
 `;
 
-const BASELINE_CYPHER = `
+const baselineCypher = (gate: string) => `
 MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk)
 WHERE coalesce(c.empty, false) = false
   AND c.relevance_to_file IS NOT NULL
   AND ($datasetId IS NULL OR f.dataset_id = $datasetId)
+  ${gate}
 RETURN c.chunk_id   AS chunkId,
        c.file_id    AS fileId,
        c.content    AS content,
@@ -90,6 +164,26 @@ RETURN c.chunk_id   AS chunkId,
        c.relevance_to_file AS relevanceToFile,
        c.relevance_to_file AS score
 ORDER BY c.relevance_to_file DESC
+LIMIT $limit
+`;
+
+// Lexical recall over the actual extracted text via the chunk_fulltext index,
+// hard-gated by the same structured constraints. This is the literal-search
+// path: the chunk is reachable by a term in its body even if no matching tag
+// was ever minted (the original gap). Score = normalized Lucene score.
+const lexicalCypher = (gate: string) => `
+CALL db.index.fulltext.queryNodes($idx, $q) YIELD node AS c, score AS lex
+MATCH (f:File)-[:HAS_CHUNK]->(c)
+WHERE coalesce(c.empty, false) = false
+  AND ($datasetId IS NULL OR f.dataset_id = $datasetId)
+  ${gate}
+RETURN c.chunk_id   AS chunkId,
+       c.file_id    AS fileId,
+       c.content    AS content,
+       c.description AS description,
+       c.relevance_to_file AS relevanceToFile,
+       round(lex, 4) AS score
+ORDER BY lex DESC
 LIMIT $limit
 `;
 
@@ -105,8 +199,8 @@ function rowToChunk(rec: Record<string, unknown>): RetrievedChunk {
 }
 
 interface ScoreTagParam {
-  name: string;          // corpus :Tag name to match
-  sim: number;           // grounding confidence (1.0 for exact-name)
+  name: string;          // grounded corpus :Tag name
+  sim: number;           // grounding cosine similarity
   w_query: number;
   topic: number; entities: number; activity: number; temporal: number; evidence: number;
 }
@@ -122,13 +216,9 @@ function facetCols(qt: QueryTag) {
   };
 }
 
-/** Legacy path: exact cleaned-name match, sim fixed at 1.0. */
-function toExactParams(tags: QueryTag[]): ScoreTagParam[] {
-  return tags.map(qt => ({ name: qt.t, sim: 1.0, ...facetCols(qt) }));
-}
-
 /**
- * Grounding: embed each prompt tag (e5 `query:`) and kNN against the
+ * Grounding: embed each prompt tag (e5 `passage:`, symmetric with the corpus
+ * side — see embeddings.ts) and kNN against the
  * `tag_embedding` index to expand it onto real corpus :Tag names. Each
  * grounded name inherits the prompt tag's facet vector + w_query and carries
  * the cosine sim, which the scorer folds into the weight.
@@ -139,7 +229,7 @@ async function groundQueryTags(
   k: number,
   minSim: number,
 ): Promise<{ params: ScoreTagParam[]; grounding: GroundedTag[] }> {
-  const vectors = await embedPromptTags(plan.tags.map(t => t.t));
+  const vectors = await embedPromptTags(plan.tags.map(t => t.t), plan.description);
   const params: ScoreTagParam[] = [];
   const grounding: GroundedTag[] = [];
 
@@ -179,55 +269,112 @@ function activeFacets(options?: RetrievalOptions): FacetDimension[] {
   return options.activeFacets.filter((f): f is FacetDimension => ALL_FACETS.includes(f as FacetDimension));
 }
 
+const EMPTY_GATE: HardGate = {
+  product: null, section: null, channel: null, employee_id: null, years: [],
+};
+
+function gateOf(plan: QueryPlan): HardGate {
+  return plan.filters?.gate ?? EMPTY_GATE;
+}
+
+function rowsToChunks(records: { keys: PropertyKey[]; get: (k: string) => unknown }[]): RetrievedChunk[] {
+  return records.map(rec => {
+    const obj: Record<string, unknown> = {};
+    for (const key of rec.keys) obj[key as string] = rec.get(key as string);
+    return rowToChunk(obj);
+  });
+}
+
+// Lucene query for the gated lexical path: the prompt's own tags plus any
+// explicit year literals. Special chars are stripped so user text can't break
+// the parser. Years are the key term for temporal/literal queries.
+function buildLexQuery(plan: QueryPlan): string {
+  const terms = [
+    ...plan.tags.map(t => t.t),
+    ...gateOf(plan).years.map(String),
+  ]
+    .map(s => s.replace(/[+\-&|!(){}[\]^"~*?:\\/]/g, ' ').trim())
+    .filter(Boolean);
+  return [...new Set(terms)].join(' ') || plan.description.replace(/[+\-&|!(){}[\]^"~*?:\\/]/g, ' ').trim();
+}
+
+async function runLexical(
+  session: Session, plan: QueryPlan, gateClause: string, gateParams: Record<string, unknown>,
+  limit: number, datasetId: string | null,
+): Promise<RetrievedChunk[]> {
+  const q = buildLexQuery(plan);
+  if (!q) return [];
+  const res = await session.run(lexicalCypher(gateClause), {
+    idx: CHUNK_FULLTEXT_INDEX, q, limit: neo4j.int(limit), datasetId, ...gateParams,
+  });
+  return rowsToChunks(res.records);
+}
+
 export async function retrieveChunks(plan: QueryPlan, cfg: Neo4jConfig, options: RetrievalOptions = {}): Promise<RetrievedChunk[]> {
   const limit = retrievalLimit(plan, options);
   const datasetId = retrievalDataset(plan, options);
   const facets = activeFacets(options);
-  if (options.strategy === 'relevance') return retrieveBaseline(limit, cfg, datasetId);
-  if (options.tagsEnabled === false) return retrieveBaseline(limit, cfg, datasetId);
-  if (!plan.tags.length || !facets.length) return [];
-  const ground = options.groundTags !== false;
-  const k = Math.max(1, Number(options.groundingK ?? 10));
-  const minSim = Number(options.minSim ?? 0.78);
+  const gate = gateOf(plan);
+  const { clause, params: gateParams, active: gated } = buildGate(gate);
+
   return withSession(cfg, async (session) => {
-    let queryTags: ScoreTagParam[];
-    if (ground) {
-      try {
-        const g = await groundQueryTags(plan, session, k, minSim);
-        plan.grounding = g.grounding;
-        // Fall back to exact-name if grounding produced no usable matches
-        // (e.g. embeddings not yet written) so retrieval still functions.
-        queryTags = g.params.length ? g.params : toExactParams(plan.tags);
-      } catch {
-        queryTags = toExactParams(plan.tags);
-      }
-    } else {
-      queryTags = toExactParams(plan.tags);
+    // Hard gate is validated up-front: an unknown constraint value is a loud
+    // error, never a silent "ignore it and scan everything".
+    if (gated) await validateGate(session, gate, datasetId);
+
+    if (options.strategy === 'relevance' || options.tagsEnabled === false) {
+      return retrieveBaseline(limit, cfg, datasetId, gate);
     }
-    const result = await session.run(SCORE_CYPHER, {
-      queryTags,
+
+    const haveTags = plan.tags.length > 0 && facets.length > 0;
+
+    // No usable tags but a hard constraint exists → the structured query is
+    // still answerable via the gated lexical path. This is the intended
+    // structured route, not a degradation; surface it as a warning so it is
+    // never silent.
+    if (!haveTags) {
+      if (!gated) return [];
+      plan.warnings.push('No tags from prompt — answered via the hard-gate + full-text path only.');
+      return runLexical(session, plan, clause, gateParams, limit, datasetId);
+    }
+
+    const k = Math.max(1, Number(options.groundingK ?? 10));
+    const minSim = Number(options.minSim ?? 0.78);
+    const g = await groundQueryTags(plan, session, k, minSim);
+    plan.grounding = g.grounding;
+    if (!g.params.length) {
+      throw new Error(
+        `Prompt-tag grounding produced no corpus matches (k=${k}, minSim=${minSim.toFixed(2)}). ` +
+        `Either the prompt is off-corpus, the similarity floor is too high, or :Tag embeddings ` +
+        `are missing — run \`python -m tagging embed-tags\` against the herb database.`,
+      );
+    }
+    const result = await session.run(scoreCypher(clause), {
+      queryTags: g.params,
       activeFacets: facets,
       minWChunk: Number(options.minWChunk ?? plan.filters.min_w_chunk ?? 0),
       minRelevanceToFile: Number(options.minRelevanceToFile ?? plan.filters.min_relevance_to_file ?? 0),
       limit: neo4j.int(limit),
       datasetId,
       runId: DONE_GRAPH_RUN_ID,
+      ...gateParams,
     });
-    return result.records.map(rec => {
-      const obj: Record<string, unknown> = {};
-      for (const key of rec.keys) obj[key as string] = rec.get(key as string);
-      return rowToChunk(obj);
-    });
+    // The year constraint is enforced by the hard gate (c.years, projected
+    // from the model-curated temporal tags) — no full-text union here. The
+    // earlier union existed to compensate for the regex-scraped years and is
+    // gone with it; lexical full-text remains only for the no-tags path above.
+    return rowsToChunks(result.records);
   });
 }
 
-export async function retrieveBaseline(limit: number, cfg: Neo4jConfig, datasetId: string | null = null): Promise<RetrievedChunk[]> {
+export async function retrieveBaseline(
+  limit: number, cfg: Neo4jConfig, datasetId: string | null = null, gate: HardGate = EMPTY_GATE,
+): Promise<RetrievedChunk[]> {
+  const { clause, params: gateParams } = buildGate(gate);
   return withSession(cfg, async (session) => {
-    const result = await session.run(BASELINE_CYPHER, { limit: neo4j.int(limit), datasetId });
-    return result.records.map(rec => {
-      const obj: Record<string, unknown> = {};
-      for (const key of rec.keys) obj[key as string] = rec.get(key as string);
-      return rowToChunk(obj);
+    const result = await session.run(baselineCypher(clause), {
+      limit: neo4j.int(limit), datasetId, ...gateParams,
     });
+    return rowsToChunks(result.records);
   });
 }

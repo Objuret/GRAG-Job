@@ -32,6 +32,7 @@ Bridge heterogeneous, noisy datasets with a queryable graph artefact. Every payl
 - **Frontend is local-only and browser-direct.** Neo4j and Anthropic are reached directly from the browser. Credentials in the local bundle are acceptable because the app is not deployed publicly.
 - **HERB field-name discipline.** HERB retrieval uses `facet`, `w_chunk`, `w_facet`, `relevance_to_file`. Legacy `cluster`, `canonical_id`, `weight_local`, `weight_global` belong only to the old generic-tagger path.
 - **Secrets are gitignored and unloggable.** `.env` is never committed and never echoed into output, logs, or graph properties.
+- **Docs track reality, in the same change.** Any change that creates, removes, or redefines something updates the docs that describe it as part of that change — not as a follow-up. `docs/**/status.md` must reflect what actually works now; plan docs (`docs/frontend/plans.md`) mark shipped/changed scope; concept docs (e.g. `docs/frontend/query_interpretation_layer.md`, `docs/graph_schema.md`) and this brief follow any renamed or redefined concept. A doc that contradicts the code is a defect. If a change makes a doc stale and you cannot fix it in the same pass, say so explicitly rather than leaving it silently wrong.
 
 ## High-level architecture
 
@@ -84,7 +85,9 @@ cp .env.example .env                                      # NEO4J_PASSWORD, ANTH
 
 python scripts/bootstrap_schema.py                        # idempotent
 python scripts/run_preflight.py --dataset-id Salesforce__HERB   # idempotent
+python -m tagging materialize                             # hard structured fields + full-text index, BEFORE tagging (no LLM, idempotent)
 python -m tagging extract                                 # HERB Anthropic pilot (current path)
+python -m tagging embed-tags                              # :Tag embeddings; prerequisite for frontend grounding (no fallback)
 python scripts/verify_graph.py                            # read-only counts
 ```
 

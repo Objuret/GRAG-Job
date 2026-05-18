@@ -620,7 +620,6 @@ function WorkbenchApp() {
     facets: DEFAULT_FACET_STATE,
     promptMode: 'context',
     interpreterModel: '',          // '' → use connConfig.model
-    interpreterStrategy: 'embedding_match',  // tag_extraction | embedding_match | hybrid
     groundingK: 10,                // nearest corpus tags per prompt tag
     minSim: 0.78,                  // drop grounding matches below this cosine
     tagsEnabled: true,
@@ -865,7 +864,6 @@ function WorkbenchApp() {
         limit,
         datasetId,
         strategy: config.retrievalStrategy,
-        groundTags: config.interpreterStrategy !== 'tag_extraction',
         groundingK: Number(config.groundingK) || 10,
         minSim: Number(config.minSim) || 0,
       };
@@ -1975,15 +1973,6 @@ function ConfigForm({ kind, config, setConfig, datasetOptions, datasetLoadState,
             <option>claude-opus-4-6</option>
             <option>gpt-4o-mini</option>
             <option>gpt-4o</option>
-          </select>
-        </div>
-        <div className="field">
-          <label className="field-label">Strategy<span className="hint">how prompt tags map to graph tags</span></label>
-          <select className="field-select" value={config.interpreterStrategy}
-                  onChange={(e) => set({ interpreterStrategy: e.target.value })}>
-            <option value="tag_extraction">Exact tag name match (legacy)</option>
-            <option value="embedding_match">Embedding similarity to graph tags</option>
-            <option value="hybrid">Hybrid (embedding, exact = sim 1.0)</option>
           </select>
         </div>
         <div className="field">
