@@ -22,6 +22,12 @@ export interface QueryFilters {
   limit: number;
 }
 
+/** Per prompt tag, the corpus :Tag names it grounded to (vector kNN). */
+export interface PlanGrounding {
+  promptTag: string;
+  matches: { name: string; sim: number }[];
+}
+
 export interface QueryPlan {
   description: string;
   tags: QueryTag[];
@@ -32,6 +38,8 @@ export interface QueryPlan {
     missing_evidence_policy: string;
   };
   warnings: string[];
+  /** Set by retrieval's grounding step; shown beside results in the UI. */
+  grounding?: PlanGrounding[];
 }
 
 const FILLER = new Set(['data', 'information', 'content', 'record', 'text', 'chunk', 'item', 'find']);

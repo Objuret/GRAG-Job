@@ -156,7 +156,19 @@ The interpreter returns one complete, inspectable object. The UI must display it
 
 ## Retrieval scoring
 
-Deterministic weighted overlap, executed in Cypher directly from the browser:
+Two steps, both executed from the browser:
+
+**1. Grounding (vector kNN).** Each prompt tag is embedded with
+`intfloat/e5-small-v2` via `@xenova/transformers` (e5 `query:` prefix) — the
+same model the backend `embed-tags` stage used to embed every `:Tag`
+(`passage:` prefix). `db.index.vector.queryNodes('tag_embedding', k, vec)`
+returns the nearest real corpus tag names with cosine `sim`. This replaces
+exact cleaned-name equality, which only ever matched coincidental identical
+strings. `k` (grounding depth) and `min_sim` are user controls on the
+Interpreter node ("effort"). Exact-name and the legacy path are equivalent to
+`sim = 1.0`.
+
+**2. Deterministic weighted overlap**, in Cypher, over the grounded tags:
 
 ```text
 score += query_tag.w_query
@@ -164,9 +176,16 @@ score += query_tag.w_query
        * chunk_edge.w_chunk
        * chunk_edge.w_facet
        * coalesce(chunk.relevance_to_file, 1.0)
+       * coalesce(grounding_sim, 1.0)
 ```
 
-Only compare a prompt tag to a chunk edge when the cleaned tag names match (a later tag-expansion step may explicitly link related tags).
+A grounded corpus tag inherits its prompt tag's facet vector and `w_query`;
+the grounding `sim` is folded into the weight so weak matches contribute
+less. If the `tag_embedding` index is absent the code falls back to
+exact-name match (`sim = 1.0`) so retrieval still functions.
+
+The full grounding map (prompt tag → matched corpus tags + sims) is attached
+to the plan as `grounding` and shown beside the results.
 
 HERB has many tags per chunk, so retrieval starts with conservative limits and visible thresholds. Broad prompts should return a plan the user can inspect before running a large search.
 
@@ -192,4 +211,4 @@ missing_evidence_policy = say_insufficient_evidence
 - Pass 1, Pass 2, and the answer call are three separate Anthropic calls in the browser. Keep them separate so the plan stays inspectable between steps.
 - The UI must display the query plan beside the retrieved results.
 - Field-name discipline: HERB graph uses `facet`, `w_chunk`, `w_facet`, `relevance_to_file`.
-- Tag lookup/autocomplete against the live `:Tag` vocabulary is a useful next step — the model's prompt tags will often need grounding against real corpus tag names.
+- Prompt-tag grounding against the live `:Tag` vocabulary is implemented via the vector index (see Retrieval scoring). Embedding model id must be identical backend (`sentence-transformers`) and browser (`@xenova/transformers`), enforced by `Tag.embedding_model`.

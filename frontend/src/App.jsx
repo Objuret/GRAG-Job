@@ -618,6 +618,11 @@ function WorkbenchApp() {
   const [config, setConfig]     = useState({
     dataset: DATASETS[0]?.id || 'Salesforce__HERB',
     facets: DEFAULT_FACET_STATE,
+    promptMode: 'context',
+    interpreterModel: '',          // '' → use connConfig.model
+    interpreterStrategy: 'embedding_match',  // tag_extraction | embedding_match | hybrid
+    groundingK: 10,                // nearest corpus tags per prompt tag
+    minSim: 0.78,                  // drop grounding matches below this cosine
     tagsEnabled: true,
     retrievalStrategy: 'weighted',
     weightThreshold: 0.0,
@@ -860,6 +865,9 @@ function WorkbenchApp() {
         limit,
         datasetId,
         strategy: config.retrievalStrategy,
+        groundTags: config.interpreterStrategy !== 'tag_extraction',
+        groundingK: Number(config.groundingK) || 10,
+        minSim: Number(config.minSim) || 0,
       };
       const neo4jCfg = {
         uri: connConfig.neo4jUri,
@@ -867,15 +875,16 @@ function WorkbenchApp() {
         password: connConfig.neo4jPassword,
         database: DONE_GRAPH_DATABASE,
       };
-      const plan = await interpretPrompt(prompt, connConfig.model, connConfig.openaiApiKey, connConfig.anthropicApiKey, datasetId);
+      const interpModel = config.interpreterModel || connConfig.model;
+      const plan = await interpretPrompt(prompt, interpModel, connConfig.openaiApiKey, connConfig.anthropicApiKey, datasetId);
       const scopedPlan = { ...plan, filters: { ...plan.filters, dataset_id: datasetId, limit } };
       const [chunks, bChunks] = await Promise.all([
         retrieveChunks(scopedPlan, neo4jCfg, retrievalOptions),
         retrieveBaseline(limit, neo4jCfg, datasetId),
       ]);
       const [ansA, ansB] = await Promise.all([
-        generateAnswer(prompt, scopedPlan, chunks, connConfig.model, connConfig.openaiApiKey, connConfig.anthropicApiKey),
-        generateAnswer(prompt, scopedPlan, bChunks, connConfig.model, connConfig.openaiApiKey, connConfig.anthropicApiKey),
+        generateAnswer(prompt, scopedPlan, chunks, connConfig.model, connConfig.openaiApiKey, connConfig.anthropicApiKey, config.promptMode),
+        generateAnswer(prompt, scopedPlan, bChunks, connConfig.model, connConfig.openaiApiKey, connConfig.anthropicApiKey, config.promptMode),
       ]);
       const activeFacetSet = new Set(retrievalOptions.activeFacets);
       const topFacets = [...new Set(
@@ -1830,8 +1839,9 @@ function ConfigForm({ kind, config, setConfig, datasetOptions, datasetLoadState,
           <textarea className="field-textarea" value={prompt} onChange={(e) => setPrompt(e.target.value)}/>
         </div>
         <div className="field">
-          <label className="field-label">Mode<span className="hint">how the prompt is built</span></label>
-          <select className="field-select" defaultValue="context">
+          <label className="field-label">Mode<span className="hint">how the prompt is passed to the LLM</span></label>
+          <select className="field-select" value={config.promptMode}
+                  onChange={(e) => set({ promptMode: e.target.value })}>
             <option value="context">Build prompt context (api-mode)</option>
             <option value="raw">Raw prompt only</option>
             <option value="hybrid">Hybrid: context + system</option>
@@ -1957,7 +1967,9 @@ function ConfigForm({ kind, config, setConfig, datasetOptions, datasetLoadState,
       <>
         <div className="field">
           <label className="field-label">Interpreter model<span className="hint">analyses the prompt</span></label>
-          <select className="field-select" defaultValue="claude-haiku-4-5">
+          <select className="field-select" value={config.interpreterModel || '__default'}
+                  onChange={(e) => set({ interpreterModel: e.target.value === '__default' ? '' : e.target.value })}>
+            <option value="__default">Default (connection model)</option>
             <option>claude-haiku-4-5</option>
             <option>claude-sonnet-4-5</option>
             <option>claude-opus-4-6</option>
@@ -1966,12 +1978,25 @@ function ConfigForm({ kind, config, setConfig, datasetOptions, datasetLoadState,
           </select>
         </div>
         <div className="field">
-          <label className="field-label">Strategy<span className="hint">how to map prompt to graph terms</span></label>
-          <select className="field-select" defaultValue="tag_extraction">
-            <option value="tag_extraction">Extract tags from prompt</option>
+          <label className="field-label">Strategy<span className="hint">how prompt tags map to graph tags</span></label>
+          <select className="field-select" value={config.interpreterStrategy}
+                  onChange={(e) => set({ interpreterStrategy: e.target.value })}>
+            <option value="tag_extraction">Exact tag name match (legacy)</option>
             <option value="embedding_match">Embedding similarity to graph tags</option>
-            <option value="hybrid">Hybrid (tags + embedding)</option>
+            <option value="hybrid">Hybrid (embedding, exact = sim 1.0)</option>
           </select>
+        </div>
+        <div className="field">
+          <label className="field-label">Grounding depth (k)<span className="hint">nearest corpus tags / prompt tag</span></label>
+          <input className="field-input" type="number" min="1" max="50"
+                 value={config.groundingK}
+                 onChange={(e) => set({ groundingK: Math.max(1, +e.target.value || 1) })}/>
+        </div>
+        <div className="field">
+          <label className="field-label">Min similarity<span className="hint">{Number(config.minSim).toFixed(2)}</span></label>
+          <input className="field-input" type="range" min="0" max="1" step="0.01"
+                 value={config.minSim}
+                 onChange={(e) => set({ minSim: +e.target.value })}/>
         </div>
       </>
     );
@@ -2257,6 +2282,21 @@ function ResultPane({ label, tone, data, view }) {
                 <span key={t.t} className="tag-pill" style={{fontSize:9.5,marginRight:2}}>{t.t} {t.w_query.toFixed(2)}</span>
               ))}
               {data.plan.tags.length > 5 && <span style={{color:'var(--text-dim)'}}> +{data.plan.tags.length-5} more</span>}
+            </div>
+          )}
+          {data.plan?.grounding?.length > 0 && (
+            <div style={{fontSize:10,color:'var(--text-dim)',fontFamily:'var(--font-mono)',marginBottom:6,padding:'4px 6px',background:'var(--bg-card)',borderRadius:4}}>
+              <strong style={{color:'var(--text-muted)'}}>Grounding:</strong>
+              {data.plan.grounding.map(g => (
+                <div key={g.promptTag} style={{marginTop:2}}>
+                  {g.promptTag} →{' '}
+                  {g.matches.length
+                    ? g.matches.slice(0,4).map(m => (
+                        <span key={m.name} className="tag-pill" style={{fontSize:9.5,marginRight:2}}>{m.name} {m.sim.toFixed(2)}</span>
+                      ))
+                    : <span style={{color:'var(--err)'}}>no match</span>}
+                </div>
+              ))}
             </div>
           )}
           <div className="bottom-pane-resp">{data.response}</div>

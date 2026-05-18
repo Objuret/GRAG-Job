@@ -55,6 +55,15 @@ FILLER = {"data", "information", "content", "record", "text", "chunk", "item"}
 MULTI_FACET_THRESHOLD = 0.50
 COVERAGE_ALPHA = 0.25
 
+# Tag embedding (grounding bridge between prompt tags and corpus tags).
+# intfloat/e5-* models require the "passage:"/"query:" prefix convention;
+# the corpus side embeds tags as passages, the browser embeds prompt tags
+# as queries with the SAME model so the vectors are comparable.
+EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL", "intfloat/e5-small-v2")
+EMBEDDING_DIM = int(os.environ.get("EMBEDDING_DIM", "384"))
+EMBED_CONTEXT_CHUNKS = 4   # representative chunk descriptions per tag
+EMBED_BATCH = 64
+
 
 def compute_w_chunk(facets: dict[str, float]) -> float:
     """w_chunk = strength * coverage_bonus
@@ -687,6 +696,102 @@ def neo4j_driver():
 async def ensure_tag_uniqueness(driver) -> None:
     async with driver.session(database=NEO4J_DATABASE) as s:
         await s.run("CREATE CONSTRAINT tag_name_unique IF NOT EXISTS FOR (t:Tag) REQUIRE t.name IS UNIQUE")
+
+
+# ---------- Stage: embed-tags ----------
+
+def _readable_tag(name: str) -> str:
+    return name.replace("_", " ").strip()
+
+
+def _tag_embed_text(name: str, descriptions: list[str]) -> str:
+    """e5 passage input: the tag plus the real chunk-context it occurs in.
+
+    The bare snake_case name carries little signal; grounding quality comes
+    from the contexts the tag actually appears in across the corpus.
+    """
+    readable = _readable_tag(name)
+    ctx = " ".join(d.strip().replace("\n", " ") for d in descriptions if d)[:900]
+    body = f"{readable}. {ctx}" if ctx else readable
+    return f"passage: {body}"
+
+
+async def stage_embed_tags() -> None:
+    """Embed every :Tag from its name + representative chunk descriptions and
+    write `t.embedding` (+ `t.embedding_model`). Creates the vector index.
+
+    No LLM calls. Uses the local sentence-transformers model named by
+    `EMBEDDING_MODEL` so it is reproducible and key-free, and matches the
+    in-browser model the workbench uses for prompt-tag grounding.
+    """
+    driver = neo4j_driver()
+    try:
+        await ensure_tag_uniqueness(driver)
+        async with driver.session(database=NEO4J_DATABASE) as s:
+            await s.run(
+                f"""
+                CREATE VECTOR INDEX tag_embedding IF NOT EXISTS
+                FOR (t:Tag) ON (t.embedding)
+                OPTIONS {{ indexConfig: {{
+                  `vector.dimensions`: {EMBEDDING_DIM},
+                  `vector.similarity_function`: 'cosine'
+                }} }}
+                """
+            )
+            result = await s.run(
+                """
+                MATCH (c:Chunk)-[r:HAS_TAG]->(t:Tag)
+                WITH t, c, r ORDER BY r.w_chunk DESC
+                WITH t.name AS name,
+                     [d IN collect(DISTINCT c.description) WHERE d IS NOT NULL]
+                       [0..$ctx] AS descriptions
+                RETURN name, descriptions
+                ORDER BY name
+                """,
+                ctx=EMBED_CONTEXT_CHUNKS,
+            )
+            rows = [dict(r) async for r in result]
+
+        if not rows:
+            print("embed-tags: no tags found — run extract first")
+            return
+
+        # Lazy import so the dependency is only needed for this stage.
+        from sentence_transformers import SentenceTransformer
+
+        model = SentenceTransformer(EMBEDDING_MODEL)
+        texts = [_tag_embed_text(row["name"], row["descriptions"]) for row in rows]
+        vectors = model.encode(
+            texts,
+            batch_size=EMBED_BATCH,
+            normalize_embeddings=True,
+            show_progress_bar=True,
+        )
+
+        payload = [
+            {"name": row["name"], "vec": [float(x) for x in vec]}
+            for row, vec in zip(rows, vectors)
+        ]
+        async with driver.session(database=NEO4J_DATABASE) as s:
+            for i in range(0, len(payload), 500):
+                await s.run(
+                    """
+                    UNWIND $rows AS row
+                    MATCH (t:Tag {name: row.name})
+                    SET t.embedding = row.vec,
+                        t.embedding_model = $model
+                    """,
+                    rows=payload[i:i + 500], model=EMBEDDING_MODEL,
+                )
+
+        state = read_run_json()
+        state.setdefault("stages_done", [])
+        if "embed-tags" not in state["stages_done"]:
+            state["stages_done"].append("embed-tags")
+        write_run_json(state)
+        print(f"embed-tags: embedded {len(payload)} tags with {EMBEDDING_MODEL} (dim={EMBEDDING_DIM})")
+    finally:
+        await driver.close()
 
 
 # ---------- Stage: verify_chunks ----------

@@ -66,11 +66,13 @@ returned structured data plus `analysis.md`.
 ## Stages
 
 ```text
-select -> extract -> describe -> score -> analyze
+select -> extract -> describe -> score -> embed-tags -> analyze
 ```
 
 `extract` is **two-pass internally** — see Stage 1 below. `describe` and
-`score` are single-call per file. `analyze` makes no API calls.
+`score` are single-call per file. `embed-tags` and `analyze` make no LLM API
+calls. `embed-tags` is independent of `describe`/`score`; it only needs
+`extract` to have written `:Tag` nodes and `Chunk.description`.
 
 ## Stage 1: Extract — two-pass
 
@@ -370,6 +372,36 @@ ones. The same `(chunk, tag)` pair may have multiple edges — one per
 
 `errors.jsonl` is only created when an API call fails.
 `run.json` holds pilot metadata, the selected chunk IDs, and `stages_done`.
+
+## Stage: Embed-tags — tag grounding bridge (no LLM)
+
+`python -m tagging embed-tags`. Embeds every `:Tag` so free-form prompt tags
+can be matched to corpus tags by vector similarity instead of exact string
+equality (see [`query_interpretation_layer.md`](../frontend/query_interpretation_layer.md)).
+
+- Model: `EMBEDDING_MODEL` env (default `intfloat/e5-small-v2`, 384-d), run
+  locally via `sentence-transformers`. No API key, reproducible. The browser
+  embeds prompt tags with the **same** model id so vectors are comparable.
+- Input text per tag (e5 passage convention):
+  `passage: {name_with_spaces}. {up to EMBED_CONTEXT_CHUNKS chunk descriptions
+  where the tag occurs, highest w_chunk first}`. The bare snake_case name
+  carries little signal; grounding quality comes from real corpus context.
+- Writes `t.embedding` (float[384]) and `t.embedding_model` on `:Tag`.
+- Creates the native vector index (also in
+  [`schema/vector_indexes.cypher`](../../backend/schema/vector_indexes.cypher)):
+
+```cypher
+CREATE VECTOR INDEX tag_embedding IF NOT EXISTS
+FOR (t:Tag) ON (t.embedding)
+OPTIONS { indexConfig: {
+  `vector.dimensions`: 384,
+  `vector.similarity_function`: 'cosine'
+} }
+```
+
+`:Tag` gains `embedding` (float[]) and `embedding_model` (string). Re-running
+the stage overwrites both. If the embedding model changes, re-run this stage
+and rebuild the index (dimensions must match).
 
 ## Stage 4: Analyze — `analysis.md`
 

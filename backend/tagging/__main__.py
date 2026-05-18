@@ -6,6 +6,7 @@ Usage:
     python -m tagging extract
     python -m tagging describe
     python -m tagging score
+    python -m tagging embed-tags
     python -m tagging analyze
 """
 
@@ -22,6 +23,7 @@ STAGES = {
     "extract": pipeline.stage_extract,
     "describe": pipeline.stage_describe,
     "score": pipeline.stage_score,
+    "embed-tags": pipeline.stage_embed_tags,
     "analyze": pipeline.stage_analyze,
 }
 
