@@ -25,6 +25,79 @@ import { env, pipeline, type FeatureExtractionPipeline } from '@xenova/transform
 env.allowLocalModels = true;
 env.allowRemoteModels = false;        // hard-fail loud instead of silently hitting HF
 env.localModelPath = '/models';
+env.useBrowserCache = false;          // avoid stale CacheStorage JSON/HTML poisoning
+
+const MODEL_ID = 'Xenova/e5-small-v2';
+const MODEL_BASE = `/models/${MODEL_ID}`;
+const JSON_ASSETS = [
+  'config.json',
+  'tokenizer.json',
+  'tokenizer_config.json',
+  'special_tokens_map.json',
+  // transformers.js asks for this optional file; Vite otherwise returns the
+  // HTML app shell for the missing path, which surfaces as a vague JSON.parse
+  // error. We bundle an empty object and verify it explicitly.
+  'generation_config.json',
+];
+
+let localModelCheck: Promise<void> | null = null;
+
+async function clearStaleModelJsonCache(): Promise<void> {
+  if (typeof caches === 'undefined') return;
+  try {
+    const cache = await caches.open('transformers-cache');
+    await Promise.all(JSON_ASSETS.map((file) => cache.delete(`${MODEL_BASE}/${file}`)));
+  } catch {
+    // CacheStorage can be unavailable in some browser contexts; asset preflight
+    // still catches broken network responses before the model loader runs.
+  }
+}
+
+async function verifyLocalModelAssets(): Promise<void> {
+  if (typeof fetch !== 'function') return;
+  if (!localModelCheck) {
+    localModelCheck = (async () => {
+      for (const file of JSON_ASSETS) {
+        const path = `${MODEL_BASE}/${file}`;
+        const res = await fetch(path, { cache: 'no-store' });
+        const text = await res.text();
+        if (!res.ok) {
+          throw new Error(`Missing grounding model asset: ${path} returned HTTP ${res.status}.`);
+        }
+        try {
+          JSON.parse(text);
+        } catch (e) {
+          const prefix = text.trim().slice(0, 40);
+          throw new Error(
+            `Grounding model asset is not valid JSON: ${path}. ` +
+            `The server returned ${prefix ? JSON.stringify(prefix) : 'an empty body'}. ` +
+            `Run \`npm run assets:assemble\` and restart Vite if the public model folder changed. ` +
+            `Parser said: ${(e as Error).message}`,
+            { cause: e },
+          );
+        }
+      }
+      await clearStaleModelJsonCache();
+      const modelPath = `${MODEL_BASE}/onnx/model.onnx`;
+      const modelRes = await fetch(modelPath, { method: 'HEAD', cache: 'no-store' });
+      if (!modelRes.ok) {
+        throw new Error(`Missing grounding model weights: ${modelPath} returned HTTP ${modelRes.status}.`);
+      }
+      const modelType = modelRes.headers.get('content-type') || '';
+      const modelSize = Number(modelRes.headers.get('content-length') || 0);
+      if (modelType.includes('text/html') || (modelSize > 0 && modelSize < 1_000_000)) {
+        throw new Error(
+          `Grounding model weights look invalid: ${modelPath} returned ` +
+          `${modelType || 'unknown content-type'} with ${modelSize || 'unknown'} bytes.`,
+        );
+      }
+    })().catch((e) => {
+      localModelCheck = null;
+      throw e;
+    });
+  }
+  return localModelCheck;
+}
 
 // Mirror of backend `_readable_tag`: snake_case → words.
 function readableTag(name: string): string {
@@ -38,16 +111,17 @@ function getExtractor(): Promise<FeatureExtractionPipeline> {
     // quantized:false → load full fp32 onnx/model.onnx, matching the backend's
     // fp32 sentence-transformers vectors exactly. transformers.js defaults to
     // the int8 model_quantized.onnx, which would drift from the corpus vectors.
-    extractorPromise = pipeline('feature-extraction', 'Xenova/e5-small-v2', {
-      quantized: false,
-    }).catch((e) => {
-      extractorPromise = null; // let a later run retry instead of caching the failure
-      throw new Error(
-        'Failed to load the e5-small-v2 grounding model from ' +
-        '/models/Xenova/e5-small-v2/. Ensure the bundled model files are present ' +
-        `(public/models/Xenova/e5-small-v2/). Underlying error: ${(e as Error).message}`,
-      );
-    });
+    extractorPromise = verifyLocalModelAssets()
+      .then(() => pipeline('feature-extraction', MODEL_ID, { quantized: false }))
+      .catch((e) => {
+        extractorPromise = null; // let a later run retry instead of caching the failure
+        throw new Error(
+          'Failed to load the e5-small-v2 grounding model from ' +
+          `${MODEL_BASE}/. Ensure the bundled model files are present ` +
+          `(public/models/Xenova/e5-small-v2/). Underlying error: ${(e as Error).message}`,
+          { cause: e },
+        );
+      });
   }
   return extractorPromise;
 }

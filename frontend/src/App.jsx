@@ -18,7 +18,7 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 
 import {
   NODE_TYPES, QUERY_FRAGMENT_NODES, QUERY_FRAGMENT_CATALOG, QUERY_CONTAINER,
-  PIPELINE_NODES, USAGE_NODES, FACETS, DATASETS, STAGE_PAYLOADS, PRESET_RESULTS, SAMPLE_CHUNKS,
+  PIPELINE_NODES, USAGE_NODES, MODULE_NODES, FACETS, DATASETS, PRESET_RESULTS, SAMPLE_CHUNKS,
 } from './data/workbenchData';
 import {
   DEFAULT_MODULE_HEADER,
@@ -33,9 +33,7 @@ import {
   getFragmentTemplate,
   getFragmentHumanLine,
 } from './query/queryModuleSyntax';
-import { interpretPrompt } from './services/interpreter';
-import { retrieveChunks, retrieveBaseline } from './services/retrieval';
-import { generateAnswer } from './services/answer';
+import { runUsageGraph } from './services/pipeline';
 import { fetchDatasetStats } from './services/neo4j';
 const NT = Object.fromEntries([...NODE_TYPES, ...QUERY_FRAGMENT_NODES].map((n) => [n.id, n]));
 
@@ -145,6 +143,7 @@ const I = {
   arrow:    <Icon d={<><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></>}/>,
   prompt:   <Icon d={<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></>}/>,
   lock:     <Icon d={<><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></>}/>,
+  list:     <Icon d={<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h8"/><path d="M8 9h2"/></>}/>,
 };
 
 const DEFAULT_FLOW_EDGE_OPTIONS = {
@@ -333,7 +332,6 @@ function findEdgeBetween(edges, source, target) {
 const StageNode = React.memo(({ id, data, selected }) => {
   const t = NT[data.kind];
   if (!t) return null;
-  const payload = STAGE_PAYLOADS[t.id] || {};
   const phase = data.execPhase || 'idle';
   const cap = data.disabled
     ? 'unavailable'
@@ -388,19 +386,19 @@ const StageNode = React.memo(({ id, data, selected }) => {
           <div className="node-title">{t.label}</div>
           <div className="node-subtitle" title={fragMeaning || undefined}>{subDisplay}</div>
         </div>
-        {t.id !== 'output' && t.id !== 'dataset' && t.id !== 'prompt' && t.id !== 'qf_start' && (
+        {!['prompt', 'compare', 'qf_start', 'dataset', 'access', 'index', 'tags', 'facets'].includes(t.id) && (
           <div className={cls('node-toggle', !data.disabled && 'on')}
                onClick={(e) => { e.stopPropagation(); data.onToggle?.(); }} />
         )}
       </div>
       <div className="node-body">
         <div className="node-row">
-          <span className="label">in</span>
-          <span className="val">{payload.inCount ?? '—'}</span>
+          <span className="label">state</span>
+          <span className="val">{data.disabled ? 'off' : phase}</span>
         </div>
         <div className="node-row">
-          <span className="label">out</span>
-          <span className="val">{data.disabled ? '—' : (payload.outCount ?? '—')}</span>
+          <span className="label">type</span>
+          <span className="val">{(t.inType || '—')} → {(t.outType || '—')}</span>
         </div>
       </div>
       <div className="node-foot">
@@ -479,69 +477,116 @@ const LaneNode = React.memo(({ data, selected }) => {
 const nodeTypes = { stage: StageNode, lane: LaneNode, queryGroup: QueryGroupNode };
 
 // ─── Initial canvas: pipeline lane (top) + usage lane (bottom) ──────────────
+const DEFAULT_USAGE_PARAMS = {
+  prompt:            { mode: 'context' },
+  interpret:         { model: '' },
+  build_input:       {
+    datasetId: DATASETS[0]?.id || 'Salesforce__HERB',
+    maxChunks: 50,
+    activeFacets: FACETS.map((f) => f.id),
+    weightThreshold: 0,
+    minRelevanceToFile: 0,
+    groundingK: 10,
+    minSim: 0.78,
+    runId: DONE_GRAPH_RUN_ID,
+  },
+  ground:            {},
+  retrieve_tags:     {},
+  retrieve_baseline: {},
+  answer:            { model: '' },
+  compare:           {},
+};
+
 function buildInitial() {
-  const pipelineOrder = PIPELINE_NODES.map(n => n.id);  // dataset, access, index, tags, facets
-  const usageOrder    = USAGE_NODES.map(n => n.id);     // prompt, interpreter, retrieval, graphquery, output
-
-  const xStart = 32, xGap = 260, yInner = 72;
-  const maxCols = Math.max(pipelineOrder.length, usageOrder.length);
-  // Reserve room for the last stage (184px wide) + matching right margin so it doesn't kiss the lane edge.
-  const laneW = xStart + (maxCols - 1) * xGap + 184 + 32;
-  const laneH = 244;
+  const xStart = 32, xGap = 232, yInner = 64;
+  const nodeW = 184;
+  const pipelineOrder = PIPELINE_NODES.map(n => n.id);
   const laneGap = 56;
-
-  const lanes = [
-    { id: 'lane_pipeline', label: 'Pipeline — graph construction', y: 0,              order: pipelineOrder },
-    { id: 'lane_usage',    label: 'Usage — retrieval & graph query', y: laneH + laneGap, order: usageOrder },
-  ];
+  const pipeH = 244;
 
   const nodes = [];
   const edges = [];
 
-  for (const lane of lanes) {
-    nodes.push({
-      id: lane.id, type: 'lane', position: { x: 0, y: lane.y },
-      style: { width: laneW, height: laneH, zIndex: -1 },
-      data: { label: lane.label, lastRun: null, running: false, lockContent: true },
-      draggable: true, selectable: true,
+  const mkEdge = (source, target) => {
+    const conn = { source, target, sourceHandle: 'h-right-a', targetHandle: 'h-left-a' };
+    const ok = connectionContractOk(conn, nodes);
+    const sKind = nodes.find(n => n.id === source)?.data?.kind;
+    const tKind = nodes.find(n => n.id === target)?.data?.kind;
+    edges.push({
+      id: `e_${source}__${target}`, ...conn, type: 'default', animated: false,
+      className: ok ? undefined : 'invalid',
+      data: { type: NT[sKind]?.outType, fromKind: sKind, toKind: tKind, contractOk: ok },
     });
-    const stageNodes = lane.order.map((kind, i) => ({
-      id: `${lane.id}_${kind}`, type: 'stage',
-      position: { x: xStart + i * xGap, y: yInner },
-      parentId: lane.id, extent: 'parent',
-      data: { kind, disabled: false, running: false },
-    }));
-    nodes.push(...stageNodes);
-    for (let i = 0; i < stageNodes.length - 1; i++) {
-      const conn = {
-        source: stageNodes[i].id,
-        target: stageNodes[i + 1].id,
-        sourceHandle: 'h-right-a',
-        targetHandle: 'h-left-a',
-      };
-      const ok = connectionContractOk(conn, nodes);
-      edges.push({
-        id: `e_${stageNodes[i].id}__${stageNodes[i + 1].id}`,
-        ...conn,
-        type: 'default',
-        animated: false,
-        className: ok ? undefined : 'invalid',
-        data: {
-          type: NT[lane.order[i]].outType,
-          fromKind: lane.order[i],
-          toKind: lane.order[i + 1],
-          contractOk: ok,
-        },
-      });
-    }
-  }
+  };
+
+  // ── Pipeline lane: offline Python build — illustration only (not executed)
+  const pipeW = xStart + (pipelineOrder.length - 1) * xGap + nodeW + 32;
+  nodes.push({
+    id: 'lane_pipeline', type: 'lane', position: { x: 0, y: 0 },
+    style: { width: pipeW, height: pipeH, zIndex: -1 },
+    data: { label: 'Pipeline — graph construction (offline, illustration)', lastRun: null, running: false, lockContent: true },
+    draggable: true, selectable: true,
+  });
+  const pipeStages = pipelineOrder.map((kind, i) => ({
+    id: `lane_pipeline_${kind}`, type: 'stage',
+    position: { x: xStart + i * xGap, y: yInner },
+    parentId: 'lane_pipeline', extent: 'parent',
+    data: { kind, disabled: false, running: false },
+  }));
+  nodes.push(...pipeStages);
+  for (let i = 0; i < pipeStages.length - 1; i++) mkEdge(pipeStages[i].id, pipeStages[i + 1].id);
+
+  // ── Usage lane: the real executable fork/join DAG
+  const usageY = pipeH + laneGap;
+  const rowTop = yInner;
+  const rowBot = yInner + 168;
+  const usageH = rowBot + 116 + 28;
+  // column index → x
+  const cx = (col) => xStart + col * xGap;
+  const U = (kind, col, row, idSuffix) => {
+    const id = `lane_usage_${idSuffix || kind}`;
+    nodes.push({
+      id, type: 'stage',
+      position: { x: cx(col), y: row },
+      parentId: 'lane_usage', extent: 'parent',
+      data: { kind, disabled: false, running: false, ...(DEFAULT_USAGE_PARAMS[kind] || {}) },
+    });
+    return id;
+  };
+  const usageW = cx(6) + nodeW + 32;
+  nodes.push({
+    id: 'lane_usage', type: 'lane', position: { x: 0, y: usageY },
+    style: { width: usageW, height: usageH, zIndex: -1 },
+    data: { label: 'Usage — live retrieval pipeline (executable)', lastRun: null, running: false, lockContent: true },
+    draggable: true, selectable: true,
+  });
+  const midRow = Math.round((rowTop + rowBot) / 2);
+  const nPrompt   = U('prompt', 0, midRow);
+  const nInterp   = U('interpret', 1, midRow);
+  const nBuild    = U('build_input', 2, midRow);
+  const nGround   = U('ground', 3, rowTop);
+  const nRetA     = U('retrieve_tags', 4, rowTop);
+  const nAnsA     = U('answer', 5, rowTop, 'answer_a');
+  const nRetB     = U('retrieve_baseline', 4, rowBot);
+  const nAnsB     = U('answer', 5, rowBot, 'answer_b');
+  const nCompare  = U('compare', 6, midRow);
+  mkEdge(nPrompt, nInterp);
+  mkEdge(nInterp, nBuild);
+  mkEdge(nBuild, nGround);
+  mkEdge(nBuild, nRetB);
+  mkEdge(nGround, nRetA);
+  mkEdge(nRetA, nAnsA);
+  mkEdge(nRetB, nAnsB);
+  mkEdge(nAnsA, nCompare);
+  mkEdge(nAnsB, nCompare);
 
   // Empty Query module, seeded but not wired to the lanes — gives a clear starting surface
   // for fragment drops without making cross-lane wiring assumptions on first paint.
+  const laneW = Math.max(pipeW, usageW);
   const qgW = 620;
   const qgH = 320;
   const qgX = Math.max(0, Math.round((laneW - qgW) / 2));
-  const qgY = 2 * laneH + laneGap + 72;
+  const qgY = usageY + usageH + laneGap;
   nodes.push({
     id: 'query_module_initial',
     type: 'queryGroup',
@@ -588,18 +633,37 @@ function toDatasetOptions(stats) {
   return rows.length ? rows : DATASETS;
 }
 
-function fmtCount(v) {
-  return typeof v === 'number' ? v.toLocaleString() : '0';
+
+
+function makeLogEvent(runId, status, stage, message, meta = {}) {
+  return {
+    id: uid('log'),
+    runId,
+    status,
+    stage,
+    message,
+    meta,
+    at: new Date().toLocaleTimeString(),
+  };
 }
 
-const DEFAULT_FACET_STATE = Object.fromEntries(FACETS.map((f) => [f.id, true]));
-
-function activeFacetsFromConfig(config) {
-  return FACETS.filter((f) => config.facets?.[f.id]).map((f) => f.id);
-}
-
-function pipelineStageDisabled(nodes, kind) {
-  return nodes.some((n) => n.id === `lane_pipeline_${kind}` && n.data?.disabled);
+function makeHistoryEntry(runId, status, prompt, datasetId, durationMs, results, error = null) {
+  const laneA = results?.lane_A;
+  const laneB = results?.lane_B;
+  return {
+    id: runId,
+    status,
+    prompt,
+    datasetId,
+    durationMs,
+    error,
+    results,
+    at: new Date().toLocaleString(),
+    chunksA: laneA?.chunks ?? 0,
+    chunksB: laneB?.chunks ?? 0,
+    tokensIn: (laneA?.tokensIn ?? 0) + (laneB?.tokensIn ?? 0),
+    tokensOut: (laneA?.tokensOut ?? 0) + (laneB?.tokensOut ?? 0),
+  };
 }
 
 // ─── App ───────────────────────────────────────────────────────────────────
@@ -615,26 +679,18 @@ function WorkbenchApp() {
   const [prompt, setPrompt]     = useState('Q2 revenue trends — what changed and why?');
   const rf = useReactFlow();
   const [results, setResults]   = useState({ lane_A: PRESET_RESULTS.full, lane_B: PRESET_RESULTS.baseline });
-  const [config, setConfig]     = useState({
-    dataset: DATASETS[0]?.id || 'Salesforce__HERB',
-    facets: DEFAULT_FACET_STATE,
-    promptMode: 'context',
-    interpreterModel: '',          // '' → use connConfig.model
-    groundingK: 10,                // nearest corpus tags per prompt tag
-    minSim: 0.78,                  // drop grounding matches below this cosine
-    tagsEnabled: true,
-    retrievalStrategy: 'weighted',
-    weightThreshold: 0.0,
-    minRelevanceToFile: 0.0,
-    maxChunks: 50,
-    formatFilter: 'All',
-  });
   const [outputView, setOutputView] = useState('llm');   // llm | chunks | table
+  const [bottomTab, setBottomTab] = useState('comparison');
+  const [bottomHeight, setBottomHeight] = useState(360);
   const connConfig = useMemo(() => normalizeConnConfig(), []);
   const [datasetOptions, setDatasetOptions] = useState(DATASETS);
   const [datasetLoadState, setDatasetLoadState] = useState({ loading: false, error: null, source: 'fallback' });
   const [pipelineRunning, setPipelineRunning] = useState(false);
   const [pipelineError, setPipelineError] = useState(null);
+  const [runLog, setRunLog] = useState([
+    makeLogEvent('initial', 'idle', 'workbench', 'Result console ready. Run the usage lane to populate live logs.'),
+  ]);
+  const [runHistory, setRunHistory] = useState([]);
 
   useEffect(() => { document.documentElement.setAttribute('data-theme', theme); }, [theme]);
   useEffect(() => { document.documentElement.style.setProperty('--accent', tweaks.accentColor); }, [tweaks.accentColor]);
@@ -666,6 +722,44 @@ function WorkbenchApp() {
   const runLaneAnimRef = useRef(0);
   const [, setUndoStack] = useState([]);
   const [, setRedoStack] = useState([]);
+
+  const appendRunLog = useCallback((runId, status, stage, message, meta = {}) => {
+    const event = makeLogEvent(runId, status, stage, message, meta);
+    setRunLog((prev) => [...prev.slice(-199), event]);
+  }, []);
+
+  const recordRunHistory = useCallback((entry) => {
+    setRunHistory((prev) => [entry, ...prev.filter((x) => x.id !== entry.id)].slice(0, 30));
+  }, []);
+
+  const restoreHistoryRun = useCallback((entry) => {
+    if (!entry?.results) return;
+    setResults(entry.results);
+    setBottomTab('comparison');
+    setOutputView('llm');
+    appendRunLog(entry.id, 'restored', 'history', 'Restored run results into the comparison panel.');
+  }, [appendRunLog]);
+
+  const startBottomResize = useCallback((e) => {
+    e.preventDefault();
+    const startY = e.clientY;
+    const startHeight = bottomHeight;
+    const onMove = (ev) => {
+      const max = Math.max(240, Math.floor(window.innerHeight * 0.72));
+      const next = Math.max(190, Math.min(max, startHeight + (startY - ev.clientY)));
+      setBottomHeight(next);
+    };
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+    document.body.style.cursor = 'ns-resize';
+    document.body.style.userSelect = 'none';
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  }, [bottomHeight]);
 
   const commitBeforeChange = useCallback(() => {
     setUndoStack((u) => [...u.slice(-49), cloneSnap(nodesRef.current, edgesRef.current)]);
@@ -701,6 +795,7 @@ function WorkbenchApp() {
   const runLane = useCallback((laneId) => {
     runLaneAnimRef.current += 1;
     const token = runLaneAnimRef.current;
+    const startedAt = Date.now();
 
     const schedule = (ms, fn) => {
       window.setTimeout(() => {
@@ -728,14 +823,9 @@ function WorkbenchApp() {
 
     if (!order.length) {
       setNodes((nds) => nds.map((n) => (n.id === laneId ? { ...n, data: { ...n.data, running: true } } : n)));
-      schedule(700, () => finishLane(720 + Math.floor(Math.random() * 120)));
+      schedule(700, () => finishLane(Date.now() - startedAt));
       return;
     }
-
-    const failAt =
-      order.length > 1 && Math.random() < 0.07
-        ? 1 + Math.floor(Math.random() * (order.length - 1))
-        : -1;
 
     setNodes((nds) => nds.map((n) => {
       if (n.id === laneId) return { ...n, data: { ...n.data, running: true } };
@@ -753,8 +843,7 @@ function WorkbenchApp() {
     const go = (i) => {
       if (token !== runLaneAnimRef.current) return;
       if (i >= order.length) {
-        const base = 80 + order.length * (D_EDGE + D_NODE + D_GAP);
-        finishLane(base + Math.floor(Math.random() * 450));
+        finishLane(Date.now() - startedAt);
         return;
       }
 
@@ -773,16 +862,6 @@ function WorkbenchApp() {
       schedule(D_EDGE, () => {
         if (token !== runLaneAnimRef.current) return;
         clearFlowPulse();
-
-        if (failAt === i) {
-          setNodes((nds) => nds.map((n) => {
-            if (n.id === laneId) return { ...n, data: { ...n.data, running: false, lastRun: null } };
-            if (n.id === stageId && stages.has(n.id))
-              return { ...n, data: { ...n.data, execPhase: 'failed' } };
-            return n;
-          }));
-          return;
-        }
 
         setNodes((nds) => nds.map((n) =>
           n.id === stageId && stages.has(n.id)
@@ -823,94 +902,100 @@ function WorkbenchApp() {
     fetchDatasetStats(neo4jCfg, DONE_GRAPH_RUN_ID)
       .then((stats) => {
         if (!live) return;
-        const options = toDatasetOptions(stats);
-        setDatasetOptions(options);
+        setDatasetOptions(toDatasetOptions(stats));
         setDatasetLoadState({ loading: false, error: null, source: stats.length ? 'graph' : 'fallback' });
-        setConfig((prev) => (
-          options.some((d) => d.id === prev.dataset) ? prev : { ...prev, dataset: options[0]?.id || DATASETS[0]?.id }
-        ));
       })
       .catch((err) => {
         if (!live) return;
         setDatasetOptions(DATASETS);
         setDatasetLoadState({ loading: false, error: err?.message || String(err), source: 'fallback' });
-        setConfig((prev) => (
-          DATASETS.some((d) => d.id === prev.dataset) ? prev : { ...prev, dataset: DATASETS[0]?.id || 'Salesforce__HERB' }
-        ));
       });
 
     return () => { live = false; };
   }, [connConfig.neo4jUri, connConfig.neo4jUser, connConfig.neo4jPassword]);
 
+  const setUsageLaneState = useCallback((patch, stagePhase) => {
+    setNodes((nds) => nds.map((n) => {
+      if (n.id === 'lane_usage' && n.type === 'lane')
+        return { ...n, data: { ...n.data, ...patch } };
+      if (stagePhase && n.type === 'stage' && n.parentId === 'lane_usage')
+        return { ...n, data: { ...n.data, execPhase: stagePhase } };
+      return n;
+    }));
+  }, [setNodes]);
+
   const runPipeline = useCallback(async () => {
-    const needsOpenAI = !connConfig.model.startsWith('claude');
-    const activeKey = needsOpenAI ? connConfig.openaiApiKey : connConfig.anthropicApiKey;
-    if (!activeKey) {
-      const which = needsOpenAI ? 'OpenAI' : 'Anthropic';
-      setPipelineError(`${which} API key not set in Vite env.`);
+    const runId = uid('run');
+    const t0 = Date.now();
+    const liveNodes = nodesRef.current;
+    const usageStages = liveNodes.filter(
+      (n) => n.type === 'stage' && n.parentId === 'lane_usage' && !n.data?.disabled,
+    );
+    // Models that the wired nodes will actually call, so the key precheck
+    // can't pass here and then fail late inside a service call.
+    const usedModels = usageStages
+      .filter((n) => n.data?.kind === 'interpret' || n.data?.kind === 'answer')
+      .map((n) => n.data?.model || connConfig.model);
+    const buildNode = usageStages.find((n) => n.data?.kind === 'build_input');
+    const datasetGuess = buildNode?.data?.datasetId || null;
+    appendRunLog(runId, 'running', 'start', `Pipeline queued (${usageStages.length} nodes).`, { prompt });
+    const missing = [];
+    if (usedModels.some((m) => !m.startsWith('claude')) && !connConfig.openaiApiKey) missing.push('OpenAI (VITE_OPENAI_API_KEY)');
+    if (usedModels.some((m) => m.startsWith('claude')) && !connConfig.anthropicApiKey) missing.push('Anthropic (VITE_ANTHROPIC_API_KEY)');
+    if (missing.length) {
+      const message = `API key not set in Vite env: ${missing.join(' and ')}.`;
+      setPipelineError(message);
+      appendRunLog(runId, 'failed', 'config', message);
+      recordRunHistory(makeHistoryEntry(runId, 'failed', prompt, datasetGuess, Date.now() - t0, null, message));
       return;
     }
     setPipelineRunning(true);
     setPipelineError(null);
-    const t0 = Date.now();
+    setUsageLaneState({ running: true, lastRun: null }, 'running');
     try {
-      const datasetId = config.dataset || datasetOptions[0]?.id || DATASETS[0]?.id || null;
-      const limit = Math.max(1, Number(config.maxChunks) || 20);
-      const retrievalOptions = {
-        activeFacets: activeFacetsFromConfig(config),
-        tagsEnabled: config.tagsEnabled && !pipelineStageDisabled(nodesRef.current, 'tags'),
-        minWChunk: Number(config.weightThreshold) || 0,
-        minRelevanceToFile: Number(config.minRelevanceToFile) || 0,
-        limit,
-        datasetId,
-        strategy: config.retrievalStrategy,
-        groundingK: Number(config.groundingK) || 10,
-        minSim: Number(config.minSim) || 0,
+      const env = {
+        prompt,
+        connConfig: {
+          model: connConfig.model,
+          openaiApiKey: connConfig.openaiApiKey,
+          anthropicApiKey: connConfig.anthropicApiKey,
+        },
+        neo4jCfg: {
+          uri: connConfig.neo4jUri,
+          user: connConfig.neo4jUser,
+          password: connConfig.neo4jPassword,
+          database: DONE_GRAPH_DATABASE,
+        },
+        runId,
+        nodes: liveNodes,
+        edges: edgesRef.current,
+        log: (stage, status, message) => appendRunLog(runId, status, stage, message),
       };
-      const neo4jCfg = {
-        uri: connConfig.neo4jUri,
-        user: connConfig.neo4jUser,
-        password: connConfig.neo4jPassword,
-        database: DONE_GRAPH_DATABASE,
-      };
-      const interpModel = config.interpreterModel || connConfig.model;
-      const plan = await interpretPrompt(prompt, interpModel, connConfig.openaiApiKey, connConfig.anthropicApiKey, datasetId);
-      const scopedPlan = { ...plan, filters: { ...plan.filters, dataset_id: datasetId, limit } };
-      const [chunks, bChunks] = await Promise.all([
-        retrieveChunks(scopedPlan, neo4jCfg, retrievalOptions),
-        retrieveBaseline(limit, neo4jCfg, datasetId),
-      ]);
-      const [ansA, ansB] = await Promise.all([
-        generateAnswer(prompt, scopedPlan, chunks, connConfig.model, connConfig.openaiApiKey, connConfig.anthropicApiKey, config.promptMode),
-        generateAnswer(prompt, scopedPlan, bChunks, connConfig.model, connConfig.openaiApiKey, connConfig.anthropicApiKey, config.promptMode),
-      ]);
-      const activeFacetSet = new Set(retrievalOptions.activeFacets);
-      const topFacets = [...new Set(
-        scopedPlan.tags.flatMap(t => Object.entries(t.facets).filter(([k, v]) => activeFacetSet.has(k) && v >= 0.5).map(([k]) => k))
-      )].slice(0, 4);
+      const { results } = await runUsageGraph(liveNodes, edgesRef.current, 'lane_usage', env);
       const elapsed = Date.now() - t0;
-      setResults({
-        lane_A: {
-          chunks: chunks.length, response: ansA.response,
-          tokensIn: ansA.tokensIn, tokensOut: ansA.tokensOut, durationMs: elapsed,
-          topFacets, plan: scopedPlan, retrievedChunks: chunks,
-        },
-        lane_B: {
-          chunks: bChunks.length, response: ansB.response,
-          tokensIn: ansB.tokensIn, tokensOut: ansB.tokensOut, durationMs: elapsed,
-          topFacets: [], plan: null, retrievedChunks: bChunks,
-        },
-      });
+      setResults(results);
+      appendRunLog(runId, 'ok', 'finish', `Run finished in ${elapsed}ms.`);
+      recordRunHistory(makeHistoryEntry(runId, 'ok', prompt, datasetGuess, elapsed, results));
+      setUsageLaneState({ running: false, lastRun: elapsed }, 'done');
     } catch (err) {
-      setPipelineError(err?.message || String(err));
+      const message = err?.message || String(err);
+      setPipelineError(message);
+      appendRunLog(runId, 'failed', 'error', message);
+      recordRunHistory(makeHistoryEntry(runId, 'failed', prompt, datasetGuess, Date.now() - t0, null, message));
+      setUsageLaneState({ running: false, lastRun: null }, 'failed');
     } finally {
       setPipelineRunning(false);
     }
-  }, [prompt, connConfig, config, datasetOptions]);
+  }, [prompt, connConfig, appendRunLog, recordRunHistory, setUsageLaneState]);
 
   const runLaneWithActualWork = useCallback((laneId) => {
+    // The usage lane runs the real services pipeline, so its node status is
+    // driven by runPipeline itself (below) — not by the cosmetic stage
+    // animation, which would otherwise report a success/duration unrelated to
+    // the actual run. Other lanes have no live execution and keep the
+    // illustrative animation.
+    if (laneId === 'lane_usage') { runPipeline(); return; }
     runLane(laneId);
-    if (laneId === 'lane_usage') runPipeline();
   }, [runLane, runPipeline]);
 
   // Wire callbacks into nodes (toggle, rename, run, etc.)
@@ -1165,8 +1250,8 @@ function WorkbenchApp() {
     const nds = nodesRef.current;
     const sel = nds.filter((n) => n.selected);
     if (!sel.length) {
-      runLane('lane_pipeline');
-      runLane('lane_usage');
+      runLaneWithActualWork('lane_pipeline');
+      runLaneWithActualWork('lane_usage');
       return;
     }
     const lanes = new Set();
@@ -1177,14 +1262,13 @@ function WorkbenchApp() {
         if (p?.type === 'lane') lanes.add(n.parentId);
       }
     }
-    lanes.forEach((id) => runLane(id));
-  }, [runLane]);
+    lanes.forEach((id) => runLaneWithActualWork(id));
+  }, [runLaneWithActualWork]);
 
   const runAll = useCallback(() => {
-    runLane('lane_pipeline');
-    runLane('lane_usage');
-    runPipeline();
-  }, [runLane, runPipeline]);
+    runLaneWithActualWork('lane_pipeline');
+    runLaneWithActualWork('lane_usage');
+  }, [runLaneWithActualWork]);
 
   const focusCanvas = useCallback(() => {
     canvasRootRef.current?.focus({ preventScroll: true });
@@ -1263,11 +1347,13 @@ function WorkbenchApp() {
   // ─── Inspector content ──────────────────────────────────────────────────
   const selNode = selected && nodes.find(n => n.id === selected.id);
   const selKind = selNode?.data?.kind ? NT[selNode.data.kind] : null;
-  const selPayload = selKind ? STAGE_PAYLOADS[selKind.id] : null;
   const selEdge = edgeSel && edges.find(e => e.id === edgeSel);
 
   return (
-    <div className={cls('workbench', edgeSel && 'drawer-open')}>
+    <div
+      className={cls('workbench', edgeSel && 'drawer-open')}
+      style={{ gridTemplateRows: `48px minmax(0, 1fr) ${bottomHeight}px` }}
+    >
       <TopStrip {...{ theme, setTheme, prompt, setPrompt, runAll, pipelineRunning }}/>
       <div className={cls('workbench-main', edgeSel && 'drawer-open')}>
         <Catalog />
@@ -1325,11 +1411,9 @@ function WorkbenchApp() {
             )}
           </ReactFlow>
         </div>
-        <Inspector selKind={selKind} selNode={selNode} selPayload={selPayload}
-                   config={config} setConfig={setConfig}
+        <Inspector selKind={selKind} selNode={selNode} metrics={results.metrics}
                    datasetOptions={datasetOptions} datasetLoadState={datasetLoadState}
                    prompt={prompt} setPrompt={setPrompt}
-                   outputView={outputView} setOutputView={setOutputView}
                    queryContainerMeta={QUERY_CONTAINER}
                    nodes={nodes}
                    edges={edges}
@@ -1337,7 +1421,11 @@ function WorkbenchApp() {
         {selEdge && <Drawer edge={selEdge} nodes={nodes} onClose={() => setEdgeSel(null)} />}
       </div>
       <BottomPanel results={results} prompt={prompt} outputView={outputView} setOutputView={setOutputView}
-                   pipelineRunning={pipelineRunning} pipelineError={pipelineError}/>
+                   bottomTab={bottomTab} setBottomTab={setBottomTab}
+                   pipelineRunning={pipelineRunning} pipelineError={pipelineError}
+                   runLog={runLog} runHistory={runHistory}
+                   onRestoreRun={restoreHistoryRun} onClearLog={() => setRunLog([])}
+                   onStartResize={startBottomResize}/>
       {tweaksOpen && <TweaksPanel tweaks={tweaks} setTweak={setTweak} onClose={() => { setTweaksOpen(false); window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*'); }}/>}
     </div>
   );
@@ -1475,8 +1563,14 @@ function Catalog() {
       <div className="catalog-divider" />
       <div className="catalog-section">
         <h4>Usage</h4>
-        <div className="catalog-hint">Query & retrieval: prompt → interpret → retrieve → query graph → LLM output.</div>
+        <div className="catalog-hint">The real pipeline. Wire order = run order: prompt → interpret → build input → ground → retrieve A / B → answer → compare.</div>
         <div className="catalog-list">{renderList(USAGE_NODES)}</div>
+      </div>
+      <div className="catalog-divider" />
+      <div className="catalog-section">
+        <h4>Modules</h4>
+        <div className="catalog-hint">Type-safe inserts. A <strong>Probe</strong> is a passthrough — splice it onto any wire whose types match to record what flows through without changing the run.</div>
+        <div className="catalog-list">{renderList(MODULE_NODES)}</div>
       </div>
       <div className="catalog-divider" />
       <div className="catalog-section">
@@ -1732,7 +1826,7 @@ function QueryFragmentSyntaxSection({ kind, selNode, nodes, edges, patchNodeData
 }
 
 // ─── Inspector ──────────────────────────────────────────────────────────────
-function Inspector({ selKind, selNode, selPayload, config, setConfig, datasetOptions, datasetLoadState, prompt, setPrompt, outputView, setOutputView, queryContainerMeta, nodes, edges, patchNodeData }) {
+function Inspector({ selKind, selNode, metrics, datasetOptions, datasetLoadState, prompt, setPrompt, queryContainerMeta, nodes, edges, patchNodeData }) {
   const [tab, setTab] = useState('config');
   if (!selNode) {
     return (
@@ -1741,7 +1835,7 @@ function Inspector({ selKind, selNode, selPayload, config, setConfig, datasetOpt
           <div>
             <div className="insp-empty-glyph">{I.inspect}</div>
             <div className="insp-empty-title">Nothing selected</div>
-            <div className="insp-empty-sub">Click a node to inspect config, live counts and sample I/O. Click an edge to see the payload that flows across it.</div>
+            <div className="insp-empty-sub">Click a node to inspect its config and the real metrics from the last run. Click an edge to see the data contract on the wire.</div>
           </div>
         </div>
       </aside>
@@ -1798,9 +1892,9 @@ function Inspector({ selKind, selNode, selPayload, config, setConfig, datasetOpt
         </div>
       </div>
       <div className="insp-tabs">
-        {['config','io','tags','runtime'].map(t => (
+        {['config','metrics'].map(t => (
           <button key={t} className={cls('insp-tab', tab === t && 'active')} onClick={() => setTab(t)}>
-            {t === 'config' ? 'Config' : t === 'io' ? 'I/O' : t === 'tags' ? 'Tags' : 'Runtime'}
+            {t === 'config' ? 'Config' : 'Metrics'}
           </button>
         ))}
       </div>
@@ -1808,38 +1902,62 @@ function Inspector({ selKind, selNode, selPayload, config, setConfig, datasetOpt
         {tab === 'config' && (
           <ConfigForm
             kind={selKind.id}
-            config={config}
-            setConfig={setConfig}
+            selNode={selNode}
             datasetOptions={datasetOptions}
             datasetLoadState={datasetLoadState}
             prompt={prompt}
             setPrompt={setPrompt}
-            outputView={outputView}
-            setOutputView={setOutputView}
             syntaxCtx={{ selNode, nodes, edges, patchNodeData }}
           />
         )}
-        {tab === 'io' && <IOPanel selKind={selKind} selPayload={selPayload}/>}
-        {tab === 'tags' && <TagsPanel selPayload={selPayload}/>}
-        {tab === 'runtime' && <RuntimePanel selPayload={selPayload}/>}
+        {tab === 'metrics' && (
+          <NodeMetricsPanel kind={selKind.id} metrics={metrics} selNode={selNode} prompt={prompt}/>
+        )}
       </div>
     </aside>
   );
 }
 
-function ConfigForm({ kind, config, setConfig, datasetOptions, datasetLoadState, prompt, setPrompt, outputView, setOutputView, syntaxCtx }) {
-  const set = (patch) => setConfig({ ...config, ...patch });
+const MODEL_OPTIONS = ['claude-haiku-4-5', 'claude-sonnet-4-5', 'claude-opus-4-6', 'gpt-4o-mini', 'gpt-4o'];
+
+function ModelField({ label, hint, value, onChange }) {
+  return (
+    <div className="field">
+      <label className="field-label">{label}<span className="hint">{hint}</span></label>
+      <select className="field-select" value={value || '__default'}
+              onChange={(e) => onChange(e.target.value === '__default' ? '' : e.target.value)}>
+        <option value="__default">Default (connection model)</option>
+        {MODEL_OPTIONS.map((m) => <option key={m}>{m}</option>)}
+      </select>
+    </div>
+  );
+}
+
+const OfflineNote = ({ children }) => (
+  <div style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.55 }}>{children}</div>
+);
+
+/**
+ * Per-node configuration. For the executable Usage nodes this edits the
+ * selected node's own `data` (params live on the node, per the engine) so the
+ * wired graph runs exactly as configured. Pipeline-lane nodes are the offline
+ * Python build and carry no live tunable.
+ */
+function ConfigForm({ kind, selNode, datasetOptions, datasetLoadState, prompt, setPrompt, syntaxCtx }) {
+  const d = selNode?.data || {};
+  const setData = (patch) => syntaxCtx.patchNodeData(selNode.id, patch);
+
   if (kind === 'prompt') {
     return (
       <>
         <div className="field">
-          <label className="field-label">Prompt context<span className="hint">shared across lanes</span></label>
+          <label className="field-label">Prompt<span className="hint">the user query (shared)</span></label>
           <textarea className="field-textarea" value={prompt} onChange={(e) => setPrompt(e.target.value)}/>
         </div>
         <div className="field">
-          <label className="field-label">Mode<span className="hint">how the prompt is passed to the LLM</span></label>
-          <select className="field-select" value={config.promptMode}
-                  onChange={(e) => set({ promptMode: e.target.value })}>
+          <label className="field-label">Mode<span className="hint">how the prompt reaches the LLM</span></label>
+          <select className="field-select" value={d.mode || 'context'}
+                  onChange={(e) => setData({ mode: e.target.value })}>
             <option value="context">Build prompt context (api-mode)</option>
             <option value="raw">Raw prompt only</option>
             <option value="hybrid">Hybrid: context + system</option>
@@ -1848,148 +1966,120 @@ function ConfigForm({ kind, config, setConfig, datasetOptions, datasetLoadState,
       </>
     );
   }
-  if (kind === 'dataset') {
+
+  if (kind === 'interpret') {
+    return <ModelField label="Interpreter model" hint="2-pass plan + gate"
+                       value={d.model} onChange={(v) => setData({ model: v })}/>;
+  }
+
+  if (kind === 'build_input') {
     const options = datasetOptions?.length ? datasetOptions : DATASETS;
-    const ds = options.find(d => d.id === config.dataset) || options[0];
-    const datasetValue = ds?.id || '';
+    const facets = Array.isArray(d.activeFacets) ? d.activeFacets : [];
+    const toggleFacet = (id) =>
+      setData({ activeFacets: facets.includes(id) ? facets.filter((f) => f !== id) : [...facets, id] });
     return (
       <>
         <div className="field">
-          <label className="field-label">Source<span className="hint">:Source node in graph</span></label>
-          <select className="field-select" value={datasetValue} onChange={(e) => set({ dataset: e.target.value })}>
-            {options.map(d => <option key={d.id} value={d.id}>{d.id}</option>)}
+          <label className="field-label">Dataset<span className="hint">:File.dataset_id filter</span></label>
+          <select className="field-select" value={d.datasetId || ''} onChange={(e) => setData({ datasetId: e.target.value })}>
+            {options.map((o) => <option key={o.id} value={o.id}>{o.id}</option>)}
           </select>
           {datasetLoadState?.error && (
-            <div className="tweaks-hint" style={{ marginTop: 6 }}>Using raw dataset list; Neo4j source lookup is unavailable.</div>
+            <div className="tweaks-hint" style={{ marginTop: 6 }}>Live source list unavailable; showing static datasets.</div>
           )}
           {datasetLoadState?.loading && (
-            <div className="tweaks-hint" style={{ marginTop: 6 }}>Loading graph sources...</div>
+            <div className="tweaks-hint" style={{ marginTop: 6 }}>Loading graph sources…</div>
           )}
         </div>
-        <div className="stat-grid">
-          <div className="stat-card"><div className="stat-card-label">Files</div><div className="stat-card-val">{fmtCount(ds?.files)}</div></div>
-          <div className="stat-card"><div className="stat-card-label">Chunks</div><div className="stat-card-val">{fmtCount(ds?.chunks)}</div></div>
-          <div className="stat-card"><div className="stat-card-label">Tags</div><div className="stat-card-val">{fmtCount(ds?.tags)}</div></div>
-          <div className="stat-card"><div className="stat-card-label">Adapter</div><div className="stat-card-val" style={{fontSize:11}}>neo4j_driver</div></div>
-        </div>
-      </>
-    );
-  }
-  if (kind === 'access') {
-    return (
-      <>
         <div className="field">
-          <label className="field-label">Format filter</label>
-          <select className="field-select" value={config.formatFilter} onChange={(e) => set({ formatFilter: e.target.value })}>
-            {['All','json','jsonl','parquet','yaml','pdf','html','docx','txt'].map(f => <option key={f} value={f}>{f}</option>)}
-          </select>
-        </div>
-        <div className="field">
-          <label className="field-label">Min description length<span className="hint">filter sparse files</span></label>
-          <input className="field-input" type="number" defaultValue="0"/>
-        </div>
-      </>
-    );
-  }
-  if (kind === 'index') {
-    return (
-      <>
-        <div className="field">
-          <label className="field-label">Graph database<span className="hint">Neo4j</span></label>
-          <input className="field-input" value={DONE_GRAPH_DATABASE} readOnly/>
-        </div>
-        <div className="field">
-          <label className="field-label">Run id<span className="hint">semantic graph</span></label>
-          <input className="field-input" value={DONE_GRAPH_RUN_ID} readOnly/>
-        </div>
-      </>
-    );
-  }
-  if (kind === 'tags') {
-    return (
-      <>
-        <div className="field">
-          <label className="field-label">Tag edges</label>
-          <select className="field-select" value={config.tagsEnabled ? 'on' : 'off'} onChange={(e) => set({ tagsEnabled: e.target.value === 'on' })}>
-            <option value="on">Use HAS_TAG edges</option>
-            <option value="off">Ignore tags</option>
-          </select>
-        </div>
-        <div className="field">
-          <label className="field-label">Active facets</label>
+          <label className="field-label">Active facets<span className="hint">HAS_TAG dimensions scored</span></label>
           <div className="facet-grid">
-            {FACETS.map(c => (
-              <div key={c.id} className={cls('facet-chip', config.facets[c.id] && 'on')}
-                   title={c.hint}
-                   onClick={() => set({ facets: { ...config.facets, [c.id]: !config.facets[c.id] } })}>
+            {FACETS.map((c) => (
+              <div key={c.id} className={cls('facet-chip', facets.includes(c.id) && 'on')}
+                   title={c.hint} onClick={() => toggleFacet(c.id)}>
                 <span className="facet-chip-dot"/>{c.label}
               </div>
             ))}
           </div>
         </div>
         <div className="field">
-          <label className="field-label">Weight threshold<span className="hint">{config.weightThreshold.toFixed(2)}</span></label>
-          <input className="field-input" type="range" min="0" max="1" step="0.05"
-                 value={config.weightThreshold}
-                 onChange={(e) => set({ weightThreshold: +e.target.value })}/>
+          <label className="field-label">Max chunks<span className="hint">limit per lane</span></label>
+          <input className="field-input" type="number" min="1" max="500" value={d.maxChunks ?? 50}
+                 onChange={(e) => setData({ maxChunks: Math.max(1, +e.target.value || 1) })}/>
+        </div>
+        <div className="field">
+          <label className="field-label">Grounding depth (k)<span className="hint">corpus tags / prompt tag</span></label>
+          <input className="field-input" type="number" min="1" max="50" value={d.groundingK ?? 10}
+                 onChange={(e) => setData({ groundingK: Math.max(1, +e.target.value || 1) })}/>
+        </div>
+        <div className="field">
+          <label className="field-label">Min similarity<span className="hint">{Number(d.minSim ?? 0.78).toFixed(2)}</span></label>
+          <input className="field-input" type="range" min="0" max="1" step="0.01" value={d.minSim ?? 0.78}
+                 onChange={(e) => setData({ minSim: +e.target.value })}/>
+        </div>
+        <div className="field">
+          <label className="field-label">Min tag weight<span className="hint">{Number(d.weightThreshold ?? 0).toFixed(2)}</span></label>
+          <input className="field-input" type="range" min="0" max="1" step="0.05" value={d.weightThreshold ?? 0}
+                 onChange={(e) => setData({ weightThreshold: +e.target.value })}/>
+        </div>
+        <div className="field">
+          <label className="field-label">Min file relevance<span className="hint">{Number(d.minRelevanceToFile ?? 0).toFixed(2)}</span></label>
+          <input className="field-input" type="range" min="0" max="1" step="0.05" value={d.minRelevanceToFile ?? 0}
+                 onChange={(e) => setData({ minRelevanceToFile: +e.target.value })}/>
+        </div>
+        <div className="field">
+          <label className="field-label">Run id<span className="hint">HAS_TAG edge filter</span></label>
+          <input className="field-input" value={d.runId || DONE_GRAPH_RUN_ID} readOnly/>
         </div>
       </>
     );
   }
-  if (kind === 'facets') {
+
+  if (kind === 'ground') {
+    return <OfflineNote>Embeds the plan tags with the bundled e5 model and kNN-grounds
+      them onto corpus <code>:Tag</code>s (validating dataset + hard gate first).
+      Knobs (k, min&nbsp;similarity) live on <strong>Build input</strong> since they
+      shape the <code>RetrievalInput</code> this consumes.</OfflineNote>;
+  }
+  if (kind === 'retrieve_tags') {
+    return <OfflineNote>Lane A: scores chunks with the weighted-overlap Cypher over
+      the grounded corpus tags. No own knobs — thresholds/limit come from the
+      <code> RetrievalInput</code> built upstream.</OfflineNote>;
+  }
+  if (kind === 'retrieve_baseline') {
+    return <OfflineNote>Lane B: relevance-to-file ordering only (no tags), same hard
+      gate and dataset scope. The control comparison for the thesis.</OfflineNote>;
+  }
+  if (kind === 'answer') {
     return (
       <>
-        <div className="field">
-          <label className="field-label">Facet view</label>
-          <select className="field-select" defaultValue="pass_through">
-            <option value="pass_through">Pass through active facets</option>
-          </select>
-        </div>
-        <div className="field">
-          <label className="field-label">Active facets</label>
-          <div className="facet-grid">
-            {FACETS.map(c => (
-              <div key={c.id} className={cls('facet-chip', config.facets[c.id] && 'on')}
-                   title={c.hint}
-                   onClick={() => set({ facets: { ...config.facets, [c.id]: !config.facets[c.id] } })}>
-                <span className="facet-chip-dot"/>{c.label}
-              </div>
-            ))}
-          </div>
-        </div>
+        <ModelField label="Answer model" hint="LLM over retrieved chunks"
+                    value={d.model} onChange={(v) => setData({ model: v })}/>
+        <OfflineNote>Prompt mode comes from the <strong>Prompt</strong> node;
+          this node answers over whatever chunks are wired into it.</OfflineNote>
       </>
     );
   }
-  if (kind === 'interpreter') {
+  if (kind === 'compare') {
+    return <OfflineNote>Joins the A and B answers, computes the real metrics
+      (grounding, A/B overlap, citations, per-stage latency) and publishes the
+      result to the console. Must be the terminal node — it produces the run
+      output.</OfflineNote>;
+  }
+  if (kind === 'probe') {
     return (
-      <>
-        <div className="field">
-          <label className="field-label">Interpreter model<span className="hint">analyses the prompt</span></label>
-          <select className="field-select" value={config.interpreterModel || '__default'}
-                  onChange={(e) => set({ interpreterModel: e.target.value === '__default' ? '' : e.target.value })}>
-            <option value="__default">Default (connection model)</option>
-            <option>claude-haiku-4-5</option>
-            <option>claude-sonnet-4-5</option>
-            <option>claude-opus-4-6</option>
-            <option>gpt-4o-mini</option>
-            <option>gpt-4o</option>
-          </select>
+      <div className="field">
+        <label className="field-label">Label<span className="hint">shown in the run log</span></label>
+        <input className="field-input" value={d.label || ''} placeholder="probe"
+               onChange={(e) => setData({ label: e.target.value })}/>
+        <div className="tweaks-hint" style={{ marginTop: 6 }}>
+          Typed passthrough: records what flows through and changes nothing.
+          Splice it onto any wire whose types match.
         </div>
-        <div className="field">
-          <label className="field-label">Grounding depth (k)<span className="hint">nearest corpus tags / prompt tag</span></label>
-          <input className="field-input" type="number" min="1" max="50"
-                 value={config.groundingK}
-                 onChange={(e) => set({ groundingK: Math.max(1, +e.target.value || 1) })}/>
-        </div>
-        <div className="field">
-          <label className="field-label">Min similarity<span className="hint">{Number(config.minSim).toFixed(2)}</span></label>
-          <input className="field-input" type="range" min="0" max="1" step="0.01"
-                 value={config.minSim}
-                 onChange={(e) => set({ minSim: +e.target.value })}/>
-        </div>
-      </>
+      </div>
     );
   }
+
   if (kind.startsWith('qf_') && syntaxCtx?.selNode && syntaxCtx?.patchNodeData) {
     return (
       <QueryFragmentSyntaxSection
@@ -2001,135 +2091,234 @@ function ConfigForm({ kind, config, setConfig, datasetOptions, datasetLoadState,
       />
     );
   }
-  if (kind === 'graphquery') {
+
+  if (kind === 'dataset' || kind === 'access' || kind === 'index' || kind === 'tags' || kind === 'facets') {
     return (
-      <>
-        <div className="field">
-          <label className="field-label">Cypher target<span className="hint">read-only</span></label>
-          <input className="field-input" value="(:Chunk)-[:HAS_TAG]->(:Tag)" readOnly/>
-        </div>
-        <div className="field">
-          <label className="field-label">Run id<span className="hint">edge filter</span></label>
-          <input className="field-input" value={DONE_GRAPH_RUN_ID} readOnly/>
-        </div>
-      </>
+      <OfflineNote>
+        <strong>Pipeline lane — offline.</strong> The dataset → access → index →
+        tags → facets graph is built by the Python pipeline (<code>python -m
+        tagging</code>) and read here as-is. It is an illustration of how the
+        graph was constructed; nothing here is executed in the browser. The live
+        retrieval scope (dataset, facets, run id) is set on the Usage lane’s
+        <strong> Build input</strong> node.
+      </OfflineNote>
     );
   }
-  if (kind === 'retrieval') {
-    return (
-      <>
-        <div className="field">
-          <label className="field-label">Ranking method<span className="hint">how to score candidates</span></label>
-          <select className="field-select" value={config.retrievalStrategy} onChange={(e) => set({ retrievalStrategy: e.target.value })}>
-            <option value="weighted">Weighted sum across facets</option>
-            <option value="relevance">Relevance-to-file only</option>
-          </select>
-        </div>
-        <div className="field">
-          <label className="field-label">Max chunks<span className="hint">chunks sent to LLM</span></label>
-          <input className="field-input" type="number" value={config.maxChunks} onChange={(e) => set({ maxChunks: +e.target.value })}/>
-        </div>
-        <div className="field">
-          <label className="field-label">Min tag weight<span className="hint">{config.weightThreshold.toFixed(2)}</span></label>
-          <input className="field-input" type="range" min="0" max="1" step="0.05"
-                 value={config.weightThreshold}
-                 onChange={(e) => set({ weightThreshold: +e.target.value })}/>
-        </div>
-        <div className="field">
-          <label className="field-label">Min file relevance<span className="hint">{config.minRelevanceToFile.toFixed(2)}</span></label>
-          <input className="field-input" type="range" min="0" max="1" step="0.05"
-                 value={config.minRelevanceToFile}
-                 onChange={(e) => set({ minRelevanceToFile: +e.target.value })}/>
-        </div>
-      </>
-    );
-  }
-  if (kind === 'output') {
-    return (
-      <>
-        <div className="field">
-          <label className="field-label">LLM model<span className="hint">for final answer</span></label>
-          <select className="field-select" defaultValue="claude-haiku-4-5">
-            <option>claude-haiku-4-5</option>
-            <option>claude-sonnet-4-5</option>
-            <option>claude-opus-4-6</option>
-            <option>gpt-4o-mini</option>
-            <option>gpt-4o</option>
-          </select>
-        </div>
-        <div className="field">
-          <label className="field-label">View mode<span className="hint">controls bottom panel</span></label>
-          <select className="field-select" value={outputView} onChange={(e) => setOutputView(e.target.value)}>
-            <option value="llm">LLM Response</option>
-            <option value="chunks">Raw Chunks</option>
-            <option value="table">Table</option>
-          </select>
-        </div>
-      </>
-    );
-  }
-  return <div style={{fontSize:11,color:'var(--text-muted)'}}>No configuration.</div>;
+
+  return <OfflineNote>No configuration for this node.</OfflineNote>;
 }
 
-function IOPanel({ selKind, selPayload }) {
-  const p = selPayload || {};
+function fmtMs(v) { return v == null ? '—' : `${v}ms`; }
+function fmtStat(s, d = 2) {
+  if (!s) return '—';
+  return `${s.min.toFixed(d)}–${s.max.toFixed(d)} · μ ${s.mean.toFixed(d)}`;
+}
+function pctText(x) { return Number.isFinite(x) ? `${(x * 100).toFixed(0)}%` : '—'; }
+
+function MetricCards({ items }) {
   return (
-    <>
-      <div className="stat-grid">
-        <div className="stat-card"><div className="stat-card-label">Records in</div><div className="stat-card-val">{p.inCount ?? '—'}</div><div className="stat-card-sub">{selKind.inType || 'no input'}</div></div>
-        <div className="stat-card"><div className="stat-card-label">Records out</div><div className="stat-card-val">{p.outCount ?? '—'}</div><div className="stat-card-sub">{selKind.outType || 'no output'}</div></div>
-      </div>
-      <div className="section-head">Sample output</div>
-      <div className="sample-table">
-        <div className="sample-row head"><span className="col col-id">id</span><span className="col">preview</span><span className="col col-w">w</span></div>
-        {(p.sample || []).map((r,i) => (
-          <div key={i} className="sample-row">
-            <span className="col col-id">{r.id}</span>
-            <span className="col" title={r.val}>{r.val}</span>
-            <span className="col col-w">{r.w}</span>
-          </div>
-        ))}
-      </div>
-    </>
+    <div className="stat-grid">
+      {items.map(([label, val, sub]) => (
+        <div key={label} className="stat-card">
+          <div className="stat-card-label">{label}</div>
+          <div className="stat-card-val" style={{ fontSize: 13 }}>{val}</div>
+          {sub != null && <div className="stat-card-sub">{sub}</div>}
+        </div>
+      ))}
+    </div>
   );
 }
 
-function TagsPanel() {
-  return (
-    <>
-      <div className="section-head">Top tags by facet</div>
-      {FACETS.map(c => {
-        const tags = SAMPLE_CHUNKS.flatMap(ch => ch.tags).filter(t => t.facet === c.id).slice(0,4);
-        if (tags.length === 0) return null;
-        return (
-          <div key={c.id}>
-            <div style={{fontSize:10.5,color:'var(--text-dim)',fontFamily:'var(--font-mono)',marginBottom:4}}>{c.label}</div>
-            <div className="tag-row">
-              {tags.map((t,i) => <span key={i} className="tag-pill" data-facet={t.facet}>{t.name} · {t.w.toFixed(2)}</span>)}
-            </div>
-          </div>
-        );
-      })}
-    </>
+/**
+ * Per-node metrics from the last *real* run only. Every number here is
+ * computed in runPipeline from the actual interpret/ground/retrieve/answer
+ * results — there is no sample/placeholder path. Nodes with no in-browser
+ * instrumentation say so plainly.
+ */
+function NodeMetricsPanel({ kind, metrics, selNode, prompt }) {
+  const d = selNode?.data || {};
+  const NotRun = (
+    <div style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.55 }}>
+      No run yet. Execute the Usage lane — these are populated only from a real
+      prompt → interpret → retrieve → answer run, never sample data.
+    </div>
   );
-}
 
-function RuntimePanel({ selPayload }) {
+  if (kind === 'prompt') {
+    return (
+      <>
+        <div className="section-head">Prompt</div>
+        <MetricCards items={[
+          ['Length', `${prompt.length} chars`],
+          ['Mode', d.mode || 'context'],
+        ]}/>
+      </>
+    );
+  }
+
+  if (kind === 'dataset' || kind === 'access' || kind === 'index' || kind === 'tags' || kind === 'facets') {
+    return (
+      <div style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.55 }}>
+        Pipeline lane — built offline by the Python pipeline. No per-run metric
+        in the browser. Live run metrics are on the Usage lane (Ground,
+        Retrieve&nbsp;A/B, Answer, Compare) and in the result console.
+      </div>
+    );
+  }
+
+  if (kind === 'interpret') {
+    if (!metrics) return NotRun;
+    const g = metrics.grounding;
+    return (
+      <>
+        <div className="section-head">Stage latency (last run)</div>
+        <MetricCards items={[['Interpret', fmtMs(metrics.latency.interpret)]]}/>
+        <div className="section-head">Plan</div>
+        <MetricCards items={[
+          ['Prompt tags', g ? g.promptTags : '—'],
+        ]}/>
+      </>
+    );
+  }
+
+  if (kind === 'build_input') {
+    return (
+      <>
+        <div className="section-head">Configured scope</div>
+        <MetricCards items={[
+          ['Dataset', d.datasetId || 'all'],
+          ['Max chunks', d.maxChunks ?? 50],
+          ['Grounding k', d.groundingK ?? 10],
+          ['Min sim', Number(d.minSim ?? 0.78).toFixed(2)],
+        ]}/>
+        <div className="section-head">Active facets</div>
+        <div className="tag-row">
+          {(Array.isArray(d.activeFacets) ? d.activeFacets : []).length
+            ? d.activeFacets.map((f) => <span key={f} className="tag-pill">{f}</span>)
+            : <span style={{ fontSize: 11, color: 'var(--err)' }}>none — Retrieve A returns nothing</span>}
+        </div>
+      </>
+    );
+  }
+
+  if (kind === 'ground') {
+    if (!metrics) return NotRun;
+    const g = metrics.grounding;
+    return (
+      <>
+        <div className="section-head">Grounding quality (last run)</div>
+        {g ? (
+          <>
+            <MetricCards items={[
+              ['Prompt tags', g.promptTags],
+              ['Grounded corpus tags', g.groundedTags],
+              ['Cosine min/μ/max', fmtStat(g.sim, 3)],
+              ['Zero-grounded', g.zeroGrounded.length],
+              ['Latency', fmtMs(metrics.latency.ground)],
+            ]}/>
+            {g.zeroGrounded.length > 0 && (
+              <div style={{ fontSize: 10.5, color: 'var(--warn)', marginTop: 6 }}>
+                off-corpus prompt tags: {g.zeroGrounded.join(', ')}
+              </div>
+            )}
+          </>
+        ) : (
+          <div style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>
+            No grounding ran (no prompt tags, or the hard-gate / lexical path was used).
+          </div>
+        )}
+      </>
+    );
+  }
+
+  if (kind === 'retrieve_tags' || kind === 'retrieve_baseline') {
+    if (!metrics) return NotRun;
+    const isA = kind === 'retrieve_tags';
+    const s = isA ? metrics.retrieval.A : metrics.retrieval.B;
+    const { overlap } = metrics.retrieval;
+    return (
+      <>
+        <div className="section-head">{isA ? 'Lane A — HERB tags' : 'Lane B — baseline'}</div>
+        <MetricCards items={[
+          ['Chunks', s.count],
+          ['Distinct files', s.files],
+          ['Score min/μ/max', fmtStat(s.score)],
+          ['Rel min/μ/max', fmtStat(s.rel)],
+          ['Latency', fmtMs(isA ? metrics.latency.retrieveA : metrics.latency.retrieveB)],
+        ]}/>
+        <div className="section-head">A vs B overlap</div>
+        <MetricCards items={[
+          ['Shared chunks', overlap.count],
+          ['Jaccard', overlap.jaccard.toFixed(3)],
+        ]}/>
+      </>
+    );
+  }
+
+  if (kind === 'answer') {
+    if (!metrics) return NotRun;
+    const { A, B } = metrics.citations;
+    return (
+      <>
+        <div className="section-head">Lane A — answer grounding</div>
+        <MetricCards items={[
+          ['Citations', A.total],
+          ['Distinct chunks', A.distinct],
+          ['Retrieved used', pctText(A.pctUsed)],
+          ['Answer latency', fmtMs(metrics.latency.answerA)],
+        ]}/>
+        <div className="section-head">Lane B — answer grounding</div>
+        <MetricCards items={[
+          ['Citations', B.total],
+          ['Distinct chunks', B.distinct],
+          ['Retrieved used', pctText(B.pctUsed)],
+          ['Answer latency', fmtMs(metrics.latency.answerB)],
+        ]}/>
+      </>
+    );
+  }
+
+  if (kind === 'compare') {
+    if (!metrics) return NotRun;
+    const { overlap } = metrics.retrieval;
+    const L = metrics.latency;
+    return (
+      <>
+        <div className="section-head">A vs B</div>
+        <MetricCards items={[
+          ['Shared chunks', overlap.count],
+          ['Jaccard', overlap.jaccard.toFixed(3)],
+          ['A cites', metrics.citations.A.distinct],
+          ['B cites', metrics.citations.B.distinct],
+        ]}/>
+        <div className="section-head">Per-stage latency</div>
+        <MetricCards items={[
+          ['Interpret', fmtMs(L.interpret)],
+          ['Ground', fmtMs(L.ground)],
+          ['Retrieve A', fmtMs(L.retrieveA)],
+          ['Retrieve B', fmtMs(L.retrieveB)],
+          ['Answer A', fmtMs(L.answerA)],
+          ['Answer B', fmtMs(L.answerB)],
+          ['Total', fmtMs(L.total)],
+        ]}/>
+      </>
+    );
+  }
+
+  if (kind === 'probe') {
+    return (
+      <div style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.55 }}>
+        Passthrough — records the value flowing through to the run log
+        (Logs tab), changes nothing. No metric of its own.
+      </div>
+    );
+  }
+
   return (
-    <>
-      <div className="stat-grid">
-        <div className="stat-card"><div className="stat-card-label">Last run</div><div className="stat-card-val">412ms</div></div>
-        <div className="stat-card"><div className="stat-card-label">Adapter</div><div className="stat-card-val" style={{fontSize:11}}>neo4j_driver v5</div></div>
-        <div className="stat-card"><div className="stat-card-label">Cypher hits</div><div className="stat-card-val">{selPayload?.outCount ?? '—'}</div></div>
-        <div className="stat-card"><div className="stat-card-label">Cache</div><div className="stat-card-val" style={{fontSize:11,color:'var(--ok)'}}>warm</div></div>
-      </div>
-      <div className="section-head">Recent log</div>
-      <div className="sample-table">
-        <div className="sample-row"><span className="col col-id" style={{color:'var(--text-dim)'}}>10:42:12</span><span className="col">Connected to bolt://neo4j-mock</span><span className="col col-w" style={{color:'var(--ok)'}}>OK</span></div>
-        <div className="sample-row"><span className="col col-id" style={{color:'var(--text-dim)'}}>10:42:13</span><span className="col">MATCH (s:Source)…</span><span className="col col-w" style={{color:'var(--ok)'}}>312</span></div>
-        <div className="sample-row"><span className="col col-id" style={{color:'var(--text-dim)'}}>10:42:13</span><span className="col">payload serialised</span><span className="col col-w" style={{color:'var(--ok)'}}>OK</span></div>
-      </div>
-    </>
+    <div style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.55 }}>
+      No standalone metric for this node — see Ground, Retrieve A/B, Answer and
+      Compare for the live run breakdown.
+    </div>
   );
 }
 
@@ -2143,13 +2332,11 @@ function Drawer({ edge, nodes, onClose }) {
   const tKind = tNode?.type === 'queryGroup'
     ? { label: 'Query module', outType: null, inType: QUERY_CONTAINER.inType, id: 'queryGroup' }
     : (tNode?.data?.kind ? NT[tNode.data.kind] : null);
-  const payloadKindId = sNode?.type === 'queryGroup' ? null : sKind?.id;
-  const payload = payloadKindId ? STAGE_PAYLOADS[payloadKindId] : null;
   return (
     <aside className="drawer">
       <div className="drawer-head">
         <span className="drawer-head-pill">{I.link} edge</span>
-        <div className="drawer-title">Payload on the wire</div>
+        <div className="drawer-title">Data contract on the wire</div>
         <button className="btn btn-ghost btn-icon" onClick={onClose}>{I.close}</button>
       </div>
       <div className="drawer-body">
@@ -2169,20 +2356,11 @@ function Drawer({ edge, nodes, onClose }) {
             <div className="drawer-flow-type">{tKind?.inType || ''}</div>
           </div>
         </div>
-        <div className="stat-grid">
-          <div className="stat-card"><div className="stat-card-label">Records</div><div className="stat-card-val">{payload?.outCount ?? '—'}</div><div className="stat-card-sub">{edge.data?.type}</div></div>
-          <div className="stat-card"><div className="stat-card-label">Latency</div><div className="stat-card-val">~12ms</div><div className="stat-card-sub">serialise + relay</div></div>
-        </div>
-        <div className="section-head">Sample payload</div>
-        <div className="sample-table">
-          <div className="sample-row head"><span className="col col-id">id</span><span className="col">preview</span><span className="col col-w">w</span></div>
-          {(payload?.sample || []).map((r,i) => (
-            <div key={i} className="sample-row">
-              <span className="col col-id">{r.id}</span>
-              <span className="col" title={r.val}>{r.val}</span>
-              <span className="col col-w">{r.w}</span>
-            </div>
-          ))}
+        <div className="section-head">Payload type</div>
+        <div style={{ fontSize: 11.5, color: 'var(--text-muted)', marginBottom: 4 }}>
+          <code className="query-syntax-code">{edge.data?.type || 'untyped'}</code> — the
+          declared contract carried by this connection. Live counts and timings
+          are per run in the Inspector <strong>Metrics</strong> tab and the result console.
         </div>
         <div className="section-head">Schema</div>
         <div className="sample-table">
@@ -2206,7 +2384,7 @@ function schemaFor(t) {
     case 'files':      return [{name:'fileId',type:'string'},{name:'relPath',type:'string'},{name:'formatFamily',type:'string'}];
     case 'graph':      return [{name:'source',type:'Source'},{name:'files[]',type:'File[]'},{name:'chunks[]',type:'Chunk[]'}];
     case 'graph_scope':return [{name:'tagsEnabled',type:'boolean'},{name:'facets',type:'FacetDimension[]'}];
-    case 'retrieval_plan': return [{name:'queryPlan',type:'QueryPlan'},{name:'facets',type:'FacetDimension[]'},{name:'limit',type:'int'}];
+    case 'retrieval_plan': return [{name:'plan',type:'QueryPlan'},{name:'scope',type:'{datasetId,runId}'},{name:'controls',type:'RetrievalControls'},{name:'gate',type:'HardGate'}];
     case 'context':    return [{name:'chunkId',type:'string'},{name:'fileId',type:'string'},{name:'content',type:'text'},{name:'tags[]',type:'ChunkTag'},{name:'score',type:'float'}];
     case 'query_plan': return [{name:'extractedTags',type:'string[]'},{name:'facets',type:'FacetDimension[]'},{name:'strategy',type:'enum'}];
     case 'frag':       return [{name:'slotId',type:'string'},{name:'boundParams',type:'Record<string, unknown>'}];
@@ -2216,14 +2394,101 @@ function schemaFor(t) {
 }
 
 // ─── Bottom Panel (lane comparison) ─────────────────────────────────────────
-function BottomPanel({ results, prompt, outputView, setOutputView, pipelineRunning, pipelineError }) {
+function copyText(text) {
+  if (!text) return;
+  navigator.clipboard?.writeText(text).catch(() => {});
+}
+
+/**
+ * One JSONL record per (run, lane) — the offline RAGAS scorer
+ * (`backend/eval/ragas_eval.py`) consumes this. Real run data only; runs
+ * without results (failed) are skipped, not faked.
+ */
+function exportRagasJsonl(runs) {
+  const rows = [];
+  for (const run of runs) {
+    if (!run.results) continue;
+    for (const lane of ['A', 'B']) {
+      const r = run.results[`lane_${lane}`];
+      if (!r) continue;
+      rows.push(JSON.stringify({
+        run_id: run.id,
+        at: run.at,
+        lane,
+        dataset: run.datasetId || null,
+        question: run.prompt,
+        answer: r.response || '',
+        contexts: (r.retrievedChunks || []).map((c) => c.content).filter(Boolean),
+      }));
+    }
+  }
+  if (!rows.length) return;
+  const blob = new Blob([rows.join('\n') + '\n'], { type: 'application/x-ndjson' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ragas_runs_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.jsonl`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function BottomPanel({
+  results, prompt, outputView, setOutputView, bottomTab, setBottomTab,
+  pipelineRunning, pipelineError, runLog, runHistory, onRestoreRun, onClearLog, onStartResize,
+}) {
+  const [errorsOpen, setErrorsOpen] = useState(false);
+  const [copiedErrorId, setCopiedErrorId] = useState(null);
   const a = results.lane_A, b = results.lane_B;
+  const tabs = [
+    ['comparison', 'Comparison'],
+    ['logs', `Logs ${runLog.length}`],
+    ['history', `History ${runHistory.length}`],
+  ];
+  const errorItems = useMemo(() => {
+    const items = [];
+    if (pipelineError) {
+      items.push({
+        id: 'current',
+        at: 'current',
+        stage: 'pipeline',
+        message: pipelineError,
+      });
+    }
+    for (const ev of runLog.filter((x) => x.status === 'failed').slice().reverse()) {
+      items.push({
+        id: ev.id,
+        at: ev.at,
+        stage: ev.stage,
+        message: ev.message,
+      });
+    }
+    const seen = new Set();
+    return items.filter((item) => {
+      const key = `${item.stage}:${item.message}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [pipelineError, runLog]);
+  const copyError = (item) => {
+    copyText(item.message);
+    setCopiedErrorId(item.id);
+    window.setTimeout(() => setCopiedErrorId(null), 900);
+  };
   return (
     <section className="bottom">
+      <div className="bottom-resizer" onPointerDown={onStartResize} title="Resize results panel" />
       <div className="bottom-head">
-        <div className="bottom-tab active">{I.layers} Lane Comparison</div>
-        <div className="bottom-tab" style={{opacity:.6}}>Logs</div>
-        <div className="bottom-tab" style={{opacity:.6}}>Run history</div>
+        {tabs.map(([key, label]) => (
+          <button
+            key={key}
+            type="button"
+            className={cls('bottom-tab', bottomTab === key && 'active')}
+            onClick={() => setBottomTab(key)}
+          >
+            {key === 'comparison' && I.layers}{label}
+          </button>
+        ))}
         <div style={{flex:1}}/>
         {pipelineRunning && (
           <span style={{fontSize:11,color:'var(--accent)',marginRight:12,animation:'pulse 1.2s infinite'}}>
@@ -2231,31 +2496,107 @@ function BottomPanel({ results, prompt, outputView, setOutputView, pipelineRunni
           </span>
         )}
         {pipelineError && !pipelineRunning && (
-          <span style={{fontSize:11,color:'var(--err)',marginRight:12,maxWidth:320,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}
-                title={pipelineError}>
-            ⚠ {pipelineError}
-          </span>
+          <div className="error-summary">
+            <span className="error-summary-text" title={pipelineError}>⚠ {pipelineError}</span>
+            <button
+              type="button"
+              className={cls('error-list-button', errorsOpen && 'active')}
+              onClick={() => setErrorsOpen((v) => !v)}
+              title="Show error list"
+            >
+              {I.list}
+              <span>{errorItems.length}</span>
+            </button>
+            {errorsOpen && (
+              <div className="error-popover">
+                <div className="error-popover-head">
+                  <span>Error list</span>
+                  <button type="button" onClick={() => setErrorsOpen(false)}>Close</button>
+                </div>
+                <div className="error-popover-list">
+                  {errorItems.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className="error-popover-row"
+                      onClick={() => copyError(item)}
+                    >
+                      <span className="error-popover-meta">{item.at} · {item.stage}</span>
+                      <span className="error-popover-message">{item.message}</span>
+                      <span className="error-popover-copy">{copiedErrorId === item.id ? 'copied' : 'copy'}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         )}
-        <div className="bottom-pane-mode">
-          {[['llm','LLM'],['chunks','Chunks'],['table','Table']].map(([k,l]) =>
-            <button key={k} className={cls(outputView === k && 'active')} onClick={() => setOutputView(k)}>{l}</button>)}
+        {bottomTab === 'comparison' && (
+          <div className="bottom-pane-mode">
+            {[['llm','Answer'],['chunks','Chunks'],['table','Run data']].map(([k,l]) =>
+              <button key={k} className={cls(outputView === k && 'active')} onClick={() => setOutputView(k)}>{l}</button>)}
+          </div>
+        )}
+      </div>
+      {bottomTab === 'comparison' && (
+        <div className="bottom-body">
+          <ResultPane label="Lane A — HERB tags" tone="full" data={a} view={outputView}/>
+          <ResultPane label="Lane B — baseline (no tags)" tone="baseline" data={b} view={outputView}/>
         </div>
-      </div>
-      <div className="bottom-body">
-        <ResultPane label="Lane A — HERB tags" tone="full" data={a} view={outputView}/>
-        <ResultPane label="Lane B — baseline (no tags)" tone="baseline" data={b} view={outputView}/>
-      </div>
+      )}
+      {bottomTab === 'logs' && <LogPanel events={runLog} pipelineError={pipelineError} onClearLog={onClearLog}/>}
+      {bottomTab === 'history' && <HistoryPanel runs={runHistory} prompt={prompt} onRestoreRun={onRestoreRun}/>}
     </section>
   );
 }
+
+function formatRetrievalGate(gate) {
+  if (!gate) return 'none';
+  const parts = [];
+  for (const key of ['product', 'section', 'channel', 'employee_id']) {
+    if (gate[key]) parts.push(`${key}=${gate[key]}`);
+  }
+  if (gate.years?.length) parts.push(`years=${gate.years.join(',')}`);
+  return parts.length ? parts.join(' · ') : 'none';
+}
+
 function ResultPane({ label, tone, data, view }) {
+  const [chunkFilter, setChunkFilter] = useState('');
+  const [selectedChunkKey, setSelectedChunkKey] = useState(null);
   if (!data) return <div className="bottom-pane"><div className="bottom-pane-empty">Run the lane to see results.</div></div>;
   const liveChunks = data.retrievedChunks;
+  const isDemo = !liveChunks;
+  const rInput = data.retrievalInput;
+  const sourceChunks = liveChunks ?? SAMPLE_CHUNKS.slice(0, tone === 'full' ? 4 : 5);
+  const normalizedChunks = sourceChunks.map((c, i) => ({
+    key: c.chunkId || c.id || `chunk_${i}`,
+    score: c.score ?? c.rel ?? 0,
+    relevanceToFile: c.relevanceToFile ?? c.rel ?? null,
+    description: c.description || c.preview || '',
+    content: c.content || c.preview || '',
+    fileId: c.fileId || c.file || 'sample',
+  }));
+  const q = chunkFilter.trim().toLowerCase();
+  const filteredChunks = q
+    ? normalizedChunks.filter((c) => `${c.description} ${c.content} ${c.fileId}`.toLowerCase().includes(q))
+    : normalizedChunks;
+  const selectedChunk = filteredChunks.find((c) => c.key === selectedChunkKey) ?? filteredChunks[0] ?? null;
+  const answerText = data.response || '';
+  const chunksJson = JSON.stringify(liveChunks ?? [], null, 2);
   return (
     <div className="bottom-pane">
       <div className="bottom-pane-head">
         <span className="lane-tag">{label}</span>
+        <div className="result-actions">
+          <button type="button" className="result-action" onClick={() => copyText(answerText)}>Copy answer</button>
+          <button type="button" className="result-action" onClick={() => copyText(chunksJson)}>Copy chunks</button>
+        </div>
       </div>
+      {isDemo && (
+        <div style={{fontSize:10.5,color:'var(--warn)',fontFamily:'var(--font-mono)',margin:'0 0 6px',padding:'4px 6px',background:'var(--bg-card)',borderRadius:4}}>
+          Demo data — not a live run. Execute the Usage lane for real retrieval & answer.
+        </div>
+      )}
       <div className="bottom-pane-stats">
         <span>{data.chunks} chunks</span>
         <span>{data.tokensIn} → {data.tokensOut} tok</span>
@@ -2271,6 +2612,16 @@ function ResultPane({ label, tone, data, view }) {
                 <span key={t.t} className="tag-pill" style={{fontSize:9.5,marginRight:2}}>{t.t} {t.w_query.toFixed(2)}</span>
               ))}
               {data.plan.tags.length > 5 && <span style={{color:'var(--text-dim)'}}> +{data.plan.tags.length-5} more</span>}
+            </div>
+          )}
+          {rInput && (
+            <div style={{fontSize:10,color:'var(--text-dim)',fontFamily:'var(--font-mono)',marginBottom:6,padding:'4px 6px',background:'var(--bg-card)',borderRadius:4}}>
+              <strong style={{color:'var(--text-muted)'}}>Retrieval input:</strong>{' '}
+              {rInput.scope.datasetId || 'all datasets'} · {rInput.scope.runId} · {rInput.controls.strategy}
+              {' · '}
+              limit {rInput.controls.limit} · k {rInput.controls.groundingK} · min_sim {Number(rInput.controls.minSim).toFixed(2)}
+              {' · '}
+              facets {rInput.controls.activeFacets.join(',') || 'none'} · gate {formatRetrievalGate(rInput.gate)}
             </div>
           )}
           {data.plan?.grounding?.length > 0 && (
@@ -2292,36 +2643,58 @@ function ResultPane({ label, tone, data, view }) {
         </>
       )}
       {view === 'chunks' && (
-        <div className="sample-table">
-          <div className="sample-row head">
-            <span className="col col-id">score</span>
-            <span className="col">description / content</span>
-            <span className="col col-w">rel</span>
+        <div className="chunk-workbench">
+          <div className="chunk-toolbar">
+            <input value={chunkFilter} onChange={(e) => setChunkFilter(e.target.value)} placeholder="Filter evidence chunks…" />
+            <span>{filteredChunks.length}/{normalizedChunks.length}</span>
           </div>
-          {(liveChunks ?? SAMPLE_CHUNKS.slice(0, tone === 'full' ? 4 : 5)).map((c, i) => {
-            const isLive = !!liveChunks;
-            const preview = isLive ? (c.description || c.content || '').slice(0, 90) : c.preview;
-            const score   = isLive ? c.score?.toFixed(3) : c.rel?.toFixed(2);
-            const rel     = isLive ? (c.relevanceToFile?.toFixed(2) ?? '—') : c.rel?.toFixed(2);
-            const title   = isLive ? (c.content || '') : c.preview;
-            return (
-              <div key={i} className="sample-row">
-                <span className="col col-id">{score}</span>
-                <span className="col" title={title}>{preview}</span>
-                <span className="col col-w">{rel}</span>
-              </div>
-            );
-          })}
+          <div className="chunk-layout">
+            <div className="chunk-list">
+              {filteredChunks.map((c) => (
+                <button
+                  key={c.key}
+                  type="button"
+                  className={cls('chunk-row', selectedChunk?.key === c.key && 'active')}
+                  onClick={() => setSelectedChunkKey(c.key)}
+                >
+                  <span className="chunk-row-score">{Number(c.score).toFixed(3)}</span>
+                  <span className="chunk-row-text">{c.description || c.content}</span>
+                  <span className="chunk-row-rel">{c.relevanceToFile != null ? Number(c.relevanceToFile).toFixed(2) : '—'}</span>
+                </button>
+              ))}
+            </div>
+            <div className="chunk-detail">
+              {selectedChunk ? (
+                <>
+                  <div className="chunk-detail-head">
+                    <span>{selectedChunk.key}</span>
+                    <button type="button" className="result-action" onClick={() => copyText(selectedChunk.content)}>Copy chunk</button>
+                  </div>
+                  <div className="chunk-detail-meta">
+                    file {selectedChunk.fileId} · score {Number(selectedChunk.score).toFixed(3)}
+                    {selectedChunk.relevanceToFile != null && ` · rel ${Number(selectedChunk.relevanceToFile).toFixed(2)}`}
+                  </div>
+                  <pre className="chunk-detail-body">{selectedChunk.content}</pre>
+                </>
+              ) : (
+                <div className="bottom-pane-empty">No chunks match the filter.</div>
+              )}
+            </div>
+          </div>
         </div>
       )}
       {view === 'table' && (
-        <div className="sample-table">
-          <div className="sample-row head"><span className="col col-id">metric</span><span className="col">value</span><span className="col col-w"></span></div>
-          <div className="sample-row"><span className="col col-id">chunks</span><span className="col">{data.chunks}</span><span className="col col-w"></span></div>
-          <div className="sample-row"><span className="col col-id">tokens in</span><span className="col">{data.tokensIn}</span><span className="col col-w"></span></div>
-          <div className="sample-row"><span className="col col-id">tokens out</span><span className="col">{data.tokensOut}</span><span className="col col-w"></span></div>
-          <div className="sample-row"><span className="col col-id">duration</span><span className="col">{data.durationMs}ms</span><span className="col col-w"></span></div>
-          {data.plan && <div className="sample-row"><span className="col col-id">plan tags</span><span className="col">{data.plan.tags.length}</span><span className="col col-w"></span></div>}
+        <div className="run-data-grid">
+          <Metric label="chunks" value={data.chunks} />
+          <Metric label="tokens in" value={data.tokensIn} />
+          <Metric label="tokens out" value={data.tokensOut} />
+          <Metric label="duration" value={`${data.durationMs}ms`} />
+          <Metric label="dataset" value={rInput?.scope?.datasetId || 'sample'} />
+          <Metric label="strategy" value={rInput?.controls?.strategy || 'sample'} />
+          <Metric label="facets" value={rInput?.controls?.activeFacets?.join(', ') || 'none'} wide />
+          <Metric label="gate" value={formatRetrievalGate(rInput?.gate)} wide />
+          {data.plan && <Metric label="plan tags" value={data.plan.tags.length} />}
+          {data.plan?.grounding && <Metric label="grounded tags" value={data.plan.grounding.reduce((n, g) => n + g.matches.length, 0)} />}
         </div>
       )}
       {data.topFacets?.length > 0 && (
@@ -2334,6 +2707,82 @@ function ResultPane({ label, tone, data, view }) {
 }
 
 // ─── Mount ──────────────────────────────────────────────────────────────────
+function Metric({ label, value, wide = false }) {
+  return (
+    <div className={cls('metric-cell', wide && 'wide')}>
+      <div className="metric-label">{label}</div>
+      <div className="metric-value" title={String(value ?? '')}>{value ?? '—'}</div>
+    </div>
+  );
+}
+
+function LogPanel({ events, pipelineError, onClearLog }) {
+  return (
+    <div className="bottom-console">
+      <div className="console-toolbar">
+        <span>{events.length} events</span>
+        {pipelineError && <span className="console-error">{pipelineError}</span>}
+        <button type="button" className="result-action" onClick={onClearLog}>Clear</button>
+      </div>
+      <div className="log-list">
+        {events.length ? events.slice().reverse().map((ev) => (
+          <div key={ev.id} className={cls('log-row', ev.status)}>
+            <span className="log-time">{ev.at}</span>
+            <span className="log-status">{ev.status}</span>
+            <span className="log-stage">{ev.stage}</span>
+            <span className="log-message">{ev.message}</span>
+          </div>
+        )) : (
+          <div className="bottom-pane-empty">No log events yet.</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function HistoryPanel({ runs, prompt, onRestoreRun }) {
+  return (
+    <div className="bottom-console">
+      <div className="console-toolbar">
+        <span>{runs.length} runs</span>
+        <span className="console-muted">current prompt: {prompt}</span>
+        <button
+          type="button"
+          className="result-action"
+          disabled={!runs.some((r) => r.results)}
+          onClick={() => exportRagasJsonl(runs)}
+          title="Download successful runs as RAGAS-ready JSONL (question, answer, contexts) per lane"
+        >
+          Export RAGAS
+        </button>
+      </div>
+      <div className="history-list">
+        {runs.length ? runs.map((run) => (
+          <button
+            key={run.id}
+            type="button"
+            className={cls('history-row', run.status)}
+            onClick={() => onRestoreRun(run)}
+            disabled={!run.results}
+          >
+            <span className="history-status">{run.status}</span>
+            <span className="history-main">
+              <span className="history-prompt">{run.prompt}</span>
+              <span className="history-meta">
+                {run.datasetId || 'all'} · {run.durationMs}ms · A {run.chunksA} chunks · B {run.chunksB} chunks
+                {run.error && ` · ${run.error}`}
+              </span>
+            </span>
+            <span className="history-time">{run.at}</span>
+          </button>
+        )) : (
+          <div className="bottom-pane-empty">No completed runs yet.</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <ReactFlowProvider>

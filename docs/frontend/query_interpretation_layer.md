@@ -1,14 +1,15 @@
 # Prompt Interpretation Method
 
-**Status:** algorithmic spec; runs in the browser as part of the local-only
-workbench. No HTTP layer. Implementing code (`src/services/*`) is **uncommitted**
-(working tree only). Its graph prerequisites are **verified present on the live
+**Status:** implemented in the browser (`src/services/*` + `src/App.jsx`).
+No HTTP layer. The retrieval lane now receives a first-class
+`RetrievalInput` object instead of a loose mix of plan fields and UI knobs.
+Graph prerequisites are **verified present on the live
 `herb` graph** (2026-05-18: materialized hard fields on 5843 chunks,
 `chunk_fulltext` + `tag_embedding` indexes ONLINE, 25,896 `:Tag` embedded — see
 [`status.md`](status.md)). Not separately re-verified: a full browser
 prompt → answer click-through.
 
-**Last updated:** 2026-05-18.
+**Last updated:** 2026-05-19.
 
 ## Purpose
 
@@ -154,24 +155,19 @@ The interpreter returns one complete, inspectable object. The UI must display it
   "filters": {
     "dataset_id": "Salesforce__HERB",
     "file_ids": [],
-    "products": ["AnomalyForce"],
-    "chunk_kinds": [],
-    "date_from": null,
-    "date_to": null,
-    "must_have_tags": [],
-    "must_not_have_tags": ["approved"]
-  },
-  "ranking": {
-    "facets": ["topic", "entities", "activity", "temporal", "evidence"],
     "min_w_chunk": 0.0,
-    "min_w_facet": 0.0,
     "min_relevance_to_file": 0.0,
-    "limit": 20
+    "limit": 20,
+    "gate": {
+      "product": "AnomalyForce",
+      "section": "prs",
+      "channel": null,
+      "employee_id": null,
+      "years": []
+    }
   },
   "answer_job": {
     "mode": "direct_answer",
-    "output_format": "links_with_short_explanation",
-    "citation_policy": "cite_chunks",
     "evidence_policy": "retrieved_only",
     "missing_evidence_policy": "say_insufficient_evidence"
   },
@@ -181,9 +177,49 @@ The interpreter returns one complete, inspectable object. The UI must display it
 
 `filters` and `answer_job` are not tags. They control what the retrieval code is allowed to search and what the answer model should do after retrieval.
 
+## RetrievalInput shape
+
+Before graph retrieval runs, the `build_input` node turns the query plan plus
+its own params into one inspectable object:
+
+```json
+{
+  "plan": "{QueryPlan}",
+  "scope": {
+    "datasetId": "Salesforce__HERB",
+    "runId": "pilot_full_herb"
+  },
+  "controls": {
+    "strategy": "weighted",
+    "activeFacets": ["topic", "entities", "activity", "temporal", "evidence"],
+    "tagsEnabled": true,
+    "limit": 20,
+    "minWChunk": 0.0,
+    "minRelevanceToFile": 0.0,
+    "groundingK": 10,
+    "minSim": 0.78
+  },
+  "gate": {
+    "product": "AnomalyForce",
+    "section": "prs",
+    "channel": null,
+    "employee_id": null,
+    "years": []
+  }
+}
+```
+
+This is the actual input to retrieval. The `interpret` node owns `plan`; the
+`build_input` node owns `scope` + `controls` (its `node.data` params); the hard
+gate comes from the plan. `scoreGroundedChunks` (Lane A, after `ground`) and
+`retrieveBaseline` (Lane B) both consume this same object so semantic and
+baseline runs use identical scope, limit, and hard gate.
+
 ## Retrieval scoring
 
-All steps execute from the browser.
+All steps execute from the browser. Retrieval scoring consumes the
+`RetrievalInput`; it does not read scattered UI state after that object is
+built.
 
 **0. Hard gate (deterministic, pre-scoring).** Before any tag or embedding
 work, the plan's `gate` is compiled to a Cypher `WHERE` fragment ANDed onto
@@ -213,9 +249,17 @@ those chunk descriptions, so both vectors are the same kind of object (name +
 description prose, same prefix). The earlier asymmetric `query:`-vs-`passage:`
 form is gone — comparing a 2-word query string against context-laden passage
 vectors collapsed cosine similarities into a narrow, non-discriminative band.
+Before loading the extractor, the browser verifies the bundled JSON assets
+(`config.json`, `tokenizer.json`, `tokenizer_config.json`,
+`special_tokens_map.json`, `generation_config.json`) plus `onnx/model.onnx`.
+This catches the common Vite fallback failure where a missing JSON path returns
+`index.html` and later appears as an opaque `JSON.parse` error. It also clears
+the model JSON keys from `transformers-cache` and disables that CacheStorage
+layer for this local bundle, because a prior missing-file run can otherwise
+cache that HTML fallback under the model asset URL.
 `db.index.vector.queryNodes('tag_embedding', k, vec)` returns the nearest real
 corpus tag names with cosine `sim`. `k` (grounding depth) and `min_sim` are
-user controls on the Interpreter node ("effort"). Note `min_sim` is a coarse
+user controls on the `build_input` node ("effort"). Note `min_sim` is a coarse
 floor: e5-small cosine on this corpus is compressed (~0.8 mean to random
 tags), so grounding leans on top-k ranking, not the absolute threshold.
 
@@ -243,16 +287,12 @@ less. `sim` is always a real cosine similarity from the vector index — there
 is no `sim = 1.0` exact-name shortcut.
 
 **3. Lexical recall (gated full-text).** Tag scoring caps recall at tagger
-coverage: a chunk whose body literally states a term (e.g. a year) is
-unreachable if no matching tag was ever minted. To close that gap, a gated
-query against the `chunk_fulltext` index (`content`, `description`,
-`question`) runs over the prompt's tag terms plus any explicit year literals,
-under the same hard gate. When the prompt produced a usable gate but **no**
-usable tags, this is the sole retrieval path (with a plan warning, so it is
-never silent). When tags exist **and** the gate carries explicit years, the
-lexical hits are unioned after the semantic hits, deduped by `chunkId`;
-Lucene and tag scores are not comparable, so they are not interleaved by
-score.
+coverage: a chunk whose body literally states a term is unreachable if no
+matching tag was ever minted. The current code only uses the `chunk_fulltext`
+index (`content`, `description`, `question`) when the prompt produced a usable
+hard gate but no usable tags. That path carries a plan warning and runs under
+the same gate. The older semantic-hit + lexical-hit union path is gone; year
+constraints are enforced through `c.years` in the hard gate.
 
 The full grounding map (prompt tag → matched corpus tags + sims) is attached
 to the plan as `grounding` and shown beside the results.
@@ -279,6 +319,6 @@ missing_evidence_policy = say_insufficient_evidence
 ## Implementation notes
 
 - Pass 1, Pass 2, and the answer call are three separate Anthropic calls in the browser. Keep them separate so the plan stays inspectable between steps.
-- The UI must display the query plan beside the retrieved results.
+- The UI must display the query plan and `RetrievalInput` beside the retrieved results.
 - Field-name discipline: HERB graph uses `facet`, `w_chunk`, `w_facet`, `relevance_to_file`.
 - Prompt-tag grounding against the live `:Tag` vocabulary is implemented via the vector index (see Retrieval scoring). Embedding model id must be identical backend (`sentence-transformers`) and browser (`@xenova/transformers`), enforced by `Tag.embedding_model`. The browser model is bundled (`frontend/public/models/Xenova/e5-small-v2/`, full fp32, loaded local-only — no runtime HF fetch); fp32 + identical `passage:` construction give exact backend parity (cosine ≈ 1.0).

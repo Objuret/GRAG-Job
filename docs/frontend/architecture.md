@@ -4,7 +4,7 @@
 
 **Entry:** `src/main.tsx` → **`src/App.jsx`**.
 
-Single-file workbench: React Flow canvas, inline catalog, inspector, query-module editor, edge drawer, and bottom comparison strip. Demo copy and registry live in **`src/data/workbenchData.ts`**.
+Single-file workbench: React Flow canvas, inline catalog, inspector, query-module editor, edge drawer, and resizable bottom result console. Demo copy and registry live in **`src/data/workbenchData.ts`**.
 
 The app is **local-only**. The browser talks directly to:
 
@@ -15,19 +15,53 @@ There is no HTTP server in the middle. The Python `backend/` is an **offline pip
 
 ---
 
-## Canvas: two lanes + bridge
+## Canvas: two lanes
 
-**Pipeline:** Dataset → Access Layer → Index Layer → Tags → Facets  
+**Pipeline (offline illustration, not executed):** Dataset → Access Layer → Index Layer → Tags → Facets — how the Python pipeline built the graph. Toggling these nodes does nothing; they carry no run controls.
 
-**Usage:** Prompt → Interpreter → Retrieval → Graph Query → Output  
+**Usage (the real executable DAG):**
 
-**Bridge:** Facets → Graph Query (dashed).
+```
+prompt → interpret → build_input → ground → retrieve_tags → answer ┐
+                                 └────────→ retrieve_baseline → answer ┘→ compare
+```
 
-In this canvas, the pipeline node **Access Layer** names the backend **access layer** (inventory, typing, stable keys, paths, payload rules, and `:Source` / `:File` anchors so the graph points at real files). It is not “only” a folder listing and not semantic tagging. **Index Layer** is the Neo4j graph artefact. **Tags** and **Facets** are graph-scope controls used to include, remove, or compare `HAS_TAG` facet dimensions.
+The Usage lane **is** the executor. `services/pipeline.ts` maps each node kind to one async executor; `runUsageGraph` topologically orders the wired `lane_usage` nodes/edges and threads a typed context — **wire order = run order**, A/B is a real fork joined at `compare`. Per-step params live on the node (`node.data`): model on `interpret`/`answer`; dataset, facets, k, min_sim, thresholds, limit on `build_input`. A node’s `disabled` toggle removes it from the run; a cycle, missing terminal `compare`, or contract mismatch is a loud error.
 
-Registry splits: `PIPELINE_NODES`, `USAGE_NODES`, combined as `NODE_TYPES`.
+**Modules:** a **Probe** (`MODULE_NODES`) is a typed passthrough — splice it on any matching wire to log what flows through without changing the run.
 
-**Query modules:** draggable `queryGroup` containers can sit between Retrieval and Graph Query. A module gets an auto-seeded `qf_start` fragment and can contain chained fragment nodes for `topic`, `entities`, `activity`, `temporal`, and `evidence`. The inspector has a plain-language view plus a technical Cypher view.
+Registry splits: `PIPELINE_NODES`, `USAGE_NODES`, `MODULE_NODES`, combined as `NODE_TYPES`.
+
+**Query modules — the executed Lane-A Cypher.** A `queryGroup` wired onto the
+grounded wire (`ground → [Query module] → retrieve_tags`) **is** the query
+`retrieve_tags` runs: `querymodule` composes the module's header + ordered
+fragment chain + footer (`composeModuleCypher`) and `retrieve_tags` executes
+that via `runModuleCypher`. No module wired → the fixed `scoreCypher`
+(`scoreGroundedChunks`). The default module header/footer is the *canonical
+weighted-overlap query itself* (same semantics as `scoreCypher`), so editing
+fragments/weights/order/structure are real experiments. Bindings: `$plan`,
+`$queryTags` (grounded corpus tags + sim + facet weights), `$activeFacets`,
+`$datasetId`, `$runId`, `$minWChunk`, `$minRelevanceToFile`, `$limit`, and the
+null-tolerant gate (`$g_product/$g_section/$g_channel/$g_employee_id/$g_years`).
+The module **must** `RETURN chunkId, fileId, content, description,
+relevanceToFile, score` — a missing column is a loud error. Dataset + hard
+gate are still validated loudly before the module runs. The inspector keeps
+the plain-language story plus the technical Cypher view.
+
+**RAGAS (offline).** No server, so RAGAS isn't wired in. History →
+**Export RAGAS** writes one JSONL record per (run, lane) with the real
+`question` / `answer` / retrieved `contexts`; `backend/eval/ragas_eval.py`
+scores faithfulness + answer_relevancy per lane and the A−B delta. See
+[`../../backend/eval/README.md`](../../backend/eval/README.md).
+
+**Result console:** the bottom panel is resizable and has real Comparison,
+Logs, and History tabs. Comparison shows lane answers, retrieved chunks,
+retrieval input, copy actions, chunk filtering, and chunk detail. Logs are
+populated by the live prompt → interpretation → retrieval → answer run.
+History records finished/failed runs and can restore a previous successful run
+into the comparison view. Pipeline errors keep the compact header warning but
+also expose a paper-list popover with deduplicated full error lines; clicking a
+line copies that complete error.
 
 ---
 
@@ -36,8 +70,9 @@ Registry splits: `PIPELINE_NODES`, `USAGE_NODES`, combined as `NODE_TYPES`.
 ```
 src/
 ├── main.tsx
-├── App.jsx                    # All UI composition
-├── data/workbenchData.ts      # Node registry + demo payloads (PRESET_RESULTS, SAMPLE_CHUNKS, …)
+├── App.jsx                    # UI composition + runPipeline wrapper
+├── services/pipeline.ts       # Executor-per-node engine + graph runner + real metrics
+├── data/workbenchData.ts      # Node registry + pre-run demo (PRESET_RESULTS, SAMPLE_CHUNKS)
 ├── query/queryModuleSyntax.ts # Query fragment defaults and composition helpers
 ├── types/index.ts
 └── index.css
@@ -52,11 +87,17 @@ workbenchData.ts       ──imports──▶  App.jsx  (registry + demo lane re
 queryModuleSyntax.ts   ──imports──▶  App.jsx  (query module composition)
 ```
 
-When the live path is wired, `App.jsx` will:
+The live path: `App.jsx:runPipeline` (key precheck, lane status, logs/history)
+calls `services/pipeline.ts:runUsageGraph`, which executes the wired Usage
+nodes in topological order. The node executors call the service modules:
 
-1. Use `neo4j-driver` directly to read datasets / files / chunks / tags from the local Neo4j.
-2. Use `@anthropic-ai/sdk` directly for prompt interpretation and answer generation. See [`query_interpretation_layer.md`](query_interpretation_layer.md) for the two-pass method and plan shape.
-3. Display the query plan beside the retrieved results, so the user can see what the model thought the prompt meant.
+1. `interpret` → `services/interpreter.ts` (two-pass plan + hard gate; see [`query_interpretation_layer.md`](query_interpretation_layer.md)).
+2. `build_input` → `services/retrieval.ts:buildRetrievalInput` (`plan` + scope + controls + gate).
+3. `ground` → `groundRetrieval` (validate dataset+gate, e5 embed + kNN onto corpus `:Tag`s).
+4. `retrieve_tags` → `scoreGroundedChunks` (Lane A weighted overlap); `retrieve_baseline` → `retrieveBaseline` (Lane B).
+5. `answer` → `services/answer.ts`; `compare` joins A/B and computes the real metrics.
+
+The query plan, retrieval input, grounding and metrics are shown beside the retrieved results so the user sees what the model inferred and what retrieval actually consumed.
 
 Field-name discipline: the HERB graph uses `facet`, `w_chunk`, `w_facet`, `relevance_to_file`; the frontend read path should use those names.
 

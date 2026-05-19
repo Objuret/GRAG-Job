@@ -1,6 +1,7 @@
 /**
- * Workbench node registry + demo samples for the canvas UI.
- * Labels and counts are synthetic until a query API is wired to Neo4j.
+ * Workbench node registry + the small demo set used only for the pre-run
+ * placeholder (PRESET_RESULTS / SAMPLE_CHUNKS, shown behind an explicit
+ * "Demo data" banner). All live numbers come from the real run, not here.
  */
 
 import type { FacetDimension } from '../types';
@@ -14,16 +15,27 @@ export const PIPELINE_NODES = [
   { id: 'facets',    label: 'Facets',       sub: 'view',         inType: 'graph_scope', outType: 'graph_scope', icon: 'Fa', color: 'var(--type-tags)',    lane: 'pipeline' },
 ];
 
-// ─── Usage lane: how a query traverses the graph at runtime ─────────────────
+// ─── Usage lane: the real executable pipeline (one node = one executor) ──────
+// These kinds map 1:1 to executors in services/pipeline.ts. Wire order is run
+// order; A/B is a real fork (retrieve_tags vs retrieve_baseline) joined at
+// `compare`.
 export const USAGE_NODES = [
-  { id: 'prompt',      label: 'Prompt',       sub: 'context',     inType: null,             outType: 'prompt',         icon: 'Pr', color: 'var(--type-prompt)',  lane: 'usage' },
-  { id: 'interpreter', label: 'Interpreter',  sub: 'analysis',    inType: 'prompt',         outType: 'query_plan',     icon: 'In', color: 'var(--type-interp)',  lane: 'usage' },
-  { id: 'retrieval',   label: 'Retrieval',    sub: 'plan+limits', inType: 'query_plan',     outType: 'retrieval_plan', icon: 'Re', color: 'var(--type-chunks)',  lane: 'usage' },
-  { id: 'graphquery',  label: 'Graph Query',  sub: 'Cypher',      inType: 'retrieval_plan', outType: 'context',        icon: 'Gq', color: 'var(--type-query)',   lane: 'usage' },
-  { id: 'output',      label: 'Output',       sub: 'LLM',         inType: 'context',        outType: 'result',         icon: 'Ou', color: 'var(--type-result)',   lane: 'usage' },
+  { id: 'prompt',            label: 'Prompt',       sub: 'user query',     inType: null,             outType: 'prompt',          icon: 'Pr', color: 'var(--type-prompt)', lane: 'usage' },
+  { id: 'interpret',         label: 'Interpret',    sub: '2-pass LLM',     inType: 'prompt',         outType: 'query_plan',      icon: 'In', color: 'var(--type-interp)', lane: 'usage' },
+  { id: 'build_input',       label: 'Build input',  sub: 'scope+gate',     inType: 'query_plan',     outType: 'retrieval_input', icon: 'Bi', color: 'var(--type-interp)', lane: 'usage' },
+  { id: 'ground',            label: 'Ground',       sub: 'e5 + kNN',       inType: 'retrieval_input',outType: 'grounded',        icon: 'Gr', color: 'var(--type-tags)',   lane: 'usage' },
+  { id: 'retrieve_tags',     label: 'Retrieve A',   sub: 'HERB tags',      inType: 'grounded',       outType: 'chunks',          icon: 'Ra', color: 'var(--type-chunks)', lane: 'usage' },
+  { id: 'retrieve_baseline', label: 'Retrieve B',   sub: 'baseline',       inType: 'retrieval_input',outType: 'chunks',          icon: 'Rb', color: 'var(--type-chunks)', lane: 'usage' },
+  { id: 'answer',            label: 'Answer',       sub: 'LLM over chunks',inType: 'chunks',         outType: 'answer',          icon: 'An', color: 'var(--type-result)', lane: 'usage' },
+  { id: 'compare',           label: 'Compare',      sub: 'A/B + metrics',  inType: 'answer',         outType: 'result',          icon: 'Cm', color: 'var(--type-result)', lane: 'usage' },
 ];
 
-export const NODE_TYPES = [...PIPELINE_NODES, ...USAGE_NODES];
+// ─── Modules: type-safe inserts you can splice into any matching wire ────────
+export const MODULE_NODES = [
+  { id: 'probe', label: 'Probe / test', sub: 'passthrough', inType: 'any', outType: 'any', icon: 'Pb', color: 'var(--neutral)', lane: 'module' },
+];
+
+export const NODE_TYPES = [...PIPELINE_NODES, ...USAGE_NODES, ...MODULE_NODES];
 
 /** Inner template fragments (chain with frag → frag inside a Query module). `qf_start` is auto-seeded, not in the catalog. */
 export const QUERY_FRAGMENT_NODES = [
@@ -52,8 +64,11 @@ export const QUERY_CONTAINER = {
 export const TYPE_LABEL: Record<string, string> = {
   source: 'source:Dataset', files: 'files:AccessLayer', graph: 'graph:Neo4j',
   graph_scope: 'graph:FacetScope',
-  prompt: 'prompt:Context', query_plan: 'plan:Interpreted',
-  retrieval_plan: 'plan:Retrieval', context: 'chunks:Retrieved', result: 'result:LLM',
+  prompt: 'prompt:Query', query_plan: 'plan:Interpreted',
+  retrieval_input: 'input:Retrieval', grounded: 'input:Grounded',
+  chunks: 'chunks:Retrieved', answer: 'answer:LLM', result: 'result:A/B',
+  any: 'any:Passthrough',
+  retrieval_plan: 'plan:Retrieval', context: 'chunks:Retrieved',
   frag: 'frag:TemplateStep',
 };
 
@@ -70,14 +85,6 @@ export const DATASETS = [
   { id: 'fever__feverous', files: 0, chunks: 0, tags: 0 },
   { id: 'VLR-CVC__DocVQA-2026', files: 0, chunks: 0, tags: 0 },
   { id: 'wenhu__hybrid_qa', files: 0, chunks: 0, tags: 0 },
-];
-
-export const SAMPLE_FILES = [
-  { id: 'f_a001', path: 'records/batch_001.jsonl', fmt: 'jsonl', chunks: 45 },
-  { id: 'f_a002', path: 'records/batch_002.jsonl', fmt: 'jsonl', chunks: 38 },
-  { id: 'f_a003', path: 'reports/overview.pdf',    fmt: 'pdf',   chunks: 72 },
-  { id: 'f_b001', path: 'tables/main.parquet',     fmt: 'parquet', chunks: 120 },
-  { id: 'f_b002', path: 'meta/schema.yaml',        fmt: 'yaml',  chunks: 8 },
 ];
 
 export const SAMPLE_CHUNKS = [
@@ -110,76 +117,11 @@ export const SAMPLE_CHUNKS = [
     ]},
 ];
 
-export const STAGE_PAYLOADS: Record<string, { inCount: number | null; outCount: number | null; sample: { id: string; val: string; w: string | number }[] }> = {
-  dataset: {
-    inCount: null, outCount: 4,
-    sample: [
-      { id: 'Salesforce__HERB', val: '33 files, 5,843 chunks, 25,896 tags', w: '—' },
-    ],
-  },
-  access: {
-    inCount: 12, outCount: 8,
-    sample: SAMPLE_FILES.slice(0,4).map(f => ({ id: f.id, val: f.path + '   ['+f.fmt+']', w: f.chunks })),
-  },
-  index: {
-    inCount: 8, outCount: 312,
-    sample: SAMPLE_CHUNKS.slice(0,4).map(c => ({ id: c.id, val: c.preview, w: c.rel })),
-  },
-  tags: {
-    inCount: 312, outCount: 312,
-    sample: SAMPLE_CHUNKS.slice(0,4).map(c => ({ id: c.id, val: c.tags.map(t => t.name).join(', '), w: c.tags.length })),
-  },
-  facets: {
-    inCount: 312, outCount: 47,
-    sample: SAMPLE_CHUNKS.slice(0,4).map((c, i) => ({ id: c.id, val: c.preview, w: (0.9 - i*0.07).toFixed(2) })),
-  },
-  prompt: {
-    inCount: null, outCount: 1,
-    sample: [{ id: 'context', val: 'Q2 revenue trends — what changed and why?', w: '—' }],
-  },
-  interpreter: {
-    inCount: 1, outCount: 1,
-    sample: [{ id: 'plan', val: 'topics: revenue_analysis, market_expansion · entities: acme_corp · temporal: q2_2025', w: '—' }],
-  },
-  graphquery: {
-    inCount: 1, outCount: 47,
-    sample: SAMPLE_CHUNKS.slice(0,4).map(c => ({ id: c.id, val: c.preview, w: c.rel })),
-  },
-  retrieval: {
-    inCount: 47, outCount: 12,
-    sample: SAMPLE_CHUNKS.slice(0,3).map((c, i) => ({ id: c.id, val: c.preview, w: (0.95 - i*0.08).toFixed(2) })),
-  },
-  output: {
-    inCount: 12, outCount: 1,
-    sample: [{ id: 'result', val: 'LLM response · 312 tokens out · 2840ms', w: '—' }],
-  },
-  qf_start: {
-    inCount: null, outCount: 1,
-    sample: [{ id: 'params', val: 'bound from interpreter (plan) at run', w: '—' }],
-  },
-  qf_topic: {
-    inCount: 1, outCount: 1,
-    sample: [{ id: 'step', val: 'topic filter / slice (parameterized Cypher slot)', w: '—' }],
-  },
-  qf_entities: {
-    inCount: 1, outCount: 1,
-    sample: [{ id: 'step', val: 'entities dimension (template slot)', w: '—' }],
-  },
-  qf_activity: {
-    inCount: 1, outCount: 1,
-    sample: [{ id: 'step', val: 'activity dimension (template slot)', w: '—' }],
-  },
-  qf_temporal: {
-    inCount: 1, outCount: 1,
-    sample: [{ id: 'step', val: 'temporal window (template slot)', w: '—' }],
-  },
-  qf_evidence: {
-    inCount: 1, outCount: 1,
-    sample: [{ id: 'step', val: 'evidence dimension (template slot)', w: '—' }],
-  },
-};
-
-/** Demo lane comparison text — replaced when retrieval is wired to the graph API. */
+/**
+ * Demo lane comparison text shown before the first real run. The UI labels
+ * this as demo data (ResultPane "Demo data" banner) and replaces it wholesale
+ * once the Usage lane runs the real pipeline.
+ */
 export const PRESET_RESULTS = {
   full: {
     response: 'Q2 revenue rose 12% year-over-year, driven by Nordic market expansion (product launch +34% vs projection) and operating margins improved 2.2pp. Year-to-date performance is at 108% of revenue target with retention at 94%. The annual overview confirms these trends sit within a broader pattern of operational efficiency gains.',

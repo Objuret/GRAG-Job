@@ -54,7 +54,7 @@ async function validateGate(session: Session, gate: HardGate, datasetId: string 
       const valid = enumRes.records.map(r => r.get('v') as string);
       throw new Error(
         `Hard-gate filter ${f}="${v}" matches no chunks in the corpus. ` +
-        `Valid ${f} values: ${valid.length ? valid.join(', ') : '(none materialized — run \`python -m tagging materialize\`)'}.`,
+        `Valid ${f} values: ${valid.length ? valid.join(', ') : '(none materialized — run `python -m tagging materialize`)'}.`,
       );
     }
   }
@@ -80,6 +80,29 @@ async function validateGate(session: Session, gate: HardGate, datasetId: string 
   }
 }
 
+/**
+ * A selected dataset that matches zero files is a loud error listing the
+ * valid dataset ids — never a silent "scan/return nothing". Mirrors the
+ * hard-gate validation philosophy.
+ */
+async function validateDataset(session: Session, datasetId: string | null): Promise<void> {
+  if (!datasetId) return;
+  const res = await session.run(
+    'MATCH (f:File) WHERE f.dataset_id = $datasetId RETURN count(f) AS n',
+    { datasetId },
+  );
+  if ((intVal(res.records[0]?.get('n')) ?? 0) > 0) return;
+  const enumRes = await session.run(
+    `MATCH (f:File) WHERE f.dataset_id IS NOT NULL
+     RETURN DISTINCT f.dataset_id AS v ORDER BY v LIMIT 60`,
+  );
+  const valid = enumRes.records.map(r => r.get('v') as string);
+  throw new Error(
+    `Dataset "${datasetId}" matches no files in the graph. ` +
+    `Valid datasets: ${valid.length ? valid.join(', ') : '(none — the graph has no :File nodes)'}.`,
+  );
+}
+
 /** One prompt tag → the corpus :Tag names it grounded to, with cosine sim. */
 export interface GroundedTag {
   promptTag: string;
@@ -95,20 +118,54 @@ export interface RetrievedChunk {
   score: number;
 }
 
-const DONE_GRAPH_RUN_ID = 'pilot_full_herb';
+const DEFAULT_GRAPH_RUN_ID = 'pilot_full_herb';
 const ALL_FACETS: FacetDimension[] = ['topic', 'entities', 'activity', 'temporal', 'evidence'];
 
-export interface RetrievalOptions {
+const EMPTY_GATE: HardGate = {
+  product: null, section: null, channel: null, employee_id: null, years: [],
+};
+
+function gateOf(plan: QueryPlan): HardGate {
+  return plan.filters?.gate ?? EMPTY_GATE;
+}
+
+export type RetrievalStrategy = 'weighted' | 'relevance';
+
+export interface RetrievalInputOptions {
   activeFacets?: FacetDimension[];
   tagsEnabled?: boolean;
   minWChunk?: number;
   minRelevanceToFile?: number;
   limit?: number;
   datasetId?: string | null;
-  strategy?: string;
+  runId?: string;
+  strategy?: RetrievalStrategy | string;
   /** Tag-grounding knobs (the interpreter "effort" control). */
   groundingK?: number;      // nearest corpus tags per prompt tag (default 10)
   minSim?: number;          // drop matches below this cosine sim (default 0.78)
+}
+
+export interface RetrievalInput {
+  /** LLM-produced query interpretation; retrieval never asks the model again. */
+  plan: QueryPlan;
+  /** Deterministic graph scope for every Cypher path. */
+  scope: {
+    datasetId: string | null;
+    runId: string;
+  };
+  /** Deterministic controls from the retrieval lane UI. */
+  controls: {
+    strategy: RetrievalStrategy;
+    activeFacets: FacetDimension[];
+    tagsEnabled: boolean;
+    limit: number;
+    minWChunk: number;
+    minRelevanceToFile: number;
+    groundingK: number;
+    minSim: number;
+  };
+  /** Hard structured gate from the plan, validated before tag scoring. */
+  gate: HardGate;
 }
 
 // Weighted overlap, with the grounding similarity folded in:
@@ -255,26 +312,44 @@ async function groundQueryTags(
   return { params, grounding };
 }
 
-function retrievalLimit(plan: QueryPlan, options?: RetrievalOptions): number {
+function retrievalLimit(plan: QueryPlan, options?: RetrievalInputOptions): number {
   const raw = Number(options?.limit ?? plan.filters.limit ?? 20);
   return Math.max(1, Math.min(500, Number.isFinite(raw) ? raw : 20));
 }
 
-function retrievalDataset(plan: QueryPlan, options?: RetrievalOptions): string | null {
+function retrievalDataset(plan: QueryPlan, options?: RetrievalInputOptions): string | null {
   return options?.datasetId ?? plan.filters.dataset_id ?? null;
 }
 
-function activeFacets(options?: RetrievalOptions): FacetDimension[] {
+function activeFacets(options?: RetrievalInputOptions): FacetDimension[] {
   if (!options?.activeFacets) return ALL_FACETS;
   return options.activeFacets.filter((f): f is FacetDimension => ALL_FACETS.includes(f as FacetDimension));
 }
 
-const EMPTY_GATE: HardGate = {
-  product: null, section: null, channel: null, employee_id: null, years: [],
-};
+function retrievalStrategy(value: RetrievalInputOptions['strategy']): RetrievalStrategy {
+  return value === 'relevance' ? 'relevance' : 'weighted';
+}
 
-function gateOf(plan: QueryPlan): HardGate {
-  return plan.filters?.gate ?? EMPTY_GATE;
+export function buildRetrievalInput(plan: QueryPlan, options: RetrievalInputOptions = {}): RetrievalInput {
+  const gate = gateOf(plan);
+  return {
+    plan,
+    scope: {
+      datasetId: retrievalDataset(plan, options),
+      runId: options.runId ?? DEFAULT_GRAPH_RUN_ID,
+    },
+    controls: {
+      strategy: retrievalStrategy(options.strategy),
+      activeFacets: activeFacets(options),
+      tagsEnabled: options.tagsEnabled ?? true,
+      limit: retrievalLimit(plan, options),
+      minWChunk: Number(options.minWChunk ?? plan.filters.min_w_chunk ?? 0),
+      minRelevanceToFile: Number(options.minRelevanceToFile ?? plan.filters.min_relevance_to_file ?? 0),
+      groundingK: Math.max(1, Number(options.groundingK ?? 10)),
+      minSim: Number(options.minSim ?? 0.78),
+    },
+    gate: { ...gate, years: [...gate.years] },
+  };
 }
 
 function rowsToChunks(records: { keys: PropertyKey[]; get: (k: string) => unknown }[]): RetrievedChunk[] {
@@ -310,21 +385,33 @@ async function runLexical(
   return rowsToChunks(res.records);
 }
 
-export async function retrieveChunks(plan: QueryPlan, cfg: Neo4jConfig, options: RetrievalOptions = {}): Promise<RetrievedChunk[]> {
-  const limit = retrievalLimit(plan, options);
-  const datasetId = retrievalDataset(plan, options);
-  const facets = activeFacets(options);
-  const gate = gateOf(plan);
-  const { clause, params: gateParams, active: gated } = buildGate(gate);
+/** Outcome of the `ground` node: which retrieval path applies, plus the
+ *  grounded corpus-tag params the `retrieve_tags` node will score with. */
+export interface GroundResult {
+  grounding: GroundedTag[];
+  params: ScoreTagParam[];
+  path: 'weighted' | 'lexical' | 'empty';
+}
+
+/**
+ * The `ground` pipeline node: validate dataset + hard gate, then embed the
+ * prompt tags and kNN them onto corpus `:Tag`s. Returns the grounded params
+ * for `scoreGroundedChunks`; no chunk scoring happens here.
+ */
+export async function groundRetrieval(
+  input: RetrievalInput, cfg: Neo4jConfig,
+): Promise<GroundResult> {
+  const { plan, scope, controls, gate } = input;
+  const datasetId = scope.datasetId;
+  const facets = controls.activeFacets;
+  const { active: gated } = buildGate(gate);
 
   return withSession(cfg, async (session) => {
+    // A dataset that contains no files is a loud error, not an empty result.
+    await validateDataset(session, datasetId);
     // Hard gate is validated up-front: an unknown constraint value is a loud
     // error, never a silent "ignore it and scan everything".
     if (gated) await validateGate(session, gate, datasetId);
-
-    if (options.strategy === 'relevance' || options.tagsEnabled === false) {
-      return retrieveBaseline(limit, cfg, datasetId, gate);
-    }
 
     const haveTags = plan.tags.length > 0 && facets.length > 0;
 
@@ -333,13 +420,13 @@ export async function retrieveChunks(plan: QueryPlan, cfg: Neo4jConfig, options:
     // structured route, not a degradation; surface it as a warning so it is
     // never silent.
     if (!haveTags) {
-      if (!gated) return [];
+      if (!gated) return { grounding: [], params: [], path: 'empty' };
       plan.warnings.push('No tags from prompt — answered via the hard-gate + full-text path only.');
-      return runLexical(session, plan, clause, gateParams, limit, datasetId);
+      return { grounding: [], params: [], path: 'lexical' };
     }
 
-    const k = Math.max(1, Number(options.groundingK ?? 10));
-    const minSim = Number(options.minSim ?? 0.78);
+    const k = controls.groundingK;
+    const minSim = controls.minSim;
     const g = await groundQueryTags(plan, session, k, minSim);
     plan.grounding = g.grounding;
     if (!g.params.length) {
@@ -349,31 +436,120 @@ export async function retrieveChunks(plan: QueryPlan, cfg: Neo4jConfig, options:
         `are missing — run \`python -m tagging embed-tags\` against the herb database.`,
       );
     }
+    return { grounding: g.grounding, params: g.params, path: 'weighted' };
+  });
+}
+
+/**
+ * Score the chunks for an already-grounded retrieval. Separated from
+ * grounding so the canvas can run `ground` and `retrieve_tags` as distinct
+ * nodes (and splice a probe between them) — the weighted-overlap Cypher is
+ * unchanged. `empty` → no rows; `lexical` → the gated full-text path.
+ */
+export async function scoreGroundedChunks(
+  input: RetrievalInput, cfg: Neo4jConfig, ground: GroundResult,
+): Promise<RetrievedChunk[]> {
+  const { plan, scope, controls, gate } = input;
+  const { clause, params: gateParams } = buildGate(gate);
+  if (ground.path === 'empty') return [];
+  return withSession(cfg, async (session) => {
+    if (ground.path === 'lexical') {
+      return runLexical(session, plan, clause, gateParams, controls.limit, scope.datasetId);
+    }
     const result = await session.run(scoreCypher(clause), {
-      queryTags: g.params,
-      activeFacets: facets,
-      minWChunk: Number(options.minWChunk ?? plan.filters.min_w_chunk ?? 0),
-      minRelevanceToFile: Number(options.minRelevanceToFile ?? plan.filters.min_relevance_to_file ?? 0),
-      limit: neo4j.int(limit),
-      datasetId,
-      runId: DONE_GRAPH_RUN_ID,
+      queryTags: ground.params,
+      activeFacets: controls.activeFacets,
+      minWChunk: controls.minWChunk,
+      minRelevanceToFile: controls.minRelevanceToFile,
+      limit: neo4j.int(controls.limit),
+      datasetId: scope.datasetId,
+      runId: scope.runId,
       ...gateParams,
     });
     // The year constraint is enforced by the hard gate (c.years, projected
-    // from the model-curated temporal tags) — no full-text union here. The
-    // earlier union existed to compensate for the regex-scraped years and is
-    // gone with it; lexical full-text remains only for the no-tags path above.
+    // from the model-curated temporal tags) — no full-text union here.
+    return rowsToChunks(result.records);
+  });
+}
+
+/**
+ * Always-present gate parameters for the module-Cypher path. Unlike
+ * `buildGate` (which injects clause strings), the user-authored / default
+ * module query uses null-tolerant predicates, so every gate field is bound
+ * (null / [] when unset) and the query decides how to apply it.
+ */
+function gateBindings(gate: HardGate): Record<string, unknown> {
+  return {
+    g_product: gate.product ?? null,
+    g_section: gate.section ?? null,
+    g_channel: gate.channel ?? null,
+    g_employee_id: gate.employee_id ?? null,
+    g_years: gate.years.map((y) => neo4j.int(y)),
+  };
+}
+
+const MODULE_RETURN_COLUMNS = [
+  'chunkId', 'fileId', 'content', 'description', 'relevanceToFile', 'score',
+] as const;
+
+/**
+ * Execute a Query-module's composed Cypher as the real retrieval query
+ * (Lane A, weighted path). The module text is run verbatim with the canonical
+ * bindings; dataset + hard gate are validated loudly up-front, and the result
+ * contract is enforced loudly — a module that doesn't RETURN the required
+ * columns is an error, never a silently dropped result.
+ */
+export async function runModuleCypher(
+  input: RetrievalInput, cfg: Neo4jConfig, ground: GroundResult, cypherText: string,
+): Promise<RetrievedChunk[]> {
+  const { plan, scope, controls, gate } = input;
+  if (!cypherText.trim()) {
+    throw new Error('Query module is wired into retrieval but composed no Cypher (empty fragment chain).');
+  }
+  if (ground.path !== 'weighted') {
+    // No grounded tags → the weighted module query has nothing to score.
+    // Fall back to the standard grounded path, which handles empty/lexical
+    // loudly via its own contract (never a silent empty here).
+    return scoreGroundedChunks(input, cfg, ground);
+  }
+  return withSession(cfg, async (session) => {
+    await validateDataset(session, scope.datasetId);
+    if (buildGate(gate).active) await validateGate(session, gate, scope.datasetId);
+    const result = await session.run(cypherText, {
+      plan,
+      queryTags: ground.params,
+      activeFacets: controls.activeFacets,
+      minWChunk: controls.minWChunk,
+      minRelevanceToFile: controls.minRelevanceToFile,
+      limit: neo4j.int(controls.limit),
+      datasetId: scope.datasetId,
+      runId: scope.runId,
+      ...gateBindings(gate),
+    });
+    if (result.records.length) {
+      const keys = result.records[0].keys.map(String);
+      const missing = MODULE_RETURN_COLUMNS.filter((c) => !keys.includes(c));
+      if (missing.length) {
+        throw new Error(
+          `Query module Cypher is missing required RETURN column(s): ${missing.join(', ')}. ` +
+          `It returned [${keys.join(', ')}]. The module must RETURN ${MODULE_RETURN_COLUMNS.join(', ')} ` +
+          `(see the default module header/footer for the canonical shape).`,
+        );
+      }
+    }
     return rowsToChunks(result.records);
   });
 }
 
 export async function retrieveBaseline(
-  limit: number, cfg: Neo4jConfig, datasetId: string | null = null, gate: HardGate = EMPTY_GATE,
+  input: RetrievalInput, cfg: Neo4jConfig,
 ): Promise<RetrievedChunk[]> {
+  const { scope, controls, gate } = input;
   const { clause, params: gateParams } = buildGate(gate);
   return withSession(cfg, async (session) => {
+    await validateDataset(session, scope.datasetId);
     const result = await session.run(baselineCypher(clause), {
-      limit: neo4j.int(limit), datasetId, ...gateParams,
+      limit: neo4j.int(controls.limit), datasetId: scope.datasetId, ...gateParams,
     });
     return rowsToChunks(result.records);
   });

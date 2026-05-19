@@ -2,9 +2,9 @@
 
 **Active UI:** `src/App.jsx`.
 
-> **Verified state (2026-05-18).** The retrieval/interpret/answer service stack
-> is **code in the working tree — uncommitted** (nothing since commit
-> `452fa5d`). Its graph prerequisites **are present and correct on the live
+> **Verified state (2026-05-19).** The retrieval/interpret/answer service stack
+> is implemented in `src/services/*` and `App.jsx`; the retrieval lane now
+> receives a named `RetrievalInput` object. Its graph prerequisites **are present and correct on the live
 > `herb` graph**, independently re-verified 2026-05-18 by direct Cypher:
 > 5843 chunks (product 5782, section 5782, channel 2669, years≥1 4799,
 > employee_id 30); gate `product=CollaborateForce AND section=slack` → 124;
@@ -18,24 +18,72 @@
 
 ## UI shell — built (no graph dependency)
 
-- [x] Two-lane canvas (pipeline + usage) + Facets → Graph Query bridge
+- [x] Two-lane canvas: Pipeline (offline illustration) + Usage (executable fork/join DAG)
 - [x] Catalog, inspector forms per node kind, edge drawer, bottom lane comparison
+- [x] Resizable result console with live Comparison / Logs / History tabs, copy actions, chunk filtering/detail inspection, run restore, and a paper-list error popover whose rows copy full errors
 - [x] Themes and CSS tokens (`index.css`)
 - [x] Query modules with chained `topic`, `entities`, `activity`, `temporal`, `evidence` fragments
 - [x] Undo/redo and clipboard support for canvas editing
+
+> **Node-driven execution (2026-05-19).** The Usage canvas is now the real
+> executor, not an illustration. `services/pipeline.ts` holds one async
+> executor per node kind; `runUsageGraph` topologically orders the wired
+> `lane_usage` nodes/edges and threads a typed context, so **wire order = run
+> order** and A/B is a real fork (`retrieve_tags` vs `retrieve_baseline`)
+> joined at `compare`. The startup canvas is that real DAG:
+> `prompt → interpret → build_input → ground → retrieve_tags → answer ↘`
+> `                              └→ retrieve_baseline → answer ↗ → compare`.
+> Per-step params live on the node (`node.data`, edited in its Config tab):
+> model on `interpret`/`answer`; dataset, facets, k, min_sim, thresholds,
+> limit on `build_input`. A node’s `disabled` toggle removes it from the run;
+> a cycle / missing `compare` / contract mismatch is a loud error, never a
+> silent partial run. A **Probe** module is a typed passthrough — splice it on
+> any matching wire to log what flows through without changing the run.
+> `runPipeline` is now just the React wrapper (key precheck, lane status,
+> logs/history) around `runUsageGraph`. The **Pipeline lane** stays a
+> non-executable illustration (it is genuinely offline Python); toggling its
+> nodes does nothing and they expose no run controls.
+
+> **Real metrics, no mock (2026-05-19).** All fabricated per-node payloads
+> (`STAGE_PAYLOADS`, `SAMPLE_FILES`, the "412ms / bolt://neo4j-mock / cache
+> warm" Runtime panel, the node-face `in/out` counts, the edge Drawer's
+> Records/Latency/Sample) were deleted. The Inspector now has **Config** +
+> **Metrics** tabs; Metrics shows only values computed by the engine
+> (`compare` node) from the actual run: grounding quality (prompt tags, grounded corpus tags, cosine
+> min/μ/max, zero-grounded prompt tags), A/B retrieval comparison (per-lane
+> chunk count, score & relevance min/μ/max, distinct files, **A∩B overlap +
+> Jaccard**), citation grounding (parsed `[n]` cites → distinct chunks, % of
+> retrieved actually used), and **per-stage latency** (interpret / ground /
+> retrieve-A / retrieve-B / answer-A / answer-B; the single reused `elapsed`
+> for both lanes is gone). Nodes with no in-browser instrumentation say so
+> plainly; pre-run state shows an explicit "no run yet", never sample data.
+> A selected dataset matching zero `:File`s now fails loud (valid ids listed),
+> like the hard gate.
+
+> **Query module = the executed query; RAGAS export (2026-05-19).** A Query
+> module spliced `ground → module → retrieve_tags` becomes Lane A's real
+> Cypher (`composeModuleCypher` → `runModuleCypher`); no module wired keeps the
+> fixed `scoreCypher`. The default module header/footer now *is* the canonical
+> weighted-overlap query (parametric gate, `$queryTags`), so weight/facet/order/
+> query experiments are real and the result contract is enforced loudly
+> (required RETURN columns; dataset+gate validated first). RAGAS runs offline:
+> History **Export RAGAS** → JSONL of real (question, answer, contexts) per
+> lane → `backend/eval/ragas_eval.py` (faithfulness + answer_relevancy, A−B
+> delta). No silent fallback anywhere in that path.
 
 ---
 
 ## Retrieval / interpret / answer stack — coded, graph layer verified on `herb`
 
 Each step is a service module under `src/services/`, driven by
-`App.jsx:runPipeline`. Code is **uncommitted** (working tree only); the graph
-data it depends on is verified present on `herb` (banner above).
+`App.jsx:runPipeline`. The graph data it depends on is verified present on
+`herb` (banner above).
 
 - [x] Browser-direct Neo4j read via `neo4j-driver` — [`services/neo4j.ts`](../../frontend/src/services/neo4j.ts)
 - [x] Browser-direct two-pass interpretation via `@anthropic-ai/sdk` — [`services/interpreter.ts`](../../frontend/src/services/interpreter.ts)
-- [x] In-browser prompt-tag embedding (`@xenova/transformers`, e5, symmetric `passage: <name>. <description>` — mirrors backend `_tag_embed_text`; model **bundled** in `public/models/Xenova/e5-small-v2/`, full fp32, loaded local-only — no runtime HF fetch; exact backend parity, cosine ≈ 1.0) — [`services/embeddings.ts`](../../frontend/src/services/embeddings.ts)
+- [x] In-browser prompt-tag embedding (`@xenova/transformers`, e5, symmetric `passage: <name>. <description>` — mirrors backend `_tag_embed_text`; model **bundled** in `public/models/Xenova/e5-small-v2/`, full fp32, loaded local-only — no runtime HF fetch; exact backend parity, cosine ≈ 1.0; local asset preflight validates JSON files + `onnx/model.onnx`, clears stale `transformers-cache` JSON entries, and disables `transformers-cache` for this local bundle) — [`services/embeddings.ts`](../../frontend/src/services/embeddings.ts)
 - [x] kNN grounding + deterministic weighted-overlap Cypher — [`services/retrieval.ts`](../../frontend/src/services/retrieval.ts)
+- [x] Named `RetrievalInput` contract (`plan` + `scope` + `controls` + `gate`) passed into semantic and baseline retrieval — [`services/retrieval.ts`](../../frontend/src/services/retrieval.ts), [`App.jsx`](../../frontend/src/App.jsx)
 - [x] Pass-1 hard-gate extraction (`product`, `section`, `channel`, `employee_id`, `years`) + deterministic pre-tag gate + fail-loud gate validation + gated `chunk_fulltext` lexical path — [`services/interpreter.ts`](../../frontend/src/services/interpreter.ts), [`services/retrieval.ts`](../../frontend/src/services/retrieval.ts)
 - [x] Answer call over retrieved chunks per `answer_job` — [`services/answer.ts`](../../frontend/src/services/answer.ts)
 - [x] Field-name discipline: HERB `facet`, `w_chunk`, `w_facet`, `relevance_to_file`
@@ -69,20 +117,12 @@ exist (banner above), so the gate and lexical paths are live.
 
 ## Known issues (real, not fixed)
 
-- **Uncommitted.** The entire feature (services + `materialize`/embeddings/
-  gate + doc updates) is working-tree only, nothing since `452fa5d`. One
-  disruption and it is gone. Commit it.
-- **`frontend/public/models/` is an unmanaged dependency.** Untracked **and**
-  not gitignored; with `allowRemoteModels=false`, a fresh checkout has no
-  model and grounding hard-fails. Decide: commit the quantized ONNX, or
-  gitignore + document a fetch step in the runbook.
 - **`min_sim` is near-meaningless.** e5-small cosine on this corpus is
   compressed (~0.8 mean to random tags); default floor 0.78 barely filters
   noise — grounding leans entirely on top-k.
-- **Year-gate lexical-union truncation.** Lexical hits are appended after tag
-  hits then `.slice(0, limit)`. If tag hits fill `limit`, the literal-recall
-  chunks the lexical path exists to add are dropped — silently defeating the
-  feature for limit-bound queries.
+- **Full UI click-through still unrecorded.** Build/lint pass and graph
+  prerequisites are verified, but the browser prompt → answer loop still needs
+  an observed result written here.
 
 ---
 

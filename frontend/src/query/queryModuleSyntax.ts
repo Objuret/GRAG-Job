@@ -3,12 +3,50 @@
  * Fragments use `plan` after the module header binds `WITH $plan AS plan`.
  */
 
+// The default module IS the canonical weighted-overlap query — identical
+// semantics to `services/retrieval.ts:scoreCypher` (the no-module path), but
+// authored as editable Cypher so experiments (weights, facets, order, query
+// shape) are real. Bindings: $plan (QueryPlan), $queryTags (grounded corpus
+// tags w/ sim + facet weights), $activeFacets, $datasetId, $runId,
+// $minWChunk, $minRelevanceToFile, $limit, and the null-tolerant gate
+// ($g_product/$g_section/$g_channel/$g_employee_id/$g_years). It MUST RETURN
+// chunkId, fileId, content, description, relevanceToFile, score.
 export const DEFAULT_MODULE_HEADER = `WITH $plan AS plan
+UNWIND $queryTags AS qt
 MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk)
-WHERE coalesce(c.empty, false) = false`;
+MATCH (c)-[r:HAS_TAG]->(t:Tag {name: qt.name})
+WHERE coalesce(c.empty, false) = false
+  AND ($datasetId IS NULL OR f.dataset_id = $datasetId)
+  AND r.run_id = $runId
+  AND r.facet IN $activeFacets
+  AND coalesce(r.w_chunk, 0.0) >= $minWChunk
+  AND coalesce(c.relevance_to_file, 1.0) >= $minRelevanceToFile
+  AND ($g_product IS NULL OR c.product = $g_product)
+  AND ($g_section IS NULL OR c.section = $g_section)
+  AND ($g_channel IS NULL OR c.channel = $g_channel)
+  AND ($g_employee_id IS NULL OR c.employee_id = $g_employee_id)
+  AND (size($g_years) = 0 OR any(y IN $g_years WHERE y IN c.years))`;
 
-export const DEFAULT_MODULE_FOOTER = `RETURN c.chunk_id AS chunkId, left(c.content, 240) AS preview
-LIMIT coalesce($limit, 50)`;
+export const DEFAULT_MODULE_FOOTER = `WITH c, r, qt,
+     CASE r.facet
+       WHEN 'topic'    THEN qt.topic
+       WHEN 'entities' THEN qt.entities
+       WHEN 'activity' THEN qt.activity
+       WHEN 'temporal' THEN qt.temporal
+       WHEN 'evidence' THEN qt.evidence
+       ELSE 0.0
+     END AS facetScore
+WITH c, sum(qt.w_query * facetScore * r.w_chunk * r.w_facet
+            * coalesce(c.relevance_to_file, 1.0) * qt.sim) AS score
+WHERE score > 0
+RETURN c.chunk_id   AS chunkId,
+       c.file_id    AS fileId,
+       c.content    AS content,
+       c.description AS description,
+       c.relevance_to_file AS relevanceToFile,
+       round(score, 4) AS score
+ORDER BY score DESC
+LIMIT $limit`;
 
 /** Seeded defaults when a fragment is created; users edit per-node `data.cypherTemplate`. */
 export const FRAGMENT_TEMPLATE_DEFAULTS: Record<string, string> = {
