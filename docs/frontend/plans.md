@@ -62,9 +62,22 @@ or the legacy clustering layer. Producer/consumer split:
   `gate_year_`, `gate_chan_`, `gate_eid_`, `facet_`, `lex_`, `ctrl_`) so RAGAS
   results can be sliced by path. The `ragas-questions.example.jsonl` starter
   stays as the minimal smoke set. Reference-free.
-- **Not built yet (optional):** reference/ground-truth answers (would unlock
-  `context_precision`/`context_recall`/`answer_correctness`); an embeddings
-  backend if `answer_relevancy` is wanted alongside `faithfulness`.
+- **Built — ground-truth reference evaluation.** Authoritative, not LLM-guessed:
+  [`backend/evaluation/build_gold_set.py`](../../backend/evaluation/build_gold_set.py)
+  extracts HERB's own `qa_record` question/`ground_truth` pairs (greedy
+  distinct question-type selection across products) into
+  [`frontend/scripts/ragas-questions.herb-gold.jsonl`](../../frontend/scripts/ragas-questions.herb-gold.jsonl).
+  The harness now passes a `reference` field through; `retrieval.ts` gained an
+  eval-only `excludeSections` option (default none — app byte-identical) so the
+  reference run can `--exclude-sections answerable_questions,unanswerable_questions`
+  and force the pipeline to answer from real evidence, not the gold record.
+  `ragas_eval.py` adds `context_recall` + `context_precision` (LLM-only,
+  reference-based) and `answer_correctness` (opt-in, needs embeddings);
+  zero-context rows are kept so `context_recall` scores them ~0 — the recall
+  hole reference-free faithfulness hid.
+- **Not built yet (optional):** an embeddings backend if `answer_relevancy` /
+  `answer_correctness` are wanted (Python 3.14 has no torch wheels — needs
+  `OPENAI_API_KEY`).
 
 ## Optional
 

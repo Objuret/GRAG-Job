@@ -1,4 +1,4 @@
-"""RAGAS runner for the HERB browser pipeline (reference-free).
+"""RAGAS runner for the HERB browser pipeline.
 
     python -m evaluation.ragas_eval [--input PATH] [--metrics LIST] ...
 
@@ -10,14 +10,22 @@ Per JSONL row it uses:
     user_input         <- row.user_input        (the question)
     response           <- row.response          (the answer the pipeline gave)
     retrieved_contexts <- row.retrieved_contexts (chunk contents retrieved)
-Rows with `meta.error` set or an empty `response` (e.g. --dry-run output) are
-skipped — there is nothing to judge there.
+    reference          <- row.reference          (HERB gold answer; ref metrics)
+Rows with `meta.error` or empty `response` are skipped. When a reference-based
+metric is requested, zero-context rows are KEPT on purpose (context_recall
+scores them ~0 — the retrieval recall hole faithfulness alone hides); rows
+without a `reference` are skipped for those metrics.
 
-Metrics (reference-free — no ground truth needed):
-    faithfulness       Does the answer stay grounded in the retrieved chunks?
-                       LLM-only. The default; works out of the box here.
-    answer_relevancy   Is the answer on-topic for the question? Needs an
-                       embeddings model. OPT-IN — see "Embeddings" below.
+Metrics:
+  Reference-free (no ground truth):
+    faithfulness       Is the answer grounded in the retrieved chunks? LLM-only,
+                       the default, works out of the box.
+    answer_relevancy   Is the answer on-topic? Needs embeddings (opt-in).
+  Reference-based (need row.reference = HERB ground_truth):
+    context_recall     Did retrieval fetch what the gold answer needs? LLM-only.
+    context_precision  Are the retrieved contexts well-targeted? LLM-only
+                       (LLMContextPrecisionWithReference).
+    answer_correctness Is the answer factually right vs gold? Needs embeddings.
 
 Judge LLM
 ---------
@@ -104,7 +112,17 @@ def _load_rows(path: Path) -> list[dict[str, Any]]:
     return rows
 
 
-def _valid_samples(rows: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], list[str]]:
+REF_METRICS = {"context_recall", "context_precision", "answer_correctness"}
+
+
+def _valid_samples(
+    rows: list[dict[str, Any]], metric_names: list[str]
+) -> tuple[list[dict[str, Any]], list[str]]:
+    # When a reference-based metric is requested we KEEP zero-context rows on
+    # purpose: context_recall scores them ~0, which is exactly the retrieval
+    # recall hole that reference-free faithfulness silently hid. faithfulness
+    # on such a row just comes back NaN (reported as NA).
+    wants_ref = any(m in REF_METRICS for m in metric_names)
     samples: list[dict[str, Any]] = []
     skipped: list[str] = []
     for r in rows:
@@ -114,10 +132,14 @@ def _valid_samples(rows: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], li
             continue
         resp = (r.get("response") or "").strip()
         ctx = [c for c in (r.get("retrieved_contexts") or []) if c]
+        ref = (r.get("reference") or "").strip()
         if not resp:
             skipped.append(f"{rid} (empty response — dry-run?)")
             continue
-        if not ctx:
+        if wants_ref and not ref:
+            skipped.append(f"{rid} (no reference — needed for {sorted(REF_METRICS & set(metric_names))})")
+            continue
+        if not ctx and not wants_ref:
             skipped.append(f"{rid} (no retrieved contexts)")
             continue
         samples.append(
@@ -126,6 +148,7 @@ def _valid_samples(rows: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], li
                 "user_input": r.get("user_input") or r.get("question") or "",
                 "response": resp,
                 "retrieved_contexts": ctx,
+                "reference": ref or None,
             }
         )
     return samples, skipped
@@ -179,8 +202,24 @@ def _build_metrics(names: list[str], llm: Any, needs_embeddings: list[str]) -> l
             cls = getattr(M, "ResponseRelevancy", None) or getattr(M, "AnswerRelevancy")
             needs_embeddings.append(name)
             out.append(cls(llm=llm))  # embeddings attached after, see _run
+        elif name == "context_recall":
+            # LLM-only, reference-based: did retrieval fetch what the gold
+            # answer needs? Scores zero-context rows ~0 — the recall hole.
+            cls = getattr(M, "LLMContextRecall", None) or getattr(M, "ContextRecall")
+            out.append(cls(llm=llm))
+        elif name == "context_precision":
+            # LLM-only, reference-based ranking quality of retrieved contexts.
+            cls = getattr(M, "LLMContextPrecisionWithReference", None) or getattr(M, "ContextPrecision")
+            out.append(cls(llm=llm))
+        elif name == "answer_correctness":
+            needs_embeddings.append(name)  # factual (LLM) + semantic (embeddings)
+            out.append(M.AnswerCorrectness(llm=llm))
         else:
-            print(f"Unknown metric '{name}'. Known: faithfulness, answer_relevancy", file=sys.stderr)
+            print(
+                f"Unknown metric '{name}'. Known: faithfulness, answer_relevancy, "
+                f"context_recall, context_precision, answer_correctness",
+                file=sys.stderr,
+            )
             sys.exit(1)
     return out
 
@@ -218,16 +257,17 @@ def _run(
             if hasattr(m, "embeddings"):
                 m.embeddings = embeddings
 
-    ds = EvaluationDataset(
-        samples=[
-            SingleTurnSample(
-                user_input=s["user_input"],
-                response=s["response"],
-                retrieved_contexts=s["retrieved_contexts"],
-            )
-            for s in samples
-        ]
-    )
+    def _mk(s: dict[str, Any]) -> Any:
+        kw: dict[str, Any] = {
+            "user_input": s["user_input"],
+            "response": s["response"],
+            "retrieved_contexts": s["retrieved_contexts"],
+        }
+        if s.get("reference"):
+            kw["reference"] = s["reference"]
+        return SingleTurnSample(**kw)
+
+    ds = EvaluationDataset(samples=[_mk(s) for s in samples])
     result = evaluate(dataset=ds, metrics=metrics, llm=llm, embeddings=embeddings)
     # Some RAGAS builds return an awaitable; tolerate both.
     import inspect
@@ -236,20 +276,26 @@ def _run(
         import asyncio
 
         result = asyncio.run(result)
-    return result
+    # Real metric column names (e.g. llm_context_precision_with_reference) so
+    # the report extracts the right df columns regardless of requested alias.
+    metric_cols = [getattr(m, "name", None) for m in metrics]
+    return result, [c for c in metric_cols if c]
 
 
 # --- reporting -------------------------------------------------------------
 
 
-def _report(result: Any, samples: list[dict[str, Any]], metric_names: list[str]) -> dict[str, Any]:
+def _report(result: Any, samples: list[dict[str, Any]], metric_cols: list[str]) -> dict[str, Any]:
     df = result.to_pandas()
     sep = "-" * 64
     print(f"\n{sep}\nRAGAS report ({len(samples)} sample(s))\n{sep}")
 
-    cols = [c for c in df.columns if c in metric_names or c.replace("response", "answer") in metric_names]
-    if not cols:  # fall back: any numeric column that is a known metric
-        cols = [c for c in df.columns if c in ("faithfulness", "answer_relevancy", "response_relevancy")]
+    cols = [c for c in metric_cols if c in df.columns]
+    if not cols:  # fall back: any numeric column that looks like a known metric
+        known = ("faithfulness", "answer_relevancy", "response_relevancy",
+                 "context_recall", "context_precision",
+                 "llm_context_precision_with_reference", "answer_correctness")
+        cols = [c for c in df.columns if c in known]
 
     per_sample = []
     for i, s in enumerate(samples):
@@ -282,12 +328,15 @@ def _report(result: Any, samples: list[dict[str, Any]], metric_names: list[str])
 def main() -> None:
     p = argparse.ArgumentParser(
         prog="python -m evaluation.ragas_eval",
-        description="Reference-free RAGAS over the harness JSONL.",
+        description="RAGAS over the harness JSONL (reference-free + reference-based).",
     )
     p.add_argument("--input", type=Path, default=_DEFAULT_INPUT,
                    help=f"Harness JSONL. Default: {_DEFAULT_INPUT}")
     p.add_argument("--metrics", default="faithfulness",
-                   help="Comma-separated: faithfulness,answer_relevancy (default: faithfulness)")
+                   help="Comma-separated. Reference-free: faithfulness, "
+                        "answer_relevancy. Reference-based (need row.reference): "
+                        "context_recall, context_precision, answer_correctness. "
+                        "(default: faithfulness)")
     p.add_argument("--judge-model", default="claude-haiku-4-5",
                    help="Anthropic judge model (default: claude-haiku-4-5). "
                         "Prefer a model >= the answer model for the thesis.")
@@ -298,8 +347,10 @@ def main() -> None:
     p.add_argument("--report", type=Path, default=None, help="Write JSON report here")
     args = p.parse_args()
 
+    metric_names = [m.strip() for m in args.metrics.split(",") if m.strip()]
+
     rows = _load_rows(args.input)
-    samples, skipped = _valid_samples(rows)
+    samples, skipped = _valid_samples(rows, metric_names)
     if args.max > 0:
         samples = samples[: args.max]
 
@@ -310,11 +361,10 @@ def main() -> None:
         print("No scorable samples (run the harness WITHOUT --dry-run first).", file=sys.stderr)
         sys.exit(1)
 
-    metric_names = [m.strip() for m in args.metrics.split(",") if m.strip()]
     print(f"Scoring {len(samples)} sample(s) with {metric_names}, judge={args.judge_model}…")
 
-    result = _run(samples, metric_names, args.judge_model, args.judge_max_tokens)
-    payload = _report(result, samples, metric_names)
+    result, metric_cols = _run(samples, metric_names, args.judge_model, args.judge_max_tokens)
+    payload = _report(result, samples, metric_cols)
 
     if args.report:
         args.report.parent.mkdir(parents=True, exist_ok=True)

@@ -109,6 +109,12 @@ export interface RetrievalOptions {
   /** Tag-grounding knobs (the interpreter "effort" control). */
   groundingK?: number;      // nearest corpus tags per prompt tag (default 10)
   minSim?: number;          // drop matches below this cosine sim (default 0.78)
+  /**
+   * Chunk sections to drop from retrieval (eval only). Default none — the app
+   * never sets this. The RAGAS reference run excludes the QA sections so the
+   * pipeline must answer from real evidence, not the gold-answer record.
+   */
+  excludeSections?: string[];
 }
 
 // Weighted overlap, with the grounding similarity folded in:
@@ -317,6 +323,14 @@ export async function retrieveChunks(plan: QueryPlan, cfg: Neo4jConfig, options:
   const gate = gateOf(plan);
   const { clause, params: gateParams, active: gated } = buildGate(gate);
 
+  // Eval-only: AND a section-exclusion onto the same `c` predicate block, so
+  // the QA gold-answer record can't be retrieved into its own evaluation.
+  // Empty by default → byte-identical to the app path.
+  const exSecs = (options.excludeSections ?? []).filter(Boolean);
+  const exFrag = exSecs.length ? "AND NOT coalesce(c.section, '') IN $excludeSections" : '';
+  const clauseX = [clause, exFrag].filter(Boolean).join('\n  ');
+  const paramsX = exSecs.length ? { ...gateParams, excludeSections: exSecs } : gateParams;
+
   return withSession(cfg, async (session) => {
     // Hard gate is validated up-front: an unknown constraint value is a loud
     // error, never a silent "ignore it and scan everything".
@@ -335,7 +349,7 @@ export async function retrieveChunks(plan: QueryPlan, cfg: Neo4jConfig, options:
     if (!haveTags) {
       if (!gated) return [];
       plan.warnings.push('No tags from prompt — answered via the hard-gate + full-text path only.');
-      return runLexical(session, plan, clause, gateParams, limit, datasetId);
+      return runLexical(session, plan, clauseX, paramsX, limit, datasetId);
     }
 
     const k = Math.max(1, Number(options.groundingK ?? 10));
@@ -349,7 +363,7 @@ export async function retrieveChunks(plan: QueryPlan, cfg: Neo4jConfig, options:
         `are missing — run \`python -m tagging embed-tags\` against the herb database.`,
       );
     }
-    const result = await session.run(scoreCypher(clause), {
+    const result = await session.run(scoreCypher(clauseX), {
       queryTags: g.params,
       activeFacets: facets,
       minWChunk: Number(options.minWChunk ?? plan.filters.min_w_chunk ?? 0),
@@ -357,7 +371,7 @@ export async function retrieveChunks(plan: QueryPlan, cfg: Neo4jConfig, options:
       limit: neo4j.int(limit),
       datasetId,
       runId: DONE_GRAPH_RUN_ID,
-      ...gateParams,
+      ...paramsX,
     });
     // The year constraint is enforced by the hard gate (c.years, projected
     // from the model-curated temporal tags) — no full-text union here. The

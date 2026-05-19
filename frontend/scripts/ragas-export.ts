@@ -25,7 +25,7 @@
  * and fails loud if the assembled onnx is missing (run `npm install` /
  * `npm run assets:assemble`). No remote HF fetch, matching embeddings.ts.
  */
-import { readFileSync, existsSync, mkdirSync, writeFileSync, statSync } from 'node:fs';
+import { readFileSync, existsSync, mkdirSync, writeFileSync, appendFileSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -108,6 +108,7 @@ const outPath = outArg
   : join(REPO_ROOT, 'backend', 'evaluation', 'ragas_samples.jsonl');
 const maxQuestions = Number(arg('--max', '0')) || 0; // 0 = all
 const dryRun = hasFlag('--dry-run'); // interpret+retrieve only, skip the answer LLM
+const fresh = hasFlag('--fresh');    // truncate the out file; default resumes
 
 const model = arg('--model', cfg('MODEL', 'claude-haiku-4-5'))!;
 const interpreterModel = arg('--interpreter-model', cfg('INTERPRETER_MODEL', '')) || model;
@@ -116,6 +117,13 @@ const datasetId = arg('--dataset', cfg('DATASET_ID', 'Salesforce__HERB')) || nul
 const retrievalLimit = Number(arg('--limit', cfg('RETRIEVAL_LIMIT', '20'))) || 20;
 const groundingK = Number(cfg('GROUNDING_K', '10')) || 10;
 const minSim = Number(cfg('MIN_SIM', '0')) || 0;
+// Eval-only: drop these chunk sections from retrieval. For the reference run
+// pass `--exclude-sections answerable_questions,unanswerable_questions` so the
+// pipeline cannot retrieve the gold-answer record into its own evaluation.
+const excludeSections = (arg('--exclude-sections', cfg('EXCLUDE_SECTIONS', '')) || '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
 
 const neo4jCfg: Neo4jConfig = {
   uri: cfg('NEO4J_URI', 'bolt://localhost:7687'),
@@ -155,6 +163,8 @@ hfEnv.localModelPath = modelsDir;
 interface QItem {
   id: string;
   question: string;
+  /** Optional gold answer (HERB ground_truth) for reference-based metrics. */
+  reference?: string;
 }
 
 function loadQuestions(path: string): QItem[] {
@@ -170,7 +180,12 @@ function loadQuestions(path: string): QItem[] {
       if (typeof q === 'string') items.push({ id: `q${i + 1}`, question: q });
       else if (q && typeof q === 'object') {
         const o = q as Record<string, unknown>;
-        items.push({ id: String(o.id ?? `q${i + 1}`), question: String(o.question ?? '') });
+        const ref = o.reference ?? o.ground_truth;
+        items.push({
+          id: String(o.id ?? `q${i + 1}`),
+          question: String(o.question ?? ''),
+          ...(ref != null ? { reference: String(ref) } : {}),
+        });
       }
     });
   } else {
@@ -182,16 +197,19 @@ function loadQuestions(path: string): QItem[] {
       n++;
       let question = line;
       let id = `q${n}`;
+      let reference: string | undefined;
       if (line.startsWith('{')) {
         try {
           const o = JSON.parse(line) as Record<string, unknown>;
           question = String(o.question ?? o.user_input ?? '');
           id = String(o.id ?? `q${n}`);
+          const ref = o.reference ?? o.ground_truth;
+          if (ref != null) reference = String(ref);
         } catch {
           /* not JSON — treat the whole line as the question */
         }
       }
-      if (question) items.push({ id, question });
+      if (question) items.push({ id, question, ...(reference != null ? { reference } : {}) });
     }
   }
   return items;
@@ -220,16 +238,38 @@ async function main(): Promise<void> {
       `  out       : ${outPath}\n` +
       `  graph     : ${neo4jCfg.uri} db=${neo4jCfg.database} dataset=${datasetId}\n` +
       `  model     : answer=${model} interpret=${interpreterModel} mode=${promptMode}\n` +
-      `  retrieval : limit=${retrievalLimit} groundingK=${groundingK} minSim=${minSim}` +
+      `  retrieval : limit=${retrievalLimit} groundingK=${groundingK} minSim=${minSim}\n` +
+      `  exclude   : ${excludeSections.length ? excludeSections.join(',') : '(none)'}` +
       `${dryRun ? '\n  DRY RUN — answer LLM skipped' : ''}\n`,
   );
 
-  const rows: string[] = [];
+  // Stream rows to disk as each question completes. A long run makes many
+  // native (onnxruntime/transformers.js) calls and can hard-crash the process;
+  // a single end-of-run write would lose everything. Per-row append leaves a
+  // valid partial JSONL. Default is RESUME: an existing out file is kept and
+  // already-done ids are skipped, so re-running after a crash converges to a
+  // complete set. `--fresh` truncates and starts over.
+  const doneIds = new Set<string>();
+  if (!fresh && existsSync(outPath)) {
+    for (const raw of readFileSync(outPath, 'utf-8').split('\n')) {
+      const s = raw.trim();
+      if (!s) continue;
+      try { doneIds.add(String((JSON.parse(s) as { id?: unknown }).id)); } catch { /* skip bad line */ }
+    }
+  } else {
+    writeFileSync(outPath, '', 'utf-8');
+  }
   let ok = 0;
   let errored = 0;
+  let resumed = 0;
 
   for (let i = 0; i < slice.length; i++) {
-    const { id, question } = slice[i];
+    const { id, question, reference } = slice[i];
+    if (doneIds.has(id)) {
+      resumed++;
+      console.log(`  [${i + 1}/${slice.length}] ${id} … skip (already in out)`);
+      continue;
+    }
     const t0 = Date.now();
     process.stdout.write(`  [${i + 1}/${slice.length}] ${id} … `);
 
@@ -239,6 +279,7 @@ async function main(): Promise<void> {
       prompt_mode: promptMode,
       dataset_id: datasetId,
       database: neo4jCfg.database,
+      exclude_sections: excludeSections,
     };
     let contexts: string[] = [];
     let response = '';
@@ -255,6 +296,7 @@ async function main(): Promise<void> {
         groundingK,
         minSim,
         tagsEnabled: true,
+        ...(excludeSections.length ? { excludeSections } : {}),
       });
       contexts = chunks.map((c) => c.content).filter(Boolean);
 
@@ -290,7 +332,8 @@ async function main(): Promise<void> {
       console.log(`ERROR: ${meta.error}`);
     }
 
-    rows.push(
+    appendFileSync(
+      outPath,
       JSON.stringify({
         id,
         question,
@@ -298,15 +341,19 @@ async function main(): Promise<void> {
         retrieved_contexts: contexts,
         response,
         answer: response,
+        reference: reference ?? null,
         meta,
-      }),
+      }) + '\n',
+      'utf-8',
     );
   }
 
-  writeFileSync(outPath, rows.join('\n') + '\n', 'utf-8');
   console.log(
-    `\nDone. ${ok} ok, ${errored} errored, ${slice.length} total.\n` +
-      `Wrote ${outPath}`,
+    `\nDone. ${ok} ok, ${errored} errored, ${resumed} pre-existing, ${slice.length} total.\n` +
+      `Wrote ${outPath}` +
+      (ok + resumed < slice.length
+        ? `\nIncomplete — re-run the same command to resume the remaining ${slice.length - ok - resumed}.`
+        : ''),
   );
   if (errored > 0) process.exitCode = 1;
 }
