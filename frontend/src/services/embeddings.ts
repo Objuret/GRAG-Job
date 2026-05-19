@@ -2,12 +2,12 @@
  * Prompt-tag embedding for the grounding step.
  *
  * Runs intfloat/e5-small-v2 in the browser via transformers.js (ONNX/WASM) —
- * the SAME model the backend uses to embed corpus `:Tag` nodes
+ * the SAME model the backend uses to embed corpus `:TagEmbedding` nodes
  * (`tagging/pipeline.py:stage_embed_tags`). Same weights → vectors are
- * comparable, so kNN against the `tag_embedding` index is meaningful.
+ * comparable, so kNN against the `tag_facet_embedding` index is meaningful.
  *
- * Symmetric with the corpus side: the backend embeds each `:Tag` as
- * `passage: <name>. <its most-central chunk descriptions>`
+ * Symmetric with the corpus side: the backend embeds each `(tag, facet)` and
+ * `(tag, all)` use as `passage: <name>. <facet scope>. <central chunk descriptions>`
  * (`tagging/pipeline.py:_tag_embed_text`). To compare like with like, a prompt
  * tag is embedded the same way — `passage: <name>. <prompt description>` —
  * where the Pass-1 prompt description is the query-side analogue of the
@@ -128,10 +128,18 @@ function getExtractor(): Promise<FeatureExtractionPipeline> {
 
 /** Mirror of backend `_tag_embed_text`: `passage: <readable name>. <ctx>`,
  *  ctx whitespace-collapsed and capped at 900 chars (empty ctx → name only). */
-function tagEmbedText(name: string, context: string): string {
+export type EmbedFacet = 'topic' | 'entities' | 'activity' | 'temporal' | 'evidence' | 'all';
+
+export interface PromptTagFacetInput {
+  name: string;
+  facet: EmbedFacet;
+}
+
+function tagEmbedText(name: string, context: string, facet: EmbedFacet = 'all'): string {
   const readable = readableTag(name);
+  const facetText = facet === 'all' ? 'all facets' : `${facet} facet`;
   const ctx = context.replace(/\s+/g, ' ').trim().slice(0, 900);
-  const body = ctx ? `${readable}. ${ctx}` : readable;
+  const body = ctx ? `${readable}. ${facetText}. ${ctx}` : `${readable}. ${facetText}`;
   return `passage: ${body}`;
 }
 
@@ -147,7 +155,18 @@ export async function embedPromptTags(
 ): Promise<number[][]> {
   if (!tagNames.length) return [];
   const extractor = await getExtractor();
-  const inputs = tagNames.map((n) => tagEmbedText(n, description));
+  const inputs = tagNames.map((n) => tagEmbedText(n, description, 'all'));
+  const out = await extractor(inputs, { pooling: 'mean', normalize: true });
+  return out.tolist() as number[][];
+}
+
+export async function embedPromptTagFacets(
+  items: PromptTagFacetInput[],
+  description = '',
+): Promise<number[][]> {
+  if (!items.length) return [];
+  const extractor = await getExtractor();
+  const inputs = items.map((item) => tagEmbedText(item.name, description, item.facet));
   const out = await extractor(inputs, { pooling: 'mean', normalize: true });
   return out.tolist() as number[][];
 }

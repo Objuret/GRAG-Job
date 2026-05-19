@@ -28,3 +28,8 @@ CREATE INDEX chunk_kind        IF NOT EXISTS FOR (c:Chunk) ON (c.kind);
 // Lexical recall over the extracted text (the no-tags / literal-search path).
 CREATE FULLTEXT INDEX chunk_fulltext IF NOT EXISTS
 FOR (c:Chunk) ON EACH [c.content, c.description, c.question];
+
+// Eval-only direct-retrieval baseline: raw chunk content, no descriptions,
+// questions, tags, grounding, or relevance_to_file enrichment.
+CREATE FULLTEXT INDEX chunk_content_ft IF NOT EXISTS
+FOR (c:Chunk) ON EACH [c.content];

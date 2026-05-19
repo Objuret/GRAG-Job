@@ -4,11 +4,11 @@
 
 **When to read this.** Any time you write Cypher, change a writer, or design a new query. This is the source of truth for shape.
 
-**Last updated:** 2026-05-13.
+**Last updated:** 2026-05-19.
 
 ## Touched paths
 
-`schema/`, `indexing/` (every writer), `scripts/bootstrap_schema.py`, `scripts/verify_graph.py`.
+`schema/`, `indexing/` (every writer), `tagging/`, `scripts/bootstrap_schema.py`, `scripts/verify_graph.py`, `scripts/create_herb_eval_db.py`.
 
 ## Conventions
 
@@ -55,6 +55,10 @@ One per payload file (`file_class == 'payload_data'`).
 - **Indexes:** `(n.dataset_id)`, `(n.format_family)`.
 - **Who writes:** preflight (creation, base properties), [`indexing/file_writer.py`](backend/indexing/file_writer.py) (description), [`indexing/file_rollup.py`](backend/indexing/file_rollup.py) reads it.
 - **Who reads:** orchestrator (file context), rollup, [`scripts/verify_graph.py`](backend/scripts/verify_graph.py).
+- **Eval graph note:** `herb-eval` intentionally omits `File.description`
+  because HERB file summaries were generated from all chunks in a file,
+  including QA/oracle sections. The already-computed `Chunk.relevance_to_file`
+  score is preserved instead.
 
 ### `:Chunk`
 
@@ -103,7 +107,7 @@ Retrieval hard-gates on these **before** any tag/embedding scoring. Does not aff
 All scalars are sparse: a property is **absent** on a chunk that had no value (Neo4j drops `null` on `SET +=`). `years` follows the same rule — absent, never an empty list.
 
 - **Constraint:** `REQUIRE n.chunk_id IS UNIQUE`.
-- **Indexes:** `(n.file_id)`, `(n.empty)`, `(n.kind)`, plus RANGE on the **four gated** scalars only (`product`, `section`, `channel`, `employee_id`) and the `chunk_fulltext` FULLTEXT index on `[content, description, question]`. The other scalar hard fields are materialized and queryable but **deliberately not indexed** (retrieval does not filter on them; an earlier version indexed them and that unused surface was removed). `years` is a list — not range-indexable; scanned (corpus is small). See [`schema/indexes.cypher`](backend/schema/indexes.cypher).
+- **Indexes:** `(n.file_id)`, `(n.empty)`, `(n.kind)`, plus RANGE on the **four gated** scalars only (`product`, `section`, `channel`, `employee_id`), the `chunk_fulltext` FULLTEXT index on `[content, description, question]`, and the eval-only `chunk_content_ft` FULLTEXT index on `[content]` for the direct content baseline. The other scalar hard fields are materialized and queryable but **deliberately not indexed** (retrieval does not filter on them; an earlier version indexed them and that unused surface was removed). `years` is a list — not range-indexable; scanned (corpus is small). See [`schema/indexes.cypher`](backend/schema/indexes.cypher).
 - **Who writes:** [`indexing/chunker.py`](backend/indexing/chunker.py) (creation), [`indexing/extraction_writer.py`](backend/indexing/extraction_writer.py) (`empty`, `empty_reason`, `description`), [`indexing/file_writer.py`](backend/indexing/file_writer.py) (`relevance_to_file`).
 - **Who reads:** orchestrator, rollup.
 
@@ -119,6 +123,25 @@ One per **distinct tag name** across the corpus. Cluster is on the **edge**, not
 - **Indexes:** none beyond uniqueness.
 - **Who writes:** [`indexing/extraction_writer.py`](backend/indexing/extraction_writer.py) (`MERGE (t:Tag {name: tag.name})`).
 - **Who reads:** rollup, future cluster query views.
+
+### `:Tag` grounding vectors (prompt-grounding index)
+
+Prompt grounding is a **tag-vocabulary lookup index stored as `:Tag`
+properties**, written by `python -m tagging embed-tags`. There are no companion
+embedding nodes — the vectors hang directly off the semantic tag node, and the
+real per-occurrence graph meaning stays on `(:Chunk)-[:HAS_TAG]->(:Tag)`
+(`w_chunk`, `w_facet`), never here.
+
+| Property | Type | Notes |
+|---|---|---|
+| `emb_topic` … `emb_evidence` | list<float> | 384-d `intfloat/e5-small-v2` vector for that tag under the named HERB facet. Absent (null) if the tag never occurs in that facet. |
+| `emb_all` | list<float> | 384-d vector for the broad corpus-wide (`all`) scope of the tag. |
+| `embedding_model` | string | Model id used to compute the vectors. |
+
+- **Constraint:** none beyond `:Tag.name` uniqueness.
+- **Indexes:** one native VECTOR index per facet — `tag_emb_topic`, `tag_emb_entities`, `tag_emb_activity`, `tag_emb_temporal`, `tag_emb_evidence`, `tag_emb_all` — each `FOR (t:Tag) ON (t.emb_<facet>)`.
+- **Who writes:** [`tagging/pipeline.py`](backend/tagging/pipeline.py) `stage_embed_tags`. It clears every stale `emb_*` vector and rebuilds them for the target database; it does **not** mutate `HAS_TAG` edges or tag weights.
+- **Who reads:** frontend prompt grounding in [`frontend/src/services/retrieval.ts`](../frontend/src/services/retrieval.ts).
 
 ### `:CanonicalTag`
 
@@ -274,9 +297,24 @@ CREATE INDEX IF NOT EXISTS FOR ()-[r:TAGGED]-()  ON (r.cluster);
 // HERB hard-field gate (materialize stage) — only the gated fields:
 CREATE INDEX chunk_product/section/channel/employee_id/kind ...;
 CREATE FULLTEXT INDEX chunk_fulltext FOR (c:Chunk) ON EACH [c.content, c.description, c.question];
+CREATE FULLTEXT INDEX chunk_content_ft FOR (c:Chunk) ON EACH [c.content];
 ```
 
-`schema/vector_indexes.cypher` is **no longer empty**: it creates `tag_embedding`, the native 384-d cosine VECTOR index on `:Tag(embedding)` written by `python -m tagging embed-tags` (the prompt-tag grounding bridge). Embeddings are live, not deferred — the older "deferred" note is obsolete.
+From [`schema/vector_indexes.cypher`](backend/schema/vector_indexes.cypher):
+
+```cypher
+CREATE VECTOR INDEX tag_emb_topic    IF NOT EXISTS FOR (t:Tag) ON (t.emb_topic);
+CREATE VECTOR INDEX tag_emb_entities IF NOT EXISTS FOR (t:Tag) ON (t.emb_entities);
+CREATE VECTOR INDEX tag_emb_activity IF NOT EXISTS FOR (t:Tag) ON (t.emb_activity);
+CREATE VECTOR INDEX tag_emb_temporal IF NOT EXISTS FOR (t:Tag) ON (t.emb_temporal);
+CREATE VECTOR INDEX tag_emb_evidence IF NOT EXISTS FOR (t:Tag) ON (t.emb_evidence);
+CREATE VECTOR INDEX tag_emb_all      IF NOT EXISTS FOR (t:Tag) ON (t.emb_all);
+```
+
+One native vector index per facet is the prompt-grounding bridge: the browser
+embeds a prompt tag for a given facet and kNN-queries the matching
+`tag_emb_<facet>` index, which returns the `:Tag` directly. The grounding
+vectors are `:Tag` properties — there is no separate embedding node type.
 
 ## Quick reference for property placement
 
@@ -287,6 +325,8 @@ CREATE FULLTEXT INDEX chunk_fulltext FOR (c:Chunk) ON EACH [c.content, c.descrip
 | `facet` | HERB `(:Chunk)-[:HAS_TAG]->(:Tag)` edge property | The retrieval dimension for the tag occurrence. |
 | `w_chunk` | HERB `(:Chunk)-[:HAS_TAG]->(:Tag)` edge property | Derived centrality of the tag in the chunk. |
 | `w_facet` | HERB `(:Chunk)-[:HAS_TAG]->(:Tag)` edge property | Fit of the tag to this facet. |
+| prompt-grounding vector | `:Tag.emb_<facet>` / `:Tag.emb_all` property | One vector per `(tag, facet)` plus one `(tag, all)`, on the tag node; a derived vocabulary lookup index, not stored on `HAS_TAG` edges. |
+| tag embedding scope | one `tag_emb_<facet>` vector index per facet | Keeps vector search facet-aware without duplicating embeddings onto every tag occurrence edge. |
 | `weight_local` | Legacy `(:Chunk)-[:HAS_TAG]->(:Tag)` edge property | Per-chunk tag saliency in the old generic path. |
 | `weight_global` | Legacy `(:File)-[:TAGGED]->(:Tag)` edge property | Aggregate of `relevance_to_file * weight_local`. |
 | `canonical_id` | Legacy `(:Chunk)-[:HAS_TAG]->(:Tag)` and `(:File)-[:TAGGED]->(:Tag)` edges | Per-attribution mapping; `null` when the tag is a proposal. |

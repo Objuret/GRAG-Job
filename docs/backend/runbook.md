@@ -1,14 +1,14 @@
 # Runbook
 
-**TL;DR.** First-time setup → bring up Neo4j → fill `.env` → bootstrap schema → preflight → run_index. Common failures and recovery steps below. The pipeline is idempotent at every stage and auto-retries failed work on the next run.
+**TL;DR.** HERB thesis path: first-time setup → bring up Neo4j → fill `.env` → bootstrap schema → preflight `Salesforce__HERB` → `python -m tagging materialize` → `python -m tagging extract` → `python -m tagging embed-tags`. The legacy generic path uses `run_index.py` and is not the HERB thesis path. Common failures and recovery steps below.
 
 **When to read this.** Before running anything that talks to Neo4j or OpenAI; when something fails and you need to recover.
 
-**Last updated:** 2026-05-13.
+**Last updated:** 2026-05-19.
 
 ## Touched paths
 
-`.env`, `.env.example`, `scripts/`, `schema/`, `data/raw/`, `indexing/preflight.py`, `indexing/orchestrator.py`.
+`.env`, `.env.example`, `scripts/`, `schema/`, `data/raw/`, `indexing/preflight.py`, `indexing/orchestrator.py`, `tagging/`.
 
 ## 1. First-time setup
 
@@ -24,7 +24,9 @@ python -m venv .venv
 pip install -r requirements-lock.txt
 
 cp .env.example .env
-# Edit .env — set at minimum: LLM_API_KEY, NEO4J_PASSWORD, NEO4J_DATABASE.
+# Edit .env — set at minimum: NEO4J_PASSWORD, NEO4J_DATABASE.
+# Add ANTHROPIC_API_KEY for HERB LLM tagging stages.
+# Add LLM_API_KEY only for the legacy generic run_index.py path.
 # See docs/env_and_config.md for the full table.
 ```
 
@@ -58,7 +60,7 @@ Try `neo4j://` first; switch to `bolt://` only if you see `ServiceUnavailable: U
 python scripts/bootstrap_schema.py
 ```
 
-Applies [`schema/constraints.cypher`](../../backend/schema/constraints.cypher), [`schema/indexes.cypher`](../../backend/schema/indexes.cypher), and [`schema/vector_indexes.cypher`](../../backend/schema/vector_indexes.cypher) (currently empty). It does not seed tag vocabularies.
+Applies [`schema/constraints.cypher`](../../backend/schema/constraints.cypher), [`schema/indexes.cypher`](../../backend/schema/indexes.cypher), and [`schema/vector_indexes.cypher`](../../backend/schema/vector_indexes.cypher), including the per-facet `tag_emb_<facet>` `:Tag` vector indexes used by the workbench grounding path. It does not seed tag vocabularies.
 
 Expected output (paraphrased):
 
@@ -103,7 +105,54 @@ Pre-flight complete:
 
 If any per-file step raises, preflight prints `[preflight] FAIL <rel_path>: <ErrorClass>: <first line>` and continues with the next file. The full list lands in `result.failures`. Re-running picks up new files and skips files that are already chunked (idempotency rule from [decision D9](architecture.md#d9--re-chunk-only-if-no-chunks-exist-idempotency)).
 
-## 5. Dispatch the indexing run
+## 5. HERB thesis tagging path
+
+For the thesis HERB graph, do not use `run_index.py`. Use the HERB-specific
+pipeline:
+
+```bash
+python scripts/run_preflight.py --dataset-id Salesforce__HERB
+python -m tagging materialize
+python -m tagging extract
+python -m tagging embed-tags
+```
+
+`materialize` and `embed-tags` are non-LLM graph maintenance stages.
+`extract`, `describe`, and `score` require `ANTHROPIC_API_KEY`.
+
+The current full thesis artefact is already live in Neo4j database `herb` under
+`run_id = "pilot_full_herb"`; do not re-run extraction/scoring just to create
+an evaluation graph.
+
+## 6. Create the eval-safe HERB graph
+
+For RAG evaluation, build a separate pruned database from the full HERB graph so
+retrieval cannot return QA records or upstream oracle product profiles:
+
+```powershell
+python scripts/create_herb_eval_db.py --source-db herb --target-db herb-eval --dry-run
+python scripts/create_herb_eval_db.py --source-db herb --target-db herb-eval
+$env:NEO4J_DATABASE='herb-eval'; python -m tagging embed-tags
+```
+
+The builder never mutates `herb`; it copies existing safe chunks, chunk
+descriptions, `HAS_TAG` edges, and weights, excluding `answerable_questions`,
+`unanswerable_questions`, and `product_profile`. It refuses to overwrite a
+non-empty target database unless `--replace` is explicitly passed. File-level
+LLM descriptions and old embeddings are intentionally not copied; facet-aware
+`:Tag.emb_*` grounding vectors are regenerated on `herb-eval` so prompt
+grounding is based only on eval-safe contexts. Verified target after the
+current run: 4,869 chunks, 0 excluded chunks, 229,249 `HAS_TAG` edges, 24,781
+tags, 96,790 grounding vectors (72,009 facet + 24,781 `all`), 0 file
+descriptions, and the six `tag_emb_<facet>` vector indexes ONLINE.
+
+On the current Windows workstation, use the repo-root CUDA venv
+(`a:\exjobbet\repo\.venv`) for `embed-tags`; it has `torch 2.6.0+cu124` and
+`sentence-transformers 5.5.0`, and `SentenceTransformer` auto-selects the GTX
+1080 Ti. Avoid reinstalling plain PyPI `torch` there because it can downgrade
+the environment to CPU-only.
+
+## 7. Dispatch the legacy generic indexing run
 
 ```bash
 python scripts/run_index.py
@@ -147,7 +196,7 @@ A `BREAKER TRIPPED:` line on stderr means the orchestrator caught a `BreakerTrip
 
 For HERB, `run_index.py` refuses to run the legacy generic tagging path by default. HERB-specific tagging experiments use the separate Anthropic pilot CLI (`python -m tagging <stage>` from `backend/`) documented in [`herb_tagging_schema.md`](herb_tagging_schema.md). The escape hatch `--allow-legacy-herb-tagging` is only for explicit throwaway experiments.
 
-## 6. Verify
+## 8. Verify
 
 ```bash
 python scripts/verify_graph.py

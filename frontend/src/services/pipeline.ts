@@ -407,7 +407,7 @@ export async function runUsageGraph(
     try {
       out = await exec(inputs, node, env, ctx);
     } catch (err) {
-      env.log(kind, 'failed', (err as Error).message);
+      env.log(kind ?? 'unknown', 'failed', (err as Error).message);
       throw err;
     }
     outputs.set(node.id, out);

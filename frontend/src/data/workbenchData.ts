@@ -81,7 +81,7 @@ export const FACETS = [
 ];
 
 export const DATASETS = [
-  { id: 'Salesforce__HERB', files: 33, chunks: 5843, tags: 25896 },
+  { id: 'Salesforce__HERB', files: 33, chunks: 4869, tags: 24781 },
   { id: 'fever__feverous', files: 0, chunks: 0, tags: 0 },
   { id: 'VLR-CVC__DocVQA-2026', files: 0, chunks: 0, tags: 0 },
   { id: 'wenhu__hybrid_qa', files: 0, chunks: 0, tags: 0 },

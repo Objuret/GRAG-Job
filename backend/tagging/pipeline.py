@@ -24,9 +24,9 @@ from pydantic import BaseModel, ValidationError
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 BACKEND_ROOT = REPO_ROOT / "backend"
-load_dotenv(BACKEND_ROOT / ".env", override=True)
+load_dotenv(BACKEND_ROOT / ".env", override=False)
 
-ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 ANTHROPIC_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-haiku-4-5")
 # Map common aliases to canonical Anthropic model IDs.
 _MODEL_ALIASES = {
@@ -38,7 +38,7 @@ PROVIDER_NAME = "anthropic"
 NEO4J_URI = os.environ["NEO4J_URI"]
 NEO4J_USER = os.environ["NEO4J_USER"]
 NEO4J_PASSWORD = os.environ["NEO4J_PASSWORD"]
-NEO4J_DATABASE = "herb"
+NEO4J_DATABASE = os.environ.get("NEO4J_DATABASE", "herb")
 DATASET_ID = "Salesforce__HERB"
 
 PILOT_NAME = os.environ.get("PILOT_NAME", "pilot_format_smoke")
@@ -54,7 +54,7 @@ FILLER = {"data", "information", "content", "record", "text", "chunk", "item"}
 MULTI_FACET_THRESHOLD = 0.50
 COVERAGE_ALPHA = 0.25
 
-# Tag embedding (grounding bridge between prompt tags and corpus tags).
+# Tag embeddings (grounding bridge between prompt tags and corpus tag uses).
 # intfloat/e5-* models use the "passage:"/"query:" prefix convention; here
 # BOTH sides use "passage:" — the corpus embeds tags as passages and the
 # browser embeds prompt tags as passages too (name + description prose), with
@@ -587,6 +587,8 @@ class ClaudeCaller:
     def __init__(self) -> None:
         # Lazy import: only the LLM tagging stages need the Anthropic SDK.
         # Key-free stages (e.g. embed-tags) must not require it to be installed.
+        if not ANTHROPIC_API_KEY:
+            raise RuntimeError("ANTHROPIC_API_KEY is required for HERB LLM tagging stages.")
         from anthropic import AsyncAnthropic
 
         self.client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
@@ -709,53 +711,90 @@ def _readable_tag(name: str) -> str:
     return name.replace("_", " ").strip()
 
 
-def _tag_embed_text(name: str, descriptions: list[str]) -> str:
-    """e5 passage input: the tag plus the real chunk-context it occurs in.
-
-    The bare snake_case name carries little signal; grounding quality comes
-    from the contexts the tag actually appears in across the corpus.
-    """
+def _tag_embed_text(name: str, descriptions: list[str], facet: str) -> str:
+    """e5 passage input: tag name, facet scope, and real chunk context."""
     readable = _readable_tag(name)
+    facet_text = "all facets" if facet == "all" else f"{facet} facet"
     ctx = " ".join(d.strip().replace("\n", " ") for d in descriptions if d)[:900]
-    body = f"{readable}. {ctx}" if ctx else readable
+    body = f"{readable}. {facet_text}. {ctx}" if ctx else f"{readable}. {facet_text}"
     return f"passage: {body}"
 
 
-async def stage_embed_tags() -> None:
-    """Embed every :Tag from its name + representative chunk descriptions and
-    write `t.embedding` (+ `t.embedding_model`). Creates the vector index.
+# The grounding vectors are stored as :Tag properties, one per facet plus a
+# corpus-wide `all`. These are the only facets the prompt side ever queries
+# (see frontend/src/services/embeddings.ts:EmbedFacet).
+EMBED_FACETS = ("topic", "entities", "activity", "temporal", "evidence", "all")
 
-    No LLM calls. Uses the local sentence-transformers model named by
-    `EMBEDDING_MODEL` so it is reproducible and key-free, and matches the
-    in-browser model the workbench uses for prompt-tag grounding.
+
+def _emb_prop(facet: str) -> str:
+    """:Tag property name holding the grounding vector for one facet.
+
+    Validated against EMBED_FACETS so the value is safe to interpolate into a
+    Cypher property/index name (no dynamic-key APOC needed).
+    """
+    if facet not in EMBED_FACETS:
+        raise ValueError(f"unknown embedding facet: {facet!r}")
+    return f"emb_{facet}"
+
+
+async def stage_embed_tags() -> None:
+    """Embed every observed (tag, facet) plus one `all` embedding per tag.
+
+    Writes the vectors as :Tag properties (`emb_<facet>`, plus `emb_all`) with
+    one native vector index per facet. Existing HAS_TAG edges and weights are
+    not touched — this is a tag-vocabulary lookup index, not graph semantics.
+    No LLM calls.
     """
     driver = neo4j_driver()
     try:
         await ensure_tag_uniqueness(driver)
         async with driver.session(database=NEO4J_DATABASE) as s:
+            # Retire the old companion-node design and its dead legacy index.
+            await s.run("DROP CONSTRAINT tag_embedding_id_unique IF EXISTS")
+            await s.run("DROP INDEX tag_facet_embedding IF EXISTS")
+            await s.run("DROP INDEX tag_embedding IF EXISTS")
             await s.run(
-                f"""
-                CREATE VECTOR INDEX tag_embedding IF NOT EXISTS
-                FOR (t:Tag) ON (t.embedding)
-                OPTIONS {{ indexConfig: {{
-                  `vector.dimensions`: {EMBEDDING_DIM},
-                  `vector.similarity_function`: 'cosine'
-                }} }}
-                """
+                "MATCH (:Tag)-[r:HAS_TAG_EMBEDDING]->(:TagEmbedding) DELETE r"
             )
-            result = await s.run(
+            await s.run("MATCH (e:TagEmbedding) DETACH DELETE e")
+            for facet in EMBED_FACETS:
+                await s.run(
+                    f"""
+                    CREATE VECTOR INDEX tag_{_emb_prop(facet)} IF NOT EXISTS
+                    FOR (t:Tag) ON (t.{_emb_prop(facet)})
+                    OPTIONS {{ indexConfig: {{
+                      `vector.dimensions`: {EMBEDDING_DIM},
+                      `vector.similarity_function`: 'cosine'
+                    }} }}
+                    """
+                )
+            facet_result = await s.run(
                 """
                 MATCH (c:Chunk)-[r:HAS_TAG]->(t:Tag)
-                WITH t, c, r ORDER BY r.w_chunk DESC
-                WITH t.name AS name,
-                     [d IN collect(DISTINCT c.description) WHERE d IS NOT NULL]
-                       [0..$ctx] AS descriptions
-                RETURN name, descriptions
+                WHERE c.description IS NOT NULL
+                WITH t.name AS name, r.facet AS facet, c.description AS description,
+                     max(coalesce(r.w_chunk, 0.0) * coalesce(r.w_facet, 0.0)) AS w
+                ORDER BY name, facet, w DESC
+                WITH name, facet, collect(description) AS descriptions, count(*) AS context_count
+                RETURN name, facet, descriptions[0..$ctx] AS descriptions, context_count
+                ORDER BY name, facet
+                """,
+                ctx=EMBED_CONTEXT_CHUNKS,
+            )
+            all_result = await s.run(
+                """
+                MATCH (c:Chunk)-[r:HAS_TAG]->(t:Tag)
+                WHERE c.description IS NOT NULL
+                WITH t.name AS name, c.description AS description,
+                     max(coalesce(r.w_chunk, 0.0) * coalesce(r.w_facet, 0.0)) AS w
+                ORDER BY name, w DESC
+                WITH name, collect(description) AS descriptions, count(*) AS context_count
+                RETURN name, 'all' AS facet, descriptions[0..$ctx] AS descriptions, context_count
                 ORDER BY name
                 """,
                 ctx=EMBED_CONTEXT_CHUNKS,
             )
-            rows = [dict(r) async for r in result]
+            rows = [dict(r) async for r in facet_result] + [dict(r) async for r in all_result]
 
         if not rows:
             print("embed-tags: no tags found — run extract first")
@@ -765,7 +804,7 @@ async def stage_embed_tags() -> None:
         from sentence_transformers import SentenceTransformer
 
         model = SentenceTransformer(EMBEDDING_MODEL)
-        texts = [_tag_embed_text(row["name"], row["descriptions"]) for row in rows]
+        texts = [_tag_embed_text(row["name"], row["descriptions"], row["facet"]) for row in rows]
         vectors = model.encode(
             texts,
             batch_size=EMBED_BATCH,
@@ -774,27 +813,49 @@ async def stage_embed_tags() -> None:
         )
 
         payload = [
-            {"name": row["name"], "vec": [float(x) for x in vec]}
+            {
+                "name": row["name"],
+                "facet": row["facet"],
+                "vec": [float(x) for x in vec],
+            }
             for row, vec in zip(rows, vectors)
         ]
+        by_facet: dict[str, list[dict]] = {f: [] for f in EMBED_FACETS}
+        for row in payload:
+            # KeyError here is intentional: an unexpected facet must fail loud,
+            # never be silently dropped from the grounding index.
+            by_facet[row["facet"]].append(row)
+
         async with driver.session(database=NEO4J_DATABASE) as s:
-            for i in range(0, len(payload), 500):
-                await s.run(
-                    """
-                    UNWIND $rows AS row
-                    MATCH (t:Tag {name: row.name})
-                    SET t.embedding = row.vec,
-                        t.embedding_model = $model
-                    """,
-                    rows=payload[i:i + 500], model=EMBEDDING_MODEL,
-                )
+            # Clear every stale grounding vector first: a tag that no longer
+            # has a given facet must not keep an old vector for it.
+            clear = ", ".join(f"t.{_emb_prop(f)} = null" for f in EMBED_FACETS)
+            await s.run(f"MATCH (t:Tag) SET {clear}, t.embedding_model = null")
+            for facet, frows in by_facet.items():
+                prop = _emb_prop(facet)
+                for i in range(0, len(frows), 500):
+                    await s.run(
+                        f"""
+                        UNWIND $rows AS row
+                        MATCH (t:Tag {{name: row.name}})
+                        SET t.{prop} = row.vec,
+                            t.embedding_model = $model
+                        """,
+                        rows=frows[i:i + 500], model=EMBEDDING_MODEL,
+                    )
 
         state = read_run_json()
         state.setdefault("stages_done", [])
         if "embed-tags" not in state["stages_done"]:
             state["stages_done"].append("embed-tags")
         write_run_json(state)
-        print(f"embed-tags: embedded {len(payload)} tags with {EMBEDDING_MODEL} (dim={EMBEDDING_DIM})")
+        facet_rows = sum(1 for row in payload if row["facet"] != "all")
+        all_rows = len(payload) - facet_rows
+        print(
+            f"embed-tags: embedded {len(payload)} tag facet/all vectors "
+            f"({facet_rows} facet, {all_rows} all) as :Tag props with "
+            f"{EMBEDDING_MODEL} (dim={EMBEDDING_DIM})"
+        )
     finally:
         await driver.close()
 
@@ -905,6 +966,13 @@ async def ensure_hard_field_indexes(driver) -> None:
             """
             CREATE FULLTEXT INDEX chunk_fulltext IF NOT EXISTS
             FOR (c:Chunk) ON EACH [c.content, c.description, c.question]
+            """
+        )
+        # Eval-only direct baseline: raw content only, no enrichment fields.
+        await s.run(
+            """
+            CREATE FULLTEXT INDEX chunk_content_ft IF NOT EXISTS
+            FOR (c:Chunk) ON EACH [c.content]
             """
         )
         for name in _OBSOLETE_CHUNK_INDEXES:

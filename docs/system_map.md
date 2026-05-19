@@ -2,7 +2,7 @@
 
 **Purpose.** One entry page for humans and AI agents: **concepts**, **where they live** (backend / frontend / Neo4j), and **which doc** is authoritative.
 
-**Scope (read this first).** This map describes **only the HERB path in actual use**: raw corpus **`Salesforce__HERB`**, Neo4j database **`herb`**, semantic artefact **`pilot_full_herb`**. The generic three-stage indexer (`scripts/run_index.py`, `indexing/orchestrator.py`, OpenAI-compatible `agents/` path, other datasets in `data_access` registry) is **quarantined** — it is not what you run or defend for HERB. See [Quarantine](#quarantine-legacy--non-herb).
+**Scope (read this first).** This map describes **only the HERB path in actual use**: raw corpus **`Salesforce__HERB`**, full Neo4j database **`herb`**, eval-safe Neo4j database **`herb-eval`**, semantic artefact **`pilot_full_herb`**. The generic three-stage indexer (`scripts/run_index.py`, `indexing/orchestrator.py`, OpenAI-compatible `agents/` path, other datasets in `data_access` registry) is **quarantined** — it is not what you run or defend for HERB. See [Quarantine](#quarantine-legacy--non-herb).
 
 **Companion pages.** Rules and commands: [`/AGENTS.md`](../AGENTS.md). Full doc index: [`README.md`](README.md). Graph contract: [`graph_schema.md`](graph_schema.md).
 
@@ -17,7 +17,8 @@
 | Indexing (HERB) | **`:Chunk`**, **`locator_json`**, worklist seeding for tagging — **no** legacy orchestrator. | **`indexing/chunker.py`**, **`indexing/preflight.py`**, **`indexing/worklist.py`**, **`scripts/run_preflight.py`** (`--dataset-id Salesforce__HERB` when scoping). | Canvas **Index Layer** onward. |
 | Hard-field gate | **Pre-tagging, deterministic.** Lift `locator_json` keys + derived `years` into indexed **`:Chunk`** props (`product`, `section`, `channel`, `years`, …) + `chunk_fulltext`. Retrieval hard-gates on these **before** tag/embedding scoring. | **`python -m tagging materialize`** ([`tagging/pipeline.py`](backend/tagging/pipeline.py) `stage_materialize`) | Gate filters in `interpreter.ts` / `retrieval.ts` (validated, fail-loud). |
 | HERB tagging | Anthropic two-pass → **`HAS_TAG`** with **`facet`**, **`w_chunk`**, **`w_facet`**, **`relevance_to_file`**. | **`backend/tagging/pipeline.py`**, **`python -m tagging …`** | — (consumes graph only). |
-| Workbench + interpretation | Read **`herb`** + browser Anthropic two-pass (aligned facets). | — | **`frontend/src/App.jsx`**, `neo4j-driver`, `@anthropic-ai/sdk`; spec [`frontend/query_interpretation_layer.md`](frontend/query_interpretation_layer.md). |
+| Eval-safe graph | Copy existing safe chunks/weights from `herb` to **`herb-eval`**, excluding `answerable_questions`, `unanswerable_questions`, and oracle `product_profile`; strip file-level LLM summaries; then regenerate facet-aware `:Tag.emb_*` grounding vectors on `herb-eval`. | **`scripts/create_herb_eval_db.py`**, then `NEO4J_DATABASE=herb-eval python -m tagging embed-tags` | Retrieval also has a default section-exclusion guard. |
+| Workbench + interpretation | Read **`herb`** for exploration or **`herb-eval`** for thesis eval + browser Anthropic two-pass (aligned facets). | — | **`frontend/src/App.jsx`**, `neo4j-driver`, `@anthropic-ai/sdk`; default DB is `herb-eval` unless `VITE_NEO4J_DATABASE` overrides; spec [`frontend/query_interpretation_layer.md`](frontend/query_interpretation_layer.md). |
 
 Canonical write-up of access vs indexing for the whole repo (includes legacy): [`backend/architecture.md`](backend/architecture.md).
 
@@ -34,6 +35,7 @@ Canonical write-up of access vs indexing for the whole repo (includes legacy): [
 | HERB model I/O and graph writes | [`backend/herb_tagging_schema.md`](backend/herb_tagging_schema.md) |
 | HERB evidence shapes → frames | [`backend/herb_tagging_frames.md`](backend/herb_tagging_frames.md) |
 | Full-corpus HERB run (method + numbers) | [`backend/pilot_full_herb_report.md`](backend/pilot_full_herb_report.md) |
+| Eval-safe graph / RAGAS smoke layer | [`../backend/eval/README.md`](../backend/eval/README.md) |
 | Workbench UI + browser-direct | [`frontend/architecture.md`](frontend/architecture.md) |
 | Browser prompt interpretation | [`frontend/query_interpretation_layer.md`](frontend/query_interpretation_layer.md) |
 | Built state / next steps | [`backend/status.md`](backend/status.md), [`frontend/status.md`](frontend/status.md), [`frontend/plans.md`](frontend/plans.md) |
@@ -50,6 +52,7 @@ Canonical write-up of access vs indexing for the whole repo (includes legacy): [
 | Preflight entrypoint | `backend/scripts/run_preflight.py` |
 | Worklist seed (tagging jobs) | `backend/indexing/worklist.py` |
 | HERB tagging pilot | `backend/tagging/pipeline.py`, `backend/tagging/__main__.py` |
+| Eval-safe HERB graph builder | `backend/scripts/create_herb_eval_db.py` |
 | Active workbench | `frontend/src/App.jsx` |
 | Pipeline node registry / demo counts | `frontend/src/data/workbenchData.ts` |
 | Query-module Cypher helpers | `frontend/src/query/queryModuleSyntax.ts` |
@@ -61,6 +64,7 @@ Canonical write-up of access vs indexing for the whole repo (includes legacy): [
 
 - **Dataset id:** `Salesforce__HERB`
 - **Neo4j database:** `herb`
+- **Eval Neo4j database:** `herb-eval` (derived; excludes QA/oracle product profile; 4,869 safe chunks and 96,790 `:Tag.emb_*` grounding vectors — 72,009 facet + 24,781 `all` — verified 2026-05-19)
 - **Run id:** `pilot_full_herb`
 - **Portable archive:** `backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip`
 - **Report:** [`backend/pilot_full_herb_report.md`](backend/pilot_full_herb_report.md)

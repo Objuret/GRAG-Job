@@ -1,140 +1,92 @@
-# Status — Built vs Planned
+# Status - Built vs Planned
 
 **Active UI:** `src/App.jsx`.
 
 > **Verified state (2026-05-19).** The retrieval/interpret/answer service stack
-> is implemented in `src/services/*` and `App.jsx`; the retrieval lane now
-> receives a named `RetrievalInput` object. Its graph prerequisites **are present and correct on the live
-> `herb` graph**, independently re-verified 2026-05-18 by direct Cypher:
-> 5843 chunks (product 5782, section 5782, channel 2669, years≥1 4799,
-> employee_id 30); gate `product=CollaborateForce AND section=slack` → 124;
-> corpus year range 1801–2048; 25,896/26,023 `:Tag` embedded; all `chunk_*`
-> RANGE + `chunk_fulltext` FULLTEXT + `tag_embedding` VECTOR indexes ONLINE.
-> The `pilot_format_smoke/run.json` `stages_done` ledger is stale — **trust the
-> graph, not the ledger.** Not separately re-verified here: a full click-through
-> of the browser prompt → answer UI loop (only its data layer was checked).
+> is implemented in `src/services/*` and `App.jsx`; the retrieval lane receives
+> a named `RetrievalInput` object. For thesis eval, the default target is the
+> physical `herb-eval` database: 4,869 chunks, 0 QA/oracle chunks, 229,249
+> `HAS_TAG` edges, 24,781 tags, 96,790 `:Tag.emb_*` grounding vectors
+> (72,009 facet + 24,781 `all`), and ONLINE `chunk_fulltext` plus
+> `tag_emb_<facet>` vector indexes. The full `herb` graph remains available for
+> exploration, but it contains QA/oracle sections and should not be used for
+> thesis RAG scoring.
+>
+> Not re-verified here: a full browser prompt-to-answer click-through and a
+> live headless RAGAS run against Neo4j/Anthropic.
 
 ---
 
-## UI shell — built (no graph dependency)
+## UI shell - built
 
 - [x] Two-lane canvas: Pipeline (offline illustration) + Usage (executable fork/join DAG)
-- [x] Catalog, inspector forms per node kind, edge drawer, bottom lane comparison
-- [x] Resizable result console with live Comparison / Logs / History tabs, copy actions, chunk filtering/detail inspection, run restore, and a paper-list error popover whose rows copy full errors
-- [x] Themes and CSS tokens (`index.css`)
+- [x] Catalog, inspector forms per node kind, edge drawer, bottom comparison/log/history console
 - [x] Query modules with chained `topic`, `entities`, `activity`, `temporal`, `evidence` fragments
 - [x] Undo/redo and clipboard support for canvas editing
 
-> **Node-driven execution (2026-05-19).** The Usage canvas is now the real
-> executor, not an illustration. `services/pipeline.ts` holds one async
-> executor per node kind; `runUsageGraph` topologically orders the wired
-> `lane_usage` nodes/edges and threads a typed context, so **wire order = run
-> order** and A/B is a real fork (`retrieve_tags` vs `retrieve_baseline`)
-> joined at `compare`. The startup canvas is that real DAG:
-> `prompt → interpret → build_input → ground → retrieve_tags → answer ↘`
-> `                              └→ retrieve_baseline → answer ↗ → compare`.
-> Per-step params live on the node (`node.data`, edited in its Config tab):
-> model on `interpret`/`answer`; dataset, facets, k, min_sim, thresholds,
-> limit on `build_input`. A node’s `disabled` toggle removes it from the run;
-> a cycle / missing `compare` / contract mismatch is a loud error, never a
-> silent partial run. A **Probe** module is a typed passthrough — splice it on
-> any matching wire to log what flows through without changing the run.
-> `runPipeline` is now just the React wrapper (key precheck, lane status,
-> logs/history) around `runUsageGraph`. The **Pipeline lane** stays a
-> non-executable illustration (it is genuinely offline Python); toggling its
-> nodes does nothing and they expose no run controls.
+**Node-driven execution.** The Usage canvas is the real executor. `services/pipeline.ts`
+holds one async executor per node kind; `runUsageGraph` topologically orders the
+wired `lane_usage` nodes/edges and threads a typed context, so wire order is run
+order and A/B is a real fork (`retrieve_tags` vs `retrieve_baseline`) joined at
+`compare`. The Pipeline lane remains a non-executable illustration of the
+offline Python path.
 
-> **Real metrics, no mock (2026-05-19).** All fabricated per-node payloads
-> (`STAGE_PAYLOADS`, `SAMPLE_FILES`, the "412ms / bolt://neo4j-mock / cache
-> warm" Runtime panel, the node-face `in/out` counts, the edge Drawer's
-> Records/Latency/Sample) were deleted. The Inspector now has **Config** +
-> **Metrics** tabs; Metrics shows only values computed by the engine
-> (`compare` node) from the actual run: grounding quality (prompt tags, grounded corpus tags, cosine
-> min/μ/max, zero-grounded prompt tags), A/B retrieval comparison (per-lane
-> chunk count, score & relevance min/μ/max, distinct files, **A∩B overlap +
-> Jaccard**), citation grounding (parsed `[n]` cites → distinct chunks, % of
-> retrieved actually used), and **per-stage latency** (interpret / ground /
-> retrieve-A / retrieve-B / answer-A / answer-B; the single reused `elapsed`
-> for both lanes is gone). Nodes with no in-browser instrumentation say so
-> plainly; pre-run state shows an explicit "no run yet", never sample data.
-> A selected dataset matching zero `:File`s now fails loud (valid ids listed),
-> like the hard gate.
-
-> **Query module = the executed query; RAGAS export (2026-05-19).** A Query
-> module spliced `ground → module → retrieve_tags` becomes Lane A's real
-> Cypher (`composeModuleCypher` → `runModuleCypher`); no module wired keeps the
-> fixed `scoreCypher`. The default module header/footer now *is* the canonical
-> weighted-overlap query (parametric gate, `$queryTags`), so weight/facet/order/
-> query experiments are real and the result contract is enforced loudly
-> (required RETURN columns; dataset+gate validated first). RAGAS runs offline:
-> History **Export RAGAS** → JSONL of real (question, answer, contexts) per
-> lane → `backend/eval/ragas_eval.py` (faithfulness + answer_relevancy, A−B
-> delta). No silent fallback anywhere in that path.
+**Real metrics, no mock.** Fabricated stage payloads and sample runtime panels
+were removed. Metrics shown in the Inspector are computed from the actual run:
+grounding quality, retrieval comparison, citation grounding, and per-stage
+latency.
 
 ---
 
-## Retrieval / interpret / answer stack — coded, graph layer verified on `herb`
+## Retrieval / interpret / answer stack - built
 
-Each step is a service module under `src/services/`, driven by
-`App.jsx:runPipeline`. The graph data it depends on is verified present on
-`herb` (banner above).
+- [x] Browser-direct Neo4j read via `neo4j-driver` - [`services/neo4j.ts`](../../frontend/src/services/neo4j.ts)
+- [x] Browser-direct interpretation via `@anthropic-ai/sdk` - [`services/interpreter.ts`](../../frontend/src/services/interpreter.ts)
+- [x] In-browser e5 tag/facet embedding, bundled local-only - [`services/embeddings.ts`](../../frontend/src/services/embeddings.ts)
+- [x] kNN prompt grounding + weighted-overlap HERB retrieval - [`services/retrieval.ts`](../../frontend/src/services/retrieval.ts)
+- [x] Named `RetrievalInput` contract (`plan`, `scope`, `controls`, `gate`) - [`services/retrieval.ts`](../../frontend/src/services/retrieval.ts), [`App.jsx`](../../frontend/src/App.jsx)
+- [x] Pass-1 hard-gate extraction (`product`, `section`, `channel`, `employee_id`, `years`) + gated lexical path
+- [x] RAG-eval leakage exclusions (`answerable_questions`, `unanswerable_questions`, `product_profile`) by default
+- [x] Answer call over retrieved chunks per `answer_job` - [`services/answer.ts`](../../frontend/src/services/answer.ts)
+- [x] HERB field-name discipline: `facet`, `w_chunk`, `w_facet`, `relevance_to_file`
 
-- [x] Browser-direct Neo4j read via `neo4j-driver` — [`services/neo4j.ts`](../../frontend/src/services/neo4j.ts)
-- [x] Browser-direct two-pass interpretation via `@anthropic-ai/sdk` — [`services/interpreter.ts`](../../frontend/src/services/interpreter.ts)
-- [x] In-browser prompt-tag embedding (`@xenova/transformers`, e5, symmetric `passage: <name>. <description>` — mirrors backend `_tag_embed_text`; model **bundled** in `public/models/Xenova/e5-small-v2/`, full fp32, loaded local-only — no runtime HF fetch; exact backend parity, cosine ≈ 1.0; local asset preflight validates JSON files + `onnx/model.onnx`, clears stale `transformers-cache` JSON entries, and disables `transformers-cache` for this local bundle) — [`services/embeddings.ts`](../../frontend/src/services/embeddings.ts)
-- [x] kNN grounding + deterministic weighted-overlap Cypher — [`services/retrieval.ts`](../../frontend/src/services/retrieval.ts)
-- [x] Named `RetrievalInput` contract (`plan` + `scope` + `controls` + `gate`) passed into semantic and baseline retrieval — [`services/retrieval.ts`](../../frontend/src/services/retrieval.ts), [`App.jsx`](../../frontend/src/App.jsx)
-- [x] Pass-1 hard-gate extraction (`product`, `section`, `channel`, `employee_id`, `years`) + deterministic pre-tag gate + fail-loud gate validation + gated `chunk_fulltext` lexical path — [`services/interpreter.ts`](../../frontend/src/services/interpreter.ts), [`services/retrieval.ts`](../../frontend/src/services/retrieval.ts)
-- [x] Answer call over retrieved chunks per `answer_job` — [`services/answer.ts`](../../frontend/src/services/answer.ts)
-- [x] Field-name discipline: HERB `facet`, `w_chunk`, `w_facet`, `relevance_to_file`
+Prompt-tag to corpus-tag/facet mapping is vector-kNN grounding against the
+per-facet `tag_emb_<facet>` `:Tag` vector indexes. If no tags survive grounding,
+semantic retrieval fails loudly. If grounded tags exist but the weighted tag
+score returns zero chunks under the hard gate, the current retrieval code falls
+back to the gated `chunk_fulltext` lexical path and records a warning; this is a
+recall rescue, not the primary semantic method.
 
----
-
-## Grounding is mandatory — no fallback
-
-Prompt-tag → corpus-tag mapping is **only** vector-kNN grounding against the
-`tag_embedding` index. The legacy exact-cleaned-name path and the silent
-"embeddings missing → degrade to string equality" fallback were deleted
-(`retrieval.ts`, `App.jsx`): no `toExactParams`, no `groundTags` option, no
-`interpreterStrategy` selector. If embeddings are absent or grounding returns
-nothing above `min_sim`, `retrieveChunks` throws a loud, actionable error
-(`run python -m tagging embed-tags`). On `herb` the embeddings are present
-(25,896 `:Tag`), so this path is live.
-
-## Hard gate — validated, no silent skip
-
-Pass 1 extracts a `gate` (`product`, `section`, `channel`, `employee_id`,
-`years`) **only** when the query explicitly names the constraint. Retrieval
-applies it as a deterministic WHERE filter on the materialized `:Chunk` hard
-fields (written by `python -m tagging materialize`, see
-[`../graph_schema.md`](../graph_schema.md)) **before** any tag/embedding
-scoring. Every set value is validated against the live corpus first: a
-constraint matching zero chunks is a loud error listing valid values — never a
-silent "scan everything". On `herb` the hard fields and `chunk_fulltext` index
-exist (banner above), so the gate and lexical paths are live.
+The hard gate is deterministic and validated before retrieval. A selected
+`product`, `section`, `channel`, `employee_id`, or `year` that matches zero
+chunks is a loud error with valid values, never a silent scan-everything skip.
 
 ---
 
-## Known issues (real, not fixed)
+## Evaluation - built
 
-- **`min_sim` is near-meaningless.** e5-small cosine on this corpus is
-  compressed (~0.8 mean to random tags); default floor 0.78 barely filters
-  noise — grounding leans entirely on top-k.
-- **Full UI click-through still unrecorded.** Build/lint pass and graph
-  prerequisites are verified, but the browser prompt → answer loop still needs
-  an observed result written here.
+- [x] UI smoke export: History **Export RAGAS** emits real `(question, answer, contexts)` JSONL from the browser run history for quick lane inspection.
+- [x] Headless thesis harness: `npm --workspace frontend run ragas:export` runs questions through the current service stack and writes RAGAS-compatible JSONL.
+- [x] Ground-truth scoring runner: `backend/evaluation/ragas_eval.py` scores exported JSONL with RAGAS faithfulness, answer relevancy, context recall, and context precision when references are present.
+- [x] Gold-set builder: `backend/evaluation/build_gold_set.py` converts HERB QA/oracle records into JSONL question sets.
+- [x] Direct content baseline for RQ2-style comparison: `retrieveBaselineContent` queries `chunk_content_ft` over `Chunk.content` only. This is intentionally separate from the UI Lane B baseline, which still uses enriched `relevance_to_file` ranking for workbench comparison.
+
+The eval-safe graph is `herb-eval`, created by `backend/scripts/create_herb_eval_db.py`.
+It removes QA/oracle/product-profile chunks while preserving already computed
+tag and relevance fields. See [`backend/eval/README.md`](../../backend/eval/README.md)
+for the current runbook.
 
 ---
 
-## Not wired
+## Known issues
 
-- [ ] Persisting canvas/module state across browser sessions (optional — local-only app)
-- [ ] Full browser prompt → answer UI click-through not re-verified here (graph data layer verified)
-
-See [`plans.md`](plans.md) and the interpretation/retrieval spec at [`query_interpretation_layer.md`](query_interpretation_layer.md).
+- `min_sim` is near-meaningless on e5-small for this corpus; cosine scores are compressed, so grounding quality mostly depends on top-k.
+- The live headless harness still needs to be run end-to-end and its result recorded.
+- Deterministic thesis metrics such as exact answer/entity F1, citation hit@k, retrieval gold-hit@k, and refusal accuracy are still missing.
+- Persisting canvas/module state across browser sessions remains optional and unwired.
 
 ---
 
 ## Inactive / Legacy
 
-- `frontend/updated/` — tracked static prototype files. They are not imported by `src/main.tsx`; the active app is `src/App.jsx`.
+- `frontend/updated/` - tracked static prototype files. They are not imported by `src/main.tsx`; the active app is `src/App.jsx`.

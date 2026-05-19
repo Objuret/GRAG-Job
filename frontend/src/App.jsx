@@ -37,7 +37,7 @@ import { runUsageGraph } from './services/pipeline';
 import { fetchDatasetStats } from './services/neo4j';
 const NT = Object.fromEntries([...NODE_TYPES, ...QUERY_FRAGMENT_NODES].map((n) => [n.id, n]));
 
-const DONE_GRAPH_DATABASE = 'herb';
+const DONE_GRAPH_DATABASE = import.meta.env.VITE_NEO4J_DATABASE || 'herb-eval';
 const DONE_GRAPH_RUN_ID = 'pilot_full_herb';
 
 // ─── helpers ───────────────────────────────────────────────────────────────
@@ -2384,7 +2384,7 @@ function schemaFor(t) {
     case 'files':      return [{name:'fileId',type:'string'},{name:'relPath',type:'string'},{name:'formatFamily',type:'string'}];
     case 'graph':      return [{name:'source',type:'Source'},{name:'files[]',type:'File[]'},{name:'chunks[]',type:'Chunk[]'}];
     case 'graph_scope':return [{name:'tagsEnabled',type:'boolean'},{name:'facets',type:'FacetDimension[]'}];
-    case 'retrieval_plan': return [{name:'plan',type:'QueryPlan'},{name:'scope',type:'{datasetId,runId}'},{name:'controls',type:'RetrievalControls'},{name:'gate',type:'HardGate'}];
+    case 'retrieval_plan': return [{name:'plan',type:'QueryPlan'},{name:'scope',type:'{datasetId,runId}'},{name:'controls',type:'RetrievalControls + excludedSections'},{name:'gate',type:'HardGate'}];
     case 'context':    return [{name:'chunkId',type:'string'},{name:'fileId',type:'string'},{name:'content',type:'text'},{name:'tags[]',type:'ChunkTag'},{name:'score',type:'float'}];
     case 'query_plan': return [{name:'extractedTags',type:'string[]'},{name:'facets',type:'FacetDimension[]'},{name:'strategy',type:'enum'}];
     case 'frag':       return [{name:'slotId',type:'string'},{name:'boundParams',type:'Record<string, unknown>'}];
@@ -2632,7 +2632,7 @@ function ResultPane({ label, tone, data, view }) {
                   {g.promptTag} →{' '}
                   {g.matches.length
                     ? g.matches.slice(0,4).map(m => (
-                        <span key={m.name} className="tag-pill" style={{fontSize:9.5,marginRight:2}}>{m.name} {m.sim.toFixed(2)}</span>
+                        <span key={`${m.name}:${m.facet}`} className="tag-pill" style={{fontSize:9.5,marginRight:2}}>{m.name}/{m.facet} {m.sim.toFixed(2)}</span>
                       ))
                     : <span style={{color:'var(--err)'}}>no match</span>}
                 </div>

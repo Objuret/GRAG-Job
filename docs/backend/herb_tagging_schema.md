@@ -426,33 +426,43 @@ tagging — retrieval filters on them before any tag/embedding work
 
 ## Stage: Embed-tags — tag grounding bridge (no LLM)
 
-`python -m tagging embed-tags`. Embeds every `:Tag` so free-form prompt tags
-can be matched to corpus tags by vector similarity instead of exact string
-equality (see [`query_interpretation_layer.md`](../frontend/query_interpretation_layer.md)).
+`python -m tagging embed-tags`. Embeds every observed `(tag, facet)` plus one
+broad `(tag, all)` record so free-form prompt tags can be matched to corpus
+tag uses by vector similarity instead of exact string equality (see
+[`query_interpretation_layer.md`](../frontend/query_interpretation_layer.md)).
 
 - Model: `EMBEDDING_MODEL` env (default `intfloat/e5-small-v2`, 384-d), run
   locally via `sentence-transformers`. No API key, reproducible. The browser
   embeds prompt tags with the **same** model id so vectors are comparable.
-- Input text per tag (e5 passage convention):
-  `passage: {name_with_spaces}. {up to EMBED_CONTEXT_CHUNKS chunk descriptions
-  where the tag occurs, highest w_chunk first}`. The bare snake_case name
-  carries little signal; grounding quality comes from real corpus context.
-- Writes `t.embedding` (float[384]) and `t.embedding_model` on `:Tag`.
-- Creates the native vector index (also in
+- Input text per tag/facet scope (e5 passage convention):
+  `passage: {name_with_spaces}. {facet scope}. {up to EMBED_CONTEXT_CHUNKS
+  chunk descriptions where the tag occurs in that scope, highest occurrence
+  strength first}`. Occurrence strength for choosing representative context is
+  `w_chunk * w_facet`; it is not a global tag/facet weight. Retrieval scoring
+  still joins back to each individual `HAS_TAG` edge and uses that edge's own
+  `w_chunk` and `w_facet`. The bare snake_case name carries little signal;
+  grounding quality comes from real corpus context.
+- Writes the vectors as `:Tag` properties: `emb_topic … emb_evidence` (one per
+  HERB facet where the tag occurs) plus `emb_all`, and `embedding_model`. There
+  are no companion embedding nodes. Existing `HAS_TAG` edges and weights are not
+  changed — this is a tag-vocabulary lookup index, not graph semantics.
+- Creates one native vector index per facet (also in
   [`schema/vector_indexes.cypher`](../../backend/schema/vector_indexes.cypher)):
 
 ```cypher
-CREATE VECTOR INDEX tag_embedding IF NOT EXISTS
-FOR (t:Tag) ON (t.embedding)
+CREATE VECTOR INDEX tag_emb_<facet> IF NOT EXISTS
+FOR (t:Tag) ON (t.emb_<facet>)
 OPTIONS { indexConfig: {
   `vector.dimensions`: 384,
   `vector.similarity_function`: 'cosine'
 } }
+-- one each for facet ∈ {topic, entities, activity, temporal, evidence, all}
 ```
 
-`:Tag` gains `embedding` (float[]) and `embedding_model` (string). Re-running
-the stage overwrites both. If the embedding model changes, re-run this stage
-and rebuild the index (dimensions must match).
+Re-running the stage first clears every stale `emb_*` vector (a tag that lost a
+facet must not keep an old vector for it), then rebuilds them for the target
+database. If the embedding model changes, re-run this stage and rebuild the
+indexes if dimensions change.
 
 ## Stage 4: Analyze — `analysis.md`
 

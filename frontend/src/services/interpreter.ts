@@ -42,7 +42,7 @@ export interface QueryFilters {
 /** Per prompt tag, the corpus :Tag names it grounded to (vector kNN). */
 export interface PlanGrounding {
   promptTag: string;
-  matches: { name: string; sim: number }[];
+  matches: { name: string; facet: 'topic' | 'entities' | 'activity' | 'temporal' | 'evidence' | 'all'; sim: number }[];
 }
 
 export interface QueryPlan {
@@ -148,9 +148,14 @@ export async function interpretPrompt(
   openaiKey: string,
   anthropicKey: string,
   datasetId: string | null = null,
+  temperature?: number,
 ): Promise<QueryPlan> {
   const call = (messages: Parameters<typeof chat>[0], maxTokens: number) =>
-    chat(messages, model, openaiKey, anthropicKey, { maxTokens, jsonMode: true });
+    chat(messages, model, openaiKey, anthropicKey, {
+      maxTokens,
+      jsonMode: true,
+      ...(temperature != null ? { temperature } : {}),
+    });
 
   // Pass 1 — describe the information need first, then derive tags from it.
   // The description is not incidental: it becomes the prompt-side embedding

@@ -3,11 +3,12 @@
 **Status:** implemented in the browser (`src/services/*` + `src/App.jsx`).
 No HTTP layer. The retrieval lane now receives a first-class
 `RetrievalInput` object instead of a loose mix of plan fields and UI knobs.
-Graph prerequisites are **verified present on the live
-`herb` graph** (2026-05-18: materialized hard fields on 5843 chunks,
-`chunk_fulltext` + `tag_embedding` indexes ONLINE, 25,896 `:Tag` embedded — see
-[`status.md`](status.md)). Not separately re-verified: a full browser
-prompt → answer click-through.
+Graph prerequisites are **verified present on the live `herb-eval` graph**
+(2026-05-19: 4,869 eval-safe chunks, 229,249 `HAS_TAG` edges,
+`chunk_fulltext` + the six `tag_emb_<facet>` vector indexes ONLINE, 96,790
+`:Tag.emb_*` grounding vectors (72,009 facet + 24,781 `all`) — see
+[`status.md`](status.md)). Not separately
+re-verified: a full browser prompt → answer click-through.
 
 **Last updated:** 2026-05-19.
 
@@ -197,7 +198,8 @@ its own params into one inspectable object:
     "minWChunk": 0.0,
     "minRelevanceToFile": 0.0,
     "groundingK": 10,
-    "minSim": 0.78
+    "minSim": 0.78,
+    "excludedSections": ["answerable_questions", "unanswerable_questions", "product_profile"]
   },
   "gate": {
     "product": "AnomalyForce",
@@ -215,23 +217,34 @@ gate comes from the plan. `scoreGroundedChunks` (Lane A, after `ground`) and
 `retrieveBaseline` (Lane B) both consume this same object so semantic and
 baseline runs use identical scope, limit, and hard gate.
 
+For RAG evaluation, `excludedSections` is part of the retrieval contract, not a
+UI convenience. The default excludes HERB QA records and oracle product profiles
+so retrieved evidence cannot contain evaluation answers or product-level
+`team`/`customers` shortcuts. The physical eval database `herb-eval` should
+remove those chunks entirely; this browser-side exclusion is a second guard.
+
 ## Retrieval scoring
 
 All steps execute from the browser. Retrieval scoring consumes the
 `RetrievalInput`; it does not read scattered UI state after that object is
 built.
 
-**0. Hard gate (deterministic, pre-scoring).** Before any tag or embedding
+**0. Eval exclusion + hard gate (deterministic, pre-scoring).** Before any tag or embedding
 work, the plan's `gate` is compiled to a Cypher `WHERE` fragment ANDed onto
 the `:Chunk` — equality on the materialized scalar hard fields (`product`,
 `section`, `channel`, `employee_id`) and `any(year ∈ gate.years ∈ c.years)`.
 Every set value is first validated against the live corpus: a constraint that
 matches zero chunks raises a loud error listing the valid values (or, for
 years, the corpus year range) — it is never silently dropped to "scan
-everything". The gate is then applied to every retrieval path below.
+everything". If the prompt explicitly gates to a section in `excludedSections`,
+retrieval fails loudly. The exclusion and gate are then applied to every
+retrieval path below, including lexical recall and the default Query-module
+Cypher; custom Query modules are post-checked for forbidden returned chunks.
 
-**1. Grounding (vector kNN).** Each prompt tag is embedded **symmetrically
-with the corpus side**: `passage: <readable tag name>. <prompt description>`,
+**1. Grounding (vector kNN).** Each prompt tag is embedded once for every active
+facet where the prompt-side facet score is positive, plus one broad `all`
+embedding. The text is **symmetric with the corpus side**:
+`passage: <readable tag name>. <facet scope>. <prompt description>`,
 whitespace-collapsed and capped at 900 chars, via `@xenova/transformers`
 running the same `intfloat/e5-small-v2` weights the backend `embed-tags` stage
 used. The model is **bundled into the app** at
@@ -249,6 +262,16 @@ those chunk descriptions, so both vectors are the same kind of object (name +
 description prose, same prefix). The earlier asymmetric `query:`-vs-`passage:`
 form is gone — comparing a 2-word query string against context-laden passage
 vectors collapsed cosine similarities into a narrow, non-discriminative band.
+The backend embeds each tag/facet scope as
+`passage: <name>. <facet scope>. <its strongest safe occurrence descriptions>`
+and stores the vector as a `:Tag.emb_<facet>` (or `emb_all`) property. There is
+no separate embedding node; the meaningful chunk graph remains
+`(:Chunk)-[:HAS_TAG]->(:Tag)`. The prompt side substitutes the Pass-1
+prompt description for chunk descriptions, so both vectors are the same kind of
+object. The earlier asymmetric `query:`-vs-`passage:` form is gone — comparing
+a 2-word query string against context-laden passage vectors collapsed cosine
+similarities into a narrow, non-discriminative band.
+
 Before loading the extractor, the browser verifies the bundled JSON assets
 (`config.json`, `tokenizer.json`, `tokenizer_config.json`,
 `special_tokens_map.json`, `generation_config.json`) plus `onnx/model.onnx`.
@@ -257,15 +280,17 @@ This catches the common Vite fallback failure where a missing JSON path returns
 the model JSON keys from `transformers-cache` and disables that CacheStorage
 layer for this local bundle, because a prior missing-file run can otherwise
 cache that HTML fallback under the model asset URL.
-`db.index.vector.queryNodes('tag_embedding', k, vec)` returns the nearest real
-corpus tag names with cosine `sim`. `k` (grounding depth) and `min_sim` are
-user controls on the `build_input` node ("effort"). Note `min_sim` is a coarse
+`db.index.vector.queryNodes('tag_emb_<facet>', k, vec)` (the per-facet `:Tag`
+vector index) returns nearest corpus `(tag, facet)` uses with cosine `sim`. Facet-specific matches can only
+score same-facet `HAS_TAG` edges; `all` matches may score any active facet and
+carry a lower scope weight. `k` (grounding depth) and `min_sim` are user
+controls on the `build_input` node ("effort"). Note `min_sim` is a coarse
 floor: e5-small cosine on this corpus is compressed (~0.8 mean to random
 tags), so grounding leans on top-k ranking, not the absolute threshold.
 
 Grounding is the **only** path. There is no exact-name match and no silent
-fallback: if the `tag_embedding` index or `:Tag` embeddings are missing, or
-grounding yields no match above `min_sim`, retrieval throws a loud error
+fallback: if the `tag_emb_<facet>` indexes or the `:Tag.emb_*` vectors are
+missing, or grounding yields no match above `min_sim`, retrieval throws a loud error
 telling the operator to run `python -m tagging embed-tags`. A broken or
 unembedded graph must fail visibly, never degrade into coincidental
 string-equality matches.
@@ -279,12 +304,15 @@ score += query_tag.w_query
        * chunk_edge.w_facet
        * coalesce(chunk.relevance_to_file, 1.0)
        * grounding_sim
+       * scope_weight
 ```
 
 A grounded corpus tag inherits its prompt tag's facet vector and `w_query`;
-the grounding `sim` is folded into the weight so weak matches contribute
-less. `sim` is always a real cosine similarity from the vector index — there
-is no `sim = 1.0` exact-name shortcut.
+the grounding `sim` is folded into the weight so weak matches contribute less.
+Facet-specific grounded uses require `query_tag.facet = chunk_edge.facet`;
+`all` grounded uses are allowed across facets but downweighted. `sim` is always
+a real cosine similarity from the vector index — there is no `sim = 1.0`
+exact-name shortcut.
 
 **3. Lexical recall (gated full-text).** Tag scoring caps recall at tagger
 coverage: a chunk whose body literally states a term is unreachable if no
@@ -321,4 +349,4 @@ missing_evidence_policy = say_insufficient_evidence
 - Pass 1, Pass 2, and the answer call are three separate Anthropic calls in the browser. Keep them separate so the plan stays inspectable between steps.
 - The UI must display the query plan and `RetrievalInput` beside the retrieved results.
 - Field-name discipline: HERB graph uses `facet`, `w_chunk`, `w_facet`, `relevance_to_file`.
-- Prompt-tag grounding against the live `:Tag` vocabulary is implemented via the vector index (see Retrieval scoring). Embedding model id must be identical backend (`sentence-transformers`) and browser (`@xenova/transformers`), enforced by `Tag.embedding_model`. The browser model is bundled (`frontend/public/models/Xenova/e5-small-v2/`, full fp32, loaded local-only — no runtime HF fetch); fp32 + identical `passage:` construction give exact backend parity (cosine ≈ 1.0).
+- Prompt-tag grounding against the live `:Tag.emb_*` vocabulary vectors is implemented via the per-facet vector indexes (see Retrieval scoring). Embedding model id must be identical backend (`sentence-transformers`) and browser (`@xenova/transformers`), enforced by `:Tag.embedding_model`. The browser model is bundled (`frontend/public/models/Xenova/e5-small-v2/`, full fp32, loaded local-only — no runtime HF fetch); fp32 + identical `passage:` construction give exact backend parity (cosine ≈ 1.0).

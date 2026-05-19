@@ -8,7 +8,7 @@
 // authored as editable Cypher so experiments (weights, facets, order, query
 // shape) are real. Bindings: $plan (QueryPlan), $queryTags (grounded corpus
 // tags w/ sim + facet weights), $activeFacets, $datasetId, $runId,
-// $minWChunk, $minRelevanceToFile, $limit, and the null-tolerant gate
+// $minWChunk, $minRelevanceToFile, $limit, $excludedSections, and the null-tolerant gate
 // ($g_product/$g_section/$g_channel/$g_employee_id/$g_years). It MUST RETURN
 // chunkId, fileId, content, description, relevanceToFile, score.
 export const DEFAULT_MODULE_HEADER = `WITH $plan AS plan
@@ -19,8 +19,10 @@ WHERE coalesce(c.empty, false) = false
   AND ($datasetId IS NULL OR f.dataset_id = $datasetId)
   AND r.run_id = $runId
   AND r.facet IN $activeFacets
+  AND (qt.facet = "all" OR r.facet = qt.facet)
   AND coalesce(r.w_chunk, 0.0) >= $minWChunk
   AND coalesce(c.relevance_to_file, 1.0) >= $minRelevanceToFile
+  AND NOT (coalesce(c.section, "") IN $excludedSections)
   AND ($g_product IS NULL OR c.product = $g_product)
   AND ($g_section IS NULL OR c.section = $g_section)
   AND ($g_channel IS NULL OR c.channel = $g_channel)
@@ -37,7 +39,8 @@ export const DEFAULT_MODULE_FOOTER = `WITH c, r, qt,
        ELSE 0.0
      END AS facetScore
 WITH c, sum(qt.w_query * facetScore * r.w_chunk * r.w_facet
-            * coalesce(c.relevance_to_file, 1.0) * qt.sim) AS score
+            * coalesce(c.relevance_to_file, 1.0) * qt.sim
+            * coalesce(qt.scopeWeight, 1.0)) AS score
 WHERE score > 0
 RETURN c.chunk_id   AS chunkId,
        c.file_id    AS fileId,

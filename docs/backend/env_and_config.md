@@ -1,14 +1,14 @@
 # Environment and Configuration
 
-**TL;DR.** Settings come from `.env` (gitignored) loaded by `pydantic-settings` in [`shared/config.py`](../../backend/shared/config.py). The legacy indexing path uses `LLM_*`; legacy `AGENT_*` names work for the same fields and `LLM_*` wins when both are set. The HERB tagging pilot uses `ANTHROPIC_*` directly in `tagging/pipeline.py`. Neo4j is configured via `NEO4J_*`. Embeddings/data root have their own keys. Nothing in this doc echoes secrets.
+**TL;DR.** Settings come from `.env` (gitignored) loaded by `pydantic-settings` in [`shared/config.py`](../../backend/shared/config.py). The legacy indexing path uses `LLM_*`; legacy `AGENT_*` names work for the same fields and `LLM_*` wins when both are set. The HERB tagging pilot uses `ANTHROPIC_*` directly in `tagging/pipeline.py`, and honors `NEO4J_DATABASE` for maintenance stages such as `embed-tags`. Neo4j is configured via `NEO4J_*`. Embeddings/data root have their own keys. Nothing in this doc echoes secrets.
 
 **When to read this.** Before running anything. Whenever you wonder where a setting is consumed.
 
-**Last updated:** 2026-05-13.
+**Last updated:** 2026-05-19.
 
 ## Touched paths
 
-`shared/config.py`, `.env.example`, `scripts/run_index.py`, `scripts/bootstrap_schema.py`, `scripts/run_preflight.py`, `agents/client.py`, `shared/neo4j_client.py`, `tagging/pipeline.py`.
+`shared/config.py`, `.env.example`, `scripts/run_index.py`, `scripts/bootstrap_schema.py`, `scripts/run_preflight.py`, `scripts/create_herb_eval_db.py`, `agents/client.py`, `shared/neo4j_client.py`, `tagging/pipeline.py`.
 
 ## Loading mechanism
 
@@ -57,6 +57,9 @@ agent_base_url: str = Field(
 
 These are not read by `shared/config.py`. They are loaded from `.env` by
 [`tagging/pipeline.py`](../../backend/tagging/pipeline.py) for the HERB-specific pilot.
+Existing process environment values win over `.env`, so a one-off command like
+`$env:NEO4J_DATABASE='herb-eval'; python -m tagging embed-tags` targets the
+eval database even when `.env` still points at `herb`.
 
 | Var | Type | Default | Required | Where consumed |
 |---|---|---|---|---|
@@ -80,8 +83,19 @@ These are not read by `shared/config.py`. They are loaded from `.env` by
 
 | Var | Type | Default | Required | Where consumed |
 |---|---|---|---|---|
-| `EMBEDDING_MODEL` | string | `intfloat/e5-small-v2` | No | Read into `Settings.embedding_model`. **Consumed by the `embed-tags` tagging stage** (`tagging/pipeline.py:stage_embed_tags`) which writes `Tag.embedding`; the browser uses the same model for prompt-tag grounding — bundled at `frontend/public/models/Xenova/e5-small-v2/` (full fp32, loaded local-only, no runtime HF fetch). Backend and browser must use this same model or the vectors are not comparable; fp32 on both sides gives exact parity (verified cosine ≈ 1.0). If you change this id, re-export and re-bundle the matching browser model. |
+| `EMBEDDING_MODEL` | string | `intfloat/e5-small-v2` | No | Read into `Settings.embedding_model`. **Consumed by the `embed-tags` tagging stage** (`tagging/pipeline.py:stage_embed_tags`) which writes facet-aware `:Tag.emb_<facet>`/`emb_all` vectors; the browser uses the same model for prompt-tag grounding — bundled at `frontend/public/models/Xenova/e5-small-v2/` (full fp32, loaded local-only, no runtime HF fetch). Backend and browser must use this same model or the vectors are not comparable; fp32 on both sides gives exact parity (verified cosine ≈ 1.0). If you change this id, re-export and re-bundle the matching browser model. |
 | `DATA_ROOT` | path | `<backend>/data` | No | Read into `Settings.data_root`. [`indexing/preflight.py`](../../backend/indexing/preflight.py) calls `scan_raw_tree(settings.data_root)` to walk `data/raw/`. The `data_access/` CLI tools accept `--data-root` to override per-invocation. |
+
+### Embedding runtime note
+
+`embed-tags` uses local `sentence-transformers`; it does not call Anthropic or
+OpenAI. On the current Windows workstation, the active repo-root environment
+`a:\exjobbet\repo\.venv` is CUDA-enabled: `torch 2.6.0+cu124`,
+`torch.cuda.is_available() == True`, device `NVIDIA GeForce GTX 1080 Ti`, and
+`sentence-transformers 5.5.0`. `SentenceTransformer` auto-selects CUDA in that
+environment, so `python -m tagging embed-tags` runs on the GPU when launched
+from that venv. Do not reinstall plain PyPI `torch` into that environment; it
+can replace the CUDA build with a CPU-only wheel.
 
 ### Recognised extras (ignored by Settings, used by other tools)
 

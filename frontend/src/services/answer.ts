@@ -38,6 +38,7 @@ export async function generateAnswer(
   openaiKey: string,
   anthropicKey: string,
   mode: AnswerMode = 'context',
+  temperature?: number,
 ): Promise<AnswerResult> {
   const system =
     `You are a retrieval-augmented assistant. Answer using only the provided chunks.\n` +
@@ -65,7 +66,10 @@ export async function generateAnswer(
     ];
   }
 
-  const resp = await chat(messages, model, openaiKey, anthropicKey, { maxTokens: 1024 });
+  const resp = await chat(messages, model, openaiKey, anthropicKey, {
+    maxTokens: 1024,
+    ...(temperature != null ? { temperature } : {}),
+  });
 
   return { response: resp.text, tokensIn: resp.tokensIn, tokensOut: resp.tokensOut };
 }
