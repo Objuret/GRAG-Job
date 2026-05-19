@@ -16,6 +16,10 @@ export interface ChatOptions {
   maxTokens?: number;
   /** When true, ask the provider to return strict JSON only. */
   jsonMode?: boolean;
+  /** Sampling temperature. Omitted → provider default (unchanged app
+   *  behaviour). The eval harness passes 0 for deterministic, low-variance
+   *  runs (thesis 5.7: temperature = 0, repeated runs). */
+  temperature?: number;
 }
 
 function isClaudeModel(model: string) {
@@ -48,6 +52,7 @@ export async function chat(
       max_tokens: maxTokens,
       system,
       messages: finalMessages,
+      ...(opts.temperature != null ? { temperature: opts.temperature } : {}),
     });
 
     const body = resp.content[0]?.type === 'text' ? resp.content[0].text : '';
@@ -61,6 +66,7 @@ export async function chat(
     model,
     max_tokens: maxTokens,
     messages,
+    ...(opts.temperature != null ? { temperature: opts.temperature } : {}),
     ...(opts.jsonMode ? { response_format: { type: 'json_object' as const } } : {}),
   });
   const text = resp.choices[0]?.message?.content ?? '';

@@ -86,9 +86,23 @@ or the legacy clustering layer. Producer/consumer split:
   IDs of…", "find all unresolved issues…") r≈0–0.2. Topical/semantic
   retrieval cannot do exact-fact lookup over scattered structured metadata;
   the next lever is grounding/ranking precision, not more recall.
+- **Built — RQ2 baseline arm + run protocol.** The thesis RQ2 is comparative
+  (graph vs direct DB), so the harness gained `--mode baseline|graph` (default
+  graph). `baseline` skips interpret/grounding/enrichment and retrieves via
+  `retrieveBaselineContent` — a plain Lucene query over `c.content` ONLY
+  (eval-only `chunk_content_ft` index; the graph is just a chunk store), same
+  section-exclusion, same answer prompt/model. `llm.ts` gained an optional
+  `temperature` (app default unchanged; harness passes 0 per thesis 5.7).
+  `--repeats N` emits N rows/question (`id#rK`) for median/IQR. The existing
+  `retrieveBaseline` (relevance_to_file order) is NOT a valid baseline — it
+  leaks the enrichment; not used. **For a clean comparison both arms must be
+  re-run under identical conditions** (same gold set, `--exclude-sections`,
+  `--repeats`, `temperature 0`); the earlier graph result above was temp-default
+  / 1 run and is not directly comparable to a temp-0 baseline.
 - **Not built yet (optional):** an embeddings backend if `answer_relevancy` /
   `answer_correctness` are wanted (Python 3.14 has no torch wheels — needs
-  `OPENAI_API_KEY`).
+  `OPENAI_API_KEY`); multi-hop/single-hop labelling of the gold set (needed to
+  split RQ2 tables 1–2 as the thesis designs them).
 
 ## Optional
 

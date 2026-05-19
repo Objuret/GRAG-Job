@@ -38,6 +38,9 @@ graph_export/grag_graph_latest.zip
 backend/evaluation/*.jsonl
 backend/evaluation/*.json
 
+# Extracted thesis text (the user's document — never commit to the repo).
+thesis_extract.md
+
 # Logs
 logs/
 *.log

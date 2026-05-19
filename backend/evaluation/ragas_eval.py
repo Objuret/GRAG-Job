@@ -286,6 +286,8 @@ def _run(
 
 
 def _report(result: Any, samples: list[dict[str, Any]], metric_cols: list[str]) -> dict[str, Any]:
+    import math
+
     df = result.to_pandas()
     sep = "-" * 64
     print(f"\n{sep}\nRAGAS report ({len(samples)} sample(s))\n{sep}")
@@ -302,7 +304,8 @@ def _report(result: Any, samples: list[dict[str, Any]], metric_cols: list[str]) 
         row = {"id": s["id"]}
         for c in cols:
             try:
-                row[c] = float(df.iloc[i][c])
+                v = float(df.iloc[i][c])
+                row[c] = None if math.isnan(v) else v  # NaN -> None (e.g. faithfulness on 0-context rows)
             except Exception:
                 row[c] = None
         per_sample.append(row)
@@ -311,15 +314,32 @@ def _report(result: Any, samples: list[dict[str, Any]], metric_cols: list[str]) 
         )
         print(f"  {s['id']:<28} {scores}")
 
+    # Mean over finite values only. A NaN row (e.g. faithfulness with 0
+    # retrieved contexts) must not poison the aggregate — it is excluded from
+    # that metric's mean but still counts for metrics where it is finite.
     overall: dict[str, float] = {}
+    overall_n: dict[str, int] = {}
     for c in cols:
-        vals = [r[c] for r in per_sample if isinstance(r[c], float)]
+        vals = [
+            r[c] for r in per_sample
+            if isinstance(r[c], (int, float))
+            and not (isinstance(r[c], float) and math.isnan(r[c]))
+        ]
         if vals:
             overall[c] = sum(vals) / len(vals)
+            overall_n[c] = len(vals)
     print(sep)
-    print("  overall: " + ("  ".join(f"{k}={v:.4f}" for k, v in overall.items()) or "(none)"))
+    print(
+        "  overall: "
+        + ("  ".join(f"{k}={v:.4f} (n={overall_n[k]})" for k, v in overall.items()) or "(none)")
+    )
     print(sep)
-    return {"per_sample": per_sample, "overall": overall, "n_samples": len(samples)}
+    return {
+        "per_sample": per_sample,
+        "overall": overall,
+        "overall_n": overall_n,
+        "n_samples": len(samples),
+    }
 
 
 # --- main ------------------------------------------------------------------

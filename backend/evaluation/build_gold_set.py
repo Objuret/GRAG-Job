@@ -107,6 +107,12 @@ def main() -> None:
     p.add_argument("--count", type=int, default=15, help="Number of gold pairs (default 15)")
     p.add_argument("--out", type=Path, default=_DEFAULT_OUT, help=f"Output JSONL (default {_DEFAULT_OUT})")
     p.add_argument("--database", default=_cfg("NEO4J_DATABASE", "herb"))
+    p.add_argument(
+        "--types", default="",
+        help="Comma-separated HERB answer-types to keep (content, person, url, "
+             "pr, company). Empty = all. Multi-hop proxy: person,company,pr,url "
+             "(relational/multi-step) vs content (single-document, ~single-hop).",
+    )
     args = p.parse_args()
 
     from neo4j import GraphDatabase
@@ -120,93 +126,88 @@ def main() -> None:
             "MATCH (c:Chunk) WHERE c.kind='qa_record' "
             "AND c.section='answerable_questions' AND c.question IS NOT NULL "
             "RETURN c.chunk_id AS cid, c.question AS q, c.product AS product, "
-            "c.item_index AS ix ORDER BY c.product, c.item_index",
+            "c.item_index AS ix, c.content AS content "
+            "ORDER BY c.product, c.item_index",
             database_=args.database,
         ).records
-
-        # Selection is product round-robin (HERB has ~88 distinct question
-        # stems over 776 records across ~33 products):
-        #   round 1 — cycle products; each contributes its next NEW-stem
-        #             record. Maximises distinct question TYPES while keeping
-        #             products balanced (no early-product monopoly).
-        #   round 2 — cycle products again, taking any remaining record
-        #             (stem repeats), to fill to count with per-type variance.
-        # Deterministic: products sorted, each product's records ordered by
-        # item_index, so the set is reproducible.
-        from collections import deque
-
-        by_prod: dict[str, deque] = {}
-        for r in cands:  # cands ordered by product, item_index
-            by_prod.setdefault(r["product"] or "x", deque()).append(r)
-        products = sorted(by_prod)
-
-        chosen: list[dict] = []
-        chosen_cids: set[str] = set()
-        seen_stems: set[str] = set()
-
-        progressed = True
-        while len(chosen) < args.count and progressed:
-            progressed = False
-            for p in products:
-                if len(chosen) >= args.count:
-                    break
-                dq = by_prod[p]
-                skipped: list[dict] = []
-                picked = None
-                while dq:
-                    r = dq.popleft()
-                    if _stem(r["q"]) not in seen_stems:
-                        picked = r
-                        break
-                    skipped.append(r)  # seen-stem — keep for round 2
-                dq.extendleft(reversed(skipped))
-                if picked:
-                    seen_stems.add(_stem(picked["q"]))
-                    chosen.append(picked)
-                    chosen_cids.add(picked["cid"])
-                    progressed = True
-
-        qi = 0
-        queues = [by_prod[p] for p in products]
-        while len(chosen) < args.count and any(queues):
-            dq = queues[qi % len(queues)]
-            qi += 1
-            if dq:
-                r = dq.popleft()
-                if r["cid"] not in chosen_cids:
-                    chosen.append(r)
-                    chosen_cids.add(r["cid"])
-
-        cid_list = [r["cid"] for r in chosen]
-        content_by_cid = {
-            rec["cid"]: rec["content"]
-            for rec in driver.execute_query(
-                "MATCH (c:Chunk) WHERE c.chunk_id IN $cids "
-                "RETURN c.chunk_id AS cid, c.content AS content",
-                cids=cid_list,
-                database_=args.database,
-            ).records
-        }
     finally:
         driver.close()
 
-    pairs: list[dict[str, str]] = []
-    used_ids: set[str] = set()
-    for r in chosen:
-        obj = _extract_json(content_by_cid.get(r["cid"]) or "")
+    # Parse + type-filter up front. HERB `type`: content/person/url/pr/company.
+    types_filter = {t.strip() for t in args.types.split(",") if t.strip()}
+    parsed: list[dict] = []
+    for r in cands:
+        obj = _extract_json(r["content"] or "")
         if not obj:
+            continue
+        qtype = str(obj.get("type") or "unknown")
+        if types_filter and qtype not in types_filter:
             continue
         q = (r["q"] or obj.get("question") or "").strip()
         ref = _norm_gt(obj.get("ground_truth"))
         if not q or len(ref) < 3:
             continue
+        parsed.append({"cid": r["cid"], "q": q, "product": r["product"],
+                       "ix": r["ix"], "qtype": qtype, "ref": ref})
+
+    # Product round-robin over the (filtered) records: round 1 takes one per
+    # distinct question stem (every TYPE of question, products balanced),
+    # round 2 fills to count with more product instances. Deterministic:
+    # products sorted, each product's records ordered by item_index.
+    from collections import deque
+
+    by_prod: dict[str, deque] = {}
+    for r in parsed:
+        by_prod.setdefault(r["product"] or "x", deque()).append(r)
+    products = sorted(by_prod)
+
+    chosen: list[dict] = []
+    chosen_cids: set[str] = set()
+    seen_stems: set[str] = set()
+
+    progressed = True
+    while len(chosen) < args.count and progressed:
+        progressed = False
+        for p in products:
+            if len(chosen) >= args.count:
+                break
+            dq = by_prod[p]
+            skipped: list[dict] = []
+            picked = None
+            while dq:
+                r = dq.popleft()
+                if _stem(r["q"]) not in seen_stems:
+                    picked = r
+                    break
+                skipped.append(r)  # seen-stem — keep for round 2
+            dq.extendleft(reversed(skipped))
+            if picked:
+                seen_stems.add(_stem(picked["q"]))
+                chosen.append(picked)
+                chosen_cids.add(picked["cid"])
+                progressed = True
+
+    qi = 0
+    queues = [by_prod[p] for p in products]
+    while len(chosen) < args.count and any(queues):
+        dq = queues[qi % len(queues)]
+        qi += 1
+        if dq:
+            r = dq.popleft()
+            if r["cid"] not in chosen_cids:
+                chosen.append(r)
+                chosen_cids.add(r["cid"])
+
+    pairs: list[dict[str, str]] = []
+    used_ids: set[str] = set()
+    for r in chosen:
         prod = re.sub(r"[^a-z0-9]+", "", (r["product"] or "x").lower())
-        base = f"gold_{prod}_{r['ix']}"
+        base = f"gold_{r['qtype']}_{prod}_{r['ix']}"  # type in id → sliceable
         rid, n = base, 2
         while rid in used_ids:  # ids must be unique (resume + per-sample keying)
             rid, n = f"{base}_{n}", n + 1
         used_ids.add(rid)
-        pairs.append({"id": rid, "question": q, "reference": ref})
+        pairs.append({"id": rid, "question": r["q"], "reference": r["ref"]})
 
     header = [
         "# HERB GOLD reference set — authoritative ground truth from the dataset.",

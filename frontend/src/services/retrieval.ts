@@ -401,3 +401,74 @@ export async function retrieveBaseline(
     return rowsToChunks(result.records);
   });
 }
+
+const CONTENT_FT_INDEX = 'chunk_content_ft';
+
+// Lucene-special chars stripped so a raw question can't break the parser.
+function sanitizeLucene(s: string): string {
+  return s.replace(/[+\-&|!(){}[\]^"~*?:\\/]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * EVAL-ONLY conventional-retrieval baseline (thesis RQ2 control arm).
+ *
+ * Top-N chunks by a plain Lucene full-text query over `c.content` ONLY — no
+ * tags, no grounding, no relevance_to_file, no hard gate, no LLM query
+ * interpretation. This is "direct keyword retrieval over the raw data with no
+ * graph contextualisation": the graph is used purely as a chunk store, none
+ * of the transformation-layer enrichment participates. The same
+ * section-exclusion as the graph arm is applied (an evaluation control, not
+ * enrichment) so neither arm can read the gold-answer QA records.
+ *
+ * Requires a content-only full-text index. Create it once (write op; this
+ * module is read-only by design):
+ *   CREATE FULLTEXT INDEX chunk_content_ft IF NOT EXISTS
+ *   FOR (c:Chunk) ON EACH [c.content];
+ * Missing index → a loud, actionable error (never a silent degraded path).
+ */
+export async function retrieveBaselineContent(
+  question: string,
+  cfg: Neo4jConfig,
+  options: { limit?: number; datasetId?: string | null; excludeSections?: string[] } = {},
+): Promise<RetrievedChunk[]> {
+  const q = sanitizeLucene(question);
+  if (!q) return [];
+  const limit = Math.max(1, Math.min(500, Number(options.limit ?? 20)));
+  const datasetId = options.datasetId ?? null;
+  const exSecs = (options.excludeSections ?? []).filter(Boolean);
+  const exFrag = exSecs.length ? "AND NOT coalesce(c.section, '') IN $excludeSections" : '';
+  const cypher = `
+CALL db.index.fulltext.queryNodes($idx, $q) YIELD node AS c, score AS lex
+MATCH (f:File)-[:HAS_CHUNK]->(c)
+WHERE coalesce(c.empty, false) = false
+  AND ($datasetId IS NULL OR f.dataset_id = $datasetId)
+  ${exFrag}
+RETURN c.chunk_id   AS chunkId,
+       c.file_id    AS fileId,
+       c.content    AS content,
+       c.description AS description,
+       c.relevance_to_file AS relevanceToFile,
+       round(lex, 4) AS score
+ORDER BY lex DESC
+LIMIT $limit
+`;
+  return withSession(cfg, async (session) => {
+    try {
+      const res = await session.run(cypher, {
+        idx: CONTENT_FT_INDEX, q, limit: neo4j.int(limit), datasetId,
+        ...(exSecs.length ? { excludeSections: exSecs } : {}),
+      });
+      return rowsToChunks(res.records);
+    } catch (e) {
+      const msg = (e as Error).message || String(e);
+      if (/no such (fulltext schema )?index|chunk_content_ft/i.test(msg)) {
+        throw new Error(
+          `Baseline content index '${CONTENT_FT_INDEX}' is missing. Create it once ` +
+          `(write op): CREATE FULLTEXT INDEX ${CONTENT_FT_INDEX} IF NOT EXISTS ` +
+          `FOR (c:Chunk) ON EACH [c.content]; then CALL db.awaitIndexes().`,
+        );
+      }
+      throw e;
+    }
+  });
+}

@@ -31,8 +31,8 @@ import { fileURLToPath } from 'node:url';
 
 import { env as hfEnv } from '@xenova/transformers';
 
-import { interpretPrompt } from '../src/services/interpreter';
-import { retrieveChunks } from '../src/services/retrieval';
+import { interpretPrompt, type QueryPlan } from '../src/services/interpreter';
+import { retrieveChunks, retrieveBaselineContent, type RetrievedChunk } from '../src/services/retrieval';
 import { generateAnswer, type AnswerMode } from '../src/services/answer';
 import type { Neo4jConfig } from '../src/services/neo4j';
 
@@ -124,6 +124,33 @@ const excludeSections = (arg('--exclude-sections', cfg('EXCLUDE_SECTIONS', '')) 
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean);
+
+// RQ2 control arm. graph = full transformation-layer pipeline (interpret ->
+// ground -> retrieve). baseline = conventional keyword retrieval over raw
+// c.content only, no interpret/grounding/enrichment. Same questions, prompt,
+// model, answer step, section-exclusion — only the retrieved context differs.
+const mode = (arg('--mode', 'graph') === 'baseline' ? 'baseline' : 'graph') as 'graph' | 'baseline';
+// Thesis 5.7: temperature 0 + repeated runs (median/IQR computed at analysis).
+const temperature = Number(arg('--temperature', '0'));
+const repeats = Math.max(1, Number(arg('--repeats', '1')) || 1);
+
+// Mirrors interpreter.ts DEFAULT_ANSWER_JOB so the baseline answer prompt is
+// byte-identical to the graph arm's (only the evidence differs).
+const BASELINE_PLAN = (q: string): QueryPlan => ({
+  description: q,
+  tags: [],
+  filters: {
+    dataset_id: datasetId, file_ids: [], min_w_chunk: 0, min_relevance_to_file: 0,
+    limit: retrievalLimit,
+    gate: { product: null, section: null, channel: null, employee_id: null, years: [] },
+  },
+  answer_job: {
+    mode: 'direct_answer',
+    evidence_policy: 'retrieved_only',
+    missing_evidence_policy: 'say_insufficient_evidence',
+  },
+  warnings: [],
+});
 
 const neo4jCfg: Neo4jConfig = {
   uri: cfg('NEO4J_URI', 'bolt://localhost:7687'),
@@ -234,11 +261,14 @@ async function main(): Promise<void> {
 
   console.log(
     `RAGAS export\n` +
+      `  arm       : ${mode}  (repeats=${repeats}, temperature=${temperature})\n` +
       `  questions : ${slice.length} from ${questionsPath}\n` +
       `  out       : ${outPath}\n` +
       `  graph     : ${neo4jCfg.uri} db=${neo4jCfg.database} dataset=${datasetId}\n` +
-      `  model     : answer=${model} interpret=${interpreterModel} mode=${promptMode}\n` +
-      `  retrieval : limit=${retrievalLimit} groundingK=${groundingK} minSim=${minSim}\n` +
+      `  model     : answer=${model} interpret=${mode === 'baseline' ? '(skipped)' : interpreterModel} promptMode=${promptMode}\n` +
+      `  retrieval : ${mode === 'baseline'
+        ? 'content-only full-text (no tags/grounding/gate)'
+        : `limit=${retrievalLimit} groundingK=${groundingK} minSim=${minSim}`}\n` +
       `  exclude   : ${excludeSections.length ? excludeSections.join(',') : '(none)'}` +
       `${dryRun ? '\n  DRY RUN — answer LLM skipped' : ''}\n`,
   );
@@ -263,96 +293,115 @@ async function main(): Promise<void> {
   let errored = 0;
   let resumed = 0;
 
+  const totalUnits = slice.length * repeats;
+  let unit = 0;
+
   for (let i = 0; i < slice.length; i++) {
     const { id, question, reference } = slice[i];
-    if (doneIds.has(id)) {
-      resumed++;
-      console.log(`  [${i + 1}/${slice.length}] ${id} … skip (already in out)`);
-      continue;
-    }
-    const t0 = Date.now();
-    process.stdout.write(`  [${i + 1}/${slice.length}] ${id} … `);
-
-    const meta: Record<string, unknown> = {
-      model,
-      interpreter_model: interpreterModel,
-      prompt_mode: promptMode,
-      dataset_id: datasetId,
-      database: neo4jCfg.database,
-      exclude_sections: excludeSections,
-    };
-    let contexts: string[] = [];
-    let response = '';
-
-    try {
-      const plan = await interpretPrompt(question, interpreterModel, openaiKey, anthropicKey, datasetId);
-      const scopedPlan = {
-        ...plan,
-        filters: { ...plan.filters, dataset_id: datasetId, limit: retrievalLimit },
-      };
-      const chunks = await retrieveChunks(scopedPlan, neo4jCfg, {
-        limit: retrievalLimit,
-        datasetId,
-        groundingK,
-        minSim,
-        tagsEnabled: true,
-        ...(excludeSections.length ? { excludeSections } : {}),
-      });
-      contexts = chunks.map((c) => c.content).filter(Boolean);
-
-      meta.plan_description = scopedPlan.description;
-      meta.warnings = scopedPlan.warnings;
-      meta.gate = scopedPlan.filters.gate;
-      meta.grounding = scopedPlan.grounding ?? [];
-      meta.n_chunks = chunks.length;
-      meta.chunk_ids = chunks.map((c) => c.chunkId);
-      meta.file_ids = [...new Set(chunks.map((c) => c.fileId))];
-
-      if (!dryRun) {
-        const ans = await generateAnswer(
-          question,
-          scopedPlan,
-          chunks,
-          model,
-          openaiKey,
-          anthropicKey,
-          promptMode,
-        );
-        response = ans.response;
-        meta.tokens = { answer_in: ans.tokensIn, answer_out: ans.tokensOut };
+    for (let rep = 1; rep <= repeats; rep++) {
+      unit++;
+      const rowId = repeats > 1 ? `${id}#r${rep}` : id;
+      if (doneIds.has(rowId)) {
+        resumed++;
+        console.log(`  [${unit}/${totalUnits}] ${rowId} … skip (already in out)`);
+        continue;
       }
-      meta.elapsed_ms = Date.now() - t0;
-      meta.error = null;
-      ok++;
-      console.log(`ok (${contexts.length} chunks${dryRun ? '' : `, ${response.length} chars`})`);
-    } catch (err) {
-      meta.elapsed_ms = Date.now() - t0;
-      meta.error = err instanceof Error ? err.message : String(err);
-      errored++;
-      console.log(`ERROR: ${meta.error}`);
-    }
+      const t0 = Date.now();
+      process.stdout.write(`  [${unit}/${totalUnits}] ${rowId} (${mode}) … `);
 
-    appendFileSync(
-      outPath,
-      JSON.stringify({
-        id,
-        question,
-        user_input: question,
-        retrieved_contexts: contexts,
-        response,
-        answer: response,
-        reference: reference ?? null,
-        meta,
-      }) + '\n',
-      'utf-8',
-    );
+      const meta: Record<string, unknown> = {
+        mode,
+        repeat: rep,
+        model,
+        interpreter_model: interpreterModel,
+        prompt_mode: promptMode,
+        temperature,
+        dataset_id: datasetId,
+        database: neo4jCfg.database,
+        exclude_sections: excludeSections,
+      };
+      let contexts: string[] = [];
+      let response = '';
+
+      try {
+        let chunks: RetrievedChunk[];
+        let planForAnswer: QueryPlan;
+
+        if (mode === 'baseline') {
+          planForAnswer = BASELINE_PLAN(question);
+          chunks = await retrieveBaselineContent(question, neo4jCfg, {
+            limit: retrievalLimit,
+            datasetId,
+            ...(excludeSections.length ? { excludeSections } : {}),
+          });
+          meta.warnings = [];
+        } else {
+          const plan = await interpretPrompt(
+            question, interpreterModel, openaiKey, anthropicKey, datasetId, temperature,
+          );
+          planForAnswer = {
+            ...plan,
+            filters: { ...plan.filters, dataset_id: datasetId, limit: retrievalLimit },
+          };
+          chunks = await retrieveChunks(planForAnswer, neo4jCfg, {
+            limit: retrievalLimit,
+            datasetId,
+            groundingK,
+            minSim,
+            tagsEnabled: true,
+            ...(excludeSections.length ? { excludeSections } : {}),
+          });
+          meta.plan_description = planForAnswer.description;
+          meta.warnings = planForAnswer.warnings;
+          meta.gate = planForAnswer.filters.gate;
+          meta.grounding = planForAnswer.grounding ?? [];
+        }
+
+        contexts = chunks.map((c) => c.content).filter(Boolean);
+        meta.n_chunks = chunks.length;
+        meta.chunk_ids = chunks.map((c) => c.chunkId);
+        meta.file_ids = [...new Set(chunks.map((c) => c.fileId))];
+
+        if (!dryRun) {
+          const ans = await generateAnswer(
+            question, planForAnswer, chunks, model, openaiKey, anthropicKey, promptMode, temperature,
+          );
+          response = ans.response;
+          meta.tokens = { answer_in: ans.tokensIn, answer_out: ans.tokensOut };
+        }
+        meta.elapsed_ms = Date.now() - t0;
+        meta.error = null;
+        ok++;
+        console.log(`ok (${contexts.length} chunks${dryRun ? '' : `, ${response.length} chars`})`);
+      } catch (err) {
+        meta.elapsed_ms = Date.now() - t0;
+        meta.error = err instanceof Error ? err.message : String(err);
+        errored++;
+        console.log(`ERROR: ${meta.error}`);
+      }
+
+      appendFileSync(
+        outPath,
+        JSON.stringify({
+          id: rowId,
+          question,
+          user_input: question,
+          retrieved_contexts: contexts,
+          response,
+          answer: response,
+          reference: reference ?? null,
+          meta,
+        }) + '\n',
+        'utf-8',
+      );
+    }
   }
 
   console.log(
-    `\nDone. ${ok} ok, ${errored} errored, ${resumed} pre-existing, ${slice.length} total.\n` +
+    `\nDone. ${ok} ok, ${errored} errored, ${resumed} pre-existing, ${totalUnits} total (${mode}).\n` +
       `Wrote ${outPath}` +
-      (ok + resumed < slice.length
-        ? `\nIncomplete — re-run the same command to resume the remaining ${slice.length - ok - resumed}.`
+      (ok + resumed < totalUnits
+        ? `\nIncomplete — re-run the same command to resume the remaining ${totalUnits - ok - resumed}.`
         : ''),
   );
   if (errored > 0) process.exitCode = 1;

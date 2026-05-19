@@ -148,9 +148,14 @@ export async function interpretPrompt(
   openaiKey: string,
   anthropicKey: string,
   datasetId: string | null = null,
+  temperature?: number,
 ): Promise<QueryPlan> {
   const call = (messages: Parameters<typeof chat>[0], maxTokens: number) =>
-    chat(messages, model, openaiKey, anthropicKey, { maxTokens, jsonMode: true });
+    chat(messages, model, openaiKey, anthropicKey, {
+      maxTokens,
+      jsonMode: true,
+      ...(temperature != null ? { temperature } : {}),
+    });
 
   // Pass 1 — describe the information need first, then derive tags from it.
   // The description is not incidental: it becomes the prompt-side embedding
