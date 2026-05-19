@@ -25,7 +25,7 @@
 ## Known quality issues (acknowledged, not fixed)
 
 - **`min_sim` is near-meaningless.** e5-small cosine on this corpus is compressed (~0.8 mean to random tags); default floor 0.78 barely filters noise — grounding leans entirely on top-k.
-- **Lexical/tag union truncation.** Year-gate lexical hits are appended after tag hits then `.slice(0, limit)`. If tag hits fill `limit`, the literal-recall chunks the path exists to add are dropped — silently defeating the feature for limit-bound queries.
+- **Wrong-retrieval, not zero-retrieval, is now the recall gap.** Tag scoring returning zero chunks under the gate now falls back to the gated full-text path instead of returning nothing (warned), closing the zero-retrieval hole the gold run exposed. The remaining gap is relevant chunks not being ranked in (grounding/precision) — see the e5 `min_sim` issue above.
 
 ## RAGAS evaluation
 

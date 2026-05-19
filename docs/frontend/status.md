@@ -79,10 +79,14 @@ exist (banner above), so the gate and lexical paths are live.
 - **`min_sim` is near-meaningless.** e5-small cosine on this corpus is
   compressed (~0.8 mean to random tags); default floor 0.78 barely filters
   noise — grounding leans entirely on top-k.
-- **Year-gate lexical-union truncation.** Lexical hits are appended after tag
-  hits then `.slice(0, limit)`. If tag hits fill `limit`, the literal-recall
-  chunks the lexical path exists to add are dropped — silently defeating the
-  feature for limit-bound queries.
+- **Lexical recall is a zero-result fallback, not a union.** The earlier
+  year-gate lexical/tag union (and its `.slice(0, limit)` truncation bug) is
+  gone. The gated `chunk_fulltext` path now runs only when tag scoring returns
+  **no** chunks under the gate (or when there were no usable tags) — a recall
+  fallback, warned on the plan. It does not merge with or truncate tag hits.
+  Measured impact: against HERB gold answers this addresses the zero-retrieval
+  failure mode; the remaining recall gap is wrong-retrieval (relevant chunks
+  not ranked in), which is a grounding/precision problem, not this path.
 
 ---
 

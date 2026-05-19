@@ -243,16 +243,24 @@ less. `sim` is always a real cosine similarity from the vector index — there
 is no `sim = 1.0` exact-name shortcut.
 
 **3. Lexical recall (gated full-text).** Tag scoring caps recall at tagger
-coverage: a chunk whose body literally states a term (e.g. a year) is
-unreachable if no matching tag was ever minted. To close that gap, a gated
-query against the `chunk_fulltext` index (`content`, `description`,
-`question`) runs over the prompt's tag terms plus any explicit year literals,
-under the same hard gate. When the prompt produced a usable gate but **no**
-usable tags, this is the sole retrieval path (with a plan warning, so it is
-never silent). When tags exist **and** the gate carries explicit years, the
-lexical hits are unioned after the semantic hits, deduped by `chunkId`;
-Lucene and tag scores are not comparable, so they are not interleaved by
-score.
+coverage: a chunk whose body literally states a term is unreachable if no
+matching tag was ever minted, or if the gated chunks simply carry none of the
+grounded corpus tags. To close that gap, a gated query against the
+`chunk_fulltext` index (`content`, `description`, `question`) runs over the
+prompt's tag terms plus any explicit year literals, under the same hard gate
+(and the same eval-only section exclusion). It is used in two cases, each with
+a plan warning so it is never silent:
+
+- the prompt produced a usable gate but **no** usable tags — lexical is then
+  the sole retrieval path;
+- tags exist and grounded, but the tag-scored join returns **zero** chunks
+  under the gate — lexical is a recall fallback rather than returning nothing.
+
+Grounding still ran (and still throws if it produced no corpus matches at
+all), so this is not the deleted string-equality grounding fallback — only
+literal recall. Lexical and tag results are not unioned or interleaved: the
+lexical path runs only when tag scoring yields nothing, and Lucene vs tag
+scores are not comparable.
 
 The full grounding map (prompt tag → matched corpus tags + sims) is attached
 to the plan as `grounding` and shown beside the results.

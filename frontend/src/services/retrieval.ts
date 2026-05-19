@@ -373,11 +373,20 @@ export async function retrieveChunks(plan: QueryPlan, cfg: Neo4jConfig, options:
       runId: DONE_GRAPH_RUN_ID,
       ...paramsX,
     });
-    // The year constraint is enforced by the hard gate (c.years, projected
-    // from the model-curated temporal tags) — no full-text union here. The
-    // earlier union existed to compensate for the regex-scraped years and is
-    // gone with it; lexical full-text remains only for the no-tags path above.
-    return rowsToChunks(result.records);
+    const scored = rowsToChunks(result.records);
+    if (scored.length > 0) return scored;
+
+    // Recall fallback: grounding succeeded but no gated chunk carries those
+    // exact corpus tags, so the tag-scored join is empty. Rather than return
+    // nothing, try the SAME gated full-text path the no-tags branch uses —
+    // the answer text may exist in chunk content even with no matching tag.
+    // Grounding still ran (and still throws if it produced nothing), so this
+    // does not reintroduce the deleted string-equality grounding fallback;
+    // it only adds literal recall. Surfaced as a warning — never silent.
+    plan.warnings.push(
+      'Tag-scored retrieval returned no chunks under the gate — fell back to the hard-gate + full-text recall path.',
+    );
+    return runLexical(session, plan, clauseX, paramsX, limit, datasetId);
   });
 }
 
