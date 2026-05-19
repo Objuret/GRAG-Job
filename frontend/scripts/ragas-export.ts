@@ -85,10 +85,27 @@ function arg(flag: string, dflt?: string): string | undefined {
 }
 const hasFlag = (flag: string) => process.argv.includes(flag);
 
-const questionsPath = resolve(
-  arg('--questions', join(SCRIPT_DIR, 'ragas-questions.example.jsonl'))!,
-);
-const outPath = resolve(arg('--out', join(REPO_ROOT, 'backend', 'evaluation', 'ragas_samples.jsonl'))!);
+// `npm --workspace frontend run` sets cwd to frontend/, so a repo-root-relative
+// path like `frontend/scripts/x.jsonl` would double to frontend/frontend/...
+// Resolve --questions against several bases and take the first that exists;
+// --out is treated as repo-root-relative (resolve() passes absolutes through).
+function resolveExisting(p: string, bases: string[]): string {
+  for (const b of bases) {
+    const cand = resolve(b, p);
+    if (existsSync(cand)) return cand;
+  }
+  return resolve(process.cwd(), p); // keep a sensible path for the not-found error
+}
+
+const questionsArg = arg('--questions');
+const questionsPath = questionsArg
+  ? resolveExisting(questionsArg, [process.cwd(), REPO_ROOT, FRONTEND_ROOT, SCRIPT_DIR])
+  : join(SCRIPT_DIR, 'ragas-questions.example.jsonl');
+
+const outArg = arg('--out');
+const outPath = outArg
+  ? resolve(REPO_ROOT, outArg)
+  : join(REPO_ROOT, 'backend', 'evaluation', 'ragas_samples.jsonl');
 const maxQuestions = Number(arg('--max', '0')) || 0; // 0 = all
 const dryRun = hasFlag('--dry-run'); // interpret+retrieve only, skip the answer LLM
 
