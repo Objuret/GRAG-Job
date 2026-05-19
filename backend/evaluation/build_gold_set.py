@@ -124,33 +124,58 @@ def main() -> None:
             database_=args.database,
         ).records
 
-        # Greedy pick: maximise distinct question TYPES (HERB has ~88 stems),
-        # then spread across products. One templated stem per product would
-        # measure almost nothing, so stem-diversity is the primary key.
+        # Selection is product round-robin (HERB has ~88 distinct question
+        # stems over 776 records across ~33 products):
+        #   round 1 — cycle products; each contributes its next NEW-stem
+        #             record. Maximises distinct question TYPES while keeping
+        #             products balanced (no early-product monopoly).
+        #   round 2 — cycle products again, taking any remaining record
+        #             (stem repeats), to fill to count with per-type variance.
+        # Deterministic: products sorted, each product's records ordered by
+        # item_index, so the set is reproducible.
+        from collections import deque
+
+        by_prod: dict[str, deque] = {}
+        for r in cands:  # cands ordered by product, item_index
+            by_prod.setdefault(r["product"] or "x", deque()).append(r)
+        products = sorted(by_prod)
+
         chosen: list[dict] = []
+        chosen_cids: set[str] = set()
         seen_stems: set[str] = set()
-        seen_products: set[str] = set()
-        for r in cands:
-            if len(chosen) >= args.count:
-                break
-            st = _stem(r["q"])
-            if st in seen_stems:
-                continue
-            if r["product"] in seen_products and len(seen_products) < args.count:
-                continue  # prefer a new product while we still can
-            seen_stems.add(st)
-            seen_products.add(r["product"])
-            chosen.append(r)
-        # Backfill if product-spread was too strict to reach count.
-        if len(chosen) < args.count:
-            for r in cands:
+
+        progressed = True
+        while len(chosen) < args.count and progressed:
+            progressed = False
+            for p in products:
                 if len(chosen) >= args.count:
                     break
-                st = _stem(r["q"])
-                if st in seen_stems:
-                    continue
-                seen_stems.add(st)
-                chosen.append(r)
+                dq = by_prod[p]
+                skipped: list[dict] = []
+                picked = None
+                while dq:
+                    r = dq.popleft()
+                    if _stem(r["q"]) not in seen_stems:
+                        picked = r
+                        break
+                    skipped.append(r)  # seen-stem — keep for round 2
+                dq.extendleft(reversed(skipped))
+                if picked:
+                    seen_stems.add(_stem(picked["q"]))
+                    chosen.append(picked)
+                    chosen_cids.add(picked["cid"])
+                    progressed = True
+
+        qi = 0
+        queues = [by_prod[p] for p in products]
+        while len(chosen) < args.count and any(queues):
+            dq = queues[qi % len(queues)]
+            qi += 1
+            if dq:
+                r = dq.popleft()
+                if r["cid"] not in chosen_cids:
+                    chosen.append(r)
+                    chosen_cids.add(r["cid"])
 
         cid_list = [r["cid"] for r in chosen]
         content_by_cid = {
@@ -166,6 +191,7 @@ def main() -> None:
         driver.close()
 
     pairs: list[dict[str, str]] = []
+    used_ids: set[str] = set()
     for r in chosen:
         obj = _extract_json(content_by_cid.get(r["cid"]) or "")
         if not obj:
@@ -175,7 +201,12 @@ def main() -> None:
         if not q or len(ref) < 3:
             continue
         prod = re.sub(r"[^a-z0-9]+", "", (r["product"] or "x").lower())
-        pairs.append({"id": f"gold_{prod}_{r['ix']}", "question": q, "reference": ref})
+        base = f"gold_{prod}_{r['ix']}"
+        rid, n = base, 2
+        while rid in used_ids:  # ids must be unique (resume + per-sample keying)
+            rid, n = f"{base}_{n}", n + 1
+        used_ids.add(rid)
+        pairs.append({"id": rid, "question": q, "reference": ref})
 
     header = [
         "# HERB GOLD reference set — authoritative ground truth from the dataset.",

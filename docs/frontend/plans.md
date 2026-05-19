@@ -74,7 +74,18 @@ or the legacy clustering layer. Producer/consumer split:
   `ragas_eval.py` adds `context_recall` + `context_precision` (LLM-only,
   reference-based) and `answer_correctness` (opt-in, needs embeddings);
   zero-context rows are kept so `context_recall` scores them ~0 — the recall
-  hole reference-free faithfulness hid.
+  hole reference-free faithfulness hid. `build_gold_set --count N` scales the
+  set with a product round-robin (every distinct question type, then balanced
+  product instances): a 100-pair set is 88 distinct stems over 30 products.
+- **Result (n=99, gold, QA excluded, judge=sonnet, recall fix live):**
+  faithfulness **0.86**, context_recall **0.33**, context_precision **0.087**.
+  The n=15 set overstated recall (0.41) — small-sample instability; report
+  n≈100. The system is faithful but retrieval is the bottleneck: recall is
+  bimodal (54/99 = 0, 35/99 ≥ 0.5), split by question TYPE — "changes
+  suggested by [role]" r≈0.69, but entity/aggregate lookup ("find employee
+  IDs of…", "find all unresolved issues…") r≈0–0.2. Topical/semantic
+  retrieval cannot do exact-fact lookup over scattered structured metadata;
+  the next lever is grounding/ranking precision, not more recall.
 - **Not built yet (optional):** an embeddings backend if `answer_relevancy` /
   `answer_correctness` are wanted (Python 3.14 has no torch wheels — needs
   `OPENAI_API_KEY`).
