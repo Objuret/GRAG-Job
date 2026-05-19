@@ -1,0 +1,74 @@
+# Curated HERB evaluation question set.
+#
+# Grounded in the LIVE `herb` graph (read-only discovery 2026-05-19): real
+# product names, sections, channels, employee_ids, years, and top tags per
+# facet were verified to hit data before authoring. Reference-free (questions
+# only) per the chosen RAGAS scope — faithfulness / answer_relevancy.
+#
+# The `id` prefix encodes WHICH retrieval path the question is meant to
+# exercise, so RAGAS results can be sliced by path:
+#   tag_     pure tag grounding + weighted-overlap, no hard gate
+#   gate_prod_      single product hard-gate
+#   gate_prodsec_   product + section (multi-constraint gate)
+#   gate_sec_       section-only gate
+#   gate_year_      year gate (verified non-empty years only)
+#   gate_chan_      channel gate (verified channel strings)
+#   gate_eid_       employee_id gate (verified ids)
+#   facet_    facet-targeted (entities/activity/temporal/evidence/topic)
+#   lex_      literal/sparse — may fall to the no-tag full-text path
+#   ctrl_     control: expected "insufficient evidence" or fail-loud grounding
+#
+# Format: one {"id","question"} per line; lines starting with # are skipped.
+# Run: npm --workspace frontend run ragas:export -- --questions frontend/scripts/ragas-questions.herb.jsonl
+
+# --- pure tag grounding (no gate) — exercises e5 grounding + scoring --------
+{"id": "tag_tensorflow", "question": "How is TensorFlow used across the products and teams in this corpus?"}
+{"id": "tag_kafka", "question": "What role does Apache Kafka play in the systems described here?"}
+{"id": "tag_gdpr", "question": "How do teams address GDPR and data privacy requirements?"}
+{"id": "tag_kubernetes", "question": "How is Kubernetes used for deployment and infrastructure?"}
+{"id": "tag_ml_nlp", "question": "What machine learning and natural language processing techniques are applied in the products?"}
+
+# --- single product hard-gate ----------------------------------------------
+{"id": "gate_prod_anomalyforce", "question": "What is AnomalyForce and what problem does it solve?"}
+{"id": "gate_prod_knowledgeforce", "question": "Summarize the purpose and main capabilities of KnowledgeForce."}
+{"id": "gate_prod_forecastforce", "question": "What does ForecastForce do and who is it for?"}
+
+# --- product + section (multi-constraint gate) -----------------------------
+{"id": "gate_prodsec_security_slack", "question": "What did the team discuss in Slack about SecurityForce?"}
+{"id": "gate_prodsec_anomaly_prs", "question": "What pull requests were made for AnomalyForce and what did they change?"}
+{"id": "gate_prodsec_connect_docs", "question": "What do the product documents say about ConnectForce?"}
+{"id": "gate_prodsec_knowledge_meetings", "question": "What was discussed in meeting transcripts about KnowledgeForce?"}
+
+# --- section-only gate -----------------------------------------------------
+{"id": "gate_sec_prs", "question": "What kinds of code changes and fixes are described across the pull requests?"}
+{"id": "gate_sec_qa", "question": "What recurring questions and answers are recorded about the products?"}
+{"id": "gate_sec_meetings", "question": "What topics come up most often in the meeting transcripts?"}
+
+# --- year gate (verified non-empty: 2026 dominant, 2027, 2025) -------------
+{"id": "gate_year_2026", "question": "What product activity and decisions are recorded for 2026?"}
+{"id": "gate_year_2027", "question": "What happened in 2027 according to the corpus?"}
+{"id": "gate_year_2025", "question": "What was going on with the products in 2025?"}
+
+# --- channel gate (verified channel strings) -------------------------------
+{"id": "gate_chan_security", "question": "What was discussed in the develop-hannahmiller-SecurityForce channel?"}
+{"id": "gate_chan_trendbug", "question": "What bugs were reported and resolved in the bug-iansmith-TrendForce channel?"}
+
+# --- employee_id gate (verified ids) ---------------------------------------
+{"id": "gate_eid_2ee26d1f", "question": "What contributions are attributed to employee eid_2ee26d1f?"}
+{"id": "gate_eid_4ae1a338", "question": "What work is associated with employee eid_4ae1a338?"}
+
+# --- facet-targeted --------------------------------------------------------
+{"id": "facet_entities_people", "question": "What are the roles and contributions of David and Hannah across the projects?"}
+{"id": "facet_activity_codereview", "question": "How does the code review and pull request process work in these teams?"}
+{"id": "facet_temporal_releases", "question": "What is described about previous releases and release timelines?"}
+{"id": "facet_evidence_prd", "question": "What product requirements and system design documents exist, and what do they specify?"}
+{"id": "facet_topic_marketresearch", "question": "What market research and competitive analysis has been done for the products?"}
+
+# --- literal / sparse — may take the no-tag full-text path ------------------
+{"id": "lex_sprint_review", "question": "What outcomes and action items came out of sprint reviews?"}
+{"id": "lex_first_draft_deadline", "question": "Which first draft deadlines are mentioned and for what?"}
+
+# --- controls: expected insufficient-evidence / fail-loud grounding ---------
+{"id": "ctrl_unans_pricing", "question": "What is the official 2031 retail pricing of AnomalyForce?"}
+{"id": "ctrl_unans_ceo", "question": "Who is the company CEO and what is their exact annual compensation?"}
+{"id": "ctrl_offcorpus", "question": "What is the capital of France?"}

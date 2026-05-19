@@ -1,0 +1,18 @@
+# Starter HERB questions for the RAGAS export harness.
+# This is NOT the curated eval set — it exists so the harness is runnable
+# end-to-end today. Replace/extend with a real set (punch-list point 3).
+# Format: one JSON object per line {"id","question"}; lines starting with # are skipped.
+# These deliberately exercise the different retrieval paths: plain tag scoring,
+# the hard gate (product/section/channel/year), and lexical-only fallback.
+{"id": "herb_product_overview", "question": "What is CollaborateForce and what problem does it solve?"}
+{"id": "herb_slack_gate", "question": "Summarize the Slack discussions about CollaborateForce."}
+{"id": "herb_prs_gate", "question": "What pull requests are associated with ActionGenie and what did they change?"}
+{"id": "herb_docs_gate", "question": "What do the product documents say about ActionGenie's main capabilities?"}
+{"id": "herb_meetings", "question": "What was discussed in meeting transcripts about product roadmap and priorities?"}
+{"id": "herb_year_gate", "question": "What product activity or decisions happened in 2026?"}
+{"id": "herb_entities", "question": "Which people and teams are responsible for CollaborateForce?"}
+{"id": "herb_activity", "question": "How is a new feature proposed, reviewed, and shipped according to the corpus?"}
+{"id": "herb_temporal", "question": "What are the most recent changes or updates described for ActionGenie?"}
+{"id": "herb_evidence_metric", "question": "What metrics or measurable results are reported for any product?"}
+{"id": "herb_cross", "question": "How do Slack conversations and pull requests relate for a single feature?"}
+{"id": "herb_unanswerable", "question": "What is the internal pricing strategy for CollaborateForce in 2030?"}

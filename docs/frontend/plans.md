@@ -27,6 +27,45 @@
 - **`min_sim` is near-meaningless.** e5-small cosine on this corpus is compressed (~0.8 mean to random tags); default floor 0.78 barely filters noise — grounding leans entirely on top-k.
 - **Lexical/tag union truncation.** Year-gate lexical hits are appended after tag hits then `.slice(0, limit)`. If tag hits fill `limit`, the literal-recall chunks the path exists to add are dropped — silently defeating the feature for limit-bound queries.
 
+## RAGAS evaluation
+
+The eval target is the **real browser pipeline**, not a Python re-implementation
+or the legacy clustering layer. Producer/consumer split:
+
+- **Built — headless export harness.** [`frontend/scripts/ragas-export.ts`](../../frontend/scripts/ragas-export.ts)
+  drives the same path as `App.jsx:runPipeline` (main lane only):
+  `interpretPrompt` → `retrieveChunks` → `generateAnswer` against the live
+  `herb` graph + Anthropic, in Node via `tsx`. It repoints transformers.js at
+  the on-disk `frontend/public/models` (fails loud if the e5 onnx is not
+  assembled) and writes one JSONL row per question with `user_input`,
+  `retrieved_contexts`, `response`, plus a `meta` block. Run:
+  `npm --workspace frontend run ragas:export -- --questions <file> --out <file>`.
+  Config comes from the app's `VITE_*` env (frontend `.env.local`) or plain
+  env. Starter questions: `frontend/scripts/ragas-questions.example.jsonl`.
+  Verified end-to-end against the live `herb` graph (grounding, hard gate, and
+  chunk retrieval all exercised; the Windows/Node transformers.js model-path
+  question is resolved — the e5 onnx loads from disk).
+- **Built — Python RAGAS runner.** [`backend/evaluation/ragas_eval.py`](../../backend/evaluation/ragas_eval.py)
+  (`python -m evaluation.ragas_eval`) consumes the harness JSONL only — no
+  Neo4j, no pipeline, no legacy clustering. Reference-free. Judge LLM is
+  Anthropic (key resolved from env / backend `.env` / frontend `.env.local`).
+  `faithfulness` is the default and works with no extra deps. `answer_relevancy`
+  is opt-in: this venv is Python 3.14 with no torch wheels, so a local
+  embeddings model is intentionally not a dependency — it needs `OPENAI_API_KEY`
+  (OpenAI embeddings) or a torch-capable env. Deps: `backend/requirements-eval.txt`.
+- **Built — curated HERB question set.** [`frontend/scripts/ragas-questions.herb.jsonl`](../../frontend/scripts/ragas-questions.herb.jsonl)
+  (~30 questions). Grounded in the live `herb` graph: real products, sections,
+  channels, employee_ids, years, and per-facet top tags were verified to hit
+  data before authoring (e.g. product `CollaborationForce`, not the starter's
+  guessed `CollaborateForce`). `id` prefixes encode the retrieval path each
+  question exercises (`tag_`, `gate_prod_`, `gate_prodsec_`, `gate_sec_`,
+  `gate_year_`, `gate_chan_`, `gate_eid_`, `facet_`, `lex_`, `ctrl_`) so RAGAS
+  results can be sliced by path. The `ragas-questions.example.jsonl` starter
+  stays as the minimal smoke set. Reference-free.
+- **Not built yet (optional):** reference/ground-truth answers (would unlock
+  `context_precision`/`context_recall`/`answer_correctness`); an embeddings
+  backend if `answer_relevancy` is wanted alongside `faithfulness`.
+
 ## Optional
 
 - **Persistence.** Save canvas/module state to `localStorage`, or skip — the app is local-only.

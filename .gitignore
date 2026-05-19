@@ -33,6 +33,11 @@ dist-ssr/
 frontend/public/models/Xenova/e5-small-v2/onnx/model.onnx
 graph_export/grag_graph_latest.zip
 
+# RAGAS run artifacts (harness JSONL + runner JSON reports). Source files in
+# backend/evaluation/ are .py/.txt so this only excludes generated output.
+backend/evaluation/*.jsonl
+backend/evaluation/*.json
+
 # Logs
 logs/
 *.log

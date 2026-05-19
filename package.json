@@ -6,6 +6,7 @@
     "dev": "npm --workspace frontend run dev",
     "build": "npm --workspace frontend run build",
     "lint": "npm --workspace frontend run lint",
+    "ragas:export": "npm --workspace frontend run ragas:export --",
     "assets:assemble": "node scripts/assemble-large-assets.mjs",
     "postinstall": "node scripts/assemble-large-assets.mjs",
     "backend:install": "python -m venv .venv && .venv\\Scripts\\python.exe -m pip install -r backend\\requirements-lock.txt",
