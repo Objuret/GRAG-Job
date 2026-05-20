@@ -1,4 +1,4 @@
-import { chat, type LlmMessage } from './llm';
+import { chat, type LlmMessage, type ProviderKeys } from './llm';
 import type { QueryPlan } from './interpreter';
 import type { RetrievedChunk } from './retrieval';
 
@@ -35,8 +35,7 @@ export async function generateAnswer(
   plan: QueryPlan,
   chunks: RetrievedChunk[],
   model: string,
-  openaiKey: string,
-  anthropicKey: string,
+  keys: ProviderKeys,
   mode: AnswerMode = 'context',
   temperature?: number,
 ): Promise<AnswerResult> {
@@ -66,7 +65,7 @@ export async function generateAnswer(
     ];
   }
 
-  const resp = await chat(messages, model, openaiKey, anthropicKey, {
+  const resp = await chat(messages, model, keys, {
     maxTokens: 1024,
     ...(temperature != null ? { temperature } : {}),
   });

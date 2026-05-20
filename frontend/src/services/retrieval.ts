@@ -208,7 +208,10 @@ function validateEvalScope(gate: HardGate, excluded: string[]): void {
 //           * coalesce(chunk.relevance_to_file, 1) * qt.sim
 // Query tags are always grounded corpus :Tag names (qt.name) with a real
 // cosine sim. There is no exact-name path.
-const scoreCypher = (gate: string, exclude: string) => `
+// `limit` clause is omitted entirely when controls.limit === 0 (= "no limit").
+const limitClause = (limit: number) => (limit > 0 ? 'LIMIT $limit' : '');
+
+const scoreCypher = (gate: string, exclude: string, limit: number) => `
 UNWIND $queryTags AS qt
 MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk)
 MATCH (c)-[r:HAS_TAG]->(t:Tag {name: qt.name})
@@ -243,10 +246,10 @@ RETURN c.chunk_id   AS chunkId,
        c.relevance_to_file AS relevanceToFile,
        round(score, 4) AS score
 ORDER BY score DESC
-LIMIT $limit
+${limitClause(limit)}
 `;
 
-const baselineCypher = (gate: string, exclude: string) => `
+const baselineCypher = (gate: string, exclude: string, limit: number) => `
 MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk)
 WHERE coalesce(c.empty, false) = false
   AND c.relevance_to_file IS NOT NULL
@@ -260,14 +263,14 @@ RETURN c.chunk_id   AS chunkId,
        c.relevance_to_file AS relevanceToFile,
        c.relevance_to_file AS score
 ORDER BY c.relevance_to_file DESC
-LIMIT $limit
+${limitClause(limit)}
 `;
 
 // Lexical recall over the actual extracted text via the chunk_fulltext index,
 // hard-gated by the same structured constraints. This is the literal-search
 // path: the chunk is reachable by a term in its body even if no matching tag
 // was ever minted (the original gap). Score = normalized Lucene score.
-const lexicalCypher = (gate: string, exclude: string) => `
+const lexicalCypher = (gate: string, exclude: string, limit: number) => `
 CALL db.index.fulltext.queryNodes($idx, $q) YIELD node AS c, score AS lex
 MATCH (f:File)-[:HAS_CHUNK]->(c)
 WHERE coalesce(c.empty, false) = false
@@ -281,7 +284,7 @@ RETURN c.chunk_id   AS chunkId,
        c.relevance_to_file AS relevanceToFile,
        round(lex, 4) AS score
 ORDER BY lex DESC
-LIMIT $limit
+${limitClause(limit)}
 `;
 
 function rowToChunk(rec: Record<string, unknown>): RetrievedChunk {
@@ -344,12 +347,14 @@ async function groundQueryTags(
   const params: ScoreTagParam[] = [];
   const grounding: GroundedTag[] = plan.tags.map(qt => ({ promptTag: qt.t, matches: [] }));
 
+  // k=0 = no cap; accept everything above minSim. Otherwise top-k by sim.
+  const noKCap = k <= 0;
   for (let i = 0; i < requests.length; i++) {
     const req = requests[i];
     const qt = plan.tags[req.promptIndex];
     const vec = vectors[i];
     if (!vec) continue;
-    const queryK = Math.max(k * 20, 200);
+    const queryK = noKCap ? 1000 : Math.max(k * 20, 200);
     const res = await session.run(
       `CALL db.index.vector.queryNodes($idx, $k, $vec) YIELD node, score
        RETURN node.name AS name, score AS sim`,
@@ -365,7 +370,7 @@ async function groundQueryTags(
       grounding[req.promptIndex].matches.push({ name, facet, sim: rounded });
       params.push({ name, facet, sim, scopeWeight: req.scopeWeight, ...facetCols(qt) });
       accepted += 1;
-      if (accepted >= k) break;
+      if (!noKCap && accepted >= k) break;
     }
   }
 
@@ -378,15 +383,19 @@ async function groundQueryTags(
         if (seen.has(key)) return false;
         seen.add(key);
         return true;
-      })
-      .slice(0, k);
+      });
+    if (!noKCap) g.matches = g.matches.slice(0, k);
   }
   return { params, grounding };
 }
 
 function retrievalLimit(plan: QueryPlan, options?: RetrievalInputOptions): number {
-  const raw = Number(options?.limit ?? plan.filters.limit ?? 20);
-  return Math.max(1, Math.min(500, Number.isFinite(raw) ? raw : 20));
+  // 0 is the sentinel for "no limit" — the LIMIT clause is omitted from the
+  // Cypher. The real quality filters are minSim + minRelevanceToFile +
+  // weightThreshold; this knob just caps row count when you want it capped.
+  const raw = Number(options?.limit ?? plan.filters.limit ?? 0);
+  if (!Number.isFinite(raw) || raw <= 0) return 0;
+  return Math.max(1, Math.min(100000, raw));
 }
 
 function retrievalDataset(plan: QueryPlan, options?: RetrievalInputOptions): string | null {
@@ -417,7 +426,7 @@ export function buildRetrievalInput(plan: QueryPlan, options: RetrievalInputOpti
       limit: retrievalLimit(plan, options),
       minWChunk: Number(options.minWChunk ?? plan.filters.min_w_chunk ?? 0),
       minRelevanceToFile: Number(options.minRelevanceToFile ?? plan.filters.min_relevance_to_file ?? 0),
-      groundingK: Math.max(1, Number(options.groundingK ?? 10)),
+      groundingK: Math.max(0, Number(options.groundingK ?? 0)), // 0 = no cap; minSim is the filter
       minSim: Number(options.minSim ?? 0.78),
       excludedSections: excludedSections(options),
     },
@@ -452,9 +461,10 @@ async function runLexical(
 ): Promise<RetrievedChunk[]> {
   const q = buildLexQuery(plan);
   if (!q) return [];
-  const res = await session.run(lexicalCypher(gateClause, excludeClause), {
-    idx: CHUNK_FULLTEXT_INDEX, q, limit: neo4j.int(limit), datasetId,
+  const res = await session.run(lexicalCypher(gateClause, excludeClause, limit), {
+    idx: CHUNK_FULLTEXT_INDEX, q, datasetId,
     excludedSections: excluded, ...gateParams,
+    ...(limit > 0 ? { limit: neo4j.int(limit) } : {}),
   });
   return rowsToChunks(res.records);
 }
@@ -536,16 +546,16 @@ export async function scoreGroundedChunks(
         controls.limit, scope.datasetId,
       );
     }
-    const result = await session.run(scoreCypher(clause, exclude), {
+    const result = await session.run(scoreCypher(clause, exclude, controls.limit), {
       queryTags: ground.params,
       activeFacets: controls.activeFacets,
       minWChunk: controls.minWChunk,
       minRelevanceToFile: controls.minRelevanceToFile,
-      limit: neo4j.int(controls.limit),
       datasetId: scope.datasetId,
       runId: scope.runId,
       excludedSections: controls.excludedSections,
       ...gateParams,
+      ...(controls.limit > 0 ? { limit: neo4j.int(controls.limit) } : {}),
     });
     // The year constraint is enforced by the hard gate (c.years, projected
     // from the model-curated temporal tags) — no full-text union here.
@@ -666,9 +676,10 @@ export async function retrieveBaseline(
   validateEvalScope(gate, controls.excludedSections);
   return withSession(cfg, async (session) => {
     await validateDataset(session, scope.datasetId);
-    const result = await session.run(baselineCypher(clause, exclude), {
-      limit: neo4j.int(controls.limit), datasetId: scope.datasetId,
+    const result = await session.run(baselineCypher(clause, exclude, controls.limit), {
+      datasetId: scope.datasetId,
       excludedSections: controls.excludedSections, ...gateParams,
+      ...(controls.limit > 0 ? { limit: neo4j.int(controls.limit) } : {}),
     });
     return rowsToChunks(result.records);
   });
@@ -694,7 +705,10 @@ export async function retrieveBaselineContent(
 ): Promise<RetrievedChunk[]> {
   const q = sanitizeLucene(question);
   if (!q) return [];
-  const limit = Math.max(1, Math.min(500, Number(options.limit ?? 20)));
+  const rawLimit = Number(options.limit ?? 0);
+  const limit = !Number.isFinite(rawLimit) || rawLimit <= 0
+    ? 0
+    : Math.max(1, Math.min(100000, rawLimit));
   const datasetId = options.datasetId ?? null;
   const excluded = [...new Set((options.excludedSections ?? DEFAULT_EXCLUDED_SECTIONS).filter(Boolean))];
   const exclude = exclusionClause(excluded);
@@ -711,7 +725,7 @@ RETURN c.chunk_id   AS chunkId,
        c.relevance_to_file AS relevanceToFile,
        round(lex, 4) AS score
 ORDER BY lex DESC
-LIMIT $limit
+${limit > 0 ? 'LIMIT $limit' : ''}
 `;
   return withSession(cfg, async (session) => {
     await validateDataset(session, datasetId);
@@ -719,9 +733,9 @@ LIMIT $limit
       const result = await session.run(cypher, {
         idx: CONTENT_FULLTEXT_INDEX,
         q,
-        limit: neo4j.int(limit),
         datasetId,
         excludedSections: excluded,
+        ...(limit > 0 ? { limit: neo4j.int(limit) } : {}),
       });
       return rowsToChunks(result.records);
     } catch (err) {
@@ -731,6 +745,7 @@ LIMIT $limit
           `Baseline content index '${CONTENT_FULLTEXT_INDEX}' is missing. Create it once: ` +
           `CREATE FULLTEXT INDEX ${CONTENT_FULLTEXT_INDEX} IF NOT EXISTS ` +
           `FOR (c:Chunk) ON EACH [c.content]; then CALL db.awaitIndexes().`,
+          { cause: err },
         );
       }
       throw err;

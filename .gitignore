@@ -19,6 +19,7 @@ quarantine/legacy_mirror/
 # Backend data payloads
 backend/data/raw/
 backend/.work/
+backend/data/baselines/*.db
 backend/data/tagging_runs/*/
 graph_export/latest/
 graph_export/*.pre_cluster_rename_*.zip
@@ -37,6 +38,10 @@ graph_export/grag_graph_latest.zip
 # backend/evaluation/ are .py/.txt so this only excludes generated output.
 backend/evaluation/*.jsonl
 backend/evaluation/*.json
+
+# Workbench exports (Run Builder + History → ragas_exports/ at repo root)
+ragas_exports/*
+!ragas_exports/.gitkeep
 
 # Extracted thesis text (the user's document — never commit to the repo).
 thesis_extract.md

@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
+import { PROVIDERS, providerOf, requireKey, type ProviderKeys } from '../data/models';
 
 export interface LlmMessage {
   role: 'system' | 'user' | 'assistant';
@@ -21,27 +22,34 @@ export interface ChatOptions {
   temperature?: number;
 }
 
-function isClaudeModel(model: string) {
-  return model.startsWith('claude');
-}
+export type { ProviderKeys };
 
+/**
+ * Single chat entry point. The model id determines the provider via the
+ * registry in src/data/models.ts; the provider determines the SDK (Anthropic
+ * uses its own; everything else is OpenAI-API-compatible and reuses the OpenAI
+ * SDK with a per-provider baseURL).
+ *
+ * Loud-fails on (a) unknown model id and (b) missing key for the resolved
+ * provider — never a silent fall-through to "the other" provider.
+ */
 export async function chat(
   messages: LlmMessage[],
   model: string,
-  openaiKey: string,
-  anthropicKey: string,
+  keys: ProviderKeys,
   opts: ChatOptions = {},
 ): Promise<LlmResult> {
   const maxTokens = opts.maxTokens ?? 1024;
+  const provider = providerOf(model);
+  const apiKey = requireKey(provider, keys, model);
 
-  if (isClaudeModel(model)) {
-    if (!anthropicKey) throw new Error('Anthropic API key not set (VITE_ANTHROPIC_API_KEY).');
-    const client = new Anthropic({ apiKey: anthropicKey, dangerouslyAllowBrowser: true });
+  if (provider === 'anthropic') {
+    const client = new Anthropic({ apiKey, dangerouslyAllowBrowser: true });
     const system = messages.find(m => m.role === 'system')?.content ?? '';
     const rest = messages.filter(m => m.role !== 'system') as Anthropic.MessageParam[];
 
     // For JSON mode, prefill the assistant turn with `{` so the model can only
-    // emit a JSON object body (this is the documented Anthropic JSON pattern).
+    // emit a JSON object body (documented Anthropic JSON pattern).
     const finalMessages: Anthropic.MessageParam[] = opts.jsonMode
       ? [...rest, { role: 'assistant', content: '{' }]
       : rest;
@@ -59,8 +67,10 @@ export async function chat(
     return { text, tokensIn: resp.usage.input_tokens, tokensOut: resp.usage.output_tokens };
   }
 
-  if (!openaiKey) throw new Error('OpenAI API key not set (VITE_OPENAI_API_KEY).');
-  const client = new OpenAI({ apiKey: openaiKey, dangerouslyAllowBrowser: true });
+  // OpenAI-API-compatible: OpenAI, DeepSeek, Ollama Cloud, Groq.
+  // `baseURL` is undefined for native OpenAI (SDK default), set for the others.
+  const baseURL = PROVIDERS[provider].baseURL;
+  const client = new OpenAI({ apiKey, baseURL, dangerouslyAllowBrowser: true });
   const resp = await client.chat.completions.create({
     model,
     max_tokens: maxTokens,

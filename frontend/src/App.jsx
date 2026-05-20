@@ -19,6 +19,7 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 import {
   NODE_TYPES, QUERY_FRAGMENT_NODES, QUERY_FRAGMENT_CATALOG, QUERY_CONTAINER,
   PIPELINE_NODES, USAGE_NODES, MODULE_NODES, FACETS, DATASETS, PRESET_RESULTS, SAMPLE_CHUNKS,
+  RUN_ROUTES, RUN_ANSWER_MODES, RUN_DATABASES, RUN_LEVERS,
 } from './data/workbenchData';
 import {
   DEFAULT_MODULE_HEADER,
@@ -33,8 +34,18 @@ import {
   getFragmentTemplate,
   getFragmentHumanLine,
 } from './query/queryModuleSyntax';
-import { runUsageGraph } from './services/pipeline';
+import { runUsageGraph, runRunSpec, compareRuns } from './services/pipeline';
+import { MODELS, PROVIDERS, providerOf } from './data/models';
 import { fetchDatasetStats } from './services/neo4j';
+import RagasReportPage from './RagasReportPage.jsx';
+import {
+  RAGAS_EXPORTS_DIR,
+  isRagasExportsFsAvailable,
+  joinRagasExportPath,
+  writeRagasExport,
+} from './services/ragasExportsFs';
+
+const RAGAS_SAVE_SUBDIR_KEY = 'ragas_exports_subdir';
 const NT = Object.fromEntries([...NODE_TYPES, ...QUERY_FRAGMENT_NODES].map((n) => [n.id, n]));
 
 const DONE_GRAPH_DATABASE = import.meta.env.VITE_NEO4J_DATABASE || 'herb-eval';
@@ -607,18 +618,178 @@ function buildInitial() {
 }
 
 // ─── Fixed local graph/runtime config (override via Vite env only) ──────────
+const envVar = (name) =>
+  (typeof import.meta !== 'undefined' && import.meta.env?.[name]) || '';
+
 const defaultConnConfig = {
-  neo4jUri:       (typeof import.meta !== 'undefined' && import.meta.env?.VITE_NEO4J_URI)        || 'bolt://localhost:7687',
-  neo4jUser:      (typeof import.meta !== 'undefined' && import.meta.env?.VITE_NEO4J_USER)       || 'neo4j',
-  neo4jPassword:  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_NEO4J_PASSWORD)   || '',
+  neo4jUri:       envVar('VITE_NEO4J_URI')      || 'neo4j://localhost:7687',
+  neo4jUser:      envVar('VITE_NEO4J_USER')     || 'neo4j',
+  neo4jPassword:  envVar('VITE_NEO4J_PASSWORD'),
   neo4jDatabase:  DONE_GRAPH_DATABASE,
-  openaiApiKey:   (typeof import.meta !== 'undefined' && import.meta.env?.VITE_OPENAI_API_KEY)   || '',
-  anthropicApiKey:(typeof import.meta !== 'undefined' && import.meta.env?.VITE_ANTHROPIC_API_KEY)|| '',
-  model:          (typeof import.meta !== 'undefined' && import.meta.env?.VITE_MODEL)            || 'claude-haiku-4-5',
+  // Per-provider keys; each is whatever VITE_*_API_KEY is set, or '' if not.
+  // The runtime resolves the right one from the model id via providerOf().
+  keys: {
+    openai:    envVar('VITE_OPENAI_API_KEY'),
+    anthropic: envVar('VITE_ANTHROPIC_API_KEY'),
+    deepseek:  envVar('VITE_DEEPSEEK_API_KEY'),
+    ollama:    envVar('VITE_OLLAMA_API_KEY'),
+    groq:      envVar('VITE_GROQ_API_KEY'),
+  },
+  model: envVar('VITE_MODEL') || 'deepseek-chat',
 };
 
 function normalizeConnConfig(cfg = {}) {
-  return { ...defaultConnConfig, ...(cfg || {}), neo4jDatabase: DONE_GRAPH_DATABASE };
+  return {
+    ...defaultConnConfig,
+    ...(cfg || {}),
+    keys: { ...defaultConnConfig.keys, ...((cfg && cfg.keys) || {}) },
+    neo4jDatabase: DONE_GRAPH_DATABASE,
+  };
+}
+
+/** Map model ids → { provider → required-env-var }; missing keys → human msg.
+ *  Used by both `runPipeline` and `runAllSpecs` so the precheck contract is
+ *  identical: fail before issuing any network call. Loud on unknown model id
+ *  (providerOf throws), surfaced through the same `missing` list. */
+function missingProviderKeys(usedModels, keys) {
+  const missing = [];
+  const seenProviders = new Set();
+  for (const m of usedModels) {
+    let p;
+    try { p = providerOf(m); } catch (e) { missing.push(e.message); continue; }
+    if (seenProviders.has(p)) continue;
+    seenProviders.add(p);
+    if (!keys[p]) missing.push(`${PROVIDERS[p].label} (${PROVIDERS[p].envKeyVar})`);
+  }
+  return missing;
+}
+
+/** A Run is a config snapshot of the Usage graph; defaults mirror the node
+ *  defaults in services/pipeline.ts so a fresh run reproduces the canvas. */
+function makeDefaultRunSpec(connConfig, label, route = 'tags') {
+  return {
+    id: uid('spec'),
+    label,
+    database: DONE_GRAPH_DATABASE,
+    route,
+    moduleId: null,
+    interpret: { model: connConfig.model, datasetId: null },
+    buildInput: {
+      maxChunks: 0, weightThreshold: 0, minRelevanceToFile: 0,
+      groundingK: 0, minSim: 0.78,
+      activeFacets: ['topic', 'entities', 'activity', 'temporal', 'evidence'],
+      runId: DONE_GRAPH_RUN_ID,
+    },
+    answer: { model: connConfig.model, mode: 'context' },
+    temperature: 0,
+    sqlAgent: { maxToolCalls: 0, maxRowsPerQuery: 0, maxCellChars: 0 },
+  };
+}
+
+/**
+ * Translate a RunSpec into the JSON config consumed by
+ * `ragas-export.ts --config`. Returns null for `route='module'`, which the
+ * headless exporter does not (yet) reproduce — callers should refuse to
+ * download in that case rather than silently downgrade.
+ */
+function specToRagasConfig(spec) {
+  let mode;
+  if (spec.route === 'tags') mode = 'graph';
+  else if (spec.route === 'baseline' || spec.route === 'content') mode = 'baseline';
+  else if (spec.route === 'sql_agent') mode = 'sql_agent';
+  else return null; // 'module' or unknown
+  return {
+    $schema: 'ragas-runspec/v1',
+    label: spec.label,
+    route_origin: spec.route, // for traceability; the exporter uses `mode`
+    mode,
+    database: spec.database,
+    model: spec.answer.model,
+    interpreter_model: spec.interpret.model,
+    prompt_mode: spec.answer.mode,
+    dataset_id: spec.interpret.datasetId,
+    temperature: spec.temperature,
+    limit: spec.buildInput.maxChunks,
+    grounding_k: spec.buildInput.groundingK,
+    min_sim: spec.buildInput.minSim,
+    min_w_chunk: spec.buildInput.weightThreshold,
+    min_relevance_to_file: spec.buildInput.minRelevanceToFile,
+    active_facets: spec.buildInput.activeFacets,
+    exclude_sections: ['answerable_questions', 'unanswerable_questions', 'product_profile'],
+    max_tool_calls: spec.sqlAgent?.maxToolCalls ?? 0,
+    max_rows_per_query: spec.sqlAgent?.maxRowsPerQuery ?? 0,
+    max_cell_chars: spec.sqlAgent?.maxCellChars ?? 0,
+  };
+}
+
+function downloadTextFile(filename, text, mime) {
+  const blob = new Blob([text], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/** Write under `ragas_exports/` when the Vite dev bridge is up; else browser download. */
+async function saveRagasArtifact(filename, text, saveSubdir) {
+  const rel = joinRagasExportPath(saveSubdir, filename);
+  if (isRagasExportsFsAvailable()) {
+    const written = await writeRagasExport(rel, text);
+    return written;
+  }
+  downloadTextFile(filename, text, 'application/octet-stream');
+  return null;
+}
+
+async function exportRagasConfig(spec, saveSubdir, onStatus) {
+  const cfg = specToRagasConfig(spec);
+  if (!cfg) {
+    alert(
+      'Route "Query module" is not supported by the headless RAGAS exporter ' +
+      '(composed Cypher has no batch pipeline). Switch route to Tags, Baseline, ' +
+      'Content, or SQL agent before exporting, or run this spec interactively from the canvas.',
+    );
+    return;
+  }
+  const safe = (spec.label || 'run').replace(/[^a-zA-Z0-9._-]+/g, '_').replace(/^_+|_+$/g, '') || 'run';
+  const filename = `${safe}.ragas.json`;
+  const text = JSON.stringify(cfg, null, 2) + '\n';
+  try {
+    onStatus?.('Saving…');
+    const path = await saveRagasArtifact(filename, text, saveSubdir);
+    onStatus?.(path ? `Saved ${path}` : `Downloaded ${filename}`);
+  } catch (e) {
+    onStatus?.(`Export failed: ${e?.message || e}`);
+  }
+}
+
+/** Read/write a dotted RunSpec path (`buildInput.minSim`) immutably. */
+function specGet(spec, path) {
+  return path.split('.').reduce((o, k) => (o == null ? o : o[k]), spec);
+}
+function specSet(spec, path, value) {
+  const keys = path.split('.');
+  const next = { ...spec };
+  let cur = next;
+  for (let i = 0; i < keys.length - 1; i++) {
+    cur[keys[i]] = { ...cur[keys[i]] };
+    cur = cur[keys[i]];
+  }
+  cur[keys[keys.length - 1]] = value;
+  return next;
+}
+
+/** A lever is inert when the chosen route doesn't consume it (greyed, not
+ *  hidden — the user still sees the node owns it). */
+function leverActive(field, route) {
+  if (field.onlyRoute && !field.onlyRoute.includes(route)) return false;
+  return true;
+}
+function groupActive(group, route) {
+  if (group.onlyOnRoute && !group.onlyOnRoute.includes(route)) return false;
+  return !(group.skipOnRoute && group.skipOnRoute.includes(route));
 }
 
 function toDatasetOptions(stats) {
@@ -666,8 +837,29 @@ function makeHistoryEntry(runId, status, prompt, datasetId, durationMs, results,
   };
 }
 
+/** History entry for one Run Builder run (one config, one route). Carries the
+ *  full RunSpec so the run is reproducible and RAGAS-exportable per-run. */
+function makeRunHistoryEntry(runId, prompt, spec, result, error = null) {
+  return {
+    id: runId,
+    kind: 'run',
+    status: error ? 'failed' : 'ok',
+    prompt,
+    datasetId: spec.interpret.datasetId || null,
+    durationMs: result?.durationMs ?? 0,
+    error,
+    spec,
+    runResult: result || null,
+    at: new Date().toLocaleString(),
+    chunksA: result?.chunks ?? 0,
+    chunksB: 0,
+    tokensIn: result?.tokensIn ?? 0,
+    tokensOut: result?.tokensOut ?? 0,
+  };
+}
+
 // ─── App ───────────────────────────────────────────────────────────────────
-function WorkbenchApp() {
+function WorkbenchApp({ onOpenReports }) {
   const initial = useMemo(buildInitial, []);
   const [nodes, setNodes, onNodesChange] = useNodesState(initial.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initial.edges);
@@ -691,6 +883,21 @@ function WorkbenchApp() {
     makeLogEvent('initial', 'idle', 'workbench', 'Result console ready. Run the usage lane to populate live logs.'),
   ]);
   const [runHistory, setRunHistory] = useState([]);
+  const [runSpecs, setRunSpecs] = useState(() => [
+    makeDefaultRunSpec(connConfig, 'A · tags', 'tags'),
+    makeDefaultRunSpec(connConfig, 'B · baseline', 'baseline'),
+  ]);
+  const [runResults, setRunResults] = useState([]);
+  const [ragasSaveSubdir, setRagasSaveSubdir] = useState(() => {
+    try { return localStorage.getItem(RAGAS_SAVE_SUBDIR_KEY) || ''; }
+    catch { return ''; }
+  });
+  const [ragasExportStatus, setRagasExportStatus] = useState('');
+  useEffect(() => {
+    try { localStorage.setItem(RAGAS_SAVE_SUBDIR_KEY, ragasSaveSubdir); }
+    catch { /* ignore */ }
+  }, [ragasSaveSubdir]);
+  const [runsBusy, setRunsBusy] = useState(false);
 
   useEffect(() => { document.documentElement.setAttribute('data-theme', theme); }, [theme]);
   useEffect(() => { document.documentElement.style.setProperty('--accent', tweaks.accentColor); }, [tweaks.accentColor]);
@@ -733,6 +940,14 @@ function WorkbenchApp() {
   }, []);
 
   const restoreHistoryRun = useCallback((entry) => {
+    if (entry?.kind === 'run') {
+      if (!entry.runResult) return;
+      setRunResults([entry.runResult]);
+      if (entry.spec) setRunSpecs((s) => (s.some((x) => x.id === entry.spec.id) ? s : [...s, entry.spec]));
+      setBottomTab('runs');
+      appendRunLog(entry.id, 'restored', 'history', `Restored run "${entry.spec?.label}" into Run Builder.`);
+      return;
+    }
     if (!entry?.results) return;
     setResults(entry.results);
     setBottomTab('comparison');
@@ -939,11 +1154,9 @@ function WorkbenchApp() {
     const buildNode = usageStages.find((n) => n.data?.kind === 'build_input');
     const datasetGuess = buildNode?.data?.datasetId || null;
     appendRunLog(runId, 'running', 'start', `Pipeline queued (${usageStages.length} nodes).`, { prompt });
-    const missing = [];
-    if (usedModels.some((m) => !m.startsWith('claude')) && !connConfig.openaiApiKey) missing.push('OpenAI (VITE_OPENAI_API_KEY)');
-    if (usedModels.some((m) => m.startsWith('claude')) && !connConfig.anthropicApiKey) missing.push('Anthropic (VITE_ANTHROPIC_API_KEY)');
+    const missing = missingProviderKeys(usedModels, connConfig.keys);
     if (missing.length) {
-      const message = `API key not set in Vite env: ${missing.join(' and ')}.`;
+      const message = `API key/model error: ${missing.join('; ')}.`;
       setPipelineError(message);
       appendRunLog(runId, 'failed', 'config', message);
       recordRunHistory(makeHistoryEntry(runId, 'failed', prompt, datasetGuess, Date.now() - t0, null, message));
@@ -955,11 +1168,7 @@ function WorkbenchApp() {
     try {
       const env = {
         prompt,
-        connConfig: {
-          model: connConfig.model,
-          openaiApiKey: connConfig.openaiApiKey,
-          anthropicApiKey: connConfig.anthropicApiKey,
-        },
+        connConfig: { model: connConfig.model, keys: connConfig.keys },
         neo4jCfg: {
           uri: connConfig.neo4jUri,
           user: connConfig.neo4jUser,
@@ -987,6 +1196,66 @@ function WorkbenchApp() {
       setPipelineRunning(false);
     }
   }, [prompt, connConfig, appendRunLog, recordRunHistory, setUsageLaneState]);
+
+  // Run Builder: execute every configured Run on the shared prompt, in order,
+  // and surface them side by side. One run's failure is reported loudly (in
+  // its result card + history + log) and does not abort the others.
+  const runAllSpecs = useCallback(async () => {
+    if (!runSpecs.length || runsBusy) return;
+    const liveNodes = nodesRef.current;
+    const baseEnv = {
+      prompt,
+      connConfig: { model: connConfig.model, keys: connConfig.keys },
+      neo4jCfg: {
+        uri: connConfig.neo4jUri,
+        user: connConfig.neo4jUser,
+        password: connConfig.neo4jPassword,
+        database: DONE_GRAPH_DATABASE,
+      },
+      nodes: liveNodes,
+      edges: edgesRef.current,
+    };
+    // Key precheck across every model any run will call — fail before issuing
+    // network calls, same contract as runPipeline.
+    const usedModels = runSpecs.flatMap((s) => [s.interpret.model, s.answer.model]);
+    const missing = missingProviderKeys(usedModels, connConfig.keys);
+    if (missing.length) {
+      const message = `API key/model error: ${missing.join('; ')}.`;
+      setPipelineError(message);
+      appendRunLog('runs', 'failed', 'config', message);
+      return;
+    }
+    setRunsBusy(true);
+    setPipelineError(null);
+    setBottomTab('runs');
+    const collected = [];
+    for (const spec of runSpecs) {
+      const runId = uid('run');
+      const t0 = Date.now();
+      appendRunLog(runId, 'running', 'run', `Run "${spec.label}" queued (${spec.route}, db=${spec.database}).`, { prompt });
+      const env = { ...baseEnv, runId, log: (stage, status, message) => appendRunLog(runId, status, stage, message) };
+      try {
+        const result = await runRunSpec(spec, env);
+        collected.push(result);
+        setRunResults(collected.slice());
+        appendRunLog(runId, 'ok', 'run', `Run "${spec.label}" finished in ${result.durationMs}ms.`);
+        recordRunHistory(makeRunHistoryEntry(runId, prompt, spec, result));
+      } catch (err) {
+        const message = err?.message || String(err);
+        const failed = {
+          specId: spec.id, label: spec.label, route: spec.route, database: spec.database,
+          error: message, response: '', chunks: 0, tokensIn: 0, tokensOut: 0,
+          durationMs: Date.now() - t0, plan: null, retrievalInput: null,
+          retrievedChunks: [], topFacets: [], metrics: null,
+        };
+        collected.push(failed);
+        setRunResults(collected.slice());
+        appendRunLog(runId, 'failed', 'run', `Run "${spec.label}": ${message}`);
+        recordRunHistory(makeRunHistoryEntry(runId, prompt, spec, null, message));
+      }
+    }
+    setRunsBusy(false);
+  }, [runSpecs, runsBusy, prompt, connConfig, appendRunLog, recordRunHistory]);
 
   const runLaneWithActualWork = useCallback((laneId) => {
     // The usage lane runs the real services pipeline, so its node status is
@@ -1354,7 +1623,7 @@ function WorkbenchApp() {
       className={cls('workbench', edgeSel && 'drawer-open')}
       style={{ gridTemplateRows: `48px minmax(0, 1fr) ${bottomHeight}px` }}
     >
-      <TopStrip {...{ theme, setTheme, prompt, setPrompt, runAll, pipelineRunning }}/>
+      <TopStrip {...{ theme, setTheme, prompt, setPrompt, runAll, pipelineRunning, onOpenReports }}/>
       <div className={cls('workbench-main', edgeSel && 'drawer-open')}>
         <Catalog />
         <div
@@ -1425,6 +1694,12 @@ function WorkbenchApp() {
                    pipelineRunning={pipelineRunning} pipelineError={pipelineError}
                    runLog={runLog} runHistory={runHistory}
                    onRestoreRun={restoreHistoryRun} onClearLog={() => setRunLog([])}
+                   runSpecs={runSpecs} setRunSpecs={setRunSpecs}
+                   runResults={runResults} runsBusy={runsBusy} onRunAll={runAllSpecs}
+                   ragasSaveSubdir={ragasSaveSubdir} setRagasSaveSubdir={setRagasSaveSubdir}
+                   ragasExportStatus={ragasExportStatus} setRagasExportStatus={setRagasExportStatus}
+                   datasetOptions={datasetOptions}
+                   queryModules={nodes.filter((n) => n.type === 'queryGroup').map((n) => ({ id: n.id, label: n.data?.label || n.id }))}
                    onStartResize={startBottomResize}/>
       {tweaksOpen && <TweaksPanel tweaks={tweaks} setTweak={setTweak} onClose={() => { setTweaksOpen(false); window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*'); }}/>}
     </div>
@@ -1490,7 +1765,7 @@ function TwToggle({ label, value, onChange }) {
 }
 
 // ─── Top Strip ──────────────────────────────────────────────────────────────
-function TopStrip({ theme, setTheme, prompt, setPrompt, runAll, pipelineRunning }) {
+function TopStrip({ theme, setTheme, prompt, setPrompt, runAll, pipelineRunning, onOpenReports }) {
   const themes = [
     { id: 'dark',      label: 'Dark Synth', bg: '#0e1322',  fg: '#b189ff' },
     { id: 'light',     label: 'Commodore',  bg: '#c8c0b4',  fg: '#4b559f' },
@@ -1520,6 +1795,11 @@ function TopStrip({ theme, setTheme, prompt, setPrompt, runAll, pipelineRunning 
           </div>
         ))}
       </div>
+      {onOpenReports && (
+        <button className="btn btn-ghost" title="Visualize RAGAS report.json files" onClick={onOpenReports}>
+          RAGAS Reports
+        </button>
+      )}
       <button className="btn btn-ghost btn-icon" title="Reset workspace"
               onClick={() => window.location.reload()}>{I.reset}</button>
       <button className="btn btn-primary" disabled={pipelineRunning} onClick={runAll}>
@@ -2400,47 +2680,74 @@ function copyText(text) {
 }
 
 /**
- * One JSONL record per (run, lane) — the offline RAGAS scorer
- * (`backend/eval/ragas_eval.py`) consumes this. Real run data only; runs
- * without results (failed) are skipped, not faked.
+ * Offline RAGAS input. Real run data only; failed/empty runs are skipped, not
+ * faked. Two entry shapes are emitted into one superset row so both the in-app
+ * scorer and the headless `frontend/scripts/ragas-export.ts` Python consumer
+ * read it:
+ *  - Run Builder runs → one row per Run (its config in `meta`).
+ *  - legacy canvas A/B runs → one row per lane.
  */
-function exportRagasJsonl(runs) {
+async function exportRagasJsonl(runs, saveSubdir, onStatus) {
   const rows = [];
+  const push = (o) => rows.push(JSON.stringify(o));
   for (const run of runs) {
+    if (run.kind === 'run') {
+      const r = run.runResult;
+      if (!r) continue;
+      const ctx = (r.retrievedChunks || []).map((c) => c.content).filter(Boolean);
+      push({
+        id: run.id, run_id: run.id, at: run.at,
+        question: run.prompt, user_input: run.prompt,
+        answer: r.response || '', response: r.response || '',
+        contexts: ctx, retrieved_contexts: ctx,
+        reference: null,
+        meta: {
+          label: r.label, route: r.route, database: r.database,
+          dataset_id: run.datasetId || null, spec: run.spec,
+          n_chunks: r.chunks, tokens: { in: r.tokensIn, out: r.tokensOut },
+          elapsed_ms: r.durationMs,
+        },
+      });
+      continue;
+    }
     if (!run.results) continue;
     for (const lane of ['A', 'B']) {
       const r = run.results[`lane_${lane}`];
       if (!r) continue;
-      rows.push(JSON.stringify({
-        run_id: run.id,
-        at: run.at,
-        lane,
+      const ctx = (r.retrievedChunks || []).map((c) => c.content).filter(Boolean);
+      push({
+        id: `${run.id}#${lane}`, run_id: run.id, at: run.at, lane,
         dataset: run.datasetId || null,
-        question: run.prompt,
-        answer: r.response || '',
-        contexts: (r.retrievedChunks || []).map((c) => c.content).filter(Boolean),
-      }));
+        question: run.prompt, user_input: run.prompt,
+        answer: r.response || '', response: r.response || '',
+        contexts: ctx, retrieved_contexts: ctx, reference: null,
+      });
     }
   }
   if (!rows.length) return;
-  const blob = new Blob([rows.join('\n') + '\n'], { type: 'application/x-ndjson' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `ragas_runs_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.jsonl`;
-  a.click();
-  URL.revokeObjectURL(url);
+  const filename = `ragas_runs_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.jsonl`;
+  const text = rows.join('\n') + '\n';
+  try {
+    onStatus?.('Saving…');
+    const path = await saveRagasArtifact(filename, text, saveSubdir);
+    onStatus?.(path ? `Saved ${path}` : `Downloaded ${filename}`);
+  } catch (e) {
+    onStatus?.(`Export failed: ${e?.message || e}`);
+  }
 }
 
 function BottomPanel({
   results, prompt, outputView, setOutputView, bottomTab, setBottomTab,
   pipelineRunning, pipelineError, runLog, runHistory, onRestoreRun, onClearLog, onStartResize,
+  runSpecs, setRunSpecs, runResults, runsBusy, onRunAll, datasetOptions, queryModules,
+  ragasSaveSubdir, setRagasSaveSubdir, ragasExportStatus, setRagasExportStatus,
 }) {
   const [errorsOpen, setErrorsOpen] = useState(false);
   const [copiedErrorId, setCopiedErrorId] = useState(null);
   const a = results.lane_A, b = results.lane_B;
   const tabs = [
     ['comparison', 'Comparison'],
+    ['runs', `Run Builder ${runSpecs?.length ? `· ${runSpecs.length}` : ''}`],
     ['logs', `Logs ${runLog.length}`],
     ['history', `History ${runHistory.length}`],
   ];
@@ -2531,7 +2838,7 @@ function BottomPanel({
             )}
           </div>
         )}
-        {bottomTab === 'comparison' && (
+        {(bottomTab === 'comparison' || bottomTab === 'runs') && (
           <div className="bottom-pane-mode">
             {[['llm','Answer'],['chunks','Chunks'],['table','Run data']].map(([k,l]) =>
               <button key={k} className={cls(outputView === k && 'active')} onClick={() => setOutputView(k)}>{l}</button>)}
@@ -2544,8 +2851,24 @@ function BottomPanel({
           <ResultPane label="Lane B — baseline (no tags)" tone="baseline" data={b} view={outputView}/>
         </div>
       )}
+      {bottomTab === 'runs' && (
+        <RunBuilderPanel
+          prompt={prompt}
+          runSpecs={runSpecs} setRunSpecs={setRunSpecs}
+          runResults={runResults} runsBusy={runsBusy} onRunAll={onRunAll}
+          datasetOptions={datasetOptions} queryModules={queryModules}
+          outputView={outputView}
+          ragasSaveSubdir={ragasSaveSubdir} setRagasSaveSubdir={setRagasSaveSubdir}
+          ragasExportStatus={ragasExportStatus} setRagasExportStatus={setRagasExportStatus}
+        />
+      )}
       {bottomTab === 'logs' && <LogPanel events={runLog} pipelineError={pipelineError} onClearLog={onClearLog}/>}
-      {bottomTab === 'history' && <HistoryPanel runs={runHistory} prompt={prompt} onRestoreRun={onRestoreRun}/>}
+      {bottomTab === 'history' && (
+        <HistoryPanel
+          runs={runHistory} prompt={prompt} onRestoreRun={onRestoreRun}
+          ragasSaveSubdir={ragasSaveSubdir} setRagasExportStatus={setRagasExportStatus}
+        />
+      )}
     </section>
   );
 }
@@ -2740,7 +3063,252 @@ function LogPanel({ events, pipelineError, onClearLog }) {
   );
 }
 
-function HistoryPanel({ runs, prompt, onRestoreRun }) {
+// ─── Run Builder ────────────────────────────────────────────────────────────
+function RunSpecField({ spec, field, route, datasetOptions, queryModules, onChange }) {
+  const value = specGet(spec, field.path);
+  const active = leverActive(field, route);
+  const set = (v) => onChange(specSet(spec, field.path, v));
+  const baseStyle = { opacity: active ? 1 : 0.4 };
+  const ctl = (el) => (
+    <label className="run-field" style={baseStyle} title={active ? '' : `Inert for the "${route}" route — that node is bypassed.`}>
+      <span className="run-field-label">{field.label}</span>
+      {el}
+    </label>
+  );
+  if (field.kind === 'select') {
+    // The `models` option is rendered as <optgroup>s by provider so the user
+    // can see at a glance which provider (and therefore which env key) each
+    // model needs. Other selects are flat lists.
+    if (field.options === 'models') {
+      const byProvider = new Map();
+      for (const m of MODELS) {
+        if (!byProvider.has(m.provider)) byProvider.set(m.provider, []);
+        byProvider.get(m.provider).push(m);
+      }
+      return ctl(
+        <select value={value ?? ''} disabled={!active} onChange={(e) => set(e.target.value)}>
+          {[...byProvider.entries()].map(([prov, list]) => (
+            <optgroup key={prov} label={PROVIDERS[prov].label}>
+              {list.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
+            </optgroup>
+          ))}
+        </select>,
+      );
+    }
+    const opts = field.options === 'routes' ? RUN_ROUTES.map((r) => [r.id, r.label])
+      : field.options === 'answerModes' ? RUN_ANSWER_MODES.map((m) => [m.id, m.label])
+        : field.options === 'databases' ? RUN_DATABASES.map((d) => [d, d])
+          : [];
+    return ctl(
+      <select value={value ?? ''} disabled={!active} onChange={(e) => set(e.target.value)}>
+        {opts.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+      </select>,
+    );
+  }
+  if (field.kind === 'dataset') {
+    return ctl(
+      <select value={value ?? ''} disabled={!active} onChange={(e) => set(e.target.value || null)}>
+        <option value="">all datasets</option>
+        {datasetOptions.map((d) => <option key={d.id} value={d.id}>{d.id}</option>)}
+      </select>,
+    );
+  }
+  if (field.kind === 'module') {
+    return ctl(
+      <select value={value ?? ''} disabled={!active} onChange={(e) => set(e.target.value || null)}>
+        <option value="">— none —</option>
+        {queryModules.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
+      </select>,
+    );
+  }
+  if (field.kind === 'facets') {
+    return (
+      <div className="run-field" style={baseStyle}>
+        <span className="run-field-label">{field.label}</span>
+        <div className="run-facets">
+          {FACETS.map((f) => {
+            const on = Array.isArray(value) && value.includes(f.id);
+            return (
+              <button
+                key={f.id} type="button" disabled={!active}
+                className={cls('tag-pill', on && 'active')}
+                onClick={() => set(on ? value.filter((x) => x !== f.id) : [...(value || []), f.id])}
+              >{f.id}</button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+  // int / float / text
+  const isNum = field.kind === 'int' || field.kind === 'float';
+  return ctl(
+    <input
+      type={isNum ? 'number' : 'text'}
+      value={value ?? ''}
+      disabled={!active}
+      min={field.min}
+      step={field.step ?? (field.kind === 'int' ? 1 : undefined)}
+      onChange={(e) => {
+        if (!isNum) return set(e.target.value);
+        const n = field.kind === 'int' ? parseInt(e.target.value, 10) : parseFloat(e.target.value);
+        set(Number.isFinite(n) ? n : 0);
+      }}
+    />,
+  );
+}
+
+function RunSpecCard({
+  spec, index, datasetOptions, queryModules, onChange, onDuplicate, onRemove, removable,
+  ragasSaveSubdir, setRagasExportStatus,
+}) {
+  const moduleRoute = spec.route === 'module';
+  return (
+    <div className="run-card">
+      <div className="run-card-head">
+        <input
+          className="run-card-title"
+          value={spec.label}
+          onChange={(e) => onChange(specSet(spec, 'label', e.target.value))}
+        />
+        <span className="run-card-route">{spec.route} · {spec.database}</span>
+        <div className="result-actions">
+          <button
+            type="button"
+            className="result-action"
+            onClick={() => exportRagasConfig(spec, ragasSaveSubdir, setRagasExportStatus)}
+            disabled={moduleRoute}
+            title={moduleRoute
+              ? 'Module route is not supported by the headless RAGAS exporter'
+              : `Save RunSpec JSON under ${RAGAS_EXPORTS_DIR}/ for ragas:export --config`}
+          >
+            Export RAGAS run
+          </button>
+          <button type="button" className="result-action" onClick={onDuplicate}>Duplicate</button>
+          <button type="button" className="result-action" disabled={!removable} onClick={onRemove}>Remove</button>
+        </div>
+      </div>
+      {RUN_LEVERS.map((group) => {
+        const gActive = groupActive(group, spec.route);
+        return (
+          <div key={group.node} className="run-group" style={{ opacity: gActive ? 1 : 0.45 }}>
+            <div className="run-group-node" title={`Levers owned by the "${group.node}" node`}>{group.label}</div>
+            <div className="run-group-fields">
+              {group.fields.map((f) => (
+                <RunSpecField
+                  key={f.path} spec={spec} field={f} route={spec.route}
+                  datasetOptions={datasetOptions} queryModules={queryModules}
+                  onChange={onChange}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function CompareRunsView({ runResults, view }) {
+  if (!runResults.length) {
+    return <div className="bottom-pane-empty">No runs executed yet. Configure runs above and press “Run all”.</div>;
+  }
+  const ok = runResults.filter((r) => !r.error && r.retrievedChunks);
+  const overlap = ok.length > 1 ? compareRuns(ok) : null;
+  return (
+    <div>
+      {overlap && overlap.pairs.length > 0 && (
+        <div className="run-overlap">
+          <strong>Chunk overlap</strong>
+          {overlap.pairs.map((p) => (
+            <span key={`${p.a}|${p.b}`} className="tag-pill" title="shared retrieved chunks · Jaccard">
+              {p.a} ∩ {p.b}: {p.count} · J={p.jaccard.toFixed(2)}
+            </span>
+          ))}
+        </div>
+      )}
+      <div className="bottom-body run-compare">
+        {runResults.map((r) => (
+          r.error
+            ? (
+              <div key={r.specId} className="bottom-pane">
+                <div className="bottom-pane-head"><span className="lane-tag">{r.label}</span></div>
+                <div style={{ fontSize: 11, color: 'var(--err)', fontFamily: 'var(--font-mono)', padding: 8 }}>
+                  Run failed ({r.route} · {r.database}): {r.error}
+                </div>
+              </div>
+            )
+            : <ResultPane key={r.specId} label={`${r.label} — ${r.route} · ${r.database}`} tone="full" data={r} view={view}/>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function RagasSaveToField({ subdir, setSubdir, status }) {
+  return (
+    <label className="run-export-dir" title={`Files are written under ${RAGAS_EXPORTS_DIR}/ at the repo root (dev server only)`}>
+      <span className="run-export-dir-label">Save to</span>
+      <span className="run-export-dir-prefix mono">{RAGAS_EXPORTS_DIR}/</span>
+      <input
+        className="run-export-dir-input mono"
+        value={subdir}
+        onChange={(e) => setSubdir(e.target.value.replace(/\\/g, '/').replace(/^\/+/, ''))}
+        placeholder="(optional subfolder)"
+      />
+      {status && <span className="run-export-dir-status mono">{status}</span>}
+    </label>
+  );
+}
+
+function RunBuilderPanel({
+  prompt, runSpecs, setRunSpecs, runResults, runsBusy, onRunAll,
+  datasetOptions, queryModules, outputView,
+  ragasSaveSubdir, setRagasSaveSubdir, ragasExportStatus, setRagasExportStatus,
+}) {
+  const update = (id, nextSpec) => setRunSpecs((s) => s.map((x) => (x.id === id ? nextSpec : x)));
+  const duplicate = (spec) => setRunSpecs((s) => {
+    const i = s.findIndex((x) => x.id === spec.id);
+    const copy = { ...JSON.parse(JSON.stringify(spec)), id: uid('spec'), label: `${spec.label} (copy)` };
+    return [...s.slice(0, i + 1), copy, ...s.slice(i + 1)];
+  });
+  const remove = (id) => setRunSpecs((s) => (s.length > 1 ? s.filter((x) => x.id !== id) : s));
+  const add = () => setRunSpecs((s) => [...s, makeDefaultRunSpec({ model: s[0]?.answer.model || 'claude-haiku-4-5' }, `run ${s.length + 1}`, 'tags')]);
+
+  return (
+    <div className="bottom-console run-builder">
+      <div className="console-toolbar">
+        <button type="button" className="result-action" disabled={runsBusy} onClick={onRunAll}>
+          {runsBusy ? 'Running…' : `Run all (${runSpecs.length})`}
+        </button>
+        <button type="button" className="result-action" disabled={runsBusy} onClick={add}>Add run</button>
+        <RagasSaveToField
+          subdir={ragasSaveSubdir}
+          setSubdir={setRagasSaveSubdir}
+          status={ragasExportStatus}
+        />
+        <span className="console-muted">same prompt across all runs: “{prompt}”</span>
+      </div>
+      <div className="run-cards">
+        {runSpecs.map((spec, i) => (
+          <RunSpecCard
+            key={spec.id} spec={spec} index={i}
+            datasetOptions={datasetOptions} queryModules={queryModules}
+            removable={runSpecs.length > 1}
+            ragasSaveSubdir={ragasSaveSubdir}
+            setRagasExportStatus={setRagasExportStatus}
+            onChange={(next) => update(spec.id, next)}
+            onDuplicate={() => duplicate(spec)}
+            onRemove={() => remove(spec.id)}
+          />
+        ))}
+      </div>
+      <CompareRunsView runResults={runResults} view={outputView} />
+    </div>
+  );
+}
+
+function HistoryPanel({ runs, prompt, onRestoreRun, ragasSaveSubdir, setRagasExportStatus }) {
   return (
     <div className="bottom-console">
       <div className="console-toolbar">
@@ -2749,9 +3317,9 @@ function HistoryPanel({ runs, prompt, onRestoreRun }) {
         <button
           type="button"
           className="result-action"
-          disabled={!runs.some((r) => r.results)}
-          onClick={() => exportRagasJsonl(runs)}
-          title="Download successful runs as RAGAS-ready JSONL (question, answer, contexts) per lane"
+          disabled={!runs.some((r) => r.results || (r.kind === 'run' && r.runResult))}
+          onClick={() => exportRagasJsonl(runs, ragasSaveSubdir, setRagasExportStatus)}
+          title={`Save successful runs as JSONL under ${RAGAS_EXPORTS_DIR}/`}
         >
           Export RAGAS
         </button>
@@ -2763,13 +3331,15 @@ function HistoryPanel({ runs, prompt, onRestoreRun }) {
             type="button"
             className={cls('history-row', run.status)}
             onClick={() => onRestoreRun(run)}
-            disabled={!run.results}
+            disabled={!run.results && run.kind !== 'run'}
           >
             <span className="history-status">{run.status}</span>
             <span className="history-main">
               <span className="history-prompt">{run.prompt}</span>
               <span className="history-meta">
-                {run.datasetId || 'all'} · {run.durationMs}ms · A {run.chunksA} chunks · B {run.chunksB} chunks
+                {run.kind === 'run'
+                  ? `run "${run.spec?.label}" · ${run.spec?.route} · ${run.spec?.database} · ${run.durationMs}ms · ${run.chunksA} chunks`
+                  : `${run.datasetId || 'all'} · ${run.durationMs}ms · A ${run.chunksA} chunks · B ${run.chunksB} chunks`}
                 {run.error && ` · ${run.error}`}
               </span>
             </span>
@@ -2784,9 +3354,13 @@ function HistoryPanel({ runs, prompt, onRestoreRun }) {
 }
 
 export default function App() {
+  const [view, setView] = useState('workbench'); // 'workbench' | 'ragas'
+  if (view === 'ragas') {
+    return <RagasReportPage onBack={() => setView('workbench')} />;
+  }
   return (
     <ReactFlowProvider>
-      <WorkbenchApp />
+      <WorkbenchApp onOpenReports={() => setView('ragas')} />
     </ReactFlowProvider>
   );
 }

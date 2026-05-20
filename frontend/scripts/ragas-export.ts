@@ -112,34 +112,110 @@ const questionsPath = questionsArg
 const outArg = arg('--out');
 const outPath = outArg
   ? resolve(REPO_ROOT, outArg)
-  : join(REPO_ROOT, 'backend', 'evaluation', 'ragas_samples.jsonl');
+  : join(REPO_ROOT, 'ragas_exports', 'ragas_samples.jsonl');
 const maxQuestions = Number(arg('--max', '0')) || 0; // 0 = all
 const dryRun = hasFlag('--dry-run'); // interpret+retrieve only, skip the answer LLM
 const fresh = hasFlag('--fresh');    // truncate the out file; default resumes
 
-const model = arg('--model', cfg('MODEL', 'claude-haiku-4-5'))!;
-const interpreterModel = arg('--interpreter-model', cfg('INTERPRETER_MODEL', '')) || model;
-const promptMode = (arg('--prompt-mode', cfg('PROMPT_MODE', 'context')) as AnswerMode);
-const datasetId = arg('--dataset', cfg('DATASET_ID', 'Salesforce__HERB')) || null;
-const retrievalLimit = Number(arg('--limit', cfg('RETRIEVAL_LIMIT', '20'))) || 20;
-const groundingK = Number(cfg('GROUNDING_K', '10')) || 10;
-const minSim = Number(cfg('MIN_SIM', '0')) || 0;
+// Optional RunSpec-derived config from the workbench's "Export RAGAS run"
+// button (see specToRagasConfig in frontend/src/App.jsx). CLI flags still win;
+// this object only provides defaults.
+interface RunCfg {
+  $schema?: string; label?: string; route_origin?: string;
+  mode?: 'graph' | 'baseline' | 'sql_agent';
+  database?: string;
+  model?: string; interpreter_model?: string;
+  prompt_mode?: string;
+  dataset_id?: string | null;
+  temperature?: number;
+  limit?: number;
+  grounding_k?: number;
+  min_sim?: number;
+  min_w_chunk?: number;
+  min_relevance_to_file?: number;
+  active_facets?: string[];
+  exclude_sections?: string[];
+  max_tool_calls?: number;
+  max_rows_per_query?: number;
+  max_cell_chars?: number;
+}
+const configArg = arg('--config');
+let runCfg: RunCfg = {};
+if (configArg) {
+  const p = resolveExisting(configArg, [process.cwd(), REPO_ROOT, FRONTEND_ROOT, SCRIPT_DIR]);
+  if (!existsSync(p)) throw new Error(`--config file not found: ${p}`);
+  let parsed: unknown;
+  try { parsed = JSON.parse(readFileSync(p, 'utf-8')); }
+  catch (e) { throw new Error(`--config file is not valid JSON (${p}): ${(e as Error).message}`); }
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    throw new Error(`--config file does not contain a JSON object: ${p}`);
+  }
+  runCfg = parsed as RunCfg;
+  if (runCfg.mode !== 'graph' && runCfg.mode !== 'baseline' && runCfg.mode !== 'sql_agent') {
+    throw new Error(
+      `--config "${p}" has invalid mode=${JSON.stringify(runCfg.mode)}. ` +
+      `Supported: 'graph', 'baseline', 'sql_agent' (RunSpec route='module' has no batch path).`,
+    );
+  }
+  console.log(`Loaded RunSpec config: "${runCfg.label ?? '(no label)'}" from ${p}`);
+}
+
+// Precedence per setting: explicit CLI flag > config file > env/.env > hard default.
+function pickStr(flag: string | null, cfgVal: string | null | undefined, envName: string | null, dflt: string): string {
+  if (flag) { const cli = arg(flag); if (cli !== undefined) return cli; }
+  if (cfgVal != null && cfgVal !== '') return String(cfgVal);
+  if (envName) return cfg(envName, dflt);
+  return dflt;
+}
+function pickNum(flag: string | null, cfgVal: number | undefined, envName: string | null, dflt: number): number {
+  if (flag) { const cli = arg(flag); if (cli !== undefined) { const n = Number(cli); return Number.isFinite(n) ? n : dflt; } }
+  if (cfgVal != null && Number.isFinite(cfgVal)) return cfgVal;
+  if (envName) { const n = Number(cfg(envName, String(dflt))); return Number.isFinite(n) ? n : dflt; }
+  return dflt;
+}
+
+const model = pickStr('--model', runCfg.model, 'MODEL', 'claude-haiku-4-5');
+const interpreterModelRaw = pickStr('--interpreter-model', runCfg.interpreter_model, 'INTERPRETER_MODEL', '');
+const interpreterModel = interpreterModelRaw || model;
+const promptMode = pickStr('--prompt-mode', runCfg.prompt_mode, 'PROMPT_MODE', 'context') as AnswerMode;
+const datasetIdRaw = pickStr('--dataset', runCfg.dataset_id ?? '', 'DATASET_ID', 'Salesforce__HERB');
+const datasetId = datasetIdRaw || null;
+const retrievalLimit = pickNum('--limit', runCfg.limit, 'RETRIEVAL_LIMIT', 0);
+const groundingK = pickNum(null, runCfg.grounding_k, 'GROUNDING_K', 0);
+const minSim = pickNum(null, runCfg.min_sim, 'MIN_SIM', 0.78);
+const minWChunk = pickNum(null, runCfg.min_w_chunk, null, 0);
+const minRelevanceToFile = pickNum(null, runCfg.min_relevance_to_file, null, 0);
+const sqlMaxToolCalls = pickNum('--max-tool-calls', runCfg.max_tool_calls, 'SQL_MAX_TOOL_CALLS', 0);
+const sqlMaxRowsPerQuery = pickNum('--max-rows-per-query', runCfg.max_rows_per_query, 'SQL_MAX_ROWS_PER_QUERY', 0);
+const sqlMaxCellChars = pickNum('--max-cell-chars', runCfg.max_cell_chars, 'SQL_MAX_CELL_CHARS', 0);
 // Eval-only: drop these chunk sections from retrieval. For the reference run
 // pass `--exclude-sections answerable_questions,unanswerable_questions` so the
 // pipeline cannot retrieve the gold-answer record into its own evaluation.
 const DEFAULT_EXCLUDED_SECTIONS = 'answerable_questions,unanswerable_questions,product_profile';
-const excludeSections = (arg('--exclude-sections', cfg('EXCLUDE_SECTIONS', DEFAULT_EXCLUDED_SECTIONS)) || '')
-  .split(',')
-  .map((s) => s.trim())
-  .filter(Boolean);
+const excludeSectionsRaw =
+  arg('--exclude-sections') ??
+  (Array.isArray(runCfg.exclude_sections) ? runCfg.exclude_sections.join(',') : undefined) ??
+  cfg('EXCLUDE_SECTIONS', DEFAULT_EXCLUDED_SECTIONS);
+const excludeSections = excludeSectionsRaw.split(',').map((s) => s.trim()).filter(Boolean);
+// activeFacets has no CLI flag; the config file overrides the pipeline default
+// (ALL_FACETS) when provided.
+const activeFacetsCfg = Array.isArray(runCfg.active_facets) && runCfg.active_facets.length
+  ? runCfg.active_facets
+  : undefined;
+// Database normally comes from env (NEO4J_DATABASE) — the config file can
+// override that default.
+const databaseOverride = runCfg.database || null;
 
 // RQ2 control arm. graph = full transformation-layer pipeline (interpret ->
 // ground -> retrieve). baseline = conventional keyword retrieval over raw
 // c.content only, no interpret/grounding/enrichment. Same questions, prompt,
 // model, answer step, section-exclusion — only the retrieved context differs.
-const mode = (arg('--mode', 'graph') === 'baseline' ? 'baseline' : 'graph') as 'graph' | 'baseline';
+const modeRaw = arg('--mode') ?? runCfg.mode ?? 'graph';
+const mode = (modeRaw === 'baseline' ? 'baseline'
+            : modeRaw === 'sql_agent' ? 'sql_agent'
+            : 'graph') as 'graph' | 'baseline' | 'sql_agent';
 // Thesis 5.7: temperature 0 + repeated runs (median/IQR computed at analysis).
-const temperature = Number(arg('--temperature', '0'));
+const temperature = pickNum('--temperature', runCfg.temperature, null, 0);
 const repeats = Math.max(1, Number(arg('--repeats', '1')) || 1);
 
 // Mirrors interpreter.ts DEFAULT_ANSWER_JOB so the baseline answer prompt is
@@ -164,11 +240,19 @@ const neo4jCfg: Neo4jConfig = {
   uri: cfg('NEO4J_URI', 'bolt://localhost:7687'),
   user: cfg('NEO4J_USER', 'neo4j'),
   password: cfg('NEO4J_PASSWORD', ''),
-  // Thesis eval should use the physically pruned graph; allow override.
-  database: cfg('NEO4J_DATABASE', 'herb-eval'),
+  // Thesis eval should use the physically pruned graph; allow override via
+  // env or the loaded RunSpec config file.
+  database: databaseOverride || cfg('NEO4J_DATABASE', 'herb-eval'),
 };
-const openaiKey = cfg('OPENAI_API_KEY', '');
-const anthropicKey = cfg('ANTHROPIC_API_KEY', '');
+// All provider keys; llm.chat() picks the right one based on the model id.
+// Adding a provider here = one extra cfg() line + an entry in MODELS.
+const keys = {
+  anthropic: cfg('ANTHROPIC_API_KEY', ''),
+  openai:    cfg('OPENAI_API_KEY', ''),
+  deepseek:  cfg('DEEPSEEK_API_KEY', ''),
+  ollama:    cfg('OLLAMA_API_KEY', ''),
+  groq:      cfg('GROQ_API_KEY', ''),
+};
 
 // --- e5 grounding model: load from disk, not the browser web root ----------
 
@@ -252,14 +336,127 @@ function loadQuestions(path: string): QItem[] {
 
 // --- main ------------------------------------------------------------------
 
+/** Baseline export only: HERB chunk text can break OpenAI-compatible JSON bodies. */
+function scrubBaselineApiText(text: string): string {
+  let out = '';
+  for (let i = 0; i < text.length; i++) {
+    const cp = text.charCodeAt(i);
+    if (cp >= 0xd800 && cp <= 0xdbff) {
+      const next = text.charCodeAt(i + 1);
+      if (next >= 0xdc00 && next <= 0xdfff) { out += text[i] + text[i + 1]; i++; continue; }
+      continue;
+    }
+    if (cp >= 0xdc00 && cp <= 0xdfff) continue;
+    if (cp === 0 || (cp < 0x20 && cp !== 0x09 && cp !== 0x0a && cp !== 0x0d)) continue;
+    out += text[i];
+  }
+  return out.replace(/\\+$/g, '');
+}
+
+function scrubBaselineChunks(chunks: RetrievedChunk[]): RetrievedChunk[] {
+  return chunks.map((c) => ({
+    ...c,
+    content: scrubBaselineApiText(c.content),
+    ...(c.description != null ? { description: scrubBaselineApiText(c.description) } : {}),
+  }));
+}
+
+/**
+ * SQL-agent dispatch: hand off to `python -m backend.baselines.sql_agent`.
+ *
+ * The Python script owns the SQLite store, the tool-use loop, and JSONL
+ * emission. We just resolve which provider + base URL + key env var the
+ * chosen `model` needs (via the same registry the UI uses) and pass them
+ * through, so the model selection in the Run Builder card transfers cleanly
+ * to the headless run.
+ */
+async function runSqlAgent(): Promise<void> {
+  const { spawnSync } = await import('node:child_process');
+  const { providerOf, PROVIDERS } = await import('../src/data/models.js');
+
+  let provider;
+  try { provider = providerOf(model); }
+  catch (e) { throw new Error(`SQL agent: ${(e as Error).message}`); }
+  if (provider === 'anthropic') {
+    throw new Error(
+      `SQL agent does not support Anthropic models yet (Anthropic tool-use has a ` +
+      `different API shape). Pick a DeepSeek / OpenAI / Ollama Cloud / Groq model.`,
+    );
+  }
+  const baseURL = PROVIDERS[provider].baseURL;
+  if (!baseURL) throw new Error(`SQL agent: provider ${provider} has no baseURL configured.`);
+  const apiKey = keys[provider as keyof typeof keys];
+  if (!apiKey) {
+    throw new Error(`SQL agent: ${PROVIDERS[provider].label} key not set (${PROVIDERS[provider].envKeyVar.replace('VITE_', '')}).`);
+  }
+
+  mkdirSync(dirname(outPath), { recursive: true });
+  const apiKeyEnv = 'SQL_AGENT_API_KEY'; // single env var name regardless of provider
+  const args = [
+    '-m', 'backend.baselines.sql_agent',
+    '--gold-set', questionsPath,
+    '--out', outPath,
+    '--model', model,
+    '--base-url', baseURL,
+    '--api-key-env', apiKeyEnv,
+  ];
+  if (maxQuestions > 0) args.push('--limit', String(maxQuestions));
+  args.push('--temperature', String(temperature));
+  args.push('--max-tool-calls', String(sqlMaxToolCalls));
+  args.push('--max-rows-per-query', String(sqlMaxRowsPerQuery));
+  args.push('--max-cell-chars', String(sqlMaxCellChars));
+
+  console.log(
+    `RAGAS export (SQL agent)\n` +
+    `  questions : ${questionsPath}\n` +
+    `  out       : ${outPath}\n` +
+    `  model     : ${model}  (provider=${provider}, base=${baseURL})\n` +
+    `  caps      : tool_calls=${sqlMaxToolCalls} rows/query=${sqlMaxRowsPerQuery} cell_chars=${sqlMaxCellChars}\n` +
+    `  cmd       : python ${args.join(' ')}\n`,
+  );
+
+  const res = spawnSync('python', args, {
+    cwd: REPO_ROOT,
+    env: { ...process.env, [apiKeyEnv]: apiKey },
+    stdio: 'inherit',
+  });
+  if (res.error) throw res.error;
+  if (res.status !== 0) {
+    throw new Error(`SQL agent script exited with status ${res.status}.`);
+  }
+}
+
 async function main(): Promise<void> {
-  if (!anthropicKey && model.startsWith('claude')) {
-    throw new Error('ANTHROPIC_API_KEY (or VITE_ANTHROPIC_API_KEY) is not set.');
+  // SQL-agent mode is dispatched to the Python backend script — it doesn't
+  // use Neo4j, transformers, or any of the TS pipeline. Short-circuit before
+  // those prechecks/preflights run.
+  if (mode === 'sql_agent') {
+    return runSqlAgent();
+  }
+  // Key precheck via the same registry the UI uses, so unknown models / missing
+  // keys fail before any network calls. Loud on unknown model id.
+  {
+    const { providerOf, PROVIDERS } = await import('../src/data/models.js');
+    const usedModels = [interpreterModel, model];
+    const missing: string[] = [];
+    const seen = new Set<string>();
+    for (const m of usedModels) {
+      let prov;
+      try { prov = providerOf(m); } catch (e) { missing.push((e as Error).message); continue; }
+      if (seen.has(prov)) continue;
+      seen.add(prov);
+      if (!keys[prov as keyof typeof keys]) {
+        missing.push(`${PROVIDERS[prov].label} (${PROVIDERS[prov].envKeyVar.replace('VITE_', '')})`);
+      }
+    }
+    if (missing.length) throw new Error(`API key/model error: ${missing.join('; ')}.`);
   }
   if (!neo4jCfg.password) {
     throw new Error('NEO4J_PASSWORD (or VITE_NEO4J_PASSWORD) is not set.');
   }
   if (mode === 'graph') preflightModel();
+
+  mkdirSync(join(REPO_ROOT, 'ragas_exports'), { recursive: true });
 
   const questions = loadQuestions(questionsPath);
   const slice = maxQuestions > 0 ? questions.slice(0, maxQuestions) : questions;
@@ -276,8 +473,11 @@ async function main(): Promise<void> {
       `  model     : answer=${model} interpret=${mode === 'baseline' ? '(skipped)' : interpreterModel} promptMode=${promptMode}\n` +
       `  retrieval : ${mode === 'baseline'
         ? 'content-only full-text (no tags/grounding/gate)'
-        : `limit=${retrievalLimit} groundingK=${groundingK} minSim=${minSim}`}\n` +
+        : `limit=${retrievalLimit} groundingK=${groundingK} minSim=${minSim}` +
+          ` minWChunk=${minWChunk} minRelToFile=${minRelevanceToFile}` +
+          ` facets=${activeFacetsCfg ? activeFacetsCfg.join(',') : '(default ALL)'}`}\n` +
       `  exclude   : ${excludeSections.length ? excludeSections.join(',') : '(none)'}` +
+      `${configArg ? `\n  config    : ${runCfg.label ?? '(no label)'} (${configArg})` : ''}` +
       `${dryRun ? '\n  DRY RUN — answer LLM skipped' : ''}\n`,
   );
 
@@ -345,17 +545,26 @@ async function main(): Promise<void> {
           meta.warnings = [];
         } else {
           const plan = await interpretPrompt(
-            question, interpreterModel, openaiKey, anthropicKey, datasetId, temperature,
+            question, interpreterModel, keys, datasetId, temperature,
           );
           planForAnswer = {
             ...plan,
-            filters: { ...plan.filters, dataset_id: datasetId, limit: retrievalLimit },
+            filters: {
+              ...plan.filters,
+              dataset_id: datasetId,
+              limit: retrievalLimit,
+              min_w_chunk: minWChunk,
+              min_relevance_to_file: minRelevanceToFile,
+            },
           };
           const input = buildRetrievalInput(planForAnswer, {
             limit: retrievalLimit,
             datasetId,
             groundingK,
             minSim,
+            minWChunk,
+            minRelevanceToFile,
+            ...(activeFacetsCfg ? { activeFacets: activeFacetsCfg as never } : {}),
             tagsEnabled: true,
             excludedSections: excludeSections,
           });
@@ -379,8 +588,9 @@ async function main(): Promise<void> {
         meta.file_ids = [...new Set(chunks.map((c) => c.fileId))];
 
         if (!dryRun) {
+          const answerChunks = mode === 'baseline' ? scrubBaselineChunks(chunks) : chunks;
           const ans = await generateAnswer(
-            question, planForAnswer, chunks, model, openaiKey, anthropicKey, promptMode, temperature,
+            question, planForAnswer, answerChunks, model, keys, promptMode, temperature,
           );
           response = ans.response;
           meta.tokens = { answer_in: ans.tokensIn, answer_out: ans.tokensOut };

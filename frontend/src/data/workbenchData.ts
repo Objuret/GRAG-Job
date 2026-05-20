@@ -80,6 +80,64 @@ export const FACETS = [
   { id: 'evidence',  label: 'Evidence', hint: 'What kind of answer material is supplied?' },
 ];
 
+// ─── Run Builder: every lever, mapped to the node that owns it ──────────────
+// A Run is a config snapshot of the Usage graph. The UI renders one section
+// per node so each lever is shown under the node it belongs to (this is the
+// "understand what a node stands for" requirement made literal in the form).
+
+export const RUN_ROUTES = [
+  { id: 'tags',      label: 'Tags — graph retrieval (the artefact)',     node: 'retrieve_tags' },
+  { id: 'baseline',  label: 'Baseline — relevance-ordered, gated',        node: 'retrieve_baseline' },
+  { id: 'content',   label: 'Content — Lucene full-text on raw chunks',   node: 'retrieve_baseline' },
+  { id: 'module',    label: 'Query module — composed Cypher',             node: 'querymodule' },
+  { id: 'sql_agent', label: 'SQL agent — LLM with SQL tool over HERB DB', node: 'sql_agent' },
+] as const;
+
+export const RUN_ANSWER_MODES = [
+  { id: 'context', label: 'context (structured, default)' },
+  { id: 'raw',     label: 'raw (prompt only)' },
+  { id: 'hybrid',  label: 'hybrid' },
+] as const;
+
+export const RUN_DATABASES = ['herb-eval', 'herb'] as const;
+
+/** Form schema: groups are nodes; each field carries the RunSpec path it
+ *  binds and is greyed when the chosen route makes it inert. */
+export const RUN_LEVERS = [
+  { node: 'prompt', label: 'Prompt', fields: [
+    { path: 'answer.mode', label: 'Answer mode', kind: 'select', options: 'answerModes' },
+  ] },
+  { node: 'interpret', label: 'Interpret', skipOnRoute: ['content', 'sql_agent'], fields: [
+    { path: 'interpret.model', label: 'Model', kind: 'select', options: 'models' },
+    { path: 'interpret.datasetId', label: 'Dataset', kind: 'dataset' },
+  ] },
+  { node: 'build_input', label: 'Build input', skipOnRoute: ['content', 'sql_agent'], fields: [
+    { path: 'buildInput.maxChunks', label: 'Max chunks (0 = no limit)', kind: 'int', min: 0 },
+    { path: 'buildInput.weightThreshold', label: 'Weight threshold (min_w_chunk)', kind: 'float', min: 0, step: 0.05 },
+    { path: 'buildInput.minRelevanceToFile', label: 'Min relevance-to-file', kind: 'float', min: 0, step: 0.05 },
+    { path: 'buildInput.groundingK', label: 'Grounding k (0 = no limit)', kind: 'int', min: 0, onlyRoute: ['tags', 'module'] },
+    { path: 'buildInput.minSim', label: 'Min sim', kind: 'float', min: 0, step: 0.01, onlyRoute: ['tags', 'module'] },
+    { path: 'buildInput.activeFacets', label: 'Active facets', kind: 'facets', onlyRoute: ['tags', 'module'] },
+    { path: 'buildInput.runId', label: 'Run id', kind: 'text' },
+  ] },
+  { node: 'route', label: 'Route', fields: [
+    { path: 'route', label: 'Retrieval route', kind: 'select', options: 'routes' },
+    { path: 'moduleId', label: 'Query module', kind: 'module', onlyRoute: ['module'] },
+  ] },
+  { node: 'answer', label: 'Answer', fields: [
+    { path: 'answer.model', label: 'Model', kind: 'select', options: 'models' },
+    { path: 'temperature', label: 'Temperature (interpret + answer)', kind: 'float', min: 0, step: 0.1 },
+  ] },
+  { node: 'neo4j', label: 'Database', fields: [
+    { path: 'database', label: 'Neo4j database', kind: 'select', options: 'databases' },
+  ] },
+  { node: 'sql_agent', label: 'SQL agent', onlyOnRoute: ['sql_agent'], fields: [
+    { path: 'sqlAgent.maxToolCalls', label: 'Max SQL calls (0 = no limit)', kind: 'int', min: 0 },
+    { path: 'sqlAgent.maxRowsPerQuery', label: 'Max rows per query (0 = no limit)', kind: 'int', min: 0 },
+    { path: 'sqlAgent.maxCellChars', label: 'Max chars per cell (0 = no limit)', kind: 'int', min: 0 },
+  ] },
+] as const;
+
 export const DATASETS = [
   { id: 'Salesforce__HERB', files: 33, chunks: 4869, tags: 24781 },
   { id: 'fever__feverous', files: 0, chunks: 0, tags: 0 },

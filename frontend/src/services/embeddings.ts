@@ -54,6 +54,9 @@ async function clearStaleModelJsonCache(): Promise<void> {
 }
 
 async function verifyLocalModelAssets(): Promise<void> {
+  // Headless harness (ragas-export.ts) repoints env.localModelPath at the on-disk
+  // public/models tree; browser fetch preflight cannot run there.
+  if (typeof window === 'undefined') return;
   if (typeof fetch !== 'function') return;
   if (!localModelCheck) {
     localModelCheck = (async () => {

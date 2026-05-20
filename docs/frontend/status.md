@@ -21,6 +21,7 @@
 
 - [x] Two-lane canvas: Pipeline (offline illustration) + Usage (executable fork/join DAG)
 - [x] Catalog, inspector forms per node kind, edge drawer, bottom comparison/log/history console
+- [x] **Run Builder** tab: N first-class `RunSpec`s (every node lever + per-run database + route `tags`/`baseline`/`content`/`module`/`sql_agent`), **Run all** on one shared prompt, side-by-side answers/metrics + pairwise chunk overlap, per-run History + RAGAS export. Graph routes run in-browser; `sql_agent` is export-only (headless). Ceiling defaults: `maxChunks=0`, `groundingK=0`, SQL caps `0/0/0`. `pipeline.ts:runRunSpec`/`compareRuns`; the A/B `runUsageGraph` path is unchanged.
 - [x] Query modules with chained `topic`, `entities`, `activity`, `temporal`, `evidence` fragments
 - [x] Undo/redo and clipboard support for canvas editing
 
@@ -65,7 +66,7 @@ chunks is a loud error with valid values, never a silent scan-everything skip.
 
 ## Evaluation - built
 
-- [x] UI smoke export: History **Export RAGAS** emits real `(question, answer, contexts)` JSONL from the browser run history for quick lane inspection.
+- [x] UI export: History **Export RAGAS** emits real JSONL from browser run history — one row per Run Builder run (config in `meta`) and one row per legacy canvas A/B lane, in a superset shape (`question`/`user_input`, `answer`/`response`, `contexts`/`retrieved_contexts`) the headless Python scorer also reads.
 - [x] Headless thesis harness: `npm --workspace frontend run ragas:export` runs questions through the current service stack and writes RAGAS-compatible JSONL.
 - [x] Ground-truth scoring runner: `backend/evaluation/ragas_eval.py` scores exported JSONL with RAGAS faithfulness, answer relevancy, context recall, and context precision when references are present.
 - [x] Gold-set builder: `backend/evaluation/build_gold_set.py` converts HERB QA/oracle records into JSONL question sets.

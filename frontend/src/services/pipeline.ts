@@ -18,11 +18,12 @@ import type { Neo4jConfig } from './neo4j';
 import { interpretPrompt, type QueryPlan } from './interpreter';
 import {
   buildRetrievalInput, groundRetrieval, scoreGroundedChunks, retrieveBaseline,
-  runModuleCypher,
+  retrieveBaselineContent, runModuleCypher,
   type RetrievalInput, type RetrievedChunk, type GroundResult,
 } from './retrieval';
 import { generateAnswer, type AnswerMode } from './answer';
 import { composeModuleCypher } from '../query/queryModuleSyntax';
+import type { ProviderKeys } from './llm';
 
 // ─── Real metric helpers (computed from the actual run only) ────────────────
 export interface NumStats { min: number; mean: number; max: number; n: number }
@@ -90,7 +91,7 @@ export interface GraphEdge { id: string; source: string; target: string }
 
 export interface RunEnv {
   prompt: string;
-  connConfig: { model: string; openaiApiKey: string; anthropicApiKey: string };
+  connConfig: { model: string; keys: ProviderKeys };
   neo4jCfg: Neo4jConfig;
   runId: string;
   /** Full live canvas — a `querymodule` node composes its Cypher from its
@@ -151,7 +152,7 @@ const EXECUTORS: Record<string, Executor> = {
     env.log('interpret', 'running', `Interpreting prompt with ${model}.`);
     const t0 = Date.now();
     const plan = await interpretPrompt(
-      p.prompt, model, env.connConfig.openaiApiKey, env.connConfig.anthropicApiKey, datasetId,
+      p.prompt, model, env.connConfig.keys, datasetId,
     );
     ctx.timing.interpret = Date.now() - t0;
     env.log('interpret', 'ok', `Plan: ${plan.tags.length} tags in ${ctx.timing.interpret}ms.`);
@@ -161,7 +162,7 @@ const EXECUTORS: Record<string, Executor> = {
   build_input: async (inputs, node, _env, ctx) => {
     const { plan } = need(inputs, 'query_plan');
     const datasetId = str(node.data?.datasetId, '') || null;
-    const limit = Math.max(1, num(node.data?.maxChunks, 50));
+    const limit = Math.max(0, num(node.data?.maxChunks, 0)); // 0 = no limit
     const facets = Array.isArray(node.data?.activeFacets)
       ? (node.data!.activeFacets as string[])
       : ['topic', 'entities', 'activity', 'temporal', 'evidence'];
@@ -173,7 +174,7 @@ const EXECUTORS: Record<string, Executor> = {
       tagsEnabled: true,
       minWChunk: num(node.data?.weightThreshold, 0),
       minRelevanceToFile: num(node.data?.minRelevanceToFile, 0),
-      groundingK: Math.max(1, num(node.data?.groundingK, 10)),
+      groundingK: Math.max(0, num(node.data?.groundingK, 0)), // 0 = no cap
       minSim: num(node.data?.minSim, 0.78),
       runId: str(node.data?.runId, 'pilot_full_herb'),
     });
@@ -241,8 +242,7 @@ const EXECUTORS: Record<string, Executor> = {
     const model = str(node.data?.model, env.connConfig.model);
     const t0 = Date.now();
     const ans = await generateAnswer(
-      env.prompt, ctx.plan, c.chunks, model,
-      env.connConfig.openaiApiKey, env.connConfig.anthropicApiKey, ctx.mode,
+      env.prompt, ctx.plan, c.chunks, model, env.connConfig.keys, ctx.mode,
     );
     ctx.timing[c.branch === 'A' ? 'answerA' : 'answerB'] = Date.now() - t0;
     env.log('answer', 'ok', `Lane ${c.branch}: ${ans.tokensOut} output tokens.`);
@@ -420,4 +420,222 @@ export async function runUsageGraph(
     throw new Error('pipeline: no `compare` node produced a result — wire the A and B answers into a compare node.');
   }
   return { results: result.results, metrics: result.metrics };
+}
+
+// ─── Run Builder: a Run is a first-class, comparable config ─────────────────
+/**
+ * A **Run** is a full snapshot of every lever the canvas spreads across its
+ * nodes — collapsed into one object you can build, vary, and stack. The fields
+ * map 1:1 to the node that owns the lever in `runUsageGraph` (prompt mode,
+ * interpret model/dataset, build_input controls, the route fork, answer
+ * model). `runRunSpec` executes ONE route end-to-end by calling the same
+ * service functions the executors call — no synthetic canvas, no required
+ * `compare` node, so N independent configs run side by side. The A/B
+ * `runUsageGraph` path above is untouched.
+ */
+export type RunRoute = 'tags' | 'baseline' | 'content' | 'module' | 'sql_agent';
+
+export interface RunSpec {
+  id: string;
+  label: string;
+  /** Neo4j database (`herb` vs the pruned `herb-eval`). Was a global. */
+  database: string;
+  /** Which retrieval executor terminates the path. `content` is the RQ2
+   *  conventional Lucene control (no interpret/ground/gate). */
+  route: RunRoute;
+  /** `queryGroup` node id when `route === 'module'`. */
+  moduleId: string | null;
+  /** `interpret` node levers. */
+  interpret: { model: string; datasetId: string | null };
+  /** `build_input` node levers. */
+  buildInput: {
+    maxChunks: number;
+    weightThreshold: number;
+    minRelevanceToFile: number;
+    groundingK: number;
+    minSim: number;
+    activeFacets: RetrievalInput['controls']['activeFacets'];
+    runId: string;
+  };
+  /** `prompt`/`answer` node levers. `temperature` feeds both LLM calls. */
+  answer: { model: string; mode: AnswerMode };
+  temperature: number;
+  /** Headless-only levers for `route === 'sql_agent'` (RAGAS export → Python). */
+  sqlAgent: {
+    maxToolCalls: number;
+    maxRowsPerQuery: number;
+    maxCellChars: number;
+  };
+}
+
+export interface RunResult {
+  specId: string;
+  label: string;
+  route: RunRoute;
+  database: string;
+  response: string;
+  chunks: number;
+  tokensIn: number;
+  tokensOut: number;
+  durationMs: number;
+  plan: QueryPlan | null;
+  retrievalInput: RetrievalInput | null;
+  retrievedChunks: RetrievedChunk[];
+  topFacets: string[];
+  metrics: {
+    grounding: ReturnType<typeof groundingStats>;
+    retrieval: ReturnType<typeof laneChunkStats>;
+    citations: ReturnType<typeof parseCitations>;
+    latency: Record<string, number | null>;
+  };
+}
+
+/** A conventional-baseline plan: `content` retrieval has no interpret step but
+ *  the answer LLM still needs an `answer_job`. Mirrors the interpreter default
+ *  so the answer prompt is identical to the graph arm — only evidence differs. */
+function contentRoutePlan(prompt: string, datasetId: string | null, limit: number): QueryPlan {
+  return {
+    description: prompt,
+    tags: [],
+    filters: {
+      dataset_id: datasetId, file_ids: [], min_w_chunk: 0, min_relevance_to_file: 0,
+      limit, gate: { product: null, section: null, channel: null, employee_id: null, years: [] },
+    },
+    answer_job: {
+      mode: 'direct_answer',
+      evidence_policy: 'retrieved_only',
+      missing_evidence_policy: 'say_insufficient_evidence',
+    },
+    warnings: [],
+  };
+}
+
+/** Execute one Run end-to-end. Loud on every failure path — no degraded run. */
+export async function runRunSpec(spec: RunSpec, env: RunEnv): Promise<RunResult> {
+  if (spec.route === 'sql_agent') {
+    // The SQL-agent baseline runs server-side (Python + SQLite); the browser
+    // cannot execute it. Export this spec with "Export RAGAS run" and feed the
+    // resulting config to `npm run ragas:export`, which dispatches to
+    // backend/baselines/sql_agent.py.
+    throw new Error(
+      `Run "${spec.label}": the SQL-agent route runs server-side and cannot ` +
+      `execute in the browser. Use "Export RAGAS run" on this card and run ` +
+      `the gold-set via \`npm run ragas:export -- --config <that.json>\`.`,
+    );
+  }
+  const { prompt, connConfig, log } = env;
+  const cfg = { ...env.neo4jCfg, database: spec.database };
+  const datasetId = spec.interpret.datasetId || null;
+  const limit = Math.max(0, spec.buildInput.maxChunks); // 0 = no limit
+  const temp = spec.temperature;
+  const tag = `run:${spec.label}`;
+  const start = Date.now();
+  const timing: Record<string, number | null> = {};
+  let t0: number;
+
+  let plan: QueryPlan;
+  let input: RetrievalInput | null = null;
+  let chunks: RetrievedChunk[];
+
+  if (spec.route === 'content') {
+    plan = contentRoutePlan(prompt, datasetId, limit);
+    log(tag, 'running', `[${spec.label}] conventional content baseline (no interpret/ground/gate).`);
+    t0 = Date.now();
+    chunks = await retrieveBaselineContent(prompt, cfg, { limit, datasetId });
+    timing.retrieve = Date.now() - t0;
+  } else {
+    log(tag, 'running', `[${spec.label}] interpret with ${spec.interpret.model}.`);
+    t0 = Date.now();
+    plan = await interpretPrompt(
+      prompt, spec.interpret.model, connConfig.keys, datasetId, temp,
+    );
+    timing.interpret = Date.now() - t0;
+    const scopedPlan: QueryPlan = { ...plan, filters: { ...plan.filters, dataset_id: datasetId, limit } };
+    input = buildRetrievalInput(scopedPlan, {
+      datasetId,
+      limit,
+      activeFacets: spec.buildInput.activeFacets,
+      tagsEnabled: true,
+      minWChunk: spec.buildInput.weightThreshold,
+      minRelevanceToFile: spec.buildInput.minRelevanceToFile,
+      groundingK: Math.max(0, spec.buildInput.groundingK), // 0 = no cap
+      minSim: spec.buildInput.minSim,
+      runId: spec.buildInput.runId,
+    });
+    plan = scopedPlan;
+
+    if (spec.route === 'baseline') {
+      t0 = Date.now();
+      chunks = await retrieveBaseline(input, cfg);
+      timing.retrieve = Date.now() - t0;
+    } else {
+      t0 = Date.now();
+      const ground = await groundRetrieval(input, cfg);
+      timing.ground = Date.now() - t0;
+      if (spec.route === 'module') {
+        if (!spec.moduleId) {
+          throw new Error(`run "${spec.label}": route is "module" but no Query module is selected.`);
+        }
+        const composed = composeModuleCypher(
+          env.nodes as unknown as Parameters<typeof composeModuleCypher>[0],
+          env.edges as unknown as Parameters<typeof composeModuleCypher>[1],
+          spec.moduleId,
+        );
+        for (const w of composed.warnings) log(tag, 'running', `[${spec.label}] ${w}`);
+        t0 = Date.now();
+        chunks = await runModuleCypher(input, cfg, ground, composed.text);
+        timing.retrieve = Date.now() - t0;
+      } else {
+        t0 = Date.now();
+        chunks = await scoreGroundedChunks(input, cfg, ground);
+        timing.retrieve = Date.now() - t0;
+      }
+    }
+  }
+  log(tag, 'running', `[${spec.label}] ${chunks.length} chunks via ${spec.route}; answering with ${spec.answer.model}.`);
+
+  t0 = Date.now();
+  const ans = await generateAnswer(
+    prompt, plan, chunks, spec.answer.model, connConfig.keys, spec.answer.mode, temp,
+  );
+  timing.answer = Date.now() - t0;
+  timing.total = Date.now() - start;
+  log(tag, 'ok', `[${spec.label}] done — ${chunks.length} chunks, ${ans.tokensOut} out tok (${timing.total}ms).`);
+
+  return {
+    specId: spec.id,
+    label: spec.label,
+    route: spec.route,
+    database: spec.database,
+    response: ans.response,
+    chunks: chunks.length,
+    tokensIn: ans.tokensIn,
+    tokensOut: ans.tokensOut,
+    durationMs: timing.total ?? 0,
+    plan: spec.route === 'content' ? null : plan,
+    retrievalInput: input,
+    retrievedChunks: chunks,
+    topFacets: spec.route === 'content' || !plan
+      ? []
+      : [...new Set(plan.tags.flatMap((t) =>
+          Object.entries(t.facets).filter(([, v]) => v >= 0.5).map(([k]) => k)))].slice(0, 4),
+    metrics: {
+      grounding: groundingStats(plan?.grounding),
+      retrieval: laneChunkStats(chunks),
+      citations: parseCitations(ans.response, chunks.length),
+      latency: timing,
+    },
+  };
+}
+
+/** Pairwise chunk-set overlap across N runs (generalizes `chunkSetOverlap`). */
+export function compareRuns(results: RunResult[]) {
+  const pairs: { a: string; b: string; count: number; jaccard: number }[] = [];
+  for (let i = 0; i < results.length; i++) {
+    for (let j = i + 1; j < results.length; j++) {
+      const o = chunkSetOverlap(results[i].retrievedChunks, results[j].retrievedChunks);
+      pairs.push({ a: results[i].label, b: results[j].label, ...o });
+    }
+  }
+  return { pairs };
 }

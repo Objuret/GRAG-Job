@@ -1,4 +1,4 @@
-import { chat } from './llm';
+import { chat, type ProviderKeys } from './llm';
 
 export interface FacetScores {
   topic: number;
@@ -145,13 +145,12 @@ const DEFAULT_ANSWER_JOB = {
 export async function interpretPrompt(
   prompt: string,
   model: string,
-  openaiKey: string,
-  anthropicKey: string,
+  keys: ProviderKeys,
   datasetId: string | null = null,
   temperature?: number,
 ): Promise<QueryPlan> {
   const call = (messages: Parameters<typeof chat>[0], maxTokens: number) =>
-    chat(messages, model, openaiKey, anthropicKey, {
+    chat(messages, model, keys, {
       maxTokens,
       jsonMode: true,
       ...(temperature != null ? { temperature } : {}),
