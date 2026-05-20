@@ -29,12 +29,10 @@ Metrics:
 
 Judge LLM
 ---------
-Anthropic via langchain-anthropic, wrapped for RAGAS. The key is resolved
-from (first hit wins): env ANTHROPIC_API_KEY -> backend/.env ANTHROPIC_API_KEY
--> frontend/.env.local VITE_ANTHROPIC_API_KEY, so you do not have to duplicate
-the key the harness already uses. NOTE: judging Claude output with Claude is
-self-evaluation; for the thesis prefer a judge at least as strong as the
-answer model (override with --judge-model).
+OpenAI-compatible providers (default: **DeepSeek** `deepseek-chat`, same as
+the export answer model). Anthropic still available via `--judge-provider
+anthropic`. Keys resolve from env / backend `.env` / `frontend/.env.local`
+(`VITE_DEEPSEEK_API_KEY`, `VITE_ANTHROPIC_API_KEY`).
 
 Embeddings (only needed for answer_relevancy)
 ---------------------------------------------
@@ -84,16 +82,43 @@ def _parse_env_file(path: Path) -> dict[str, str]:
     return out
 
 
-def _resolve_anthropic_key() -> str:
+def _resolve_key(*names: str) -> str:
     import os
 
-    if os.environ.get("ANTHROPIC_API_KEY"):
-        return os.environ["ANTHROPIC_API_KEY"]
+    for name in names:
+        if os.environ.get(name):
+            return os.environ[name]
     backend_env = _parse_env_file(_BACKEND_ROOT / ".env")
-    if backend_env.get("ANTHROPIC_API_KEY"):
-        return backend_env["ANTHROPIC_API_KEY"]
+    for name in names:
+        if backend_env.get(name):
+            return backend_env[name]
     fe = _parse_env_file(_FRONTEND_ROOT / ".env.local")
-    return fe.get("VITE_ANTHROPIC_API_KEY", "") or fe.get("ANTHROPIC_API_KEY", "")
+    for name in names:
+        if fe.get(name):
+            return fe[name]
+    return ""
+
+
+def _dedupe_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Resume exports can append duplicate ids; keep the best row per id."""
+    by_id: dict[str, dict[str, Any]] = {}
+    for r in rows:
+        rid = str(r.get("id") or "")
+        if not rid:
+            continue
+        prev = by_id.get(rid)
+        if prev is None:
+            by_id[rid] = r
+            continue
+
+        def _score(row: dict[str, Any]) -> tuple[int, int]:
+            err = bool((row.get("meta") or {}).get("error"))
+            resp = bool((row.get("response") or "").strip())
+            return (0 if err else 1, 1 if resp else 0)
+
+        if _score(r) >= _score(prev):
+            by_id[rid] = r
+    return list(by_id.values())
 
 
 # --- load + filter samples -------------------------------------------------
@@ -114,9 +139,28 @@ def _load_rows(path: Path) -> list[dict[str, Any]]:
 
 REF_METRICS = {"context_recall", "context_precision", "answer_correctness"}
 
+# Match headless export answer cap (`ANSWER_EXPORT_MAX_CHUNKS` in ragas-export.ts).
+JUDGE_DEFAULT_MAX_CONTEXTS = 200
+JUDGE_DEFAULT_MAX_CONTEXT_CHARS = 1800
+
+
+def _cap_contexts_for_judge(
+    contexts: list[str],
+    max_contexts: int,
+    max_context_chars: int,
+) -> list[str]:
+    """JSONL keeps full retrieval; the judge sees a bounded slice only."""
+    out = contexts[:max_contexts] if max_contexts > 0 else contexts
+    if max_context_chars > 0:
+        out = [c[:max_context_chars] for c in out]
+    return out
+
 
 def _valid_samples(
-    rows: list[dict[str, Any]], metric_names: list[str]
+    rows: list[dict[str, Any]],
+    metric_names: list[str],
+    judge_max_contexts: int,
+    judge_max_context_chars: int,
 ) -> tuple[list[dict[str, Any]], list[str]]:
     # When a reference-based metric is requested we KEEP zero-context rows on
     # purpose: context_recall scores them ~0, which is exactly the retrieval
@@ -131,7 +175,11 @@ def _valid_samples(
             skipped.append(f"{rid} (pipeline error)")
             continue
         resp = (r.get("response") or "").strip()
-        ctx = [c for c in (r.get("retrieved_contexts") or []) if c]
+        ctx = _cap_contexts_for_judge(
+            [c for c in (r.get("retrieved_contexts") or []) if c],
+            judge_max_contexts,
+            judge_max_context_chars,
+        )
         ref = (r.get("reference") or "").strip()
         if not resp:
             skipped.append(f"{rid} (empty response — dry-run?)")
@@ -157,9 +205,14 @@ def _valid_samples(
 # --- RAGAS wiring (defensive across 0.2/0.3 API) ---------------------------
 
 
-def _build_judge_llm(model: str, api_key: str, max_tokens: int) -> Any:
+def _build_judge_llm(
+    provider: str,
+    model: str,
+    api_key: str,
+    max_tokens: int,
+    base_url: str | None = None,
+) -> Any:
     try:
-        from langchain_anthropic import ChatAnthropic
         from ragas.llms import LangchainLLMWrapper
     except ImportError as exc:
         print(
@@ -167,11 +220,28 @@ def _build_judge_llm(model: str, api_key: str, max_tokens: int) -> Any:
             file=sys.stderr,
         )
         sys.exit(1)
-    # Faithfulness emits statement-extraction + NLI-verdict JSON; too small a
-    # budget truncates it -> LLMDidNotFinishException -> nan for that sample.
-    return LangchainLLMWrapper(
-        ChatAnthropic(model=model, api_key=api_key, temperature=0, max_tokens=max_tokens)
-    )
+
+    if provider == "anthropic":
+        try:
+            from langchain_anthropic import ChatAnthropic
+        except ImportError as exc:
+            print(f"Missing langchain-anthropic ({exc}).", file=sys.stderr)
+            sys.exit(1)
+        llm = ChatAnthropic(model=model, api_key=api_key, temperature=0, max_tokens=max_tokens)
+    else:
+        try:
+            from langchain_openai import ChatOpenAI
+        except ImportError as exc:
+            print(f"Missing langchain-openai ({exc}).", file=sys.stderr)
+            sys.exit(1)
+        llm = ChatOpenAI(
+            model=model,
+            api_key=api_key,
+            base_url=base_url or "https://api.deepseek.com",
+            temperature=0,
+            max_tokens=max_tokens,
+        )
+    return LangchainLLMWrapper(llm)
 
 
 def _build_embeddings_or_exit() -> Any:
@@ -227,11 +297,15 @@ def _build_metrics(names: list[str], llm: Any, needs_embeddings: list[str]) -> l
 def _run(
     samples: list[dict[str, Any]],
     metric_names: list[str],
+    judge_provider: str,
     judge_model: str,
     judge_max_tokens: int,
+    concurrency: int,
+    timeout: int,
 ) -> Any:
     try:
         from ragas import EvaluationDataset, SingleTurnSample, evaluate
+        from ragas.run_config import RunConfig
     except ImportError as exc:
         print(
             f"Missing eval deps ({exc}). Install: pip install -r requirements-eval.txt",
@@ -239,16 +313,28 @@ def _run(
         )
         sys.exit(1)
 
-    api_key = _resolve_anthropic_key()
-    if not api_key:
-        print(
-            "No Anthropic key found (env ANTHROPIC_API_KEY / backend/.env / "
-            "frontend/.env.local VITE_ANTHROPIC_API_KEY).",
-            file=sys.stderr,
-        )
-        sys.exit(2)
+    provider = judge_provider.lower()
+    if provider == "anthropic":
+        api_key = _resolve_key("ANTHROPIC_API_KEY", "VITE_ANTHROPIC_API_KEY")
+        base_url = None
+        if not api_key:
+            print(
+                "No Anthropic key found (ANTHROPIC_API_KEY / VITE_ANTHROPIC_API_KEY).",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+    else:
+        provider = "deepseek"
+        api_key = _resolve_key("DEEPSEEK_API_KEY", "VITE_DEEPSEEK_API_KEY")
+        base_url = "https://api.deepseek.com"
+        if not api_key:
+            print(
+                "No DeepSeek key found (DEEPSEEK_API_KEY / VITE_DEEPSEEK_API_KEY).",
+                file=sys.stderr,
+            )
+            sys.exit(2)
 
-    llm = _build_judge_llm(judge_model, api_key, judge_max_tokens)
+    llm = _build_judge_llm(provider, judge_model, api_key, judge_max_tokens, base_url)
     needs_embeddings: list[str] = []
     metrics = _build_metrics(metric_names, llm, needs_embeddings)
     embeddings = _build_embeddings_or_exit() if needs_embeddings else None
@@ -268,7 +354,14 @@ def _run(
         return SingleTurnSample(**kw)
 
     ds = EvaluationDataset(samples=[_mk(s) for s in samples])
-    result = evaluate(dataset=ds, metrics=metrics, llm=llm, embeddings=embeddings)
+    run_config = RunConfig(max_workers=max(1, concurrency), timeout=max(30, timeout))
+    result = evaluate(
+        dataset=ds,
+        metrics=metrics,
+        llm=llm,
+        embeddings=embeddings,
+        run_config=run_config,
+    )
     # Some RAGAS builds return an awaitable; tolerate both.
     import inspect
 
@@ -285,7 +378,14 @@ def _run(
 # --- reporting -------------------------------------------------------------
 
 
-def _report(result: Any, samples: list[dict[str, Any]], metric_cols: list[str]) -> dict[str, Any]:
+def _report(
+    result: Any,
+    samples: list[dict[str, Any]],
+    metric_cols: list[str],
+    *,
+    judge_max_contexts: int,
+    judge_max_context_chars: int,
+) -> dict[str, Any]:
     import math
 
     df = result.to_pandas()
@@ -339,6 +439,8 @@ def _report(result: Any, samples: list[dict[str, Any]], metric_cols: list[str]) 
         "overall": overall,
         "overall_n": overall_n,
         "n_samples": len(samples),
+        "judge_max_contexts": judge_max_contexts,
+        "judge_max_context_chars": judge_max_context_chars,
     }
 
 
@@ -357,20 +459,36 @@ def main() -> None:
                         "answer_relevancy. Reference-based (need row.reference): "
                         "context_recall, context_precision, answer_correctness. "
                         "(default: faithfulness)")
-    p.add_argument("--judge-model", default="claude-haiku-4-5",
-                   help="Anthropic judge model (default: claude-haiku-4-5). "
-                        "Prefer a model >= the answer model for the thesis.")
+    p.add_argument("--judge-provider", default="deepseek", choices=("deepseek", "anthropic"),
+                   help="Judge backend (default: deepseek).")
+    p.add_argument("--judge-model", default="deepseek-chat",
+                   help="Judge model id (default: deepseek-chat).")
     p.add_argument("--judge-max-tokens", type=int, default=8192,
                    help="Judge output token budget (default: 8192). Too low -> "
                         "truncated judge output -> nan scores.")
+    p.add_argument("--judge-max-contexts", type=int, default=JUDGE_DEFAULT_MAX_CONTEXTS,
+                   help=f"Max retrieved contexts passed to judge (default: {JUDGE_DEFAULT_MAX_CONTEXTS}). "
+                        "JSONL keeps full retrieval.")
+    p.add_argument("--judge-max-context-chars", type=int, default=JUDGE_DEFAULT_MAX_CONTEXT_CHARS,
+                   help=f"Max chars per context string for judge (default: {JUDGE_DEFAULT_MAX_CONTEXT_CHARS}).")
+    p.add_argument("--concurrency", type=int, default=8,
+                   help="Parallel RAGAS workers (default: 8).")
+    p.add_argument("--timeout", type=int, default=600,
+                   help="Per-job timeout in seconds (default: 600). RAGAS default 180s "
+                        "times out on large HERB contexts under parallel load.")
     p.add_argument("--max", type=int, default=0, help="Cap samples (0 = all)")
     p.add_argument("--report", type=Path, default=None, help="Write JSON report here")
     args = p.parse_args()
 
     metric_names = [m.strip() for m in args.metrics.split(",") if m.strip()]
 
-    rows = _load_rows(args.input)
-    samples, skipped = _valid_samples(rows, metric_names)
+    rows = _dedupe_rows(_load_rows(args.input))
+    samples, skipped = _valid_samples(
+        rows,
+        metric_names,
+        args.judge_max_contexts,
+        args.judge_max_context_chars,
+    )
     if args.max > 0:
         samples = samples[: args.max]
 
@@ -381,10 +499,29 @@ def main() -> None:
         print("No scorable samples (run the harness WITHOUT --dry-run first).", file=sys.stderr)
         sys.exit(1)
 
-    print(f"Scoring {len(samples)} sample(s) with {metric_names}, judge={args.judge_model}…")
+    print(
+        f"Scoring {len(samples)} sample(s) with {metric_names}, "
+        f"judge={args.judge_provider}/{args.judge_model}, "
+        f"contexts<={args.judge_max_contexts}×{args.judge_max_context_chars}chars, "
+        f"concurrency={args.concurrency}, timeout={args.timeout}s…"
+    )
 
-    result, metric_cols = _run(samples, metric_names, args.judge_model, args.judge_max_tokens)
-    payload = _report(result, samples, metric_cols)
+    result, metric_cols = _run(
+        samples,
+        metric_names,
+        args.judge_provider,
+        args.judge_model,
+        args.judge_max_tokens,
+        args.concurrency,
+        args.timeout,
+    )
+    payload = _report(
+        result,
+        samples,
+        metric_cols,
+        judge_max_contexts=args.judge_max_contexts,
+        judge_max_context_chars=args.judge_max_context_chars,
+    )
 
     if args.report:
         args.report.parent.mkdir(parents=True, exist_ok=True)

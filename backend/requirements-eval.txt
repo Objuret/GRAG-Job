@@ -8,6 +8,9 @@
 # langchain-openai and set OPENAI_API_KEY (see ragas_eval.py docstring).
 
 ragas>=0.2,<0.4
+langchain-openai>=0.2
+
+# Opt-in: `--judge-provider anthropic`
 langchain-anthropic>=0.2
 
 # Opt-in: only for `--metrics answer_relevancy` via OpenAI embeddings.

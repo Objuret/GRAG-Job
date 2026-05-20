@@ -26,7 +26,7 @@
  * and fails loud if the assembled onnx is missing (run `npm install` /
  * `npm run assets:assemble`). No remote HF fetch, matching embeddings.ts.
  */
-import { readFileSync, existsSync, mkdirSync, writeFileSync, appendFileSync, statSync } from 'node:fs';
+import { readFileSync, existsSync, mkdirSync, writeFileSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -116,6 +116,7 @@ const outPath = outArg
 const maxQuestions = Number(arg('--max', '0')) || 0; // 0 = all
 const dryRun = hasFlag('--dry-run'); // interpret+retrieve only, skip the answer LLM
 const fresh = hasFlag('--fresh');    // truncate the out file; default resumes
+const retryErrors = hasFlag('--retry-errors'); // re-run rows with meta.error only
 
 // Optional RunSpec-derived config from the workbench's "Export RAGAS run"
 // button (see specToRagasConfig in frontend/src/App.jsx). CLI flags still win;
@@ -138,6 +139,8 @@ interface RunCfg {
   max_tool_calls?: number;
   max_rows_per_query?: number;
   max_cell_chars?: number;
+  concurrency?: number;
+  answer_max_chunks?: number;
 }
 const configArg = arg('--config');
 let runCfg: RunCfg = {};
@@ -214,6 +217,23 @@ const modeRaw = arg('--mode') ?? runCfg.mode ?? 'graph';
 const mode = (modeRaw === 'baseline' ? 'baseline'
             : modeRaw === 'sql_agent' ? 'sql_agent'
             : 'graph') as 'graph' | 'baseline' | 'sql_agent';
+/** HERB Lucene baseline returns ~5k hits at limit=0 and breaks the answer API. Graph stays uncapped. */
+const BASELINE_EXPORT_DEFAULT_LIMIT = 150;
+const baselineRetrievalLimit =
+  retrievalLimit > 0 ? retrievalLimit : BASELINE_EXPORT_DEFAULT_LIMIT;
+const concurrency = Math.max(
+  1,
+  Number(arg('--concurrency') ?? runCfg.concurrency ?? cfg('RAGAS_CONCURRENCY', '8')) || 8,
+);
+/** Answer API only — retrieval + RAGAS `retrieved_contexts` stay full. */
+const ANSWER_EXPORT_MAX_CHUNKS = 200;
+const answerMaxChunks = Math.max(
+  ANSWER_EXPORT_MAX_CHUNKS,
+  Number(arg('--answer-max-chunks') ?? runCfg.answer_max_chunks ?? cfg('ANSWER_MAX_CHUNKS', String(ANSWER_EXPORT_MAX_CHUNKS))) || ANSWER_EXPORT_MAX_CHUNKS,
+);
+const skipRetryIds = new Set(
+  (arg('--skip-ids') ?? 'gold_personalizeforce_34').split(',').map((s) => s.trim()).filter(Boolean),
+);
 // Thesis 5.7: temperature 0 + repeated runs (median/IQR computed at analysis).
 const temperature = pickNum('--temperature', runCfg.temperature, null, 0);
 const repeats = Math.max(1, Number(arg('--repeats', '1')) || 1);
@@ -225,7 +245,7 @@ const BASELINE_PLAN = (q: string): QueryPlan => ({
   tags: [],
   filters: {
     dataset_id: datasetId, file_ids: [], min_w_chunk: 0, min_relevance_to_file: 0,
-    limit: retrievalLimit,
+    limit: baselineRetrievalLimit,
     gate: { product: null, section: null, channel: null, employee_id: null, years: [] },
   },
   answer_job: {
@@ -334,32 +354,45 @@ function loadQuestions(path: string): QItem[] {
   return items;
 }
 
-// --- main ------------------------------------------------------------------
+type ExportRow = {
+  id: string;
+  question: string;
+  user_input: string;
+  retrieved_contexts: string[];
+  response: string;
+  answer: string;
+  reference: string | null;
+  meta: Record<string, unknown>;
+};
 
-/** Baseline export only: HERB chunk text can break OpenAI-compatible JSON bodies. */
-function scrubBaselineApiText(text: string): string {
-  let out = '';
-  for (let i = 0; i < text.length; i++) {
-    const cp = text.charCodeAt(i);
-    if (cp >= 0xd800 && cp <= 0xdbff) {
-      const next = text.charCodeAt(i + 1);
-      if (next >= 0xdc00 && next <= 0xdfff) { out += text[i] + text[i + 1]; i++; continue; }
-      continue;
-    }
-    if (cp >= 0xdc00 && cp <= 0xdfff) continue;
-    if (cp === 0 || (cp < 0x20 && cp !== 0x09 && cp !== 0x0a && cp !== 0x0d)) continue;
-    out += text[i];
+function rowSucceeded(r: ExportRow): boolean {
+  return !(r.meta?.error) && Boolean((r.response || '').trim());
+}
+
+function loadRowsById(path: string): Map<string, ExportRow> {
+  const byId = new Map<string, ExportRow>();
+  if (!existsSync(path)) return byId;
+  for (const raw of readFileSync(path, 'utf-8').split('\n')) {
+    const s = raw.trim();
+    if (!s) continue;
+    try {
+      const r = JSON.parse(s) as ExportRow;
+      const id = String(r.id);
+      const prev = byId.get(id);
+      if (!prev || (rowSucceeded(r) && !rowSucceeded(prev)) || (!rowSucceeded(prev) && !rowSucceeded(r))) {
+        byId.set(id, r);
+      }
+    } catch { /* skip bad line */ }
   }
-  return out.replace(/\\+$/g, '');
+  return byId;
 }
 
-function scrubBaselineChunks(chunks: RetrievedChunk[]): RetrievedChunk[] {
-  return chunks.map((c) => ({
-    ...c,
-    content: scrubBaselineApiText(c.content),
-    ...(c.description != null ? { description: scrubBaselineApiText(c.description) } : {}),
-  }));
+function writeRowsById(path: string, byId: Map<string, ExportRow>): void {
+  const lines = [...byId.values()].map((r) => JSON.stringify(r));
+  writeFileSync(path, lines.length ? `${lines.join('\n')}\n` : '', 'utf-8');
 }
+
+// --- main ------------------------------------------------------------------
 
 /**
  * SQL-agent dispatch: hand off to `python -m backend.baselines.sql_agent`.
@@ -472,38 +505,51 @@ async function main(): Promise<void> {
       `  graph     : ${neo4jCfg.uri} db=${neo4jCfg.database} dataset=${datasetId}\n` +
       `  model     : answer=${model} interpret=${mode === 'baseline' ? '(skipped)' : interpreterModel} promptMode=${promptMode}\n` +
       `  retrieval : ${mode === 'baseline'
-        ? 'content-only full-text (no tags/grounding/gate)'
+        ? `content-only full-text (no tags/grounding/gate), limit=${baselineRetrievalLimit}` +
+          (retrievalLimit <= 0 ? ` (baseline default; graph unchanged at limit=0)` : '')
         : `limit=${retrievalLimit} groundingK=${groundingK} minSim=${minSim}` +
           ` minWChunk=${minWChunk} minRelToFile=${minRelevanceToFile}` +
           ` facets=${activeFacetsCfg ? activeFacetsCfg.join(',') : '(default ALL)'}`}\n` +
       `  exclude   : ${excludeSections.length ? excludeSections.join(',') : '(none)'}` +
       `${configArg ? `\n  config    : ${runCfg.label ?? '(no label)'} (${configArg})` : ''}` +
+      `\n  parallel  : concurrency=${concurrency}` +
+      `\n  answer    : max_chunks=${answerMaxChunks} scrub=true (API only; RAGAS contexts full)` +
+      `${retryErrors ? `\n  retry     : errors only, skip=${[...skipRetryIds].join(',')}` : ''}` +
       `${dryRun ? '\n  DRY RUN — answer LLM skipped' : ''}\n`,
   );
 
-  // Stream rows to disk as each question completes. A long run makes many
-  // native (onnxruntime/transformers.js) calls and can hard-crash the process;
-  // a single end-of-run write would lose everything. Per-row append leaves a
-  // valid partial JSONL. Default is RESUME: an existing out file is kept and
-  // already-done ids are skipped, so re-running after a crash converges to a
-  // complete set. `--fresh` truncates and starts over.
+  const rowStore: Map<string, ExportRow> = fresh ? new Map() : loadRowsById(outPath);
   const doneIds = new Set<string>();
-  if (!fresh && existsSync(outPath)) {
-    for (const raw of readFileSync(outPath, 'utf-8').split('\n')) {
-      const s = raw.trim();
-      if (!s) continue;
-      try { doneIds.add(String((JSON.parse(s) as { id?: unknown }).id)); } catch { /* skip bad line */ }
+  for (const [id, r] of rowStore) {
+    if (retryErrors) {
+      if (rowSucceeded(r)) doneIds.add(id);
+    } else {
+      doneIds.add(id);
     }
-  } else {
-    writeFileSync(outPath, '', 'utf-8');
   }
+  for (const id of skipRetryIds) doneIds.add(id);
+
+  let flushLock = Promise.resolve();
+  const flushRows = () => {
+    flushLock = flushLock.then(() => { writeRowsById(outPath, rowStore); });
+    return flushLock;
+  };
+  if (fresh) writeFileSync(outPath, '', 'utf-8');
+
   let ok = 0;
   let errored = 0;
   let resumed = 0;
 
   const totalUnits = slice.length * repeats;
+  type WorkItem = {
+    unit: number;
+    rowId: string;
+    question: string;
+    reference?: string;
+    rep: number;
+  };
+  const pending: WorkItem[] = [];
   let unit = 0;
-
   for (let i = 0; i < slice.length; i++) {
     const { id, question, reference } = slice[i];
     for (let rep = 1; rep <= repeats; rep++) {
@@ -511,117 +557,148 @@ async function main(): Promise<void> {
       const rowId = repeats > 1 ? `${id}#r${rep}` : id;
       if (doneIds.has(rowId)) {
         resumed++;
-        console.log(`  [${unit}/${totalUnits}] ${rowId} … skip (already in out)`);
+        console.log(`  [${unit}/${totalUnits}] ${rowId} … skip (already ok)`);
         continue;
       }
-      const t0 = Date.now();
-      process.stdout.write(`  [${unit}/${totalUnits}] ${rowId} (${mode}) … `);
-
-      const meta: Record<string, unknown> = {
-        mode,
-        repeat: rep,
-        model,
-        interpreter_model: interpreterModel,
-        prompt_mode: promptMode,
-        temperature,
-        dataset_id: datasetId,
-        database: neo4jCfg.database,
-        exclude_sections: excludeSections,
-      };
-      let contexts: string[] = [];
-      let response = '';
-
-      try {
-        let chunks: RetrievedChunk[];
-        let planForAnswer: QueryPlan;
-
-        if (mode === 'baseline') {
-          planForAnswer = BASELINE_PLAN(question);
-          chunks = await retrieveBaselineContent(question, neo4jCfg, {
-            limit: retrievalLimit,
-            datasetId,
-            excludedSections: excludeSections,
-          });
-          meta.warnings = [];
-        } else {
-          const plan = await interpretPrompt(
-            question, interpreterModel, keys, datasetId, temperature,
-          );
-          planForAnswer = {
-            ...plan,
-            filters: {
-              ...plan.filters,
-              dataset_id: datasetId,
-              limit: retrievalLimit,
-              min_w_chunk: minWChunk,
-              min_relevance_to_file: minRelevanceToFile,
-            },
-          };
-          const input = buildRetrievalInput(planForAnswer, {
-            limit: retrievalLimit,
-            datasetId,
-            groundingK,
-            minSim,
-            minWChunk,
-            minRelevanceToFile,
-            ...(activeFacetsCfg ? { activeFacets: activeFacetsCfg as never } : {}),
-            tagsEnabled: true,
-            excludedSections: excludeSections,
-          });
-          const ground = await groundRetrieval(input, neo4jCfg);
-          chunks = await scoreGroundedChunks(input, neo4jCfg, ground);
-          meta.retrieval_input = {
-            scope: input.scope,
-            controls: input.controls,
-            gate: input.gate,
-          };
-          meta.ground_path = ground.path;
-          meta.plan_description = planForAnswer.description;
-          meta.warnings = planForAnswer.warnings;
-          meta.gate = planForAnswer.filters.gate;
-          meta.grounding = planForAnswer.grounding ?? [];
-        }
-
-        contexts = chunks.map((c) => c.content).filter(Boolean);
-        meta.n_chunks = chunks.length;
-        meta.chunk_ids = chunks.map((c) => c.chunkId);
-        meta.file_ids = [...new Set(chunks.map((c) => c.fileId))];
-
-        if (!dryRun) {
-          const answerChunks = mode === 'baseline' ? scrubBaselineChunks(chunks) : chunks;
-          const ans = await generateAnswer(
-            question, planForAnswer, answerChunks, model, keys, promptMode, temperature,
-          );
-          response = ans.response;
-          meta.tokens = { answer_in: ans.tokensIn, answer_out: ans.tokensOut };
-        }
-        meta.elapsed_ms = Date.now() - t0;
-        meta.error = null;
-        ok++;
-        console.log(`ok (${contexts.length} chunks${dryRun ? '' : `, ${response.length} chars`})`);
-      } catch (err) {
-        meta.elapsed_ms = Date.now() - t0;
-        meta.error = err instanceof Error ? err.message : String(err);
-        errored++;
-        console.log(`ERROR: ${meta.error}`);
+      if (skipRetryIds.has(rowId)) {
+        resumed++;
+        console.log(`  [${unit}/${totalUnits}] ${rowId} … skip (permanent eval failure)`);
+        continue;
       }
-
-      appendFileSync(
-        outPath,
-        JSON.stringify({
-          id: rowId,
-          question,
-          user_input: question,
-          retrieved_contexts: contexts,
-          response,
-          answer: response,
-          reference: reference ?? null,
-          meta,
-        }) + '\n',
-        'utf-8',
-      );
+      pending.push({ unit, rowId, question, reference, rep });
     }
   }
+
+  let writeLock = Promise.resolve();
+  const appendRow = (line: string) => {
+    writeLock = writeLock.then(() => { appendFileSync(outPath, line, 'utf-8'); });
+    return writeLock;
+  };
+
+  async function processOne(work: WorkItem): Promise<void> {
+    const { unit: u, rowId, question, reference, rep } = work;
+    const t0 = Date.now();
+    const meta: Record<string, unknown> = {
+      mode,
+      repeat: rep,
+      model,
+      interpreter_model: interpreterModel,
+      prompt_mode: promptMode,
+      temperature,
+      dataset_id: datasetId,
+      database: neo4jCfg.database,
+      exclude_sections: excludeSections,
+    };
+    let contexts: string[] = [];
+    let response = '';
+    let logSuffix: string;
+
+    try {
+      let chunks: RetrievedChunk[];
+      let planForAnswer: QueryPlan;
+
+      if (mode === 'baseline') {
+        planForAnswer = BASELINE_PLAN(question);
+        chunks = await retrieveBaselineContent(question, neo4jCfg, {
+          limit: baselineRetrievalLimit,
+          datasetId,
+          excludedSections: excludeSections,
+        });
+        meta.warnings = [];
+      } else {
+        const plan = await interpretPrompt(
+          question, interpreterModel, keys, datasetId, temperature,
+        );
+        planForAnswer = {
+          ...plan,
+          filters: {
+            ...plan.filters,
+            dataset_id: datasetId,
+            limit: retrievalLimit,
+            min_w_chunk: minWChunk,
+            min_relevance_to_file: minRelevanceToFile,
+          },
+        };
+        const input = buildRetrievalInput(planForAnswer, {
+          limit: retrievalLimit,
+          datasetId,
+          groundingK,
+          minSim,
+          minWChunk,
+          minRelevanceToFile,
+          ...(activeFacetsCfg ? { activeFacets: activeFacetsCfg as never } : {}),
+          tagsEnabled: true,
+          excludedSections: excludeSections,
+        });
+        const ground = await groundRetrieval(input, neo4jCfg);
+        chunks = await scoreGroundedChunks(input, neo4jCfg, ground);
+        meta.retrieval_input = {
+          scope: input.scope,
+          controls: input.controls,
+          gate: input.gate,
+        };
+        meta.ground_path = ground.path;
+        meta.plan_description = planForAnswer.description;
+        meta.warnings = planForAnswer.warnings;
+        meta.gate = planForAnswer.filters.gate;
+        meta.grounding = planForAnswer.grounding ?? [];
+      }
+
+      contexts = chunks.map((c) => c.content).filter(Boolean);
+      meta.n_chunks = chunks.length;
+      meta.chunk_ids = chunks.map((c) => c.chunkId);
+      meta.file_ids = [...new Set(chunks.map((c) => c.fileId))];
+      meta.answer_max_chunks = answerMaxChunks;
+      meta.answer_scrubbed = true;
+
+      if (!dryRun) {
+        const ans = await generateAnswer(
+          question, planForAnswer, chunks, model, keys, promptMode, temperature,
+          { maxAnswerChunks: answerMaxChunks, scrubForApi: true },
+        );
+        response = ans.response;
+        meta.tokens = { answer_in: ans.tokensIn, answer_out: ans.tokensOut };
+        meta.answer_chunks = answerMaxChunks > 0
+          ? Math.min(chunks.length, answerMaxChunks)
+          : chunks.length;
+      }
+      meta.elapsed_ms = Date.now() - t0;
+      meta.error = null;
+      ok++;
+      logSuffix = `ok (${contexts.length} chunks${dryRun ? '' : `, ${response.length} chars`})`;
+    } catch (err) {
+      meta.elapsed_ms = Date.now() - t0;
+      meta.error = err instanceof Error ? err.message : String(err);
+      errored++;
+      logSuffix = `ERROR: ${meta.error}`;
+    }
+
+    rowStore.set(rowId, {
+      id: rowId,
+      question,
+      user_input: question,
+      retrieved_contexts: contexts,
+      response,
+      answer: response,
+      reference: reference ?? null,
+      meta,
+    });
+    await flushRows();
+    console.log(`  [${u}/${totalUnits}] ${rowId} (${mode}) … ${logSuffix}`);
+  }
+
+  let next = 0;
+  async function worker(): Promise<void> {
+    while (true) {
+      const idx = next++;
+      if (idx >= pending.length) return;
+      await processOne(pending[idx]);
+    }
+  }
+  await Promise.all(
+    Array.from({ length: Math.min(concurrency, pending.length) }, () => worker()),
+  );
+  await flushLock;
 
   console.log(
     `\nDone. ${ok} ok, ${errored} errored, ${resumed} pre-existing, ${totalUnits} total (${mode}).\n` +

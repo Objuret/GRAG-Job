@@ -4,7 +4,7 @@
 
 **When to read this.** Before promising a feature is "done". Before estimating remaining work. After every significant code change, update this doc.
 
-**Last updated:** 2026-05-19.
+**Last updated:** 2026-05-20.
 
 ## Touched paths
 
@@ -25,6 +25,7 @@ This doc references everything; updates affect `docs/status.md` only.
 | Idempotency rules | [`Chunker.chunk_file`](../../backend/indexing/chunker.py) skips files that already have chunks; preflight upserts `:Source` and `:File` with `MERGE`; bootstrap uses `IF NOT EXISTS` everywhere. |
 | HERB hard-field gate (materialize) — backend executed; frontend code only | **Executed against live `herb`:** `python -m tagging materialize` wrote hard fields to **5843/5843** chunks (product 5782, section 5782, channel 2669, employee_id 30); `years` projected from each chunk's `temporal`-facet tag names = **3523/5843** (literal tokens, no range expansion; absent — never `[]` — when none; spot-checked equal to the source tag tokens). Idempotent: two consecutive runs produced identical coverage. Indexes now exactly `chunk_{product,section,channel,employee_id,kind}` + `chunk_fulltext`; the 5 earlier unwired `chunk_*` indexes were dropped. Fail-loud gate confirmed at the Cypher level: a non-existent value (`product=GhostForce`) → 0 rows, which `validateGate` turns into a thrown error; real gate `CollaborateForce/slack/year2026` → 79. **Not executed (code only, uncommitted):** the actual browser path — `interpreter.ts` producing a `gate` from a live LLM call, and `retrieval.ts` `validateGate`/scoring against a running Neo4j from the app — was *not* run here; only the generated Cypher shapes were exercised from Python and `tsc --noEmit` is clean. Earlier regex-over-`content` `years` removed. Restores "hard fields materialized as queryable props" design; Non-Contamination clarified to govern only the tagger prompt. |
 | HERB eval-safe graph path | [`scripts/create_herb_eval_db.py`](../../backend/scripts/create_herb_eval_db.py) builds a separate `herb-eval` DB from `herb` without mutating `herb`, copying existing safe chunks plus existing `HAS_TAG` weights while excluding `answerable_questions`, `unanswerable_questions`, and oracle `product_profile`. It strips file-level LLM descriptions and old embeddings, then `NEO4J_DATABASE=herb-eval python -m tagging embed-tags` rebuilds facet-aware prompt-grounding embeddings from safe contexts only. Verified 2026-05-19: `herb-eval` has 4,869 chunks, 0 excluded chunks, 229,249 `HAS_TAG` edges, 24,781 `:Tag` nodes, 96,790 `:TagEmbedding` nodes, 0 orphan embeddings, 0 old `Tag.embedding` values, 0 `File.description` values, and `tag_facet_embedding` ONLINE. |
+| HERB gold-100 RAGAS pilot (graph vs Lucene) | Export via `frontend/scripts/ragas-export.ts` → `ragas_exports/A_tags.jsonl`, `B_baseline.jsonl`; score via `python -m evaluation.ragas_eval`. 2026-05-20: 92/100 graph answers, 95/100 baseline; medians faithfulness 0,81 vs 0,80, context_recall 0,86 vs 1,00 (see [`ragas_eval_report.md`](ragas_eval_report.md)). |
 
 ## Current HERB artefact
 
@@ -73,6 +74,6 @@ The unzipped `backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226
 
 ## Next recommended step
 
-1. Build the HERB eval-set exporter/harness against `herb-eval`, including answerable/unanswerable split metadata and citation/reference IDs.
-2. Validate retrieval quality against the eval graph with deterministic hit@k/MRR/citation-recall metrics before leaning on RAGAS judge scores.
-3. Build the `clustering/queries/*.cypher` named views if human browsing remains useful after the eval harness exists.
+1. Optional: score `answer_correctness` / re-export failed ids; document token/latency medians for thesis §7.5.
+2. Validate retrieval with deterministic hit@k/MRR/citation-recall on `herb-eval` (complement RAGAS judge scores).
+3. Build the `clustering/queries/*.cypher` named views if human browsing remains useful after eval.

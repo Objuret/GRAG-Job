@@ -24,6 +24,15 @@ Project-wide reference for the thesis system. Start in [`/AGENTS.md`](../AGENTS.
 | [`backend/herb_tagging_frames.md`](backend/herb_tagging_frames.md) | HERB per-evidence-shape frame routing |
 | [`backend/pilot_full_herb_report.md`](backend/pilot_full_herb_report.md) | Current HERB artefact run report |
 | [`backend/status.md`](backend/status.md) | Backend built / verified state |
+| [`backend/ragas_eval_report.md`](backend/ragas_eval_report.md) | HERB gold-100 RAGAS methodology + results (graph vs Lucene) |
+
+## Thesis (PDF ↔ repo)
+
+| File | Purpose |
+|---|---|
+| [`thesis/README.md`](thesis/README.md) | Index: codebase truth, PDF error catalog, Swedish/English correction text |
+| [`thesis/repo_truth_comprehensive.md`](thesis/repo_truth_comprehensive.md) | Code-verified monorepo analysis |
+| [`thesis/thesis_pdf_vs_reality.md`](thesis/thesis_pdf_vs_reality.md) | Thesis2026VT.pdf vs implementation |
 
 ## Frontend — local-only browser workbench
 

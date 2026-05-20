@@ -719,6 +719,8 @@ function specToRagasConfig(spec) {
     max_tool_calls: spec.sqlAgent?.maxToolCalls ?? 0,
     max_rows_per_query: spec.sqlAgent?.maxRowsPerQuery ?? 0,
     max_cell_chars: spec.sqlAgent?.maxCellChars ?? 0,
+    answer_max_chunks: 200,
+    answer_scrub: true,
   };
 }
 

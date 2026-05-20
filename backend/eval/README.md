@@ -39,7 +39,7 @@ floors; SQL: similarity is N/A) still apply.
 | Arm | Default caps | RAGAS evidence |
 |---|---|---|
 | Graph (`mode=graph`) | `limit=0`, `grounding_k=0` | Full retrieved chunk texts |
-| Baseline (`mode=baseline`) | `limit=0` | Full retrieved chunk texts |
+| Baseline (`mode=baseline`) | `limit=0` → export uses **150** | Top-k Lucene hits (HERB Lucene at 0 returns ~5k chunks and breaks the answer API) |
 | SQL agent (`mode=sql_agent`) | `max_tool_calls=0`, `max_rows_per_query=0`, `max_cell_chars=0` | All SQL rows the agent saw (flattened), same truncation rules as the LLM tool output |
 
 **0 semantics:** omitting a cap removes it. SQL tool-call budget `0` still has
@@ -47,11 +47,15 @@ a hard **200-iteration** sanity ceiling in `backend/baselines/sql_agent.py`.
 Graph grounding `0` still queries the vector index top-**1000** neighbors per
 prompt tag before `minSim` filtering.
 
-Headless **baseline** export scrubs chunk text only when building the answer
-API request (malformed HERB bytes); retrieval and RAGAS `retrieved_contexts`
-are unchanged.
+Headless **baseline** export applies a **150-chunk default** when `limit=0`
+(graph retrieval stays uncapped). **All** headless exports apply **200-chunk
+answer API cap** + byte scrub (`answer_max_chunks` / `answer_scrub` in RunSpec);
+`retrieved_contexts` in JSONL remain the full retrieval for RAGAS.
 
 Set **`prompt_mode: context`** on graph/baseline RAG arms (never `raw` for eval).
+
+**Thesis limitations (export errors, judge timeouts, cohort sizes):**
+[`docs/backend/ragas_eval_report.md`](../../docs/backend/ragas_eval_report.md).
 
 ## Thesis Harness
 
