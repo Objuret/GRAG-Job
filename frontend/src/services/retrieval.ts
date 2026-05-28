@@ -154,6 +154,12 @@ export interface RetrievalInputOptions {
   /** Tag-grounding knobs (the interpreter "effort" control). */
   groundingK?: number;      // nearest corpus tags per prompt tag (default 10)
   minSim?: number;          // drop matches below this cosine sim (default 0.78)
+  /**
+   * kNN links prompt tags to corpus `:Tag` names; chunk ranking uses the HERB
+   * weight chain only (no `* grounding_sim`). Each prompt tag contributes its
+   * best matching edge on the chunk; scores sum across prompt tags.
+   */
+  linkOnlyScoring?: boolean;
   /** RAG-eval leakage guard: QA records + oracle product profiles are excluded by default. */
   excludedSections?: string[];
 }
@@ -176,6 +182,7 @@ export interface RetrievalInput {
     minRelevanceToFile: number;
     groundingK: number;
     minSim: number;
+    linkOnlyScoring: boolean;
     excludedSections: string[];
   };
   /** Hard structured gate from the plan, validated before tag scoring. */
@@ -203,15 +210,23 @@ function validateEvalScope(gate: HardGate, excluded: string[]): void {
   }
 }
 
-// Weighted overlap, with the grounding similarity folded in:
-// score = Σ qt.w_query * qt.facets[edge.facet] * edge.w_chunk * edge.w_facet
-//           * coalesce(chunk.relevance_to_file, 1) * qt.sim
-// Query tags are always grounded corpus :Tag names (qt.name) with a real
-// cosine sim. There is no exact-name path.
 // `limit` clause is omitted entirely when controls.limit === 0 (= "no limit").
 const limitClause = (limit: number) => (limit > 0 ? 'LIMIT $limit' : '');
 
-const scoreCypher = (gate: string, exclude: string, limit: number) => `
+// Weighted overlap: each prompt tag contributes its best matching HAS_TAG edge
+// on the chunk (max over that tag's grounded corpus links), then scores sum
+// across prompt tags. Stops generic corpus tags linked from many kNN hits from
+// piling onto the same chunk. Link-only mode drops grounding_sim from the product.
+const scoreCypher = (gate: string, exclude: string, limit: number, linkOnly: boolean) => {
+  const edgeWeight = linkOnly
+    ? `qt.w_query * facetScore * r.w_chunk * r.w_facet
+         * coalesce(c.relevance_to_file, 1.0)
+         * coalesce(qt.scopeWeight, 1.0)`
+    : `qt.w_query * facetScore * r.w_chunk * r.w_facet
+         * coalesce(c.relevance_to_file, 1.0)
+         * qt.sim
+         * coalesce(qt.scopeWeight, 1.0)`;
+  return `
 UNWIND $queryTags AS qt
 MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk)
 MATCH (c)-[r:HAS_TAG]->(t:Tag {name: qt.name})
@@ -224,7 +239,7 @@ WHERE coalesce(c.empty, false) = false
   AND coalesce(c.relevance_to_file, 1.0) >= $minRelevanceToFile
   ${gate}
   ${exclude}
-WITH c, r, qt,
+WITH c, qt.promptIndex AS promptIdx, r, qt,
      CASE r.facet
        WHEN 'topic'    THEN qt.topic
        WHEN 'entities' THEN qt.entities
@@ -233,11 +248,9 @@ WITH c, r, qt,
        WHEN 'evidence' THEN qt.evidence
        ELSE 0.0
      END AS facetScore
-WITH c,
-     sum(qt.w_query * facetScore * r.w_chunk * r.w_facet
-         * coalesce(c.relevance_to_file, 1.0)
-         * qt.sim
-         * coalesce(qt.scopeWeight, 1.0)) AS score
+WITH c, promptIdx, (${edgeWeight}) AS contrib
+WITH c, promptIdx, max(contrib) AS bestPromptContrib
+WITH c, sum(bestPromptContrib) AS score
 WHERE score > 0
 RETURN c.chunk_id   AS chunkId,
        c.file_id    AS fileId,
@@ -248,6 +261,7 @@ RETURN c.chunk_id   AS chunkId,
 ORDER BY score DESC
 ${limitClause(limit)}
 `;
+};
 
 const baselineCypher = (gate: string, exclude: string, limit: number) => `
 MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk)
@@ -301,8 +315,9 @@ function rowToChunk(rec: Record<string, unknown>): RetrievedChunk {
 interface ScoreTagParam {
   name: string;          // grounded corpus :Tag name
   facet: EmbedFacet;     // grounded corpus embedding facet; 'all' can score any edge facet
-  sim: number;           // grounding cosine similarity
+  sim: number;           // grounding cosine similarity (link stage only when linkOnly)
   scopeWeight: number;   // lower for the broad 'all' embedding
+  promptIndex: number;   // index into plan.tags — scorer takes max per prompt tag
   w_query: number;
   topic: number; entities: number; activity: number; temporal: number; evidence: number;
 }
@@ -332,7 +347,9 @@ async function groundQueryTags(
   k: number,
   minSim: number,
   activeFacets: FacetDimension[],
+  linkOnly: boolean,
 ): Promise<{ params: ScoreTagParam[]; grounding: GroundedTag[] }> {
+  const linkCap = linkOnly ? Math.max(1, k > 0 ? k : 40) : k;
   const requests: Array<PromptTagFacetInput & { promptIndex: number; scopeWeight: number }> = [];
   for (let i = 0; i < plan.tags.length; i++) {
     const qt = plan.tags[i];
@@ -344,17 +361,35 @@ async function groundQueryTags(
   }
 
   const vectors = await embedPromptTagFacets(requests, plan.description);
-  const params: ScoreTagParam[] = [];
   const grounding: GroundedTag[] = plan.tags.map(qt => ({ promptTag: qt.t, matches: [] }));
+  const rawParams: ScoreTagParam[] = [];
 
-  // k=0 = no cap; accept everything above minSim. Otherwise top-k by sim.
-  const noKCap = k <= 0;
+  // k=0 = no cap (legacy only). Link-only always caps links per prompt tag.
+  const noKCap = !linkOnly && linkCap <= 0;
+
+  if (linkOnly) {
+    for (let i = 0; i < plan.tags.length; i++) {
+      const qt = plan.tags[i];
+      const res = await session.run(
+        'MATCH (t:Tag {name: $name}) RETURN t.name AS name LIMIT 1',
+        { name: qt.t },
+      );
+      if (!res.records.length) continue;
+      const facets = activeFacets.filter((f) => (qt.facets[f] ?? 0) > 0);
+      const facet = facets.sort((a, b) => (qt.facets[b] ?? 0) - (qt.facets[a] ?? 0))[0] ?? 'topic';
+      rawParams.push({
+        name: qt.t, facet, sim: 1.0, scopeWeight: 1.0, promptIndex: i, ...facetCols(qt),
+      });
+      grounding[i].matches.push({ name: qt.t, facet, sim: 1.0 });
+    }
+  }
+
   for (let i = 0; i < requests.length; i++) {
     const req = requests[i];
     const qt = plan.tags[req.promptIndex];
     const vec = vectors[i];
     if (!vec) continue;
-    const queryK = noKCap ? 1000 : Math.max(k * 20, 200);
+    const queryK = linkOnly ? linkCap : (noKCap ? 1000 : Math.max(linkCap * 20, 200));
     const res = await session.run(
       `CALL db.index.vector.queryNodes($idx, $k, $vec) YIELD node, score
        RETURN node.name AS name, score AS sim`,
@@ -368,10 +403,36 @@ async function groundQueryTags(
       if (!name || !facet || !Number.isFinite(sim) || sim < minSim) continue;
       const rounded = Math.round(sim * 1e4) / 1e4;
       grounding[req.promptIndex].matches.push({ name, facet, sim: rounded });
-      params.push({ name, facet, sim, scopeWeight: req.scopeWeight, ...facetCols(qt) });
+      rawParams.push({ name, facet, sim, scopeWeight: req.scopeWeight, promptIndex: req.promptIndex, ...facetCols(qt) });
       accepted += 1;
-      if (!noKCap && accepted >= k) break;
+      if (linkOnly ? accepted >= linkCap : (!noKCap && accepted >= linkCap)) break;
     }
+  }
+
+  if (linkOnly) {
+    const params: ScoreTagParam[] = [];
+    for (let i = 0; i < plan.tags.length; i++) {
+      const qt = plan.tags[i];
+      const byName = new Map<string, { facet: EmbedFacet; sim: number; scopeWeight: number }>();
+      for (const m of grounding[i].matches) {
+        const prev = byName.get(m.name);
+        if (!prev || m.sim > prev.sim) {
+          byName.set(m.name, {
+            facet: m.facet,
+            sim: m.sim,
+            scopeWeight: m.name === qt.t ? 1.0 : (m.facet === 'all' ? 0.65 : 1.0),
+          });
+        }
+      }
+      const top = [...byName.entries()]
+        .sort((a, b) => b[1].sim - a[1].sim)
+        .slice(0, linkCap);
+      grounding[i].matches = top.map(([name, v]) => ({ name, facet: v.facet, sim: v.sim }));
+      for (const [name, v] of top) {
+        params.push({ name, facet: v.facet, sim: v.sim, scopeWeight: v.scopeWeight, promptIndex: i, ...facetCols(qt) });
+      }
+    }
+    return { params, grounding };
   }
 
   for (const g of grounding) {
@@ -384,9 +445,9 @@ async function groundQueryTags(
         seen.add(key);
         return true;
       });
-    if (!noKCap) g.matches = g.matches.slice(0, k);
+    if (!noKCap) g.matches = g.matches.slice(0, linkCap);
   }
-  return { params, grounding };
+  return { params: rawParams, grounding };
 }
 
 function retrievalLimit(plan: QueryPlan, options?: RetrievalInputOptions): number {
@@ -428,6 +489,7 @@ export function buildRetrievalInput(plan: QueryPlan, options: RetrievalInputOpti
       minRelevanceToFile: Number(options.minRelevanceToFile ?? plan.filters.min_relevance_to_file ?? 0),
       groundingK: Math.max(0, Number(options.groundingK ?? 0)), // 0 = no cap; minSim is the filter
       minSim: Number(options.minSim ?? 0.78),
+      linkOnlyScoring: Boolean(options.linkOnlyScoring),
       excludedSections: excludedSections(options),
     },
     gate: { ...gate, years: [...gate.years] },
@@ -512,7 +574,7 @@ export async function groundRetrieval(
 
     const k = controls.groundingK;
     const minSim = controls.minSim;
-    const g = await groundQueryTags(plan, session, k, minSim, facets);
+    const g = await groundQueryTags(plan, session, k, minSim, facets, controls.linkOnlyScoring);
     plan.grounding = g.grounding;
     if (!g.params.length) {
       throw new Error(
@@ -546,7 +608,9 @@ export async function scoreGroundedChunks(
         controls.limit, scope.datasetId,
       );
     }
-    const result = await session.run(scoreCypher(clause, exclude, controls.limit), {
+    const result = await session.run(
+      scoreCypher(clause, exclude, controls.limit, controls.linkOnlyScoring),
+      {
       queryTags: ground.params,
       activeFacets: controls.activeFacets,
       minWChunk: controls.minWChunk,

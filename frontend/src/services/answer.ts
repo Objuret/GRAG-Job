@@ -21,7 +21,7 @@ export type AnswerMode = 'raw' | 'context' | 'hybrid';
 
 /** Headless export: scrub HERB bytes + cap evidence sent to the answer API. */
 export interface AnswerCallOptions {
-  /** Top-N chunks by score for the answer LLM (0 = all retrieved). RAGAS contexts stay full. */
+  /** Top-N chunks by score for the answer/evidence budget (0 = all retrieved). */
   maxAnswerChunks?: number;
   maxChunkChars?: number;
   scrubForApi?: boolean;
@@ -41,10 +41,14 @@ export function scrubApiText(text: string): string {
     if (cp === 0 || (cp < 0x20 && cp !== 0x09 && cp !== 0x0a && cp !== 0x0d)) continue;
     out += text[i];
   }
-  return out.replace(/\\+$/g, '');
+  // Truncation can leave `\`, `\u`, or partial `\uXXXX` at the end — some APIs reject the JSON body.
+  out = out.replace(/\\u[0-9a-fA-F]{0,3}$/g, '');
+  out = out.replace(/\\+$/g, '');
+  return out;
 }
 
-function prepareChunksForAnswer(
+/** Same slice the answer LLM sees — export/RAGAS must use this for `retrieved_contexts`. */
+export function selectEvidenceChunks(
   chunks: RetrievedChunk[],
   opts: AnswerCallOptions = {},
 ): RetrievedChunk[] {
@@ -52,17 +56,15 @@ function prepareChunksForAnswer(
   let list = [...chunks].sort((a, b) => b.score - a.score);
   const cap = opts.maxAnswerChunks ?? 0;
   if (cap > 0) list = list.slice(0, cap);
-  if (opts.scrubForApi) {
-    list = list.map((c) => ({
-      ...c,
-      content: scrubApiText(c.content),
-      ...(c.description != null ? { description: scrubApiText(c.description) } : {}),
-    }));
-  }
-  return list.map((c) => ({
-    ...c,
-    content: c.content.slice(0, maxChars),
-  }));
+  return list.map((c) => {
+    let content = c.content.slice(0, maxChars);
+    let description = c.description;
+    if (opts.scrubForApi) {
+      content = scrubApiText(content);
+      if (description != null) description = scrubApiText(description);
+    }
+    return { ...c, content, ...(description != null ? { description } : {}) };
+  });
 }
 
 function formatChunks(chunks: RetrievedChunk[]): string {
@@ -92,7 +94,7 @@ export async function generateAnswer(
     `If evidence is insufficient: ${plan.answer_job.missing_evidence_policy}.\n` +
     `Cite chunks by their id number in brackets, e.g. [1] or [2,4].`;
 
-  const answerChunks = prepareChunksForAnswer(chunks, callOpts);
+  const answerChunks = selectEvidenceChunks(chunks, callOpts);
   const evidence = answerChunks.length
     ? formatChunks(answerChunks)
     : '(No chunks were retrieved — say insufficient evidence.)';

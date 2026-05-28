@@ -291,8 +291,10 @@ Two-pass via generic `chat()` (not Anthropic-only):
 4. **Score chunks** — weighted overlap Cypher:
 
 ```
-score = Σ w_query × facetScore × w_chunk × w_facet × relevance_to_file × sim × scopeWeight
+score = Σ_promptTag max_edge( w_query × facetScore × w_chunk × w_facet × relevance_to_file × sim × scopeWeight )
 ```
+
+Each prompt tag contributes its best edge on the chunk; scores sum across prompt tags (see [`query_interpretation_layer.md`](../frontend/query_interpretation_layer.md)).
 
 Filtered by: `r.run_id` (default `pilot_full_herb`), active facets, minWChunk, minRelevanceToFile, eval section exclusions.
 
@@ -359,6 +361,8 @@ flowchart LR
 |-----|------|-----------|
 | A_tags | `graph` | interpret → ground → scoreGroundedChunks |
 | B_baseline | `baseline` | Lucene on content, default **top 150** if limit=0 |
+
+**Primary thesis eval (2026-05):** matched **k=40**, **grounding_k=20**, answer/judge @40 — see `ragas_exports/*.ragas.json` and `docs/backend/ragas_eval_report.md`. Pilot uncapped runs (`A_tags.jsonl`, `B_baseline.jsonl`) remain appendix/stress only.
 
 ### RAGAS scorer
 

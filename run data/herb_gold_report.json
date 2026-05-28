@@ -1,0 +1,100 @@
+{
+  "per_sample": [
+    {
+      "id": "gold_actiongenie_0",
+      "faithfulness": 1.0,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_anomalyforce_0",
+      "faithfulness": 0.4375,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.09728506786843892
+    },
+    {
+      "id": "gold_autotuneforce_0",
+      "faithfulness": 0.9166666666666666,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_coachforce_5",
+      "faithfulness": 0.8666666666666667,
+      "context_recall": 0.5,
+      "llm_context_precision_with_reference": 0.249999999975
+    },
+    {
+      "id": "gold_collaborateforce_1",
+      "faithfulness": 0.1111111111111111,
+      "context_recall": 1.0,
+      "llm_context_precision_with_reference": 0.34166666665527773
+    },
+    {
+      "id": "gold_collaborationforce_6",
+      "faithfulness": 0.45454545454545453,
+      "context_recall": 0.5,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_connectforce_5",
+      "faithfulness": 0.8181818181818182,
+      "context_recall": 1.0,
+      "llm_context_precision_with_reference": 0.249999999975
+    },
+    {
+      "id": "gold_contentforce_2",
+      "faithfulness": 0.4,
+      "context_recall": 1.0,
+      "llm_context_precision_with_reference": 0.07692307691538462
+    },
+    {
+      "id": "gold_contextforce_1",
+      "faithfulness": 1.0,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_edgeforce_2",
+      "faithfulness": 1.0,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_explainabilityforce_6",
+      "faithfulness": 0.6,
+      "context_recall": 1.0,
+      "llm_context_precision_with_reference": 0.49999999995
+    },
+    {
+      "id": "gold_feedbackforce_5",
+      "faithfulness": 1.0,
+      "context_recall": 0.14285714285714285,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_flowforce_3",
+      "faithfulness": 0.8571428571428571,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_forecastforce_4",
+      "faithfulness": 1.0,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_insightforce_5",
+      "faithfulness": 1.0,
+      "context_recall": 1.0,
+      "llm_context_precision_with_reference": 0.33333333331666665
+    }
+  ],
+  "overall": {
+    "faithfulness": 0.7641209716209717,
+    "context_recall": 0.40952380952380957,
+    "llm_context_precision_with_reference": 0.1232805429770512
+  },
+  "n_samples": 15
+}

@@ -42,6 +42,7 @@ import {
   RAGAS_EXPORTS_DIR,
   isRagasExportsFsAvailable,
   joinRagasExportPath,
+  ragasExportExists,
   writeRagasExport,
 } from './services/ragasExportsFs';
 
@@ -155,7 +156,11 @@ const I = {
   prompt:   <Icon d={<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></>}/>,
   lock:     <Icon d={<><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></>}/>,
   list:     <Icon d={<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h8"/><path d="M8 9h2"/></>}/>,
+  chevLeft:  <Icon d={<polyline points="15 18 9 12 15 6"/>}/>,
+  chevRight: <Icon d={<polyline points="9 18 15 12 9 6"/>}/>,
 };
+
+const SIDE_PANEL_W = { open: { catalog: 248, inspector: 360 }, collapsed: 36 };
 
 const DEFAULT_FLOW_EDGE_OPTIONS = {
   type: 'default',
@@ -591,29 +596,6 @@ function buildInitial() {
   mkEdge(nAnsA, nCompare);
   mkEdge(nAnsB, nCompare);
 
-  // Empty Query module, seeded but not wired to the lanes — gives a clear starting surface
-  // for fragment drops without making cross-lane wiring assumptions on first paint.
-  const laneW = Math.max(pipeW, usageW);
-  const qgW = 620;
-  const qgH = 320;
-  const qgX = Math.max(0, Math.round((laneW - qgW) / 2));
-  const qgY = usageY + usageH + laneGap;
-  nodes.push({
-    id: 'query_module_initial',
-    type: 'queryGroup',
-    position: { x: qgX, y: qgY },
-    style: { width: qgW, height: qgH, zIndex: 0 },
-    data: {
-      label: 'Query module',
-      templateNote: '',
-      headerCypher: DEFAULT_MODULE_HEADER,
-      footerCypher: DEFAULT_MODULE_FOOTER,
-      humanSummary: '',
-    },
-    draggable: true,
-    selectable: true,
-  });
-
   return { nodes, edges };
 }
 
@@ -719,7 +701,9 @@ function specToRagasConfig(spec) {
     max_tool_calls: spec.sqlAgent?.maxToolCalls ?? 0,
     max_rows_per_query: spec.sqlAgent?.maxRowsPerQuery ?? 0,
     max_cell_chars: spec.sqlAgent?.maxCellChars ?? 0,
-    answer_max_chunks: 200,
+    // Same budget as retrieval limit (0 = all retrieved). Matches browser runRunSpec
+    // (no separate answer cap) and headless export eval slice.
+    answer_max_chunks: Math.max(0, spec.buildInput.maxChunks ?? 0),
     answer_scrub: true,
   };
 }
@@ -734,6 +718,27 @@ function downloadTextFile(filename, text, mime) {
   URL.revokeObjectURL(url);
 }
 
+function normalizeRagasSubdir(subdir) {
+  return String(subdir || '').replace(/\\/g, '/').replace(/^\/+|\/+$/g, '').replace(/\.\.(\/|$)/g, '');
+}
+
+/** Basename only — no folders in the filename field. */
+function normalizeRagasFilename(name) {
+  const base = String(name || '').replace(/\\/g, '/').split('/').pop() || '';
+  const cleaned = base.replace(/[^a-zA-Z0-9._-]+/g, '_').replace(/^_+|_+$/g, '');
+  return cleaned || 'export';
+}
+
+function defaultRagasConfigFilename(spec) {
+  const safe = normalizeRagasFilename((spec.label || 'run').replace(/\.ragas\.json$/i, ''));
+  return `${safe}.ragas.json`;
+}
+
+function defaultRagasJsonlFilename() {
+  const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+  return `ragas_runs_${stamp}.jsonl`;
+}
+
 /** Write under `ragas_exports/` when the Vite dev bridge is up; else browser download. */
 async function saveRagasArtifact(filename, text, saveSubdir) {
   const rel = joinRagasExportPath(saveSubdir, filename);
@@ -745,26 +750,68 @@ async function saveRagasArtifact(filename, text, saveSubdir) {
   return null;
 }
 
-async function exportRagasConfig(spec, saveSubdir, onStatus) {
+function buildRagasConfigSaveRequest(spec) {
   const cfg = specToRagasConfig(spec);
   if (!cfg) {
-    alert(
-      'Route "Query module" is not supported by the headless RAGAS exporter ' +
-      '(composed Cypher has no batch pipeline). Switch route to Tags, Baseline, ' +
-      'Content, or SQL agent before exporting, or run this spec interactively from the canvas.',
-    );
-    return;
+    return {
+      error:
+        'Route "Query module" is not supported by the headless RAGAS exporter ' +
+        '(composed Cypher has no batch pipeline). Switch route to Tags, Baseline, ' +
+        'Content, or SQL agent before exporting, or run this spec interactively from the canvas.',
+    };
   }
-  const safe = (spec.label || 'run').replace(/[^a-zA-Z0-9._-]+/g, '_').replace(/^_+|_+$/g, '') || 'run';
-  const filename = `${safe}.ragas.json`;
-  const text = JSON.stringify(cfg, null, 2) + '\n';
-  try {
-    onStatus?.('Saving…');
-    const path = await saveRagasArtifact(filename, text, saveSubdir);
-    onStatus?.(path ? `Saved ${path}` : `Downloaded ${filename}`);
-  } catch (e) {
-    onStatus?.(`Export failed: ${e?.message || e}`);
+  return {
+    title: 'Save RAGAS run config',
+    description: 'RunSpec JSON for npm run ragas:export -- --config',
+    defaultFilename: defaultRagasConfigFilename(spec),
+    getText: () => JSON.stringify(cfg, null, 2) + '\n',
+  };
+}
+
+function buildRagasJsonlSaveRequest(runs) {
+  const rows = [];
+  const push = (o) => rows.push(JSON.stringify(o));
+  for (const run of runs) {
+    if (run.kind === 'run') {
+      const r = run.runResult;
+      if (!r) continue;
+      const ctx = (r.retrievedChunks || []).map((c) => c.content).filter(Boolean);
+      push({
+        id: run.id, run_id: run.id, at: run.at,
+        question: run.prompt, user_input: run.prompt,
+        answer: r.response || '', response: r.response || '',
+        contexts: ctx, retrieved_contexts: ctx,
+        reference: null,
+        meta: {
+          label: r.label, route: r.route, database: r.database,
+          dataset_id: run.datasetId || null, spec: run.spec,
+          n_chunks: r.chunks, tokens: { in: r.tokensIn, out: r.tokensOut },
+          elapsed_ms: r.durationMs,
+        },
+      });
+      continue;
+    }
+    if (!run.results) continue;
+    for (const lane of ['A', 'B']) {
+      const r = run.results[`lane_${lane}`];
+      if (!r) continue;
+      const ctx = (r.retrievedChunks || []).map((c) => c.content).filter(Boolean);
+      push({
+        id: `${run.id}#${lane}`, run_id: run.id, at: run.at, lane,
+        dataset: run.datasetId || null,
+        question: run.prompt, user_input: run.prompt,
+        answer: r.response || '', response: r.response || '',
+        contexts: ctx, retrieved_contexts: ctx, reference: null,
+      });
+    }
   }
+  if (!rows.length) return { error: 'No successful runs to export.' };
+  return {
+    title: 'Save RAGAS runs',
+    description: 'JSONL from run history (one row per run or lane)',
+    defaultFilename: defaultRagasJsonlFilename(),
+    getText: () => rows.join('\n') + '\n',
+  };
 }
 
 /** Read/write a dotted RunSpec path (`buildInput.minSim`) immutably. */
@@ -867,6 +914,8 @@ function WorkbenchApp({ onOpenReports }) {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initial.edges);
   const [selected, setSelected] = useState(null);     // {kind:'node'|'lane', id}
   const [edgeSel, setEdgeSel]   = useState(null);     // edge id (drawer)
+  const [catalogOpen, setCatalogOpen] = useState(false);
+  const [inspectorOpen, setInspectorOpen] = useState(false);
   const [tweaks, setTweak]      = useTweaks(TWEAK_DEFAULTS);
   const [tweaksOpen, setTweaksOpen] = useState(false);
   const [theme, setTheme]       = useState(tweaks.defaultTheme);
@@ -895,11 +944,16 @@ function WorkbenchApp({ onOpenReports }) {
     catch { return ''; }
   });
   const [ragasExportStatus, setRagasExportStatus] = useState('');
+  const [ragasSaveDialog, setRagasSaveDialog] = useState(null);
   useEffect(() => {
     try { localStorage.setItem(RAGAS_SAVE_SUBDIR_KEY, ragasSaveSubdir); }
     catch { /* ignore */ }
   }, [ragasSaveSubdir]);
   const [runsBusy, setRunsBusy] = useState(false);
+
+  const onOpenRagasSave = useCallback((request) => {
+    openRagasSaveRequest(setRagasSaveDialog, ragasSaveSubdir, request);
+  }, [ragasSaveSubdir]);
 
   useEffect(() => { document.documentElement.setAttribute('data-theme', theme); }, [theme]);
   useEffect(() => { document.documentElement.style.setProperty('--accent', tweaks.accentColor); }, [tweaks.accentColor]);
@@ -1351,8 +1405,10 @@ function WorkbenchApp({ onOpenReports }) {
   const onSelectionChange = useCallback(({ nodes: ns, edges: es }) => {
     if (es.length === 1) { setEdgeSel(es[0].id); setSelected(null); return; }
     setEdgeSel(null);
-    if (ns.length === 1) setSelected({ kind: ns[0].type, id: ns[0].id });
-    else setSelected(null);
+    if (ns.length === 1) {
+      setSelected({ kind: ns[0].type, id: ns[0].id });
+      setInspectorOpen(true);
+    } else setSelected(null);
   }, []);
 
   const onDrop = useCallback((e) => {
@@ -1619,15 +1675,26 @@ function WorkbenchApp({ onOpenReports }) {
   const selNode = selected && nodes.find(n => n.id === selected.id);
   const selKind = selNode?.data?.kind ? NT[selNode.data.kind] : null;
   const selEdge = edgeSel && edges.find(e => e.id === edgeSel);
+  const catalogW = catalogOpen ? SIDE_PANEL_W.open.catalog : SIDE_PANEL_W.collapsed;
+  const inspectorW = inspectorOpen ? SIDE_PANEL_W.open.inspector : SIDE_PANEL_W.collapsed;
+  const mainColumns = `${catalogW}px 1fr ${inspectorW}px${selEdge ? ' 380px' : ''}`;
 
   return (
     <div
-      className={cls('workbench', edgeSel && 'drawer-open')}
+      className="workbench"
       style={{ gridTemplateRows: `48px minmax(0, 1fr) ${bottomHeight}px` }}
     >
       <TopStrip {...{ theme, setTheme, prompt, setPrompt, runAll, pipelineRunning, onOpenReports }}/>
-      <div className={cls('workbench-main', edgeSel && 'drawer-open')}>
-        <Catalog />
+      <div className="workbench-main" style={{ gridTemplateColumns: mainColumns }}>
+        <SidePanel
+          side="left"
+          open={catalogOpen}
+          onToggle={() => setCatalogOpen((v) => !v)}
+          title="Node library"
+          icon={I.list}
+        >
+          <Catalog />
+        </SidePanel>
         <div
           ref={canvasRootRef}
           className="canvas workbench-canvas-focus"
@@ -1682,13 +1749,21 @@ function WorkbenchApp({ onOpenReports }) {
             )}
           </ReactFlow>
         </div>
-        <Inspector selKind={selKind} selNode={selNode} metrics={results.metrics}
-                   datasetOptions={datasetOptions} datasetLoadState={datasetLoadState}
-                   prompt={prompt} setPrompt={setPrompt}
-                   queryContainerMeta={QUERY_CONTAINER}
-                   nodes={nodes}
-                   edges={edges}
-                   patchNodeData={patchNodeData} />
+        <SidePanel
+          side="right"
+          open={inspectorOpen}
+          onToggle={() => setInspectorOpen((v) => !v)}
+          title="Inspector"
+          icon={I.inspect}
+        >
+          <Inspector selKind={selKind} selNode={selNode} metrics={results.metrics}
+                     datasetOptions={datasetOptions} datasetLoadState={datasetLoadState}
+                     prompt={prompt} setPrompt={setPrompt}
+                     queryContainerMeta={QUERY_CONTAINER}
+                     nodes={nodes}
+                     edges={edges}
+                     patchNodeData={patchNodeData} />
+        </SidePanel>
         {selEdge && <Drawer edge={selEdge} nodes={nodes} onClose={() => setEdgeSel(null)} />}
       </div>
       <BottomPanel results={results} prompt={prompt} outputView={outputView} setOutputView={setOutputView}
@@ -1698,12 +1773,24 @@ function WorkbenchApp({ onOpenReports }) {
                    onRestoreRun={restoreHistoryRun} onClearLog={() => setRunLog([])}
                    runSpecs={runSpecs} setRunSpecs={setRunSpecs}
                    runResults={runResults} runsBusy={runsBusy} onRunAll={runAllSpecs}
-                   ragasSaveSubdir={ragasSaveSubdir} setRagasSaveSubdir={setRagasSaveSubdir}
-                   ragasExportStatus={ragasExportStatus} setRagasExportStatus={setRagasExportStatus}
+                   ragasExportStatus={ragasExportStatus}
+                   onOpenRagasSave={onOpenRagasSave}
                    datasetOptions={datasetOptions}
                    queryModules={nodes.filter((n) => n.type === 'queryGroup').map((n) => ({ id: n.id, label: n.data?.label || n.id }))}
                    onStartResize={startBottomResize}/>
       {tweaksOpen && <TweaksPanel tweaks={tweaks} setTweak={setTweak} onClose={() => { setTweaksOpen(false); window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*'); }}/>}
+      {ragasSaveDialog && (
+        <RagasSaveDialog
+          {...ragasSaveDialog}
+          onClose={() => setRagasSaveDialog(null)}
+          onSaved={({ path, subdir, filename }) => {
+            setRagasSaveSubdir(subdir);
+            setRagasExportStatus(path ? `Saved ${path}` : `Downloaded ${filename}`);
+            setRagasSaveDialog(null);
+          }}
+          onError={(msg) => setRagasExportStatus(msg)}
+        />
+      )}
     </div>
   );
 }
@@ -1763,6 +1850,44 @@ function TwToggle({ label, value, onChange }) {
       <span className="tw-label">{label}</span>
       <div className={cls('node-toggle', value && 'on')}/>
     </div>
+  );
+}
+
+// ─── Side panels (catalog + inspector) ──────────────────────────────────────
+function SidePanel({ side, open, onToggle, title, icon, children }) {
+  const isLeft = side === 'left';
+  if (!open) {
+    return (
+      <aside className={cls('side-panel', 'collapsed', isLeft ? 'side-panel-left' : 'side-panel-right')}>
+        <button
+          type="button"
+          className="side-panel-expand btn btn-ghost btn-icon"
+          onClick={onToggle}
+          title={`Open ${title}`}
+          aria-label={`Open ${title}`}
+        >
+          {isLeft ? I.chevRight : I.chevLeft}
+        </button>
+        <span className="side-panel-rail-label" aria-hidden="true">{icon}</span>
+      </aside>
+    );
+  }
+  return (
+    <aside className={cls('side-panel', isLeft ? 'side-panel-left' : 'side-panel-right')}>
+      <div className="side-panel-head">
+        <span className="side-panel-title">{icon}<span>{title}</span></span>
+        <button
+          type="button"
+          className="btn btn-ghost btn-icon side-panel-collapse"
+          onClick={onToggle}
+          title={`Collapse ${title}`}
+          aria-label={`Collapse ${title}`}
+        >
+          {isLeft ? I.chevLeft : I.chevRight}
+        </button>
+      </div>
+      <div className="side-panel-body">{children}</div>
+    </aside>
   );
 }
 
@@ -2689,60 +2814,22 @@ function copyText(text) {
  *  - Run Builder runs → one row per Run (its config in `meta`).
  *  - legacy canvas A/B runs → one row per lane.
  */
-async function exportRagasJsonl(runs, saveSubdir, onStatus) {
-  const rows = [];
-  const push = (o) => rows.push(JSON.stringify(o));
-  for (const run of runs) {
-    if (run.kind === 'run') {
-      const r = run.runResult;
-      if (!r) continue;
-      const ctx = (r.retrievedChunks || []).map((c) => c.content).filter(Boolean);
-      push({
-        id: run.id, run_id: run.id, at: run.at,
-        question: run.prompt, user_input: run.prompt,
-        answer: r.response || '', response: r.response || '',
-        contexts: ctx, retrieved_contexts: ctx,
-        reference: null,
-        meta: {
-          label: r.label, route: r.route, database: r.database,
-          dataset_id: run.datasetId || null, spec: run.spec,
-          n_chunks: r.chunks, tokens: { in: r.tokensIn, out: r.tokensOut },
-          elapsed_ms: r.durationMs,
-        },
-      });
-      continue;
-    }
-    if (!run.results) continue;
-    for (const lane of ['A', 'B']) {
-      const r = run.results[`lane_${lane}`];
-      if (!r) continue;
-      const ctx = (r.retrievedChunks || []).map((c) => c.content).filter(Boolean);
-      push({
-        id: `${run.id}#${lane}`, run_id: run.id, at: run.at, lane,
-        dataset: run.datasetId || null,
-        question: run.prompt, user_input: run.prompt,
-        answer: r.response || '', response: r.response || '',
-        contexts: ctx, retrieved_contexts: ctx, reference: null,
-      });
-    }
+function openRagasSaveRequest(setDialog, defaultSubdir, request) {
+  if (request.error) {
+    alert(request.error);
+    return;
   }
-  if (!rows.length) return;
-  const filename = `ragas_runs_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.jsonl`;
-  const text = rows.join('\n') + '\n';
-  try {
-    onStatus?.('Saving…');
-    const path = await saveRagasArtifact(filename, text, saveSubdir);
-    onStatus?.(path ? `Saved ${path}` : `Downloaded ${filename}`);
-  } catch (e) {
-    onStatus?.(`Export failed: ${e?.message || e}`);
-  }
+  setDialog({
+    ...request,
+    defaultSubdir: defaultSubdir ?? '',
+  });
 }
 
 function BottomPanel({
   results, prompt, outputView, setOutputView, bottomTab, setBottomTab,
   pipelineRunning, pipelineError, runLog, runHistory, onRestoreRun, onClearLog, onStartResize,
   runSpecs, setRunSpecs, runResults, runsBusy, onRunAll, datasetOptions, queryModules,
-  ragasSaveSubdir, setRagasSaveSubdir, ragasExportStatus, setRagasExportStatus,
+  ragasExportStatus, onOpenRagasSave,
 }) {
   const [errorsOpen, setErrorsOpen] = useState(false);
   const [copiedErrorId, setCopiedErrorId] = useState(null);
@@ -2860,15 +2947,15 @@ function BottomPanel({
           runResults={runResults} runsBusy={runsBusy} onRunAll={onRunAll}
           datasetOptions={datasetOptions} queryModules={queryModules}
           outputView={outputView}
-          ragasSaveSubdir={ragasSaveSubdir} setRagasSaveSubdir={setRagasSaveSubdir}
-          ragasExportStatus={ragasExportStatus} setRagasExportStatus={setRagasExportStatus}
+          ragasExportStatus={ragasExportStatus}
+          onOpenRagasSave={onOpenRagasSave}
         />
       )}
       {bottomTab === 'logs' && <LogPanel events={runLog} pipelineError={pipelineError} onClearLog={onClearLog}/>}
       {bottomTab === 'history' && (
         <HistoryPanel
           runs={runHistory} prompt={prompt} onRestoreRun={onRestoreRun}
-          ragasSaveSubdir={ragasSaveSubdir} setRagasExportStatus={setRagasExportStatus}
+          onOpenRagasSave={onOpenRagasSave}
         />
       )}
     </section>
@@ -3162,7 +3249,7 @@ function RunSpecField({ spec, field, route, datasetOptions, queryModules, onChan
 
 function RunSpecCard({
   spec, index, datasetOptions, queryModules, onChange, onDuplicate, onRemove, removable,
-  ragasSaveSubdir, setRagasExportStatus,
+  onOpenRagasSave,
 }) {
   const moduleRoute = spec.route === 'module';
   return (
@@ -3178,7 +3265,7 @@ function RunSpecCard({
           <button
             type="button"
             className="result-action"
-            onClick={() => exportRagasConfig(spec, ragasSaveSubdir, setRagasExportStatus)}
+            onClick={() => onOpenRagasSave(buildRagasConfigSaveRequest(spec))}
             disabled={moduleRoute}
             title={moduleRoute
               ? 'Module route is not supported by the headless RAGAS exporter'
@@ -3247,26 +3334,110 @@ function CompareRunsView({ runResults, view }) {
   );
 }
 
-function RagasSaveToField({ subdir, setSubdir, status }) {
+function RagasSaveDialog({
+  title, description, defaultFilename, defaultSubdir, getText, onClose, onSaved, onError,
+}) {
+  const [filename, setFilename] = useState(defaultFilename);
+  const [subdir, setSubdir] = useState(defaultSubdir || '');
+  const [busy, setBusy] = useState(false);
+  const filenameRef = useRef(null);
+
+  useEffect(() => {
+    filenameRef.current?.focus();
+    filenameRef.current?.select();
+  }, []);
+
+  const fn = normalizeRagasFilename(filename);
+  const folder = normalizeRagasSubdir(subdir);
+  const relPath = joinRagasExportPath(folder, fn);
+  const fullPath = relPath ? `${RAGAS_EXPORTS_DIR}/${relPath}` : `${RAGAS_EXPORTS_DIR}/${fn}`;
+  const devFs = isRagasExportsFsAvailable();
+
+  const handleSave = async () => {
+    if (!fn) return;
+    if (devFs) {
+      try {
+        const exists = await ragasExportExists(relPath);
+        if (exists && !window.confirm(`"${relPath}" already exists. Overwrite?`)) return;
+      } catch (e) {
+        onError?.(`Export failed: ${e?.message || e}`);
+        return;
+      }
+    }
+    setBusy(true);
+    try {
+      const text = getText();
+      const path = await saveRagasArtifact(fn, text, folder);
+      onSaved({ path, subdir: folder, filename: fn });
+    } catch (e) {
+      onError?.(`Export failed: ${e?.message || e}`);
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
-    <label className="run-export-dir" title={`Files are written under ${RAGAS_EXPORTS_DIR}/ at the repo root (dev server only)`}>
-      <span className="run-export-dir-label">Save to</span>
-      <span className="run-export-dir-prefix mono">{RAGAS_EXPORTS_DIR}/</span>
-      <input
-        className="run-export-dir-input mono"
-        value={subdir}
-        onChange={(e) => setSubdir(e.target.value.replace(/\\/g, '/').replace(/^\/+/, ''))}
-        placeholder="(optional subfolder)"
-      />
-      {status && <span className="run-export-dir-status mono">{status}</span>}
-    </label>
+    <div className="ragas-picker-backdrop" role="presentation" onClick={onClose}>
+      <div
+        className="ragas-picker ragas-save-dialog"
+        role="dialog"
+        aria-labelledby="ragas-save-title"
+        aria-modal="true"
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => { if (e.key === 'Escape') onClose(); }}
+      >
+        <header className="ragas-picker-head">
+          <div>
+            <h2 id="ragas-save-title">{title}</h2>
+            {description && <p className="ragas-picker-sub">{description}</p>}
+          </div>
+          <button type="button" className="ragas-report-remove" onClick={onClose} title="Close">✕</button>
+        </header>
+        <div className="ragas-save-body">
+          <label className="ragas-save-field">
+            <span className="ragas-save-label">Folder</span>
+            <div className="ragas-save-path-row">
+              <span className="ragas-save-prefix mono">{RAGAS_EXPORTS_DIR}/</span>
+              <input
+                className="ragas-save-input mono"
+                value={subdir}
+                onChange={(e) => setSubdir(e.target.value.replace(/\\/g, '/').replace(/^\/+/, ''))}
+                placeholder="(optional subfolder)"
+                disabled={busy}
+              />
+            </div>
+          </label>
+          <label className="ragas-save-field">
+            <span className="ragas-save-label">File name</span>
+            <input
+              ref={filenameRef}
+              className="ragas-save-input mono"
+              value={filename}
+              onChange={(e) => setFilename(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') handleSave(); }}
+              disabled={busy}
+            />
+          </label>
+          <p className="ragas-save-preview mono" title={devFs ? 'Written via dev server' : 'Downloaded in production build'}>
+            {devFs ? 'Save as: ' : 'Download as: '}
+            <strong>{fullPath}</strong>
+          </p>
+        </div>
+        <footer className="ragas-picker-foot">
+          <button type="button" className="ragas-btn ragas-btn-ghost" onClick={onClose} disabled={busy}>Cancel</button>
+          <button type="button" className="ragas-btn ragas-btn-primary" onClick={handleSave} disabled={busy || !fn}>
+            {busy ? 'Saving…' : 'Save'}
+          </button>
+        </footer>
+      </div>
+    </div>
   );
 }
 
 function RunBuilderPanel({
   prompt, runSpecs, setRunSpecs, runResults, runsBusy, onRunAll,
   datasetOptions, queryModules, outputView,
-  ragasSaveSubdir, setRagasSaveSubdir, ragasExportStatus, setRagasExportStatus,
+  ragasExportStatus, onOpenRagasSave,
 }) {
   const update = (id, nextSpec) => setRunSpecs((s) => s.map((x) => (x.id === id ? nextSpec : x)));
   const duplicate = (spec) => setRunSpecs((s) => {
@@ -3284,11 +3455,9 @@ function RunBuilderPanel({
           {runsBusy ? 'Running…' : `Run all (${runSpecs.length})`}
         </button>
         <button type="button" className="result-action" disabled={runsBusy} onClick={add}>Add run</button>
-        <RagasSaveToField
-          subdir={ragasSaveSubdir}
-          setSubdir={setRagasSaveSubdir}
-          status={ragasExportStatus}
-        />
+        {ragasExportStatus && (
+          <span className="run-export-dir-status mono" title="Last export">{ragasExportStatus}</span>
+        )}
         <span className="console-muted">same prompt across all runs: “{prompt}”</span>
       </div>
       <div className="run-cards">
@@ -3297,8 +3466,7 @@ function RunBuilderPanel({
             key={spec.id} spec={spec} index={i}
             datasetOptions={datasetOptions} queryModules={queryModules}
             removable={runSpecs.length > 1}
-            ragasSaveSubdir={ragasSaveSubdir}
-            setRagasExportStatus={setRagasExportStatus}
+            onOpenRagasSave={onOpenRagasSave}
             onChange={(next) => update(spec.id, next)}
             onDuplicate={() => duplicate(spec)}
             onRemove={() => remove(spec.id)}
@@ -3310,7 +3478,7 @@ function RunBuilderPanel({
   );
 }
 
-function HistoryPanel({ runs, prompt, onRestoreRun, ragasSaveSubdir, setRagasExportStatus }) {
+function HistoryPanel({ runs, prompt, onRestoreRun, onOpenRagasSave }) {
   return (
     <div className="bottom-console">
       <div className="console-toolbar">
@@ -3320,7 +3488,7 @@ function HistoryPanel({ runs, prompt, onRestoreRun, ragasSaveSubdir, setRagasExp
           type="button"
           className="result-action"
           disabled={!runs.some((r) => r.results || (r.kind === 'run' && r.runResult))}
-          onClick={() => exportRagasJsonl(runs, ragasSaveSubdir, setRagasExportStatus)}
+          onClick={() => onOpenRagasSave(buildRagasJsonlSaveRequest(runs))}
           title={`Save successful runs as JSONL under ${RAGAS_EXPORTS_DIR}/`}
         >
           Export RAGAS

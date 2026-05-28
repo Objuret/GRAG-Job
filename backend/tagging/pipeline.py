@@ -606,7 +606,7 @@ class ClaudeCaller:
                 "input_schema": schema,
             }],
             tool_choice={"type": "tool", "name": schema_name},
-            temperature=0.3,
+            temperature=0,
         )
 
     async def call(
@@ -898,13 +898,16 @@ MATERIALIZE_SCALAR_FIELDS = (
 MATERIALIZE_INT_FIELDS = ("item_index", "msg_index_start", "msg_index_end", "part_index")
 
 # Only these are gateable in retrieval.ts, so only these are indexed.
-GATE_INDEXED_FIELDS = ("product", "section", "channel", "employee_id")
+GATE_INDEXED_FIELDS = ("product", "section", "channel", "employee_id", "metadata_section")
 # Indexes created by an earlier version that nothing queries — dropped so the
 # index surface matches what is actually used.
 _OBSOLETE_CHUNK_INDEXES = (
-    "chunk_parent_ref", "chunk_chunk_ref", "chunk_metadata_section",
+    "chunk_parent_ref", "chunk_chunk_ref",
     "chunk_subsection", "chunk_doc_field",
 )
+
+# Stable employee-id tokens in directory/org-tree row text (deterministic lookup tags).
+_EID_TOKEN_RE = re.compile(r"\beid_[a-f0-9]{8}\b", re.IGNORECASE)
 
 # 4-digit year token inside a temporal tag name (1800–2099).
 _TAG_YEAR_RE = re.compile(r"(?:18|19|20)\d{2}")
@@ -1043,6 +1046,86 @@ async def stage_materialize() -> None:
         if "materialize" not in state["stages_done"]:
             state["stages_done"].append("materialize")
         write_run_json(state)
+    finally:
+        await driver.close()
+
+
+def _lookup_eid_names(content: str, employee_id: str | None = None) -> list[str]:
+    """Extract normalised eid_* tag names from chunk text (+ materialized employee_id)."""
+    names: set[str] = set()
+    for m in _EID_TOKEN_RE.findall(content or ""):
+        n = clean_tag_name(m)
+        if n.startswith("eid_"):
+            names.add(n)
+    if employee_id:
+        n = clean_tag_name(str(employee_id))
+        if n.startswith("eid_"):
+            names.add(n)
+    return sorted(names)
+
+
+def _lookup_eid_edges(names: list[str]) -> list[dict[str, Any]]:
+    """One entities-facet HAS_TAG edge per lookup id (deterministic weights)."""
+    if not names:
+        return []
+    facets = {"topic": 0.1, "entities": 1.0, "activity": 0.0, "temporal": 0.0, "evidence": 0.85}
+    w_chunk = round(compute_w_chunk(facets), 2)
+    return [{"name": n, "facet": "entities", "w_chunk": w_chunk, "w_facet": 0.95} for n in names]
+
+
+async def stage_supplement_lookup_tags() -> None:
+    """Deterministic eid_* tags on directory/org-tree lookup chunks. No LLM.
+
+    The HERB frames treat row ids as lookup handles, but the LLM often tags
+    only table-level concepts on directory_batch. This stage closes that gap
+    on the live graph without re-running extract.
+    """
+    run_id = os.environ.get("PILOT_NAME", "pilot_full_herb")
+    driver = neo4j_driver()
+    try:
+        await ensure_hard_field_indexes(driver)
+        async with driver.session(database=NEO4J_DATABASE) as s:
+            res = await s.run(
+                """
+                MATCH (f:File {dataset_id: $dataset_id})-[:HAS_CHUNK]->(c:Chunk)
+                WHERE c.kind IN ['directory_batch', 'org_tree']
+                   OR c.metadata_section = 'employee'
+                RETURN c.chunk_id AS chunk_id, c.content AS content,
+                       c.employee_id AS employee_id
+                """,
+                dataset_id=DATASET_ID,
+            )
+            rows = [dict(r) async for r in res]
+
+        total_edges = 0
+        chunks_with = 0
+        async with driver.session(database=NEO4J_DATABASE) as s:
+            for row in rows:
+                names = _lookup_eid_names(row.get("content") or "", row.get("employee_id"))
+                edges = _lookup_eid_edges(names)
+                if not edges:
+                    continue
+                chunks_with += 1
+                await s.run(
+                    """
+                    MATCH (c:Chunk {chunk_id: $chunk_id})
+                    UNWIND $edges AS e
+                      MERGE (t:Tag {name: e.name})
+                      MERGE (c)-[r:HAS_TAG {facet: e.facet, run_id: $run_id}]->(t)
+                      SET r.w_chunk = e.w_chunk,
+                          r.w_facet = e.w_facet,
+                          r.lookup_supplement = true
+                    """,
+                    chunk_id=row["chunk_id"],
+                    edges=edges,
+                    run_id=run_id,
+                )
+                total_edges += len(edges)
+
+        print(
+            f"supplement-lookup-tags: {total_edges} entities edges on "
+            f"{chunks_with}/{len(rows)} lookup chunks (run_id={run_id}, db={NEO4J_DATABASE})"
+        )
     finally:
         await driver.close()
 

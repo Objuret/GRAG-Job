@@ -4,6 +4,7 @@ Usage:
     python -m tagging select
     python -m tagging verify-chunks
     python -m tagging materialize
+    python -m tagging supplement-lookup-tags
     python -m tagging extract
     python -m tagging describe
     python -m tagging score
@@ -22,6 +23,7 @@ STAGES = {
     "verify-chunks": pipeline.stage_verify_chunks,
     "select": pipeline.stage_select,
     "materialize": pipeline.stage_materialize,
+    "supplement-lookup-tags": pipeline.stage_supplement_lookup_tags,
     "extract": pipeline.stage_extract,
     "describe": pipeline.stage_describe,
     "score": pipeline.stage_score,

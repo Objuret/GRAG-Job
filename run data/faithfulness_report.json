@@ -1,0 +1,52 @@
+{
+  "per_sample": [
+    {
+      "id": "herb_product_overview",
+      "faithfulness": 0.42105263157894735
+    },
+    {
+      "id": "herb_slack_gate",
+      "faithfulness": 0.7333333333333333
+    },
+    {
+      "id": "herb_prs_gate",
+      "faithfulness": 0.875
+    },
+    {
+      "id": "herb_docs_gate",
+      "faithfulness": 0.8181818181818182
+    },
+    {
+      "id": "herb_meetings",
+      "faithfulness": 1.0
+    },
+    {
+      "id": "herb_year_gate",
+      "faithfulness": 0.8571428571428571
+    },
+    {
+      "id": "herb_entities",
+      "faithfulness": 1.0
+    },
+    {
+      "id": "herb_activity",
+      "faithfulness": 0.9285714285714286
+    },
+    {
+      "id": "herb_temporal",
+      "faithfulness": 0.95
+    },
+    {
+      "id": "herb_evidence_metric",
+      "faithfulness": 1.0
+    },
+    {
+      "id": "herb_cross",
+      "faithfulness": 1.0
+    }
+  ],
+  "overall": {
+    "faithfulness": 0.8712074608007623
+  },
+  "n_samples": 11
+}

@@ -87,6 +87,19 @@ export function ragasExportsFs(repoRoot: string): Plugin {
         return;
       }
 
+      if (route === '/exists' && req.method === 'GET') {
+        const q = new URL(url, 'http://local');
+        const name = q.searchParams.get('name');
+        if (!name) {
+          sendJson(res, 400, { error: 'missing name' });
+          return;
+        }
+        const full = safeFullPath(name);
+        const exists = fs.existsSync(full) && fs.statSync(full).isFile();
+        sendJson(res, 200, { exists, name });
+        return;
+      }
+
       if (route === '/write' && req.method === 'POST') {
         const raw = await readBody(req);
         let body: { name?: string; text?: string };

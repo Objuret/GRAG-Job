@@ -10,7 +10,7 @@
 // alone is fine; missing run meta just yields blank cost/timing columns.
 //
 // No silent fallback: malformed files are rejected with a visible reason.
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
   RAGAS_EXPORTS_DIR,
   isRagasExportsFsAvailable,
@@ -90,7 +90,9 @@ function validateReport(obj) {
   }
   if (!Array.isArray(obj.per_sample)) throw new Error('missing "per_sample" array');
   if (!obj.overall || typeof obj.overall !== 'object') throw new Error('missing "overall" object');
-  if (typeof obj.n_samples !== 'number') throw new Error('missing "n_samples" number');
+  if (typeof obj.n_samples !== 'number' && typeof obj.n_rows !== 'number') {
+    throw new Error('missing "n_samples" or "n_rows" number');
+  }
   for (const row of obj.per_sample) {
     if (!row || typeof row !== 'object') throw new Error('per_sample contains a non-object entry');
     if (!('id' in row)) throw new Error('per_sample row missing "id"');
@@ -142,12 +144,47 @@ function classifyAndParse(file, text) {
   return { kind: 'runs', payload: parseRunsFile(text) };
 }
 
+function scoresFromAtomicRows(rows) {
+  const per_sample = rows.map((r) => ({
+    id: r.id,
+    ...(r.ragas && typeof r.ragas === 'object' ? r.ragas : {}),
+    ...(r.deterministic && typeof r.deterministic === 'object' ? r.deterministic : {}),
+    ...(r.score_meta?.skip_reason ? { skip_reason: r.score_meta.skip_reason } : {}),
+  }));
+  const overall = {};
+  const overall_n = {};
+  const metricKeys = new Set();
+  for (const row of per_sample) {
+    for (const k of Object.keys(row)) {
+      if (k !== 'id' && k !== 'skip_reason') metricKeys.add(k);
+    }
+  }
+  for (const k of metricKeys) {
+    const vals = per_sample
+      .map((row) => row[k])
+      .filter((v) => typeof v === 'number' && !Number.isNaN(v));
+    if (vals.length) {
+      overall[k] = vals.reduce((a, b) => a + b, 0) / vals.length;
+      overall_n[k] = vals.length;
+    }
+  }
+  const n_scored = rows.filter((r) => r.score_meta?.scored).length;
+  return {
+    per_sample,
+    overall,
+    overall_n,
+    n_samples: rows.length,
+    n_rows: rows.length,
+    n_scored,
+  };
+}
+
 function basenameFor(file, kind) {
   let n = file.name;
   if (kind === 'scores') {
     n = n.replace(/\.report\.json$/i, '').replace(/\.json$/i, '');
   } else {
-    n = n.replace(/\.jsonl$/i, '');
+    n = n.replace(/\.scored\.jsonl$/i, '').replace(/\.jsonl$/i, '');
   }
   return n || file.name;
 }
@@ -156,13 +193,18 @@ function basenameFor(file, kind) {
 function runMetaOf(row) {
   const m = row?.meta || {};
   const t = m.tokens || {};
+  const nChunks = typeof m.n_chunks_eval === 'number'
+    ? m.n_chunks_eval
+    : (typeof m.n_chunks === 'number' ? m.n_chunks : null);
   return {
-    nChunks: typeof m.n_chunks === 'number' ? m.n_chunks : null,
+    nChunks,
+    nChunksRetrieved: typeof m.n_chunks_retrieved === 'number' ? m.n_chunks_retrieved : null,
     tokensIn: typeof t.answer_in === 'number' ? t.answer_in : null,
     tokensOut: typeof t.answer_out === 'number' ? t.answer_out : null,
     elapsedMs: typeof m.elapsed_ms === 'number' ? m.elapsed_ms : null,
     model: typeof m.model === 'string' ? m.model : null,
     error: m.error ?? null,
+    skipReason: row?.score_meta?.skip_reason ?? null,
   };
 }
 
@@ -175,6 +217,33 @@ function costOf({ tokensIn, tokensOut, model }, pricing) {
   return inCost + outCost;
 }
 
+/** Files the visualizer can ingest (excludes RunSpec `.ragas.json` configs). */
+function isVisualizableExport(name) {
+  const lower = name.toLowerCase();
+  if (lower.endsWith('.jsonl')) return true;
+  if (lower.endsWith('.ragas.json')) return false;
+  return lower.endsWith('.json');
+}
+
+function exportFileKind(name) {
+  const lower = name.toLowerCase();
+  if (lower.endsWith('.jsonl')) return 'runs';
+  if (lower.endsWith('.report.json')) return 'scores';
+  return 'json';
+}
+
+function fmtBytes(n) {
+  if (n == null || Number.isNaN(n)) return '—';
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+  return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function fmtWhen(ms) {
+  if (ms == null || Number.isNaN(ms)) return '—';
+  return new Date(ms).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' });
+}
+
 export default function RagasReportPage({ onBack }) {
   // Datasets: {id, name, color, scores: object|null, runs: array|null, runsByRowId: map}
   const [datasets, setDatasets] = useState([]);
@@ -183,17 +252,25 @@ export default function RagasReportPage({ onBack }) {
   const [sortKey, setSortKey] = useState({ scope: 'id', metric: null, dir: 'asc' });
   const [pricing, setPricing] = useState(() => ({ ...DEFAULT_MODEL_PRICING }));
   const [showPricing, setShowPricing] = useState(false);
+  const [exportsPicker, setExportsPicker] = useState(null);
+  const [exportsPickerLoading, setExportsPickerLoading] = useState(false);
   const fileRef = useRef(null);
   const colorCursor = useRef(0);
 
   const mergeFile = useCallback((prev, file, kind, payload) => {
     const base = basenameFor(file, kind);
     const idx = prev.findIndex((d) => d.name === base);
+    const atomicScores = kind === 'runs' && payload.some((r) => r?.ragas != null || r?.score_meta)
+      ? scoresFromAtomicRows(payload)
+      : null;
     if (idx >= 0) {
       const existing = prev[idx];
       const next = { ...existing };
       if (kind === 'scores') next.scores = payload;
-      else next.runs = payload;
+      else {
+        next.runs = payload;
+        if (atomicScores && !next.scores) next.scores = atomicScores;
+      }
       if (next.runs) next.runsByRowId = Object.fromEntries(next.runs.map((r) => [String(r.id), r]));
       const out = prev.slice();
       out[idx] = next;
@@ -205,7 +282,7 @@ export default function RagasReportPage({ onBack }) {
       id: `${base}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
       name: base,
       color,
-      scores: kind === 'scores' ? payload : null,
+      scores: kind === 'scores' ? payload : atomicScores,
       runs: kind === 'runs' ? payload : null,
       runsByRowId: kind === 'runs' ? Object.fromEntries(payload.map((r) => [String(r.id), r])) : {},
     };
@@ -231,36 +308,44 @@ export default function RagasReportPage({ onBack }) {
     setErrors(errs);
   }, [ingestNamedText]);
 
-  const loadFromExportsFolder = useCallback(async ({ quiet = false } = {}) => {
+  const openExportsPicker = useCallback(async () => {
     if (!isRagasExportsFsAvailable()) {
-      if (!quiet) setErrors([`${RAGAS_EXPORTS_DIR}/ is only available under npm run dev`]);
+      setErrors([`${RAGAS_EXPORTS_DIR}/ is only available under npm run dev`]);
       return;
     }
-    const errs = [];
+    setExportsPickerLoading(true);
     try {
       const files = await listRagasExports();
-      const wanted = files.filter((f) => /\.(jsonl|json)$/i.test(f.name));
+      const wanted = files
+        .filter((f) => isVisualizableExport(f.name))
+        .sort((a, b) => a.name.localeCompare(b.name));
       if (!wanted.length) {
-        if (!quiet) setErrors([`No .json / .jsonl files in ${RAGAS_EXPORTS_DIR}/ yet`]);
+        setErrors([`No visualizable .json / .jsonl files in ${RAGAS_EXPORTS_DIR}/ yet`]);
         return;
       }
-      for (const f of wanted) {
-        try {
-          const text = await readRagasExport(f.name);
-          ingestNamedText(f.name, text);
-        } catch (e) {
-          errs.push(`${f.name}: ${e.message || String(e)}`);
-        }
-      }
-      setErrors(errs);
+      setExportsPicker({ files: wanted, selected: new Set() });
+      setErrors([]);
     } catch (e) {
-      if (!quiet) setErrors([`${RAGAS_EXPORTS_DIR}/: ${e.message || String(e)}`]);
+      setErrors([`${RAGAS_EXPORTS_DIR}/: ${e.message || String(e)}`]);
+    } finally {
+      setExportsPickerLoading(false);
     }
-  }, [ingestNamedText]);
+  }, []);
 
-  useEffect(() => {
-    if (isRagasExportsFsAvailable()) loadFromExportsFolder({ quiet: true });
-  }, [loadFromExportsFolder]);
+  const loadSelectedExports = useCallback(async (names) => {
+    if (!names.length) return;
+    const errs = [];
+    for (const name of names) {
+      try {
+        const text = await readRagasExport(name);
+        ingestNamedText(name, text);
+      } catch (e) {
+        errs.push(`${name}: ${e.message || String(e)}`);
+      }
+    }
+    setErrors(errs);
+    setExportsPicker(null);
+  }, [ingestNamedText]);
 
   const onPick = (e) => {
     const files = Array.from(e.target.files || []);
@@ -485,8 +570,13 @@ export default function RagasReportPage({ onBack }) {
             onChange={onPick}
           />
           {isRagasExportsFsAvailable() && (
-            <button type="button" className="ragas-btn ragas-btn-primary" onClick={() => loadFromExportsFolder()}>
-              Open {RAGAS_EXPORTS_DIR}/
+            <button
+              type="button"
+              className="ragas-btn ragas-btn-primary"
+              onClick={openExportsPicker}
+              disabled={exportsPickerLoading}
+            >
+              {exportsPickerLoading ? 'Listing…' : `Browse ${RAGAS_EXPORTS_DIR}/`}
             </button>
           )}
           <button
@@ -522,8 +612,18 @@ export default function RagasReportPage({ onBack }) {
           </div>
         )}
 
+        {exportsPicker && (
+          <ExportsPickerModal
+            files={exportsPicker.files}
+            selected={exportsPicker.selected}
+            onClose={() => setExportsPicker(null)}
+            onChangeSelected={(selected) => setExportsPicker((cur) => (cur ? { ...cur, selected } : cur))}
+            onLoad={(names) => loadSelectedExports(names)}
+          />
+        )}
+
         {!hasAny ? (
-          <EmptyState />
+          <EmptyState onBrowse={isRagasExportsFsAvailable() ? openExportsPicker : null} />
         ) : (
           <>
             <DatasetsBar datasets={datasets} onRemove={removeDataset} onRename={renameDataset} />
@@ -568,16 +668,89 @@ export default function RagasReportPage({ onBack }) {
   );
 }
 
-function EmptyState() {
+function ExportsPickerModal({ files, selected, onClose, onChangeSelected, onLoad }) {
+  const toggle = (name) => {
+    const next = new Set(selected);
+    if (next.has(name)) next.delete(name);
+    else next.add(name);
+    onChangeSelected(next);
+  };
+  const selectAll = () => onChangeSelected(new Set(files.map((f) => f.name)));
+  const selectNone = () => onChangeSelected(new Set());
+  const selectedNames = Array.from(selected);
+
+  return (
+    <div className="ragas-picker-backdrop" role="presentation" onClick={onClose}>
+      <div
+        className="ragas-picker"
+        role="dialog"
+        aria-labelledby="ragas-picker-title"
+        aria-modal="true"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <header className="ragas-picker-head">
+          <div>
+            <h2 id="ragas-picker-title">Choose files from {RAGAS_EXPORTS_DIR}/</h2>
+            <p className="ragas-picker-sub">
+              Pick one or more <code>.report.json</code> (scores) and/or <code>.jsonl</code> (runs).
+              RunSpec <code>.ragas.json</code> configs are hidden — they are not visualizable.
+            </p>
+          </div>
+          <button type="button" className="ragas-report-remove" onClick={onClose} title="Close">✕</button>
+        </header>
+        <div className="ragas-picker-toolbar">
+          <button type="button" className="ragas-btn ragas-btn-ghost" onClick={selectAll}>Select all</button>
+          <button type="button" className="ragas-btn ragas-btn-ghost" onClick={selectNone}>Select none</button>
+          <span className="ragas-picker-count">{selected.size} of {files.length} selected</span>
+        </div>
+        <ul className="ragas-picker-list">
+          {files.map((f) => {
+            const kind = exportFileKind(f.name);
+            const checked = selected.has(f.name);
+            return (
+              <li key={f.name}>
+                <label className={'ragas-picker-row' + (checked ? ' checked' : '')}>
+                  <input type="checkbox" checked={checked} onChange={() => toggle(f.name)} />
+                  <span className="ragas-picker-name mono">{f.name}</span>
+                  <span className={'ragas-tag ' + (kind === 'runs' ? 'on' : kind === 'scores' ? 'on' : 'off')}>
+                    {kind === 'runs' ? 'runs' : kind === 'scores' ? 'scores' : 'json'}
+                  </span>
+                  <span className="ragas-picker-meta">{fmtBytes(f.size)}</span>
+                  <span className="ragas-picker-meta">{fmtWhen(f.mtimeMs)}</span>
+                </label>
+              </li>
+            );
+          })}
+        </ul>
+        <footer className="ragas-picker-foot">
+          <button type="button" className="ragas-btn ragas-btn-ghost" onClick={onClose}>Cancel</button>
+          <button
+            type="button"
+            className="ragas-btn ragas-btn-primary"
+            disabled={!selected.size}
+            onClick={() => onLoad(selectedNames)}
+          >
+            Load selected
+          </button>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+function EmptyState({ onBrowse }) {
   return (
     <div className="ragas-empty">
       <div className="ragas-empty-icon">▤</div>
       <h2>No data loaded</h2>
       <p>
-        {isRagasExportsFsAvailable() ? (
+        {onBrowse ? (
           <>
-            Exports from Run Builder are saved under <code>{RAGAS_EXPORTS_DIR}/</code> at the repo root — use{' '}
-            <strong>Open {RAGAS_EXPORTS_DIR}/</strong> above, or drop files here.
+            Exports from Run Builder live under <code>{RAGAS_EXPORTS_DIR}/</code> at the repo root —{' '}
+            <button type="button" className="ragas-empty-link" onClick={onBrowse}>
+              browse and pick files
+            </button>
+            , or drop files here.
           </>
         ) : (
           <>

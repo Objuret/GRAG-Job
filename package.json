@@ -11,7 +11,10 @@
     "backend:install": "python -m venv .venv && .venv\\Scripts\\python.exe -m pip install -r backend\\requirements-lock.txt",
     "graph:export": ".venv\\Scripts\\python.exe backend\\scripts\\export_graph_json.py",
     "graph:import": "node scripts/assemble-large-assets.mjs && .venv\\Scripts\\python.exe backend\\scripts\\import_graph_json.py --input graph_export\\grag_graph_latest.zip",
-    "pilot:tags": ".venv\\Scripts\\python.exe backend\\scripts\\run_tags_only_pilot.py --file-id 960f223de786daa74a7d0f70 --concurrency 2"
+    "pilot:tags": ".venv\\Scripts\\python.exe backend\\scripts\\run_tags_only_pilot.py --file-id 960f223de786daa74a7d0f70 --concurrency 2",
+    "eval:recall-fast": ".venv\\Scripts\\python.exe -m evaluation.retrieval_recall_fast",
+    "eval:answer-tokens": ".venv\\Scripts\\python.exe -m evaluation.answer_token_score",
+    "eval:aggregate": ".venv\\Scripts\\python.exe -m evaluation.aggregate_scores"
   },
   "workspaces": [
     "frontend"

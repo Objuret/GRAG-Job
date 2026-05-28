@@ -35,7 +35,7 @@ Usage:
 
   # then score:
   python -m evaluation.ragas_eval --input backend/evaluation/sql_agent.jsonl \
-      --metrics faithfulness,context_recall,context_precision \
+      --metrics faithfulness,context_recall,context_precision,answer_correctness \
       --report backend/evaluation/sql_agent.report.json
 """
 

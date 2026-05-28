@@ -13,5 +13,5 @@ langchain-openai>=0.2
 # Opt-in: `--judge-provider anthropic`
 langchain-anthropic>=0.2
 
-# Opt-in: only for `--metrics answer_relevancy` via OpenAI embeddings.
+# Opt-in: `--metrics answer_relevancy` or `answer_correctness` via OpenAI embeddings.
 # langchain-openai>=0.2

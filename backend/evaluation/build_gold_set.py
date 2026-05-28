@@ -221,7 +221,7 @@ def main() -> None:
         "#     --questions ragas-questions.herb-gold.jsonl \\",
         "#     --exclude-sections answerable_questions,unanswerable_questions",
         "#   python -m evaluation.ragas_eval --judge-model claude-sonnet-4-6 \\",
-        "#     --metrics faithfulness,context_recall,context_precision",
+        "#     --metrics faithfulness,context_recall,context_precision,answer_correctness",
         '# Format: one {"id","question","reference"} per line; # lines skipped.',
     ]
     args.out.parent.mkdir(parents=True, exist_ok=True)

@@ -37,6 +37,12 @@ export async function writeRagasExport(name: string, text: string): Promise<stri
   return data.path;
 }
 
+export async function ragasExportExists(name: string): Promise<boolean> {
+  const q = new URLSearchParams({ name });
+  const data = await apiJson<{ exists: boolean }>(`${API}/exists?${q}`);
+  return Boolean(data.exists);
+}
+
 /** Join optional subfolder under ragas_exports (no leading slash, no ..). */
 export function joinRagasExportPath(subdir: string, filename: string): string {
   const parts = [subdir, filename]

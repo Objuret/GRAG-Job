@@ -1,0 +1,108 @@
+{
+  "per_sample": [
+    {
+      "id": "tag_tensorflow",
+      "faithfulness": 0.8275862068965517
+    },
+    {
+      "id": "tag_kafka",
+      "faithfulness": 0.8125
+    },
+    {
+      "id": "tag_gdpr",
+      "faithfulness": 1.0
+    },
+    {
+      "id": "tag_kubernetes",
+      "faithfulness": 0.9473684210526315
+    },
+    {
+      "id": "tag_ml_nlp",
+      "faithfulness": 0.8636363636363636
+    },
+    {
+      "id": "gate_prod_anomalyforce",
+      "faithfulness": 0.9047619047619048
+    },
+    {
+      "id": "gate_prod_knowledgeforce",
+      "faithfulness": 1.0
+    },
+    {
+      "id": "gate_prodsec_security_slack",
+      "faithfulness": 0.9375
+    },
+    {
+      "id": "gate_prodsec_anomaly_prs",
+      "faithfulness": 0.7368421052631579
+    },
+    {
+      "id": "gate_prodsec_knowledge_meetings",
+      "faithfulness": 0.8571428571428571
+    },
+    {
+      "id": "gate_sec_prs",
+      "faithfulness": 1.0
+    },
+    {
+      "id": "gate_sec_qa",
+      "faithfulness": 0.88
+    },
+    {
+      "id": "gate_sec_meetings",
+      "faithfulness": 1.0
+    },
+    {
+      "id": "gate_year_2026",
+      "faithfulness": 0.9375
+    },
+    {
+      "id": "gate_year_2027",
+      "faithfulness": 0.9230769230769231
+    },
+    {
+      "id": "gate_year_2025",
+      "faithfulness": 0.5555555555555556
+    },
+    {
+      "id": "gate_chan_trendbug",
+      "faithfulness": 1.0
+    },
+    {
+      "id": "facet_entities_people",
+      "faithfulness": 0.9230769230769231
+    },
+    {
+      "id": "facet_activity_codereview",
+      "faithfulness": 0.8
+    },
+    {
+      "id": "facet_temporal_releases",
+      "faithfulness": 1.0
+    },
+    {
+      "id": "facet_topic_marketresearch",
+      "faithfulness": 0.8518518518518519
+    },
+    {
+      "id": "lex_sprint_review",
+      "faithfulness": 0.9791666666666666
+    },
+    {
+      "id": "lex_first_draft_deadline",
+      "faithfulness": 0.75
+    },
+    {
+      "id": "ctrl_unans_ceo",
+      "faithfulness": 1.0
+    },
+    {
+      "id": "ctrl_offcorpus",
+      "faithfulness": 1.0
+    }
+  ],
+  "overall": {
+    "faithfulness": 0.8995026311592556
+  },
+  "n_samples": 25
+}

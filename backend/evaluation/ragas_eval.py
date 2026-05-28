@@ -1,48 +1,13 @@
 """RAGAS runner for the HERB browser pipeline.
 
-    python -m evaluation.ragas_eval [--input PATH] [--metrics LIST] ...
+    python -m evaluation.ragas_eval --input export.jsonl --out export.scored.jsonl
 
-Reads the JSONL produced by `frontend/scripts/ragas-export.ts` and scores it
-with RAGAS. It does NOT run any pipeline, touch Neo4j, or import the legacy
-clustering layer — it is purely the consumer of the harness output.
+Reads export JSONL, calls RAGAS only on scorable rows, writes **atomic** JSONL:
+every input row is preserved; failed/skipped rows get null metrics + skip_reason.
+Use `python -m evaluation.aggregate_scores` for means/medians.
 
-Per JSONL row it uses:
-    user_input         <- row.user_input        (the question)
-    response           <- row.response          (the answer the pipeline gave)
-    retrieved_contexts <- row.retrieved_contexts (chunk contents retrieved)
-    reference          <- row.reference          (HERB gold answer; ref metrics)
-Rows with `meta.error` or empty `response` are skipped. When a reference-based
-metric is requested, zero-context rows are KEPT on purpose (context_recall
-scores them ~0 — the retrieval recall hole faithfulness alone hides); rows
-without a `reference` are skipped for those metrics.
-
-Metrics:
-  Reference-free (no ground truth):
-    faithfulness       Is the answer grounded in the retrieved chunks? LLM-only,
-                       the default, works out of the box.
-    answer_relevancy   Is the answer on-topic? Needs embeddings (opt-in).
-  Reference-based (need row.reference = HERB ground_truth):
-    context_recall     Did retrieval fetch what the gold answer needs? LLM-only.
-    context_precision  Are the retrieved contexts well-targeted? LLM-only
-                       (LLMContextPrecisionWithReference).
-    answer_correctness Is the answer factually right vs gold? Needs embeddings.
-
-Judge LLM
----------
-OpenAI-compatible providers (default: **DeepSeek** `deepseek-chat`, same as
-the export answer model). Anthropic still available via `--judge-provider
-anthropic`. Keys resolve from env / backend `.env` / `frontend/.env.local`
-(`VITE_DEEPSEEK_API_KEY`, `VITE_ANTHROPIC_API_KEY`).
-
-Embeddings (only needed for answer_relevancy)
----------------------------------------------
-This venv is Python 3.14 and has no torch/sentence-transformers (no 3.14
-wheels), so a local embeddings model is intentionally NOT a dependency. If you
-request answer_relevancy, set OPENAI_API_KEY and it uses OpenAI embeddings;
-otherwise the harness errors loudly telling you so. faithfulness alone needs
-no embeddings.
-
-    pip install -r requirements-eval.txt
+`retrieved_contexts` is scored as-is (no judge trim by default). Export must write
+the same evidence slice the answer model saw (see ragas-export.ts).
 """
 
 from __future__ import annotations
@@ -50,12 +15,14 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from evaluation.metrics_common import answer_token_scores
+
 _BACKEND_ROOT = Path(__file__).resolve().parent.parent
 _FRONTEND_ROOT = _BACKEND_ROOT.parent / "frontend"
-_DEFAULT_INPUT = Path(__file__).resolve().parent / "ragas_samples.jsonl"
 
 
 # --- minimal .env reader (mirrors the harness; never logs values) ----------
@@ -139,9 +106,12 @@ def _load_rows(path: Path) -> list[dict[str, Any]]:
 
 REF_METRICS = {"context_recall", "context_precision", "answer_correctness"}
 
-# Match headless export answer cap (`ANSWER_EXPORT_MAX_CHUNKS` in ragas-export.ts).
-JUDGE_DEFAULT_MAX_CONTEXTS = 200
-JUDGE_DEFAULT_MAX_CONTEXT_CHARS = 1800
+# Primary thesis comparison (graph vs baseline @ k=40).
+THESIS_METRICS = "faithfulness,context_recall,context_precision,answer_correctness"
+
+# 0 = no judge-side trim; export owns the evidence budget.
+JUDGE_DEFAULT_MAX_CONTEXTS = 0
+JUDGE_DEFAULT_MAX_CONTEXT_CHARS = 0
 
 
 def _cap_contexts_for_judge(
@@ -149,57 +119,55 @@ def _cap_contexts_for_judge(
     max_contexts: int,
     max_context_chars: int,
 ) -> list[str]:
-    """JSONL keeps full retrieval; the judge sees a bounded slice only."""
+    """Legacy opt-in trim only — default is no cap (export is authoritative)."""
+    if max_contexts <= 0 and max_context_chars <= 0:
+        return contexts
     out = contexts[:max_contexts] if max_contexts > 0 else contexts
     if max_context_chars > 0:
         out = [c[:max_context_chars] for c in out]
     return out
 
 
-def _valid_samples(
-    rows: list[dict[str, Any]],
+def _skip_reason(row: dict[str, Any], metric_names: list[str]) -> str | None:
+    if (row.get("meta") or {}).get("error"):
+        return "pipeline error"
+    if not (row.get("response") or "").strip():
+        return "empty response"
+    wants_ref = any(m in REF_METRICS for m in metric_names)
+    if wants_ref and not (row.get("reference") or "").strip():
+        return "missing reference"
+    ctx = [c for c in (row.get("retrieved_contexts") or []) if c]
+    if not ctx and not wants_ref:
+        return "no retrieved contexts"
+    return None
+
+
+def _sample_from_row(
+    row: dict[str, Any],
     metric_names: list[str],
     judge_max_contexts: int,
     judge_max_context_chars: int,
-) -> tuple[list[dict[str, Any]], list[str]]:
-    # When a reference-based metric is requested we KEEP zero-context rows on
-    # purpose: context_recall scores them ~0, which is exactly the retrieval
-    # recall hole that reference-free faithfulness silently hid. faithfulness
-    # on such a row just comes back NaN (reported as NA).
-    wants_ref = any(m in REF_METRICS for m in metric_names)
-    samples: list[dict[str, Any]] = []
-    skipped: list[str] = []
-    for r in rows:
-        rid = r.get("id", "?")
-        if (r.get("meta") or {}).get("error"):
-            skipped.append(f"{rid} (pipeline error)")
-            continue
-        resp = (r.get("response") or "").strip()
-        ctx = _cap_contexts_for_judge(
-            [c for c in (r.get("retrieved_contexts") or []) if c],
-            judge_max_contexts,
-            judge_max_context_chars,
-        )
-        ref = (r.get("reference") or "").strip()
-        if not resp:
-            skipped.append(f"{rid} (empty response — dry-run?)")
-            continue
-        if wants_ref and not ref:
-            skipped.append(f"{rid} (no reference — needed for {sorted(REF_METRICS & set(metric_names))})")
-            continue
-        if not ctx and not wants_ref:
-            skipped.append(f"{rid} (no retrieved contexts)")
-            continue
-        samples.append(
-            {
-                "id": rid,
-                "user_input": r.get("user_input") or r.get("question") or "",
-                "response": resp,
-                "retrieved_contexts": ctx,
-                "reference": ref or None,
-            }
-        )
-    return samples, skipped
+) -> dict[str, Any]:
+    ctx = _cap_contexts_for_judge(
+        [c for c in (row.get("retrieved_contexts") or []) if c],
+        judge_max_contexts,
+        judge_max_context_chars,
+    )
+    return {
+        "id": row.get("id", "?"),
+        "user_input": row.get("user_input") or row.get("question") or "",
+        "response": (row.get("response") or "").strip(),
+        "retrieved_contexts": ctx,
+        "reference": (row.get("reference") or "").strip() or None,
+    }
+
+
+def _deterministic_for_row(row: dict[str, Any]) -> dict[str, Any]:
+    ref = (row.get("reference") or "").strip()
+    resp = (row.get("response") or "").strip()
+    if not ref or not resp:
+        return {}
+    return answer_token_scores(ref, resp)
 
 
 # --- RAGAS wiring (defensive across 0.2/0.3 API) ---------------------------
@@ -249,9 +217,10 @@ def _build_embeddings_or_exit() -> Any:
 
     if not os.environ.get("OPENAI_API_KEY"):
         print(
-            "answer_relevancy needs an embeddings model. This venv has no local "
-            "embeddings (Python 3.14, no torch wheels). Set OPENAI_API_KEY to use "
-            "OpenAI embeddings, or run with --metrics faithfulness only.",
+            "answer_relevancy and answer_correctness need an embeddings model. "
+            "This venv has no local embeddings (Python 3.14, no torch wheels). "
+            "Set OPENAI_API_KEY for OpenAI embeddings, or use "
+            "python -m evaluation.answer_token_score for deterministic HERB token F1.",
             file=sys.stderr,
         )
         sys.exit(1)
@@ -450,83 +419,183 @@ def _report(
 def main() -> None:
     p = argparse.ArgumentParser(
         prog="python -m evaluation.ragas_eval",
-        description="RAGAS over the harness JSONL (reference-free + reference-based).",
+        description="Score export JSONL with RAGAS; write atomic scored JSONL.",
     )
-    p.add_argument("--input", type=Path, default=_DEFAULT_INPUT,
-                   help=f"Harness JSONL. Default: {_DEFAULT_INPUT}")
+    p.add_argument("--input", type=Path, required=True,
+                   help="Export JSONL to score")
+    p.add_argument(
+        "--out",
+        type=Path,
+        default=None,
+        help="Atomic scored JSONL (default: <input>.scored.jsonl)",
+    )
     p.add_argument("--metrics", default="faithfulness",
-                   help="Comma-separated. Reference-free: faithfulness, "
-                        "answer_relevancy. Reference-based (need row.reference): "
-                        "context_recall, context_precision, answer_correctness. "
-                        "(default: faithfulness)")
-    p.add_argument("--judge-provider", default="deepseek", choices=("deepseek", "anthropic"),
-                   help="Judge backend (default: deepseek).")
-    p.add_argument("--judge-model", default="deepseek-chat",
-                   help="Judge model id (default: deepseek-chat).")
-    p.add_argument("--judge-max-tokens", type=int, default=8192,
-                   help="Judge output token budget (default: 8192). Too low -> "
-                        "truncated judge output -> nan scores.")
-    p.add_argument("--judge-max-contexts", type=int, default=JUDGE_DEFAULT_MAX_CONTEXTS,
-                   help=f"Max retrieved contexts passed to judge (default: {JUDGE_DEFAULT_MAX_CONTEXTS}). "
-                        "JSONL keeps full retrieval.")
-    p.add_argument("--judge-max-context-chars", type=int, default=JUDGE_DEFAULT_MAX_CONTEXT_CHARS,
-                   help=f"Max chars per context string for judge (default: {JUDGE_DEFAULT_MAX_CONTEXT_CHARS}).")
-    p.add_argument("--concurrency", type=int, default=8,
-                   help="Parallel RAGAS workers (default: 8).")
-    p.add_argument("--timeout", type=int, default=600,
-                   help="Per-job timeout in seconds (default: 600). RAGAS default 180s "
-                        "times out on large HERB contexts under parallel load.")
-    p.add_argument("--max", type=int, default=0, help="Cap samples (0 = all)")
-    p.add_argument("--report", type=Path, default=None, help="Write JSON report here")
+                   help=f"Comma-separated metrics. --thesis -> {THESIS_METRICS}")
+    p.add_argument("--thesis", action="store_true",
+                   help=f"Primary thesis eval: metrics={THESIS_METRICS}")
+    p.add_argument("--merge-report", type=Path, default=None,
+                   help="Merge summary into an existing report JSON (legacy)")
+    p.add_argument("--judge-provider", default="deepseek", choices=("deepseek", "anthropic"))
+    p.add_argument("--judge-model", default="deepseek-chat")
+    p.add_argument("--judge-max-tokens", type=int, default=8192)
+    p.add_argument(
+        "--judge-max-contexts",
+        type=int,
+        default=JUDGE_DEFAULT_MAX_CONTEXTS,
+        help="Legacy judge trim (0 = use export contexts as-is)",
+    )
+    p.add_argument(
+        "--judge-max-context-chars",
+        type=int,
+        default=JUDGE_DEFAULT_MAX_CONTEXT_CHARS,
+        help="Legacy per-context char trim (0 = off)",
+    )
+    p.add_argument("--concurrency", type=int, default=8)
+    p.add_argument("--timeout", type=int, default=600)
+    p.add_argument("--max", type=int, default=0, help="Cap scored samples (0 = all)")
+    p.add_argument(
+        "--report",
+        type=Path,
+        default=None,
+        help="Optional summary report (use aggregate_scores for filtering)",
+    )
     args = p.parse_args()
 
-    metric_names = [m.strip() for m in args.metrics.split(",") if m.strip()]
+    if args.thesis and args.metrics == "faithfulness":
+        args.metrics = THESIS_METRICS
 
-    rows = _dedupe_rows(_load_rows(args.input))
-    samples, skipped = _valid_samples(
-        rows,
-        metric_names,
-        args.judge_max_contexts,
-        args.judge_max_context_chars,
-    )
+    metric_names = [m.strip() for m in args.metrics.split(",") if m.strip()]
+    out_path = args.out or args.input.with_name(f"{args.input.stem}.scored.jsonl")
+
+    rows = _load_rows(args.input)
     if args.max > 0:
-        samples = samples[: args.max]
+        rows = rows[: args.max]
+
+    score_jobs: list[tuple[int, dict[str, Any]]] = []
+    for idx, row in enumerate(rows):
+        reason = _skip_reason(row, metric_names)
+        if reason is None:
+            score_jobs.append((idx, _sample_from_row(
+                row, metric_names, args.judge_max_contexts, args.judge_max_context_chars,
+            )))
 
     print(f"Loaded {len(rows)} row(s) from {args.input}")
-    if skipped:
-        print(f"Skipped {len(skipped)}: " + ", ".join(skipped))
-    if not samples:
-        print("No scorable samples (run the harness WITHOUT --dry-run first).", file=sys.stderr)
+    print(
+        f"RAGAS: {len(score_jobs)} to score, {len(rows) - len(score_jobs)} skipped (no API)"
+    )
+
+    ragas_by_id: dict[str, dict[str, Any]] = {}
+    metric_cols: list[str] = []
+    if score_jobs:
+        samples = [s for _, s in score_jobs]
+        print(
+            f"Scoring with {metric_names}, judge={args.judge_provider}/{args.judge_model}, "
+            f"concurrency={args.concurrency}, timeout={args.timeout}s…"
+        )
+        result, metric_cols = _run(
+            samples,
+            metric_names,
+            args.judge_provider,
+            args.judge_model,
+            args.judge_max_tokens,
+            args.concurrency,
+            args.timeout,
+        )
+        import math
+
+        df = result.to_pandas()
+        cols = [c for c in metric_cols if c in df.columns]
+        if not cols:
+            known = (
+                "faithfulness", "answer_relevancy", "response_relevancy",
+                "context_recall", "context_precision",
+                "llm_context_precision_with_reference", "answer_correctness",
+            )
+            cols = [c for c in df.columns if c in known]
+        for i, (_, sample) in enumerate(score_jobs):
+            row_scores: dict[str, Any] = {}
+            for c in cols:
+                try:
+                    v = float(df.iloc[i][c])
+                    row_scores[c] = None if math.isnan(v) else v
+                except Exception:
+                    row_scores[c] = None
+            ragas_by_id[str(sample["id"])] = row_scores
+
+    scored_at = datetime.now(timezone.utc).isoformat()
+    atomic_rows: list[dict[str, Any]] = []
+    for row in rows:
+        rid = str(row.get("id") or "?")
+        reason = _skip_reason(row, metric_names)
+        out_row = dict(row)
+        out_row["deterministic"] = _deterministic_for_row(row)
+        if reason:
+            out_row["ragas"] = None
+            out_row["score_meta"] = {
+                "scored": False,
+                "skip_reason": reason,
+                "metrics_requested": metric_names,
+                "judge_provider": args.judge_provider,
+                "judge_model": args.judge_model,
+                "judge_max_contexts": args.judge_max_contexts,
+                "judge_max_context_chars": args.judge_max_context_chars,
+                "scored_at": scored_at,
+            }
+        else:
+            scores = ragas_by_id.get(rid, {})
+            out_row["ragas"] = scores
+            out_row["score_meta"] = {
+                "scored": True,
+                "skip_reason": None,
+                "metrics_requested": metric_names,
+                "metric_columns": list(scores.keys()),
+                "judge_provider": args.judge_provider,
+                "judge_model": args.judge_model,
+                "judge_max_contexts": args.judge_max_contexts,
+                "judge_max_context_chars": args.judge_max_context_chars,
+                "scored_at": scored_at,
+            }
+        atomic_rows.append(out_row)
+
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    with out_path.open("w", encoding="utf-8") as fh:
+        for r in atomic_rows:
+            fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+    print(f"Wrote {out_path}")
+
+    if args.report or args.merge_report:
+        from evaluation.aggregate_scores import build_summary
+
+        summary = build_summary(atomic_rows)
+        summary["judge_provider"] = args.judge_provider
+        summary["judge_model"] = args.judge_model
+        summary["judge_max_contexts"] = args.judge_max_contexts
+        summary["judge_max_context_chars"] = args.judge_max_context_chars
+        summary["metrics_requested"] = metric_names
+
+        if args.merge_report:
+            if not args.merge_report.exists():
+                print(f"Merge target not found: {args.merge_report}", file=sys.stderr)
+                sys.exit(2)
+            from evaluation.metrics_common import merge_report_payload
+
+            base = json.loads(args.merge_report.read_text(encoding="utf-8"))
+            summary = merge_report_payload(base, summary)
+
+        report_path = args.report or args.merge_report
+        if report_path:
+            report_path.parent.mkdir(parents=True, exist_ok=True)
+            report_path.write_text(
+                json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8"
+            )
+            print(f"Wrote {report_path}")
+
+    if not rows:
+        print("No rows in input.", file=sys.stderr)
         sys.exit(1)
 
-    print(
-        f"Scoring {len(samples)} sample(s) with {metric_names}, "
-        f"judge={args.judge_provider}/{args.judge_model}, "
-        f"contexts<={args.judge_max_contexts}×{args.judge_max_context_chars}chars, "
-        f"concurrency={args.concurrency}, timeout={args.timeout}s…"
-    )
-
-    result, metric_cols = _run(
-        samples,
-        metric_names,
-        args.judge_provider,
-        args.judge_model,
-        args.judge_max_tokens,
-        args.concurrency,
-        args.timeout,
-    )
-    payload = _report(
-        result,
-        samples,
-        metric_cols,
-        judge_max_contexts=args.judge_max_contexts,
-        judge_max_context_chars=args.judge_max_context_chars,
-    )
-
-    if args.report:
-        args.report.parent.mkdir(parents=True, exist_ok=True)
-        args.report.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-        print(f"Wrote {args.report}")
+    if not score_jobs:
+        print("No rows sent to RAGAS (all skipped); atomic file still written.", file=sys.stderr)
 
 
 if __name__ == "__main__":

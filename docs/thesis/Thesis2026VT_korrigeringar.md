@@ -6,10 +6,14 @@
 
 **Senast uppdaterad:** 2026-05-20.
 
+**Inlämning (allt-i-ett):** [`Thesis2026VT9_submission_pack.md`](Thesis2026VT9_submission_pack.md) — titel, abstract, sammanfattning, nyckelord, §2, kap. 7–8, §6.3.3, AI-upplysning, checklista. **For Word paste use** [`Thesis2026VT9_submission_pack.md`](Thesis2026VT9_submission_pack.md) **or** [`Thesis2026VT9_WORD_PASTE.txt`](Thesis2026VT9_WORD_PASTE.txt).
+
 **Relaterade dokument:**
 
 | Dokument | Innehåll |
 |----------|----------|
+| [`Thesis2026VT9_submission_pack.md`](Thesis2026VT9_submission_pack.md) | **Master inlämningspaket** — kopiera till Word |
+| [`Thesis2026VT9_missing_references_APA7.md`](Thesis2026VT9_missing_references_APA7.md) | **APA 7-referenser** + citeringsfixar (Chakraborty/Pan) |
 | [`Thesis2026VT_kap6_ersattningstext.md`](Thesis2026VT_kap6_ersattningstext.md) | **Kopiera-klistra-in** hela kap. 6 till Word (svenska, en sida) |
 | [`Thesis2026VT_corrections_EN.md`](Thesis2026VT_corrections_EN.md) | **Engelsk parallell** (metod, fel, platshållare kap. 7) |
 | [`repo_truth_comprehensive.md`](repo_truth_comprehensive.md) | **Hela kodbas-analysen** (lång form, kod-verifierad) |
@@ -50,8 +54,10 @@ Källa: [`docs/backend/ragas_eval_report.md`](../backend/ragas_eval_report.md). 
 | `[MEDIAN_CP_BASE]` / `[IQR_CP_BASE]` | 0,00 (0,00–0,05) |
 | RAGAS `n` (faithfulness) | graph 92, baseline 94 |
 | RAGAS `n` (context_recall) | graph 91, baseline 95 |
+| Primär design (tabell i uppsats) | **k = 40**, judge @40 — se `ragas_eval_report.md` |
+| Rapporterad kohort (2026-05-20) | `A_tags.report.json` (pilot/export); baseline från eval-rapport |
 
-**Föreslagen `[SAMMANFATTNING_EFTER_SIFFROR]`:** baseline besvarade fler frågor (95 vs 92) och hade högre median context_recall (1,00 vs 0,86); faithfulness var i stort sett lika (median 0,80 vs 0,81). Skillnaderna ska läsas tillsammans med exportfel, ogiltig gate och låg context_precision — inte som generell överlägsenhet för någon arm.
+**Föreslagen `[SAMMANFATTNING_EFTER_SIFFROR]`:** baseline besvarade fler frågor (95 vs 92) och hade högre median context_recall (1,00 vs 0,86); faithfulness var i stort sett lika (median 0,80 vs 0,81). Skillnaderna ska läsas tillsammans med exportfel, ogiltig gate och låg context_precision — inte som generell överlägsenhet för någon arm. **Färdig text:** [`Thesis2026VT9_submission_pack.md`](Thesis2026VT9_submission_pack.md) §F (kap. 7) och §G (kap. 8).
 
 ---
 
@@ -364,10 +370,10 @@ npm --workspace frontend run ragas:export -- --config ragas_exports/B_baseline.r
 # RAGAS (fyll platshållare från .report.json)
 cd backend
 python -m evaluation.ragas_eval --input ../ragas_exports/A_tags.jsonl \
-  --metrics faithfulness,context_recall,context_precision \
+  --metrics faithfulness,context_recall,context_precision,answer_correctness \
   --report ../ragas_exports/A_tags.report.json --timeout 600
 python -m evaluation.ragas_eval --input ../ragas_exports/B_baseline.jsonl \
-  --metrics faithfulness,context_recall,context_precision \
+  --metrics faithfulness,context_recall,context_precision,answer_correctness \
   --report ../ragas_exports/B_baseline.report.json --timeout 600
 ```
 
@@ -375,14 +381,30 @@ python -m evaluation.ragas_eval --input ../ragas_exports/B_baseline.jsonl \
 
 ## Bilaga B — Checklista före inlämning
 
-- [ ] Alla “samma anrop” → tvåpass extract
-- [ ] Inga “inga vektorindex” kvar
+**Täcks av [`Thesis2026VT9_submission_pack.md`](Thesis2026VT9_submission_pack.md) (kopiera till Word):**
+
+- [x] Abstract (EN) + sammanfattning (SV) + nyckelord — §B–D i submission pack
+- [x] §2 syfte + RQ2 baseline — §E
+- [x] Kap. 7 med RAGAS-siffror (ärlig tolkning) — §F
+- [x] Kap. 8.2, 8.3, 8.5 — §G (inkl. borttag “samma modellanrop”)
+- [x] §6.3.3 facetter — §I
+- [x] Generativ AI-upplysning — §H
+- [x] Referenser APA 7 — [`Thesis2026VT9_missing_references_APA7.md`](Thesis2026VT9_missing_references_APA7.md)
+
+**Kvar i Word/PDF manuellt:**
+
+- [ ] Alla “samma anrop” → tvåpass extract (även utanför 8.2 om kvar)
+- [ ] Inga “inga vektorindex” kvar (kap. 6)
 - [ ] Baseline definierad som Lucene (eval) + ev. fotnot om relevance-baseline i UI
 - [ ] HERB nämnt som data, Bonnier som kontext
-- [ ] Kap. 7: inga påståenden utan siffror; `[X]` ersatta eller tabeller borttagna
-- [ ] `facet` inte `cluster` för HERB
+- [ ] Kap. 7: inga påståenden utan siffror; `[X]` ersatta — använd §F, inte gammal mall med [X]
+- [ ] `facet` inte `cluster` för HERB (globalt + §6.3.3)
 - [ ] Ground truth: dataset + build_gold_set (ej påhittad dubbelgranskning)
 - [ ] Figur/flöde: lägg till tagg-grounding (e5 → kNN → HAS_TAG)
+- [ ] Ta bort alla granskningskommentarer (`Kommenterad [C1]` …)
+- [ ] Examinator + examinationsdatum på titelsida
+- [ ] Chakraborty → Anh-Hoang; Pan → Agrawal (se referensdokument)
+- [ ] Uppdatera tabell 7 när `*_k40.report.json` finns (valfritt före inlämning)
 
 ---
 

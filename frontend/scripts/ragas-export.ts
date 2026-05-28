@@ -7,15 +7,15 @@
  * interpretPrompt -> buildRetrievalInput -> groundRetrieval ->
  * scoreGroundedChunks -> generateAnswer, against the live eval-safe Neo4j
  * graph and Anthropic. For each question it writes one JSONL
- * row with the fields RAGAS needs reference-free:
+ * row with the fields RAGAS needs:
  *
  *   user_input         = the question
- *   retrieved_contexts = the chunk contents retrieval actually returned
+ *   retrieved_contexts = eval evidence (same slice as the answer LLM)
  *   response           = the answer the pipeline actually generated
  *
  * plus a `meta` block (plan, grounding, gate, tokens, timing, error) for
- * debugging and later reference-based metrics. This is the producer half; the
- * Python RAGAS runner consumes the JSONL and is intentionally decoupled.
+ * debugging. Full retrieval audit: meta.n_chunks_retrieved, meta.chunk_ids_retrieved,
+ * meta.retrieved_chunks (rank/id/score for the eval slice).
  *
  * Config resolution per key: process.env[KEY] -> process.env[VITE_KEY] ->
  * .env files (frontend/.env.local, frontend/.env, repo .env) -> default.
@@ -40,7 +40,7 @@ import {
   scoreGroundedChunks,
   type RetrievedChunk,
 } from '../src/services/retrieval';
-import { generateAnswer, type AnswerMode } from '../src/services/answer';
+import { generateAnswer, selectEvidenceChunks, type AnswerMode } from '../src/services/answer';
 import type { Neo4jConfig } from '../src/services/neo4j';
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
@@ -141,6 +141,7 @@ interface RunCfg {
   max_cell_chars?: number;
   concurrency?: number;
   answer_max_chunks?: number;
+  link_only_scoring?: boolean;
 }
 const configArg = arg('--config');
 let runCfg: RunCfg = {};
@@ -184,7 +185,9 @@ const promptMode = pickStr('--prompt-mode', runCfg.prompt_mode, 'PROMPT_MODE', '
 const datasetIdRaw = pickStr('--dataset', runCfg.dataset_id ?? '', 'DATASET_ID', 'Salesforce__HERB');
 const datasetId = datasetIdRaw || null;
 const retrievalLimit = pickNum('--limit', runCfg.limit, 'RETRIEVAL_LIMIT', 0);
-const groundingK = pickNum(null, runCfg.grounding_k, 'GROUNDING_K', 0);
+const linkOnlyScoring = hasFlag('--link-only') || runCfg.link_only_scoring === true;
+const groundingKDefault = linkOnlyScoring ? 40 : 0;
+const groundingK = pickNum('--grounding-k', runCfg.grounding_k, 'GROUNDING_K', groundingKDefault);
 const minSim = pickNum(null, runCfg.min_sim, 'MIN_SIM', 0.78);
 const minWChunk = pickNum(null, runCfg.min_w_chunk, null, 0);
 const minRelevanceToFile = pickNum(null, runCfg.min_relevance_to_file, null, 0);
@@ -200,11 +203,15 @@ const excludeSectionsRaw =
   (Array.isArray(runCfg.exclude_sections) ? runCfg.exclude_sections.join(',') : undefined) ??
   cfg('EXCLUDE_SECTIONS', DEFAULT_EXCLUDED_SECTIONS);
 const excludeSections = excludeSectionsRaw.split(',').map((s) => s.trim()).filter(Boolean);
-// activeFacets has no CLI flag; the config file overrides the pipeline default
-// (ALL_FACETS) when provided.
-const activeFacetsCfg = Array.isArray(runCfg.active_facets) && runCfg.active_facets.length
-  ? runCfg.active_facets
-  : undefined;
+// activeFacets has no CLI flag. Config key absent → pipeline default (all five).
+// Explicit [] → none (matches browser Run Builder with all facets off).
+const activeFacetsFromCfg = Array.isArray(runCfg.active_facets) ? runCfg.active_facets : undefined;
+const activeFacetsLabel =
+  activeFacetsFromCfg === undefined
+    ? '(default all)'
+    : activeFacetsFromCfg.length
+      ? activeFacetsFromCfg.join(',')
+      : '(none)';
 // Database normally comes from env (NEO4J_DATABASE) — the config file can
 // override that default.
 const databaseOverride = runCfg.database || null;
@@ -225,12 +232,17 @@ const concurrency = Math.max(
   1,
   Number(arg('--concurrency') ?? runCfg.concurrency ?? cfg('RAGAS_CONCURRENCY', '8')) || 8,
 );
-/** Answer API only — retrieval + RAGAS `retrieved_contexts` stay full. */
-const ANSWER_EXPORT_MAX_CHUNKS = 200;
-const answerMaxChunks = Math.max(
-  ANSWER_EXPORT_MAX_CHUNKS,
-  Number(arg('--answer-max-chunks') ?? runCfg.answer_max_chunks ?? cfg('ANSWER_MAX_CHUNKS', String(ANSWER_EXPORT_MAX_CHUNKS))) || ANSWER_EXPORT_MAX_CHUNKS,
+/** Answer API + RAGAS eval share one evidence budget (see selectEvidenceChunks). */
+const ANSWER_EXPORT_DEFAULT_MAX_CHUNKS = 200;
+const answerMaxChunksRaw = Number(
+  arg('--answer-max-chunks') ??
+    runCfg.answer_max_chunks ??
+    cfg('ANSWER_MAX_CHUNKS', String(ANSWER_EXPORT_DEFAULT_MAX_CHUNKS)),
 );
+const answerMaxChunks =
+  Number.isFinite(answerMaxChunksRaw) && answerMaxChunksRaw >= 0
+    ? answerMaxChunksRaw
+    : ANSWER_EXPORT_DEFAULT_MAX_CHUNKS;
 const skipRetryIds = new Set(
   (arg('--skip-ids') ?? 'gold_personalizeforce_34').split(',').map((s) => s.trim()).filter(Boolean),
 );
@@ -508,12 +520,13 @@ async function main(): Promise<void> {
         ? `content-only full-text (no tags/grounding/gate), limit=${baselineRetrievalLimit}` +
           (retrievalLimit <= 0 ? ` (baseline default; graph unchanged at limit=0)` : '')
         : `limit=${retrievalLimit} groundingK=${groundingK} minSim=${minSim}` +
+          ` linkOnly=${linkOnlyScoring}` +
           ` minWChunk=${minWChunk} minRelToFile=${minRelevanceToFile}` +
-          ` facets=${activeFacetsCfg ? activeFacetsCfg.join(',') : '(default ALL)'}`}\n` +
+          ` facets=${activeFacetsLabel}`}\n` +
       `  exclude   : ${excludeSections.length ? excludeSections.join(',') : '(none)'}` +
       `${configArg ? `\n  config    : ${runCfg.label ?? '(no label)'} (${configArg})` : ''}` +
       `\n  parallel  : concurrency=${concurrency}` +
-      `\n  answer    : max_chunks=${answerMaxChunks} scrub=true (API only; RAGAS contexts full)` +
+      `\n  evidence  : max_chunks=${answerMaxChunks} (retrieved_contexts = answer slice; full ids in meta)` +
       `${retryErrors ? `\n  retry     : errors only, skip=${[...skipRetryIds].join(',')}` : ''}` +
       `${dryRun ? '\n  DRY RUN — answer LLM skipped' : ''}\n`,
   );
@@ -626,7 +639,8 @@ async function main(): Promise<void> {
           minSim,
           minWChunk,
           minRelevanceToFile,
-          ...(activeFacetsCfg ? { activeFacets: activeFacetsCfg as never } : {}),
+          linkOnlyScoring,
+          ...(activeFacetsFromCfg !== undefined ? { activeFacets: activeFacetsFromCfg as never } : {}),
           tagsEnabled: true,
           excludedSections: excludeSections,
         });
@@ -636,6 +650,7 @@ async function main(): Promise<void> {
           scope: input.scope,
           controls: input.controls,
           gate: input.gate,
+          link_only_scoring: linkOnlyScoring,
         };
         meta.ground_path = ground.path;
         meta.plan_description = planForAnswer.description;
@@ -645,27 +660,42 @@ async function main(): Promise<void> {
       }
 
       contexts = chunks.map((c) => c.content).filter(Boolean);
-      meta.n_chunks = chunks.length;
-      meta.chunk_ids = chunks.map((c) => c.chunkId);
-      meta.file_ids = [...new Set(chunks.map((c) => c.fileId))];
+      const evidenceOpts = {
+        maxAnswerChunks: answerMaxChunks,
+        maxChunkChars: 1800,
+        scrubForApi: true,
+      };
+      const evalChunks = selectEvidenceChunks(chunks, evidenceOpts);
+      const evalContexts = evalChunks.map((c) => c.content).filter(Boolean);
+      meta.n_chunks_retrieved = chunks.length;
+      meta.chunk_ids_retrieved = chunks.map((c) => c.chunkId);
+      meta.n_chunks_eval = evalChunks.length;
+      meta.chunk_ids = evalChunks.map((c) => c.chunkId);
+      meta.retrieved_chunks = evalChunks.map((c, i) => ({
+        rank: i + 1,
+        chunk_id: c.chunkId,
+        file_id: c.fileId,
+        score: c.score,
+      }));
+      meta.file_ids = [...new Set(evalChunks.map((c) => c.fileId))];
       meta.answer_max_chunks = answerMaxChunks;
       meta.answer_scrubbed = true;
+      meta.evidence_max_chars = 1800;
 
       if (!dryRun) {
         const ans = await generateAnswer(
           question, planForAnswer, chunks, model, keys, promptMode, temperature,
-          { maxAnswerChunks: answerMaxChunks, scrubForApi: true },
+          evidenceOpts,
         );
         response = ans.response;
         meta.tokens = { answer_in: ans.tokensIn, answer_out: ans.tokensOut };
-        meta.answer_chunks = answerMaxChunks > 0
-          ? Math.min(chunks.length, answerMaxChunks)
-          : chunks.length;
+        meta.answer_chunks = evalChunks.length;
       }
+      contexts = evalContexts;
       meta.elapsed_ms = Date.now() - t0;
       meta.error = null;
       ok++;
-      logSuffix = `ok (${contexts.length} chunks${dryRun ? '' : `, ${response.length} chars`})`;
+      logSuffix = `ok (${meta.n_chunks_retrieved} retrieved, ${evalContexts.length} eval${dryRun ? '' : `, ${response.length} chars`})`;
     } catch (err) {
       meta.elapsed_ms = Date.now() - t0;
       meta.error = err instanceof Error ? err.message : String(err);

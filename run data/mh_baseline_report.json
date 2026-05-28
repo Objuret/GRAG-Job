@@ -1,0 +1,105 @@
+{
+  "per_sample": [
+    {
+      "id": "gold_person_actiongenie_0",
+      "faithfulness": 0.8461538461538461,
+      "context_recall": 0.7272727272727273,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_person_anomalyforce_8",
+      "faithfulness": 1.0,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_person_autotuneforce_0",
+      "faithfulness": 1.0,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_pr_coachforce_5",
+      "faithfulness": 0.9166666666666666,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_url_collaborateforce_16",
+      "faithfulness": 0.8571428571428571,
+      "context_recall": 1.0,
+      "llm_context_precision_with_reference": 0.9999999999
+    },
+    {
+      "id": "gold_pr_collaborationforce_6",
+      "faithfulness": 0.5454545454545454,
+      "context_recall": 0.25,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_pr_connectforce_5",
+      "faithfulness": 0.8,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_company_contentforce_14",
+      "faithfulness": 1.0,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_person_contextforce_1",
+      "faithfulness": 0.9090909090909091,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_person_edgeforce_2",
+      "faithfulness": 1.0,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_pr_explainabilityforce_6",
+      "faithfulness": 1.0,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_company_feedbackforce_11",
+      "faithfulness": 0.8888888888888888,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_person_flowforce_3",
+      "faithfulness": 1.0,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_company_forecastforce_7",
+      "faithfulness": 0.6666666666666666,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.0
+    },
+    {
+      "id": "gold_person_insightforce_12",
+      "faithfulness": 0.6923076923076923,
+      "context_recall": 0.0,
+      "llm_context_precision_with_reference": 0.0
+    }
+  ],
+  "overall": {
+    "faithfulness": 0.8748248048248047,
+    "context_recall": 0.1318181818181818,
+    "llm_context_precision_with_reference": 0.06666666666
+  },
+  "overall_n": {
+    "faithfulness": 15,
+    "context_recall": 15,
+    "llm_context_precision_with_reference": 15
+  },
+  "n_samples": 15
+}

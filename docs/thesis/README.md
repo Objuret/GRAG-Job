@@ -2,7 +2,15 @@
 
 Documents produced from code-verified analysis of this monorepo and comparison with **Thesis2026VT.pdf**. Documentation in `docs/backend/` and root `README.md` may be stale; **trust these after cross-checking code**.
 
-## Start here
+## Start here — Word paste (pick one)
+
+| Document | Open when… |
+|----------|------------|
+| [**Thesis2026VT9_submission_pack.md**](Thesis2026VT9_submission_pack.md) | You want **structured paste blocks** with *WHERE IN WORD* labels and a 7-step quick start (recommended). |
+| [**Thesis2026VT9_WORD_PASTE.txt**](Thesis2026VT9_WORD_PASTE.txt) | You want **plain text only** — same paste content, no markdown (Notepad / Word). |
+| [**Thesis2026VT9_missing_references_APA7.md**](Thesis2026VT9_missing_references_APA7.md) | You need **APA 7 reference lines** — one entry per section, alphabetical. |
+
+## Deep analysis
 
 | Document | Use when you need… |
 |----------|-------------------|
@@ -14,11 +22,11 @@ Documents produced from code-verified analysis of this monorepo and comparison w
 
 ## Recommended workflow
 
-1. Read `repo_truth_comprehensive.md` once — understand what you actually built.  
-2. Use `thesis_pdf_vs_reality.md` while editing the PDF — fix or replace flagged sections.  
-3. Paste `Thesis2026VT_kap6_ersattningstext.md` into chapter 6.  
-4. Copy filled values from `Thesis2026VT_korrigeringar.md` § *Ifyllda värden* (2026-05-20) into Word; reports stay in `ragas_exports/` (gitignored).  
-5. Replace speculative chapter 7–8 narrative with evidence-based text from `ragas_eval_report.md`.
+1. Open **`Thesis2026VT9_submission_pack.md`** (or **`Thesis2026VT9_WORD_PASTE.txt`** if you prefer plain text) — follow the 7-step quick start.  
+2. Paste references from **`Thesis2026VT9_missing_references_APA7.md`**; fix Chakraborty/Pan in-text per that doc.  
+3. Paste `Thesis2026VT_kap6_ersattningstext.md` into chapter 6 if not already done.  
+4. Use `thesis_pdf_vs_reality.md` for any remaining flagged sections outside the pack.  
+5. Optional: re-run k=40 RAGAS and swap table values from `*_k40.report.json` when available.
 
 ## Source PDF
 

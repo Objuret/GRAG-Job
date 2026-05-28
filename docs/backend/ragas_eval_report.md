@@ -18,7 +18,7 @@ adapted in the thesis methods/limitations chapter.
 | Baseline retrieval | Lucene `chunk_content_ft` on raw `content`, **same k=40** |
 | Answer + judge cap | **`answer_max_chunks=40`**, RAGAS **`--judge-max-contexts 40`**, `1800` chars/chunk |
 | RAGAS judge | `deepseek-chat` (OpenAI-compatible), temperature 0 |
-| RAGAS metrics | `faithfulness`, `context_recall`, `context_precision` (@40) |
+| RAGAS metrics | `faithfulness`, `context_recall`, `context_precision`, `answer_correctness` (@40) |
 | Export concurrency | 8 (graph) / 10 (baseline) parallel questions |
 | Scorer concurrency | 8 parallel RAGAS jobs (`RunConfig.max_workers`) |
 
@@ -41,7 +41,33 @@ Reports: `ragas_exports/A_tags_k40.report.json`, `ragas_exports/B_baseline_k40.r
 
 Artifacts: `ragas_exports/A_tags.jsonl`, `B_baseline.jsonl`, `*.report.json` (completed).
 
-Visualize: workbench → **RAGAS Reports**.
+Visualize: workbench → **RAGAS Reports** → **Browse ragas_exports/** (pick files; nothing autoloads).
+
+## Token and chunk cohort (export JSONL)
+
+Full tables: [`ragas_export_token_stats.md`](ragas_export_token_stats.md).
+
+Each export row records `meta.tokens.answer_in` / `answer_out` (answer LLM only),
+`meta.n_chunks`, and full `retrieved_contexts` (RAGAS audit). Dedupe by `id`,
+prefer rows without `meta.error` and with non-empty `response`.
+
+**Primary k=40** (`A_tags_k40.jsonl`, `B_baseline_k40.jsonl`; paired n=99):
+
+| Metric | Graph median | Baseline median | Ratio (graph/baseline) |
+|--------|-------------:|----------------:|-----------------------:|
+| `answer_in` tokens | 9 422 | 24 289 | **0,39** |
+| `answer_out` tokens | 112 | 174 | 0,64 |
+| Retrieved chunks | 15 | 40 | **0,38** |
+| Context chars (sum) | 45 499 | 132 948 | **0,34** |
+
+Graph tag grounding + gate often returns **fewer than k=40** segments; Lucene
+baseline **fills the cap**. Faithfulness medians stay similar (§ Results); lower
+context recall aligns with smaller evidence bags.
+
+**Pilot uncapped** (`A_tags.jsonl`, `B_baseline.jsonl`): `answer_in` ratio ~0,84,
+chunks ~0,82 — appendix only; graph retrieval can exceed baseline breadth.
+
+Reproduce: `python ragas_exports/_token_stats.py` or export commands below.
 
 ## Answer-generation cohort
 
@@ -164,7 +190,9 @@ graph faithfulness mean 0,74) — do not confuse with median.
 cohort (higher context_recall median) while faithfulness is similar. Very low
 context_precision medians reflect noisy Lucene/graph context bags and judge
 strictness — discuss limitations, not “precision = 0” as a product bug.
-`answer_correctness` was not scored in this run.
+`answer_correctness` requires `OPENAI_API_KEY` (embeddings). Until that is set, run
+`python -m evaluation.answer_token_score --merge-report …` on the same JSONL for
+deterministic HERB `eid_*` answer F1 (free; merged into the report JSON).
 
 ## Suggested thesis wording (short)
 
@@ -192,12 +220,23 @@ npm --workspace frontend run ragas:export -- --config ragas_exports/B_baseline.r
   --questions frontend/scripts/ragas-questions.herb-gold100.jsonl \
   --out ragas_exports/B_baseline_k40.jsonl --fresh --concurrency 10
 
-# Score (@40)
+# Score (@40) — full thesis metrics (answer_correctness needs OPENAI_API_KEY)
 cd backend
 python -m evaluation.ragas_eval --input ../ragas_exports/A_tags_k40.jsonl \
-  --metrics faithfulness,context_recall,context_precision \
-  --report ../ragas_exports/A_tags_k40.report.json --judge-max-contexts 40 --concurrency 8 --timeout 600
+  --thesis \
+  --report ../ragas_exports/A_tags_k40.report.json --judge-max-contexts 40 --concurrency 4 --timeout 600
 python -m evaluation.ragas_eval --input ../ragas_exports/B_baseline_k40.jsonl \
-  --metrics faithfulness,context_recall,context_precision \
-  --report ../ragas_exports/B_baseline_k40.report.json --judge-max-contexts 40 --concurrency 8 --timeout 600
+  --thesis \
+  --report ../ragas_exports/B_baseline_k40.report.json --judge-max-contexts 40 --concurrency 4 --timeout 600
+
+# Answer correctness without OpenAI (HERB eid_* token F1) — merge into report:
+python -m evaluation.answer_token_score --input ../ragas_exports/A_tags_k40.jsonl \
+  --merge-report ../ragas_exports/A_tags_k40.report.json
+python -m evaluation.answer_token_score --input ../ragas_exports/B_baseline_k40.jsonl \
+  --merge-report ../ragas_exports/B_baseline_k40.report.json
+
+# RAGAS answer_correctness only (needs OPENAI_API_KEY), merge into existing report:
+python -m evaluation.ragas_eval --input ../ragas_exports/A_tags_k40.jsonl \
+  --metrics answer_correctness --merge-report ../ragas_exports/A_tags_k40.report.json \
+  --judge-max-contexts 40 --concurrency 4 --timeout 600
 ```

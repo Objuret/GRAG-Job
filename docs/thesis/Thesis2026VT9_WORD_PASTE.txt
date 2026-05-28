@@ -1,0 +1,335 @@
+This pack optimises for substance per sentence, not maximum word count.
+Checklist limits (e.g. 300-word abstract) are ceilings, not targets.
+
+Lines wrapped at 80 columns for readability.
+Thesis2026VT9 — Word paste (plain text)
+Same content as Thesis2026VT9_submission_pack.md — copy each section into Word.
+Generated 2026-05-20. RAGAS from A_tags.report.json; tokens/chunks from
+ragas_exports/*_k40.jsonl (docs/backend/ragas_export_token_stats.md).
+
+
+========== ABSTRACT (ENGLISH) ==========
+
+Flat retrieval over heterogeneous enterprise text loses relational context
+and raises hallucination risk. With Bonnier News, this thesis designs and
+evaluates a transformation layer that materialises the Salesforce HERB
+benchmark in Neo4j, enriches segments offline via a two-pass Anthropic
+tagging pipeline, indexes tag vocabulary with e5-small-v2 embeddings, and
+retrieves evidence through tag grounding and weighted HAS_TAG edges under a
+structural gate. A local workbench connects to Neo4j and LLM APIs for
+reproducible export.
+
+The graph-enriched path is compared to a Lucene full-text baseline on raw
+chunk content (no tags, interpretation, or gate), using the same answer
+model and 100 gold questions from HERB answerable QA (database herb-eval).
+DeepSeek (deepseek-chat) at temperature 0 generated answers and ran RAGAS
+judging. Primary evaluation caps retrieval at k = 40 segments per question
+with matched judge context; an uncapped pilot is in the appendix.
+
+After export deduplication, the graph arm answered 92/100 questions and the
+baseline 95/100. RAGAS medians on scored subsets: faithfulness 0.81
+(graph) vs 0.80 (baseline); context recall 0.86 vs 1.00; context
+precision near zero for both arms—consistent with noisy context bags and
+strict judging, not a trivial bug. Failures involved oversized graph
+retrieval in stress runs, Slack text breaking the answer API, one invalid
+hard gate, and occasional judge timeouts.
+
+Structured enrichment improves traceability and gate-controlled selection
+but does not uniformly beat full-text recall on this cohort. Limitations:
+single corpus, dataset-derived ground truth, model-dependent absolute
+scores.
+
+
+========== KAPITEL 7 (ERSATT §7.1–7.6) ==========
+
+7.1 Översikt över genomförda tester
+
+Utvärderingen följer avsnitt 5.5 på 100 gold-frågor (ragas-questions.
+herb-gold100.jsonl) mot grafdatabasen herb-eval (oracle-/QA-sektioner
+exkluderade), med samma svarsmodell (deepseek-chat, T=0) och samma typ av
+serialiserat kontextpaket i två armar:
+
+1. Grafberikad arm (A · tags): frågetolkning → e5-tagggrundning (grounding_k =
+    20, minSim = 0,78) → viktad HAS_TAG-retrieval under strukturell gate.
+2. Textbaseline (B · baseline): Lucene på index chunk_content_ft över rå
+    Chunk.content, utan tolkning, taggar eller gate.
+
+Primär körning: k = 40 segment per fråga på båda armarna; RAGAS-judge med
+--judge-max-contexts 40 och 1800 tecken per segment. k = 40 sattes före
+körning som fast evidensbudget (~40 × 1800 tecken), under pilotmedian (~120
+segment/fråga vid ocappad graph-retrieval), med ändlig tagggrundning — inte
+grid search på gold-100. Ocappad pilot (bilaga): limit = 0, grounding_k = 0
+på graf; baseline topp 150; median ~120 segment och API-fel på Slack-tung
+text. Tabell 1–2 bygger på export/RAGAS 2026-05-20 (A_tags.report.json;
+baseline enligt ragas_eval_report.md).
+
+Svarsgenerering före RAGAS (deduplicerad export, utan meta.error): graf
+92/100, baseline 95/100. Permanent utebliven graf-fråga: gold_personalizeforce_34
+(employee_id saknas i herb-eval). Övriga fel: JSON-body mot svar-API
+(Slack-text), oversized retrieval i pilot, enstaka judge-timeouts.
+
+7.2 Svarskorrekthet och trovärdighet (RAGAS)
+
+answer_correctness kördes inte. Trovärdighet operationaliseras med
+faithfulness (tabell 1).
+
+Tabell 1. Exportkohort och RAGAS faithfulness (median, IQR).
+
+Baseline (Lucene):
+- Andel besvarade i export: 95/100
+- RAGAS n (faithfulness): 94
+- Faithfulness, median (IQR): 0,80 (0,61–1,00)
+
+Graf (tagg + gate):
+- Andel besvarade i export: 92/100
+- RAGAS n (faithfulness): 92
+- Faithfulness, median (IQR): 0,81 (0,58–1,00)
+
+Median faithfulness skiljer marginellt (+0,01 till grafens fördel); baseline
+besvarade fler frågor i export (95 mot 92).
+
+7.3 Retrieval: recall och precision (RAGAS)
+
+Tabell 2. RAGAS context_recall och context_precision (median, IQR).
+
+Context recall, median (IQR):
+- Baseline (Lucene): 1,00 (0,00–1,00)
+- Graf (tagg + gate): 0,86 (0,00–1,00)
+- Δ (graf − baseline): −0,14
+
+Context precision, median (IQR):
+- Baseline (Lucene): 0,00 (0,00–0,05)
+- Graf (tagg + gate): 0,00 (0,00–0,03)
+- Δ (graf − baseline): ≈0
+
+RAGAS n (context_recall):
+- Baseline: 95
+- Graf: 91
+
+Baseline hade högre median context_recall: fulltext träffar ofta gold-evidens
+när referensen är lexikalt nära chunk-text; graf-armen filtrerar via
+taggmatchning och gate. Context precision ~0 i båda armarna speglar stora
+kontextmängder och strikt LLM-judge.
+
+Tabell 3. Sammanfattning huvudmått (median).
+
+- Faithfulness: Baseline 0,80 | Graf 0,81
+- Context recall: Baseline 1,00 | Graf 0,86
+- Context precision: Baseline 0,00 | Graf 0,00
+
+Använd median per stickprov, inte aritmetiskt medel i .report.json overall.
+
+7.4 Hallucinationsfrekvens
+
+Hallucination mäts via RAGAS faithfulness (tabell 1–3). De fyra manuella
+kategorierna i avsnitt 4.2 kvantifierades inte separat i pipelinen.
+
+7.5 Effektivitet och spårbarhet
+
+Export-JSONL (ragas-export.ts) loggar per fråga meta.tokens (answer_in,
+answer_out), n_chunks, chunk_ids, gate och grounding. Kohortstatistik
+agregerades från A_tags_k40.jsonl och B_baseline_k40.jsonl (dedupe per id;
+99 besvarade i båda armarna vid k = 40).
+
+Tabell 4. Svar-API och hämtad kontext vid k = 40 (median, IQR).
+
+Svarstokens in (meta.tokens.answer_in):
+- Graf: 9 422 (4 832–14 818)
+- Baseline: 24 289 (23 074–26 090)
+- Förhållande graf/baseline (medianer): 0,39
+
+Hämtade segment (n_chunks):
+- Graf: 15 (8–23)
+- Baseline: 40 (40–40)
+- Förhållande: 0,38
+
+Tecken i retrieved_contexts (summa per fråga):
+- Graf: 45 499 (23 456–75 152)
+- Baseline: 132 948 (128 944–141 390)
+- Förhållande: 0,34
+
+Baseline fyller konsekvent taket k = 40; tagggrundning och gate lämnar
+ofta färre segment (median 15). Vid likvärdig median faithfulness (§7.2)
+använde graf-armen ungefär två femtedelar av baseline svarstokens in och
+en tredjedel av hämtad teckenmängd — lägre LLM-ingång utan trovärdighetsförlust
+på det måttet, mot kostnaden lägre context recall (§7.3).
+
+Ocappad pilot (bilaga): median answer_in ~75k vs ~90k (förhållande ~0,84),
+segment median 122 vs 150; stora kontextmängder och API-fel dominerar där.
+
+Spårbarhet: endast graf-armen exponerar tagg-härledning, gate och fil-id i
+export-meta; baseline ger Lucene-träffar utan facet-/taggspår.
+
+7.6 Sammanfattning av resultat
+
+På 100 HERB gold-frågor: faithfulness i stort sett lika (median 0,81 vs
+0,80), context recall högre för Lucene-baseline (1,00 vs 0,86), fler
+export-svar i pilot (95 vs 92), context precision låg i båda armarna.
+Vid k = 40 kombinerar graf-armen lägre token- och segmentbudget (§7.5) med
+likvärdig faithfulness men lägre context recall. Graf-armen prioriterar
+gate-styrd, tagggrundad selektion och spårbarhet; baseline maximerar
+lexikal recall mot gold-referens. Universell graföverlägsenhet stöds inte;
+effektivitetsvinsten (≈0,39× svarstokens in) gäller HERB/herb-eval under
+matchad k = 40.
+
+
+========== §2 SYFTE ==========
+
+Syftet är att utveckla och utvärdera en grafbaserad RAG-artefakt för hämtning,
+representation och kontextualisering av heterogent digitalt material inför
+LLM-analys. Studien testar om hybrid av grafmaterialisering, semantisk
+taggberikning och taggvektorgrundad hämtning påverkar kontextbevarande och
+svarskvalitet vid frågor som kan kräva samband mellan segment (multi-hop som
+frågetyp, inte garanterad flerhoppstraversal i Cypher).
+
+Utvärderingen jämför (i) grafberikad hämtning — tolkning, e5-grundning mot
+tagg-vokabulär, viktade HAS_TAG under strukturell gate — med (ii) Lucene-
+fulltext på rå segmenttext utan tagg- eller gate-lager. Båda armarna
+serialiserar segment till samma kontextpaket inför samma svarsmodell.
+
+
+========== RQ2 ==========
+
+RQ2: Vilken effekt har grafbaserad hämtning, jämfört med den textuella baseline
+definierad i avsnitt 5.4 och 6.5, på (a) svarskorrekthet, (b) retrieval och
+svarsprecision samt (c) hallucinationsfrekvens vid LLM-baserad analys?
+
+(Fotnot/parentes: Med "direkt hämtning" avses här inte SQL-frågor mot
+käll-Databaser utan fulltext på chunk-innehåll (Lucene på Chunk.content).)
+
+
+========== SVENSK TITEL ==========
+
+Strukturering och kontextualisering av heterogent digitalt material för
+LLM-baserad analys: design och utvärdering av ett transformationslager
+
+
+========== SVENSK UNDERTITEL (VALFRITT) ==========
+
+Grafbaserad RAG på HERB-korpusen med tagggrundning, Lucene-baseline och gold-100
+RAGAS-utvärdering
+
+
+========== ENGELSK TITEL + UNDERTITEL ==========
+
+Title: Structuring and Contextualizing Heterogeneous Digital Material for
+LLM-Based Analysis: Design and Evaluation of a Graph-Enriched Transformation
+Layer
+
+Subtitle: A hybrid graph–vector RAG pipeline on the Salesforce HERB corpus with
+Lucene baseline and gold-100 RAGAS evaluation
+
+
+========== GENERATIV AI — UPPLYSNING (SV) ==========
+
+Anthropic (Claude) — offline HERB-tagging (python -m tagging extract/describe/
+score); validerad struktur, skrivning till Neo4j.
+
+DeepSeek (deepseek-chat) — svar och RAGAS-domare i gold-100-exporten; samma
+modell i båda armarna, temperatur 0.
+
+Cursor / LLM-assistans — kod, dokumentation och korrigeringstexter; verifierat
+mot repo och ragas_exports/*.report.json. Utvärderingssiffror fabricerades
+inte.
+
+
+========== SAMMANFATTNING (SVENSKA) ==========
+
+Examensarbetet med Bonnier News designar och utvärderar ett transformationslager
+som materialiserar HERB (Salesforce) i Neo4j, taggar segment offline i två pass
+(Anthropic), indexerar tagg-vokabulär med e5-small-v2 och hämtar underlag via
+tagggrundning och viktade HAS_TAG-kanter under strukturell gate. En lokal
+workbench kopplar direkt till Neo4j och LLM-API för reproducerbar export.
+
+Grafarmen jämförs med Lucene-baseline på rå segmenttext (utan taggar, tolkning,
+gate), samma svarsmodell och 100 gold-frågor (herb-eval). DeepSeek (deepseek-
+chat, T=0) genererade svar och domade RAGAS. Primär design: k = 40 segment och
+matchad judge-kontext; ocappad pilot i bilaga.
+
+Export (deduplicerad): graf 92/100, baseline 95/100. Median faithfulness 0,81
+vs 0,80; context recall 0,86 vs 1,00; context precision ~0 i båda armarna
+(brusiga kontextmängder, strikt domarkriterium). Fel: oversized pilot-retrieval,
+Slack-text mot svar-API, en ogiltig hard gate, judge-timeouts.
+
+Strukturerad berikning ökar spårbarhet och gate-styrt urval men slår inte
+fulltext-recall på kohorten. Begränsningar: en korpus, dataset-ground truth,
+modellberoende nivåer.
+
+
+========== NYCKELORD (ENGELSKA) ==========
+
+retrieval-augmented generation; knowledge graph; Neo4j; large language models;
+heterogeneous data; transformation layer; tag grounding; full-text search;
+hallucination; design science research
+
+
+========== NYCKELORD (SVENSKA) ==========
+
+retrieval-augmented generation; kunskapsgraf; Neo4j; stora språkmodeller;
+heterogen data; transformationslager; tagggrundning; fulltextsökning;
+hallucination; design science
+
+
+========== KAPITEL 8.2 — DESIGNENS SVAR PÅ RQ1 ==========
+
+RQ1 gällde design av kontextbevarande hämtning från strukturerat material.
+Transformationslagret separerar: (1) deterministisk segmentering och Neo4j-
+materialisering, (2) offline tvåpass-taggning (extract + facet-bedömning;
+fil-describe och relevance_to_file), (3) e5-vektorindex för lexikal→grafisk
+grounding, (4) analystids-serialisering till LLM — inte rå graf eller SQL.
+
+Grafen är index- och urvalslager, inte promptformat; hämtning kombinerar kNN
++ viktade HAS_TAG med valfri fulltext-fallback, inte ren multi-hop Cypher.
+Pipeline: preflight → tagging → materialize → embed-tags → workbench/export.
+
+
+========== KAPITEL 8.3 — TOLKNING AV RESULTATEN (RQ2) ==========
+
+RQ2a (svarskorrekthet): answer_correctness kördes inte; export 95 vs 92
+besvarade. Skillnaden speglar graf-specifika fel (hard gate, stora kontexter),
+inte per automatik högre semantisk korrekthet.
+
+RQ2b (retrieval): context recall median högre för baseline (1,00 vs 0,86) —
+Lucene träffar ofta gold-referens lexikalt; tagggrundning och gate minskar
+recall mot referens. Lägre recall samvarierar med mindre hämtad evidens
+(median 15 vs 40 segment, §7.5) — avvägning mellan tokenbudget och gold-
+täckning. Context precision ~0 i båda armarna (kontextbrus, judge).
+
+RQ2c (hallucination): faithfulness median 0,81 vs 0,80 — strukturerad hämtning
+garanterar inte lägre RAGAS-trovärdighet här. Fyra-kategorimodellen (§4.2)
+kompletterar utan att ersätta dessa utfall.
+
+Baseline: bättre lexikal recall och fler export-svar; graf: likvärdig
+faithfulness, lägre svarstokens in vid k = 40 (§7.5) och tydligare
+spårbarhet. Universell graföverlägsenhet stöds inte av tabell 1–3.
+
+
+========== KAPITEL 8.4 — AVVÄGNING TOKENBUDGET MOT RECALL ==========
+
+Primär design (k = 40) visar att Lucene-baseline systematiskt maximerar
+evidensbudgeten (40 segment, ~133k tecken median) medan tagggrafen selektivt
+hämtar färre segment (~15 median, ~46k tecken) till samma svarsmodell.
+Förhållandet graf/baseline ~0,39 för answer_in-tokens vid likvärdig
+faithfulnessmedian tyder på att strukturerat urval kan minska LLM-ingång utan
+att RAGAS-trovärdighet sjunker på kohorten — men context recall median sjunker
+(−0,14), dvs gold-referens täcks oftare när fler råsegment skickas in.
+Ocappad pilot minskar inte token-gapet lika tydligt (~0,84× answer_in);
+huvudbudskap gäller matchad k = 40.
+
+
+========== KAPITEL 8.5 — RESULTATEN I FÖRHÅLLANDE TILL TIDIGARE FORSKNING ==========
+
+Edge et al. (2024) och Peng et al. (2024) rapporterar graffördelar på
+flerstegsfrågor; här var baseline-recall median högre och faithfulness likvärdig
+(HERB gold-100). Fördelar beror på frågetyp, gate, k-cap och baseline (Lucene
+på chunks).
+
+Mot hallucinationslitteratur (Agrawal et al., 2024; Zhang & Zhang, 2025):
+faithfulness mot hämtade segment förblev i stort sett oförändrad; icke-grundade
+inferenser styrs mer av generativ modell än retrieval-arm (Peng et al., 2024).
+
+
+========== §6.3.3 — ERSATT MENING (FACETTER) ==========
+
+… filbeskrivningar, taggar, facetter (topic, entities, activity, temporal,
+evidence på HAS_TAG), relevansvikter och källhänvisningar.

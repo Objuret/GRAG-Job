@@ -29,7 +29,7 @@ WHERE coalesce(c.empty, false) = false
   AND ($g_employee_id IS NULL OR c.employee_id = $g_employee_id)
   AND (size($g_years) = 0 OR any(y IN $g_years WHERE y IN c.years))`;
 
-export const DEFAULT_MODULE_FOOTER = `WITH c, r, qt,
+export const DEFAULT_MODULE_FOOTER = `WITH c, qt.promptIndex AS promptIdx, r, qt,
      CASE r.facet
        WHEN 'topic'    THEN qt.topic
        WHEN 'entities' THEN qt.entities
@@ -38,9 +38,12 @@ export const DEFAULT_MODULE_FOOTER = `WITH c, r, qt,
        WHEN 'evidence' THEN qt.evidence
        ELSE 0.0
      END AS facetScore
-WITH c, sum(qt.w_query * facetScore * r.w_chunk * r.w_facet
-            * coalesce(c.relevance_to_file, 1.0) * qt.sim
-            * coalesce(qt.scopeWeight, 1.0)) AS score
+WITH c, promptIdx,
+     qt.w_query * facetScore * r.w_chunk * r.w_facet
+       * coalesce(c.relevance_to_file, 1.0) * qt.sim
+       * coalesce(qt.scopeWeight, 1.0) AS contrib
+WITH c, promptIdx, max(contrib) AS bestPromptContrib
+WITH c, sum(bestPromptContrib) AS score
 WHERE score > 0
 RETURN c.chunk_id   AS chunkId,
        c.file_id    AS fileId,

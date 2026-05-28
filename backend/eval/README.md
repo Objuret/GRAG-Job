@@ -79,20 +79,22 @@ Preferred path for thesis results:
    Or export RunSpec cards from the workbench (see below) and pass
    `--config path/to/run.ragas.json`.
 
-3. Score each JSONL:
+3. Score (you pass the export path — nothing is hardcoded):
 
    ```powershell
    cd backend
    pip install -r requirements-eval.txt
-   python -m evaluation.ragas_eval --input evaluation/graph.jsonl --metrics faithfulness,context_recall,context_precision --report evaluation/graph.report.json
-   python -m evaluation.ragas_eval --input evaluation/baseline.jsonl --metrics faithfulness,context_recall,context_precision --report evaluation/baseline.report.json
-   python -m evaluation.ragas_eval --input evaluation/sql_agent.jsonl --metrics faithfulness,context_recall,context_precision --report evaluation/sql_agent.report.json
+   python -m evaluation.ragas_eval --input ../ragas_exports/YOUR_EXPORT.jsonl --thesis --report ../ragas_exports/YOUR_EXPORT.report.json
+   python -m evaluation.aggregate_scores --input ../ragas_exports/YOUR_EXPORT.scored.jsonl --report ../ragas_exports/YOUR_EXPORT.report.json
    ```
 
-The headless exporter writes `user_input`, `retrieved_contexts`, `response`,
-`reference`, and a `meta` block with mode, timing, chunk ids, file ids,
-grounding, gate, controls, warnings, and errors. SQL-agent rows also record
-`max_tool_calls`, `max_rows_per_query`, and `max_cell_chars` in `meta`.
+   `ragas_eval` writes `<input>.scored.jsonl`: every export row preserved, plus
+   `ragas`, `deterministic` (token F1), and `score_meta`. Failed export rows get
+   `ragas: null` and `skip_reason` — no judge API spend. `retrieved_contexts`
+   in the export is the same evidence slice the answer model saw; the scorer
+   does not trim by default (`--judge-max-contexts 0`).
+
+   Use `aggregate_scores` for means/medians and cohort filtering — not the scorer.
 
 ### From the workbench Run Builder
 

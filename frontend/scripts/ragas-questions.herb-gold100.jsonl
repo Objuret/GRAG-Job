@@ -9,7 +9,7 @@
 #     --questions ragas-questions.herb-gold.jsonl \
 #     --exclude-sections answerable_questions,unanswerable_questions
 #   python -m evaluation.ragas_eval --judge-model claude-sonnet-4-6 \
-#     --metrics faithfulness,context_recall,context_precision
+#     --metrics faithfulness,context_recall,context_precision,answer_correctness
 # Format: one {"id","question","reference"} per line; # lines skipped.
 {"id": "gold_actiongenie_0", "question": "Find employee IDs of the authors and key reviewers of the Market Research Report for the ActionGenie product?", "reference": "eid_d96fb219; eid_2589c967; eid_ec3b5d65; eid_f1c8f4a5; eid_4afd9484; eid_839bc5eb; eid_e96d2f38; eid_3bcf2a20; eid_802e8eff; eid_bed67c52; eid_13fdff84"}
 {"id": "gold_anomalyforce_0", "question": "What are the changes suggested by Engineering Lead to improve the Market Research Report for AnomalyForce?", "reference": "- Elaborate on the 'advanced algorithms' used by alyAIX in the Product Description section, including a comparison with competitors.\n- Add more details in the Challenges section about how alyAIX plans to address integration with various data sources, including a short paragraph on the technical support or resources available to users."}

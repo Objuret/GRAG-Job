@@ -10,7 +10,7 @@ Graph prerequisites are **verified present on the live `herb-eval` graph**
 [`status.md`](status.md)). Not separately
 re-verified: a full browser prompt → answer click-through.
 
-**Last updated:** 2026-05-19.
+**Last updated:** 2026-05-20.
 
 ## Purpose
 
@@ -288,31 +288,32 @@ controls on the `build_input` node ("effort"). Note `min_sim` is a coarse
 floor: e5-small cosine on this corpus is compressed (~0.8 mean to random
 tags), so grounding leans on top-k ranking, not the absolute threshold.
 
-Grounding is the **only** path. There is no exact-name match and no silent
-fallback: if the `tag_emb_<facet>` indexes or the `:Tag.emb_*` vectors are
-missing, or grounding yields no match above `min_sim`, retrieval throws a loud error
-telling the operator to run `python -m tagging embed-tags`. A broken or
-unembedded graph must fail visibly, never degrade into coincidental
-string-equality matches.
+Grounding is the **only** path. In legacy mode there is no exact-name shortcut
+and no silent fallback: if the `tag_emb_<facet>` indexes or the `:Tag.emb_*`
+vectors are missing, or grounding yields no match above `min_sim`, retrieval
+throws a loud error telling the operator to run `python -m tagging embed-tags`.
+Link-only mode adds an exact `:Tag` name probe before kNN (see §2 below).
 
 **2. Deterministic weighted overlap**, in Cypher, over the grounded tags:
 
 ```text
-score += query_tag.w_query
-       * query_tag.facets[facet]
-       * chunk_edge.w_chunk
-       * chunk_edge.w_facet
-       * coalesce(chunk.relevance_to_file, 1.0)
-       * grounding_sim
-       * scope_weight
+edgeContrib = w_query × facetScore × w_chunk × w_facet × relevance_to_file × scopeWeight
+              [× grounding_sim in legacy mode only]
+
+perPromptBest(c, promptTag) = max(edgeContrib) over that prompt tag's grounded links on c
+score(c) = Σ perPromptBest(c, promptTag)   // sum across prompt tags
 ```
 
-A grounded corpus tag inherits its prompt tag's facet vector and `w_query`;
-the grounding `sim` is folded into the weight so weak matches contribute less.
-Facet-specific grounded uses require `query_tag.facet = chunk_edge.facet`;
-`all` grounded uses are allowed across facets but downweighted. `sim` is always
-a real cosine similarity from the vector index — there is no `sim = 1.0`
-exact-name shortcut.
+Each **prompt tag** contributes at most one term per chunk (its best matching
+`HAS_TAG` edge among the corpus tags kNN linked to it). Scores then **sum
+across prompt tags**. This stops a chunk from piling up score because many
+generic corpus tags (linked from a wide kNN pool) each hit the same chunk.
+
+A grounded corpus tag inherits its prompt tag's facet vector and `w_query`.
+Link-only mode (`--link-only` / `link_only_scoring`) uses kNN only to **link**
+prompt tags to corpus `:Tag` names (`groundingK` typically 40); ranking uses
+the HERB weight product above **without** `× grounding_sim`. Exact corpus tag
+name match is tried before kNN.
 
 **3. Lexical recall (gated full-text).** Tag scoring caps recall at tagger
 coverage: a chunk whose body literally states a term is unreachable if no
