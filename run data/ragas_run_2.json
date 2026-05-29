@@ -1,0 +1,2403 @@
+{
+  "run": "K=40 (primary controlled)",
+  "artifacts": {
+    "graph_export": "ragas_exports/A_tags_k40.jsonl",
+    "baseline_export": "ragas_exports/B_baseline_k40.jsonl",
+    "graph_report": "ragas_exports/A_tags_k40.report.json",
+    "baseline_report": "ragas_exports/B_baseline_k40.report.json"
+  },
+  "config": {
+    "shared": {
+      "gold": "frontend/scripts/ragas-questions.herb-gold100.jsonl",
+      "n_gold": 100,
+      "database": "herb-eval",
+      "answer_model": "deepseek-chat",
+      "judge_model": "deepseek-chat",
+      "temperature": 0,
+      "exclude_sections": [
+        "answerable_questions",
+        "unanswerable_questions",
+        "product_profile"
+      ]
+    },
+    "graph": {
+      "limit": 40,
+      "grounding_k": 20,
+      "min_sim": 0.78,
+      "min_w_chunk": 0,
+      "min_relevance_to_file": 0,
+      "facets": "topic,entities,activity,temporal,evidence",
+      "answer_max_chunks": 40,
+      "answer_scrub": true,
+      "judge_max_contexts": 40,
+      "judge_chars_per_chunk": 1800
+    },
+    "baseline": {
+      "limit": 40,
+      "answer_max_chunks": 40,
+      "answer_scrub": true,
+      "judge_max_contexts": 40,
+      "judge_chars_per_chunk": 1800
+    }
+  },
+  "cohort": {
+    "graph_answered": 99,
+    "baseline_answered": 99,
+    "graph_ragas_scored": 99,
+    "baseline_ragas_scored": 99,
+    "paired_n_both_answered": 99,
+    "permanent_skip": "gold_personalizeforce_34"
+  },
+  "graph": {
+    "export": {
+      "answered": 99,
+      "n_chunks": {
+        "median": 15,
+        "p25": 8,
+        "p75": 23,
+        "max": 40,
+        "min": 1
+      },
+      "answer_in_tokens": {
+        "median": 9422,
+        "p25": 4815,
+        "p75": 15053,
+        "max": 26361,
+        "min": 548
+      },
+      "answer_out_tokens": {
+        "median": 112,
+        "p25": 68,
+        "p75": 174,
+        "max": 555,
+        "min": 26
+      },
+      "context_chars_sum": {
+        "median": 45499,
+        "p25": 22981,
+        "p75": 76213,
+        "max": 138944,
+        "min": 2974
+      },
+      "elapsed_ms": {
+        "median": 6744,
+        "p25": 5912,
+        "p75": 8576,
+        "max": 15104,
+        "min": 4502
+      }
+    },
+    "ragas": {
+      "n_samples": 99,
+      "overall_mean": {
+        "faithfulness": 0.6717051524414889,
+        "context_recall": 0.2451178451178451,
+        "llm_context_precision_with_reference": 0.06397891248590057,
+        "answer_token_f1": 0.01398007496722845,
+        "answer_token_precision": 0.012719183173728629,
+        "answer_token_recall": 0.04226026498753771
+      },
+      "median": {
+        "faithfulness": 0.75,
+        "context_recall": 0.0,
+        "llm_context_precision_with_reference": 0.0,
+        "answer_token_f1": 0.0,
+        "answer_token_precision": 0.0,
+        "answer_token_recall": 0.0
+      },
+      "iqr": {
+        "faithfulness": {
+          "p25": 0.5833333333333334,
+          "p75": 0.9
+        },
+        "context_recall": {
+          "p25": 0.0,
+          "p75": 0.5
+        },
+        "llm_context_precision_with_reference": {
+          "p25": 0.0,
+          "p75": 0.0
+        },
+        "answer_token_f1": {
+          "p25": 0.0,
+          "p75": 0.0
+        },
+        "answer_token_precision": {
+          "p25": 0.0,
+          "p75": 0.0
+        },
+        "answer_token_recall": {
+          "p25": 0.0,
+          "p75": 0.0
+        }
+      },
+      "per_sample": [
+        {
+          "id": "gold_edgeforce_2",
+          "faithfulness": 0.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_actiongenie_0",
+          "faithfulness": 0.3333333333333333,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 11,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_autotuneforce_0",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_contentforce_2",
+          "faithfulness": 0.0,
+          "context_recall": 0.5,
+          "llm_context_precision_with_reference": 0.49999999995,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_collaborationforce_6",
+          "faithfulness": 1.0,
+          "context_recall": 0.25,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_collaborateforce_1",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_coachforce_5",
+          "faithfulness": 0.625,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_contextforce_1",
+          "faithfulness": 0.6666666666666666,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_anomalyforce_0",
+          "faithfulness": 0.16666666666666666,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.06249999999375,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_connectforce_5",
+          "faithfulness": 0.1,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_feedbackforce_5",
+          "faithfulness": 0.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 7,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_flowforce_3",
+          "faithfulness": 0.7142857142857143,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_monitorforce_5",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_pitchforce_6",
+          "faithfulness": 0.8571428571428571,
+          "context_recall": 0.5,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 8,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_knowledgeforce_4",
+          "faithfulness": 0.0,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.9999999999,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_insightforce_5",
+          "faithfulness": 1.0,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.9999999999,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_personalizeforce_7",
+          "faithfulness": 1.0,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.15048840048338422,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_leadforce_5",
+          "faithfulness": 0.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_explainabilityforce_6",
+          "faithfulness": 0.75,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_forecastforce_4",
+          "faithfulness": 0.42857142857142855,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.035714285710714284,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_proposalforce_11",
+          "faithfulness": 0.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_searchflow_12",
+          "faithfulness": 0.7,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.1,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 10,
+          "n_found_in_response": 1
+        },
+        {
+          "id": "gold_sentimentforce_8",
+          "faithfulness": 1.0,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 1.0,
+          "answer_token_precision": 0.2857142857142857,
+          "answer_token_f1": 0.4444444444444445,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 2
+        },
+        {
+          "id": "gold_securityforce_7",
+          "faithfulness": 0.9,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 11,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_searchforce_7",
+          "faithfulness": 0.8333333333333334,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_vizforce_16",
+          "faithfulness": 0.75,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.9999999999,
+          "answer_token_recall": 1.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 3
+        },
+        {
+          "id": "gold_supportforce_5",
+          "faithfulness": 0.5833333333333334,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_trendforce_9",
+          "faithfulness": 0.7142857142857143,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_anomalyforce_17",
+          "faithfulness": 0.6,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_workflowgenie_11",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_coachforce_11",
+          "faithfulness": 0.9090909090909091,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_autotuneforce_12",
+          "faithfulness": 0.8275862068965517,
+          "context_recall": 0.3333333333333333,
+          "llm_context_precision_with_reference": 0.19999999999,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_summarizeforce_11",
+          "faithfulness": 0.9,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.4,
+          "answer_token_precision": 0.08333333333333333,
+          "answer_token_f1": 0.13793103448275862,
+          "n_reference_tokens": 5,
+          "n_found_in_response": 2
+        },
+        {
+          "id": "gold_actiongenie_5",
+          "faithfulness": 0.55,
+          "context_recall": 0.4,
+          "llm_context_precision_with_reference": 0.24285714284499998,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 5,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_collaborationforce_12",
+          "faithfulness": 0.5,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_collaborateforce_19",
+          "faithfulness": 0.8,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_contentforce_11",
+          "faithfulness": 0.8571428571428571,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_contextforce_22",
+          "faithfulness": 0.6363636363636364,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_connectforce_7",
+          "faithfulness": 0.7,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_feedbackforce_6",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_edgeforce_12",
+          "faithfulness": 0.9285714285714286,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.20833333332291665,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_flowforce_12",
+          "faithfulness": 0.7333333333333333,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.16666666665,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_explainabilityforce_7",
+          "faithfulness": 1.0,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_insightforce_6",
+          "faithfulness": 0.0,
+          "context_recall": 0.3333333333333333,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_forecastforce_24",
+          "faithfulness": 0.6666666666666666,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_monitorforce_16",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_leadforce_13",
+          "faithfulness": 0.75,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_knowledgeforce_14",
+          "faithfulness": 0.6956521739130435,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.11111111109999999,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 6,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_proposalforce_17",
+          "faithfulness": 0.5,
+          "context_recall": 0.5,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_personalizeforce_24",
+          "faithfulness": 0.9090909090909091,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_sentimentforce_26",
+          "faithfulness": 0.6666666666666666,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_supportforce_6",
+          "faithfulness": 0.75,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_summarizeforce_23",
+          "faithfulness": 0.7142857142857143,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_searchforce_16",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_vizforce_43",
+          "faithfulness": 0.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_actiongenie_7",
+          "faithfulness": 0.875,
+          "context_recall": 0.6666666666666666,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_searchflow_33",
+          "faithfulness": 0.875,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_pitchforce_25",
+          "faithfulness": 0.8333333333333334,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.6666666666666666,
+          "answer_token_precision": 0.18181818181818182,
+          "answer_token_f1": 0.28571428571428575,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 2
+        },
+        {
+          "id": "gold_autotuneforce_13",
+          "faithfulness": 0.6666666666666666,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.08496732025718955,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_connectforce_14",
+          "faithfulness": 0.625,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_collaborateforce_21",
+          "faithfulness": 0.7333333333333333,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_contentforce_16",
+          "faithfulness": 0.8333333333333334,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_explainabilityforce_9",
+          "faithfulness": 0.5555555555555556,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.25,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 1
+        },
+        {
+          "id": "gold_feedbackforce_7",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_forecastforce_26",
+          "faithfulness": 0.6,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_edgeforce_13",
+          "faithfulness": 0.8636363636363636,
+          "context_recall": 0.8333333333333334,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 6,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_flowforce_13",
+          "faithfulness": 0.8,
+          "context_recall": 0.2,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.14285714285714285,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 7,
+          "n_found_in_response": 1
+        },
+        {
+          "id": "gold_insightforce_7",
+          "faithfulness": 0.5,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_knowledgeforce_15",
+          "faithfulness": 0.9090909090909091,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.11212121211560606,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 5,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_monitorforce_18",
+          "faithfulness": 0.6,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_leadforce_20",
+          "faithfulness": 0.6,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_proposalforce_20",
+          "faithfulness": 0.4,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_summarizeforce_24",
+          "faithfulness": 0.75,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_connectforce_15",
+          "faithfulness": 0.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_collaborateforce_31",
+          "faithfulness": 0.9090909090909091,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_sentimentforce_27",
+          "faithfulness": 0.75,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_pitchforce_27",
+          "faithfulness": 0.7777777777777778,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.3333333333333333,
+          "answer_token_precision": 0.08333333333333333,
+          "answer_token_f1": 0.13333333333333333,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 1
+        },
+        {
+          "id": "gold_contentforce_17",
+          "faithfulness": 0.75,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_feedbackforce_12",
+          "faithfulness": 0.3333333333333333,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_insightforce_8",
+          "faithfulness": 1.0,
+          "context_recall": 0.75,
+          "llm_context_precision_with_reference": 0.12698412697777778,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_leadforce_28",
+          "faithfulness": 0.75,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_edgeforce_14",
+          "faithfulness": 0.47619047619047616,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.6458333333225694,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 7,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_explainabilityforce_11",
+          "faithfulness": 0.6,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_feedbackforce_18",
+          "faithfulness": 0.6666666666666666,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_feedbackforce_16",
+          "faithfulness": 0.6666666666666666,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_actiongenie_1",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.1,
+          "answer_token_precision": 0.3333333333333333,
+          "answer_token_f1": 0.15384615384615383,
+          "n_reference_tokens": 10,
+          "n_found_in_response": 1
+        },
+        {
+          "id": "gold_anomalyforce_1",
+          "faithfulness": 0.4,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_sentimentforce_29",
+          "faithfulness": 0.8695652173913043,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_autotuneforce_1",
+          "faithfulness": 0.6666666666666666,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_collaborationforce_0",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 10,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_monitorforce_19",
+          "faithfulness": 0.8958333333333334,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.14285714284285714,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_coachforce_0",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.09090909090909091,
+          "answer_token_precision": 0.16666666666666666,
+          "answer_token_f1": 0.11764705882352942,
+          "n_reference_tokens": 11,
+          "n_found_in_response": 1
+        },
+        {
+          "id": "gold_collaborateforce_0",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_contentforce_0",
+          "faithfulness": 0.0,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.5434782608423913,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_edgeforce_0",
+          "faithfulness": 0.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_connectforce_0",
+          "faithfulness": 0.8333333333333334,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.1,
+          "answer_token_precision": 0.125,
+          "answer_token_f1": 0.11111111111111112,
+          "n_reference_tokens": 10,
+          "n_found_in_response": 1
+        },
+        {
+          "id": "gold_contextforce_0",
+          "faithfulness": 0.6666666666666666,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_explainabilityforce_0",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 5,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_feedbackforce_0",
+          "faithfulness": 0.75,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 10,
+          "n_found_in_response": 0
+        }
+      ]
+    }
+  },
+  "baseline": {
+    "export": {
+      "answered": 99,
+      "n_chunks": {
+        "median": 40,
+        "p25": 40,
+        "p75": 40,
+        "max": 40,
+        "min": 40
+      },
+      "answer_in_tokens": {
+        "median": 24289,
+        "p25": 22971,
+        "p75": 26153,
+        "max": 27510,
+        "min": 19914
+      },
+      "answer_out_tokens": {
+        "median": 174,
+        "p25": 117,
+        "p75": 255,
+        "max": 1024,
+        "min": 25
+      },
+      "context_chars_sum": {
+        "median": 132948,
+        "p25": 128934,
+        "p75": 141510,
+        "max": 153857,
+        "min": 121715
+      },
+      "elapsed_ms": {
+        "median": 3559,
+        "p25": 2930,
+        "p75": 4464,
+        "max": 9645,
+        "min": 1301
+      }
+    },
+    "ragas": {
+      "n_samples": 99,
+      "overall_mean": {
+        "faithfulness": 0.699055848940859,
+        "context_recall": 0.3937229437229437,
+        "llm_context_precision_with_reference": 0.06704646654388545,
+        "answer_token_f1": 0.04531894095408496,
+        "answer_token_precision": 0.03335212341944288,
+        "answer_token_recall": 0.11204906204906205
+      },
+      "median": {
+        "faithfulness": 0.75,
+        "context_recall": 0.0,
+        "llm_context_precision_with_reference": 0.0,
+        "answer_token_f1": 0.0,
+        "answer_token_precision": 0.0,
+        "answer_token_recall": 0.0
+      },
+      "iqr": {
+        "faithfulness": {
+          "p25": 0.6,
+          "p75": 0.9
+        },
+        "context_recall": {
+          "p25": 0.0,
+          "p75": 1.0
+        },
+        "llm_context_precision_with_reference": {
+          "p25": 0.0,
+          "p75": 0.04545454545
+        },
+        "answer_token_f1": {
+          "p25": 0.0,
+          "p75": 0.0
+        },
+        "answer_token_precision": {
+          "p25": 0.0,
+          "p75": 0.0
+        },
+        "answer_token_recall": {
+          "p25": 0.0,
+          "p75": 0.0
+        }
+      },
+      "per_sample": [
+        {
+          "id": "gold_autotuneforce_0",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_anomalyforce_0",
+          "faithfulness": 0.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.6666666666444444,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_contentforce_2",
+          "faithfulness": 0.8,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.11111111109999999,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_contextforce_1",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_edgeforce_2",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_collaborateforce_1",
+          "faithfulness": 0.0,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.12941176469941176,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_coachforce_5",
+          "faithfulness": 0.7,
+          "context_recall": 0.5,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_connectforce_5",
+          "faithfulness": 0.7,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_collaborationforce_6",
+          "faithfulness": 0.6,
+          "context_recall": 0.5,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_actiongenie_0",
+          "faithfulness": 1.0,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 1.0,
+          "answer_token_precision": 0.3235294117647059,
+          "answer_token_f1": 0.48888888888888893,
+          "n_reference_tokens": 11,
+          "n_found_in_response": 11
+        },
+        {
+          "id": "gold_explainabilityforce_6",
+          "faithfulness": 0.75,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_flowforce_3",
+          "faithfulness": 0.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_knowledgeforce_4",
+          "faithfulness": 0.0,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.33333333331666665,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_forecastforce_4",
+          "faithfulness": 0.625,
+          "context_recall": 0.3333333333333333,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_feedbackforce_5",
+          "faithfulness": 0.6666666666666666,
+          "context_recall": 0.42857142857142855,
+          "llm_context_precision_with_reference": 0.04545454545,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 7,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_insightforce_5",
+          "faithfulness": 1.0,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.44742063491317785,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_personalizeforce_7",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_leadforce_5",
+          "faithfulness": 0.6,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_monitorforce_5",
+          "faithfulness": 0.6666666666666666,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.04761904761428571,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_pitchforce_6",
+          "faithfulness": 0.7142857142857143,
+          "context_recall": 0.5,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 8,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_proposalforce_11",
+          "faithfulness": 1.0,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.07142857142142857,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_sentimentforce_8",
+          "faithfulness": 0.75,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 1.0,
+          "answer_token_precision": 0.2,
+          "answer_token_f1": 0.33333333333333337,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 2
+        },
+        {
+          "id": "gold_searchforce_7",
+          "faithfulness": 0.5,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_trendforce_9",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_summarizeforce_11",
+          "faithfulness": 0.9,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.2,
+          "answer_token_precision": 0.06666666666666667,
+          "answer_token_f1": 0.1,
+          "n_reference_tokens": 5,
+          "n_found_in_response": 1
+        },
+        {
+          "id": "gold_supportforce_5",
+          "faithfulness": 0.8,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_securityforce_7",
+          "faithfulness": 0.7692307692307693,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 11,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_vizforce_16",
+          "faithfulness": 0.9,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.058823529405882355,
+          "answer_token_recall": 1.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 3
+        },
+        {
+          "id": "gold_workflowgenie_11",
+          "faithfulness": 0.7777777777777778,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_anomalyforce_17",
+          "faithfulness": 0.8571428571428571,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_coachforce_11",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_actiongenie_5",
+          "faithfulness": 0.5238095238095238,
+          "context_recall": 0.4,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 5,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_autotuneforce_12",
+          "faithfulness": 0.8125,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.37917637916374003,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_collaborationforce_12",
+          "faithfulness": 0.7142857142857143,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_contentforce_11",
+          "faithfulness": 0.375,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0909090909,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_searchflow_12",
+          "faithfulness": 0.7450980392156863,
+          "context_recall": 0.3333333333333333,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.2,
+          "answer_token_precision": 0.011627906976744186,
+          "answer_token_f1": 0.021978021978021976,
+          "n_reference_tokens": 10,
+          "n_found_in_response": 2
+        },
+        {
+          "id": "gold_collaborateforce_19",
+          "faithfulness": 0.5714285714285714,
+          "context_recall": 0.5,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_contextforce_22",
+          "faithfulness": 0.8571428571428571,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 1.0,
+          "answer_token_precision": 0.17647058823529413,
+          "answer_token_f1": 0.3,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 3
+        },
+        {
+          "id": "gold_edgeforce_12",
+          "faithfulness": 0.7692307692307693,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.3761835503378402,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_forecastforce_24",
+          "faithfulness": 0.8,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_flowforce_12",
+          "faithfulness": 1.0,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.9166666666361111,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_feedbackforce_6",
+          "faithfulness": 0.75,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.07692307691538462,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_insightforce_6",
+          "faithfulness": 0.0,
+          "context_recall": 0.6666666666666666,
+          "llm_context_precision_with_reference": 0.05263157894210526,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_explainabilityforce_7",
+          "faithfulness": 0.9285714285714286,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 1.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 1
+        },
+        {
+          "id": "gold_knowledgeforce_14",
+          "faithfulness": 0.42857142857142855,
+          "context_recall": 0.16666666666666666,
+          "llm_context_precision_with_reference": 0.04347826086521739,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 6,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_connectforce_7",
+          "faithfulness": 0.9230769230769231,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_leadforce_13",
+          "faithfulness": 0.8888888888888888,
+          "context_recall": 0.5,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_monitorforce_16",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_personalizeforce_24",
+          "faithfulness": 0.6666666666666666,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_searchflow_33",
+          "faithfulness": 0.7777777777777778,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.3333333333333333,
+          "answer_token_precision": 0.125,
+          "answer_token_f1": 0.18181818181818182,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 1
+        },
+        {
+          "id": "gold_sentimentforce_26",
+          "faithfulness": 0.3333333333333333,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_pitchforce_25",
+          "faithfulness": 0.8571428571428571,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 1.0,
+          "answer_token_precision": 0.25,
+          "answer_token_f1": 0.4,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 3
+        },
+        {
+          "id": "gold_proposalforce_17",
+          "faithfulness": 1.0,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.039999999996,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_vizforce_43",
+          "faithfulness": 0.6666666666666666,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_supportforce_6",
+          "faithfulness": 0.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_actiongenie_7",
+          "faithfulness": 1.0,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_searchforce_16",
+          "faithfulness": 0.5652173913043478,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.04761904761428571,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_contentforce_16",
+          "faithfulness": 0.625,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_autotuneforce_13",
+          "faithfulness": 1.0,
+          "context_recall": 0.25,
+          "llm_context_precision_with_reference": 0.02857142856857143,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_connectforce_14",
+          "faithfulness": 0.23076923076923078,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_edgeforce_13",
+          "faithfulness": 0.8666666666666667,
+          "context_recall": 0.5,
+          "llm_context_precision_with_reference": 0.9999999999,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 6,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_summarizeforce_23",
+          "faithfulness": 0.625,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.027027027024324326,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_collaborateforce_21",
+          "faithfulness": 0.8518518518518519,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.04545454545,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_feedbackforce_7",
+          "faithfulness": 0.18181818181818182,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_forecastforce_26",
+          "faithfulness": 0.9,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_explainabilityforce_9",
+          "faithfulness": 0.7692307692307693,
+          "context_recall": 0.25,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.25,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 1
+        },
+        {
+          "id": "gold_flowforce_13",
+          "faithfulness": 0.5882352941176471,
+          "context_recall": 0.4,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 7,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_leadforce_20",
+          "faithfulness": 0.9230769230769231,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.042307692305576926,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_insightforce_7",
+          "faithfulness": 0.4,
+          "context_recall": 0.3333333333333333,
+          "llm_context_precision_with_reference": 0.10989010988461538,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_monitorforce_18",
+          "faithfulness": 0.7333333333333333,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_pitchforce_27",
+          "faithfulness": 0.625,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.6666666666666666,
+          "answer_token_precision": 0.14285714285714285,
+          "answer_token_f1": 0.23529411764705882,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 2
+        },
+        {
+          "id": "gold_proposalforce_20",
+          "faithfulness": 0.4166666666666667,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_knowledgeforce_15",
+          "faithfulness": 0.9230769230769231,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.05531609195125718,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 5,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_summarizeforce_24",
+          "faithfulness": 0.6470588235294118,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_sentimentforce_27",
+          "faithfulness": 0.7857142857142857,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_connectforce_15",
+          "faithfulness": 0.7272727272727273,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_collaborateforce_31",
+          "faithfulness": 0.8,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_insightforce_8",
+          "faithfulness": 0.9090909090909091,
+          "context_recall": 0.75,
+          "llm_context_precision_with_reference": 0.24696969696146467,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_feedbackforce_12",
+          "faithfulness": 0.9,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.19999999998,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_sentimentforce_29",
+          "faithfulness": 0.8461538461538461,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_leadforce_28",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_edgeforce_14",
+          "faithfulness": 0.75,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.5326494930908983,
+          "answer_token_recall": 0.14285714285714285,
+          "answer_token_precision": 0.05263157894736842,
+          "answer_token_f1": 0.07692307692307693,
+          "n_reference_tokens": 7,
+          "n_found_in_response": 1
+        },
+        {
+          "id": "gold_explainabilityforce_11",
+          "faithfulness": 0.5714285714285714,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_monitorforce_19",
+          "faithfulness": 0.7307692307692307,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_contentforce_17",
+          "faithfulness": 0.675,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_feedbackforce_18",
+          "faithfulness": 0.7441860465116279,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 1,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_anomalyforce_1",
+          "faithfulness": 0.0,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.10262843488307845,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_contextforce_0",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_actiongenie_1",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.7,
+          "answer_token_precision": 0.28,
+          "answer_token_f1": 0.4,
+          "n_reference_tokens": 10,
+          "n_found_in_response": 7
+        },
+        {
+          "id": "gold_autotuneforce_1",
+          "faithfulness": 1.0,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 3,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_collaborationforce_0",
+          "faithfulness": 0.75,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.1,
+          "answer_token_precision": 0.16666666666666666,
+          "answer_token_f1": 0.125,
+          "n_reference_tokens": 10,
+          "n_found_in_response": 1
+        },
+        {
+          "id": "gold_collaborateforce_0",
+          "faithfulness": 0.0,
+          "context_recall": 0.6666666666666666,
+          "llm_context_precision_with_reference": 0.16907166906603335,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_contentforce_0",
+          "faithfulness": 1.0,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.14285714284285714,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 4,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_connectforce_0",
+          "faithfulness": 0.5,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.7,
+          "answer_token_precision": 0.3888888888888889,
+          "answer_token_f1": 0.5,
+          "n_reference_tokens": 10,
+          "n_found_in_response": 7
+        },
+        {
+          "id": "gold_coachforce_0",
+          "faithfulness": 0.36363636363636365,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 1.0,
+          "answer_token_precision": 0.4230769230769231,
+          "answer_token_f1": 0.5945945945945945,
+          "n_reference_tokens": 11,
+          "n_found_in_response": 11
+        },
+        {
+          "id": "gold_feedbackforce_16",
+          "faithfulness": 0.726027397260274,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_edgeforce_0",
+          "faithfulness": 0.7142857142857143,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.0,
+          "answer_token_precision": 0.0,
+          "answer_token_f1": 0.0,
+          "n_reference_tokens": 2,
+          "n_found_in_response": 0
+        },
+        {
+          "id": "gold_explainabilityforce_0",
+          "faithfulness": 0.75,
+          "context_recall": 1.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.4,
+          "answer_token_precision": 0.25,
+          "answer_token_f1": 0.3076923076923077,
+          "n_reference_tokens": 5,
+          "n_found_in_response": 2
+        },
+        {
+          "id": "gold_feedbackforce_0",
+          "faithfulness": 0.625,
+          "context_recall": 0.0,
+          "llm_context_precision_with_reference": 0.0,
+          "answer_token_recall": 0.4,
+          "answer_token_precision": 0.4444444444444444,
+          "answer_token_f1": 0.4210526315789474,
+          "n_reference_tokens": 10,
+          "n_found_in_response": 4
+        }
+      ]
+    }
+  }
+}
