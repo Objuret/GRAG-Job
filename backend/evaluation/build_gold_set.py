@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+from datetime import datetime, timezone
 from pathlib import Path
 
 _BACKEND_ROOT = Path(__file__).resolve().parent.parent
@@ -199,6 +200,7 @@ def main() -> None:
                 chosen_cids.add(r["cid"])
 
     pairs: list[dict[str, str]] = []
+    manifest_items: list[dict] = []
     used_ids: set[str] = set()
     for r in chosen:
         prod = re.sub(r"[^a-z0-9]+", "", (r["product"] or "x").lower())
@@ -208,6 +210,29 @@ def main() -> None:
             rid, n = f"{base}_{n}", n + 1
         used_ids.add(rid)
         pairs.append({"id": rid, "question": r["q"], "reference": r["ref"]})
+        manifest_items.append({
+            "index": len(pairs),
+            "id": rid,
+            "chunk_id": r["cid"],
+            "product": r["product"],
+            "qtype": r["qtype"],
+            "item_index": r["ix"],
+            "has_reference": bool(r["ref"]),
+        })
+
+    manifest = {
+        "kind": "gold_cohort_manifest",
+        "schema": "ragas-export/v1",
+        "built_at": datetime.now(timezone.utc).isoformat(),
+        "source_database": args.database,
+        "selection": {
+            "method": "round_robin_by_product",
+            "count": len(pairs),
+            "pool_size": len(parsed),
+            "types_filter": sorted(types_filter) if types_filter else None,
+        },
+        "items": manifest_items,
+    }
 
     header = [
         "# HERB GOLD reference set — authoritative ground truth from the dataset.",
@@ -230,7 +255,11 @@ def main() -> None:
         for o in pairs:
             f.write(json.dumps(o, ensure_ascii=False) + "\n")
 
+    manifest_path = Path(str(args.out)).with_suffix(".manifest.json")
+    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
     print(f"Wrote {len(pairs)} gold pair(s) -> {args.out}")
+    print(f"Wrote cohort manifest -> {manifest_path}")
     for o in pairs:
         print(f"  {o['id']:<28} q={o['question'][:62]!r}")
 

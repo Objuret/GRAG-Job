@@ -1,3 +1,9 @@
+import {
+  DEFAULT_ANSWER_JOB,
+  GATE_SECTIONS,
+  interpretPass1SystemPrompt,
+  interpretPass2SystemPrompt,
+} from '../rag/pipelinePrompts';
 import { chat, type ProviderKeys } from './llm';
 
 export interface FacetScores {
@@ -114,34 +120,27 @@ const DEFAULT_FILTERS: QueryFilters = {
   gate: EMPTY_GATE,
 };
 
-const GATE_SECTIONS = [
-  'slack', 'documents', 'meeting_transcripts', 'meeting_chats', 'prs',
-  'urls', 'answerable_questions', 'unanswerable_questions', 'product_profile',
-];
-
 /** Normalise the model's loose gate object into a strict HardGate. */
 function parseGate(raw: unknown): HardGate {
   const g = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
   const str = (v: unknown): string | null =>
     typeof v === 'string' && v.trim() ? v.trim() : null;
   const section = str(g.section);
+  const gateSection =
+    section && (GATE_SECTIONS as readonly string[]).includes(section)
+      ? (section as (typeof GATE_SECTIONS)[number])
+      : null;
   const years = Array.isArray(g.years)
     ? [...new Set(g.years.map(Number).filter(y => Number.isInteger(y) && y >= 1000 && y <= 9999))]
     : [];
   return {
     product: str(g.product),
-    section: section && GATE_SECTIONS.includes(section) ? section : null,
+    section: gateSection,
     channel: str(g.channel),
     employee_id: str(g.employee_id),
     years,
   };
 }
-const DEFAULT_ANSWER_JOB = {
-  mode: 'direct_answer',
-  evidence_policy: 'retrieved_only',
-  missing_evidence_policy: 'say_insufficient_evidence',
-};
-
 export async function interpretPrompt(
   prompt: string,
   model: string,
@@ -161,23 +160,7 @@ export async function interpretPrompt(
   // context (mirroring corpus chunk descriptions), so it must be a faithful,
   // self-contained statement of what the user wants to find.
   const p1 = await call([
-    {
-      role: 'system',
-      content:
-        'You interpret a user query for graph retrieval. Work in two steps. ' +
-        'STEP 1: write "description" — a concise, self-contained 1–3 sentence statement of the ' +
-        'underlying information need (what the user actually wants to find, including implied entities/scope), ' +
-        'in plain declarative prose, not a restatement of the question. ' +
-        'STEP 2: derive "tags" FROM that description — specific noun phrases, named entities, systems, or actions. ' +
-        'No generic filler words. ' +
-        'STEP 3: extract "gate" — hard structured constraints ONLY when the query explicitly names them, else null/[]. ' +
-        'Fields: product (a "*Force"/"*Genie"-style product name if named), ' +
-        `section (one of: ${GATE_SECTIONS.join(', ')} — map synonyms, e.g. "pull requests"->prs, "chat"->slack), ` +
-        'channel (a Slack channel name if given), employee_id (an "eid_..." id if given), ' +
-        'years (array of 4-digit years explicitly mentioned). ' +
-        'Do NOT guess values that are not in the query. ' +
-        'Return ONLY valid JSON: {"description":"...","tags":["tag1"],"gate":{"product":null,"section":null,"channel":null,"employee_id":null,"years":[]}}.',
-    },
+    { role: 'system', content: interpretPass1SystemPrompt() },
     { role: 'user', content: `User query: ${prompt}` },
   ], 512);
 
@@ -198,14 +181,7 @@ export async function interpretPrompt(
 
   // Pass 2 — score each tag against 5 facets
   const p2 = await call([
-    {
-      role: 'system',
-      content:
-        'Score retrieval tags against five facets (each 0.0–1.0). ' +
-        'topic: subject matter. entities: named people/orgs/products/systems. ' +
-        'activity: events/processes/actions. temporal: time relevance. evidence: answer material type. ' +
-        'Return ONLY valid JSON: {"scores":[{"t":"tag","facets":{"topic":0.0,"entities":0.0,"activity":0.0,"temporal":0.0,"evidence":0.0}}]}',
-    },
+    { role: 'system', content: interpretPass2SystemPrompt() },
     {
       role: 'user',
       content: `Original query: ${prompt}\n\nScore these tags:\n${JSON.stringify(rawTags)}`,

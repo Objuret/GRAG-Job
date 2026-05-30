@@ -100,7 +100,10 @@ def _load_rows(path: Path) -> list[dict[str, Any]]:
         line = raw.strip()
         if not line:
             continue
-        rows.append(json.loads(line))
+        row = json.loads(line)
+        if row.get("kind") == "run_frame":
+            continue
+        rows.append(row)
     return rows
 
 

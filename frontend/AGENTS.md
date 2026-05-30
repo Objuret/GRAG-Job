@@ -8,7 +8,7 @@ Local-only Vite/React workbench. The browser talks directly to Neo4j (`neo4j-dri
 - Graph contract: [`../docs/graph_schema.md`](../docs/graph_schema.md)
 - Status / plans: [`../docs/frontend/status.md`](../docs/frontend/status.md), [`../docs/frontend/plans.md`](../docs/frontend/plans.md)
 
-The canvas **Pipeline** lane (Dataset → Access Layer → …) uses the same **access layer** vs **indexing** vocabulary as [`../docs/backend/architecture.md`](../docs/backend/architecture.md) and [`../docs/frontend/architecture.md`](../docs/frontend/architecture.md).
+Graph scope levers (dataset, facets, run id) live on the canvas **Build input** node and in **Run Builder**; offline graph construction vocabulary matches [`../docs/backend/architecture.md`](../docs/backend/architecture.md).
 
 ## Source layout
 
@@ -16,7 +16,7 @@ The canvas **Pipeline** lane (Dataset → Access Layer → …) uses the same **
 src/
 ├── main.tsx                       Vite entry
 ├── App.jsx                        Active workbench (canvas + panels inline)
-├── data/workbenchData.ts          PIPELINE_NODES, USAGE_NODES, query fragments, demo payloads
+├── data/workbenchData.ts          USAGE_NODES, query fragments, Run Builder schema
 ├── query/queryModuleSyntax.ts     Query module fragment defaults + composition helpers
 ├── types/index.ts                 Shared TypeScript types
 └── index.css                      Design system

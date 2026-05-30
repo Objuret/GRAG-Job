@@ -19,22 +19,23 @@
 
 ## UI shell - built
 
-- [x] Two-lane canvas: Pipeline (offline illustration) + Usage (executable fork/join DAG)
+- [x] Canvas: executable Usage fork/join DAG (prompt → interpret → retrieve A/B → compare)
 - [x] Catalog and inspector side panels — collapsible rails, folded in on first load; inspector auto-opens when a node is selected
-- [x] Initial canvas: pipeline + usage lanes only (query modules added from the catalog)
+- [x] Initial canvas: Usage lane only (query modules added from the catalog)
 - [x] **Run Builder** tab: N first-class `RunSpec`s (every node lever + per-run database + route `tags`/`baseline`/`content`/`module`/`sql_agent`), **Run all** on one shared prompt, side-by-side answers/metrics + pairwise chunk overlap, per-run History + RAGAS export. Graph routes run in-browser; `sql_agent` is export-only (headless). Ceiling defaults: `maxChunks=0`, `groundingK=0`, SQL caps `0/0/0`. `pipeline.ts:runRunSpec`/`compareRuns`; the A/B `runUsageGraph` path is unchanged.
-- [x] Query modules with chained `topic`, `entities`, `activity`, `temporal`, `evidence` fragments
+- [x] Compare node output toggles: lanes, panel views, metrics summary, and export rows (Comparison tab + RAGAS JSONL)
+- [x] Canvas levers aligned with Run Builder on Interpret (dataset, temperature), Build input (database, run id, 0=unlimited caps). Canvas + Run Builder answer steps use explicit `NO_EVIDENCE_CAP` (no hidden 1800-char / 200-chunk / scrub defaults).
+- [x] Canvas comparison: **Export comparison** JSONL + **Export lane A/B config** (`.ragas.json`; lane A→`graph`/tags, lane B→`relevance`/baseline). History stores `canvasSnap`; export rows carry route/database/levers in `meta`.
 - [x] Undo/redo and clipboard support for canvas editing
 
-**Node-driven execution.** The Usage canvas is the real executor. `services/pipeline.ts`
+**Node-driven execution.** The canvas is the real executor. `services/pipeline.ts`
 holds one async executor per node kind; `runUsageGraph` topologically orders the
 wired `lane_usage` nodes/edges and threads a typed context, so wire order is run
 order and A/B is a real fork (`retrieve_tags` vs `retrieve_baseline`) joined at
-`compare`. The Pipeline lane remains a non-executable illustration of the
-offline Python path.
+`compare`. Offline graph construction (`python -m tagging`, etc.) is documented
+in [`../backend/architecture.md`](../backend/architecture.md), not on the canvas.
 
-**Real metrics, no mock.** Fabricated stage payloads and sample runtime panels
-were removed. Metrics shown in the Inspector are computed from the actual run:
+**Real metrics, no mock.** Fabricated stage payloads, preset comparison answers, and sample chunk placeholders were removed. Metrics shown in the Inspector are computed from the actual run:
 grounding quality, retrieval comparison, citation grounding, and per-stage
 latency.
 
@@ -67,7 +68,7 @@ chunks is a loud error with valid values, never a silent scan-everything skip.
 
 ## Evaluation - built
 
-- [x] UI export: Run Builder **Export RAGAS run** and History **Export RAGAS** open a save dialog (editable file name + subfolder under `ragas_exports/`, overwrite confirm) instead of silently clobbering by label. JSONL/config shape unchanged — one row per Run Builder run (config in `meta`) and one row per legacy canvas A/B lane, superset fields for the headless Python scorer.
+- [x] UI export: Run Builder **Export RAGAS run** and History **Export RAGAS** open a save dialog (editable file name + subfolder under `ragas_exports/`, overwrite confirm). JSONL uses `selectEvidenceChunks` (same slice the answer LLM saw). Config export maps routes 1:1 (`tags`→`graph`, `baseline`→`relevance`, `content`→`content`); legacy `mode: baseline` in old files → Lucene content.
 - [x] Headless thesis harness: `npm --workspace frontend run ragas:export` runs questions through the current service stack and writes RAGAS-compatible JSONL.
 - [x] Ground-truth scoring runner: `backend/evaluation/ragas_eval.py` scores exported JSONL with RAGAS faithfulness, answer relevancy, context recall, and context precision when references are present.
 - [x] Gold-set builder: `backend/evaluation/build_gold_set.py` converts HERB QA/oracle records into JSONL question sets.

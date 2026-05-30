@@ -36,12 +36,16 @@ import { interpretPrompt, type QueryPlan } from '../src/services/interpreter';
 import {
   buildRetrievalInput,
   groundRetrieval,
+  retrieveBaseline,
   retrieveBaselineContent,
   scoreGroundedChunks,
   type RetrievedChunk,
 } from '../src/services/retrieval';
 import { generateAnswer, selectEvidenceChunks, type AnswerMode } from '../src/services/answer';
 import type { Neo4jConfig } from '../src/services/neo4j';
+import { baseQuestionRow, isRunFrameRow, type ExportArm } from '../src/rag/exportContract';
+import { loadQuestions, PERMANENT_SKIP_IDS } from './ragas/cohort';
+import { buildRunFrame, readRunFrame, writeRunFrame } from './ragas/frame';
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const FRONTEND_ROOT = resolve(SCRIPT_DIR, '..');
@@ -123,8 +127,10 @@ const retryErrors = hasFlag('--retry-errors'); // re-run rows with meta.error on
 // this object only provides defaults.
 interface RunCfg {
   $schema?: string; label?: string; route_origin?: string;
-  mode?: 'graph' | 'baseline' | 'sql_agent';
+  /** Execution arm. Prefer `route_origin` from Run Builder export when set. */
+  mode?: 'graph' | 'content' | 'relevance' | 'sql_agent' | 'baseline';
   database?: string;
+  run_id?: string;
   model?: string; interpreter_model?: string;
   prompt_mode?: string;
   dataset_id?: string | null;
@@ -141,7 +147,26 @@ interface RunCfg {
   max_cell_chars?: number;
   concurrency?: number;
   answer_max_chunks?: number;
+  answer_max_chunk_chars?: number;
+  answer_scrub?: boolean;
   link_only_scoring?: boolean;
+}
+
+type ExportMode = 'graph' | 'content' | 'relevance' | 'sql_agent';
+
+/** Run Builder route → headless arm. Legacy `mode: baseline` = Lucene content. */
+function resolveExportMode(cfg: RunCfg, cliMode?: string): ExportMode {
+  const origin = cfg.route_origin;
+  if (origin === 'tags') return 'graph';
+  if (origin === 'content') return 'content';
+  if (origin === 'baseline') return 'relevance';
+  if (origin === 'sql_agent') return 'sql_agent';
+  const raw = cliMode ?? cfg.mode ?? 'graph';
+  if (raw === 'sql_agent') return 'sql_agent';
+  if (raw === 'content') return 'content';
+  if (raw === 'relevance') return 'relevance';
+  if (raw === 'baseline') return 'content'; // legacy export label
+  return 'graph';
 }
 const configArg = arg('--config');
 let runCfg: RunCfg = {};
@@ -155,13 +180,18 @@ if (configArg) {
     throw new Error(`--config file does not contain a JSON object: ${p}`);
   }
   runCfg = parsed as RunCfg;
-  if (runCfg.mode !== 'graph' && runCfg.mode !== 'baseline' && runCfg.mode !== 'sql_agent') {
+  const resolved = resolveExportMode(runCfg);
+  const validModes = ['graph', 'content', 'relevance', 'sql_agent', 'baseline'];
+  if (runCfg.mode != null && !validModes.includes(runCfg.mode)) {
     throw new Error(
       `--config "${p}" has invalid mode=${JSON.stringify(runCfg.mode)}. ` +
-      `Supported: 'graph', 'baseline', 'sql_agent' (RunSpec route='module' has no batch path).`,
+      `Supported: graph, content, relevance, sql_agent (legacy baseline → content).`,
     );
   }
-  console.log(`Loaded RunSpec config: "${runCfg.label ?? '(no label)'}" from ${p}`);
+  console.log(
+    `Loaded RunSpec config: "${runCfg.label ?? '(no label)'}" ` +
+    `(route=${runCfg.route_origin ?? '?'} → arm=${resolved}) from ${p}`,
+  );
 }
 
 // Precedence per setting: explicit CLI flag > config file > env/.env > hard default.
@@ -212,61 +242,59 @@ const activeFacetsLabel =
     : activeFacetsFromCfg.length
       ? activeFacetsFromCfg.join(',')
       : '(none)';
-// Database normally comes from env (NEO4J_DATABASE) — the config file can
-// override that default.
 const databaseOverride = runCfg.database || null;
+const runId = pickStr(null, runCfg.run_id, null, 'pilot_full_herb');
 
-// RQ2 control arm. graph = full transformation-layer pipeline (interpret ->
-// ground -> retrieve). baseline = conventional keyword retrieval over raw
-// c.content only, no interpret/grounding/enrichment. Same questions, prompt,
-// model, answer step, section-exclusion — only the retrieved context differs.
-const modeRaw = arg('--mode') ?? runCfg.mode ?? 'graph';
-const mode = (modeRaw === 'baseline' ? 'baseline'
-            : modeRaw === 'sql_agent' ? 'sql_agent'
-            : 'graph') as 'graph' | 'baseline' | 'sql_agent';
-/** HERB Lucene baseline returns ~5k hits at limit=0 and breaks the answer API. Graph stays uncapped. */
-const BASELINE_EXPORT_DEFAULT_LIMIT = 150;
-const baselineRetrievalLimit =
-  retrievalLimit > 0 ? retrievalLimit : BASELINE_EXPORT_DEFAULT_LIMIT;
+const mode = resolveExportMode(runCfg, arg('--mode'));
 const concurrency = Math.max(
   1,
   Number(arg('--concurrency') ?? runCfg.concurrency ?? cfg('RAGAS_CONCURRENCY', '8')) || 8,
 );
-/** Answer API + RAGAS eval share one evidence budget (see selectEvidenceChunks). */
-const ANSWER_EXPORT_DEFAULT_MAX_CHUNKS = 200;
-const answerMaxChunksRaw = Number(
-  arg('--answer-max-chunks') ??
-    runCfg.answer_max_chunks ??
-    cfg('ANSWER_MAX_CHUNKS', String(ANSWER_EXPORT_DEFAULT_MAX_CHUNKS)),
-);
-const answerMaxChunks =
-  Number.isFinite(answerMaxChunksRaw) && answerMaxChunksRaw >= 0
-    ? answerMaxChunksRaw
-    : ANSWER_EXPORT_DEFAULT_MAX_CHUNKS;
+/** 0 = no cap (same contract as browser Run Builder / pipeline.ts). */
+const answerMaxChunks = pickNum('--answer-max-chunks', runCfg.answer_max_chunks, 'ANSWER_MAX_CHUNKS', 0);
+const answerMaxChunkChars = pickNum(null, runCfg.answer_max_chunk_chars, null, 0);
+const answerScrub = runCfg.answer_scrub === true;
 const skipRetryIds = new Set(
-  (arg('--skip-ids') ?? 'gold_personalizeforce_34').split(',').map((s) => s.trim()).filter(Boolean),
+  (arg('--skip-ids') ?? PERMANENT_SKIP_IDS.join(',')).split(',').map((s) => s.trim()).filter(Boolean),
 );
 // Thesis 5.7: temperature 0 + repeated runs (median/IQR computed at analysis).
 const temperature = pickNum('--temperature', runCfg.temperature, null, 0);
 const repeats = Math.max(1, Number(arg('--repeats', '1')) || 1);
 
-// Mirrors interpreter.ts DEFAULT_ANSWER_JOB so the baseline answer prompt is
-// byte-identical to the graph arm's (only the evidence differs).
-const BASELINE_PLAN = (q: string): QueryPlan => ({
-  description: q,
-  tags: [],
-  filters: {
-    dataset_id: datasetId, file_ids: [], min_w_chunk: 0, min_relevance_to_file: 0,
-    limit: baselineRetrievalLimit,
-    gate: { product: null, section: null, channel: null, employee_id: null, years: [] },
-  },
-  answer_job: {
-    mode: 'direct_answer',
-    evidence_policy: 'retrieved_only',
-    missing_evidence_policy: 'say_insufficient_evidence',
-  },
-  warnings: [],
-});
+// Stub plan for routes that skip interpret (content Lucene arm).
+function contentRoutePlan(q: string): QueryPlan {
+  return {
+    description: q,
+    tags: [],
+    filters: {
+      dataset_id: datasetId, file_ids: [], min_w_chunk: 0, min_relevance_to_file: 0,
+      limit: retrievalLimit,
+      gate: { product: null, section: null, channel: null, employee_id: null, years: [] },
+    },
+    answer_job: {
+      mode: 'direct_answer',
+      evidence_policy: 'retrieved_only',
+      missing_evidence_policy: 'say_insufficient_evidence',
+    },
+    warnings: [],
+  };
+}
+
+function retrievalInputOpts(plan: QueryPlan) {
+  return {
+    limit: retrievalLimit,
+    datasetId,
+    runId,
+    groundingK,
+    minSim,
+    minWChunk,
+    minRelevanceToFile,
+    linkOnlyScoring,
+    ...(activeFacetsFromCfg !== undefined ? { activeFacets: activeFacetsFromCfg as never } : {}),
+    tagsEnabled: true,
+    excludedSections: excludeSections,
+  };
+}
 
 const neo4jCfg: Neo4jConfig = {
   uri: cfg('NEO4J_URI', 'bolt://localhost:7687'),
@@ -309,64 +337,10 @@ hfEnv.allowRemoteModels = false;
 hfEnv.allowLocalModels = true;
 hfEnv.localModelPath = modelsDir;
 
-// --- questions -------------------------------------------------------------
-
-interface QItem {
-  id: string;
-  question: string;
-  /** Optional gold answer (HERB ground_truth) for reference-based metrics. */
-  reference?: string;
-}
-
-function loadQuestions(path: string): QItem[] {
-  if (!existsSync(path)) {
-    throw new Error(`Questions file not found: ${path}`);
-  }
-  const text = readFileSync(path, 'utf-8');
-  const items: QItem[] = [];
-  if (path.endsWith('.json')) {
-    const parsed = JSON.parse(text);
-    const arr = Array.isArray(parsed) ? parsed : parsed.questions ?? [];
-    arr.forEach((q: unknown, i: number) => {
-      if (typeof q === 'string') items.push({ id: `q${i + 1}`, question: q });
-      else if (q && typeof q === 'object') {
-        const o = q as Record<string, unknown>;
-        const ref = o.reference ?? o.ground_truth;
-        items.push({
-          id: String(o.id ?? `q${i + 1}`),
-          question: String(o.question ?? ''),
-          ...(ref != null ? { reference: String(ref) } : {}),
-        });
-      }
-    });
-  } else {
-    // .jsonl OR plain text — try JSON per line, fall back to raw line.
-    let n = 0;
-    for (const raw of text.split('\n')) {
-      const line = raw.trim();
-      if (!line || line.startsWith('#')) continue;
-      n++;
-      let question = line;
-      let id = `q${n}`;
-      let reference: string | undefined;
-      if (line.startsWith('{')) {
-        try {
-          const o = JSON.parse(line) as Record<string, unknown>;
-          question = String(o.question ?? o.user_input ?? '');
-          id = String(o.id ?? `q${n}`);
-          const ref = o.reference ?? o.ground_truth;
-          if (ref != null) reference = String(ref);
-        } catch {
-          /* not JSON — treat the whole line as the question */
-        }
-      }
-      if (question) items.push({ id, question, ...(reference != null ? { reference } : {}) });
-    }
-  }
-  return items;
-}
+// --- export rows (question lines; line 0 is run_frame via ./ragas/frame) ----
 
 type ExportRow = {
+  kind?: 'question';
   id: string;
   question: string;
   user_input: string;
@@ -388,7 +362,9 @@ function loadRowsById(path: string): Map<string, ExportRow> {
     const s = raw.trim();
     if (!s) continue;
     try {
-      const r = JSON.parse(s) as ExportRow;
+      const parsed = JSON.parse(s) as ExportRow | { kind: string };
+      if (isRunFrameRow(parsed)) continue;
+      const r = parsed as ExportRow;
       const id = String(r.id);
       const prev = byId.get(id);
       if (!prev || (rowSucceeded(r) && !rowSucceeded(prev)) || (!rowSucceeded(prev) && !rowSucceeded(r))) {
@@ -400,8 +376,82 @@ function loadRowsById(path: string): Map<string, ExportRow> {
 }
 
 function writeRowsById(path: string, byId: Map<string, ExportRow>): void {
-  const lines = [...byId.values()].map((r) => JSON.stringify(r));
-  writeFileSync(path, lines.length ? `${lines.join('\n')}\n` : '', 'utf-8');
+  const frame = readRunFrame(path);
+  const lines = [...byId.values()].map((r) => JSON.stringify({ kind: 'question', ...r }));
+  const body = lines.length ? `${lines.join('\n')}\n` : '';
+  writeFileSync(path, frame ? `${JSON.stringify(frame)}\n${body}` : body, 'utf-8');
+}
+
+function exportInvocationFlags(): string[] {
+  const flags: string[] = [];
+  if (fresh) flags.push('--fresh');
+  if (dryRun) flags.push('--dry-run');
+  if (retryErrors) flags.push('--retry-errors');
+  if (linkOnlyScoring) flags.push('--link-only');
+  return flags;
+}
+
+function makeRunFrame(
+  arm: ExportArm,
+  cohortSlice: ReturnType<typeof loadQuestions>,
+): ReturnType<typeof buildRunFrame> {
+  return buildRunFrame({
+    arm,
+    routeOrigin: runCfg.route_origin ?? null,
+    label: runCfg.label ?? null,
+    invocation: {
+      questions: questionsPath,
+      out: outPath,
+      config: configArg ?? null,
+      max_questions: maxQuestions,
+      repeats,
+      concurrency,
+      flags: exportInvocationFlags(),
+      permanent_skip_ids: [...skipRetryIds],
+    },
+    resolved: {
+      arm,
+      route_origin: runCfg.route_origin ?? null,
+      label: runCfg.label ?? null,
+      database: neo4jCfg.database,
+      run_id: runId,
+      dataset_id: datasetId,
+      models: {
+        answer: model,
+        interpret: arm === 'content' ? null : interpreterModel,
+      },
+      prompt_mode: promptMode,
+      temperature,
+      retrieval: {
+        limit: retrievalLimit,
+        grounding_k: groundingK,
+        min_sim: minSim,
+        min_w_chunk: minWChunk,
+        min_relevance_to_file: minRelevanceToFile,
+        active_facets: activeFacetsFromCfg ?? null,
+        link_only_scoring: linkOnlyScoring,
+      },
+      evidence: {
+        answer_max_chunks: answerMaxChunks,
+        answer_max_chunk_chars: answerMaxChunkChars,
+        answer_scrub: answerScrub,
+      },
+      exclude_sections: excludeSections,
+      neo4j_uri: neo4jCfg.uri,
+      ...(arm === 'sql_agent' ? {
+        sql: {
+          db_path: join(REPO_ROOT, 'backend', 'data', 'baselines', 'herb.db'),
+          max_tool_calls: sqlMaxToolCalls,
+          max_rows_per_query: sqlMaxRowsPerQuery,
+          max_cell_chars: sqlMaxCellChars,
+          base_url: null,
+        },
+      } : {}),
+    },
+    questionsPath,
+    cohortItems: cohortSlice,
+    configSource: configArg ? runCfg as Record<string, unknown> : undefined,
+  });
 }
 
 // --- main ------------------------------------------------------------------
@@ -415,8 +465,7 @@ function writeRowsById(path: string, byId: Map<string, ExportRow>): void {
  * through, so the model selection in the Run Builder card transfers cleanly
  * to the headless run.
  */
-async function runSqlAgent(): Promise<void> {
-  const { spawnSync } = await import('node:child_process');
+async function runSqlAgent(cohortSlice: ReturnType<typeof loadQuestions>): Promise<void> {
   const { providerOf, PROVIDERS } = await import('../src/data/models.js');
 
   let provider;
@@ -436,7 +485,10 @@ async function runSqlAgent(): Promise<void> {
   }
 
   mkdirSync(dirname(outPath), { recursive: true });
-  const apiKeyEnv = 'SQL_AGENT_API_KEY'; // single env var name regardless of provider
+  const frame = makeRunFrame('sql_agent', cohortSlice);
+  writeRunFrame(outPath, frame, fresh);
+
+  const apiKeyEnv = 'SQL_AGENT_API_KEY';
   const args = [
     '-m', 'backend.baselines.sql_agent',
     '--gold-set', questionsPath,
@@ -444,6 +496,7 @@ async function runSqlAgent(): Promise<void> {
     '--model', model,
     '--base-url', baseURL,
     '--api-key-env', apiKeyEnv,
+    '--append-rows',
   ];
   if (maxQuestions > 0) args.push('--limit', String(maxQuestions));
   args.push('--temperature', String(temperature));
@@ -453,13 +506,14 @@ async function runSqlAgent(): Promise<void> {
 
   console.log(
     `RAGAS export (SQL agent)\n` +
-    `  questions : ${questionsPath}\n` +
-    `  out       : ${outPath}\n` +
+    `  questions : ${cohortSlice.length} from ${questionsPath}\n` +
+    `  out       : ${outPath} (run_frame + append rows)\n` +
     `  model     : ${model}  (provider=${provider}, base=${baseURL})\n` +
     `  caps      : tool_calls=${sqlMaxToolCalls} rows/query=${sqlMaxRowsPerQuery} cell_chars=${sqlMaxCellChars}\n` +
     `  cmd       : python ${args.join(' ')}\n`,
   );
 
+  const { spawnSync } = await import('node:child_process');
   const res = spawnSync('python', args, {
     cwd: REPO_ROOT,
     env: { ...process.env, [apiKeyEnv]: apiKey },
@@ -472,17 +526,22 @@ async function runSqlAgent(): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  // SQL-agent mode is dispatched to the Python backend script — it doesn't
-  // use Neo4j, transformers, or any of the TS pipeline. Short-circuit before
-  // those prechecks/preflights run.
+  mkdirSync(join(REPO_ROOT, 'ragas_exports'), { recursive: true });
+
+  const questions = loadQuestions(questionsPath);
+  const slice = maxQuestions > 0 ? questions.slice(0, maxQuestions) : questions;
+  if (!slice.length) throw new Error(`No questions loaded from ${questionsPath}`);
+
+  mkdirSync(dirname(outPath), { recursive: true });
+
   if (mode === 'sql_agent') {
-    return runSqlAgent();
+    return runSqlAgent(slice);
   }
   // Key precheck via the same registry the UI uses, so unknown models / missing
   // keys fail before any network calls. Loud on unknown model id.
   {
     const { providerOf, PROVIDERS } = await import('../src/data/models.js');
-    const usedModels = [interpreterModel, model];
+    const usedModels = mode === 'content' ? [model] : [interpreterModel, model];
     const missing: string[] = [];
     const seen = new Set<string>();
     for (const m of usedModels) {
@@ -501,32 +560,37 @@ async function main(): Promise<void> {
   }
   if (mode === 'graph') preflightModel();
 
-  mkdirSync(join(REPO_ROOT, 'ragas_exports'), { recursive: true });
+  writeRunFrame(outPath, makeRunFrame(mode, slice), fresh);
 
-  const questions = loadQuestions(questionsPath);
-  const slice = maxQuestions > 0 ? questions.slice(0, maxQuestions) : questions;
-  if (!slice.length) throw new Error(`No questions loaded from ${questionsPath}`);
-
-  mkdirSync(dirname(outPath), { recursive: true });
+  const armLabel =
+    mode === 'graph' ? 'tags (interpret→ground→tag retrieval)'
+    : mode === 'content' ? 'content (Lucene full-text, no interpret)'
+    : mode === 'relevance' ? 'baseline (interpret→relevance-to-file, no tags)'
+    : 'sql_agent (Python tool loop)';
+  const interpretLabel =
+    mode === 'content' ? '(skipped)' : interpreterModel;
+  const retrievalLabel =
+    mode === 'content'
+      ? `Lucene chunk_content_ft, limit=${retrievalLimit} (0=no LIMIT clause)`
+      : mode === 'relevance'
+        ? `relevance_to_file + gate, limit=${retrievalLimit} (0=no LIMIT clause)`
+        : `limit=${retrievalLimit} groundingK=${groundingK} minSim=${minSim}` +
+          ` linkOnly=${linkOnlyScoring} minWChunk=${minWChunk}` +
+          ` minRelToFile=${minRelevanceToFile} facets=${activeFacetsLabel}` +
+          ` runId=${runId}`;
 
   console.log(
     `RAGAS export\n` +
-      `  arm       : ${mode}  (repeats=${repeats}, temperature=${temperature})\n` +
+      `  arm       : ${mode} — ${armLabel}  (repeats=${repeats}, temperature=${temperature})\n` +
       `  questions : ${slice.length} from ${questionsPath}\n` +
       `  out       : ${outPath}\n` +
       `  graph     : ${neo4jCfg.uri} db=${neo4jCfg.database} dataset=${datasetId}\n` +
-      `  model     : answer=${model} interpret=${mode === 'baseline' ? '(skipped)' : interpreterModel} promptMode=${promptMode}\n` +
-      `  retrieval : ${mode === 'baseline'
-        ? `content-only full-text (no tags/grounding/gate), limit=${baselineRetrievalLimit}` +
-          (retrievalLimit <= 0 ? ` (baseline default; graph unchanged at limit=0)` : '')
-        : `limit=${retrievalLimit} groundingK=${groundingK} minSim=${minSim}` +
-          ` linkOnly=${linkOnlyScoring}` +
-          ` minWChunk=${minWChunk} minRelToFile=${minRelevanceToFile}` +
-          ` facets=${activeFacetsLabel}`}\n` +
+      `  model     : answer=${model} interpret=${interpretLabel} promptMode=${promptMode}\n` +
+      `  retrieval : ${retrievalLabel}\n` +
       `  exclude   : ${excludeSections.length ? excludeSections.join(',') : '(none)'}` +
-      `${configArg ? `\n  config    : ${runCfg.label ?? '(no label)'} (${configArg})` : ''}` +
+      `${configArg ? `\n  config    : ${runCfg.label ?? '(no label)'} route=${runCfg.route_origin ?? '?'} (${configArg})` : ''}` +
       `\n  parallel  : concurrency=${concurrency}` +
-      `\n  evidence  : max_chunks=${answerMaxChunks} (retrieved_contexts = answer slice; full ids in meta)` +
+      `\n  evidence  : max_chunks=${answerMaxChunks} max_chars=${answerMaxChunkChars} scrub=${answerScrub}` +
       `${retryErrors ? `\n  retry     : errors only, skip=${[...skipRetryIds].join(',')}` : ''}` +
       `${dryRun ? '\n  DRY RUN — answer LLM skipped' : ''}\n`,
   );
@@ -547,7 +611,6 @@ async function main(): Promise<void> {
     flushLock = flushLock.then(() => { writeRowsById(outPath, rowStore); });
     return flushLock;
   };
-  if (fresh) writeFileSync(outPath, '', 'utf-8');
 
   let ok = 0;
   let errored = 0;
@@ -582,26 +645,10 @@ async function main(): Promise<void> {
     }
   }
 
-  let writeLock = Promise.resolve();
-  const appendRow = (line: string) => {
-    writeLock = writeLock.then(() => { appendFileSync(outPath, line, 'utf-8'); });
-    return writeLock;
-  };
-
   async function processOne(work: WorkItem): Promise<void> {
     const { unit: u, rowId, question, reference, rep } = work;
     const t0 = Date.now();
-    const meta: Record<string, unknown> = {
-      mode,
-      repeat: rep,
-      model,
-      interpreter_model: interpreterModel,
-      prompt_mode: promptMode,
-      temperature,
-      dataset_id: datasetId,
-      database: neo4jCfg.database,
-      exclude_sections: excludeSections,
-    };
+    const meta: Record<string, unknown> = { arm: mode, repeat: rep };
     let contexts: string[] = [];
     let response = '';
     let logSuffix: string;
@@ -610,14 +657,39 @@ async function main(): Promise<void> {
       let chunks: RetrievedChunk[];
       let planForAnswer: QueryPlan;
 
-      if (mode === 'baseline') {
-        planForAnswer = BASELINE_PLAN(question);
+      if (mode === 'content') {
+        planForAnswer = contentRoutePlan(question);
         chunks = await retrieveBaselineContent(question, neo4jCfg, {
-          limit: baselineRetrievalLimit,
+          limit: retrievalLimit,
           datasetId,
           excludedSections: excludeSections,
         });
         meta.warnings = [];
+      } else if (mode === 'relevance') {
+        const plan = await interpretPrompt(
+          question, interpreterModel, keys, datasetId, temperature,
+        );
+        planForAnswer = {
+          ...plan,
+          filters: {
+            ...plan.filters,
+            dataset_id: datasetId,
+            limit: retrievalLimit,
+            min_w_chunk: minWChunk,
+            min_relevance_to_file: minRelevanceToFile,
+          },
+        };
+        const input = buildRetrievalInput(planForAnswer, retrievalInputOpts(planForAnswer));
+        chunks = await retrieveBaseline(input, neo4jCfg);
+        meta.retrieval_input = {
+          scope: input.scope,
+          controls: input.controls,
+          gate: input.gate,
+          link_only_scoring: linkOnlyScoring,
+        };
+        meta.plan_description = planForAnswer.description;
+        meta.warnings = planForAnswer.warnings;
+        meta.gate = planForAnswer.filters.gate;
       } else {
         const plan = await interpretPrompt(
           question, interpreterModel, keys, datasetId, temperature,
@@ -632,18 +704,7 @@ async function main(): Promise<void> {
             min_relevance_to_file: minRelevanceToFile,
           },
         };
-        const input = buildRetrievalInput(planForAnswer, {
-          limit: retrievalLimit,
-          datasetId,
-          groundingK,
-          minSim,
-          minWChunk,
-          minRelevanceToFile,
-          linkOnlyScoring,
-          ...(activeFacetsFromCfg !== undefined ? { activeFacets: activeFacetsFromCfg as never } : {}),
-          tagsEnabled: true,
-          excludedSections: excludeSections,
-        });
+        const input = buildRetrievalInput(planForAnswer, retrievalInputOpts(planForAnswer));
         const ground = await groundRetrieval(input, neo4jCfg);
         chunks = await scoreGroundedChunks(input, neo4jCfg, ground);
         meta.retrieval_input = {
@@ -662,8 +723,8 @@ async function main(): Promise<void> {
       contexts = chunks.map((c) => c.content).filter(Boolean);
       const evidenceOpts = {
         maxAnswerChunks: answerMaxChunks,
-        maxChunkChars: 1800,
-        scrubForApi: true,
+        maxChunkChars: answerMaxChunkChars,
+        scrubForApi: answerScrub,
       };
       const evalChunks = selectEvidenceChunks(chunks, evidenceOpts);
       const evalContexts = evalChunks.map((c) => c.content).filter(Boolean);
@@ -679,8 +740,8 @@ async function main(): Promise<void> {
       }));
       meta.file_ids = [...new Set(evalChunks.map((c) => c.fileId))];
       meta.answer_max_chunks = answerMaxChunks;
-      meta.answer_scrubbed = true;
-      meta.evidence_max_chars = 1800;
+      meta.answer_max_chunk_chars = answerMaxChunkChars;
+      meta.answer_scrubbed = answerScrub;
 
       if (!dryRun) {
         const ans = await generateAnswer(
@@ -703,16 +764,13 @@ async function main(): Promise<void> {
       logSuffix = `ERROR: ${meta.error}`;
     }
 
-    rowStore.set(rowId, {
-      id: rowId,
-      question,
-      user_input: question,
-      retrieved_contexts: contexts,
-      response,
-      answer: response,
-      reference: reference ?? null,
-      meta,
-    });
+    const shell = baseQuestionRow(rowId, question, reference ?? null) as ExportRow;
+    shell.answer = response;
+    shell.response = response;
+    shell.contexts = contexts;
+    shell.retrieved_contexts = contexts;
+    shell.meta = meta;
+    rowStore.set(rowId, shell);
     await flushRows();
     console.log(`  [${u}/${totalUnits}] ${rowId} (${mode}) … ${logSuffix}`);
   }

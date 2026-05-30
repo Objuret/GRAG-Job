@@ -1,21 +1,6 @@
-/**
- * Workbench node registry + the small demo set used only for the pre-run
- * placeholder (PRESET_RESULTS / SAMPLE_CHUNKS, shown behind an explicit
- * "Demo data" banner). All live numbers come from the real run, not here.
- */
+/** Workbench node registry and static catalog metadata. Live run output is never seeded here. */
 
-import type { FacetDimension } from '../types';
-
-// ─── Pipeline lane: defines what's in the graph ─────────────────────────────
-export const PIPELINE_NODES = [
-  { id: 'dataset',   label: 'Dataset',      sub: 'HERB',         inType: null,          outType: 'source',      icon: 'Ds', color: 'var(--type-source)',  lane: 'pipeline' },
-  { id: 'access',    label: 'Access Layer', sub: 'files',        inType: 'source',      outType: 'files',       icon: 'Ac', color: 'var(--type-files)',   lane: 'pipeline' },
-  { id: 'index',     label: 'Index Layer',  sub: 'graph',        inType: 'files',       outType: 'graph',       icon: 'Ix', color: 'var(--type-chunks)',  lane: 'pipeline' },
-  { id: 'tags',      label: 'Tags',         sub: 'HAS_TAG',      inType: 'graph',       outType: 'graph_scope', icon: 'Tg', color: 'var(--type-tags)',    lane: 'pipeline' },
-  { id: 'facets',    label: 'Facets',       sub: 'view',         inType: 'graph_scope', outType: 'graph_scope', icon: 'Fa', color: 'var(--type-tags)',    lane: 'pipeline' },
-];
-
-// ─── Usage lane: the real executable pipeline (one node = one executor) ──────
+// ─── Usage canvas: executable pipeline (one node = one executor) ────────────
 // These kinds map 1:1 to executors in services/pipeline.ts. Wire order is run
 // order; A/B is a real fork (retrieve_tags vs retrieve_baseline) joined at
 // `compare`.
@@ -35,7 +20,7 @@ export const MODULE_NODES = [
   { id: 'probe', label: 'Probe / test', sub: 'passthrough', inType: 'any', outType: 'any', icon: 'Pb', color: 'var(--neutral)', lane: 'module' },
 ];
 
-export const NODE_TYPES = [...PIPELINE_NODES, ...USAGE_NODES, ...MODULE_NODES];
+export const NODE_TYPES = [...USAGE_NODES, ...MODULE_NODES];
 
 /** Inner template fragments (chain with frag → frag inside a Query module). `qf_start` is auto-seeded, not in the catalog. */
 export const QUERY_FRAGMENT_NODES = [
@@ -101,6 +86,44 @@ export const RUN_ANSWER_MODES = [
 
 export const RUN_DATABASES = ['herb-eval', 'herb'] as const;
 
+/** Compare node: which lanes, panel views, metric blocks, and export rows to include. */
+export const DEFAULT_COMPARE_OUTPUT = {
+  lanes: { a: true, b: true },
+  views: { llm: true, chunks: true, table: true },
+  metrics: {
+    overlap: true,
+    retrieval: true,
+    grounding: true,
+    citations: true,
+    latency: true,
+  },
+  export: { laneA: true, laneB: true, includeMetrics: true },
+};
+
+export function normalizeCompareOutput(raw: unknown) {
+  const d = (raw && typeof raw === 'object' ? raw : {}) as Partial<typeof DEFAULT_COMPARE_OUTPUT>;
+  return {
+    lanes: { a: d.lanes?.a !== false, b: d.lanes?.b !== false },
+    views: {
+      llm: d.views?.llm !== false,
+      chunks: d.views?.chunks !== false,
+      table: d.views?.table !== false,
+    },
+    metrics: {
+      overlap: d.metrics?.overlap !== false,
+      retrieval: d.metrics?.retrieval !== false,
+      grounding: d.metrics?.grounding !== false,
+      citations: d.metrics?.citations !== false,
+      latency: d.metrics?.latency !== false,
+    },
+    export: {
+      laneA: d.export?.laneA !== false,
+      laneB: d.export?.laneB !== false,
+      includeMetrics: d.export?.includeMetrics !== false,
+    },
+  };
+}
+
 /** Form schema: groups are nodes; each field carries the RunSpec path it
  *  binds and is greyed when the chosen route makes it inert. */
 export const RUN_LEVERS = [
@@ -144,51 +167,3 @@ export const DATASETS = [
   { id: 'VLR-CVC__DocVQA-2026', files: 0, chunks: 0, tags: 0 },
   { id: 'wenhu__hybrid_qa', files: 0, chunks: 0, tags: 0 },
 ];
-
-export const SAMPLE_CHUNKS = [
-  { id: 'c_a001_000', file: 'f_a001', preview: 'Revenue for Q2 showed a 12% increase year-over-year, driven primarily by expansion into new market segments.', rel: 0.92,
-    tags: [
-      { name: 'revenue_analysis', facet: 'topic', w: 0.85 },
-      { name: 'q2_2025', facet: 'temporal', w: 0.91 },
-      { name: 'quarterly_report', facet: 'activity', w: 0.72 },
-    ]},
-  { id: 'c_a001_001', file: 'f_a001', preview: 'The product launch in the Nordic region exceeded initial projections by 34%. Customer acquisition cost decreased to $47 per unit.', rel: 0.78,
-    tags: [
-      { name: 'market_expansion', facet: 'topic', w: 0.78 },
-      { name: 'product_launch', facet: 'activity', w: 0.65 },
-      { name: 'acme_corp', facet: 'entities', w: 0.92 },
-    ]},
-  { id: 'c_a001_002', file: 'f_a001', preview: 'Year-to-date performance against targets: revenue at 108%, retention at 94%, NPS improved from 42 to 51.', rel: 0.85,
-    tags: [
-      { name: 'performance_metric', facet: 'topic', w: 0.88 },
-      { name: 'comparison', facet: 'evidence', w: 0.74 },
-    ]},
-  { id: 'c_a003_000', file: 'f_a003', preview: 'This annual overview consolidates findings from all twelve data batches processed during the evaluation period.', rel: 0.95,
-    tags: [
-      { name: 'annual_summary', facet: 'topic', w: 0.93 },
-      { name: 'historical', facet: 'temporal', w: 0.70 },
-    ]},
-  { id: 'c_b001_000', file: 'f_b001', preview: '{"entity_id":"ENT-0042","type":"organisation","label":"Demo Systems Inc","sector":"technology","status":"active"}', rel: 0.60,
-    tags: [
-      { name: 'demo_systems_inc', facet: 'entities', w: 0.95 },
-      { name: 'active', facet: 'temporal', w: 0.50 },
-    ]},
-];
-
-/**
- * Demo lane comparison text shown before the first real run. The UI labels
- * this as demo data (ResultPane "Demo data" banner) and replaces it wholesale
- * once the Usage lane runs the real pipeline.
- */
-export const PRESET_RESULTS = {
-  full: {
-    response: 'Q2 revenue rose 12% year-over-year, driven by Nordic market expansion (product launch +34% vs projection) and operating margins improved 2.2pp. Year-to-date performance is at 108% of revenue target with retention at 94%. The annual overview confirms these trends sit within a broader pattern of operational efficiency gains.',
-    chunks: 47, tokensIn: 1247, tokensOut: 312, durationMs: 2840,
-    topFacets: ['topic', 'activity', 'temporal'],
-  },
-  baseline: {
-    response: 'The data mentions a 12% revenue increase in Q2 and a product launch in the Nordic region. However, one retrieved record appears to be an unrelated entity record for a technology company, suggesting the retrieval precision could be improved.',
-    chunks: 312, tokensIn: 1189, tokensOut: 287, durationMs: 2610,
-    topFacets: [] as FacetDimension[],
-  },
-};

@@ -21,7 +21,7 @@ import {
   retrieveBaselineContent, runModuleCypher,
   type RetrievalInput, type RetrievedChunk, type GroundResult,
 } from './retrieval';
-import { generateAnswer, type AnswerMode } from './answer';
+import { generateAnswer, NO_EVIDENCE_CAP, type AnswerMode } from './answer';
 import { composeModuleCypher } from '../query/queryModuleSyntax';
 import type { ProviderKeys } from './llm';
 
@@ -110,6 +110,7 @@ interface RunCtx {
   retrievalInput: RetrievalInput | null;
   timing: Record<string, number | null>;
   start: number;
+  temperature: number | null;
 }
 
 type Carried =
@@ -149,10 +150,13 @@ const EXECUTORS: Record<string, Executor> = {
     const p = need(inputs, 'prompt');
     const model = str(node.data?.model, env.connConfig.model);
     const datasetId = str(node.data?.datasetId, '') || null;
+    const tempRaw = node.data?.temperature;
+    const temperature = tempRaw === '' || tempRaw == null ? null : num(tempRaw, 0);
+    ctx.temperature = temperature;
     env.log('interpret', 'running', `Interpreting prompt with ${model}.`);
     const t0 = Date.now();
     const plan = await interpretPrompt(
-      p.prompt, model, env.connConfig.keys, datasetId,
+      p.prompt, model, env.connConfig.keys, datasetId, temperature ?? undefined,
     );
     ctx.timing.interpret = Date.now() - t0;
     env.log('interpret', 'ok', `Plan: ${plan.tags.length} tags in ${ctx.timing.interpret}ms.`);
@@ -243,6 +247,7 @@ const EXECUTORS: Record<string, Executor> = {
     const t0 = Date.now();
     const ans = await generateAnswer(
       env.prompt, ctx.plan, c.chunks, model, env.connConfig.keys, ctx.mode,
+      ctx.temperature ?? undefined, NO_EVIDENCE_CAP,
     );
     ctx.timing[c.branch === 'A' ? 'answerA' : 'answerB'] = Date.now() - t0;
     env.log('answer', 'ok', `Lane ${c.branch}: ${ans.tokensOut} output tokens.`);
@@ -391,7 +396,10 @@ export async function runUsageGraph(
   const inboundOf = (id: string) =>
     edges.filter((e) => e.target === id && laneIds.has(e.source));
 
-  const ctx: RunCtx = { prompt: env.prompt, mode: 'context', plan: null, retrievalInput: null, timing: {}, start: Date.now() };
+  const ctx: RunCtx = {
+    prompt: env.prompt, mode: 'context', plan: null, retrievalInput: null,
+    timing: {}, start: Date.now(), temperature: null,
+  };
   const outputs = new Map<string, Carried>();
 
   for (const node of order) {
@@ -597,6 +605,7 @@ export async function runRunSpec(spec: RunSpec, env: RunEnv): Promise<RunResult>
   t0 = Date.now();
   const ans = await generateAnswer(
     prompt, plan, chunks, spec.answer.model, connConfig.keys, spec.answer.mode, temp,
+    NO_EVIDENCE_CAP,
   );
   timing.answer = Date.now() - t0;
   timing.total = Date.now() - start;

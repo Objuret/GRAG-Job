@@ -1,4 +1,5 @@
 import { chat, type LlmMessage, type ProviderKeys } from './llm';
+import { answerSystemPrompt } from '../rag/pipelinePrompts';
 import type { QueryPlan } from './interpreter';
 import type { RetrievedChunk } from './retrieval';
 
@@ -19,13 +20,22 @@ export interface AnswerResult {
  */
 export type AnswerMode = 'raw' | 'context' | 'hybrid';
 
-/** Headless export: scrub HERB bytes + cap evidence sent to the answer API. */
+/** Evidence sent to the answer LLM / RAGAS `retrieved_contexts`. 0 = no cap. */
 export interface AnswerCallOptions {
-  /** Top-N chunks by score for the answer/evidence budget (0 = all retrieved). */
+  /** Top-N chunks by score (0 = all retrieved). */
   maxAnswerChunks?: number;
+  /** Per-chunk char cap (0 = no truncation). */
   maxChunkChars?: number;
+  /** Scrub HERB bytes before the API (default false unless explicitly true). */
   scrubForApi?: boolean;
 }
+
+/** Browser canvas + Run Builder default: no hidden caps or scrub. */
+export const NO_EVIDENCE_CAP: AnswerCallOptions = {
+  maxAnswerChunks: 0,
+  maxChunkChars: 0,
+  scrubForApi: false,
+};
 
 /** HERB slack/raw exports can break OpenAI-compatible JSON request bodies. */
 export function scrubApiText(text: string): string {
@@ -52,12 +62,12 @@ export function selectEvidenceChunks(
   chunks: RetrievedChunk[],
   opts: AnswerCallOptions = {},
 ): RetrievedChunk[] {
-  const maxChars = opts.maxChunkChars ?? 1800;
+  const maxChars = opts.maxChunkChars ?? 0; // 0 = no per-chunk truncation
   let list = [...chunks].sort((a, b) => b.score - a.score);
   const cap = opts.maxAnswerChunks ?? 0;
   if (cap > 0) list = list.slice(0, cap);
   return list.map((c) => {
-    let content = c.content.slice(0, maxChars);
+    let content = maxChars > 0 ? c.content.slice(0, maxChars) : c.content;
     let description = c.description;
     if (opts.scrubForApi) {
       content = scrubApiText(content);
@@ -88,11 +98,10 @@ export async function generateAnswer(
   temperature?: number,
   callOpts: AnswerCallOptions = {},
 ): Promise<AnswerResult> {
-  const system =
-    `You are a retrieval-augmented assistant. Answer using only the provided chunks.\n` +
-    `Evidence policy: ${plan.answer_job.evidence_policy}.\n` +
-    `If evidence is insufficient: ${plan.answer_job.missing_evidence_policy}.\n` +
-    `Cite chunks by their id number in brackets, e.g. [1] or [2,4].`;
+  const system = answerSystemPrompt(
+    plan.answer_job.evidence_policy,
+    plan.answer_job.missing_evidence_policy,
+  );
 
   const answerChunks = selectEvidenceChunks(chunks, callOpts);
   const evidence = answerChunks.length

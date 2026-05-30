@@ -18,8 +18,8 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 
 import {
   NODE_TYPES, QUERY_FRAGMENT_NODES, QUERY_FRAGMENT_CATALOG, QUERY_CONTAINER,
-  PIPELINE_NODES, USAGE_NODES, MODULE_NODES, FACETS, DATASETS, PRESET_RESULTS, SAMPLE_CHUNKS,
-  RUN_ROUTES, RUN_ANSWER_MODES, RUN_DATABASES, RUN_LEVERS,
+  USAGE_NODES, MODULE_NODES, FACETS, DATASETS, RUN_ROUTES, RUN_ANSWER_MODES, RUN_DATABASES, RUN_LEVERS,
+  DEFAULT_COMPARE_OUTPUT, normalizeCompareOutput,
 } from './data/workbenchData';
 import {
   DEFAULT_MODULE_HEADER,
@@ -35,6 +35,7 @@ import {
   getFragmentHumanLine,
 } from './query/queryModuleSyntax';
 import { runUsageGraph, runRunSpec, compareRuns } from './services/pipeline';
+import { selectEvidenceChunks, NO_EVIDENCE_CAP } from './services/answer';
 import { MODELS, PROVIDERS, providerOf } from './data/models';
 import { fetchDatasetStats } from './services/neo4j';
 import RagasReportPage from './RagasReportPage.jsx';
@@ -402,7 +403,7 @@ const StageNode = React.memo(({ id, data, selected }) => {
           <div className="node-title">{t.label}</div>
           <div className="node-subtitle" title={fragMeaning || undefined}>{subDisplay}</div>
         </div>
-        {!['prompt', 'compare', 'qf_start', 'dataset', 'access', 'index', 'tags', 'facets'].includes(t.id) && (
+        {!['prompt', 'compare', 'qf_start'].includes(t.id) && (
           <div className={cls('node-toggle', !data.disabled && 'on')}
                onClick={(e) => { e.stopPropagation(); data.onToggle?.(); }} />
         )}
@@ -492,17 +493,18 @@ const LaneNode = React.memo(({ data, selected }) => {
 
 const nodeTypes = { stage: StageNode, lane: LaneNode, queryGroup: QueryGroupNode };
 
-// ─── Initial canvas: pipeline lane (top) + usage lane (bottom) ──────────────
+// ─── Initial canvas: usage lane (executable fork/join DAG) ───────────────────
 const DEFAULT_USAGE_PARAMS = {
   prompt:            { mode: 'context' },
-  interpret:         { model: '' },
+  interpret:         { model: '', datasetId: DATASETS[0]?.id || 'Salesforce__HERB', temperature: 0 },
   build_input:       {
     datasetId: DATASETS[0]?.id || 'Salesforce__HERB',
-    maxChunks: 50,
+    database: DONE_GRAPH_DATABASE,
+    maxChunks: 0,
     activeFacets: FACETS.map((f) => f.id),
     weightThreshold: 0,
     minRelevanceToFile: 0,
-    groundingK: 10,
+    groundingK: 0,
     minSim: 0.78,
     runId: DONE_GRAPH_RUN_ID,
   },
@@ -510,15 +512,12 @@ const DEFAULT_USAGE_PARAMS = {
   retrieve_tags:     {},
   retrieve_baseline: {},
   answer:            { model: '' },
-  compare:           {},
+  compare:           { compareOutput: DEFAULT_COMPARE_OUTPUT },
 };
 
 function buildInitial() {
   const xStart = 32, xGap = 232, yInner = 64;
   const nodeW = 184;
-  const pipelineOrder = PIPELINE_NODES.map(n => n.id);
-  const laneGap = 56;
-  const pipeH = 244;
 
   const nodes = [];
   const edges = [];
@@ -535,25 +534,6 @@ function buildInitial() {
     });
   };
 
-  // ── Pipeline lane: offline Python build — illustration only (not executed)
-  const pipeW = xStart + (pipelineOrder.length - 1) * xGap + nodeW + 32;
-  nodes.push({
-    id: 'lane_pipeline', type: 'lane', position: { x: 0, y: 0 },
-    style: { width: pipeW, height: pipeH, zIndex: -1 },
-    data: { label: 'Pipeline — graph construction (offline, illustration)', lastRun: null, running: false, lockContent: true },
-    draggable: true, selectable: true,
-  });
-  const pipeStages = pipelineOrder.map((kind, i) => ({
-    id: `lane_pipeline_${kind}`, type: 'stage',
-    position: { x: xStart + i * xGap, y: yInner },
-    parentId: 'lane_pipeline', extent: 'parent',
-    data: { kind, disabled: false, running: false },
-  }));
-  nodes.push(...pipeStages);
-  for (let i = 0; i < pipeStages.length - 1; i++) mkEdge(pipeStages[i].id, pipeStages[i + 1].id);
-
-  // ── Usage lane: the real executable fork/join DAG
-  const usageY = pipeH + laneGap;
   const rowTop = yInner;
   const rowBot = yInner + 168;
   const usageH = rowBot + 116 + 28;
@@ -571,9 +551,9 @@ function buildInitial() {
   };
   const usageW = cx(6) + nodeW + 32;
   nodes.push({
-    id: 'lane_usage', type: 'lane', position: { x: 0, y: usageY },
+    id: 'lane_usage', type: 'lane', position: { x: 0, y: 0 },
     style: { width: usageW, height: usageH, zIndex: -1 },
-    data: { label: 'Usage — live retrieval pipeline (executable)', lastRun: null, running: false, lockContent: true },
+    data: { label: 'Retrieval pipeline', lastRun: null, running: false, lockContent: true },
     draggable: true, selectable: true,
   });
   const midRow = Math.round((rowTop + rowBot) / 2);
@@ -675,15 +655,17 @@ function makeDefaultRunSpec(connConfig, label, route = 'tags') {
  * download in that case rather than silently downgrade.
  */
 function specToRagasConfig(spec) {
+  /** Maps 1:1 to Run Builder route → ragas-export.ts execution arm. */
   let mode;
   if (spec.route === 'tags') mode = 'graph';
-  else if (spec.route === 'baseline' || spec.route === 'content') mode = 'baseline';
+  else if (spec.route === 'content') mode = 'content';
+  else if (spec.route === 'baseline') mode = 'relevance';
   else if (spec.route === 'sql_agent') mode = 'sql_agent';
   else return null; // 'module' or unknown
   return {
     $schema: 'ragas-runspec/v1',
     label: spec.label,
-    route_origin: spec.route, // for traceability; the exporter uses `mode`
+    route_origin: spec.route,
     mode,
     database: spec.database,
     model: spec.answer.model,
@@ -691,6 +673,7 @@ function specToRagasConfig(spec) {
     prompt_mode: spec.answer.mode,
     dataset_id: spec.interpret.datasetId,
     temperature: spec.temperature,
+    run_id: spec.buildInput.runId,
     limit: spec.buildInput.maxChunks,
     grounding_k: spec.buildInput.groundingK,
     min_sim: spec.buildInput.minSim,
@@ -701,10 +684,114 @@ function specToRagasConfig(spec) {
     max_tool_calls: spec.sqlAgent?.maxToolCalls ?? 0,
     max_rows_per_query: spec.sqlAgent?.maxRowsPerQuery ?? 0,
     max_cell_chars: spec.sqlAgent?.maxCellChars ?? 0,
-    // Same budget as retrieval limit (0 = all retrieved). Matches browser runRunSpec
-    // (no separate answer cap) and headless export eval slice.
     answer_max_chunks: Math.max(0, spec.buildInput.maxChunks ?? 0),
-    answer_scrub: true,
+    answer_max_chunk_chars: 0,
+    answer_scrub: false,
+  };
+}
+
+/** Canvas lane → Run Builder route / headless export arm (A=tags, B=baseline). */
+const CANVAS_LANE_ROUTES = {
+  A: { route: 'tags', mode: 'graph', label: 'Canvas lane A · tags' },
+  B: { route: 'baseline', mode: 'relevance', label: 'Canvas lane B · baseline' },
+};
+
+/** Snapshot of canvas node levers at run/export time — same fields as RunSpec. */
+function canvasUsageSnapshot(liveNodes, connConfig, promptText) {
+  const stages = liveNodes.filter(
+    (n) => n.type === 'stage' && n.parentId === 'lane_usage' && !n.data?.disabled,
+  );
+  const byKind = (k) => stages.find((n) => n.data?.kind === k);
+  const answers = stages.filter((n) => n.data?.kind === 'answer');
+  const ansA = stages.find((n) => n.id.endsWith('answer_a')) || answers[0];
+  const ansB = stages.find((n) => n.id.endsWith('answer_b')) || answers[1];
+  const promptNode = byKind('prompt');
+  const interpretNode = byKind('interpret');
+  const buildNode = byKind('build_input');
+  const bi = buildNode?.data || {};
+  const tempRaw = interpretNode?.data?.temperature;
+  const temperature = tempRaw === '' || tempRaw == null ? 0 : Number(tempRaw) || 0;
+  const activeFacets = Array.isArray(bi.activeFacets) ? bi.activeFacets : FACETS.map((f) => f.id);
+  return {
+    prompt: promptText,
+    promptMode: promptNode?.data?.mode || 'context',
+    interpret: {
+      model: interpretNode?.data?.model || connConfig.model,
+      datasetId: interpretNode?.data?.datasetId || bi.datasetId || null,
+      temperature,
+    },
+    buildInput: {
+      database: bi.database || DONE_GRAPH_DATABASE,
+      datasetId: bi.datasetId || null,
+      maxChunks: Math.max(0, bi.maxChunks ?? 0),
+      weightThreshold: bi.weightThreshold ?? 0,
+      minRelevanceToFile: bi.minRelevanceToFile ?? 0,
+      groundingK: Math.max(0, bi.groundingK ?? 0),
+      minSim: bi.minSim ?? 0.78,
+      activeFacets,
+      runId: bi.runId || DONE_GRAPH_RUN_ID,
+    },
+    answerA: { model: ansA?.data?.model || connConfig.model },
+    answerB: { model: ansB?.data?.model || connConfig.model },
+  };
+}
+
+/** `.ragas.json` for one canvas lane — mirrors `specToRagasConfig` field-for-field. */
+function canvasToRagasConfig(lane, snap, connConfig) {
+  const lr = CANVAS_LANE_ROUTES[lane];
+  const answerModel = lane === 'A' ? snap.answerA.model : snap.answerB.model;
+  return {
+    $schema: 'ragas-runspec/v1',
+    label: lr.label,
+    route_origin: lr.route,
+    mode: lr.mode,
+    database: snap.buildInput.database,
+    model: answerModel || connConfig.model,
+    interpreter_model: snap.interpret.model,
+    prompt_mode: snap.promptMode,
+    dataset_id: snap.buildInput.datasetId || snap.interpret.datasetId,
+    temperature: snap.interpret.temperature,
+    run_id: snap.buildInput.runId,
+    limit: snap.buildInput.maxChunks,
+    grounding_k: snap.buildInput.groundingK,
+    min_sim: snap.buildInput.minSim,
+    min_w_chunk: snap.buildInput.weightThreshold,
+    min_relevance_to_file: snap.buildInput.minRelevanceToFile,
+    active_facets: snap.buildInput.activeFacets,
+    exclude_sections: ['answerable_questions', 'unanswerable_questions', 'product_profile'],
+    answer_max_chunks: snap.buildInput.maxChunks,
+    answer_max_chunk_chars: 0,
+    answer_scrub: false,
+  };
+}
+
+function canvasLaneRagasMeta(lane, snap) {
+  const lr = CANVAS_LANE_ROUTES[lane];
+  return {
+    route: lr.route,
+    mode: lr.mode,
+    database: snap.buildInput.database,
+    dataset_id: snap.buildInput.datasetId || snap.interpret.datasetId || null,
+    canvas: snap,
+    answer_max_chunks: snap.buildInput.maxChunks,
+    answer_max_chunk_chars: 0,
+    answer_scrub: false,
+  };
+}
+
+/** Contexts in RAGAS rows = same evidence slice the answer LLM saw. */
+function ragasContextsFromChunks(chunks, evidenceOpts = NO_EVIDENCE_CAP) {
+  return selectEvidenceChunks(chunks || [], evidenceOpts).map((c) => c.content).filter(Boolean);
+}
+
+function buildCanvasRagasConfigSaveRequest(lane, snap, connConfig) {
+  const cfg = canvasToRagasConfig(lane, snap, connConfig);
+  const safe = normalizeRagasFilename(cfg.label.replace(/\.ragas\.json$/i, ''));
+  return {
+    title: `Save RAGAS config — lane ${lane}`,
+    description: 'RunSpec JSON for npm run ragas:export -- --config (matches canvas levers)',
+    defaultFilename: `${safe}.ragas.json`,
+    getText: () => JSON.stringify(cfg, null, 2) + '\n',
   };
 }
 
@@ -775,7 +862,7 @@ function buildRagasJsonlSaveRequest(runs) {
     if (run.kind === 'run') {
       const r = run.runResult;
       if (!r) continue;
-      const ctx = (r.retrievedChunks || []).map((c) => c.content).filter(Boolean);
+      const ctx = ragasContextsFromChunks(r.retrievedChunks);
       push({
         id: run.id, run_id: run.id, at: run.at,
         question: run.prompt, user_input: run.prompt,
@@ -787,22 +874,46 @@ function buildRagasJsonlSaveRequest(runs) {
           dataset_id: run.datasetId || null, spec: run.spec,
           n_chunks: r.chunks, tokens: { in: r.tokensIn, out: r.tokensOut },
           elapsed_ms: r.durationMs,
+          answer_max_chunks: run.spec?.buildInput?.maxChunks ?? 0,
+          answer_max_chunk_chars: 0,
+          answer_scrub: false,
         },
       });
       continue;
     }
     if (!run.results) continue;
-    for (const lane of ['A', 'B']) {
-      const r = run.results[`lane_${lane}`];
-      if (!r) continue;
-      const ctx = (r.retrievedChunks || []).map((c) => c.content).filter(Boolean);
-      push({
-        id: `${run.id}#${lane}`, run_id: run.id, at: run.at, lane,
-        dataset: run.datasetId || null,
-        question: run.prompt, user_input: run.prompt,
-        answer: r.response || '', response: r.response || '',
-        contexts: ctx, retrieved_contexts: ctx, reference: null,
-      });
+    const exp = normalizeCompareOutput(run.compareOutput).export;
+    const snap = run.canvasSnap;
+    const baseMeta = exp.includeMetrics && run.results.metrics
+      ? { metrics: run.results.metrics }
+      : {};
+    if (exp.laneA) {
+      const r = run.results.lane_A;
+      if (r) {
+        const ctx = ragasContextsFromChunks(r.retrievedChunks);
+        const laneMeta = snap ? canvasLaneRagasMeta('A', snap) : { route: 'tags', mode: 'graph' };
+        push({
+          id: `${run.id}#A`, run_id: run.id, at: run.at, lane: 'A',
+          question: run.prompt, user_input: run.prompt,
+          answer: r.response || '', response: r.response || '',
+          contexts: ctx, retrieved_contexts: ctx, reference: null,
+          meta: { ...baseMeta, ...laneMeta, lane: 'A', n_chunks: r.chunks },
+        });
+      }
+    }
+    if (exp.laneB) {
+      const r = run.results.lane_B;
+      if (r) {
+        const ctx = ragasContextsFromChunks(r.retrievedChunks);
+        const laneMeta = snap ? canvasLaneRagasMeta('B', snap) : { route: 'baseline', mode: 'relevance' };
+        push({
+          id: `${run.id}#B`, run_id: run.id, at: run.at, lane: 'B',
+          question: run.prompt, user_input: run.prompt,
+          answer: r.response || '', response: r.response || '',
+          contexts: ctx, retrieved_contexts: ctx, reference: null,
+          meta: { ...baseMeta, ...laneMeta, lane: 'B', n_chunks: r.chunks },
+        });
+      }
     }
   }
   if (!rows.length) return { error: 'No successful runs to export.' };
@@ -841,6 +952,55 @@ function groupActive(group, route) {
   return !(group.skipOnRoute && group.skipOnRoute.includes(route));
 }
 
+function findCompareNode(nodes) {
+  return nodes.find((n) => n.type === 'stage' && n.data?.kind === 'compare');
+}
+
+function canvasCompareOutput(nodes) {
+  return normalizeCompareOutput(findCompareNode(nodes)?.data?.compareOutput);
+}
+
+function buildCanvasRagasExportRequest(results, prompt, canvasSnap, compareOutput) {
+  if (!results?.lane_A && !results?.lane_B) {
+    return { error: 'No comparison results to export. Run the canvas first.' };
+  }
+  const exp = normalizeCompareOutput(compareOutput).export;
+  const rows = [];
+  const push = (o) => rows.push(JSON.stringify(o));
+  const baseMeta = exp.includeMetrics && results.metrics
+    ? { metrics: results.metrics }
+    : {};
+  if (exp.laneA && results.lane_A) {
+    const r = results.lane_A;
+    const ctx = ragasContextsFromChunks(r.retrievedChunks);
+    push({
+      lane: 'A',
+      question: prompt, user_input: prompt,
+      answer: r.response || '', response: r.response || '',
+      contexts: ctx, retrieved_contexts: ctx, reference: null,
+      meta: { ...baseMeta, ...canvasLaneRagasMeta('A', canvasSnap), lane: 'A', n_chunks: r.chunks },
+    });
+  }
+  if (exp.laneB && results.lane_B) {
+    const r = results.lane_B;
+    const ctx = ragasContextsFromChunks(r.retrievedChunks);
+    push({
+      lane: 'B',
+      question: prompt, user_input: prompt,
+      answer: r.response || '', response: r.response || '',
+      contexts: ctx, retrieved_contexts: ctx, reference: null,
+      meta: { ...baseMeta, ...canvasLaneRagasMeta('B', canvasSnap), lane: 'B', n_chunks: r.chunks },
+    });
+  }
+  if (!rows.length) return { error: 'Compare node export settings exclude both lanes.' };
+  return {
+    title: 'Save canvas comparison export',
+    description: 'JSONL from the current A/B run (respects Compare node export toggles)',
+    defaultFilename: defaultRagasJsonlFilename(),
+    getText: () => rows.join('\n') + '\n',
+  };
+}
+
 function toDatasetOptions(stats) {
   const rows = stats
     .filter((s) => s?.sourceId && !s.sourceId.endsWith('_demo') && s.fileCount > 0)
@@ -867,7 +1027,7 @@ function makeLogEvent(runId, status, stage, message, meta = {}) {
   };
 }
 
-function makeHistoryEntry(runId, status, prompt, datasetId, durationMs, results, error = null) {
+function makeHistoryEntry(runId, status, prompt, datasetId, durationMs, results, error = null, compareOutput = null, canvasSnap = null) {
   const laneA = results?.lane_A;
   const laneB = results?.lane_B;
   return {
@@ -878,6 +1038,8 @@ function makeHistoryEntry(runId, status, prompt, datasetId, durationMs, results,
     durationMs,
     error,
     results,
+    compareOutput: compareOutput ? normalizeCompareOutput(compareOutput) : null,
+    canvasSnap,
     at: new Date().toLocaleString(),
     chunksA: laneA?.chunks ?? 0,
     chunksB: laneB?.chunks ?? 0,
@@ -919,9 +1081,9 @@ function WorkbenchApp({ onOpenReports }) {
   const [tweaks, setTweak]      = useTweaks(TWEAK_DEFAULTS);
   const [tweaksOpen, setTweaksOpen] = useState(false);
   const [theme, setTheme]       = useState(tweaks.defaultTheme);
-  const [prompt, setPrompt]     = useState('Q2 revenue trends — what changed and why?');
+  const [prompt, setPrompt]     = useState('');
   const rf = useReactFlow();
-  const [results, setResults]   = useState({ lane_A: PRESET_RESULTS.full, lane_B: PRESET_RESULTS.baseline });
+  const [results, setResults]   = useState({ lane_A: null, lane_B: null });
   const [outputView, setOutputView] = useState('llm');   // llm | chunks | table
   const [bottomTab, setBottomTab] = useState('comparison');
   const [bottomHeight, setBottomHeight] = useState(360);
@@ -1202,20 +1364,29 @@ function WorkbenchApp({ onOpenReports }) {
     const usageStages = liveNodes.filter(
       (n) => n.type === 'stage' && n.parentId === 'lane_usage' && !n.data?.disabled,
     );
+    const buildNode = usageStages.find((n) => n.data?.kind === 'build_input');
+    const datasetGuess = buildNode?.data?.datasetId || null;
+    const database = buildNode?.data?.database || DONE_GRAPH_DATABASE;
+    const compareSnap = findCompareNode(liveNodes)?.data?.compareOutput ?? null;
+    const canvasSnap = canvasUsageSnapshot(liveNodes, connConfig, prompt);
+    if (!prompt.trim()) {
+      const message = 'Enter a prompt before running.';
+      setPipelineError(message);
+      appendRunLog(runId, 'failed', 'prompt', message);
+      return;
+    }
     // Models that the wired nodes will actually call, so the key precheck
     // can't pass here and then fail late inside a service call.
     const usedModels = usageStages
       .filter((n) => n.data?.kind === 'interpret' || n.data?.kind === 'answer')
       .map((n) => n.data?.model || connConfig.model);
-    const buildNode = usageStages.find((n) => n.data?.kind === 'build_input');
-    const datasetGuess = buildNode?.data?.datasetId || null;
     appendRunLog(runId, 'running', 'start', `Pipeline queued (${usageStages.length} nodes).`, { prompt });
     const missing = missingProviderKeys(usedModels, connConfig.keys);
     if (missing.length) {
       const message = `API key/model error: ${missing.join('; ')}.`;
       setPipelineError(message);
       appendRunLog(runId, 'failed', 'config', message);
-      recordRunHistory(makeHistoryEntry(runId, 'failed', prompt, datasetGuess, Date.now() - t0, null, message));
+      recordRunHistory(makeHistoryEntry(runId, 'failed', prompt, datasetGuess, Date.now() - t0, null, message, compareSnap, canvasSnap));
       return;
     }
     setPipelineRunning(true);
@@ -1229,7 +1400,7 @@ function WorkbenchApp({ onOpenReports }) {
           uri: connConfig.neo4jUri,
           user: connConfig.neo4jUser,
           password: connConfig.neo4jPassword,
-          database: DONE_GRAPH_DATABASE,
+          database,
         },
         runId,
         nodes: liveNodes,
@@ -1240,13 +1411,13 @@ function WorkbenchApp({ onOpenReports }) {
       const elapsed = Date.now() - t0;
       setResults(results);
       appendRunLog(runId, 'ok', 'finish', `Run finished in ${elapsed}ms.`);
-      recordRunHistory(makeHistoryEntry(runId, 'ok', prompt, datasetGuess, elapsed, results));
+      recordRunHistory(makeHistoryEntry(runId, 'ok', prompt, datasetGuess, elapsed, results, null, compareSnap, canvasSnap));
       setUsageLaneState({ running: false, lastRun: elapsed }, 'done');
     } catch (err) {
       const message = err?.message || String(err);
       setPipelineError(message);
       appendRunLog(runId, 'failed', 'error', message);
-      recordRunHistory(makeHistoryEntry(runId, 'failed', prompt, datasetGuess, Date.now() - t0, null, message));
+      recordRunHistory(makeHistoryEntry(runId, 'failed', prompt, datasetGuess, Date.now() - t0, null, message, compareSnap, canvasSnap));
       setUsageLaneState({ running: false, lastRun: null }, 'failed');
     } finally {
       setPipelineRunning(false);
@@ -1258,6 +1429,12 @@ function WorkbenchApp({ onOpenReports }) {
   // its result card + history + log) and does not abort the others.
   const runAllSpecs = useCallback(async () => {
     if (!runSpecs.length || runsBusy) return;
+    if (!prompt.trim()) {
+      const message = 'Enter a prompt before running.';
+      setPipelineError(message);
+      appendRunLog('runs', 'failed', 'prompt', message);
+      return;
+    }
     const liveNodes = nodesRef.current;
     const baseEnv = {
       prompt,
@@ -1577,7 +1754,6 @@ function WorkbenchApp({ onOpenReports }) {
     const nds = nodesRef.current;
     const sel = nds.filter((n) => n.selected);
     if (!sel.length) {
-      runLaneWithActualWork('lane_pipeline');
       runLaneWithActualWork('lane_usage');
       return;
     }
@@ -1593,7 +1769,6 @@ function WorkbenchApp({ onOpenReports }) {
   }, [runLaneWithActualWork]);
 
   const runAll = useCallback(() => {
-    runLaneWithActualWork('lane_pipeline');
     runLaneWithActualWork('lane_usage');
   }, [runLaneWithActualWork]);
 
@@ -1671,6 +1846,17 @@ function WorkbenchApp({ onOpenReports }) {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  const compareOutput = useMemo(() => canvasCompareOutput(nodes), [nodes]);
+
+  useEffect(() => {
+    const v = compareOutput.views;
+    const key = outputView === 'llm' ? 'llm' : outputView === 'chunks' ? 'chunks' : 'table';
+    if (v[key]) return;
+    if (v.llm) setOutputView('llm');
+    else if (v.chunks) setOutputView('chunks');
+    else if (v.table) setOutputView('table');
+  }, [compareOutput, outputView]);
+
   // ─── Inspector content ──────────────────────────────────────────────────
   const selNode = selected && nodes.find(n => n.id === selected.id);
   const selKind = selNode?.data?.kind ? NT[selNode.data.kind] : null;
@@ -1684,7 +1870,7 @@ function WorkbenchApp({ onOpenReports }) {
       className="workbench"
       style={{ gridTemplateRows: `48px minmax(0, 1fr) ${bottomHeight}px` }}
     >
-      <TopStrip {...{ theme, setTheme, prompt, setPrompt, runAll, pipelineRunning, onOpenReports }}/>
+      <TopStrip {...{ theme, setTheme, prompt, setPrompt, runAll, pipelineRunning, runsBusy, onOpenReports }}/>
       <div className="workbench-main" style={{ gridTemplateColumns: mainColumns }}>
         <SidePanel
           side="left"
@@ -1775,6 +1961,9 @@ function WorkbenchApp({ onOpenReports }) {
                    runResults={runResults} runsBusy={runsBusy} onRunAll={runAllSpecs}
                    ragasExportStatus={ragasExportStatus}
                    onOpenRagasSave={onOpenRagasSave}
+                   compareOutput={compareOutput}
+                   getCanvasSnapshot={() => canvasUsageSnapshot(nodesRef.current, connConfig, prompt)}
+                   connConfig={connConfig}
                    datasetOptions={datasetOptions}
                    queryModules={nodes.filter((n) => n.type === 'queryGroup').map((n) => ({ id: n.id, label: n.data?.label || n.id }))}
                    onStartResize={startBottomResize}/>
@@ -1892,7 +2081,7 @@ function SidePanel({ side, open, onToggle, title, icon, children }) {
 }
 
 // ─── Top Strip ──────────────────────────────────────────────────────────────
-function TopStrip({ theme, setTheme, prompt, setPrompt, runAll, pipelineRunning, onOpenReports }) {
+function TopStrip({ theme, setTheme, prompt, setPrompt, runAll, pipelineRunning, runsBusy, onOpenReports }) {
   const themes = [
     { id: 'dark',      label: 'Dark Synth', bg: '#0e1322',  fg: '#b189ff' },
     { id: 'light',     label: 'Commodore',  bg: '#c8c0b4',  fg: '#4b559f' },
@@ -1910,7 +2099,7 @@ function TopStrip({ theme, setTheme, prompt, setPrompt, runAll, pipelineRunning,
       </div>
       <div className="topstrip-prompt">
         {I.prompt}
-        <input value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Build prompt context…" />
+        <input value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Question about the HERB corpus…" />
         <span className="kbd">↵</span>
       </div>
       <div className="theme-pick" title="Theme">
@@ -1929,8 +2118,13 @@ function TopStrip({ theme, setTheme, prompt, setPrompt, runAll, pipelineRunning,
       )}
       <button className="btn btn-ghost btn-icon" title="Reset workspace"
               onClick={() => window.location.reload()}>{I.reset}</button>
-      <button className="btn btn-primary" disabled={pipelineRunning} onClick={runAll}>
-        {pipelineRunning ? I.zap : I.play} {pipelineRunning ? 'Running…' : 'Execute All'}
+      <button
+        className="btn btn-primary"
+        disabled={pipelineRunning || runsBusy || !prompt.trim()}
+        onClick={runAll}
+        title={!prompt.trim() ? 'Enter a prompt first' : 'Run the canvas A/B pipeline'}
+      >
+        {pipelineRunning ? I.zap : I.play} {pipelineRunning ? 'Running…' : 'Run'}
       </button>
     </div>
   );
@@ -1963,14 +2157,8 @@ function Catalog() {
         </div>
       </div>
       <div className="catalog-section">
-        <h4>Pipeline</h4>
-        <div className="catalog-hint">Graph construction: dataset → access layer → graph → tags → facets.</div>
-        <div className="catalog-list">{renderList(PIPELINE_NODES)}</div>
-      </div>
-      <div className="catalog-divider" />
-      <div className="catalog-section">
-        <h4>Usage</h4>
-        <div className="catalog-hint">The real pipeline. Wire order = run order: prompt → interpret → build input → ground → retrieve A / B → answer → compare.</div>
+        <h4>Canvas</h4>
+        <div className="catalog-hint">Wire order = run order: prompt → interpret → build input → ground → retrieve A / B → answer → compare. Graph scope (dataset, facets, run id) is on <strong>Build input</strong>; batch eval levers live in Run Builder.</div>
         <div className="catalog-list">{renderList(USAGE_NODES)}</div>
       </div>
       <div className="catalog-divider" />
@@ -2344,11 +2532,31 @@ const OfflineNote = ({ children }) => (
   <div style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.55 }}>{children}</div>
 );
 
+function CheckField({ label, hint, checked, onChange }) {
+  return (
+    <label className="field field-check">
+      <span className="field-label">
+        {label}
+        {hint && <span className="hint">{hint}</span>}
+      </span>
+      <input type="checkbox" checked={!!checked} onChange={(e) => onChange(e.target.checked)} />
+    </label>
+  );
+}
+
+function patchCompareOutput(current, group, key, value) {
+  const base = current || {};
+  return {
+    compareOutput: {
+      ...base,
+      [group]: { ...(base[group] || {}), [key]: value },
+    },
+  };
+}
+
 /**
- * Per-node configuration. For the executable Usage nodes this edits the
- * selected node's own `data` (params live on the node, per the engine) so the
- * wired graph runs exactly as configured. Pipeline-lane nodes are the offline
- * Python build and carry no live tunable.
+ * Per-node configuration. Params live on the selected node's `data` so the
+ * wired graph runs exactly as configured.
  */
 function ConfigForm({ kind, selNode, datasetOptions, datasetLoadState, prompt, setPrompt, syntaxCtx }) {
   const d = selNode?.data || {};
@@ -2375,8 +2583,25 @@ function ConfigForm({ kind, selNode, datasetOptions, datasetLoadState, prompt, s
   }
 
   if (kind === 'interpret') {
-    return <ModelField label="Interpreter model" hint="2-pass plan + gate"
-                       value={d.model} onChange={(v) => setData({ model: v })}/>;
+    const options = datasetOptions?.length ? datasetOptions : DATASETS;
+    return (
+      <>
+        <ModelField label="Interpreter model" hint="2-pass plan + gate"
+                    value={d.model} onChange={(v) => setData({ model: v })}/>
+        <div className="field">
+          <label className="field-label">Dataset<span className="hint">scope hint for the plan</span></label>
+          <select className="field-select" value={d.datasetId || ''} onChange={(e) => setData({ datasetId: e.target.value })}>
+            {options.map((o) => <option key={o.id} value={o.id}>{o.id}</option>)}
+          </select>
+        </div>
+        <div className="field">
+          <label className="field-label">Temperature<span className="hint">interpret + answer LLM calls</span></label>
+          <input className="field-input" type="number" min="0" max="2" step="0.1"
+                 value={d.temperature ?? 0}
+                 onChange={(e) => setData({ temperature: Math.max(0, +e.target.value || 0) })}/>
+        </div>
+      </>
+    );
   }
 
   if (kind === 'build_input') {
@@ -2399,6 +2624,13 @@ function ConfigForm({ kind, selNode, datasetOptions, datasetLoadState, prompt, s
           )}
         </div>
         <div className="field">
+          <label className="field-label">Neo4j database<span className="hint">graph to query</span></label>
+          <select className="field-select" value={d.database || DONE_GRAPH_DATABASE}
+                  onChange={(e) => setData({ database: e.target.value })}>
+            {RUN_DATABASES.map((db) => <option key={db} value={db}>{db}</option>)}
+          </select>
+        </div>
+        <div className="field">
           <label className="field-label">Active facets<span className="hint">HAS_TAG dimensions scored</span></label>
           <div className="facet-grid">
             {FACETS.map((c) => (
@@ -2410,14 +2642,14 @@ function ConfigForm({ kind, selNode, datasetOptions, datasetLoadState, prompt, s
           </div>
         </div>
         <div className="field">
-          <label className="field-label">Max chunks<span className="hint">limit per lane</span></label>
-          <input className="field-input" type="number" min="1" max="500" value={d.maxChunks ?? 50}
-                 onChange={(e) => setData({ maxChunks: Math.max(1, +e.target.value || 1) })}/>
+          <label className="field-label">Max chunks<span className="hint">0 = no limit</span></label>
+          <input className="field-input" type="number" min="0" max="500" value={d.maxChunks ?? 0}
+                 onChange={(e) => setData({ maxChunks: Math.max(0, +e.target.value || 0) })}/>
         </div>
         <div className="field">
-          <label className="field-label">Grounding depth (k)<span className="hint">corpus tags / prompt tag</span></label>
-          <input className="field-input" type="number" min="1" max="50" value={d.groundingK ?? 10}
-                 onChange={(e) => setData({ groundingK: Math.max(1, +e.target.value || 1) })}/>
+          <label className="field-label">Grounding depth (k)<span className="hint">0 = no limit</span></label>
+          <input className="field-input" type="number" min="0" max="50" value={d.groundingK ?? 0}
+                 onChange={(e) => setData({ groundingK: Math.max(0, +e.target.value || 0) })}/>
         </div>
         <div className="field">
           <label className="field-label">Min similarity<span className="hint">{Number(d.minSim ?? 0.78).toFixed(2)}</span></label>
@@ -2436,7 +2668,8 @@ function ConfigForm({ kind, selNode, datasetOptions, datasetLoadState, prompt, s
         </div>
         <div className="field">
           <label className="field-label">Run id<span className="hint">HAS_TAG edge filter</span></label>
-          <input className="field-input" value={d.runId || DONE_GRAPH_RUN_ID} readOnly/>
+          <input className="field-input" value={d.runId ?? DONE_GRAPH_RUN_ID}
+                 onChange={(e) => setData({ runId: e.target.value })}/>
         </div>
       </>
     );
@@ -2468,10 +2701,31 @@ function ConfigForm({ kind, selNode, datasetOptions, datasetLoadState, prompt, s
     );
   }
   if (kind === 'compare') {
-    return <OfflineNote>Joins the A and B answers, computes the real metrics
-      (grounding, A/B overlap, citations, per-stage latency) and publishes the
-      result to the console. Must be the terminal node — it produces the run
-      output.</OfflineNote>;
+    const out = normalizeCompareOutput(d.compareOutput);
+    const toggle = (group, key, value) => {
+      setData(patchCompareOutput(d.compareOutput, group, key, value));
+    };
+    return (
+      <>
+        <div className="section-head">Comparison panel</div>
+        <CheckField label="Lane A — HERB tags" checked={out.lanes.a} onChange={(v) => toggle('lanes', 'a', v)} />
+        <CheckField label="Lane B — baseline" checked={out.lanes.b} onChange={(v) => toggle('lanes', 'b', v)} />
+        <CheckField label="Answer view" checked={out.views.llm} onChange={(v) => toggle('views', 'llm', v)} />
+        <CheckField label="Chunks view" checked={out.views.chunks} onChange={(v) => toggle('views', 'chunks', v)} />
+        <CheckField label="Run data view" checked={out.views.table} onChange={(v) => toggle('views', 'table', v)} />
+        <div className="section-head">Metrics summary</div>
+        <CheckField label="A/B overlap" hint="shared chunks · Jaccard" checked={out.metrics.overlap} onChange={(v) => toggle('metrics', 'overlap', v)} />
+        <CheckField label="Retrieval stats" hint="per-lane chunk scores" checked={out.metrics.retrieval} onChange={(v) => toggle('metrics', 'retrieval', v)} />
+        <CheckField label="Grounding" checked={out.metrics.grounding} onChange={(v) => toggle('metrics', 'grounding', v)} />
+        <CheckField label="Citations" checked={out.metrics.citations} onChange={(v) => toggle('metrics', 'citations', v)} />
+        <CheckField label="Latency" checked={out.metrics.latency} onChange={(v) => toggle('metrics', 'latency', v)} />
+        <div className="section-head">Export</div>
+        <CheckField label="Include lane A in JSONL" checked={out.export.laneA} onChange={(v) => toggle('export', 'laneA', v)} />
+        <CheckField label="Include lane B in JSONL" checked={out.export.laneB} onChange={(v) => toggle('export', 'laneB', v)} />
+        <CheckField label="Attach metrics in export meta" checked={out.export.includeMetrics} onChange={(v) => toggle('export', 'includeMetrics', v)} />
+        <OfflineNote>Controls the Comparison tab, the metrics summary bar, and canvas/history RAGAS export rows.</OfflineNote>
+      </>
+    );
   }
   if (kind === 'probe') {
     return (
@@ -2496,19 +2750,6 @@ function ConfigForm({ kind, selNode, datasetOptions, datasetLoadState, prompt, s
         edges={syntaxCtx.edges}
         patchNodeData={syntaxCtx.patchNodeData}
       />
-    );
-  }
-
-  if (kind === 'dataset' || kind === 'access' || kind === 'index' || kind === 'tags' || kind === 'facets') {
-    return (
-      <OfflineNote>
-        <strong>Pipeline lane — offline.</strong> The dataset → access → index →
-        tags → facets graph is built by the Python pipeline (<code>python -m
-        tagging</code>) and read here as-is. It is an illustration of how the
-        graph was constructed; nothing here is executed in the browser. The live
-        retrieval scope (dataset, facets, run id) is set on the Usage lane’s
-        <strong> Build input</strong> node.
-      </OfflineNote>
     );
   }
 
@@ -2563,16 +2804,6 @@ function NodeMetricsPanel({ kind, metrics, selNode, prompt }) {
     );
   }
 
-  if (kind === 'dataset' || kind === 'access' || kind === 'index' || kind === 'tags' || kind === 'facets') {
-    return (
-      <div style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.55 }}>
-        Pipeline lane — built offline by the Python pipeline. No per-run metric
-        in the browser. Live run metrics are on the Usage lane (Ground,
-        Retrieve&nbsp;A/B, Answer, Compare) and in the result console.
-      </div>
-    );
-  }
-
   if (kind === 'interpret') {
     if (!metrics) return NotRun;
     const g = metrics.grounding;
@@ -2594,8 +2825,8 @@ function NodeMetricsPanel({ kind, metrics, selNode, prompt }) {
         <div className="section-head">Configured scope</div>
         <MetricCards items={[
           ['Dataset', d.datasetId || 'all'],
-          ['Max chunks', d.maxChunks ?? 50],
-          ['Grounding k', d.groundingK ?? 10],
+          ['Max chunks', d.maxChunks ?? 0],
+          ['Grounding k', d.groundingK ?? 0],
           ['Min sim', Number(d.minSim ?? 0.78).toFixed(2)],
         ]}/>
         <div className="section-head">Active facets</div>
@@ -2687,27 +2918,66 @@ function NodeMetricsPanel({ kind, metrics, selNode, prompt }) {
 
   if (kind === 'compare') {
     if (!metrics) return NotRun;
+    const out = normalizeCompareOutput(d.compareOutput);
     const { overlap } = metrics.retrieval;
     const L = metrics.latency;
+    const g = metrics.grounding;
+    const { A, B } = metrics.citations;
     return (
       <>
-        <div className="section-head">A vs B</div>
-        <MetricCards items={[
-          ['Shared chunks', overlap.count],
-          ['Jaccard', overlap.jaccard.toFixed(3)],
-          ['A cites', metrics.citations.A.distinct],
-          ['B cites', metrics.citations.B.distinct],
-        ]}/>
-        <div className="section-head">Per-stage latency</div>
-        <MetricCards items={[
-          ['Interpret', fmtMs(L.interpret)],
-          ['Ground', fmtMs(L.ground)],
-          ['Retrieve A', fmtMs(L.retrieveA)],
-          ['Retrieve B', fmtMs(L.retrieveB)],
-          ['Answer A', fmtMs(L.answerA)],
-          ['Answer B', fmtMs(L.answerB)],
-          ['Total', fmtMs(L.total)],
-        ]}/>
+        {out.metrics.overlap && (
+          <>
+            <div className="section-head">A vs B</div>
+            <MetricCards items={[
+              ['Shared chunks', overlap.count],
+              ['Jaccard', overlap.jaccard.toFixed(3)],
+            ]}/>
+          </>
+        )}
+        {out.metrics.citations && (
+          <>
+            <div className="section-head">Citations</div>
+            <MetricCards items={[
+              ['A cites', A.distinct],
+              ['B cites', B.distinct],
+            ]}/>
+          </>
+        )}
+        {out.metrics.grounding && g && (
+          <>
+            <div className="section-head">Grounding</div>
+            <MetricCards items={[
+              ['Prompt tags', g.promptTags],
+              ['Grounded', g.groundedTags],
+              ['Zero-grounded', g.zeroGrounded.length],
+            ]}/>
+          </>
+        )}
+        {out.metrics.retrieval && (
+          <>
+            <div className="section-head">Retrieval</div>
+            <MetricCards items={[
+              ['A chunks', metrics.retrieval.A.count],
+              ['B chunks', metrics.retrieval.B.count],
+              ['A score μ', fmtStat(metrics.retrieval.A.score)],
+              ['B score μ', fmtStat(metrics.retrieval.B.score)],
+            ]}/>
+          </>
+        )}
+        {out.metrics.latency && (
+          <>
+            <div className="section-head">Per-stage latency</div>
+            <MetricCards items={[
+              ['Interpret', fmtMs(L.interpret)],
+              ['Ground', fmtMs(L.ground)],
+              ['Retrieve A', fmtMs(L.retrieveA)],
+              ['Retrieve B', fmtMs(L.retrieveB)],
+              ['Answer A', fmtMs(L.answerA)],
+              ['Answer B', fmtMs(L.answerB)],
+              ['Total', fmtMs(L.total)],
+            ]}/>
+          </>
+        )}
       </>
     );
   }
@@ -2825,15 +3095,52 @@ function openRagasSaveRequest(setDialog, defaultSubdir, request) {
   });
 }
 
+function CompareMetricsBar({ metrics, compareOutput }) {
+  if (!metrics) return null;
+  const out = normalizeCompareOutput(compareOutput);
+  const chips = [];
+  const { overlap } = metrics.retrieval;
+  const L = metrics.latency;
+  const g = metrics.grounding;
+  if (out.metrics.overlap) {
+    chips.push(`overlap ${overlap.count} · J=${overlap.jaccard.toFixed(2)}`);
+  }
+  if (out.metrics.retrieval) {
+    chips.push(`A ${metrics.retrieval.A.count} chunks · B ${metrics.retrieval.B.count} chunks`);
+  }
+  if (out.metrics.grounding && g) {
+    chips.push(`grounded ${g.groundedTags}/${g.promptTags} tags`);
+  }
+  if (out.metrics.citations) {
+    chips.push(`cites A ${metrics.citations.A.distinct} · B ${metrics.citations.B.distinct}`);
+  }
+  if (out.metrics.latency && L.total != null) {
+    chips.push(`total ${L.total}ms`);
+  }
+  if (!chips.length) return null;
+  return (
+    <div className="compare-metrics-bar">
+      {chips.map((c) => <span key={c} className="tag-pill">{c}</span>)}
+    </div>
+  );
+}
+
 function BottomPanel({
   results, prompt, outputView, setOutputView, bottomTab, setBottomTab,
   pipelineRunning, pipelineError, runLog, runHistory, onRestoreRun, onClearLog, onStartResize,
   runSpecs, setRunSpecs, runResults, runsBusy, onRunAll, datasetOptions, queryModules,
-  ragasExportStatus, onOpenRagasSave,
+  ragasExportStatus, onOpenRagasSave, compareOutput, getCanvasSnapshot, connConfig,
 }) {
   const [errorsOpen, setErrorsOpen] = useState(false);
   const [copiedErrorId, setCopiedErrorId] = useState(null);
   const a = results.lane_A, b = results.lane_B;
+  const out = normalizeCompareOutput(compareOutput);
+  const viewTabs = [
+    out.views.llm && ['llm', 'Answer'],
+    out.views.chunks && ['chunks', 'Chunks'],
+    out.views.table && ['table', 'Run data'],
+  ].filter(Boolean);
+  const hasComparisonResults = !!(a?.retrievedChunks != null || b?.retrievedChunks != null);
   const tabs = [
     ['comparison', 'Comparison'],
     ['runs', `Run Builder ${runSpecs?.length ? `· ${runSpecs.length}` : ''}`],
@@ -2927,18 +3234,71 @@ function BottomPanel({
             )}
           </div>
         )}
-        {(bottomTab === 'comparison' || bottomTab === 'runs') && (
+        {(bottomTab === 'comparison' || bottomTab === 'runs') && viewTabs.length > 0 && (
           <div className="bottom-pane-mode">
-            {[['llm','Answer'],['chunks','Chunks'],['table','Run data']].map(([k,l]) =>
+            {viewTabs.map(([k, l]) =>
               <button key={k} className={cls(outputView === k && 'active')} onClick={() => setOutputView(k)}>{l}</button>)}
           </div>
         )}
+        {bottomTab === 'comparison' && hasComparisonResults && (
+          <>
+            <button
+              type="button"
+              className="result-action"
+              style={{ marginRight: 8 }}
+              onClick={() => {
+                const snap = getCanvasSnapshot?.();
+                if (!snap) return;
+                onOpenRagasSave(buildCanvasRagasExportRequest(results, prompt, snap, compareOutput));
+              }}
+            >
+              Export comparison
+            </button>
+            {out.lanes.a && (
+              <button
+                type="button"
+                className="result-action btn-ghost"
+                style={{ marginRight: 8 }}
+                title="Lane A → mode graph (tags route)"
+                onClick={() => {
+                  const snap = getCanvasSnapshot?.();
+                  if (!snap) return;
+                  onOpenRagasSave(buildCanvasRagasConfigSaveRequest('A', snap, connConfig));
+                }}
+              >
+                Export lane A config
+              </button>
+            )}
+            {out.lanes.b && (
+              <button
+                type="button"
+                className="result-action btn-ghost"
+                style={{ marginRight: 8 }}
+                title="Lane B → mode relevance (baseline route)"
+                onClick={() => {
+                  const snap = getCanvasSnapshot?.();
+                  if (!snap) return;
+                  onOpenRagasSave(buildCanvasRagasConfigSaveRequest('B', snap, connConfig));
+                }}
+              >
+                Export lane B config
+              </button>
+            )}
+          </>
+        )}
       </div>
       {bottomTab === 'comparison' && (
-        <div className="bottom-body">
-          <ResultPane label="Lane A — HERB tags" tone="full" data={a} view={outputView}/>
-          <ResultPane label="Lane B — baseline (no tags)" tone="baseline" data={b} view={outputView}/>
-        </div>
+        <>
+          <CompareMetricsBar metrics={results.metrics} compareOutput={compareOutput} />
+          {!out.lanes.a && !out.lanes.b ? (
+            <div className="bottom-pane-empty">Compare node hides both lanes — enable at least one lane in the Compare inspector.</div>
+          ) : (
+            <div className="bottom-body">
+              {out.lanes.a && <ResultPane label="Lane A — HERB tags" tone="full" data={a} view={outputView}/>}
+              {out.lanes.b && <ResultPane label="Lane B — baseline (no tags)" tone="baseline" data={b} view={outputView}/>}
+            </div>
+          )}
+        </>
       )}
       {bottomTab === 'runs' && (
         <RunBuilderPanel
@@ -2975,18 +3335,24 @@ function formatRetrievalGate(gate) {
 function ResultPane({ label, tone, data, view }) {
   const [chunkFilter, setChunkFilter] = useState('');
   const [selectedChunkKey, setSelectedChunkKey] = useState(null);
-  if (!data) return <div className="bottom-pane"><div className="bottom-pane-empty">Run the lane to see results.</div></div>;
-  const liveChunks = data.retrievedChunks;
-  const isDemo = !liveChunks;
+  if (!data) {
+    return (
+      <div className="bottom-pane">
+        <div className="bottom-pane-head"><span className="lane-tag">{label}</span></div>
+        <div className="bottom-pane-empty">Run the Usage lane to see results.</div>
+      </div>
+    );
+  }
+  const liveChunks = data.retrievedChunks ?? [];
+  const hasRun = data.retrievedChunks != null;
   const rInput = data.retrievalInput;
-  const sourceChunks = liveChunks ?? SAMPLE_CHUNKS.slice(0, tone === 'full' ? 4 : 5);
-  const normalizedChunks = sourceChunks.map((c, i) => ({
+  const normalizedChunks = liveChunks.map((c, i) => ({
     key: c.chunkId || c.id || `chunk_${i}`,
     score: c.score ?? c.rel ?? 0,
     relevanceToFile: c.relevanceToFile ?? c.rel ?? null,
     description: c.description || c.preview || '',
     content: c.content || c.preview || '',
-    fileId: c.fileId || c.file || 'sample',
+    fileId: c.fileId || c.file || '—',
   }));
   const q = chunkFilter.trim().toLowerCase();
   const filteredChunks = q
@@ -2994,28 +3360,27 @@ function ResultPane({ label, tone, data, view }) {
     : normalizedChunks;
   const selectedChunk = filteredChunks.find((c) => c.key === selectedChunkKey) ?? filteredChunks[0] ?? null;
   const answerText = data.response || '';
-  const chunksJson = JSON.stringify(liveChunks ?? [], null, 2);
+  const chunksJson = JSON.stringify(liveChunks, null, 2);
   return (
     <div className="bottom-pane">
       <div className="bottom-pane-head">
         <span className="lane-tag">{label}</span>
         <div className="result-actions">
-          <button type="button" className="result-action" onClick={() => copyText(answerText)}>Copy answer</button>
-          <button type="button" className="result-action" onClick={() => copyText(chunksJson)}>Copy chunks</button>
+          <button type="button" className="result-action" disabled={!hasRun} onClick={() => copyText(answerText)}>Copy answer</button>
+          <button type="button" className="result-action" disabled={!hasRun} onClick={() => copyText(chunksJson)}>Copy chunks</button>
         </div>
       </div>
-      {isDemo && (
-        <div style={{fontSize:10.5,color:'var(--warn)',fontFamily:'var(--font-mono)',margin:'0 0 6px',padding:'4px 6px',background:'var(--bg-card)',borderRadius:4}}>
-          Demo data — not a live run. Execute the Usage lane for real retrieval & answer.
-        </div>
-      )}
       <div className="bottom-pane-stats">
-        <span>{data.chunks} chunks</span>
-        <span>{data.tokensIn} → {data.tokensOut} tok</span>
-        <span>{data.durationMs}ms</span>
+        <span>{hasRun ? data.chunks : '—'} chunks</span>
+        <span>{hasRun ? `${data.tokensIn} → ${data.tokensOut} tok` : '— tok'}</span>
+        <span>{hasRun ? `${data.durationMs}ms` : '—'}</span>
       </div>
       {view === 'llm' && (
         <>
+          {!hasRun ? (
+            <div className="bottom-pane-empty">No answer yet.</div>
+          ) : (
+            <>
           {data.plan && (
             <div style={{fontSize:10.5,color:'var(--text-dim)',fontFamily:'var(--font-mono)',marginBottom:6,padding:'4px 6px',background:'var(--bg-card)',borderRadius:4}}>
               <strong style={{color:'var(--text-muted)'}}>Plan:</strong> {data.plan.description}
@@ -3052,9 +3417,14 @@ function ResultPane({ label, tone, data, view }) {
             </div>
           )}
           <div className="bottom-pane-resp">{data.response}</div>
+            </>
+          )}
         </>
       )}
       {view === 'chunks' && (
+        !hasRun ? (
+          <div className="bottom-pane-empty">No retrieved chunks yet.</div>
+        ) : (
         <div className="chunk-workbench">
           <div className="chunk-toolbar">
             <input value={chunkFilter} onChange={(e) => setChunkFilter(e.target.value)} placeholder="Filter evidence chunks…" />
@@ -3094,20 +3464,25 @@ function ResultPane({ label, tone, data, view }) {
             </div>
           </div>
         </div>
+        )
       )}
       {view === 'table' && (
+        !hasRun ? (
+          <div className="bottom-pane-empty">No run data yet.</div>
+        ) : (
         <div className="run-data-grid">
           <Metric label="chunks" value={data.chunks} />
           <Metric label="tokens in" value={data.tokensIn} />
           <Metric label="tokens out" value={data.tokensOut} />
           <Metric label="duration" value={`${data.durationMs}ms`} />
-          <Metric label="dataset" value={rInput?.scope?.datasetId || 'sample'} />
-          <Metric label="strategy" value={rInput?.controls?.strategy || 'sample'} />
+          <Metric label="dataset" value={rInput?.scope?.datasetId || '—'} />
+          <Metric label="strategy" value={rInput?.controls?.strategy || '—'} />
           <Metric label="facets" value={rInput?.controls?.activeFacets?.join(', ') || 'none'} wide />
           <Metric label="gate" value={formatRetrievalGate(rInput?.gate)} wide />
           {data.plan && <Metric label="plan tags" value={data.plan.tags.length} />}
           {data.plan?.grounding && <Metric label="grounded tags" value={data.plan.grounding.reduce((n, g) => n + g.matches.length, 0)} />}
         </div>
+        )
       )}
       {data.topFacets?.length > 0 && (
         <div className="tag-row" style={{marginTop:4}}>

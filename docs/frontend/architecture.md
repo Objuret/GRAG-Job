@@ -11,15 +11,17 @@ offline and is not part of serving the frontend.
 
 ## Canvas
 
-The Pipeline lane is an offline illustration of the backend HERB build path.
-It is not executed by the browser.
-
-The Usage lane is the real executable DAG:
+The workbench canvas is a single executable Usage DAG:
 
 ```text
 prompt -> interpret -> build_input -> ground -> retrieve_tags -> answer
                              \-> retrieve_baseline -> answer -> compare
 ```
+
+Graph construction (dataset → access → chunk → HERB tagging) runs offline in
+`backend/` and is not represented on the canvas. Scope levers (dataset,
+facets, run id) live on the **Build input** node; batch comparison levers live
+in **Run Builder**.
 
 `services/pipeline.ts` maps each node kind to one async executor and runs the
 wired Usage nodes in topological order. Wire order is run order. Per-step
@@ -100,9 +102,11 @@ RQ2 comparator.
 
 RAGAS runs offline. The preferred thesis path is:
 
-- `frontend/scripts/ragas-export.ts`: headless graph, direct-content baseline,
-  or SQL-agent batch runner. It writes JSONL with `user_input`,
-  `retrieved_contexts`, `response`, `reference`, and `meta`.
+- `frontend/scripts/ragas-export.ts`: headless graph, Lucene content, relevance
+  baseline, or SQL-agent batch runner. Export `mode` maps 1:1 to Run Builder
+  routes (`tags`→`graph`, `content`→`content`, `baseline`→`relevance`).
+  Writes JSONL with `user_input`, `retrieved_contexts`, `response`, `reference`,
+  and `meta`.
 - `backend/baselines/sql_agent.py`: LLM agent with a SQL tool over a local
   HERB SQLite store (independent of the graph artefact). Invoked by
   `ragas:export --mode sql_agent` or a RunSpec export with
@@ -113,7 +117,11 @@ RAGAS runs offline. The preferred thesis path is:
   metrics such as context recall and context precision.
 
 Graph and SQL exports share the same ceiling-default contract (0 = no count cap
-unless set). See [`../../backend/eval/README.md`](../../backend/eval/README.md).
+unless set). Canvas **Run** and Run Builder browser runs pass explicit
+`NO_EVIDENCE_CAP` to the answer step; canvas/history JSONL export uses the same
+evidence slice via `selectEvidenceChunks`. Comparison tab also exposes
+**Export lane A/B config** (`.ragas.json` per lane, same field mapping as Run
+Builder). See [`../../backend/eval/README.md`](../../backend/eval/README.md).
 
 The History tab's **Export RAGAS** button remains a lightweight UI smoke path
 for `backend/eval/ragas_eval.py`.

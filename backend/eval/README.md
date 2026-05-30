@@ -36,23 +36,31 @@ Thesis exports default to **minimum-strangle**: count caps stay at **0 = no
 limit** unless you set them. Quality filters (graph: `minSim`, weight/relevance
 floors; SQL: similarity is N/A) still apply.
 
-| Arm | Default caps | RAGAS evidence |
-|---|---|---|
-| Graph (`mode=graph`) | `limit=0`, `grounding_k=0` | Full retrieved chunk texts |
-| Baseline (`mode=baseline`) | `limit=0` → export uses **150** | Top-k Lucene hits (HERB Lucene at 0 returns ~5k chunks and breaks the answer API) |
-| SQL agent (`mode=sql_agent`) | `max_tool_calls=0`, `max_rows_per_query=0`, `max_cell_chars=0` | All SQL rows the agent saw (flattened), same truncation rules as the LLM tool output |
+| Arm | Run Builder route | Export `mode` | Headless execution |
+|---|---|---|---|
+| HERB tags | `tags` | `graph` | interpret → ground → tag overlap |
+| Lucene (thesis RQ2 control) | `content` | `content` | Lucene on `c.content`, no interpret |
+| Relevance baseline (Lane B) | `baseline` | `relevance` | interpret → `relevance_to_file` order, no tags |
+| SQL agent | `sql_agent` | `sql_agent` | Python `backend/baselines/sql_agent.py` |
 
-**0 semantics:** omitting a cap removes it. SQL tool-call budget `0` still has
-a hard **200-iteration** sanity ceiling in `backend/baselines/sql_agent.py`.
-Graph grounding `0` still queries the vector index top-**1000** neighbors per
-prompt tag before `minSim` filtering.
+**0 semantics:** `limit=0`, `grounding_k=0`, `answer_max_chunks=0`, and
+`answer_max_chunk_chars=0` mean **no cap** — the exporter does not substitute
+hidden defaults. Legacy configs with `"mode": "baseline"` and no `route_origin`
+still map to Lucene **content** (old label).
 
-Headless **baseline** export applies a **150-chunk default** when `limit=0`
-(graph retrieval stays uncapped). **All** headless exports apply **200-chunk
-answer API cap** + byte scrub (`answer_max_chunks` / `answer_scrub` in RunSpec);
-`retrieved_contexts` in JSONL remain the full retrieval for RAGAS.
+| Cap field | 0 means |
+|---|---|
+| `limit` / `grounding_k` / `answer_max_chunks` / SQL caps | No count cap |
+| `answer_max_chunk_chars` | No per-chunk truncation |
+| `answer_scrub` | `false` unless explicitly `true` in export |
 
-Set **`prompt_mode: context`** on graph/baseline RAG arms (never `raw` for eval).
+SQL tool-call budget `0` still has a hard **200-iteration** sanity ceiling in
+`backend/baselines/sql_agent.py`. Graph grounding `0` still queries the vector
+index top-**1000** neighbors per prompt tag before `minSim` filtering (Neo4j
+kNN behaviour, not an export override).
+
+Set **`prompt_mode: context`** on graph/content/relevance RAG arms (never `raw`
+for eval).
 
 **Thesis limitations (export errors, judge timeouts, cohort sizes):**
 [`docs/backend/ragas_eval_report.md`](../../docs/backend/ragas_eval_report.md).
@@ -72,9 +80,12 @@ Preferred path for thesis results:
 
    ```powershell
    npm --workspace frontend run ragas:export -- --mode graph --questions frontend/scripts/ragas-questions.herb-gold100.jsonl --out backend/evaluation/graph.jsonl --fresh
-   npm --workspace frontend run ragas:export -- --mode baseline --questions frontend/scripts/ragas-questions.herb-gold100.jsonl --out backend/evaluation/baseline.jsonl --fresh
+   npm --workspace frontend run ragas:export -- --mode content --questions frontend/scripts/ragas-questions.herb-gold100.jsonl --out backend/evaluation/content.jsonl --fresh
    npm --workspace frontend run ragas:export -- --mode sql_agent --questions frontend/scripts/ragas-questions.herb-gold100.jsonl --out backend/evaluation/sql_agent.jsonl --fresh --model deepseek-chat
-   ```
+```
+
+   (`--mode baseline` is legacy alias for **content** Lucene. Use Run Builder
+   export with route **Baseline** for `mode: relevance`.)
 
    Or export RunSpec cards from the workbench (see below) and pass
    `--config path/to/run.ragas.json`.
@@ -95,6 +106,31 @@ Preferred path for thesis results:
    does not trim by default (`--judge-max-contexts 0`).
 
    Use `aggregate_scores` for means/medians and cohort filtering — not the scorer.
+
+### Unified export contract (all arms)
+
+Every headless `ragas:export` run uses the same JSONL shape regardless of arm
+(`graph`, `content`, `relevance`, `sql_agent`):
+
+| Layer | TS | Python |
+|---|---|---|
+| Cohort | `scripts/ragas/cohort.ts` | `evaluation/ragas_io.py` |
+| Run audit (line 0) | `scripts/ragas/frame.ts` + `src/rag/exportContract.ts` | `ragas_io.write_run_frame` |
+| Question rows | `baseQuestionRow()` | `question_row_shell()` |
+| Prompt audit | `src/rag/pipelinePrompts.ts` | (SQL system prompt live per run) |
+| Scorer input | — | `ragas_eval._load_rows` skips `kind=run_frame` |
+
+**Line 0 — `run_frame`:** resolved config (models, caps, database, arm),
+invocation flags, cohort **id list + metadata** (no question text; links optional
+`*.manifest.json` from `build_gold_set`), and interpret/answer system prompts.
+
+**Lines 1..N — `kind: question`:** `id`, `user_input`, `response`,
+`retrieved_contexts`, `reference`, plus per-row `meta` only (plan, grounding,
+tokens, timing, SQL queries, errors).
+
+Only the **arm runner** differs (tag graph vs Lucene vs relevance order vs
+Python SQL agent). Cohort file, RAGAS scorer hook-up, resume/skip ids, and
+output schema are shared modules — not four bespoke pipelines.
 
 ### From the workbench Run Builder
 

@@ -30,7 +30,7 @@ npm run dev                                                # http://127.0.0.1:51
 ## Layout
 
 - `backend/` — Python indexing pipeline; runs offline to build/refresh the Neo4j graph artefact.
-- `frontend/` — Vite/React workbench (`src/App.jsx`); two-lane canvas, draggable query modules. Browser-direct architecture.
+- `frontend/` — Vite/React workbench (`src/App.jsx`); executable canvas + Run Builder. Browser-direct architecture.
 - `docs/` — project-wide reference. Module-specific docs under `docs/backend/` and `docs/frontend/`. The cross-cutting Neo4j contract is `docs/graph_schema.md`.
 - `graph_export/` — portable graph snapshots; operator artefact, not part of the indexing path.
 

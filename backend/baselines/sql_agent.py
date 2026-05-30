@@ -48,6 +48,7 @@ import sqlite3
 import sys
 import time
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -492,59 +493,119 @@ def run_gold_set(
     max_calls: int = MAX_TOOL_CALLS,
     max_rows: int = MAX_ROWS_PER_QUERY,
     max_cell_chars: int = MAX_CELL_CHARS,
+    *,
+    append_rows: bool = False,
+    run_frame: dict[str, Any] | None = None,
 ) -> None:
+    from evaluation.ragas_io import (
+        PERMANENT_SKIP_IDS,
+        append_question_row,
+        build_cohort_manifest,
+        load_gold_questions,
+        question_row_shell,
+        write_run_frame,
+    )
+
     build_sqlite(db_path)  # idempotent — only rebuilds if missing
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    con = sqlite3.connect(db_path)
-    n_ok = n_err = 0
-    with out_path.open("w", encoding="utf-8") as out:
-        for i, rec in enumerate(_question_records(gold_path)):
-            if limit is not None and i >= limit:
-                break
-            qid = rec.get("id") or f"q_{i}"
-            question = rec.get("question") or ""
-            reference = rec.get("reference")
-            try:
-                run = run_question(question, con, model, api_key, base_url,
-                                   max_calls=max_calls, max_rows=max_rows,
-                                   max_cell_chars=max_cell_chars, temperature=temperature)
-            except Exception as e:
-                run = AgentRun(answer="", sql_queries=[], rows_seen=[], tokens_in=0,
-                               tokens_out=0, iterations=0, elapsed_ms=0, error=str(e))
-            contexts = [_row_to_context(r, max_cell_chars) for r in run.rows_seen]
-            row = {
-                "id": qid,
-                "question": question,
-                "user_input": question,
-                "answer": run.answer,
-                "response": run.answer,
-                "contexts": contexts,
-                "retrieved_contexts": contexts,
-                "reference": reference,
-                "meta": {
-                    "baseline": "sql_agent",
-                    "model": model,
+    gold_items = load_gold_questions(gold_path)
+    cohort_slice = gold_items if limit is None else gold_items[:limit]
+
+    if not append_rows:
+        frame = run_frame or {
+            "kind": "run_frame",
+            "schema": "ragas-export/v1",
+            "exported_at": datetime.now(timezone.utc).isoformat(),
+            "arm": "sql_agent",
+            "route_origin": "sql_agent",
+            "label": None,
+            "invocation": {
+                "questions": str(gold_path),
+                "out": str(out_path),
+                "config": None,
+                "max_questions": limit or 0,
+                "repeats": 1,
+                "concurrency": 1,
+                "flags": [],
+                "permanent_skip_ids": list(PERMANENT_SKIP_IDS),
+            },
+            "resolved": {
+                "arm": "sql_agent",
+                "route_origin": "sql_agent",
+                "label": None,
+                "database": None,
+                "run_id": None,
+                "dataset_id": None,
+                "models": {"answer": model, "interpret": None},
+                "prompt_mode": None,
+                "temperature": temperature,
+                "retrieval": {},
+                "evidence": {
+                    "answer_max_chunks": 0,
+                    "answer_max_chunk_chars": max_cell_chars,
+                    "answer_scrub": False,
+                },
+                "exclude_sections": sorted(EXCLUDED_SURFACES),
+                "sql": {
+                    "db_path": str(db_path),
                     "max_tool_calls": max_calls,
                     "max_rows_per_query": max_rows,
                     "max_cell_chars": max_cell_chars,
-                    "sql_queries": run.sql_queries,
-                    "n_rows_seen": len(run.rows_seen),
-                    "iterations": run.iterations,
-                    "tokens": {"in": run.tokens_in, "out": run.tokens_out},
-                    "elapsed_ms": run.elapsed_ms,
-                    "error": run.error,
+                    "base_url": base_url,
                 },
-            }
-            out.write(json.dumps(row, ensure_ascii=False) + "\n")
-            out.flush()
-            if run.error:
-                n_err += 1
-                print(f"  [{i}] {qid}: ERROR {run.error}", file=sys.stderr)
-            else:
-                n_ok += 1
-                print(f"  [{i}] {qid}: {run.iterations} iters, {len(run.rows_seen)} rows, "
-                      f"{run.tokens_in}/{run.tokens_out} tok, {run.elapsed_ms}ms",
-                      file=sys.stderr)
+            },
+            "cohort": build_cohort_manifest(gold_path, cohort_slice),
+            "prompts": {
+                "sql_agent_system_template": SYSTEM_PROMPT_TEMPLATE,
+                "note": "Live system prompt also embeds introspected SQLite schema per run.",
+            },
+        }
+        write_run_frame(out_path, frame, fresh=True)
+    elif not out_path.exists():
+        raise FileNotFoundError(
+            f"--append-rows set but {out_path} missing — headless exporter must write run_frame first.",
+        )
+
+    con = sqlite3.connect(db_path)
+    n_ok = n_err = 0
+    for i, rec in enumerate(gold_items):
+        if limit is not None and i >= limit:
+            break
+        qid = rec.get("id") or f"q_{i}"
+        question = rec.get("question") or ""
+        reference = rec.get("reference")
+        try:
+            run = run_question(question, con, model, api_key, base_url,
+                               max_calls=max_calls, max_rows=max_rows,
+                               max_cell_chars=max_cell_chars, temperature=temperature)
+        except Exception as e:
+            run = AgentRun(answer="", sql_queries=[], rows_seen=[], tokens_in=0,
+                           tokens_out=0, iterations=0, elapsed_ms=0, error=str(e))
+        contexts = [_row_to_context(r, max_cell_chars) for r in run.rows_seen]
+        row = question_row_shell(qid, question, reference)
+        row["answer"] = run.answer
+        row["response"] = run.answer
+        row["contexts"] = contexts
+        row["retrieved_contexts"] = contexts
+        row["meta"] = {
+            "arm": "sql_agent",
+            "repeat": 1,
+            "sql_queries": run.sql_queries,
+            "n_rows_seen": len(run.rows_seen),
+            "iterations": run.iterations,
+            "tokens": {"answer_in": run.tokens_in, "answer_out": run.tokens_out},
+            "elapsed_ms": run.elapsed_ms,
+            "error": run.error,
+        }
+        append_question_row(out_path, row)
+        if run.error:
+            n_err += 1
+            print(f"  [{i}] {qid}: ERROR {run.error}", file=sys.stderr)
+        else:
+            n_ok += 1
+            print(f"  [{i}] {qid}: {run.iterations} iters, {len(run.rows_seen)} rows, "
+                  f"{run.tokens_in}/{run.tokens_out} tok, {run.elapsed_ms}ms",
+                  file=sys.stderr)
     con.close()
     print(f"\nDone: {n_ok} ok, {n_err} errors → {out_path}", file=sys.stderr)
 
@@ -577,6 +638,8 @@ def main(argv: list[str] | None = None) -> int:
                    help=f"Max rows returned per SQL call (default: {MAX_ROWS_PER_QUERY}; 0 = fetch all).")
     p.add_argument("--max-cell-chars", type=int, default=MAX_CELL_CHARS,
                    help=f"Max chars per cell before truncation (default: {MAX_CELL_CHARS}; 0 = no truncation).")
+    p.add_argument("--append-rows", action="store_true",
+                   help="Append question rows only (run_frame already written by ragas-export.ts).")
     args = p.parse_args(argv)
 
     if args.rebuild_db:
@@ -597,7 +660,8 @@ def main(argv: list[str] | None = None) -> int:
     run_gold_set(args.gold_set, args.out, args.model, api_key,
                  base_url=args.base_url, db_path=args.db_path, limit=args.limit,
                  temperature=args.temperature, max_calls=args.max_tool_calls,
-                 max_rows=args.max_rows_per_query, max_cell_chars=args.max_cell_chars)
+                 max_rows=args.max_rows_per_query, max_cell_chars=args.max_cell_chars,
+                 append_rows=args.append_rows)
     return 0
 
 

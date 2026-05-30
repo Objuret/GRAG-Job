@@ -45,6 +45,12 @@ ragas_exports/*
 
 # Extracted thesis text (the user's document — never commit to the repo).
 thesis_extract.md
+# Thesis documents + analysis scratch — the user's document, never commit.
+.codex_tmp/
+.thesis_audit/
+.tmp_thesis_docx_media/
+.work/thesis_review/
+docs/thesis/
 
 # Logs
 logs/
