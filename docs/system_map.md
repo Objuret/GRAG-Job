@@ -1,5 +1,11 @@
 # System map
 
+> **⚠ Describes the v1 artefact (current `herb-eval`).** A redesign —
+> [`v2_artefact_rebuild_design.md`](v2_artefact_rebuild_design.md) — supersedes the
+> *design intent* here (references-not-copies; agnostic shape probe; declarative mapping
+> key; re-tag). This doc stays accurate for v1 until v2 is built; where they conflict on
+> intent, v2 governs.
+
 **Purpose.** One entry page for humans and AI agents: **concepts**, **where they live** (backend / frontend / Neo4j), and **which doc** is authoritative.
 
 **Scope (read this first).** This map describes **only the HERB path in actual use**: raw corpus **`Salesforce__HERB`**, full Neo4j database **`herb`**, eval-safe Neo4j database **`herb-eval`**, semantic artefact **`pilot_full_herb`**. The generic three-stage indexer (`scripts/run_index.py`, `indexing/orchestrator.py`, OpenAI-compatible `agents/` path, other datasets in `data_access` registry) is **quarantined** — it is not what you run or defend for HERB. See [Quarantine](#quarantine-legacy--non-herb).

@@ -1,5 +1,11 @@
 # Architecture
 
+> **⚠ Describes the v1 artefact (current `herb-eval`).** A redesign —
+> [`../v2_artefact_rebuild_design.md`](../v2_artefact_rebuild_design.md) — supersedes the
+> *design intent* here (references-not-copies; agnostic shape probe; declarative mapping
+> key; re-tag). This doc stays accurate for v1 until v2 is built; where they conflict on
+> intent, v2 governs.
+
 **TL;DR.** The pipeline has three logical layers — **access** (join raw bytes to graph-addressable corpus identity via inventory, typing, stable keys, and `:Source` / `:File` anchors), **indexing** (segment into `(:Chunk)` with locators, job ledger, LLM extraction/tagging, rollups), and **clustering** (the canonical-tag vocabulary plus future query views). Everything durable lives in Neo4j. This doc captures the design decisions that produced the current shape, the run lifecycle, and the dispatch strategy.
 
 **When to read this.** When you need to understand *why* the code is shaped the way it is, before changing anything load-bearing.

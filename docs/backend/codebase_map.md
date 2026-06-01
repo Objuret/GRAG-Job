@@ -1,5 +1,9 @@
 # Codebase Map
 
+> **⚠ Maps the v1 codebase.** The access/index/chunk/tag layer is being rebuilt per
+> [`../v2_artefact_rebuild_design.md`](../v2_artefact_rebuild_design.md); this map stays
+> accurate for v1 until v2 lands.
+
 **TL;DR.** Every top-level directory has its own section. For each file: a one-line role, the key public symbols, and what calls them. Use this as the index when you want to navigate the source.
 
 **When to read this.** When you know what you want to change and need to find the right file.

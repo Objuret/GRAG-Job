@@ -1,5 +1,11 @@
 # HERB Tagging Schema
 
+> **⚠ Describes the v1 artefact (current `herb-eval`).** A redesign —
+> [`../v2_artefact_rebuild_design.md`](../v2_artefact_rebuild_design.md) — supersedes the
+> *design intent* here (references-not-copies; agnostic shape probe; declarative mapping
+> key; re-tag on clean structure). This doc stays accurate for v1 until v2 is built; where
+> they conflict on intent, v2 governs.
+
 **Last updated:** 2026-05-14.
 
 ## Purpose

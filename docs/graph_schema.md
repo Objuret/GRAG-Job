@@ -1,5 +1,11 @@
 # Graph Schema
 
+> **⚠ Describes the v1 artefact (current `herb-eval`).** A redesign —
+> [`v2_artefact_rebuild_design.md`](v2_artefact_rebuild_design.md) — supersedes the
+> *design intent* here (graph indexes references into untouched raw instead of storing
+> copies; agnostic shape probe; declarative per-dataset mapping key; re-tag). This doc
+> stays accurate for v1 until v2 is built; where they conflict on intent, v2 governs.
+
 **TL;DR.** This is the Neo4j artefact contract. Every node label and edge type is documented below with properties, types, constraints, indexes, who writes it, and who reads it. The schema is applied by [`scripts/bootstrap_schema.py`](backend/scripts/bootstrap_schema.py) reading [`schema/constraints.cypher`](backend/schema/constraints.cypher), [`schema/indexes.cypher`](backend/schema/indexes.cypher), [`schema/vector_indexes.cypher`](backend/schema/vector_indexes.cypher).
 
 **When to read this.** Any time you write Cypher, change a writer, or design a new query. This is the source of truth for shape.

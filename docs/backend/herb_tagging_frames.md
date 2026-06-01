@@ -1,5 +1,10 @@
 # HERB Tagging Frames
 
+> **⚠ Describes the v1 artefact (current `herb-eval`).** A redesign —
+> [`../v2_artefact_rebuild_design.md`](../v2_artefact_rebuild_design.md) — supersedes the
+> *design intent* here. This doc stays accurate for v1 until v2 is built; where they
+> conflict on intent, v2 governs.
+
 **Last updated:** 2026-05-13.
 
 ## Purpose

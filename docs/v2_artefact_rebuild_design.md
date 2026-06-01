@@ -4,6 +4,14 @@
 **Date:** 2026-05-30.
 **Baseline it supersedes:** the v1 artefact (git tag `artefact-v1`, commit `244beb7`; Neo4j `herb-eval` + `herb-eval.dump` + sibling `herb-eval-backup`).
 
+**Supersedes the design intent of these v1 docs** (they remain accurate for the v1
+system as built, until v2 lands; where they conflict with this doc on *intent*, this
+doc governs): [`graph_schema.md`](graph_schema.md), [`system_map.md`](system_map.md),
+[`backend/architecture.md`](backend/architecture.md),
+[`backend/herb_tagging_schema.md`](backend/herb_tagging_schema.md),
+[`backend/herb_tagging_frames.md`](backend/herb_tagging_frames.md),
+[`backend/codebase_map.md`](backend/codebase_map.md). Each carries a pointer back here.
+
 This document records the design for rebuilding the access → index → chunk → tag
 layer from scratch. The raw datasets, the semantic concepts (tags/weights/grounding
 vectors), the eval harness, and the frontend are retained; the ingestion/indexing
@@ -190,3 +198,109 @@ against the v1 graph, whose retriever multiplies seven factors at query time and
 vocabulary is polluted. Those numbers measure the v1 violation, not the intended product.
 The HERB evaluation is re-run on the v2 graph for thesis numbers; v1 runs are kept as the
 before/after contrast. The SQL-agent remains the comparison baseline.
+
+## 13. Semantic dimensions — the research basis for the facets
+
+### 13.1 Why the v1 facets degraded
+
+The v1 tagger used five facets — `topic, entities, activity, temporal, evidence`
+([`backend/tagging/pipeline.py`](../backend/tagging/pipeline.py) line 52). They were
+intended as rich semantic dimensions but were never specified as such, so the model
+defaulted to the shallowest reading of each and emitted literal tokens: `temporal` →
+date strings (`2024_04_27`), `entities` → identifier strings (`eid_…`), `evidence` →
+links (`https_github_com_…_pull_380`). This is the root of the ~18 % junk vocabulary
+(`eid_*` alone ≈ 16 k `HAS_TAG` edges). The pollution is what an *underspecified
+semantic dimension* collapses into when it is pointed at prose full of literal tokens.
+
+The fix is two-part: (a) move the literal **facts** to structure (§7 — timestamps to
+hard fields, identities to `:Employee`/`:Customer` edges, links to entities), removing
+the temptation to tag them; and (b) **specify each dimension by its true semantic
+intent** — e.g. `temporal` is the *time-relationship* (retrospective / now / forward,
+span, urgency), never a date. The date is structure; the temporal *meaning* is the facet.
+
+### 13.2 Convergence across research traditions
+
+The dimensions needed to decompose chunk/sentence meaning are not invented here; seven
+independent lineages converge on the same structure:
+
+| Tradition | Dimensions it names |
+|---|---|
+| Ranganathan **PMEST** (faceted classification) | Personality, Matter, Energy, Space, Time |
+| **neo-Davidsonian / AMR** (event semantics) | event + role-bound participants + time + location + manner |
+| **5W1H** (journalism / semantic role labeling) | who, what, when, where, why, how |
+| **SFL metafunctions** (Halliday) | ideational (content), interpersonal (stance), textual (discourse role) |
+| **TAM** | tense, aspect, modality |
+| **Appraisal + evidentiality** | attitude, graduation (intensity), engagement/sourcing vs epistemic certainty |
+| **RST / speech-act / dialogue-act** | rhetorical / communicative function of a span |
+
+De-duplicated, this yields a **three-tier model**:
+
+- **Tier 1 — Propositional / ideational (the situation):** aboutness/topic (the frame
+  or domain); process (what happens); participants + their *roles* (agent/patient/
+  recipient — not identifiers); circumstance = time (full TAM) + space + manner +
+  cause/purpose.
+- **Tier 2 — Interpersonal (stance toward the situation):** evaluation/attitude
+  (affect / judgement / appreciation); modality (certainty / obligation / possibility);
+  evidentiality (how a claim is *sourced* — distinct from certainty).
+- **Tier 3 — Pragmatic / textual (what the span does):** communicative / rhetorical
+  function (question / assertion / decision / request / problem / resolution); genre /
+  register.
+
+Meaning = a **situation** (frame + process + roles + circumstance), wrapped in a
+**stance** (evaluation + modality + sourcing), serving a **communicative function**,
+classified by aboutness and genre. Temporal is TAM *inside* circumstance (then/now/
+later, ongoing/done, planned) — not dates. A participant is a *role*, not a token.
+Evidence is *sourcing*, not links.
+
+### 13.3 Organizing principle — completeness across the totality + prompt/chunk symmetry
+
+The dimensions are **not** all facets. The artefact has several mechanisms, and each
+dimension is carried by whichever fits:
+
+- **structure / hard fields** — literal facts (time = timestamp, space, participants as
+  entities): exact, queryable;
+- **facets on tags** — the genuinely semantic dimensions (stance, communicative
+  function, process, aboutness) as weighted tag-edges;
+- **chunk description + embedding** — holistic meaning that resists discretization;
+- **grounding vectors** — the bridge between prompt-space and corpus-space;
+- **prompt interpretation** — the query side.
+
+Two invariants govern the design:
+
+1. **Completeness.** Every dimension in the convergent model is represented *somewhere*
+   in the totality (structure ∪ facets ∪ description ∪ grounding ∪ interpreter). None is
+   dropped; the totality of the artefact covers the whole dimensional space.
+2. **Symmetry.** Whatever the artefact uses to *retrieve* must be mirrored on the prompt
+   side — chunk-representation and prompt-interpretation decompose along the *same* axes,
+   or they cannot be matched. Communicative function is only useful if the interpreter
+   also extracts "the user is asking for a decision"; TAM is only useful if the
+   interpreter reads "what did we decide *last* quarter" as past/retrospective.
+
+So facet design is an **allocation problem**, not a list: for each convergent dimension,
+decide which mechanism(s) carry it — `{hard field | tag-facet | description/embedding |
+grounding | interpreter}` — and confirm the prompt interpreter extracts the matching
+axis. "Facets" are simply the subset of dimensions best carried as weighted tag-edges.
+Building this dimension → mechanism allocation table (with the interpreter column) is the
+next design step before the re-tag is implemented.
+
+### 13.4 References
+
+- Ranganathan, *Colon Classification* / PMEST — faceted classification:
+  <https://en.wikipedia.org/wiki/Faceted_classification>
+- Halliday, Systemic Functional Linguistics — metafunctions:
+  <https://en.wikipedia.org/wiki/Metafunction>
+- Thematic / semantic roles; Jurafsky & Martin, *SLP3* ch. 21 (Semantic Role Labeling):
+  <https://web.stanford.edu/~jurafsky/slp3/21.pdf>; thematic relations:
+  <https://en.wikipedia.org/wiki/Thematic_relation>
+- Neo-Davidsonian event semantics (Landman, course notes):
+  <https://www.tau.ac.il/~landman/Online%20Class%20Notes/2%20ADVANCED%20SEMANTICS/8%20Neo-davidsonian%20event%20semantics.pdf>
+- Abstract Meaning Representation (AMR):
+  <https://en.wikipedia.org/wiki/Abstract_Meaning_Representation>
+- 5W1H semantic-role extraction:
+  <https://arxiv.org/pdf/2505.14804>
+- Tense–Aspect–Mood (TAM): <https://en.wikipedia.org/wiki/Tense%E2%80%93aspect%E2%80%93mood>
+- Appraisal theory (Martin & White):
+  <https://www.grammatics.com/appraisal/appraisaloutline/unframed/appraisaloutline.htm>
+- Evidentiality vs epistemic modality (Kroeger, *Analyzing Meaning* ch. 17):
+  <https://socialsci.libretexts.org/Bookshelves/Linguistics/Analyzing_Meaning_-_An_Introduction_to_Semantics_and_Pragmatics_(Kroeger)/17:_Evidentiality>
+- Rhetorical Structure Theory: <https://en.wikipedia.org/wiki/Rhetorical_structure_theory>

@@ -14,6 +14,12 @@ DEFAULT_DATA_ROOT = REPO_ROOT / "data"
 _DEFAULT_LLM_BASE_URL = "https://api.openai.com/v1"
 _DEFAULT_LLM_MODEL = "gpt-4o-mini"
 
+# NVIDIA NIM (build.nvidia.com) — OpenAI-compatible host for the v2 tagger.
+# NOTE: the working endpoint is the `integrate.` subdomain; plain
+# api.nvidia.com is wrong. Forever-free as of 2026-05, 40 req/min.
+_DEFAULT_NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1"
+_DEFAULT_NVIDIA_MODEL = "deepseek-ai/deepseek-v4-pro"
+
 
 def resolve_data_root(value: str | Path | None = None) -> Path:
     if value is None or str(value).strip() == "":
@@ -60,6 +66,21 @@ class Settings(BaseSettings):
 
     embedding_model: str = "intfloat/e5-small-v2"
 
+    # NVIDIA NIM config for the v2 tagger (OpenAI-compatible client points here).
+    # Separate from agent_* so existing legacy/eval paths are not silently rerouted.
+    nvidia_base_url: str = Field(
+        default=_DEFAULT_NVIDIA_BASE_URL,
+        validation_alias=AliasChoices("NVIDIA_BASE_URL"),
+    )
+    nvidia_model: str = Field(
+        default=_DEFAULT_NVIDIA_MODEL,
+        validation_alias=AliasChoices("NVIDIA_MODEL"),
+    )
+    nvidia_api_key: str = Field(
+        default="",
+        validation_alias=AliasChoices("NVIDIA_API_KEY"),
+    )
+
     data_root: Path = DEFAULT_DATA_ROOT
 
     @field_validator("agent_base_url", mode="before")
@@ -74,4 +95,18 @@ class Settings(BaseSettings):
     def _default_model_when_blank(cls, value: object) -> object:
         if isinstance(value, str) and value.strip() == "":
             return _DEFAULT_LLM_MODEL
+        return value
+
+    @field_validator("nvidia_base_url", mode="before")
+    @classmethod
+    def _default_nvidia_base_url_when_blank(cls, value: object) -> object:
+        if isinstance(value, str) and value.strip() == "":
+            return _DEFAULT_NVIDIA_BASE_URL
+        return value
+
+    @field_validator("nvidia_model", mode="before")
+    @classmethod
+    def _default_nvidia_model_when_blank(cls, value: object) -> object:
+        if isinstance(value, str) and value.strip() == "":
+            return _DEFAULT_NVIDIA_MODEL
         return value
