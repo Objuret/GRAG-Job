@@ -10,15 +10,13 @@ phantom v1<->v2 edges that contradict the no-v1-imports rule):
   v1 REFERENCE  -> v1/graphify-out/      : frozen v1 stack, on demand only.
 
 Usage (exposed as `regraph` in PowerShell + bash):
-  regraph              rebuild the ACTIVE graph
-  regraph --v1         rebuild the v1 REFERENCE graph
-  regraph --force      allow a >10% node drop (deliberate rescopes)
-  regraph --no-agent   don't auto-invoke Claude; just print a worklist and stop
+  regraph          rebuild the ACTIVE graph
+  regraph --v1     rebuild the v1 REFERENCE graph
+  regraph --force  allow a >10% node drop (deliberate rescopes)
 
-Code edits rebuild on their own. When a DOC changed/appeared, the prose must be read
-by a model: the script hands the worklist to a headless Claude Code (`claude -p`), which
-extracts each doc (with bridge edges into the existing concepts), then the script
-finishes the rebuild. No model available -> it writes the worklist and stops loudly.
+Code edits rebuild on their own. If a DOC changed/appeared, the prose has to be read
+by a model first - the script can't do that itself, so it lists which docs need it and
+stops. To finish: tell Claude "update the graph" and it'll read them, then re-run.
 See graphify-out/REFRESH.md.
 """
 from __future__ import annotations
@@ -36,7 +34,6 @@ EXTERNAL = [
     (Path(r"A:\Coding\skills\handoff\exjobbet"),          "handoff/exjobbet/"),
     (Path(r"A:\Coding\skills\state\exjobbet"),            "state/exjobbet/"),
 ]
-EXTERNAL_PARENT = Path(r"A:\Coding\skills")   # --add-dir for the headless agent
 # ---------------------------------------------------------------------------
 
 os.environ["GRAPHIFY_OUT"] = str(OUT)
@@ -44,7 +41,7 @@ os.chdir(REPO_ROOT)
 
 from graphify.detect import detect, save_manifest
 from graphify.extract import collect_files, extract
-from graphify.cache import check_semantic_cache, save_cached, save_semantic_cache
+from graphify.cache import check_semantic_cache, save_cached
 from graphify.build import build_from_json
 from graphify.cluster import cluster, score_all
 from graphify.analyze import god_nodes, surprising_connections, suggest_questions
@@ -52,12 +49,10 @@ from graphify.report import generate
 from graphify.export import to_json
 
 SIDECAR = OUT / ".external_cache"
-PICKUP = OUT / ".pickup"
 INIT_MARKER = OUT / ".graph_refresh_init"
 WORKLIST = OUT / ".refresh_worklist.json"
 CONCEPT_INDEX = OUT / ".concept_index.txt"
 FORCE = "--force" in sys.argv
-NO_AGENT = "--no-agent" in sys.argv or os.environ.get("REGRAPH_NO_AGENT") == "1"
 _FM = re.compile(r"^---[ \t]*\r?$", re.MULTILINE)
 
 
@@ -93,16 +88,6 @@ def frag_path(real: Path) -> Path:
     return SIDECAR / (hashlib.sha256(str(real).lower().encode()).hexdigest()[:16] + ".json")
 
 
-def find_claude():
-    bases = [Path(os.environ["USERPROFILE"]) / e / "extensions"
-             for e in (".cursor", ".vscode", ".vscode-insiders", ".windsurf")]
-    cands = []
-    for b in bases:
-        if b.is_dir():
-            cands += b.glob("anthropic.claude-code-*/resources/native-binary/claude.exe")
-    return sorted(cands, key=lambda p: p.parent.parent.parent.name)[-1] if cands else None
-
-
 def collect_code(file_lists: dict) -> list:
     out = []
     for f in file_lists.get("code", []):
@@ -112,12 +97,8 @@ def collect_code(file_lists: dict) -> list:
 
 
 def words(paths) -> int:
-    n = 0
-    for p in paths:
-        p = Path(p)
-        if p.is_file():
-            n += len(p.read_text(encoding="utf-8", errors="ignore").split())
-    return n
+    return sum(len(Path(p).read_text(encoding="utf-8", errors="ignore").split())
+               for p in paths if Path(p).is_file())
 
 
 def write_concept_index(nodes: list) -> None:
@@ -137,8 +118,10 @@ def scan_external():
         for p in sorted(base.glob("*.md")):
             current.append(str(p)); seen.add(frag_path(p).name)
             fp = frag_path(p)
-            if fp.exists() and json.loads(fp.read_text(encoding="utf-8")).get("hash") == body_hash(p):
-                frags.append(json.loads(fp.read_text(encoding="utf-8"))); continue
+            if fp.exists():
+                fr = json.loads(fp.read_text(encoding="utf-8"))
+                if fr.get("hash") == body_hash(p):
+                    frags.append(fr); continue
             changed.append(str(p))
     for fp in SIDECAR.glob("*.json"):
         if fp.name not in seen:
@@ -175,81 +158,21 @@ def seed_first_run(repo_uncached) -> None:
     print("first run: seeded external fragments + registered empty repo docs")
 
 
-_AGENT_PROMPT = (
-    "You are updating a graphify knowledge graph, non-interactively. Do exactly this:\n"
-    "1. Read the worklist JSON at {worklist}.\n"
-    "2. Read the concept index at its 'concept_index' path (TSV lines `node_id<TAB>label`) "
-    "- these are concepts ALREADY in the graph.\n"
-    "3. For EACH item in items[]: read the file at item.real. Extract its named "
-    "concepts/decisions/mechanisms as nodes (file_type one of rationale|concept|document). "
-    "CRUCIAL: add bridge edges FROM your new nodes TO existing concept ids the file "
-    "discusses, copying the id VERBATIM from the concept index (relations: references|"
-    "conceptually_related_to|semantically_similar_to|rationale_for). Node ids: lowercase "
-    "[a-z0-9_] from filename+entity, unique, no suffixes. Every edge needs confidence_score "
-    "(EXTRACTED=1.0; INFERRED one of 0.95/0.85/0.75/0.65/0.55).\n"
-    "4. Write ONLY a JSON object {{\"nodes\":[...],\"edges\":[...]}} to item.pickup using the "
-    "Write tool (one pickup per item).\n"
-    "5. Do NOT run refresh_graph.py or rebuild anything. After writing every pickup, stop."
-)
-
-
-def resolve_docs(repo_uncached, ext_changed, scope):
-    """Build the worklist, hand it to a headless Claude to extract, persist results.
-    Exits(2) if no model is available or the agent didn't produce output."""
-    PICKUP.mkdir(parents=True, exist_ok=True)
-    items = []
-    for d in repo_uncached:
-        items.append({"kind": "repo", "real": d,
-                      "source_file": Path(d).resolve().relative_to(REPO_ROOT).as_posix(),
-                      "pickup": str(PICKUP / (hashlib.sha256(d.lower().encode()).hexdigest()[:16] + ".json"))})
-    for d in ext_changed:
-        items.append({"kind": "external", "real": d, "source_file": ext_label(Path(d)),
-                      "pickup": str(PICKUP / (hashlib.sha256(d.lower().encode()).hexdigest()[:16] + ".json"))})
+def need_docs_stop(repo_uncached, ext_changed, scope):
+    """A doc changed/appeared and needs reading by a model. Record what, and stop -
+    a script can't read prose. Finishing it = tell Claude 'update the graph'."""
+    items = ([{"kind": "repo", "real": d, "source_file": Path(d).resolve().relative_to(REPO_ROOT).as_posix()}
+              for d in repo_uncached]
+             + [{"kind": "external", "real": d, "source_file": ext_label(Path(d))} for d in ext_changed])
     WORKLIST.write_text(json.dumps(
         {"scope": scope, "concept_index": str(CONCEPT_INDEX), "items": items},
         indent=2, ensure_ascii=False), encoding="utf-8")
-
-    claude = None if NO_AGENT else find_claude()
-    if not claude:
-        print(f"\n*** {len(items)} doc(s) need model extraction ***")
-        for it in items:
-            print("  ", it["kind"], ":", it["real"])
-        why = "--no-agent set" if NO_AGENT else "no Claude CLI found"
-        print(f"\nNot rebuilding ({why}). Process graphify-out/.refresh_worklist.json "
-              f"then re-run. See graphify-out/REFRESH.md.")
-        sys.exit(2)
-
+    print(f"\n{len(items)} doc(s) changed and need reading by a model:")
     for it in items:
-        Path(it["pickup"]).unlink(missing_ok=True)
-    print(f"\nhanding {len(items)} doc(s) to Claude Code ({claude.parent.parent.parent.name}) for extraction...")
-    env = dict(os.environ, REGRAPH_NO_AGENT="1")
-    r = subprocess.run(
-        [str(claude), "-p", _AGENT_PROMPT.format(worklist=str(WORKLIST)),
-         "--permission-mode", "acceptEdits", "--add-dir", str(EXTERNAL_PARENT),
-         "--allowedTools", "Read", "Write", "Glob", "Grep"],
-        cwd=str(REPO_ROOT), env=env, capture_output=True, text=True, timeout=900)
-    if r.returncode != 0:
-        sys.exit(f"claude extraction failed (exit {r.returncode}):\n{(r.stderr or r.stdout)[-800:]}")
-
-    missing = []
-    for it in items:
-        pf = Path(it["pickup"])
-        if not pf.exists():
-            missing.append(it["real"]); continue
-        frag = json.loads(pf.read_text(encoding="utf-8"))
-        nodes = frag.get("nodes", []); edges = frag.get("edges", [])
-        for x in nodes + edges:
-            x["source_file"] = it["source_file"]   # stamp authoritative provenance
-        if it["kind"] == "repo":
-            save_semantic_cache(nodes, edges, [], root=REPO_ROOT)
-        else:
-            frag_path(Path(it["real"])).write_text(json.dumps(
-                {"source_file": it["source_file"], "hash": body_hash(Path(it["real"])),
-                 "nodes": nodes, "edges": edges}, ensure_ascii=False), encoding="utf-8")
-        pf.unlink(missing_ok=True)
-    if missing:
-        sys.exit("agent did not produce extractions for:\n  " + "\n  ".join(missing))
-    print(f"extracted {len(items)} doc(s) via Claude Code.")
+        print("  -", it["real"])
+    print("\nA script can't read prose. To finish: tell Claude \"update the graph\".")
+    print("(It reads the docs, then re-runs this. Details: graphify-out/REFRESH.md.)")
+    sys.exit(2)
 
 
 def assemble(node_sources, edge_sources):
@@ -321,11 +244,7 @@ def main_active():
     write_concept_index(ast["nodes"] + cn + [n for fr in ext_frags for n in fr["nodes"]])
 
     if uncached or ext_changed:
-        resolve_docs(uncached, ext_changed, "active")
-        cn, ce, ch, uncached = check_semantic_cache(repo_docs, root=REPO_ROOT)
-        ext_frags, ext_changed, ext_current = scan_external()
-        if uncached or ext_changed:
-            sys.exit("still missing extractions after agent run; aborting.")
+        need_docs_stop(uncached, ext_changed, "active")
 
     nodes, edges = assemble(
         ast["nodes"] + cn + [x for fr in ext_frags for x in fr["nodes"]],
@@ -346,10 +265,7 @@ def main_v1():
     ast = extract(code, cache_root=REPO_ROOT) if code else {"nodes": [], "edges": []}
     write_concept_index(ast["nodes"] + cn)
     if uncached:
-        resolve_docs(uncached, [], "v1")
-        cn, ce, ch, uncached = check_semantic_cache(v1_docs, root=REPO_ROOT)
-        if uncached:
-            sys.exit("still missing extractions after agent run; aborting.")
+        need_docs_stop(uncached, [], "v1")
     nodes, edges = assemble(ast["nodes"] + cn, ast["edges"] + ce)
     detection = {"total_files": det.get("total_files", 0), "total_words": det.get("total_words", 0)}
     rebuild(nodes, edges, ch, detection, V1_ROOT / "graphify-out", V1_ROOT, "v1 REFERENCE graph")
