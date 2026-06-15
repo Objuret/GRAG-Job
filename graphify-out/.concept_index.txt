@@ -1,0 +1,154 @@
+2026_05_25_artefact_audit_and_cleanup_plan_cheap_cleanup_plan	Cheap zero-LLM cleanup plan (chunker+materialize+pattern-delete+docs)
+2026_05_25_artefact_audit_and_cleanup_plan_chunker_drops_timestamps	Defect: chunker discards source timestamps (locator has zero date keys)
+2026_05_25_artefact_audit_and_cleanup_plan_doc	Handoff: graph-RAG artefact audit + cleanup plan (2026-05-25)
+2026_05_25_artefact_audit_and_cleanup_plan_doc_drift	Doc drift: graph_schema.md claims NEXT/Run/legacy writer that live graph lacks
+2026_05_25_artefact_audit_and_cleanup_plan_id_date_tag_pollution	Defect: ~18% of tags are literal IDs/dates, not concepts
+2026_05_25_artefact_audit_and_cleanup_plan_live_graph_audit	Live herb-eval graph audit (4 labels, 3 edge types, no NEXT/Run)
+2026_05_25_artefact_audit_and_cleanup_plan_neo4j_data_move_backup	Infra: Neo4j data moved to A:, herb-eval.dump + herb-eval-backup sibling DB
+2026_05_25_artefact_audit_and_cleanup_plan_pattern_delete_junk_tags	Pattern-delete junk tags via anchored regexes (eid/emp/year/date)
+2026_05_25_artefact_audit_and_cleanup_plan_relevance_calibration	Defect: relevance_to_file calibrated too high to discriminate
+2026_05_25_artefact_audit_and_cleanup_plan_silent_unembedded_tags	Defect: 23 tags silently unembedded (description filter)
+2026_05_25_artefact_audit_and_cleanup_plan_three_weight_layers	Three baked weight layers (relevance_to_file / w_chunk / w_facet)
+2026_05_25_artefact_audit_and_cleanup_plan_w_facet_categorical	Finding: w_facet is categorical (~9-value resolution), not continuous
+2026_05_25_artefact_audit_and_cleanup_plan_years_from_tags	Defect: c.years back-projected from temporal tag names (hard-fields-before-tagging violation)
+2026_05_25_graph_rag_retrieval_redesign_bake_combinator	Bake combinator decision (multiplication rejected)
+2026_05_25_graph_rag_retrieval_redesign_doc	Handoff: graph-RAG retrieval pipeline redesign (2026-05-25)
+2026_05_25_graph_rag_retrieval_redesign_no_query_time_synthesis	No weight synthesis at query time
+2026_05_25_graph_rag_retrieval_redesign_recall_filter_rank_cap	Recall to filter to rank to cap retrieval shape
+2026_05_25_graph_rag_retrieval_redesign_seven_factor_violation	7-factor multiplicative scoreCypher (rejected synthesis)
+2026_05_25_graph_rag_retrieval_redesign_weights_baked_at_index	Weights baked at index time as facts
+2026_05_25_middle_layer_weight_redesign_determinism_goal	Retriever as deterministic function of graph state and query
+2026_05_25_middle_layer_weight_redesign_doc	Handoff: middle-layer weight & retrieval redesign (2026-05-25)
+2026_05_25_middle_layer_weight_redesign_facets_direction_not_filter	Facets as directional alignment signal, not hard filter
+2026_05_25_middle_layer_weight_redesign_semantic_layer_load_bearing	Semantic weights are the load-bearing LLM-produced value
+2026_05_25_middle_layer_weight_redesign_three_roles	Three roles: indexing math, interpreter LLM, retriever graph
+2026_05_25_middle_layer_weight_redesign_w_facet_coarse	w_facet coarse (21 distinct values across 255k edges)
+2026_05_31_v2_artefact_rebuild_and_facet_design_combinator	Combinator = prompt-conditioned weighted dot product (accumulate not max)
+2026_05_31_v2_artefact_rebuild_and_facet_design_doc	Handoff: v2 artefact rebuild design + facet/semantic redesign (2026-05-31)
+2026_05_31_v2_artefact_rebuild_and_facet_design_eval_oracle_holdout	Eval oracle (answerable/unanswerable_questions) must be holdout, not corpus
+2026_05_31_v2_artefact_rebuild_and_facet_design_facet_framework	Facet redesign: facets as semantic dimensions from 7 linguistic traditions
+2026_05_31_v2_artefact_rebuild_and_facet_design_mapping_key	Per-dataset declarative settings-file key (cross-refs + identity only)
+2026_05_31_v2_artefact_rebuild_and_facet_design_nvidia_host	v2 tagger host = NVIDIA NIM (forever-free 40 RPM, rate-limiter required)
+2026_05_31_v2_artefact_rebuild_and_facet_design_reference_resolver_keystone	Keystone implementation = reference resolver (resolve + hash-verify + fail-loud)
+2026_05_31_v2_artefact_rebuild_and_facet_design_reference_triple	Reference triple {file_id, scheme, address} + read-in-place/hash-verify
+2026_05_31_v2_artefact_rebuild_and_facet_design_references_not_copies	v2 core stance: graph is a reference index over untouched raw, not copies
+2026_05_31_v2_artefact_rebuild_and_facet_design_retag_facet_analysis	v1 facets underspecified -> degraded into token-extraction (~18% junk)
+2026_05_31_v2_artefact_rebuild_and_facet_design_routing_model	Retriever routing = weighted activation propagation, no hard filters
+2026_05_31_v2_artefact_rebuild_and_facet_design_shape_probe	Shape probe (dataset-agnostic, recovers structural schema with source names)
+2026_05_31_v2_artefact_rebuild_and_facet_design_v1_snapshot	v1 preserved (tag artefact-v1 @244beb7, branch + dump + sibling DB) = comparison baseline
+2026_05_31_v2_artefact_rebuild_and_facet_design_v2_facet_set	v2 facet set: topic/process/stance/communicative-function/temporal-stance(TAM)
+2026_05_31_v2_artefact_rebuild_and_facet_design_v2_pipeline	v2 pipeline scan to probe to reference to structure to tag to retrieve
+2026_06_03_v2_chunking_model_design_coherent_episode	Chunk as coherent episode, not fixed-size window
+2026_06_03_v2_chunking_model_design_covers_edge	COVERS edge joining record references to chunks
+2026_06_03_v2_chunking_model_design_deterministic_seam_finder	Deterministic boundary seam-finder (no embeddings, no LLM)
+2026_06_03_v2_chunking_model_design_doc	Handoff: v2 chunking model design (2026-06-03)
+2026_06_03_v2_chunking_model_design_materialized_path	Materialized path index as integer components
+2026_06_03_v2_chunking_model_design_no_overlap	No chunk overlap (protects references-not-copies)
+2026_06_03_v2_chunking_model_design_no_parent_node	Subchunks share path prefix, no parent node
+2026_06_03_v2_chunking_model_design_records_vs_prose_per_position	Records-vs-prose is per-position in the tree
+2026_06_03_v2_chunking_model_design_structure_chunk_handoff_depth	Structure-to-chunk handoff depth (read off shape)
+2026_06_04_v2_chunk_cap_and_budget_cap_3000_tokens	Cap approx 3000 tokens (calibration seed)
+2026_06_04_v2_chunk_cap_and_budget_doc	Handoff: v2 chunk cap / budget design (2026-06-04)
+2026_06_04_v2_chunk_cap_and_budget_embedding_placement	Embedding placement: tag concept-embedding on Tag, description-embedding on Chunk, weight on edge
+2026_06_04_v2_chunk_cap_and_budget_focus_span_cap	Chunk cap is the tagger's focus span, not an embedder limit
+2026_06_04_v2_chunk_cap_and_budget_per_content_kind_seams	Seams per content-kind (chat/prose/records) dispatched by probe shape
+2026_06_04_v2_chunk_cap_and_budget_records_canonical_path	Records ride the canonical path; subchunk fragments the only minted tier
+2026_06_04_v2_chunk_cap_and_budget_uniform_split_rule	Uniform split rule: walk to strongest seam, recurse, no minimum size
+2026_06_09_weight_production_measure_not_emit_all_facet_weights_one_edge	All facet weights on the same chunk-tag edge, not one edge per facet
+2026_06_09_weight_production_measure_not_emit_anchoring_reduction	Anchoring reduction 85% single-pass to 12.3% two-pass derived
+2026_06_09_weight_production_measure_not_emit_combinator	Combinator: prompt-conditioned weighted dot product, accumulation not max
+2026_06_09_weight_production_measure_not_emit_doc	State doc 2026-06-09: weight production measure-not-emit
+2026_06_09_weight_production_measure_not_emit_fewer_richer_tags	Fewer, richer phrase-level tags with context on the edge
+2026_06_09_weight_production_measure_not_emit_isotropy_problem	Anisotropic cosine on this corpus (collapses to ~0.8 band)
+2026_06_09_weight_production_measure_not_emit_llm_cannot_weight	An LLM cannot emit correct weights (v1 evidence: 85% round-number anchoring)
+2026_06_09_weight_production_measure_not_emit_measure_dont_emit	Measure, don't emit: geometry produces weights, model never emits a number
+2026_06_09_weight_production_measure_not_emit_tag_description_distance	Tag-vs-description embedding distance as a relevance signal (later killed)
+2026_06_09_weight_production_measure_not_emit_three_edge_weights	Three v2 edge weights (chunk-file, chunk-tag, tag-facet)
+2026_06_09_weight_production_measure_not_emit_w_chunk_formula	v1 w_chunk derivation (strength x coverage_bonus)
+2026_06_11_v2_facet_carriers_and_build_gate_all_facets_evaluations	All facets are evaluations: each facet weight = how much of that facet the tag carries
+2026_06_11_v2_facet_carriers_and_build_gate_asked_for_given_split	Asked-for vs given split: rank by requested dimension, narrow by presupposed scope (no numeric prompt emphasis)
+2026_06_11_v2_facet_carriers_and_build_gate_axis_apparatus_dead	Axis/projection weight apparatus (SemAxis, pole words) is DEAD
+2026_06_11_v2_facet_carriers_and_build_gate_description_dead	Chunk description killed: union of phrase tags IS the chunk content
+2026_06_11_v2_facet_carriers_and_build_gate_design_before_build_gate	Design-before-build gate: no pipeline code until the stage's design is signed off
+2026_06_11_v2_facet_carriers_and_build_gate_doc	State doc 2026-06-11: v2 facet carriers and build gate
+2026_06_11_v2_facet_carriers_and_build_gate_facets_dual_role	Facets dual-purpose: narrowing entry into corpus + prompt-priced weight modifier
+2026_06_11_v2_facet_carriers_and_build_gate_interpreter_contract	Interpreter contract: one toolless LLM call emitting text/categories only (need, subjects, action, function, stance, time, literals, shape)
+2026_06_11_v2_facet_carriers_and_build_gate_linguistics_to_interpreter	Linguistics belongs to the interpreter (decomposing the prompt for tools/routes)
+2026_06_11_v2_facet_carriers_and_build_gate_node_edge_split	Node/edge split: intrinsic per-phrase value on node, sibling-relational value on edge
+2026_06_11_v2_facet_carriers_and_build_gate_per_facet_unique_mechanism	Each facet gets its own unique weight-production mechanism (concept uniform, instrument per-facet)
+2026_06_11_v2_facet_carriers_and_build_gate_phrase_is_the_node	Phrase tag IS the node: per-chunk contextual phrase + embedding, no bare-word shared nodes, no synonym merge
+2026_06_11_v2_facet_carriers_and_build_gate_polarity_not_geometry	Polarity does not survive embedding similarity; stance direction must be explicit text/label
+2026_06_11_v2_facet_carriers_and_build_gate_proximity_linking	Cross-chunk linking by phrase-embedding proximity (emergent neighborhood), not node identity
+2026_06_11_v2_facet_carriers_and_build_gate_scan_probe_built	First v2 pipeline slice built: scan + probe stages, 12 tests green
+2026_06_11_v2_facet_carriers_and_build_gate_sibling_centrality	Sibling centrality: tag's relational value against its chunk's own tag cloud, per facet, on the chunk-tag edge
+2026_06_11_v2_facet_carriers_and_build_gate_swefn_grounding	Swedish FrameNet (SweFN) frame-semantics grounding for the process facet
+2026_06_12_v2_graph_spine_and_literal_matching_ambiguity_rule	Ambiguity rule: all candidates boosted, confidence tiers boost size, jump only on exact-unique single anchor
+2026_06_12_v2_graph_spine_and_literal_matching_chunk_file_weight_dead	Chunk-file relevance weight DEAD (containment edge carries no number; coherence chunking solves filler demotion)
+2026_06_12_v2_graph_spine_and_literal_matching_doc	State doc 2026-06-12: v2 graph spine and literal matching
+2026_06_12_v2_graph_spine_and_literal_matching_docs_removal_not_banners	Docs reconciliation by removal not banners: dead content deleted, tombstones only to block revival
+2026_06_12_v2_graph_spine_and_literal_matching_embed_only_phrase_tags	One embedding surface: embed phrase tags only (no field values, descriptions, or raw chunks)
+2026_06_12_v2_graph_spine_and_literal_matching_field_handling_by_shape	Field handling follows value shape (dates to time-range, id-shaped to id-sets, few-distinct to labels, names raw-only, long text to content); finalize at mapping key
+2026_06_12_v2_graph_spine_and_literal_matching_hard_fields_attributes	Hard fields are indexed chunk attributes (author ids, time range, kind, channel labels, materialized path)
+2026_06_12_v2_graph_spine_and_literal_matching_herb_twins	HERB product twins (ContentForce/ContextForce etc.) only separable by exact matching, not embeddings/string-distance
+2026_06_12_v2_graph_spine_and_literal_matching_id_joins_replace_entity_bridges	Multi-hop via id-joins through chunk attributes + raw directory reads (entity-node bridges impossible without entity nodes)
+2026_06_12_v2_graph_spine_and_literal_matching_literal_matching_pipeline	Literal-matching pipeline: exact+normalization pre-pass, vocab-free interpreter type/wanted-vs-excluded flag, scoped distance lookup on miss, paraphrase to semantics
+2026_06_12_v2_graph_spine_and_literal_matching_multi_hit_boosts_only	Multi-hit rule: multiple hard-field hits = additive boosts only, no multi-anchor jump
+2026_06_12_v2_graph_spine_and_literal_matching_no_corpus_vocab_in_interpreter	No corpus vocabulary in the interpreter's context (cost boundary; deterministic resolution is free)
+2026_06_12_v2_graph_spine_and_literal_matching_no_inventories_in_graph	No value inventories/metadata mirrors in the graph: values live in raw, graph holds field connection + references
+2026_06_12_v2_graph_spine_and_literal_matching_node_attribute_rule	Node/attribute rule: node only if others resolve through it or retrieval walks through it; otherwise an attribute
+2026_06_12_v2_graph_spine_and_literal_matching_spine_source_file_chunk_tag	v2 graph spine: Source to File to Chunk to Tag, nothing else is a node
+baselines_common_rationale_1	Shared helpers for v2 Neo4j baseline retrievers.
+baselines_init_rationale_1	v2 eval baselines — thesis comparison arms for the v2 artefact (not v1).  | Modu
+baselines_lucene_rationale_1	v2 Lucene baseline — plain full-text on raw `Chunk.content`.  Port of `frontend/
+baselines_lucene_rationale_33	Lucene full-text retrieval over `chunk_content_ft` on `c.content` only.
+baselines_sql_agent_rationale_1	v2 SQL-agent baseline — LLM with a SQL tool over the HERB corpus.  Same producti
+baselines_sql_agent_rationale_177	Build (or rebuild) the HERB SQLite store. Returns the DB path.
+baselines_sql_agent_rationale_229	Run a SELECT-only query against the HERB SQLite store. Other statements     are
+baselines_sql_agent_rationale_273	Introspect the live SQLite schema and return it as a human-readable     block fo
+baselines_sql_agent_rationale_335	OpenAI tool list with a row-cap hint that matches the run configuration.
+baselines_sql_agent_rationale_346	Raw OpenAI-compatible chat completion POST. Returns the parsed response.
+baselines_sql_agent_rationale_387	One question → one tool-use loop → final answer + collected evidence.
+baselines_sql_agent_rationale_473	Flatten a row dict to a single context string for RAGAS.
+baselines_vector_rationale_1	v2 vector baseline — dense kNN on chunk content embeddings.  Conventional semant
+baselines_vector_rationale_64	Dense vector retrieval over `chunk_emb_content` on `c.emb_content`.
+claude_md_design_before_build	Hard rule: Design before build — no pipeline code until the stage's design is signed off
+claude_md_doc	CLAUDE.md — project instructions / session entry point
+claude_md_docs_track_reality	Hard rule: docs track reality — close a decision, update design doc + memory in the same pass
+claude_md_graphify_navigation_graph	Codebase navigation graph (graphify) — a search tool, NOT the v2 Neo4j spine
+claude_md_herb_eval_canonical_db	Hard rule: herb-eval is the canonical Neo4j DB — never query herb (contaminated)
+claude_md_model_emits_no_numbers	Hard rule: the model emits no numbers, ever (tagger and interpreter)
+claude_md_plain_english_verify	Hard rule: talk in plain spoken English, short answers; verify before asserting
+claude_md_refresh_graph_only_path	python refresh_graph.py is the ONLY active-graph rebuild path (never graphify --update)
+claude_md_repo_layout_v1_v2_split	Repo layout: v2/ = ACTIVE rebuild, v1/ = FROZEN thesis-era stack (reference only)
+claude_md_session_entry_state_docs	Session entry point: continue work via state-transfer docs stored OUTSIDE the workspace
+claude_md_v1_v2_separate_graphs	v1 and v2 kept in SEPARATE graphify graphs (active graph contains NO v1)
+claude_md_v2_graph_spine_closed_canon	Hard rule: v2 graph spine is closed canon — Source->File->Chunk->Tag are the only nodes
+keys_salesforce_herb	HERB mapping key (Salesforce__HERB.yaml)
+keys_salesforce_herb_content	HERB content fields (prose to chunk/tag)
+keys_salesforce_herb_directories	HERB id-directories (employee/customer/pr_author)
+keys_salesforce_herb_id_spaces	HERB id-space assignment
+readme_exjobbet_monorepo	exjobbet Artefact Monorepo
+shared_config_rationale_1	Path constants + runtime settings loaded from .env.
+shared_config_rationale_18	# NOTE: the working endpoint is the `integrate.` subdomain; plain
+shared_config_rationale_32	Runtime settings. Loaded from backend/.env and overridable by env vars.
+shared_error_class_rationale_1	Typed error classes for the legacy indexer circuit breaker.  Kept in `shared/`
+shared_legacy_mirror_boot_rationale_1	Load Python modules archived under quarantine/legacy_mirror/backend/.
+shared_legacy_mirror_boot_rationale_15	Load ``quarantine/legacy_mirror/backend/<relative_parts>`` as a one-off module.
+shared_neo4j_client_rationale_1	Thin async wrapper around the Neo4j driver.
+shared_utils_rationale_1	Shared helpers for run IDs, hashing, and JSON IO.
+tests_test_probe_rationale_1	Golden tests for the shape probe — the deterministic prefix is cheap to lock dow
+v2_derive_corpus_rationale_1	One-time prep: derive the corpus view a dataset's pipeline run scans.  The publi
+v2_init_rationale_1	v2 ingestion spine — references-not-copies rebuild.  Fresh package: no imports f
+v2_main_rationale_1	v2 pipeline CLI.    python -m v2 derive-corpus <raw-dataset-dir> -> <data>/corpu
+v2_probe_rationale_1	Stage 2: probe — recover the structural schema from shape. Meaning-free.  Profil
+v2_probe_rationale_111	Fuse the shapes of many files into one tree. Order-independent.
+v2_probe_rationale_187	Sets -> sorted lists so the shape tree serializes deterministically.
+v2_probe_rationale_49	One value -> its shape signature.
+v2_probe_rationale_64	Merge two shape signatures (array-element fusion and cross-file fusion).
+v2_scan_rationale_1	Stage 1: scan — catalog raw files. Dumb and meaning-free.  Walks a dataset direc
+v2_scan_rationale_62	Catalog every file under dataset_dir. Fails loud on the first broken file.
+work_nvidia_connectivity_test_rationale_1	NVIDIA NIM connectivity + model benchmark.  Reads the API key from backend/.env
+work_resolver_prototype_rationale_1	v2 reference-resolver prototype — proves the 'graph is references' stance.  A re
+work_resolver_prototype_rationale_34	RFC 6901. Raises (loud) on any miss — never returns a silent default.
+work_resolver_prototype_rationale_59	ref = {file_path, sha256, scheme, address}. Fail loud on hash mismatch.
+work_verify_nvidia_settings_rationale_1	Confirm Settings reads NVIDIA_* from backend/.env. Key value never printed.

@@ -1,0 +1,87 @@
+# HERB settings-file KEY — redrafted 2026-06-12 in post-spine vocabulary
+# (graph = Source→File→Chunk→Tag; no entity/record nodes, no minted edges —
+# design §7/§8). The per-dataset "key": the only thing a human writes. It
+# declares MEANING over the structural schema the probe recovers automatically.
+#
+# The probe gives: collections, nesting, scalar shapes + repetition ratios,
+# long-text leaves, source names. The shape→handling table (design §8) turns
+# those into attributes/content with no key entry: dates → time-range,
+# id-space fields → id-sets, repeated scalars → label attributes,
+# per-record-unique free-form (title, link) → stays in raw, never copied.
+# This file adds ONLY the three judgments shape can't know:
+#   1. content      — which fields are the prose to chunk + tag
+#   2. directories  — which files are id-directories (not corpus), + kind
+#   3. id_spaces    — which fields carry which id-space
+# Everything unmentioned mirrors automatically. Silence = "mirror it".
+#
+# The eval oracle is NOT declared here: it is quarantined structurally
+# (design §4 stage 0, derive_corpus.py) — the scanned corpus/ view physically
+# cannot contain it, so the key has nothing to say about it. The harness
+# reads the oracle in place from the working raw; it is copied nowhere.
+
+dataset: Salesforce__HERB
+
+# What a source (file) name IS here: products (PitchForce, ContentForce, …).
+# Feeds the interpreter-flag → scope join; universal enum: person|org|product.
+sources:
+  kind: product
+
+# ---- 1. content: the prose that gets chunked and tagged ----
+# JSON-pointer patterns into products/*.json.
+content:
+  - /slack/*/Message/User/text
+  - /prs/*/summary
+  - /prs/*/reviews/*/comment
+  - /documents/*/content
+  - /documents/*/feedback               # second doc-leaf on the same record
+  - /meeting_transcripts/*/transcript
+  - /meeting_chats/*/text               # short (maxlen 128) — still content
+  - /urls/*/description                 # short (maxlen 120) — still content
+
+# ---- 2. directories: id-spaces resolved through raw, never mirrored ----
+# kind routes an interpreter flag to the one directory the scoped
+# distance-lookup searches; key/name = the fields that lookup reads
+# (from raw, via references).
+directories:
+  employee:
+    file: metadata/employee.json        # flat dict keyed by eid_xxxxxxxx (530)
+    kind: person
+    key: employee_id                    # == the dict key (verified 2026-05-30)
+    name: name
+    # org hierarchy: metadata/salesforce_team.json — raw, read on demand,
+    # never mirrored into the graph.
+  customer:
+    file: metadata/customers_data.json  # list of 120, {name, role, company, id}
+    kind: person
+    key: id                             # CUST-####
+    name: name
+  pr_author:
+    # EMP_######### logins on prs/reviews. Directory-less population — zero
+    # EMP_ ids in employee.json (verified; never conflate with employee).
+    # No file => exact-match only; no distance lookup possible.
+    kind: person
+
+# ---- 3. id-space assignment: which fields carry which id-space ----
+# These become id-set attributes at their structural scope: record-level →
+# covering chunk; file-level → File node (§7). Resolution rates verified
+# 2026-05-30.
+#
+# NOTE: /team/* and /customers/* do NOT appear here — the dataset card's RAG
+# Evaluation Note marks them oracle-only ("for oracle/long-context evaluation
+# settings only"; 390/815 questions are people-/customer-search), so
+# derive-corpus strips them from the corpus view. Membership is inferred from
+# the artifacts and metadata/, exactly as the card prescribes. The customer
+# DIRECTORY above stays: customer names in artifact text still resolve
+# against it.
+id_spaces:
+  employee:
+    - /slack/*/Message/User/userId          # 54/56 resolve
+    - /documents/*/author                   # 15/15
+    - /meeting_transcripts/*/participants/* # 33/33
+  pr_author:
+    - /prs/*/user/login
+    - /prs/*/reviews/*/user/login
+
+# Unresolved-ref policy: a value in an id-space field that resolves to no
+# directory entry (2/56 slack userIds) is flagged loudly at build time —
+# never silently dropped, never invented.

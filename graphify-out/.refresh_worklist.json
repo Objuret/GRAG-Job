@@ -1,0 +1,14 @@
+{
+  "scope": "active",
+  "repo_docs_needing_extraction": [],
+  "external_docs_needing_extraction": [
+    "A:\\Coding\\skills\\state\\exjobbet\\2026-06-14-v2-facets-as-relevance-channels.md"
+  ],
+  "concept_index": "A:\\exjobbet\\repo\\graphify-out\\.concept_index.txt",
+  "external_prefixes": {
+    "A:\\Coding\\skills\\handoff\\exjobbet-monorepo": "handoff/exjobbet-monorepo/",
+    "A:\\Coding\\skills\\handoff\\exjobbet": "handoff/exjobbet/",
+    "A:\\Coding\\skills\\state\\exjobbet": "state/exjobbet/"
+  },
+  "sidecar_dir": "A:\\exjobbet\\repo\\graphify-out\\.external_cache"
+}

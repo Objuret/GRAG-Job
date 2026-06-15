@@ -7,50 +7,46 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .venv/
-backend/.venv/
 
-# Local agent / planning noise (not part of thesis delivery)
+# Local agent / planning noise
 .claude/
-backend/.plan/
+v1/backend/.plan/
 
-# Quarantined legacy implementation (not part of HERB thesis delivery)
-quarantine/legacy_mirror/
+# Quarantined legacy implementation
+v1/quarantine/legacy_mirror/
 
-# Backend data payloads
-backend/data/raw/
-backend/.work/
-backend/data/baselines/*.db
-backend/data/tagging_runs/*/
-graph_export/latest/
-graph_export/*.pre_cluster_rename_*.zip
+# v2 stage artifacts (manifest/probe dumps for eyeballing — regenerable)
+v2/backend/v2/out/
 
-# Frontend dependencies and builds
+# Data payloads (working copies; storage archive lives outside the repo)
+v1/backend/.work/
+v1/backend/data/tagging_runs/*/
+v2/backend/data/raw/
+v2/backend/data/corpus/
+v2/backend/data/baselines/*.db
+
+# v1 export/run artifacts
+v1/graph_export/latest/
+v1/graph_export/*.pre_cluster_rename_*.zip
+v1/graph_export/grag_graph_latest.zip
+v1/backend/evaluation/*.jsonl
+v1/backend/evaluation/*.json
+v1/ragas_exports/*
+!v1/ragas_exports/.gitkeep
+
+# Frontend dependencies and builds (v1)
 node_modules/
 dist/
 dist-ssr/
+v1/frontend/public/models/Xenova/e5-small-v2/onnx/model.onnx
 
-# Reconstructed large assets — committed only as split <100MB *.partNN
-# (GitHub blocks files >100MB). Rebuilt by scripts/assemble-large-assets.mjs.
-frontend/public/models/Xenova/e5-small-v2/onnx/model.onnx
-graph_export/grag_graph_latest.zip
-
-# RAGAS run artifacts (harness JSONL + runner JSON reports). Source files in
-# backend/evaluation/ are .py/.txt so this only excludes generated output.
-backend/evaluation/*.jsonl
-backend/evaluation/*.json
-
-# Workbench exports (Run Builder + History → ragas_exports/ at repo root)
-ragas_exports/*
-!ragas_exports/.gitkeep
-
-# Extracted thesis text (the user's document — never commit to the repo).
+# Extracted thesis text + analysis scratch — the user's document, never commit.
 thesis_extract.md
-# Thesis documents + analysis scratch — the user's document, never commit.
 .codex_tmp/
 .thesis_audit/
 .tmp_thesis_docx_media/
-.work/thesis_review/
-docs/thesis/
+v1/.work/thesis_review/
+v1/docs/thesis/
 
 # Logs
 logs/

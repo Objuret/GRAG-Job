@@ -1,0 +1,10 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "artefact-v2"
+version = "0.1.0"
+description = "v2 graph-RAG artefact pipeline (references-not-copies rebuild)"
+requires-python = ">=3.10"
+dependencies = []
