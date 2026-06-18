@@ -595,29 +595,24 @@
     "semantic_hash": "c9fb969e68ece884e780b9ce6ad19fe4"
   },
   "A:\\exjobbet\\repo\\v2\\backend\\v2\\baselines\\__init__.py": {
-    "mtime": 1781263071.271863,
-    "ast_hash": "b5633411a51e05515d7aa76b8fd29536",
-    "semantic_hash": "b5633411a51e05515d7aa76b8fd29536"
-  },
-  "A:\\exjobbet\\repo\\v2\\backend\\v2\\baselines\\common.py": {
-    "mtime": 1781263073.3783627,
-    "ast_hash": "5cc35bd12608374bc29c2f40828f8f91",
-    "semantic_hash": "5cc35bd12608374bc29c2f40828f8f91"
+    "mtime": 1781771635.590108,
+    "ast_hash": "3f57abfa37ef890385f6cbb88278f5e6",
+    "semantic_hash": "3f57abfa37ef890385f6cbb88278f5e6"
   },
   "A:\\exjobbet\\repo\\v2\\backend\\v2\\baselines\\lucene.py": {
-    "mtime": 1781263075.2383628,
-    "ast_hash": "8fa087cba05cbe36c920a1859f040506",
-    "semantic_hash": "8fa087cba05cbe36c920a1859f040506"
+    "mtime": 1781626777.0468636,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "A:\\exjobbet\\repo\\v2\\backend\\v2\\baselines\\sql_agent.py": {
-    "mtime": 1781263089.0248637,
-    "ast_hash": "475e064cd9c65da746aaa744b475573e",
-    "semantic_hash": "475e064cd9c65da746aaa744b475573e"
+    "mtime": 1781624782.4964392,
+    "ast_hash": "2f440a6d9460f237ba8ed925aa976359",
+    "semantic_hash": "2f440a6d9460f237ba8ed925aa976359"
   },
   "A:\\exjobbet\\repo\\v2\\backend\\v2\\baselines\\vector.py": {
-    "mtime": 1781263080.725863,
-    "ast_hash": "323fcb9702b14ef02d340d94e9254f25",
-    "semantic_hash": "323fcb9702b14ef02d340d94e9254f25"
+    "mtime": 1781647278.2283905,
+    "ast_hash": "d53639978342dc2548e28582b3284d2a",
+    "semantic_hash": "d53639978342dc2548e28582b3284d2a"
   },
   "A:\\exjobbet\\repo\\v2\\backend\\v2\\derive_corpus.py": {
     "mtime": 1781293327.8183644,
@@ -633,11 +628,6 @@
     "mtime": 1781180984.9554017,
     "ast_hash": "359650c7a6c07b6a9efc6f6c29e24d6a",
     "semantic_hash": "359650c7a6c07b6a9efc6f6c29e24d6a"
-  },
-  "A:\\exjobbet\\repo\\v2\\backend\\v2\\tests\\test_baselines.py": {
-    "mtime": 1781263090.0268626,
-    "ast_hash": "229ecc635c63144612b9d1ef1faf328c",
-    "semantic_hash": "229ecc635c63144612b9d1ef1faf328c"
   },
   "A:\\exjobbet\\repo\\v2\\backend\\v2\\tests\\test_derive_corpus.py": {
     "mtime": 1781293360.5618653,
@@ -943,5 +933,60 @@
     "mtime": 1781434257.7893634,
     "ast_hash": "d57790864cd09d494faeefe6873bc853",
     "semantic_hash": "d57790864cd09d494faeefe6873bc853"
+  },
+  "A:\\exjobbet\\repo\\v2\\backend\\evaluation\\__init__.py": {
+    "mtime": 1781626988.4468634,
+    "ast_hash": "1af2b2eb740216ca9520dd9e24d2fec7",
+    "semantic_hash": "1af2b2eb740216ca9520dd9e24d2fec7"
+  },
+  "A:\\exjobbet\\repo\\v2\\backend\\evaluation\\ragas_io.py": {
+    "mtime": 1781647297.6938922,
+    "ast_hash": "d584c8a45f7c604e1dbbe469062b49c4",
+    "semantic_hash": "d584c8a45f7c604e1dbbe469062b49c4"
+  },
+  "A:\\exjobbet\\repo\\v3\\contract.py": {
+    "mtime": 1781778858.7796087,
+    "ast_hash": "960ac3b7460387aa44d4006b5b6387ef",
+    "semantic_hash": "960ac3b7460387aa44d4006b5b6387ef"
+  },
+  "A:\\exjobbet\\repo\\v3\\eval\\herb.py": {
+    "mtime": 1781778940.3056076,
+    "ast_hash": "d6cc8b8c86c3b3e5c487e18b5eb522b1",
+    "semantic_hash": "d6cc8b8c86c3b3e5c487e18b5eb522b1"
+  },
+  "A:\\exjobbet\\repo\\v3\\eval\\ragas.py": {
+    "mtime": 1781778884.9436092,
+    "ast_hash": "fa000506c053408d6e66f64dc7872090",
+    "semantic_hash": "fa000506c053408d6e66f64dc7872090"
+  },
+  "A:\\exjobbet\\repo\\v3\\orchestrator.py": {
+    "mtime": 1781778948.650609,
+    "ast_hash": "d536ceb84c06ba4f2c7f2e03f0bb54f0",
+    "semantic_hash": "d536ceb84c06ba4f2c7f2e03f0bb54f0"
+  },
+  "A:\\exjobbet\\repo\\v3\\pipelines\\artifact.py": {
+    "mtime": 1781778865.0236082,
+    "ast_hash": "b18eeb86681bbc529da7c827957d273a",
+    "semantic_hash": "b18eeb86681bbc529da7c827957d273a"
+  },
+  "A:\\exjobbet\\repo\\v3\\pipelines\\lucene.py": {
+    "mtime": 1781778929.5601091,
+    "ast_hash": "513cb4345a561cf646ab21a26e546ec3",
+    "semantic_hash": "513cb4345a561cf646ab21a26e546ec3"
+  },
+  "A:\\exjobbet\\repo\\v3\\pipelines\\vector.py": {
+    "mtime": 1781778934.1571088,
+    "ast_hash": "739a1a118c4c7435db9439452100d92a",
+    "semantic_hash": "739a1a118c4c7435db9439452100d92a"
+  },
+  "A:\\exjobbet\\repo\\v3\\smoke.py": {
+    "mtime": 1781778950.8891082,
+    "ast_hash": "7044b2a9ec83fadfbcbc53727d4f07ab",
+    "semantic_hash": "7044b2a9ec83fadfbcbc53727d4f07ab"
+  },
+  "A:\\exjobbet\\repo\\v3\\README.md": {
+    "mtime": 1781790038.5761073,
+    "ast_hash": "6261d722a358506d15b323a6f8de4fd5",
+    "semantic_hash": "6261d722a358506d15b323a6f8de4fd5"
   }
 }

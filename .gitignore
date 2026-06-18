@@ -40,14 +40,10 @@ dist/
 dist-ssr/
 v1/frontend/public/models/Xenova/e5-small-v2/onnx/model.onnx
 
-# Extracted thesis text + analysis scratch — the user's document, never commit.
-thesis_extract.md
-.codex_tmp/
-.thesis_audit/
-.tmp_thesis_docx_media/
-v1/.work/thesis_review/
-v1/docs/thesis/
-
 # Logs
 logs/
 *.log
+
+# Local continuity docs (state/handoff skills) — in-repo but not committed
+docs/state/
+docs/handoff/

@@ -2,15 +2,19 @@
 """
 refresh_graph.py - rebuild the graphify knowledge graph(s) in one command.
 
-v1 and v2 live in SEPARATE graphs (shared class/file names otherwise fabricate
-phantom v1<->v2 edges that contradict the no-v1-imports rule):
+v3 is CANON; v1 and v2 are separate reference builds. Each build lives in its OWN graph
+(shared class/file names across builds otherwise fabricate phantom cross-build edges
+that contradict the no-cross-imports rule):
 
-  ACTIVE graph  -> graphify-out/        : v2/ + external state/handoff docs + root
-                                          canon (CLAUDE.md, README.md). What agents use.
+  ACTIVE graph  -> graphify-out/        : v3/ + the in-repo (gitignored) state/handoff
+                                          docs (docs/state, docs/handoff) + root canon
+                                          (CLAUDE.md, README.md). What agents use.
+  v2 REFERENCE  -> v2/graphify-out/      : the artefact build, on demand only.
   v1 REFERENCE  -> v1/graphify-out/      : frozen v1 stack, on demand only.
 
 Usage (exposed as `regraph` in PowerShell + bash):
-  regraph          rebuild the ACTIVE graph
+  regraph          rebuild the ACTIVE (v3) graph
+  regraph --v2     rebuild the v2 REFERENCE graph
   regraph --v1     rebuild the v1 REFERENCE graph
   regraph --force  allow a >10% node drop (deliberate rescopes)
 
@@ -28,11 +32,11 @@ REPO_ROOT = Path(r"A:\exjobbet\repo")
 OUT = REPO_ROOT / "graphify-out"
 V2_ROOT = REPO_ROOT / "v2"
 V1_ROOT = REPO_ROOT / "v1"
+V3_ROOT = REPO_ROOT / "v3"
 ROOT_DOCS = [REPO_ROOT / "CLAUDE.md", REPO_ROOT / "README.md"]
 EXTERNAL = [
-    (Path(r"A:\Coding\skills\handoff\exjobbet-monorepo"), "handoff/exjobbet-monorepo/"),
-    (Path(r"A:\Coding\skills\handoff\exjobbet"),          "handoff/exjobbet/"),
-    (Path(r"A:\Coding\skills\state\exjobbet"),            "state/exjobbet/"),
+    (REPO_ROOT / "docs" / "handoff", "handoff/"),
+    (REPO_ROOT / "docs" / "state",   "state/"),
 ]
 # ---------------------------------------------------------------------------
 
@@ -228,12 +232,18 @@ def rebuild(nodes, edges, hyper, detection, out_dir: Path, export_cwd: Path, lab
 
 
 def main_active():
-    print("scanning v2 + root + external (active graph)...")
-    det = detect(V2_ROOT)
+    print("scanning v3 + root + external (active graph)...")
+    det = detect(V3_ROOT)
+    # the nav graph is v3 CODE + DESIGN DOCS, never the benchmark dataset or run outputs
+    _skip = [(V3_ROOT / "data").resolve(), (V3_ROOT / "output").resolve()]
+    for _k in list(det["files"].keys()):
+        det["files"][_k] = [f for f in det["files"][_k]
+                            if not any(d == (rp := Path(f).resolve()) or d in rp.parents
+                                       for d in _skip)]
     code = collect_code(det["files"])
     repo_docs = [f for k in ("document", "paper", "image") for f in det["files"].get(k, [])]
     repo_docs += [str(p) for p in ROOT_DOCS if p.is_file()]
-    print(f"  v2 code: {len(code)} | docs (v2+root): {len(repo_docs)}")
+    print(f"  v3 code: {len(code)} | docs (v3+root): {len(repo_docs)}")
 
     cn, ce, ch, uncached = check_semantic_cache(repo_docs, root=REPO_ROOT)
     if not INIT_MARKER.exists():
@@ -252,7 +262,7 @@ def main_active():
     detection = {"total_files": len(code) + len(repo_docs) + len(ext_current),
                  "total_words": words(repo_docs) + words(ext_current)}
     save_manifest(det.get("all_files") or det["files"])
-    rebuild(nodes, edges, ch, detection, OUT, REPO_ROOT, "ACTIVE graph (v2+ext+root)")
+    rebuild(nodes, edges, ch, detection, OUT, REPO_ROOT, "ACTIVE graph (v3+ext+root)")
 
 
 def main_v1():
@@ -271,5 +281,26 @@ def main_v1():
     rebuild(nodes, edges, ch, detection, V1_ROOT / "graphify-out", V1_ROOT, "v1 REFERENCE graph")
 
 
+def main_v2():
+    print("scanning v2 (reference graph)...")
+    det = detect(V2_ROOT)
+    code = collect_code(det["files"])
+    v2_docs = [f for k in ("document", "paper", "image") for f in det["files"].get(k, [])]
+    print(f"  v2 code: {len(code)} | docs: {len(v2_docs)}")
+    cn, ce, ch, uncached = check_semantic_cache(v2_docs, root=REPO_ROOT)
+    ast = extract(code, cache_root=REPO_ROOT) if code else {"nodes": [], "edges": []}
+    write_concept_index(ast["nodes"] + cn)
+    if uncached:
+        need_docs_stop(uncached, [], "v2")
+    nodes, edges = assemble(ast["nodes"] + cn, ast["edges"] + ce)
+    detection = {"total_files": det.get("total_files", 0), "total_words": det.get("total_words", 0)}
+    rebuild(nodes, edges, ch, detection, V2_ROOT / "graphify-out", V2_ROOT, "v2 REFERENCE graph")
+
+
 if __name__ == "__main__":
-    (main_v1 if "--v1" in sys.argv else main_active)()
+    if "--v1" in sys.argv:
+        main_v1()
+    elif "--v2" in sys.argv:
+        main_v2()
+    else:
+        main_active()

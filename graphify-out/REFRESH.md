@@ -3,14 +3,16 @@
 The graph in `graphify-out/` is a **snapshot**. Editing files doesn't update it —
 you rebuild it with `refresh_graph.py` (repo root).
 
-## Two graphs, on purpose
+## Separate graph per build, on purpose
 
-v1 and v2 share class/file names, so building them together fabricates phantom
-v1↔v2 edges (e.g. `v1 chunker --uses--> v2 neo4j_client`) that are false and break the
-no-v1-imports rule. So they're separate:
+v1, v2 and v3 share class/file names, so building them together fabricates phantom
+cross-build edges (e.g. `v2 chunker --uses--> v3 vector`) that are false and break the
+no-cross-imports rule. So each build is its own graph, and **v3 is canon**:
 
-- **ACTIVE — `graphify-out/`** : v2/ + external state/handoff docs + root canon
-  (CLAUDE.md, README.md), wired by bridge edges. **This is the graph agents use.** No v1.
+- **ACTIVE — `graphify-out/`** : v3/ + in-repo (gitignored) state/handoff docs
+  (docs/state, docs/handoff) + root canon (CLAUDE.md, README.md), wired by bridge edges.
+  **This is the graph agents use.** No v1/v2 code.
+- **v2 REFERENCE — `v2/graphify-out/`** : the artefact build, built on demand only.
 - **v1 REFERENCE — `v1/graphify-out/`** : the frozen v1 stack, built on demand only.
 
 `refresh_graph.py` is the single rebuild authority — never `graphify --update` (it would
@@ -19,7 +21,8 @@ drop the external-doc bridges).
 ## Usage
 
 ```powershell
-python refresh_graph.py          # rebuild the ACTIVE graph (v2 + external + root)
+python refresh_graph.py          # rebuild the ACTIVE graph (v3 + external + root)
+python refresh_graph.py --v2     # rebuild the v2 REFERENCE graph (from cache, no new LLM)
 python refresh_graph.py --v1     # rebuild the v1 REFERENCE graph (from cache, no new LLM)
 python refresh_graph.py --force  # allow a >10% node drop (only for deliberate rescopes)
 ```

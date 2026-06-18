@@ -113,58 +113,44 @@
 2026_06_14_v2_facets_as_relevance_channels_tag_one_phrase	A tag is ONE phrase carrying meaning; facet structure carries relevance separately
 2026_06_14_v2_facets_as_relevance_channels_v1_concept_sound	v1 tag concept was sound; the model-emitted weights were the rot
 2026_06_14_v2_facets_as_relevance_channels_weights_one_edge	Per-facet weights ride ONE chunk-tag edge (a facet vector)
-baselines_common_rationale_1	Shared helpers for v2 Neo4j baseline retrievers.
-baselines_init_rationale_1	v2 eval baselines — thesis comparison arms for the v2 artefact (not v1).  | Modu
-baselines_lucene_rationale_1	v2 Lucene baseline — plain full-text on raw `Chunk.content`.  Port of `frontend/
-baselines_lucene_rationale_33	Lucene full-text retrieval over `chunk_content_ft` on `c.content` only.
-baselines_sql_agent_rationale_1	v2 SQL-agent baseline — LLM with a SQL tool over the HERB corpus.  Same producti
-baselines_sql_agent_rationale_177	Build (or rebuild) the HERB SQLite store. Returns the DB path.
-baselines_sql_agent_rationale_229	Run a SELECT-only query against the HERB SQLite store. Other statements     are
-baselines_sql_agent_rationale_273	Introspect the live SQLite schema and return it as a human-readable     block fo
-baselines_sql_agent_rationale_335	OpenAI tool list with a row-cap hint that matches the run configuration.
-baselines_sql_agent_rationale_346	Raw OpenAI-compatible chat completion POST. Returns the parsed response.
-baselines_sql_agent_rationale_387	One question → one tool-use loop → final answer + collected evidence.
-baselines_sql_agent_rationale_473	Flatten a row dict to a single context string for RAGAS.
-baselines_vector_rationale_1	v2 vector baseline — dense kNN on chunk content embeddings.  Conventional semant
-baselines_vector_rationale_64	Dense vector retrieval over `chunk_emb_content` on `c.emb_content`.
-claude_md_design_before_build	Hard rule: Design before build — no pipeline code until the stage's design is signed off
-claude_md_doc	CLAUDE.md — project instructions / session entry point
-claude_md_docs_track_reality	Hard rule: docs track reality — close a decision, update design doc + memory in the same pass
-claude_md_graphify_navigation_graph	Codebase navigation graph (graphify) — a search tool, NOT the v2 Neo4j spine
-claude_md_herb_eval_canonical_db	Hard rule: herb-eval is the canonical Neo4j DB — never query herb (contaminated)
-claude_md_model_emits_no_numbers	Hard rule: the model emits no numbers, ever (tagger and interpreter)
-claude_md_plain_english_verify	Hard rule: talk in plain spoken English, short answers; verify before asserting
-claude_md_refresh_graph_only_path	python refresh_graph.py is the ONLY active-graph rebuild path (never graphify --update)
-claude_md_repo_layout_v1_v2_split	Repo layout: v2/ = ACTIVE rebuild, v1/ = FROZEN thesis-era stack (reference only)
-claude_md_session_entry_state_docs	Session entry point: continue work via state-transfer docs stored OUTSIDE the workspace
-claude_md_v1_v2_separate_graphs	v1 and v2 kept in SEPARATE graphify graphs (active graph contains NO v1)
-claude_md_v2_graph_spine_closed_canon	Hard rule: v2 graph spine is closed canon — Source->File->Chunk->Tag are the only nodes
-keys_salesforce_herb	HERB mapping key (Salesforce__HERB.yaml)
-keys_salesforce_herb_content	HERB content fields (prose to chunk/tag)
-keys_salesforce_herb_directories	HERB id-directories (employee/customer/pr_author)
-keys_salesforce_herb_id_spaces	HERB id-space assignment
-readme_exjobbet_monorepo	exjobbet Artefact Monorepo
-shared_config_rationale_1	Path constants + runtime settings loaded from .env.
-shared_config_rationale_18	# NOTE: the working endpoint is the `integrate.` subdomain; plain
-shared_config_rationale_32	Runtime settings. Loaded from backend/.env and overridable by env vars.
-shared_error_class_rationale_1	Typed error classes for the legacy indexer circuit breaker.  Kept in `shared/`
-shared_legacy_mirror_boot_rationale_1	Load Python modules archived under quarantine/legacy_mirror/backend/.
-shared_legacy_mirror_boot_rationale_15	Load ``quarantine/legacy_mirror/backend/<relative_parts>`` as a one-off module.
-shared_neo4j_client_rationale_1	Thin async wrapper around the Neo4j driver.
-shared_utils_rationale_1	Shared helpers for run IDs, hashing, and JSON IO.
-tests_test_probe_rationale_1	Golden tests for the shape probe — the deterministic prefix is cheap to lock dow
-v2_derive_corpus_rationale_1	One-time prep: derive the corpus view a dataset's pipeline run scans.  The publi
-v2_init_rationale_1	v2 ingestion spine — references-not-copies rebuild.  Fresh package: no imports f
-v2_main_rationale_1	v2 pipeline CLI.    python -m v2 derive-corpus <raw-dataset-dir> -> <data>/corpu
-v2_probe_rationale_1	Stage 2: probe — recover the structural schema from shape. Meaning-free.  Profil
-v2_probe_rationale_111	Fuse the shapes of many files into one tree. Order-independent.
-v2_probe_rationale_187	Sets -> sorted lists so the shape tree serializes deterministically.
-v2_probe_rationale_49	One value -> its shape signature.
-v2_probe_rationale_64	Merge two shape signatures (array-element fusion and cross-file fusion).
-v2_scan_rationale_1	Stage 1: scan — catalog raw files. Dumb and meaning-free.  Walks a dataset direc
-v2_scan_rationale_62	Catalog every file under dataset_dir. Fails loud on the first broken file.
-work_nvidia_connectivity_test_rationale_1	NVIDIA NIM connectivity + model benchmark.  Reads the API key from backend/.env
-work_resolver_prototype_rationale_1	v2 reference-resolver prototype — proves the 'graph is references' stance.  A re
-work_resolver_prototype_rationale_34	RFC 6901. Raises (loud) on any miss — never returns a silent default.
-work_resolver_prototype_rationale_59	ref = {file_path, sha256, scheme, address}. Fail loud on hash mismatch.
-work_verify_nvidia_settings_rationale_1	Confirm Settings reads NVIDIA_* from backend/.env. Key value never printed.
+2026_06_18_v3_eval_both_scorers	Do BOTH scorers: HERB exact anchor + RAGAS primary lens (not either/or)
+2026_06_18_v3_eval_construct_validity	Construct-validity: answer scoring measures the whole pipeline; deterministic ctx + oracle setting keep an endpoint on retrieval
+2026_06_18_v3_eval_deterministic_ctx	Deterministic citation-based context precision/recall (ID-based / non-LLM), not the judged variants
+2026_06_18_v3_eval_generation_placement_open	OPEN: generation placement (arm-side vs orchestrator-side)
+2026_06_18_v3_eval_harness_doc	State doc 2026-06-18: v3 evaluation harness (HERB + RAGAS)
+2026_06_18_v3_eval_herb_only	HERB only for now; Bonnier deferred
+2026_06_18_v3_eval_metricscore_atoms	Evaluators emit raw per-question MetricScore (tidy long), never pre-aggregated
+2026_06_18_v3_eval_open_locks	Open locks: generator, judge (re-run baselines if not GPT-4o), top-k, question set, calibration size
+2026_06_18_v3_eval_ragas_primary_herb_anchor	RAGAS-on-answer is the primary lens; HERB's exact scorer is the anchor
+2026_06_18_v3_eval_reject_artefact_as_retriever	Rejected: treating the artefact as 'just another retriever' scored by IR recall@k (category error)
+2026_06_18_v3_eval_reject_ragas_useless	Rejected: 'RAGAS is reference-free therefore useless' (overstatement walked back)
+2026_06_18_v3_eval_structural_quarantine	Structural quarantine: corpus physically oracle-stripped; truth read in place from raw
+2026_06_18_v3_eval_three_arms_one_generator	Three arms (artefact/lucene/vector), one shared generator, shared top-k
+2026_06_18_v3_eval_v2_buildsite_v3_clean	Working model: v2 = build-site (mess allowed), v3 = clean lean extraction destination
+claude_md_critical_review	Critical-review code you write (in v3/) before reporting it done
+claude_md_doc	CLAUDE.md — repo canon, layout & hard rules
+claude_md_graphify_not_spine	The graphify nav graph is a search tool, NOT the v2 Source→File→Chunk→Tag Neo4j spine
+claude_md_hard_rules	Hard rules: design-before-build, build isolation, spine closed canon, model emits no numbers, herb-eval canonical
+claude_md_isolation_scope_tag	Build isolation: the @v3/@v2/@v1 scope tag is authority; v3 self-contained; never open a v1/v2 file unless handed the exact one; overrides doc §9 pointers
+claude_md_refresh_rule	Always refresh the active graph (refresh_graph.py) after editing v3/root/external docs
+claude_md_repo_layout_v3_canon	Repo layout: v3 is CANON (active eval harness, self-contained); v2 and v1 are separate reference builds
+claude_md_three_graphs	Three graphify graphs: v3 active/canon, v2 + v1 reference builds, via refresh_graph.py
+eval_herb_rationale_1	herb.py — HERB's own scorer: exact answer correctness, the anchor metric (leader
+eval_ragas_rationale_1	ragas.py — multidimensional answer/evidence quality (the primary lens, and what
+pipelines_artifact_rationale_1	artifact.py — the ARTEFACT arm: the v2 graph (interpreter -> facet-channel retri
+pipelines_lucene_rationale_1	lucene.py — sparse baseline (BM25 / Lucene).  Why it's here: the sparse-retrieva
+pipelines_vector_rationale_1	vector.py — dense baseline (embeddings + cosine), i.e. naive RAG.  Why it's here
+readme_exjobbet_monorepo	exjobbet — artefact monorepo (root README)
+readme_three_builds_v3_canon	Three self-contained builds: v3 canon (active eval harness), v2 + v1 reference builds; each its own graphify graph
+v3_contract_rationale_1	contract.py — the shared shapes + the two interfaces both sides import.  Why it'
+v3_orchestrator_rationale_1	orchestrator.py — wires ONE pipeline + ONE evaluator over the chosen questions a
+v3_readme_construct_validity	Caveat: answer-level scoring measures the whole pipeline; deterministic ctx keeps an endpoint on retrieval
+v3_readme_deterministic_ctx	Context precision/recall computed deterministically against gold citations, not the judged variants
+v3_readme_doc	v3 — HERB evaluation harness (README)
+v3_readme_metricscore_tidy	Raw per-question MetricScore (tidy long, nothing pre-aggregated) + RunManifest provenance
+v3_readme_open_decisions	Open: generator, judge (re-run baselines if not GPT-4o), top-k, question set, judge calibration
+v3_readme_quarantine_split	Data split: corpus oracle-stripped (pipelines see only this) vs raw (truth read in place)
+v3_readme_shared_generator	One shared generator built in the orchestrator and injected into every arm (difference is retrieval, not the LLM)
+v3_readme_three_arms	Three arms: artifact (system under test), lucene, vector — each own index
+v3_readme_two_scorers	Two scorers: HERB exact (anchor) + RAGAS (multidimensional lens)
+v3_smoke_rationale_1	smoke.py — a tiny wiring check: run a couple of questions through one pipeline +
