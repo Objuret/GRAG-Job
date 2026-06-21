@@ -26,10 +26,10 @@ nothing with the artefact.
   citations** (no judge). The multidimensional lens, and the part that transfers
   to a no-gold set later.
 
-Both emit raw per-question records (`MetricScore`, tidy long format) — nothing
+Both emit raw per-question records (`EvalResult`, tidy long format) — nothing
 pre-aggregated — so paired tests, CIs, per-type splits and judge calibration are
-all possible downstream. Each run also writes a `RunManifest` (models, top-k,
-seed, git sha) for reproducibility.
+all possible downstream. Each run also writes a `RunConfig` (models, top-k,
+seed, timestamp) for reproducibility.
 
 ## Data split (the quarantine)
 
@@ -45,15 +45,16 @@ seed, git sha) for reproducibility.
 ```
 orchestrator.run(pipeline, evaluator, ids, config)
   load questions (truth from raw) + open corpus + build shared generator
-  → run_one_pipeline: prepare arm once, then per question:
-        truth-free prompt → arm.answer_one_question → PipelineOutput(answer, contexts, ids)
-  → run_one_evaluator: score_outputs → Report[ MetricScore… ]
+  → run_one_pipeline: prepare arm once (-> BuildStats), then per question:
+        question (id + text only) → arm.answer_one_question → ArmOutput(answer, contexts, context_ids, timing)
+  → run_one_evaluator: score_outputs → list[EvalResult]
   → save_run → output/        (smoke.py = same path, few questions → output/smoke/)
 ```
 
 ## Files
 
-- `contract.py` — the shapes + the two interfaces everything imports.
+- `contract.py` — the shared shapes everything imports (QuestionWithTruth,
+  ArmOutput, BuildStats, EvalResult, RunConfig).
 - `pipelines/` — `artifact.py`, `lucene.py`, `vector.py`.
 - `eval/` — `herb.py`, `ragas.py`.
 - `orchestrator.py` — wires one arm + one scorer; owns the shared generator.
@@ -65,6 +66,11 @@ orchestrator.run(pipeline, evaluator, ids, config)
 - Both scorers (HERB anchor + RAGAS lens). Three arms, shared generator, shared top-k.
 - Deterministic citation-based context precision/recall (not the judged variants).
 - Oracle read in place from raw; pipelines blind to it.
+- **lucene arm built**: bm25s (Lucene-variant BM25, k1=0.9 / b=0.4, EN stopwords +
+  Snowball stem); one document per artifact; artifacts-only index. Justified: all
+  17,087 gold citations resolve to an artifact `id`, so context_ids share the
+  citation id space and metadata would only add never-relevant distractors.
+  Returns `ArmOutput`; prepare attaches `BuildStats` (model_* = 0, no model at build).
 
 ## Still open
 
