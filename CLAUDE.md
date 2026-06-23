@@ -89,6 +89,12 @@ Details: `graphify-out/REFRESH.md`.
 - **Docs track reality:** when a decision closes, update the design doc + memory in the
   same pass, by removal of dead content, not banners. v1 docs and dated state/handoff
   docs are frozen — they describe that build / that moment.
+- **No historical or defensive comments:** code, docs and commit messages state only the
+  present — what the code is and does now, as if written correctly the first time. Never
+  narrate a past mistake, a change, or a review finding — no "previously/now", "no longer",
+  "NOT because", "do not factor out", no review-finding labels. Remove the mistake and
+  write the correct version plainly; never annotate that something was caught and fixed —
+  comments feed the graph and memory, so scar tissue pollutes every future session.
 - **Always refresh the navigation graph after changing files:** after any edit to `v3/`,
   root canon, or the external state/handoff docs, run `python refresh_graph.py` (repo root)
   so the active graphify graph tracks reality. It is the ONLY rebuild path (never

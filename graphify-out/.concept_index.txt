@@ -127,30 +127,91 @@
 2026_06_18_v3_eval_structural_quarantine	Structural quarantine: corpus physically oracle-stripped; truth read in place from raw
 2026_06_18_v3_eval_three_arms_one_generator	Three arms (artefact/lucene/vector), one shared generator, shared top-k
 2026_06_18_v3_eval_v2_buildsite_v3_clean	Working model: v2 = build-site (mess allowed), v3 = clean lean extraction destination
+2026_06_23_vector_independence_arms_share_only	v3 arms share only the corpus on disk + the injected generator; each reads, indexes and ranks the corpus with its own code (the independent variable the experiment measures); the only shared import is contract.py
+2026_06_23_vector_independence_doc	State doc 2026-06-23: v3 vector arm independence + comment-hygiene canon
+2026_06_23_vector_independence_nim_transport	nim.py = shared NIM REST transport (httpx, OpenAI-compatible endpoints); the orchestrator generator and the vector embedder both POST via nim.post; shared plumbing like contract.py, not retrieval logic; openai SDK is not a dependency
+2026_06_23_vector_independence_no_history_rule	Canon rule: comments, docs and commits state only the present, as if written right the first time; never narrate a past mistake, change, or review finding (it invents fake history and pollutes the graph + memory)
+2026_06_23_vector_independence_open_decisions	Open (undecided): lucene documents.feedback parity, slack userId/channel tokens in the embedded passage, empty-text artifact handling, README anti-sharing phrasing cleanup
 claude_md_critical_review	Critical-review code you write (in v3/) before reporting it done
 claude_md_doc	CLAUDE.md — repo canon, layout & hard rules
 claude_md_graphify_not_spine	The graphify nav graph is a search tool, NOT the v2 Source→File→Chunk→Tag Neo4j spine
 claude_md_hard_rules	Hard rules: design-before-build, build isolation, spine closed canon, model emits no numbers, herb-eval canonical
 claude_md_isolation_scope_tag	Build isolation: the @v3/@v2/@v1 scope tag is authority; v3 self-contained; never open a v1/v2 file unless handed the exact one; overrides doc §9 pointers
+claude_md_no_historical_comments	No historical/defensive comments: code, docs and commits state ONLY the present, as if written right the first time; never narrate a past mistake, change, or review finding; remove the mistake rather than annotate it (scar tissue feeds the graph + memory and pollutes future context)
 claude_md_refresh_rule	Always refresh the active graph (refresh_graph.py) after editing v3/root/external docs
 claude_md_repo_layout_v3_canon	Repo layout: v3 is CANON (active eval harness, self-contained); v2 and v1 are separate reference builds
 claude_md_three_graphs	Three graphify graphs: v3 active/canon, v2 + v1 reference builds, via refresh_graph.py
 eval_herb_rationale_1	herb.py — HERB's own scorer: exact answer correctness, the anchor metric (leader
+eval_ragas_catalog_rationale_1	ragas_catalog.py — the full RAGAS metric menu + the toggle for which ones a run
+eval_ragas_catalog_rationale_102	The free deterministic backbone + the judged metrics you opted into.
+eval_ragas_catalog_rationale_107	Fail loud before a run if SELECTED is malformed. SELECTED is judged-only;     de
 eval_ragas_rationale_1	ragas.py — multidimensional answer/evidence quality (the primary lens, and what
 pipelines_artifact_rationale_1	artifact.py — the ARTEFACT arm: the v2 graph (interpreter -> facet-channel retri
-pipelines_lucene_rationale_1	lucene.py — sparse baseline (BM25 / Lucene).  Why it's here: the sparse-retrieva
+pipelines_lucene_rationale_1	lucene.py — sparse baseline (BM25, Lucene-variant ranking).  Why it's here: th
+pipelines_lucene_rationale_134	Flatten HERB into one document per artifact: {id, title, contents, kind}.
+pipelines_lucene_rationale_166	prepare(): build an own BM25 index over the corpus artifacts. Runs once.
+pipelines_lucene_rationale_204	Uniform prepare entry the orchestrator drives. Thin alias over     build_sparse
+pipelines_lucene_rationale_212	(id, question_text) from a QuestionWithTruth, dict, (id, text) tuple, or     a
+pipelines_lucene_rationale_224	Sparse top-k retrieval for the question text -> list of unit dicts     {id, tex
+pipelines_lucene_rationale_259	Read the native artifact id off the unit. Fills ArmOutput.context_ids     (same
+pipelines_lucene_rationale_265	Collect the units' text. Fills ArmOutput.contexts + feeds the generator.
+pipelines_lucene_rationale_272	Normalise a generator's return into (answer, calls, tokens, time_s).      Acce
+pipelines_lucene_rationale_298	ENTRY: retrieve_top_k -> ids + text -> generate -> ArmOutput.      `generate`
+pipelines_lucene_rationale_79	Handle returned by prepare(); fed back into answer_one_question.     Carries th
+pipelines_lucene_rationale_93	One artifact -> (id, title, contents). None if the record carries no id.
 pipelines_vector_rationale_1	vector.py — dense baseline (embeddings + cosine), i.e. naive RAG.  Why it's here
+pipelines_vector_rationale_101	The text the dense arm embeds for one artifact. Each artifact type stores     it
+pipelines_vector_rationale_130	Read the corpus into one whole artifact per document: {id, text}.      Walks the
+pipelines_vector_rationale_155	Embed texts via nv-embedqa -> (matrix [n, d] float32 L2-normalised, calls,     t
+pipelines_vector_rationale_199	prepare(): embed every corpus artifact (as "passage") and hold the     normalise
+pipelines_vector_rationale_224	Uniform prepare entry the orchestrator drives. Thin alias over     build_dense_i
+pipelines_vector_rationale_232	(id, question_text) from a QuestionWithTruth, dict, (id, text) tuple, or a     b
+pipelines_vector_rationale_244	Embed the question (as "query"), exact brute-force cosine top-k over the     cor
+pipelines_vector_rationale_269	Native artifact id off the unit. Fills ArmOutput.context_ids (same id space
+pipelines_vector_rationale_275	Collect the units' text. Fills ArmOutput.contexts + feeds the generator.
+pipelines_vector_rationale_282	Normalise a generator's return into (answer, calls, tokens, time_s).      Accept
+pipelines_vector_rationale_308	ENTRY: retrieve_top_k -> ids + text -> generate -> ArmOutput.      `generate` is
+pipelines_vector_rationale_88	Handle returned by prepare(); fed back into answer_one_question. Holds the     L
 readme_exjobbet_monorepo	exjobbet — artefact monorepo (root README)
 readme_three_builds_v3_canon	Three self-contained builds: v3 canon (active eval harness), v2 + v1 reference builds; each its own graphify graph
-v3_contract_rationale_1	contract.py — the shared shapes + the two interfaces both sides import.  Why it'
+v3_build_question_sets_rationale_17	The gold-N: a balanced ANSWERABLE subset, drawn by seeded round-robin     over t
+v3_build_questions_rationale_1	build_questions.py — one-shot: build the HERB question set from raw.  HERB ships
+v3_contract_rationale_1	contract.py — the shared shapes every arm and evaluator imports.
+v3_contract_rationale_16	One model's cost — calls / tokens / wall-time. Reused wherever a model is     to
+v3_contract_rationale_54	Provenance for a `questions` run — answers generated by ONE arm.
+v3_contract_rationale_66	Provenance for an `evals` run — ONE scorer over one run file.
+v3_nim_rationale_1	nim.py — NVIDIA NIM REST transport (OpenAI-compatible endpoints).  Shared HARNES
+v3_nim_rationale_21	Populate os.environ from a sibling .env (KEY=VALUE lines) without     overriding
+v3_nim_rationale_36	The NIM API key, or a loud failure — no silent offline mode.
+v3_nim_rationale_45	POST payload to {BASE_URL}{path}, return the parsed JSON body.      Retries tran
 v3_orchestrator_rationale_1	orchestrator.py — wires ONE pipeline + ONE evaluator over the chosen questions a
-v3_readme_construct_validity	Caveat: answer-level scoring measures the whole pipeline; deterministic ctx keeps an endpoint on retrieval
-v3_readme_deterministic_ctx	Context precision/recall computed deterministically against gold citations, not the judged variants
-v3_readme_doc	v3 — HERB evaluation harness (README)
-v3_readme_metricscore_tidy	Raw per-question MetricScore (tidy long, nothing pre-aggregated) + RunManifest provenance
-v3_readme_open_decisions	Open: generator, judge (re-run baselines if not GPT-4o), top-k, question set, judge calibration
-v3_readme_quarantine_split	Data split: corpus oracle-stripped (pipelines see only this) vs raw (truth read in place)
-v3_readme_shared_generator	One shared generator built in the orchestrator and injected into every arm (difference is retrieval, not the LLM)
-v3_readme_three_arms	Three arms: artifact (system under test), lucene, vector — each own index
-v3_readme_two_scorers	Two scorers: HERB exact (anchor) + RAGAS (multidimensional lens)
-v3_smoke_rationale_1	smoke.py — a tiny wiring check: run a couple of questions through one pipeline +
+v3_orchestrator_rationale_143	Strip the truth: hand the arm the question's id + text ONLY, as the (id,     tex
+v3_orchestrator_rationale_152	Prepare the arm once, then per question: to_arm_question -> answer.     -> (list
+v3_orchestrator_rationale_165	-> list[contract.EvalResult]. linked to: evaluator.score_outputs
+v3_orchestrator_rationale_170	Provenance for the generation side -> contract.RunManifest (timestamp now, UTC).
+v3_orchestrator_rationale_184	Provenance for the eval side -> contract.EvalManifest (timestamp now, UTC).
+v3_orchestrator_rationale_195	Persist arm outputs + eval results + both manifests under out_dir. Raw     per-r
+v3_orchestrator_rationale_218	pipelines.lucene' / 'eval.herb' -> 'lucene' / 'herb' (run + output label).
+v3_orchestrator_rationale_223	TOP ENTRY: load questions -> open corpus -> build generator -> run the arm     -
+v3_orchestrator_rationale_249	Wiring check with fake arm/evaluator/generator — no NIM, no bm25s, no disk     q
+v3_orchestrator_rationale_44	Load the full question set (truth hydrated from raw via questions.jsonl)     and
+v3_orchestrator_rationale_66	Ids from a jsonl id-set file (output/question_ids.jsonl, gold100.jsonl):     eac
+v3_orchestrator_rationale_86	Handle onto the RAG-safe corpus — the only data a pipeline sees. Validates     t
+v3_orchestrator_rationale_99	Build the ONE generator (Mistral Large on NIM) injected into every arm.     Retu
+v3_questions_rationale_1	questions.py — load the HERB question set from data/questions.jsonl.  Each recor
+v3_questions_rationale_15	The HERB question set as QuestionWithTruth records.
+v3_readme_harness	v3 HERB evaluation harness
+v3_readme_idbased_context	ID-based context precision/recall (deterministic backbone)
+v3_readme_manifests	Provenance: RunManifest + EvalManifest (no seed/git-sha)
+v3_readme_open_decisions	Still open: ragas computation (library vs hand-built), judge model, top-k, question set, generation contract
+v3_readme_oracle_free_record	Oracle-free run record; eval re-joins truth by id
+v3_readme_quarantine	Data split / truth quarantine (corpus oracle-free, truth in raw)
+v3_readme_ragas_catalog	RAGAS metric catalog: deterministic always-on, judged via SELECTED
+v3_readme_shared_generator	Shared generator (fairness control)
+v3_readme_telemetry_split	Per-question telemetry split: generator vs retrieval ModelUsage
+v3_readme_three_arms	Three arms: artifact / lucene / vector
+v3_readme_two_phase_run	Two separate phases: questions / evals / full
+v3_readme_two_scorers	Two scorers: HERB anchor + RAGAS lens
+v3_smoke_rationale_1	smoke.py — tiny wiring check: run a few questions through one pipeline + evaluat
+v3_smoke_rationale_17	A small FIXED subset of answerable ids — one per type first (so the smoke     ex
+v3_smoke_rationale_43	Run orchestrator.run over n fixed questions into a per-run folder     output/smo

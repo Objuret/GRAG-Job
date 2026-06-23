@@ -4,7 +4,9 @@ retrieval -> answer).
 Why it's here: this is the system under test — the whole point of the comparison.
 Why this one is relevant: it's the thesis contribution; the baselines exist only
 to measure it against. Depends on the v2-built graph (NOT yet built).
-Implements contract.PipelineInterface. No logic.
+
+Contract fit (mirrors lucene): prepare returns a Prepared carrying a
+contract.BuildStats; answer_one_question returns a contract.ArmOutput. No logic.
 """
 
 
@@ -14,7 +16,7 @@ def connect_to_artefact_graph(corpus):
     ...
 
 
-def interpret_prompt_per_facet(prompt):
+def interpret_prompt_per_facet(question):
     # decompose the question into per-facet query content (topic/stance/...).
     # linked to: retrieve_chunks_by_facets (feeds it the decomposition)
     ...
@@ -29,19 +31,18 @@ def retrieve_chunks_by_facets(facets, prepared):
 
 def resolve_chunk_artifact_ids(chunks):
     # dereference chunk references -> source artifact ids (msg/doc ids).
-    # fills PipelineOutput.retrieved_ids (used by RAGAS citation-based ctx metrics)
+    # fills ArmOutput.context_ids (used by RAGAS citation-based ctx metrics)
     ...
 
 
 def gather_chunk_text(chunks):
     # pull the evidence text via the chunks' references.
-    # fills PipelineOutput.retrieved_contexts + feeds the generator
+    # fills ArmOutput.contexts + feeds the generator
     ...
 
 
-def answer_one_question(prompt, prepared, generate):
+def answer_one_question(question, prepared, generate, k):
     # ENTRY: interpret -> retrieve -> resolve ids + gather text ->
-    #   generate(answer from text) -> build PipelineOutput.
-    # linked to: orchestrator (calls per question); `generate` = shared generator;
-    #            returns contract.PipelineOutput
+    #   generate(answer from text) -> contract.ArmOutput.
+    # linked to: orchestrator; shared `generate`; returns contract.ArmOutput
     ...

@@ -7,11 +7,22 @@ NOTHING with the artefact.
 
 In -> out: question -> BM25 top-k artifacts -> shared generator -> answer.
 
-Engine: bm25s (pure-Python) with `method="lucene"` — the Lucene BM25 variant,
-English stopwords + Snowball stemmer (the Lucene English analyzer's stem +
-stopword removal). Params k1=0.9, b=0.4 are the BEIR reference values
-(Kamalloo et al. 2023, "Resources for Brewing BEIR"); benchmark of record is
-BEIR (Thakur et al. 2021); algorithm origin Robertson & Zaragoza (2009).
+Engine: bm25s (pure-Python) with `method="lucene"`. BM25 is a family, not one
+formula — bm25s ships several standard variants (robertson / atire / bm25l /
+bm25+ / lucene) that differ only in IDF and length-normalisation detail.
+`"lucene"` is the variant Apache Lucene / Elasticsearch / Anserini use and is
+bm25s's default, so this baseline IS the de-facto-standard BM25 the literature
+benchmarks against; it reproduces Lucene's *scoring* exactly. The text analysis,
+though, is bm25s's own — its tokenizer + English stopwords + a Snowball/Porter2
+stemmer: Lucene-LIKE, not Lucene's Java EnglishAnalyzer (which stems with the
+original Porter). So we approximate Lucene's analyzer, we don't reproduce it.
+
+Params k1=0.9, b=0.4 are the reference defaults from "Resources for Brewing BEIR"
+(Kamalloo et al. 2023), established on the BEIR benchmark (Thakur et al. 2021);
+algorithm origin Robertson & Zaragoza (2009). These citations are the PROVENANCE
+of the configuration only — BEIR is not an evaluation target here. Every arm
+(artifact / lucene / vector) is scored solely by the two project scorers, HERB
+and RAGAS.
 
 Retrieval unit = one HERB artifact (slack message / document / meeting
 transcript / meeting chat / url / pr). The artifact's native `id` is preserved
@@ -22,8 +33,7 @@ citation-based context precision/recall compares against.
 Contract fit: prepare returns a Prepared index carrying a contract.BuildStats;
 answer_one_question returns a contract.ArmOutput. The question is read for its
 `id` + `question` ONLY — `ground_truth` / `citations` are never touched, so the
-truth quarantine holds by convention even though the contract no longer ships a
-separate truth-free prompt type.
+truth quarantine holds by convention.
 """
 from __future__ import annotations
 
@@ -36,7 +46,7 @@ from typing import Callable, Optional, Union
 import bm25s
 import Stemmer
 
-from contract import ArmOutput, BuildStats
+from contract import ArmOutput, BuildStats, ModelUsage
 
 # BM25 reference parameters (Kamalloo et al. 2023 / BEIR).
 K1 = 0.9
@@ -158,7 +168,7 @@ def build_sparse_index(
     `corpus` is either a path to the corpus root (it gets ingested) or an
     already-ingested list of doc dicts. Independent of the artefact — own units,
     own index. Records a contract.BuildStats on the returned Prepared (no model
-    is used at build time, so model_* = 0 and models = []).
+    is used at build time, so model = ModelUsage() and models = []).
     linked to: orchestrator.run_one_pipeline (called once); ingest_corpus
     """
     t0 = time.perf_counter()
@@ -177,9 +187,7 @@ def build_sparse_index(
 
     build_stats = BuildStats(
         build_time_s=time.perf_counter() - t0,
-        model_calls=0,
-        model_tokens=0,
-        model_time_s=0.0,
+        model=ModelUsage(),  # sparse BM25 touches no model at build
         models=[],
     )
     return Prepared(
@@ -317,7 +325,6 @@ def answer_one_question(
         contexts=contexts,
         context_ids=context_ids,
         search_time_s=search_time_s,
-        model_calls=model_calls,
-        model_tokens=model_tokens,
-        model_time_s=model_time_s,
+        generator=ModelUsage(model_calls, model_tokens, model_time_s),
+        retrieval=ModelUsage(),  # sparse retrieval uses no model
     )
