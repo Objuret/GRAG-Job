@@ -145,9 +145,9 @@
     "semantic_hash": "29cc2ec74c97ca52f94f2d77f803bf42"
   },
   "A:\\exjobbet\\repo\\v3\\artefact\\graph_store.py": {
-    "mtime": 1782605869.3178332,
-    "ast_hash": "f5ce7a14dccbcb1294e1141cca6b2049",
-    "semantic_hash": "f5ce7a14dccbcb1294e1141cca6b2049"
+    "mtime": 1782606304.1411865,
+    "ast_hash": "1fb8ddedfbf6e4b01f6e4bf3421fc152",
+    "semantic_hash": "1fb8ddedfbf6e4b01f6e4bf3421fc152"
   },
   "A:\\exjobbet\\repo\\v3\\artefact\\tests\\smoke_chunk.py": {
     "mtime": 1782509800.1729074,
@@ -185,9 +185,9 @@
     "semantic_hash": "ac00f86d6ac9105ab46f5aa9b498653a"
   },
   "A:\\exjobbet\\repo\\v3\\artefact\\index.py": {
-    "mtime": 1782605923.171385,
-    "ast_hash": "41ec057650160a61533108541ea2bb05",
-    "semantic_hash": "41ec057650160a61533108541ea2bb05"
+    "mtime": 1782606227.5034022,
+    "ast_hash": "1ae286bc0bcd4d545e4e213d0fb4b48f",
+    "semantic_hash": "1ae286bc0bcd4d545e4e213d0fb4b48f"
   },
   "A:\\exjobbet\\repo\\v3\\embed_tags.py": {
     "mtime": 1782605541.376959,
@@ -198,5 +198,10 @@
     "mtime": 1782606073.0303817,
     "ast_hash": "5bf3d04e1d33cda4451210a132b5e5b1",
     "semantic_hash": "5bf3d04e1d33cda4451210a132b5e5b1"
+  },
+  "A:\\exjobbet\\repo\\v3\\artefact\\prepass.py": {
+    "mtime": 1782606413.9329238,
+    "ast_hash": "7f5040502b00d7271583079df342d0d0",
+    "semantic_hash": "7f5040502b00d7271583079df342d0d0"
   }
 }

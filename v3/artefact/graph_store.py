@@ -40,10 +40,11 @@ import numpy as np
 from neo4j import GraphDatabase
 from tqdm import tqdm
 
+from .index import TAGS_NPZ_GLOB, find_tags_npz
+
 DB = "herb-v3"
 _SAFE_DB = re.compile(r"^[A-Za-z][A-Za-z0-9.-]{2,62}$")
 
-TAGS_NPZ_GLOB = "output/artefact_index/tags_*.npz"
 TAG_EMBED_BATCH = 500
 
 
@@ -122,21 +123,6 @@ def _row(c) -> dict:
         # JSON string; resolving in order reproduces the chunk's source.
         "refs": [json.dumps(_resolver_ref(c, r)) for r in c.refs],
     }
-
-
-def find_tags_npz(glob: str = TAGS_NPZ_GLOB) -> Path:
-    """Locate the tags embedding npz. Fails loud if absent or ambiguous (more
-    than one match — a stale cache alongside a fresh one)."""
-    matches = sorted(Path(".").glob(glob))
-    if not matches:
-        raise FileNotFoundError(
-            f"no tags npz matching {glob!r} — run `python embed_tags.py` (from v3/) first")
-    if len(matches) > 1:
-        raise RuntimeError(
-            f"ambiguous tags npz: {len(matches)} matches {glob!r}: "
-            + ", ".join(str(m) for m in matches)
-            + " — remove the stale one")
-    return matches[0]
 
 
 def load_tags_index(npz_path: Path) -> dict:
@@ -218,6 +204,18 @@ def build(dataset_dir: Path, data_root: Path, key_path: Path, dataset: str,
     print(f"  {len(tags['chunk_ids'])} tagged chunks, "
           f"{sum(len(r) for r in tags['chunk_tag_rows'])} tag emissions, "
           f"matrix {tags['matrix'].shape}")
+    # Fail loud on a stale npz: every chunk_id in the npz must match a chunk the
+    # chunker produced, else INGEST_TAGS's MATCH would silently drop tag rows
+    # and the sentinel would lie about the count.
+    chunk_ids = {c.chunk_id for c in chunks}
+    npz_cids = set(tags["chunk_ids"])
+    if npz_cids != chunk_ids:
+        missing = chunk_ids - npz_cids
+        extra = npz_cids - chunk_ids
+        raise RuntimeError(
+            f"tags npz chunk set diverges from chunker: "
+            f"{len(missing)} chunks missing from npz, {len(extra)} extra in npz — "
+            f"re-run embed_tags.py over the current tags")
     drv = driver()
     try:
         print(f"creating database {name!r} (if absent)…")
@@ -229,13 +227,15 @@ def build(dataset_dir: Path, data_root: Path, key_path: Path, dataset: str,
     return len(chunks), sum(len(r) for r in tags["chunk_tag_rows"])
 
 
-def report_counts(drv, name: str = DB) -> dict:
+def report_counts(drv, dataset: str, name: str = DB) -> dict:
     """Print + return node/edge counts for inspection. Fails loud if the
-    sentinel is missing (the ingest did not finish)."""
+    sentinel is missing (the ingest did not finish). The sentinel is keyed by
+    `dataset` (e.g. "Salesforce__HERB"), not the DB name."""
     with drv.session(database=name) as s:
-        meta = s.run("MATCH (m:BuildMeta {dataset: $d}) RETURN m", d=name).single()
+        meta = s.run("MATCH (m:BuildMeta {dataset: $d}) RETURN m", d=dataset).single()
         if meta is None:
-            raise RuntimeError(f"no :BuildMeta in {name!r} — ingest did not complete")
+            raise RuntimeError(
+                f"no :BuildMeta for dataset {dataset!r} in {name!r} — ingest did not complete")
         counts = {}
         for label, cy in (("Source", "MATCH (n:Source) RETURN count(n) AS c"),
                           ("File", "MATCH (n:File) RETURN count(n) AS c"),
@@ -267,16 +267,17 @@ def report_db_size(name: str = DB) -> str:
 
 if __name__ == "__main__":
     root = Path("data/corpus")
+    dataset_name = "Salesforce__HERB"
     n_chunks, n_tags = build(
-        dataset_dir=root / "Salesforce__HERB",
+        dataset_dir=root / dataset_name,
         data_root=root,
         key_path=Path("artefact/keys/Salesforce__HERB.yaml"),
-        dataset="Salesforce__HERB",
+        dataset=dataset_name,
     )
     print(f"done — {n_chunks} chunks, {n_tags} tags in {DB}.")
     drv = driver()
     try:
-        report_counts(drv)
+        report_counts(drv, dataset=dataset_name)
     finally:
         drv.close()
     print(f"db size: {report_db_size()}")

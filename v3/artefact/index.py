@@ -2,10 +2,11 @@
 
 Holds the tag-embedding matrix (mean-centered for corpus-relative geometry,
 plus the original L2-normalized matrix for comparison) and the chunk-id → Chunk
-map (references + attributes + on-demand text resolution). The phrase text
-itself is NOT loaded here — it lives in `output/tags/Salesforce__HERB.jsonl`,
-re-embeddable from `embed_tags.py`; the index carries phrase row → chunk
-mappings so the engine never needs the string to route.
+map (references + attributes + on-demand text resolution). The phrase text is
+loaded (row i -> phrase) for inspection/display, but is not used by routing —
+the index carries phrase row → chunk mappings so the engine never needs the
+string to route. The phrase text itself lives in `output/tags/Salesforce__HERB.jsonl`,
+re-embeddable from `embed_tags.py`.
 
 Mean-centering is pass 1 of the corpus-relative geometry transform (design
 §13): subtract the matrix's mean vector, re-L2-normalize. The original matrix
@@ -113,21 +114,29 @@ def load_artefact_index(
     npz_path = find_tags_npz(tags_npz_glob)
     tags = _load_tags_npz(npz_path)
 
-    # Verify the npz's chunk set matches the chunker's output — a stale npz
-    # built against a different corpus would otherwise route against the wrong
-    # chunks silently.
+    # Verify the npz's chunk set AND per-chunk kind match the chunker's output
+    # — a stale npz built against a different corpus or a divergent kind
+    # vocabulary would otherwise route against the wrong chunks silently.
     chunks = chunk_dataset(Path(data_root) / "Salesforce__HERB", Path(data_root),
                            load_key(Path(key_path)))
     chunks_by_id = {c.chunk_id: c for c in chunks}
-    npz_cids = set(tags["chunk_ids"])
+    npz_cids = list(tags["chunk_ids"])
     ds_cids = set(chunks_by_id)
-    if npz_cids != ds_cids:
-        missing = ds_cids - npz_cids
-        extra = npz_cids - ds_cids
+    npz_cid_set = set(npz_cids)
+    if npz_cid_set != ds_cids:
+        missing = ds_cids - npz_cid_set
+        extra = npz_cid_set - ds_cids
         raise RuntimeError(
             f"tags npz chunk set diverges from chunker: "
             f"{len(missing)} chunks missing from npz, {len(extra)} extra in npz — "
             f"re-run embed_tags.py over the current tags")
+    for j, cid in enumerate(npz_cids):
+        c = chunks_by_id.get(cid)
+        if c is not None and c.kind != tags["chunk_kinds"][j]:
+            raise RuntimeError(
+                f"tags npz kind diverges from chunker at chunk {cid!r}: "
+                f"npz={tags['chunk_kinds'][j]!r} chunker={c.kind!r} — "
+                f"re-run embed_tags.py over the current tags")
 
     centered, mean = _mean_center(tags["matrix"])
 
@@ -152,7 +161,15 @@ def resolve_chunk_text(chunk: Chunk, data_root: Path) -> str:
     self-resolving contract `{file_path, sha256, scheme, address}`; the
     resolver fails loud on a hash mismatch or a bad pointer. Non-string
     resolved values (impossible for declared content leaves, possible if a
-    pointer lands on a scalar) raise — content refs are text."""
+    pointer lands on a scalar) raise — content refs are text.
+
+    A chunk's refs are scheme-homogeneous (chunk.py: `_refs_json` emits all
+    `json_pointer`; `_split_leaves`'s char_span branch emits all `char_span`).
+    char_span fragments tile their leaf exactly (lossless) — joining with a
+    separator would corrupt offsets, so char_span chunks join with the empty
+    string; json_pointer chunks (records, conversation, prose-leaf records)
+    join with "\n"."""
+    sep = "" if chunk.refs and chunk.refs[0].scheme == "char_span" else "\n"
     parts: list[str] = []
     for r in chunk.refs:
         ref = {
@@ -167,7 +184,7 @@ def resolve_chunk_text(chunk: Chunk, data_root: Path) -> str:
                 f"chunk {chunk.chunk_id} ref {r!r} resolved to non-string "
                 f"({type(val).__name__}) — content refs must land on text")
         parts.append(val)
-    return "\n".join(parts)
+    return sep.join(parts)
 
 
 # Cypher snippets for Neo4j Browser inspection of the built graph.

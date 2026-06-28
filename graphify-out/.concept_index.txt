@@ -174,18 +174,23 @@ artefact_chunk_rationale_348	Scan a corpus-view dataset dir and chunk every JSON
 artefact_chunk_rationale_93	RFC 6901 get. Raises (loud) on a miss — used only on known-present pointers.
 artefact_derive_corpus_rationale_1	One-time prep: derive the corpus view a dataset's pipeline run scans.  The publi
 artefact_graph_store_rationale_1	Materialize the artefact graph into Neo4j: `Source -[:CONTAINS]-> File -[:CONTAI
-artefact_graph_store_rationale_101	A chunk reference in the resolver's self-resolving contract     (`resolver_proto
-artefact_graph_store_rationale_128	Locate the tags embedding npz. Fails loud if absent or ambiguous (more     than
-artefact_graph_store_rationale_143	Load the tags npz into the arrays the ingest needs. Returns the matrix     as fl
-artefact_graph_store_rationale_164	Build one UNWIND row per (chunk, position-in-chunk) tag emission.     `embedding
-artefact_graph_store_rationale_233	Print + return node/edge counts for inspection. Fails loud if the     sentinel i
+artefact_graph_store_rationale_102	A chunk reference in the resolver's self-resolving contract     (`resolver_proto
+artefact_graph_store_rationale_129	Load the tags npz into the arrays the ingest needs. Returns the matrix     as fl
+artefact_graph_store_rationale_150	Build one UNWIND row per (chunk, position-in-chunk) tag emission.     `embedding
+artefact_graph_store_rationale_231	Print + return node/edge counts for inspection. Fails loud if the     sentinel i
 artefact_graph_store_rationale_254	Best-effort on-disk size of the Neo4j database directory (local install     layo
 artefact_index_rationale_1	artefact/index.py — the in-memory query engine's view of the lean graph.  Holds
-artefact_index_rationale_108	Build the in-memory index: load the tags npz, mean-center the tag     matrix, an
-artefact_index_rationale_150	Resolve a chunk's references in order, hash-verified, and concatenate     them i
-artefact_index_rationale_34	The in-memory artefact index: tag embeddings + chunk metadata + the     chunk-id
-artefact_index_rationale_63	Locate the tags embedding npz. Fails loud if absent or ambiguous.
-artefact_index_rationale_92	Subtract the corpus mean vector, re-L2-normalize. Returns     (centered_matrix,
+artefact_index_rationale_109	Build the in-memory index: load the tags npz, mean-center the tag     matrix, an
+artefact_index_rationale_159	Resolve a chunk's references in order, hash-verified, and concatenate     them i
+artefact_index_rationale_35	The in-memory artefact index: tag embeddings + chunk metadata + the     chunk-id
+artefact_index_rationale_64	Locate the tags embedding npz. Fails loud if absent or ambiguous.
+artefact_index_rationale_93	Subtract the corpus mean vector, re-L2-normalize. Returns     (centered_matrix,
+artefact_prepass_rationale_1	Stage query: pre-pass — deterministic literal matching against the corpus name d
+artefact_prepass_rationale_106	excluded if an exclusion keyword sits within _LOOKBACK chars before     the matc
+artefact_prepass_rationale_113	Deterministic literal match of `prompt` against the corpus name     directories.
+artefact_prepass_rationale_145	Diagnostic: how many names of each kind are loaded.
+artefact_prepass_rationale_53	Load + cache the three name directories. Fail loud on missing files.
+artefact_prepass_rationale_85	Case-fold + collapse whitespace runs to a single space. Returns the     normaliz
 artefact_probe_rationale_1	Stage 2: probe — recover the structural schema from shape. Meaning-free.  Profil
 artefact_probe_rationale_124	Fuse the shapes of many files into one tree. Order-independent.      With `conte
 artefact_probe_rationale_154	Median length of a scalar position's string instances (0 if it has none).     Th
