@@ -24,10 +24,17 @@ _PRODUCTS_DIR = _CORPUS / "products"
 _EMPLOYEE_JSON = _CORPUS / "metadata" / "employee.json"
 _CUSTOMERS_JSON = _CORPUS / "metadata" / "customers_data.json"
 
-# Words that flip a following literal to excluded polarity. Searched
-# case-insensitively, word-bounded, within _LOOKBACK chars before the match.
-_EXCLUDE_RE = re.compile(r"\b(apart\s+from|excluding|except|but\s+not|not)\b", re.IGNORECASE)
-_LOOKBACK = 30
+# An exclusion keyword must be the LAST word(s) immediately before the match
+# (only an optional determiner allowed in between). The regex is anchored at
+# the end of the lookback slice (which ends at the match start), so a keyword
+# followed by verbs/other entities ("discussed but not implemented in X",
+# "sets the product apart from IBM Watson") does NOT bind to a later entity.
+# This kills the false positives a bare "within 30 chars" rule produces on
+# real HERB phrasing while still catching "apart from PitchForce" / "not X".
+_EXCLUDE_RE = re.compile(
+    r"(apart\s+from|excluding|except|but\s+not|not)\s*(?:the\s+|a\s+|an\s+)?$",
+    re.IGNORECASE)
+_LOOKBACK = 40  # generous slice; the `$` anchor does the binding
 
 
 @dataclass(frozen=True)
@@ -96,15 +103,15 @@ def _normalize(s: str) -> tuple[str, list[int]]:
             while i < n and s[i].isspace():
                 i += 1
         else:
-            norm_chars.append(c.lower())
+            norm_chars.append(c.casefold())
             orig_idx.append(i)
             i += 1
     return "".join(norm_chars), orig_idx
 
 
 def _polarity(norm_prompt: str, match_start: int) -> str:
-    """excluded if an exclusion keyword sits within _LOOKBACK chars before
-    the match start in the normalized prompt, else wanted."""
+    """excluded if the text immediately before the match ends with an
+    exclusion keyword (only an optional determiner in between), else wanted."""
     lookback = norm_prompt[max(0, match_start - _LOOKBACK):match_start]
     return "excluded" if _EXCLUDE_RE.search(lookback) else "wanted"
 
@@ -118,7 +125,7 @@ def prepass(prompt: str) -> list[MarkedSpan]:
     norm, idx_map = _normalize(prompt)
     spans: list[MarkedSpan] = []
     for entry in names:
-        needle = " ".join(entry.text.split()).lower()
+        needle = " ".join(entry.text.split()).casefold()
         if not needle:
             continue
         start = 0
@@ -138,7 +145,42 @@ def prepass(prompt: str) -> list[MarkedSpan]:
             ))
             start = end  # advance past this match — non-overlapping per name
     spans.sort(key=lambda s: (s.start, s.end, s.kind, s.span))
-    return spans
+    return _drop_contained(_dedupe_identical(spans))
+
+
+def _dedupe_identical(spans: list[MarkedSpan]) -> list[MarkedSpan]:
+    """Drop exact duplicates (same span/kind/polarity/start/end) — e.g. an
+    employee and a customer sharing the same name produce two identical rows.
+    Different-kind duplicates are real ambiguity and kept."""
+    seen: set[tuple] = set()
+    out: list[MarkedSpan] = []
+    for s in spans:
+        key = (s.span, s.kind, s.polarity, s.start, s.end)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(s)
+    return out
+
+
+def _drop_contained(spans: list[MarkedSpan]) -> list[MarkedSpan]:
+    """Drop a match whose [start, end) is fully contained in another match's
+    — e.g. "EdgeForce" inside "KnowledgeForce". A genuine prompt that names
+    two distinct entities produces non-contained spans; containment is the
+    substring-false-positive signature. Ties (identical span, different kind)
+    are kept — that's real ambiguity, two directories resolving to one span."""
+    out: list[MarkedSpan] = []
+    for s in spans:
+        contained = False
+        for o in spans:
+            if s is o:
+                continue
+            if s.start >= o.start and s.end <= o.end and (o.start, o.end) != (s.start, s.end):
+                contained = True
+                break
+        if not contained:
+            out.append(s)
+    return out
 
 
 def name_counts() -> dict[str, int]:

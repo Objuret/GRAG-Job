@@ -13,11 +13,13 @@ Mean-centering is pass 1 of the corpus-relative geometry transform (design
 is retained alongside so ablations can compare centered vs raw.
 
 linked to: embed_tags (writes the npz); graph_store (writes the DB);
-pipelines.artifact (the future query-engine consumer)
+pipelines.artefact (the future query-engine consumer)
 """
 
 from __future__ import annotations
 
+import hashlib
+import json
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -25,7 +27,6 @@ from pathlib import Path
 import numpy as np
 
 from .chunk import Chunk, chunk_dataset, load_key
-from .resolver_prototype import resolve as _resolve_ref
 
 TAGS_NPZ_GLOB = "output/artefact_index/tags_*.npz"
 
@@ -155,11 +156,51 @@ def load_artefact_index(
     )
 
 
-def resolve_chunk_text(chunk: Chunk, data_root: Path) -> str:
+def _load_verified_doc(relpath: str, sha256: str, data_root: Path,
+                       cache: dict | None = None) -> dict:
+    """Read + hash-verify + parse a product JSON once, memoized in `cache` so
+    the per-question loop over k chunks (each with multiple refs into the same
+    file) reads each file at most once. Fails loud on a hash mismatch — the
+    graph was built against `sha256`; a drifted file is refused, never served.
+    A `cache` of None allocates a fresh dict, so callers without one still
+    behave correctly (just without cross-call reuse)."""
+    c = cache if cache is not None else {}
+    key = (relpath, sha256)
+    doc = c.get(key)
+    if doc is not None:
+        return doc
+    path = Path(data_root) / relpath
+    actual = hashlib.sha256(path.read_bytes()).hexdigest()
+    if actual != sha256:
+        raise RuntimeError(
+            f"HASH MISMATCH for {relpath}: graph built against "
+            f"{sha256[:12]}…, on-disk is {actual[:12]}…. "
+            f"Refusing to serve drifted content.")
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    c[key] = doc
+    if cache is not None:
+        cache.update(c)
+    return doc
+
+
+def _pointer_get(doc, pointer: str):
+    """RFC 6901 get into `doc` (loud on a miss) — a local copy so the per-ref
+    hot path doesn't round-trip through the resolver prototype's per-call
+    file read."""
+    cur = doc
+    if pointer == "":
+        return cur
+    for raw in pointer.split("/")[1:]:
+        tok = raw.replace("~1", "/").replace("~0", "~")
+        cur = cur[int(tok)] if isinstance(cur, list) else cur[tok]
+    return cur
+
+
+def resolve_chunk_text(chunk: Chunk, data_root: Path, cache: dict | None = None) -> str:
     """Resolve a chunk's references in order, hash-verified, and concatenate
-    them into the chunk's source view. Each Ref rides as the resolver's
-    self-resolving contract `{file_path, sha256, scheme, address}`; the
-    resolver fails loud on a hash mismatch or a bad pointer. Non-string
+    them into the chunk's source view. The containing file is read + hashed +
+    parsed once (memoized in `cache`) and each ref is sliced in-memory, so a
+    chunk with N refs into one file costs one file read, not N. Non-string
     resolved values (impossible for declared content leaves, possible if a
     pointer lands on a scalar) raise — content refs are text.
 
@@ -169,22 +210,75 @@ def resolve_chunk_text(chunk: Chunk, data_root: Path) -> str:
     separator would corrupt offsets, so char_span chunks join with the empty
     string; json_pointer chunks (records, conversation, prose-leaf records)
     join with "\n"."""
+    doc = _load_verified_doc(chunk.relpath, chunk.sha256, data_root, cache)
     sep = "" if chunk.refs and chunk.refs[0].scheme == "char_span" else "\n"
     parts: list[str] = []
     for r in chunk.refs:
-        ref = {
-            "file_path": chunk.relpath,
-            "sha256": chunk.sha256,
-            "scheme": r.scheme,
-            "address": r.address,
-        }
-        val = _resolve_ref(ref, data_root=Path(data_root))
+        if r.scheme == "json_pointer":
+            val = _pointer_get(doc, r.address)
+        elif r.scheme == "char_span":
+            ptr, start, end = r.address
+            leaf = _pointer_get(doc, ptr)
+            if not isinstance(leaf, str):
+                raise TypeError(
+                    f"chunk {chunk.chunk_id} char_span target {ptr!r} is not a string")
+            val = leaf[start:end]
+        else:
+            raise ValueError(f"unknown ref scheme: {r.scheme!r}")
         if not isinstance(val, str):
             raise TypeError(
                 f"chunk {chunk.chunk_id} ref {r!r} resolved to non-string "
                 f"({type(val).__name__}) — content refs must land on text")
         parts.append(val)
     return sep.join(parts)
+
+
+def _record_pointer(ref) -> str:
+    """The `/collection/index` pointer to the record a ref lives in. A ref's
+    address is either a json_pointer (`/slack/0/Message/User/text`) or a
+    char_span `(pointer, start, end)` whose pointer is a leaf
+    (`/documents/0/content`). The record is always the first two path
+    components — the collection root and the record index — so slicing back to
+    them lands on the record dict that carries the artifact `id`."""
+    addr = ref.address
+    ptr = addr if isinstance(addr, str) else addr[0]
+    toks = ptr.strip("/").split("/")
+    if len(toks) < 2:
+        raise ValueError(
+            f"ref pointer {ptr!r} has no collection/record prefix — "
+            f"chunk covers a leaf that is not inside a record array")
+    return f"/{toks[0]}/{toks[1]}"
+
+
+def chunk_artifact_ids(chunk: Chunk, data_root: Path, cache: dict | None = None) -> list[str]:
+    """The deduped artifact `id` strings for every record a chunk covers. For
+    each ref, walk its pointer back to the containing record (`/collection/
+    index`), resolve that record from the raw file (hash-verified, memoized in
+    `cache`), and read its top-level `id` field. Fails loud on a missing `id`
+    (a chunk covers records that should carry ids) or a hash/pointer mismatch.
+
+    The ids land in the same space the gold citations and the other arms'
+    context_ids use, so RAGAS's citation-based context precision/recall compare
+    like-for-like."""
+    doc = _load_verified_doc(chunk.relpath, chunk.sha256, data_root, cache)
+    ids: list[str] = []
+    seen: set[str] = set()
+    for r in chunk.refs:
+        rec_ptr = _record_pointer(r)
+        rec = _pointer_get(doc, rec_ptr)
+        if not isinstance(rec, dict):
+            raise TypeError(
+                f"chunk {chunk.chunk_id} record {rec_ptr!r} resolved to "
+                f"{type(rec).__name__}, not a record dict — cannot read `id`")
+        aid = rec.get("id")
+        if aid is None:
+            raise RuntimeError(
+                f"chunk {chunk.chunk_id} record {rec_ptr!r} has no `id` field — "
+                f"every artifact record carries an id")
+        if aid not in seen:
+            seen.add(aid)
+            ids.append(str(aid))
+    return ids
 
 
 # Cypher snippets for Neo4j Browser inspection of the built graph.

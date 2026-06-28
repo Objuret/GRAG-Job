@@ -15,7 +15,7 @@ writes one npz: aligned `phrases` + L2-normalised `matrix` (row i = phrase i) +
 (phrase i -> [chunk positions in chunk_ids]). Content-addressed: a re-run over
 unchanged tags loads instead of re-embedding.
 
-linked to: pipelines.artifact.prepare_over_corpus (the consumer)
+linked to: pipelines.artefact.prepare_over_corpus (the consumer)
 """
 from __future__ import annotations
 

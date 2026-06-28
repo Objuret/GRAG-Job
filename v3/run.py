@@ -30,7 +30,7 @@ from run_lock import RunLock
 _HERE = Path(__file__).parent
 DATA = _HERE / "data"
 OUTPUT = _HERE / "output"
-ARMS = ("lucene", "vector")
+ARMS = ("lucene", "vector", "artefact")
 
 
 def _write_dev_ids(n, dest):
@@ -106,6 +106,12 @@ def main():
     p.add_argument("--no-eval", action="store_true",
                    help="arm run only — generate answers to arm_outputs.jsonl, skip "
                         "RAGAS scoring")
+    p.add_argument("--retrieval-only", action="store_true",
+                   help="retrieval only — no generation (generator=None); ArmOutput.answer "
+                        "is empty. RAGAS retrieval metrics (context_precision_id, "
+                        "context_recall_id, context_precision_nonllm, context_recall_nonllm) "
+                        "still score real values; answer-based metrics are 0. Use when the "
+                        "shared generator is down but retrieval comparison is still wanted.")
     args = p.parse_args()
 
     pipeline = importlib.import_module(f"pipelines.{args.arm}")
@@ -122,12 +128,15 @@ def main():
     ids_file, out_dir = _resolve_set(args.qset, args.arm, args.n, ts)
     if args.out:
         out_dir = Path(args.out)
-    config = {"top_k": args.k, "workers": args.workers, "out_dir": str(out_dir)}
+    config = {"top_k": args.k, "workers": args.workers, "out_dir": str(out_dir),
+              "retrieval_only": args.retrieval_only}
 
     pace = "serial" if args.workers == 1 else f"{args.workers} workers"
     n_q = (len(questions.load_questions()) if ids_file is None
            else sum(1 for ln in ids_file.read_text(encoding="utf-8").splitlines() if ln.strip()))
-    mode = "answers only (no eval)" if args.no_eval else "answers + RAGAS eval"
+    mode = ("retrieval only (no generation)" if args.retrieval_only
+            else "answers only (no eval)" if args.no_eval
+            else "answers + RAGAS eval")
     print(f"{args.arm} | set={args.qset} | {n_q} questions | k={args.k} | {pace} | {mode}\n  ->  {out_dir}")
     abort.watch()  # press q to stop the run gracefully (Ctrl+C can be swallowed)
     print("running - press q to abort\n")
