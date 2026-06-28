@@ -1,0 +1,60 @@
+{"question_id": "ActionGenie::a::5", "type": "content", "arm": "vector", "metric": "context_precision_id", "value": 0.3333333333333333, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::5", "type": "content", "arm": "vector", "metric": "context_recall_id", "value": 0.02564102564102564, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::5", "type": "content", "arm": "vector", "metric": "context_precision_nonllm", "value": 0.9999999999, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::5", "type": "content", "arm": "vector", "metric": "context_recall_nonllm", "value": 0.02564102564102564, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::5", "type": "content", "arm": "vector", "metric": "string_similarity", "value": 0.009771986970684043, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::5", "type": "content", "arm": "vector", "metric": "bleu", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::5", "type": "content", "arm": "vector", "metric": "rouge", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::5", "type": "content", "arm": "vector", "metric": "chrf", "value": 0.004705043329816107, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::5", "type": "content", "arm": "vector", "metric": "exact_match", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::5", "type": "content", "arm": "vector", "metric": "string_presence", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::11", "type": "company", "arm": "vector", "metric": "context_precision_id", "value": 0.6666666666666666, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::11", "type": "company", "arm": "vector", "metric": "context_recall_id", "value": 0.03636363636363636, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::11", "type": "company", "arm": "vector", "metric": "context_precision_nonllm", "value": 0.99999999995, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::11", "type": "company", "arm": "vector", "metric": "context_recall_nonllm", "value": 0.03636363636363636, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::11", "type": "company", "arm": "vector", "metric": "string_similarity", "value": 0.11363636363636365, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::11", "type": "company", "arm": "vector", "metric": "bleu", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::11", "type": "company", "arm": "vector", "metric": "rouge", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::11", "type": "company", "arm": "vector", "metric": "chrf", "value": 0.027322404371584695, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::11", "type": "company", "arm": "vector", "metric": "exact_match", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::11", "type": "company", "arm": "vector", "metric": "string_presence", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::21", "type": "pr", "arm": "vector", "metric": "context_precision_id", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::21", "type": "pr", "arm": "vector", "metric": "context_recall_id", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::21", "type": "pr", "arm": "vector", "metric": "context_precision_nonllm", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::21", "type": "pr", "arm": "vector", "metric": "context_recall_nonllm", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::21", "type": "pr", "arm": "vector", "metric": "string_similarity", "value": 0.13131313131313127, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::21", "type": "pr", "arm": "vector", "metric": "bleu", "value": 0.009667730854450062, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::21", "type": "pr", "arm": "vector", "metric": "rouge", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::21", "type": "pr", "arm": "vector", "metric": "chrf", "value": 0.09880580854722627, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::21", "type": "pr", "arm": "vector", "metric": "exact_match", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::21", "type": "pr", "arm": "vector", "metric": "string_presence", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "context_precision_id", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "context_recall_id", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "context_precision_nonllm", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "context_recall_nonllm", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "string_similarity", "value": 0.1495726495726496, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "bleu", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "rouge", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "chrf", "value": 0.05840287396147632, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "exact_match", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "string_presence", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "semantic_similarity", "value": 0.27737271425133025, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "faithfulness", "value": 0.6, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "answer_correctness", "value": NaN, "status": "error", "components": {"error": "RuntimeError: NIM judge returned null content (finish_reason=stop)"}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "context_recall_llm", "value": NaN, "status": "error", "components": {"error": "RuntimeError: NIM judge returned null content (finish_reason=stop)"}, "human_label": null}
+{"question_id": "ActionGenie::a::5", "type": "content", "arm": "vector", "metric": "semantic_similarity", "value": 0.10578514576799238, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::5", "type": "content", "arm": "vector", "metric": "faithfulness", "value": NaN, "status": "error", "components": {"error": "RuntimeError: NIM judge returned null content (finish_reason=stop)"}, "human_label": null}
+{"question_id": "ActionGenie::a::5", "type": "content", "arm": "vector", "metric": "answer_correctness", "value": NaN, "status": "error", "components": {"error": "RuntimeError: NIM /chat/completions gave up after 6 tries / 60s: 429 {\"status\":429,\"title\":\"Too Many Requests\"}"}, "human_label": null}
+{"question_id": "ActionGenie::a::5", "type": "content", "arm": "vector", "metric": "context_recall_llm", "value": NaN, "status": "error", "components": {"error": "RuntimeError: NIM /chat/completions gave up after 6 tries / 65s: 429 {\"status\":429,\"title\":\"Too Many Requests\"}"}, "human_label": null}
+{"question_id": "ActionGenie::a::21", "type": "pr", "arm": "vector", "metric": "semantic_similarity", "value": 0.5144625259697835, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::21", "type": "pr", "arm": "vector", "metric": "faithfulness", "value": NaN, "status": "error", "components": {"error": "RuntimeError: NIM /chat/completions gave up after 6 tries / 42s: 429 {\"status\":429,\"title\":\"Too Many Requests\"}"}, "human_label": null}
+{"question_id": "ActionGenie::a::21", "type": "pr", "arm": "vector", "metric": "answer_correctness", "value": NaN, "status": "error", "components": {"error": "RuntimeError: NIM /chat/completions gave up after 6 tries / 61s: 429 {\"status\":429,\"title\":\"Too Many Requests\"}"}, "human_label": null}
+{"question_id": "ActionGenie::a::21", "type": "pr", "arm": "vector", "metric": "context_recall_llm", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::11", "type": "company", "arm": "vector", "metric": "semantic_similarity", "value": 0.6096421047753544, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::11", "type": "company", "arm": "vector", "metric": "faithfulness", "value": 0.75, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::11", "type": "company", "arm": "vector", "metric": "answer_correctness", "value": 0.45241052619383865, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::11", "type": "company", "arm": "vector", "metric": "context_recall_llm", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::11", "type": "company", "arm": "vector", "metric": "context_precision_llm_ref", "value": NaN, "status": "error", "components": {"error": "RuntimeError: NIM judge returned null content (finish_reason=stop)"}, "human_label": null}
+{"question_id": "ActionGenie::a::5", "type": "content", "arm": "vector", "metric": "context_precision_llm_ref", "value": NaN, "status": "error", "components": {"error": "RuntimeError: NIM judge returned null content (finish_reason=stop)"}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "context_precision_llm_ref", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::21", "type": "pr", "arm": "vector", "metric": "context_precision_llm_ref", "value": 0.0, "status": "ok", "components": {}, "human_label": null}

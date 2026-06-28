@@ -225,8 +225,8 @@ shape of its values, read off the probe tree with **no key entry**:
 **The declared part — the three judgments shape can't know:**
 
 1. **Content choice** — which fields are the prose to chunk and tag. The probe flags
-   `str_long` candidates; only meaning draws the line (a 120-char url `description` is
-   content; a 99-char PR `title` is not).
+   long-text leaves by typical length; only meaning draws the line (a 120-char url
+   `description` is content; a 99-char PR `title` is not).
 2. **Directories** — which files are id-directories rather than corpus
    (`employee.json`, `customers_data.json`), each with its key field, display-name
    field, and a **`kind`** drawn from the query interpreter's universal enum (starting
@@ -236,7 +236,7 @@ shape of its values, read off the probe tree with **no key entry**:
    space itself gets a kind too** (HERB sources are *products*; Bonnier sources are
    systems): what a source name *is* is dataset meaning, so it lives here.
 3. **Id-space assignment** — which fields carry which id-space (`userId` → employee,
-   `login` → the directory-less PR-author space). Shape sees `str maxlen=15`; it cannot
+   `login` → the directory-less PR-author space). Shape sees a short `str`; it cannot
    know slack userIds and document authors are the same population while PR logins are
    not.
 
@@ -313,16 +313,28 @@ channel → thread → message: every one of those positions is a real source un
 position is canonical. A record's path component and its `json_pointer` reference are two
 views of the same canonical spot, so there is no second, drift-prone address.
 
-The **single exception is the subchunk split**. When a coherent episode exceeds the budget
-ceiling, the fragments it is sliced into are the only positions on the whole path that
-correspond to nothing in the source — *we* drew those lines. A split **inserts that one
-non-canonical tier**: an over-budget thread at `[1,2]` gets fragments `[1,2,1]`, `[1,2,2]`,
-`[1,2,3]`, and its messages ride one tier deeper as canonical leaves beneath them. There
-is **no parent/episode node** — the episode exists only as "the fragments sharing the
-`[1,2]` prefix," reassembled on demand at query time. The split rule is uniform (§9.4):
-when a unit exceeds the cap, walk back to the **best natural seam** below it and recurse —
-no minimum-size rule, because a unit that fits the cap is already a chunk, and the
-worst-case seam is always a real boundary (a sentence), never an arbitrary cut.
+**Derived-grouping tiers are the exception.** Where a path component is a real source unit
+(a record index, a structural position), the component and its `json_pointer` are two views
+of one canonical spot. Where a component is a grouping *we* compute — a flat conversation's
+channel-ordinal and episode-ordinal, and a subchunk split's fragment-ordinal — it
+corresponds to nothing addressable in the source, so the chunk's source position lives in
+its refs, not its path ordinals. A flat slack stream's chunk path is
+`(collection_ord, channel_ord, episode_ord[, fragment_ord])`: `channel_ord` is the position
+of the channel in the sorted channel set (the channel id itself is a source value on each
+message), `episode_ord` is the adaptive-time-gap segmentation, and `fragment_ord` appears
+only on an over-cap split. These ordinals still do the path's other duties (gather/group by
+prefix); they are simply not record indices.
+
+The clearest case of a minted tier is the **subchunk split**. When a coherent episode
+exceeds the budget ceiling, the fragments it is sliced into correspond to nothing in the
+source — *we* drew those lines. A split **inserts that one tier**: an over-budget thread at
+`[1,2]` gets fragments `[1,2,1]`, `[1,2,2]`, `[1,2,3]`, and its messages ride one tier
+deeper as canonical leaves beneath them. There is **no parent/episode node** — the episode
+exists only as "the fragments sharing the `[1,2]` prefix," reassembled on demand at query
+time. The split rule is uniform (§9.4): when a unit exceeds the cap, walk back to the
+**best natural seam** below it and recurse — no minimum-size rule, because a unit that fits
+the cap is already a chunk, and the worst-case seam is always a real boundary (a sentence),
+never an arbitrary cut.
 
 The path does **triple duty**: structural ancestry, context expansion (gather by prefix),
 and duplicate-collapse / diversity (group by prefix).

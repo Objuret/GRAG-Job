@@ -7,16 +7,11 @@ selected. Each entry records what the eval runner needs to know to feed and run 
 whether it calls the judge model, whether it needs the embedder, what gold input it
 requires, and which direction is better.
 
-Every judge-free metric always runs — it costs nothing, so nothing gates it.
-SELECTED is only the JUDGED metrics added on top (the ones that actually spend:
-judge-model calls + the calibration you owe them). `eval ragas` scores
-ALWAYS + SELECTED; the EvalManifest records the full list so a result says which
-metrics produced it. Most deterministic metrics need nothing; `semantic_similarity`
-uses the embedder; `faithfulness_hhem` needs the HHEM classifier installed (the
-runner fails loud if it's missing).
-
-HERB's metrics are NOT here: those are fixed by question type (person/url/pr/company
-set-F1, content judge, abstention), not chosen from a menu.
+SELECTED (below) is the single source of truth: exactly the metrics a run scores.
+`eval ragas` runs that list and the EvalManifest records it, so a result says which
+metrics produced it. Judge-using metrics (judge=True) spend model calls; the rest are
+free. `semantic_similarity` needs the embedder; `faithfulness_hhem` needs the HHEM
+classifier installed (the runner fails loud if it's missing).
 
 Facts verified against the RAGAS docs (docs.ragas.io, June 2026).
 `needs` values: none | gold_answer | citation_ids | gold_context_text | criterion
@@ -53,11 +48,12 @@ CATALOG = {
 
     # --- answer / generation quality -----------------------------------------
     "faithfulness":             Metric(True,  False, "none",              "higher", True,  "answer claims grounded in the contexts"),
-    "faithfulness_hhem":        Metric(False, False, "none",              "higher", True,  "same, verified by Vectara HHEM-2.1 T5 classifier instead of a judge"),
+    "faithfulness_hhem":        Metric(True,  False, "none",              "higher", True,  "LLM decomposes the answer into statements; the Vectara HHEM-2.1 classifier verifies each against the contexts (needs the HHEM model installed)"),
     "answer_relevancy":         Metric(True,  True,  "none",              "higher", True,  "answer addresses the question (judge generates probe Qs, embeddings score them)"),
     "response_groundedness_nv": Metric(True,  False, "none",              "higher", True,  "Nvidia: answer supported by the contexts"),
     "answer_accuracy_nv":       Metric(True,  False, "gold_answer",       "higher", True,  "Nvidia: answer agrees with gold answer"),
     "factual_correctness":      Metric(True,  False, "gold_answer",       "higher", True,  "claim-overlap of answer vs gold via NLI"),
+    "answer_correctness":       Metric(True,  True,  "gold_answer",       "higher", True,  "RAGAS AnswerCorrectness: factual (claim F1) + semantic similarity of answer vs gold"),
     "semantic_similarity":      Metric(False, True,  "gold_answer",       "higher", True,  "cosine(answer, gold) embeddings"),
     "string_similarity":        Metric(False, False, "gold_answer",       "higher", True,  "Levenshtein/Jaro vs gold (NonLLMStringSimilarity)"),
     "bleu":                     Metric(False, False, "gold_answer",       "higher", True,  "n-gram precision vs gold (weak for QA)"),
@@ -85,36 +81,49 @@ CATALOG = {
 }
 
 
-# --- what runs ---------------------------------------------------------------
-# Every judge-free metric HERB can feed always runs — derived from the catalog, so
-# any deterministic metric is automatically in. Nothing to toggle: it's free.
-ALWAYS = [name for name, m in CATALOG.items() if m.applies and not m.judge]
-
-# SELECTED = the JUDGED metrics to add on top — the only ones that cost (judge
-# calls + calibration). This is the toggle; edit it.
+# --- what this run scores -----------------------------------------------------
+# The single source of truth: exactly the metrics a run computes. Edit this list —
+# comment a line out to drop that metric. Every name must be in CATALOG and feedable
+# by HERB (applies=True); _check() enforces it. Tags: [judge] spends model calls,
+# [embed] needs the embedder, everything else is free.
 SELECTED = [
-    "faithfulness",
-    "answer_relevancy",
+    # retrieval — free, exact / string-based
+    "context_precision_id",
+    "context_recall_id",
+    "context_precision_nonllm",
+    "context_recall_nonllm",
+    # answer vs gold — free
+    "semantic_similarity",        # [embed]
+    "string_similarity",
+    "bleu",
+    "rouge",
+    "chrf",
+    "exact_match",
+    "string_presence",
+    # judged — spend model calls
+    "faithfulness",               # [judge]
+    "answer_correctness",         # [judge] [embed]
+    "context_recall_llm",         # [judge]
+    # "context_precision_llm_ref",  # [judge] per-context: ~k judge calls/question (the slow pass)
 ]
 
 
 def metrics_to_run():
-    """The free deterministic backbone + the judged metrics you opted into."""
-    return ALWAYS + SELECTED
+    """The metrics this run scores — exactly SELECTED."""
+    return list(SELECTED)
 
 
 def _check():
-    """Fail loud before a run if SELECTED is malformed. SELECTED is judged-only;
-    deterministic metrics ride ALWAYS, so putting one here is a mistake."""
+    """Fail loud before a run if SELECTED is malformed."""
     unknown = [m for m in SELECTED if m not in CATALOG]
     assert not unknown, f"SELECTED names not in CATALOG: {unknown}"
     wrong_task = [m for m in SELECTED if not CATALOG[m].applies]
     assert not wrong_task, f"SELECTED metrics HERB can't feed: {wrong_task}"
-    deterministic = [m for m in SELECTED if not CATALOG[m].judge]
-    assert not deterministic, (
-        f"SELECTED is judged-only; these are deterministic (already always-on): {deterministic}")
-    print(f"ragas_catalog OK — {len(CATALOG)} metrics; {len(ALWAYS)} deterministic "
-          f"always-on, {len(SELECTED)} judged selected, {len(metrics_to_run())} this run")
+    dupes = sorted({m for m in SELECTED if SELECTED.count(m) > 1})
+    assert not dupes, f"SELECTED has duplicates: {dupes}"
+    judged = sum(1 for m in SELECTED if CATALOG[m].judge)
+    print(f"ragas_catalog OK — {len(CATALOG)} in menu; {len(SELECTED)} selected "
+          f"({judged} judged, {len(SELECTED) - judged} free)")
 
 
 if __name__ == "__main__":

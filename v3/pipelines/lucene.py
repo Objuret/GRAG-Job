@@ -21,8 +21,7 @@ Params k1=0.9, b=0.4 are the reference defaults from "Resources for Brewing BEIR
 (Kamalloo et al. 2023), established on the BEIR benchmark (Thakur et al. 2021);
 algorithm origin Robertson & Zaragoza (2009). These citations are the PROVENANCE
 of the configuration only — BEIR is not an evaluation target here. Every arm
-(artifact / lucene / vector) is scored solely by the two project scorers, HERB
-and RAGAS.
+(artifact / lucene / vector) is scored solely by RAGAS.
 
 Retrieval unit = one HERB artifact (slack message / document / meeting
 transcript / meeting chat / url / pr). The artifact's native `id` is preserved
@@ -34,6 +33,25 @@ Contract fit: prepare returns a Prepared index carrying a contract.BuildStats;
 answer_one_question returns a contract.ArmOutput. The question is read for its
 `id` + `question` ONLY — `ground_truth` / `citations` are never touched, so the
 truth quarantine holds by convention.
+
+References (provenance of the method + its configuration; none is an evaluation
+target — every arm is scored solely by RAGAS):
+  - Robertson, S. & Zaragoza, H. (2009). The Probabilistic Relevance Framework:
+    BM25 and Beyond. Foundations and Trends in IR 3(4):333-389.
+    doi:10.1561/1500000019 — the BM25 ranking function itself.
+  - Kamphuis, C., de Vries, A.P., Boytsov, L. & Lin, J. (2020). Which BM25 Do You
+    Mean? A Large-Scale Reproducibility Study of Scoring Variants. ECIR 2020.
+    doi:10.1007/978-3-030-45442-5_4 — the variant taxonomy; "lucene" is the
+    Lucene/Robertson length-normalisation this arm selects.
+  - Lù, X.H. (2024). BM25S: Orders of Magnitude Faster Lexical Search via Eager
+    Sparse Scoring. arXiv:2407.03618 — the bm25s engine used here, which
+    reproduces those variants' exact scoring.
+  - Kamalloo, E., Thakur, N. et al. (2023). Resources for Brewing BEIR:
+    Reproducible Reference Models and an Official Leaderboard. arXiv:2306.07471 —
+    source of the k1=0.9, b=0.4 reference defaults.
+  - Thakur, N., Reimers, N., Rücklé, A., Srivastava, A. & Gurevych, I. (2021).
+    BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of IR Models.
+    arXiv:2104.08663 — the benchmark those defaults were established on.
 """
 from __future__ import annotations
 
@@ -104,7 +122,9 @@ def _flatten_one(kind: str, rec: dict) -> Optional[tuple]:
         contents = text
     elif kind == "documents":
         title = rec.get("type", "Document")
-        contents = rec.get("content", "")
+        contents = "\n".join(
+            s for s in (rec.get("content", ""), rec.get("feedback", "")) if s
+        )
     elif kind == "meeting_transcripts":
         title = rec.get("document_type", "Meeting transcript")
         contents = rec.get("transcript", "")
@@ -177,6 +197,8 @@ def build_sparse_index(
     titles = [d["title"] for d in docs]
     # Title + body is the indexed text (the standard BEIR concatenation).
     texts = [f'{d["title"]}\n{d["contents"]}'.strip() for d in docs]
+    if not texts:
+        raise RuntimeError(f"sparse index: corpus is empty (corpus={corpus!r})")
 
     stemmer = Stemmer.Stemmer("english")
     corpus_tokens = bm25s.tokenize(

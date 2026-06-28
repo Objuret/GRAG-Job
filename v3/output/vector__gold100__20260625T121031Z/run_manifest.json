@@ -1,0 +1,21 @@
+{
+  "arm": "vector",
+  "generator_model": "qwen/qwen3.5-397b-a17b",
+  "top_k": 50,
+  "questions_file": "A:\\exjobbet\\repo\\v3\\data\\questions.jsonl",
+  "n_questions": 100,
+  "n_ran": 100,
+  "n_failed": 0,
+  "timestamp": "2026-06-28T00:21:46.320840+00:00",
+  "build_stats": {
+    "build_time_s": 205.6349188000022,
+    "model": {
+      "calls": 19,
+      "tokens": 2719968,
+      "time_s": 200.8340187999711
+    },
+    "models": [
+      "nvidia/llama-nemotron-embed-1b-v2"
+    ]
+  }
+}

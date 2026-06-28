@@ -1,0 +1,7 @@
+{
+  "scorer": "ragas",
+  "judge_model": null,
+  "source_run": "A:\\exjobbet\\repo\\v3\\output\\smoke\\lucene__smoke__20260627T220933Z",
+  "arm": "lucene",
+  "timestamp": "2026-06-27T22:09:38.750577+00:00"
+}

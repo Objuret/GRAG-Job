@@ -35,8 +35,18 @@ content:
   - /documents/*/content
   - /documents/*/feedback               # second doc-leaf on the same record
   - /meeting_transcripts/*/transcript
-  - /meeting_chats/*/text               # short (maxlen 128) — still content
-  - /urls/*/description                 # short (maxlen 120) — still content
+  - /meeting_chats/*/text               # short — still content
+# urls (link + blurb) are references, not content: they resolve through raw, never tagged.
+
+# ---- conversation: which content collections are message STREAMS ----
+# Many tiny records that must be GROUPED into coherent episodes by channel +
+# time (design §9.4), vs self-contained records that are one chunk each.
+# Silence = self-contained record. channel/timestamp name the per-record
+# fields the seam-finder reads (the meaning the shape can't know).
+conversation:
+  - collection: /slack
+    channel: /Channel/channelID
+    timestamp: /Message/User/timestamp
 
 # ---- 2. directories: id-spaces resolved through raw, never mirrored ----
 # kind routes an interpreter flag to the one directory the scoped

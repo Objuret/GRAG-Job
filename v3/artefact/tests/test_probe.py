@@ -8,7 +8,9 @@ from artefact.probe import (
     derive_candidates,
     escape_pointer_token,
     fuse,
+    is_content_file,
     profile,
+    typical_str_len,
 )
 
 
@@ -18,7 +20,11 @@ def test_scalar_kinds():
     assert profile(3)["kinds"] == {"int"}
     assert profile(3.5)["kinds"] == {"float"}
     assert profile("hi")["kinds"] == {"str"}
-    assert profile("x" * (LONG_TEXT_CHARS + 1))["kinds"] == {"str_long"}
+    # a long string is still a `str`; whether it is prose is a typical-length
+    # judgment over instances (typical_str_len), not a per-instance kind
+    long_one = profile("x" * (LONG_TEXT_CHARS + 1))
+    assert long_one["kinds"] == {"str"}
+    assert typical_str_len(long_one) == LONG_TEXT_CHARS + 1
 
 
 def test_array_fuses_elements():
@@ -76,6 +82,35 @@ def test_candidates_collections_and_docleaves():
     leaf_pointers = {d.pointer for d in docleaves}
     assert "/doc" in leaf_pointers
     assert "/prs/*/reviews/*/body" in leaf_pointers
+
+
+def test_docleaf_discriminator_is_typical_not_max():
+    # a position whose instances are TYPICALLY short is NOT a prose leaf, even
+    # when one outlier instance is long: median decides, not the max.
+    short = profile({"f": [{"summary": "ok"}] * 3 + [{"summary": "x" * 5000}]})
+    leaves = {d.pointer for d in derive_candidates(short)[1]}
+    assert "/f/*/summary" not in leaves          # typical length is 2 chars
+    # a position whose instances are typically long IS a prose leaf
+    longp = profile({"f": [{"content": "y" * 3000} for _ in range(3)]})
+    leaves = {d.pointer for d in derive_candidates(longp)[1]}
+    assert "/f/*/content" in leaves
+
+
+def test_str_lens_fuse_accumulates_across_instances():
+    fused = fuse(profile("aaa"), profile("aaaaa"))
+    assert fused["t"] == "scalar"
+    assert sorted(fused["str_lens"]) == [3, 5]
+    assert typical_str_len(fused) == 4          # median of {3, 5}
+
+
+def test_is_content_file_scopes_to_collection_roots():
+    # a product-shaped object (collection-of-objects root) is a content file
+    assert is_content_file({"slack": [{"a": 1}], "n": 2}) is True
+    # an id-directory (flat dict keyed by id) is not — its values are objects,
+    # not collections
+    assert is_content_file({"eid_1": {"name": "x"}, "eid_2": {"name": "y"}}) is False
+    # a top-level-array file is not (it is not even a top-level object)
+    assert is_content_file([{"id": 1}, {"id": 2}]) is False
 
 
 def test_pointer_escaping():

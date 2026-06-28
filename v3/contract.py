@@ -56,7 +56,9 @@ class RunManifest:
     generator_model: str | None  # None on a retrieval-only run (no generation)
     top_k: int
     questions_file: str
-    n_questions: int
+    n_questions: int                      # chosen for this run
+    n_ran: int                            # produced an answer -> arm_outputs.jsonl
+    n_failed: int                         # chosen minus answered (n_ran + n_failed == n_questions)
     timestamp: str
     build_stats: BuildStats
 

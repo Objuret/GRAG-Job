@@ -1,0 +1,9 @@
+{"question_id": "ActionGenie::a::0", "metric": "answer_correctness", "error": "RuntimeError: NIM judge returned null content (finish_reason=stop)"}
+{"question_id": "ActionGenie::a::0", "metric": "context_recall_llm", "error": "RuntimeError: NIM judge returned null content (finish_reason=stop)"}
+{"question_id": "ActionGenie::a::5", "metric": "faithfulness", "error": "RuntimeError: NIM judge returned null content (finish_reason=stop)"}
+{"question_id": "ActionGenie::a::5", "metric": "answer_correctness", "error": "RuntimeError: NIM /chat/completions gave up after 6 tries / 60s: 429 {\"status\":429,\"title\":\"Too Many Requests\"}"}
+{"question_id": "ActionGenie::a::5", "metric": "context_recall_llm", "error": "RuntimeError: NIM /chat/completions gave up after 6 tries / 65s: 429 {\"status\":429,\"title\":\"Too Many Requests\"}"}
+{"question_id": "ActionGenie::a::21", "metric": "faithfulness", "error": "RuntimeError: NIM /chat/completions gave up after 6 tries / 42s: 429 {\"status\":429,\"title\":\"Too Many Requests\"}"}
+{"question_id": "ActionGenie::a::21", "metric": "answer_correctness", "error": "RuntimeError: NIM /chat/completions gave up after 6 tries / 61s: 429 {\"status\":429,\"title\":\"Too Many Requests\"}"}
+{"question_id": "ActionGenie::a::11", "metric": "context_precision_llm_ref", "error": "RuntimeError: NIM judge returned null content (finish_reason=stop)"}
+{"question_id": "ActionGenie::a::5", "metric": "context_precision_llm_ref", "error": "RuntimeError: NIM judge returned null content (finish_reason=stop)"}

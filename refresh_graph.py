@@ -1,21 +1,12 @@
 #!/usr/bin/env python
 """
-refresh_graph.py - rebuild the graphify knowledge graph(s) in one command.
+refresh_graph.py - rebuild the graphify navigation graph in one command.
 
-v3 is CANON; v1 and v2 are separate reference builds. Each build lives in its OWN graph
-(shared class/file names across builds otherwise fabricate phantom cross-build edges
-that contradict the no-cross-imports rule):
-
-  ACTIVE graph  -> graphify-out/        : v3/ + the in-repo (gitignored) state/handoff
-                                          docs (docs/state, docs/handoff) + root canon
-                                          (CLAUDE.md, README.md). What agents use.
-  v2 REFERENCE  -> v2/graphify-out/      : the artefact build, on demand only.
-  v1 REFERENCE  -> v1/graphify-out/      : frozen v1 stack, on demand only.
+The graph covers graphify-out/ : v3/ + the in-repo (gitignored) state/handoff
+docs (docs/state, docs/handoff) + root canon (CLAUDE.md, README.md).
 
 Usage (exposed as `regraph` in PowerShell + bash):
-  regraph          rebuild the ACTIVE (v3) graph
-  regraph --v2     rebuild the v2 REFERENCE graph
-  regraph --v1     rebuild the v1 REFERENCE graph
+  regraph          rebuild the graph
   regraph --force  allow a >10% node drop (deliberate rescopes)
 
 Code edits rebuild on their own. If a DOC changed/appeared, the prose has to be read
@@ -30,8 +21,6 @@ from pathlib import Path
 # ---- CONFIG ---------------------------------------------------------------
 REPO_ROOT = Path(r"A:\exjobbet\repo")
 OUT = REPO_ROOT / "graphify-out"
-V2_ROOT = REPO_ROOT / "v2"
-V1_ROOT = REPO_ROOT / "v1"
 V3_ROOT = REPO_ROOT / "v3"
 ROOT_DOCS = [REPO_ROOT / "CLAUDE.md", REPO_ROOT / "README.md"]
 EXTERNAL = [
@@ -265,42 +254,5 @@ def main_active():
     rebuild(nodes, edges, ch, detection, OUT, REPO_ROOT, "ACTIVE graph (v3+ext+root)")
 
 
-def main_v1():
-    print("scanning v1 (reference graph)...")
-    det = detect(V1_ROOT)
-    code = collect_code(det["files"])
-    v1_docs = [f for k in ("document", "paper", "image") for f in det["files"].get(k, [])]
-    print(f"  v1 code: {len(code)} | docs: {len(v1_docs)}")
-    cn, ce, ch, uncached = check_semantic_cache(v1_docs, root=REPO_ROOT)
-    ast = extract(code, cache_root=REPO_ROOT) if code else {"nodes": [], "edges": []}
-    write_concept_index(ast["nodes"] + cn)
-    if uncached:
-        need_docs_stop(uncached, [], "v1")
-    nodes, edges = assemble(ast["nodes"] + cn, ast["edges"] + ce)
-    detection = {"total_files": det.get("total_files", 0), "total_words": det.get("total_words", 0)}
-    rebuild(nodes, edges, ch, detection, V1_ROOT / "graphify-out", V1_ROOT, "v1 REFERENCE graph")
-
-
-def main_v2():
-    print("scanning v2 (reference graph)...")
-    det = detect(V2_ROOT)
-    code = collect_code(det["files"])
-    v2_docs = [f for k in ("document", "paper", "image") for f in det["files"].get(k, [])]
-    print(f"  v2 code: {len(code)} | docs: {len(v2_docs)}")
-    cn, ce, ch, uncached = check_semantic_cache(v2_docs, root=REPO_ROOT)
-    ast = extract(code, cache_root=REPO_ROOT) if code else {"nodes": [], "edges": []}
-    write_concept_index(ast["nodes"] + cn)
-    if uncached:
-        need_docs_stop(uncached, [], "v2")
-    nodes, edges = assemble(ast["nodes"] + cn, ast["edges"] + ce)
-    detection = {"total_files": det.get("total_files", 0), "total_words": det.get("total_words", 0)}
-    rebuild(nodes, edges, ch, detection, V2_ROOT / "graphify-out", V2_ROOT, "v2 REFERENCE graph")
-
-
 if __name__ == "__main__":
-    if "--v1" in sys.argv:
-        main_v1()
-    elif "--v2" in sys.argv:
-        main_v2()
-    else:
-        main_active()
+    main_active()

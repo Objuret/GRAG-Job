@@ -1,0 +1,17 @@
+{
+  "arm": "lucene",
+  "generator_model": null,
+  "top_k": 10,
+  "questions_file": "A:\\exjobbet\\repo\\v3\\data\\questions.jsonl",
+  "n_questions": 5,
+  "timestamp": "2026-06-23T19:11:54.218557+00:00",
+  "build_stats": {
+    "build_time_s": 2.4629877999977907,
+    "model": {
+      "calls": 0,
+      "tokens": 0,
+      "time_s": 0.0
+    },
+    "models": []
+  }
+}

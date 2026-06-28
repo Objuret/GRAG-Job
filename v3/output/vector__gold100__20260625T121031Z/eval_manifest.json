@@ -1,0 +1,7 @@
+{
+  "scorer": "ragas",
+  "judge_model": null,
+  "source_run": "output\\vector__gold100__20260625T121031Z",
+  "arm": "vector",
+  "timestamp": "2026-06-28T00:21:49.302969+00:00"
+}

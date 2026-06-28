@@ -5,10 +5,10 @@ This is the eval harness for comparing the artefact against baselines on HERB.
 ## Goal
 
 Run the chosen HERB questions through three arms, get an answer from each, score
-those answers two ways.
+those answers with RAGAS.
 
 Three arms:
-- **artifact** — the v2 graph (interpreter → facet retrieval → answer). The system under test.
+- **artifact** — the artefact graph (interpreter → facet retrieval → answer). The system under test, built natively in v3.
 - **lucene** — BM25 baseline. Its own index over the corpus.
 - **vector** — dense / naive-RAG baseline. Its own index over the corpus.
 
@@ -18,20 +18,18 @@ the **corpus on disk**, the arms share **nothing** — each reads, indexes and r
 the corpus with its own code (how it does so is what the comparison measures); they
 share no retrieval code with each other, and nothing with the artefact.
 
-## Two scorers, on purpose
+## Scoring with RAGAS
 
-- **HERB** (`eval/herb.py`) — the dataset's own scoring: per-type set-F1
-  (person/url/pr/company), a 0–100 judge for content, abstention for
-  unanswerables. Exact, leaderboard-comparable. **The anchor.**
-- **RAGAS** (`eval/ragas.py`) — the multidimensional lens. The full RAGAS metric
+- **RAGAS** (`eval/ragas.py`) — the scorer. The full RAGAS metric
   menu lives in `eval/ragas_catalog.py`; every judge-free (deterministic) metric
   always runs (it costs nothing), and `SELECTED` adds the judged ones. The
   deterministic backbone is **ID-based** context precision/recall against the gold
   citations (`IDBasedContextPrecision` / `IDBasedContextRecall`, no judge); the
-  judged picks are faithfulness + **response relevancy**. RAGAS is the part that
-  transfers to a no-gold set later (faithfulness + response relevancy need no reference).
+  judged picks are **faithfulness, answer correctness, context precision, and
+  context recall**. Faithfulness needs no reference, so it transfers to a no-gold
+  set later; the other three lean on the gold answer / citations.
 
-Both emit raw per-question records (`EvalResult`, tidy long format) — nothing
+RAGAS emits raw per-question records (`EvalResult`, tidy long format) — nothing
 pre-aggregated — so paired tests, CIs, per-type splits and judge calibration are
 all possible downstream. Each run writes a `RunManifest` (arm, generator model,
 top-k, questions file, n, timestamp, build stats) and an `EvalManifest` (scorer,
@@ -79,8 +77,8 @@ three modes is the pending step — see Still open.)
 - `nim.py` — the one NVIDIA NIM REST transport (generator, embedder and judge all
   POST through it); shared harness plumbing, not retrieval code.
 - `pipelines/` — `artifact.py`, `lucene.py`, `vector.py`.
-- `eval/` — `herb.py`, `ragas.py`, and `ragas_catalog.py` (the full RAGAS metric
-  menu: deterministic metrics always run, judged ones via the `SELECTED` toggle).
+- `eval/` — `ragas.py` and `ragas_catalog.py` (the full RAGAS metric menu:
+  deterministic metrics always run, judged ones via the `SELECTED` toggle).
 - `orchestrator.py` — owns the shared generator; runs an arm through generation and
   a scorer through evaluation; writes the manifests.
 - `build_questions.py` / `questions.py` / `build_question_sets.py` — HERB ships no
@@ -98,23 +96,32 @@ three modes is the pending step — see Still open.)
 
 ## Decided
 
-- Both scorers (HERB anchor + RAGAS lens). Three arms, one shared generator, and a top-k budget shared across arms (that it's *shared* is decided; the value itself is still open — see below).
+- RAGAS is the only scorer. Three arms, one shared generator, and a top-k budget shared across arms (that it's *shared* is decided; the value itself is still open — see below).
 - **Generation and scoring are separate phases** (`questions` / `evals` / `full`), so
   iterating a scorer never re-runs the generator. The `questions` record is **oracle-free**;
   `evals` re-joins `type` + `ground_truth` + `citations` by id from `data/questions.jsonl`.
 - **RAGAS selection**: deterministic (judge-free) metrics always run because they cost
   nothing; the judged ones are opted in via `SELECTED` in `eval/ragas_catalog.py`.
   Deterministic context precision/recall = the **ID-based** variants against the gold citations.
+  Computed with the **RAGAS library** (validated/citable), judge = the Mistral above.
 - **Per-question telemetry is split**: `ArmOutput.generator` (the shared answer-writer,
   identical across arms) vs `ArmOutput.retrieval` (the arm's OWN retrieval-time model cost —
   vector's query embed; zero for lucene).
 - **Provenance** is two manifests — `RunManifest` (generation side) + `EvalManifest`
   (scoring side); no seed, no git-sha.
 - Oracle read in place from raw; pipelines blind to it.
-- **Shared generator**: `mistralai/mistral-large-3-675b-instruct-2512` on NVIDIA NIM —
-  one generator injected into all three arms, so the only variable is retrieval. It's
-  multilingual, so HERB now and the deferred Swedish Bonnier set later run on the SAME
-  generator with no swap.
+- **One LLM — generator *and* judge**: `qwen/qwen3.5-397b-a17b` on NVIDIA NIM. It's the
+  generator injected into all three arms (so the only variable is retrieval) AND the
+  LLM-as-judge for the RAGAS judged metrics. Multilingual, so HERB now and the deferred
+  Swedish Bonnier set run on the same model, no swap. Not GPT-4o, so HERB's published
+  baselines get re-run, not cited.
+- **Generation contract — a thin, fixed RAG pipe.** It sends the model one fixed system
+  instruction — *"Answer the question using only the provided documents. Be concise."* —
+  then the question exactly as posed in the set plus the arm's retrieved passages as a
+  labelled user turn, and takes back a structured `{answer}`. The instruction is generic
+  grounding, not retrieval engineering, and is held byte-identical across all three arms,
+  so the only variable remains the retrieval. Any advanced handling of thin or empty
+  context is an individual arm's own concern, never the shared harness.
 - **lucene arm built**: bm25s `method="lucene"` — the Lucene / Elasticsearch BM25
   variant (bm25s's default; k1=0.9 / b=0.4 are the BEIR reference values). It reproduces
   Lucene's *scoring* exactly; the analysis (EN stopwords + Snowball/Porter2 stem) is
@@ -122,8 +129,8 @@ three modes is the pending step — see Still open.)
   index. Justified: all 17,087 gold citations resolve to an artifact `id`, so context_ids
   share the citation id space and metadata would only add never-relevant distractors.
   Returns `ArmOutput`; prepare attaches `BuildStats` (model = ModelUsage(), no model at build).
-- **vector arm built**: embedder `nvidia/llama-3.2-nv-embedqa-1b-v2` on NIM
-  (multilingual, English-strong, 8192-token context). It reads the corpus with its
+- **vector arm built**: embedder `nvidia/llama-nemotron-embed-1b-v2` on NIM
+  (multilingual incl. Swedish, English-strong, 8192-token context). It reads the corpus with its
   OWN reader (no code shared with another arm) into one document per artifact,
   embedded **whole** — the 8192-token context covers every HERB artifact (longest
   ~1.5k tokens), so no truncation and no chunking (this arm's own unit choice);
@@ -140,14 +147,8 @@ three modes is the pending step — see Still open.)
 
 ## Still open
 
-- **RAGAS computation** — the `ragas` library (every metric for ~free, heavier, more
-  opaque) vs hand-implemented (transparent; the deterministic ones are a few lines each,
-  the judged ones need prompts). Decides how legible the eval is.
 - **Orchestrator split** into the three `questions` / `evals` / `full` modes, with a
   per-run-folder run identity (so a gold-100 run and a full run don't clobber).
-- **Generation contract** — the generator's answer prompt, its abstention string, and
-  the empty-context behavior — pending sign-off.
-- **Judge** model(s) — if it's not GPT-4o, the HERB baselines must be **re-run**, not cited from the paper.
 - **top-k** budget.
 - **Which set to run** — gold-100 (built; seeded stratified draw) vs the full 815 + 699.
 - **Judge calibration** subset size (to validate the judged RAGAS metrics).
@@ -156,5 +157,5 @@ three modes is the pending step — see Still open.)
 
 Answer-level scoring measures the whole pipeline, not retrieval alone — a strong
 generator can mask retrieval quality. The deterministic context precision/recall
-(and, if wanted, HERB's oracle setting) is what keeps an endpoint pointed
-directly at retrieval, which is the artefact's actual claim.
+is what keeps an endpoint pointed directly at retrieval, which is the artefact's
+actual claim.

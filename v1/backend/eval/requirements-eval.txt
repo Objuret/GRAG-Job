@@ -1,4 +1,0 @@
-# Offline RAGAS scoring for exported workbench runs (backend/eval/ragas_eval.py).
-# Kept out of the main lock file: only needed when actually scoring.
-ragas>=0.2,<0.3
-datasets>=2.16
