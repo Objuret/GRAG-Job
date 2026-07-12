@@ -135,6 +135,9 @@ def build_shared_generator(config):
             # Output budget. Unset, NIM applies its own low default and long answers
             # come back truncated (finish_reason=length); the 262k context leaves ample room.
             "max_tokens": 8192,
+            # Force >=1 generated token; Qwen otherwise greedily emits end-of-turn first
+            # for some prompts (null content, finish_reason=stop) — same guard the judge uses.
+            "min_tokens": 1,
             "messages": [
                 {"role": "system",
                  "content": "Answer the question using only the provided documents. Be concise."},

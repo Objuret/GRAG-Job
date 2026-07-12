@@ -30,7 +30,7 @@ from run_lock import RunLock
 _HERE = Path(__file__).parent
 DATA = _HERE / "data"
 OUTPUT = _HERE / "output"
-ARMS = ("lucene", "vector", "artefact")
+ARMS = ("lucene", "vector", "artefact", "artefact_v1")
 
 
 def _write_dev_ids(n, dest):

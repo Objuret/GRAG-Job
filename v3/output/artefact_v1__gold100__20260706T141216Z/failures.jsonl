@@ -1,0 +1,4 @@
+{"id": "ProposalForce::a::11", "error": "RuntimeError(\"NIM /chat/completions gave up after 3 tries / 364s: ReadTimeout('The read operation timed out')\")"}
+{"id": "AnomalyForce::a::17", "error": "RuntimeError(\"NIM /chat/completions gave up after 3 tries / 363s: ReadTimeout('The read operation timed out')\")"}
+{"id": "ContextForce::a::22", "error": "RuntimeError(\"NIM /chat/completions gave up after 3 tries / 363s: ReadTimeout('The read operation timed out')\")"}
+{"id": "PersonalizeForce::a::34", "error": "RuntimeError(\"no chunks match the gate at all (gate={'product': 'PersonalizeForce', 'section': 'prs', 'channel': None, 'employee_id': 'eid_bac7c6c4', 'years': []}) — nothing to retrieve\")"}

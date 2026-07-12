@@ -277,6 +277,24 @@ pipelines_artefact_rationale_203	interpret → embed facet phrases → phrase we
 pipelines_artefact_rationale_235	Normalise a generator's return into (answer, calls, tokens, time_s).     Mirrors
 pipelines_artefact_rationale_259	ENTRY: interpret → retrieve top-k chunks → resolve artifact ids + chunk     text
 pipelines_artefact_rationale_89	Handle returned by prepare(); fed back into answer_one_question.     Carries the
+pipelines_artefact_v1_rationale_1	artefact_v1.py — the ARTEFACT-V1 arm: facet-grounded tag retrieval over the Neo4
+pipelines_artefact_v1_rationale_125	The hard-gate WHERE fragment + params from the plan's structured gate,     ANDed
+pipelines_artefact_v1_rationale_203	Handle returned by prepare(): the live Neo4j driver + BuildStats. The tag     gr
+pipelines_artefact_v1_rationale_212	Neo4j driver from the usual v3/.env (loaded by nim, same as every other     secr
+pipelines_artefact_v1_rationale_230	Open the Neo4j driver and confirm the per-facet grounding indexes are     presen
+pipelines_artefact_v1_rationale_271	(id, question_text) from a QuestionWithTruth, dict, (id, text) tuple, or a     b
+pipelines_artefact_v1_rationale_283	First balanced {...} object in the model output, tolerant of code fences     and
+pipelines_artefact_v1_rationale_339	One JSON turn on the shared model -> (parsed_json, tokens, time_s).     Determin
+pipelines_artefact_v1_rationale_375	Tag weight from its facet vector: RMS strength scaled by a coverage bonus     (a
+pipelines_artefact_v1_rationale_389	Normalise the model's loose gate into the strict shape retrieval gates on:     s
+pipelines_artefact_v1_rationale_416	interpret a question -> (plan, calls, tokens, time_s). plan = {description,
+pipelines_artefact_v1_rationale_453	One embed call (query side) for the pass-1 description + the prompt tag     name
+pipelines_artefact_v1_rationale_492	interpret-plan -> (pointer rows best-first, ground embed ModelUsage). Each     r
+pipelines_artefact_v1_rationale_532	Read + hash-verify + parse one raw file, memoized in `cache` so k chunks     int
+pipelines_artefact_v1_rationale_552	Record i of a metadata file: a list root indexes directly; a dict root     (the
+pipelines_artefact_v1_rationale_562	One retrieved pointer row -> (chunk text, [artifact ids]). The locator is     se
+pipelines_artefact_v1_rationale_602	Normalise the shared generator's return into (answer, calls, tokens,     time_s)
+pipelines_artefact_v1_rationale_616	ENTRY: interpret -> ground -> score -> top-k chunk text -> generate ->     ArmOu
 pipelines_lucene_rationale_1	lucene.py — sparse baseline (BM25, Lucene-variant ranking).  Why it's here: th
 pipelines_lucene_rationale_111	One artifact -> (id, title, contents). None if the record carries no id.
 pipelines_lucene_rationale_154	Flatten HERB into one document per artifact: {id, title, contents, kind}.
@@ -471,16 +489,16 @@ v3_offline_eval_rationale_1	offline_eval.py — score run folders with the no-ju
 v3_offline_eval_rationale_42	Vectors for `texts` in input order via the vector arm's batched embedder —     h
 v3_orchestrator_rationale_1	orchestrator.py — wires ONE pipeline + ONE evaluator over the chosen questions a
 v3_orchestrator_rationale_111	Build the ONE generator (on NIM) injected into every arm.     Returns a callable
-v3_orchestrator_rationale_176	Strip the truth: hand the arm the question's id + text ONLY, as the (id,     tex
-v3_orchestrator_rationale_185	Ids already answered — one per line in arm_outputs.jsonl. This is the resume
-v3_orchestrator_rationale_195	A persisted arm-output record (dict) -> contract.ArmOutput, so the scorer     re
-v3_orchestrator_rationale_205	Prepare the arm once, then answer the questions concurrently, writing each     a
-v3_orchestrator_rationale_276	-> list[contract.EvalResult]. The arm label + corpus (so an evaluator can     de
-v3_orchestrator_rationale_286	Provenance for the generation side -> contract.RunManifest (timestamp now,     U
-v3_orchestrator_rationale_304	Provenance for the eval side -> contract.EvalManifest (timestamp now, UTC).
-v3_orchestrator_rationale_315	pipelines.lucene' / 'eval.ragas' -> 'lucene' / 'ragas' (run + output label).
-v3_orchestrator_rationale_320	TOP ENTRY. Generation writes each answer to out_dir/arm_outputs.jsonl as it
-v3_orchestrator_rationale_381	Wiring check with fakes — no NIM, no bm25s, no disk questions. Verifies the
+v3_orchestrator_rationale_179	Strip the truth: hand the arm the question's id + text ONLY, as the (id,     tex
+v3_orchestrator_rationale_188	Ids already answered — one per line in arm_outputs.jsonl. This is the resume
+v3_orchestrator_rationale_198	A persisted arm-output record (dict) -> contract.ArmOutput, so the scorer     re
+v3_orchestrator_rationale_208	Prepare the arm once, then answer the questions concurrently, writing each     a
+v3_orchestrator_rationale_279	-> list[contract.EvalResult]. The arm label + corpus (so an evaluator can     de
+v3_orchestrator_rationale_289	Provenance for the generation side -> contract.RunManifest (timestamp now,     U
+v3_orchestrator_rationale_307	Provenance for the eval side -> contract.EvalManifest (timestamp now, UTC).
+v3_orchestrator_rationale_318	pipelines.lucene' / 'eval.ragas' -> 'lucene' / 'ragas' (run + output label).
+v3_orchestrator_rationale_323	TOP ENTRY. Generation writes each answer to out_dir/arm_outputs.jsonl as it
+v3_orchestrator_rationale_384	Wiring check with fakes — no NIM, no bm25s, no disk questions. Verifies the
 v3_orchestrator_rationale_55	Load the full question set (truth hydrated from raw via questions.jsonl)     and
 v3_orchestrator_rationale_77	Ids from a jsonl id-set file (output/question_ids.jsonl, gold100.jsonl,     or a
 v3_orchestrator_rationale_98	Handle onto the RAG-safe corpus — the only data a pipeline sees. Validates     t
@@ -511,6 +529,10 @@ v3_readme_three_arms	The harness runs chosen HERB questions through three arms �
 v3_readme_two_manifests_provenance	Each run writes a RunManifest (arm, generator model, top-k, questions file, n, timestamp, build stats) on the generation side and an EvalManifest (scorer, judge model, source run, arm, timestamp) on the scoring side; no seed, no git-sha.
 v3_readme_two_phase_run_flow	Generation and scoring are split into two separate phases (modes questions / evals / full) so iterating a scorer never re-runs the LLM; the questions phase answers chosen questions writing an oracle-free records.jsonl + run_manifest.json, the evals phase re-joins truth by id and writes eval_results.jsonl + eval_manifest.json.
 v3_readme_vector_design	The vector arm is built on embedder nvidia/llama-nemotron-embed-1b-v2 on NIM (multilingual incl. Swedish, 8192-token context), reading the corpus with its OWN reader into one document per artifact embedded WHOLE (no truncation/chunking), exact brute-force cosine (no ANN), keeping each artifact's native id — a deliberate capable multilingual dense baseline, NOT the English-only 256-token all-MiniLM textbook naive-RAG default.
+v3_reembed_herb_eval_rationale_1	Embed the herb-eval graph's semantic layer with the v3 embedder (nemotron).  The
+v3_reembed_herb_eval_rationale_52	Drop + recreate one cosine vector index — a re-run after a dimension     change
+v3_reembed_herb_eval_rationale_67	Tag names, bare, one vector per tag reachable through the arm's tagging     run
+v3_reembed_herb_eval_rationale_93	Each chunk's description (text read from the backup, embedding input     only) -
 v3_run_lock_rationale_1	Single-writer guard for run output folders.
 v3_run_rationale_1	run.py — the single entry point for an evaluation run: choose an arm, a question
 v3_run_rationale_37	Write a fixed dev id-set (one answerable per HERB type first, then in file     o
