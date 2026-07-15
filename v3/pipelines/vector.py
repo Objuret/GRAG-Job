@@ -78,7 +78,7 @@ import numpy as np
 from tqdm import tqdm
 
 import nim
-from contract import ArmOutput, BuildStats, ModelUsage
+from contract import ArmOutput, BuildStats, ModelUsage, split_usage_tokens, unpack_generation
 
 EMBED_MODEL = "nvidia/llama-nemotron-embed-1b-v2"
 # NIM hosted /embeddings caps: 2048 inputs AND 300k tokens per request. Batch to
@@ -188,7 +188,7 @@ def _read_corpus(corpus_root) -> list:
 
 def _embed_request(texts: list, input_type: str) -> tuple:
     """Embed one batch in a single NIM call -> (embeddings in input order, calls,
-    tokens, seconds).
+    tokens_in, tokens_out, seconds).
 
     `truncate="NONE"` so an over-long input errors loudly rather than being
     silently clipped. On a too-large rejection (NIM 4xx — the batch over the
@@ -215,9 +215,9 @@ def _embed_request(texts: list, input_type: str) -> tuple:
             raise
         mid = len(texts) // 2
         lo, ro = _embed_request(texts[:mid], input_type), _embed_request(texts[mid:], input_type)
-        return lo[0] + ro[0], lo[1] + ro[1], lo[2] + ro[2], lo[3] + ro[3]
+        return lo[0] + ro[0], lo[1] + ro[1], lo[2] + ro[2], lo[3] + ro[3], lo[4] + ro[4]
 
-    tokens = int((resp.get("usage") or {}).get("total_tokens", 0) or 0)
+    tokens_in, tokens_out = split_usage_tokens(resp.get("usage"))
     data = resp.get("data")
     if not data:
         raise RuntimeError(f"NIM /embeddings returned no data (keys={list(resp)})")
@@ -230,34 +230,35 @@ def _embed_request(texts: list, input_type: str) -> tuple:
             raise RuntimeError(
                 f"NIM /embeddings row malformed (index={idx}, has_emb={bool(emb)})")
         embs.append(emb)
-    return embs, 1, tokens, secs
+    return embs, 1, tokens_in, tokens_out, secs
 
 
 def _embed(texts: list, input_type: str, batch: int = EMBED_BATCH) -> tuple:
     """Embed texts via nv-embedqa -> (matrix [n, d] float32 L2-normalised, calls,
-    tokens, seconds).
+    tokens_in, tokens_out, seconds).
 
     `input_type` is the model's asymmetric flag: "passage" for corpus docs,
     "query" for questions. Batches up to `batch` inputs per request (the NIM input
     cap); _embed_request handles the token cap and over-long inputs by splitting.
-    calls/tokens/seconds count SUCCESSFUL embedding requests only — a batch
+    calls/tokens_in/tokens_out/seconds count SUCCESSFUL embedding requests only — a batch
     rejected for size is a sizing probe that embeds nothing, so it is not counted.
     """
-    vecs, calls, tokens, secs = [], 0, 0, 0.0
+    vecs, calls, tokens_in, tokens_out, secs = [], 0, 0, 0, 0.0
     starts = range(0, len(texts), batch)
     # A live bar for the multi-batch corpus build; disabled for a single-text query.
     for i in tqdm(starts, desc="embedding", unit="batch", disable=len(texts) <= batch):
-        e, c, t, s = _embed_request(texts[i:i + batch], input_type)
+        e, c, ti, to, s = _embed_request(texts[i:i + batch], input_type)
         vecs.extend(e)
         calls += c
-        tokens += t
+        tokens_in += ti
+        tokens_out += to
         secs += s
     # dtype=float32 over ragged rows raises ValueError, so mismatched dims fail loud.
     mat = np.asarray(vecs, dtype=np.float32)
     norms = np.linalg.norm(mat, axis=1, keepdims=True)
     norms[norms == 0] = 1.0
     mat /= norms
-    return mat, calls, tokens, secs
+    return mat, calls, tokens_in, tokens_out, secs
 
 
 # --- index -------------------------------------------------------------------
@@ -297,21 +298,29 @@ def build_dense_index(corpus, batch: int = EMBED_BATCH) -> Prepared:
     cache = _cache_path(ids, texts)
     if cache.is_file():
         z = np.load(cache, allow_pickle=True)
-        bt, calls, tokens, model_s = z["build_stats"]
+        stats = z["build_stats"]
+        bt = float(stats[0])
+        calls = int(stats[1])
+        if len(stats) == 4:
+            tokens_in, tokens_out, model_s = int(stats[2]), 0, float(stats[3])
+        else:
+            tokens_in, tokens_out, model_s = int(stats[2]), int(stats[3]), float(stats[4])
         return Prepared(
             matrix=z["matrix"], ids=list(z["ids"]), texts=list(z["texts"]),
             build_stats=BuildStats(
-                build_time_s=float(bt),
-                model=ModelUsage(int(calls), int(tokens), float(model_s)),
+                build_time_s=bt,
+                model=ModelUsage(calls=calls, tokens_in=tokens_in, tokens_out=tokens_out,
+                                 time_s=model_s),
                 models=[EMBED_MODEL]),
         )
 
     nim.require_key()  # fail loud before embedding — no silent offline mode
-    matrix, calls, tokens, model_s = _embed(texts, "passage", batch)
+    matrix, calls, tokens_in, tokens_out, model_s = _embed(texts, "passage", batch)
 
     build_stats = BuildStats(
         build_time_s=time.perf_counter() - t0,
-        model=ModelUsage(calls, tokens, model_s),
+        model=ModelUsage(calls=calls, tokens_in=tokens_in, tokens_out=tokens_out,
+                         time_s=model_s),
         models=[EMBED_MODEL],
     )
     # Atomic publish: write a temp file then rename, so a concurrent reader gating
@@ -325,8 +334,8 @@ def build_dense_index(corpus, batch: int = EMBED_BATCH) -> Prepared:
             np.savez(
                 f, matrix=matrix,
                 ids=np.array(ids, dtype=object), texts=np.array(texts, dtype=object),
-                build_stats=np.array([build_stats.build_time_s, calls, tokens, model_s],
-                                     dtype=object),
+                build_stats=np.array([build_stats.build_time_s, calls, tokens_in, tokens_out,
+                                      model_s], dtype=object),
             )
         os.replace(tmp, cache)
     except BaseException:
@@ -337,7 +346,8 @@ def build_dense_index(corpus, batch: int = EMBED_BATCH) -> Prepared:
         raise
     # The construction cost, saved once beside the embeddings as readable JSON.
     (CACHE_DIR / f"{cache.stem}.cost.json").write_text(
-        json.dumps({"model": EMBED_MODEL, "calls": calls, "tokens": tokens,
+        json.dumps({"model": EMBED_MODEL, "calls": calls,
+                    "tokens_in": tokens_in, "tokens_out": tokens_out,
                     "build_time_s": build_stats.build_time_s}, indent=2),
         encoding="utf-8")
     return Prepared(matrix=matrix, ids=ids, texts=texts, build_stats=build_stats)
@@ -424,27 +434,8 @@ def gather_unit_text(units: list) -> list:
 # --- answer ------------------------------------------------------------------
 
 def _unpack_generation(result, elapsed_s: float) -> tuple:
-    """Normalise a generator's return into (answer, calls, tokens, time_s).
-
-    Accepts: a bare answer string; a (answer, telemetry_dict) pair; or an object
-    exposing .answer plus optional .calls/.tokens/.time. Missing telemetry falls
-    back to calls=1, tokens=0, time=the measured wall time of the call."""
-    if isinstance(result, tuple) and len(result) == 2 and isinstance(result[1], dict):
-        answer, tel = result
-        return (
-            answer,
-            int(tel.get("calls", 1)),
-            int(tel.get("tokens", 0)),
-            float(tel.get("time", elapsed_s)),
-        )
-    if hasattr(result, "answer"):
-        return (
-            result.answer,
-            int(getattr(result, "calls", 1)),
-            int(getattr(result, "tokens", 0)),
-            float(getattr(result, "time", elapsed_s)),
-        )
-    return str(result), 1, 0, elapsed_s
+    """Normalise a generator's return into (answer, ModelUsage)."""
+    return unpack_generation(result, elapsed_s)
 
 
 def answer_one_question(
@@ -470,19 +461,17 @@ def answer_one_question(
     contexts = gather_unit_text(units)
 
     if generate is None:
-        answer, model_calls, model_tokens, model_time_s = "", 0, 0, 0.0
+        answer, gen_usage = "", ModelUsage()
     else:
         g0 = time.perf_counter()
         result = generate(text, contexts)
-        answer, model_calls, model_tokens, model_time_s = _unpack_generation(
-            result, time.perf_counter() - g0
-        )
+        answer, gen_usage = _unpack_generation(result, time.perf_counter() - g0)
 
     return ArmOutput(
         answer=answer,
         contexts=contexts,
         context_ids=context_ids,
         search_time_s=search_time_s,
-        generator=ModelUsage(model_calls, model_tokens, model_time_s),
+        generator=gen_usage,
         retrieval=retrieval_usage,  # the query-embed cost
     )

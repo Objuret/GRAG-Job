@@ -22,12 +22,12 @@ def main():
     ids = [q.id for q in qs]
     texts = [q.question for q in qs]
 
-    matrix, calls, tokens, secs = _embed(texts, "query")
+    matrix, calls, tokens_in, tokens_out, secs = _embed(texts, "query")
 
     QUERY_VECS_PATH.parent.mkdir(parents=True, exist_ok=True)
     np.savez(QUERY_VECS_PATH, ids=np.array(ids, dtype=object), matrix=matrix)
     print(f"embedded {len(ids)} questions ({EMBED_MODEL}) -> {QUERY_VECS_PATH}")
-    print(f"  {calls} request(s), {tokens} tokens, {secs:.1f}s")
+    print(f"  {calls} request(s), in={tokens_in} out={tokens_out} tokens, {secs:.1f}s")
 
 
 if __name__ == "__main__":

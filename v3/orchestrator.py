@@ -18,7 +18,10 @@ from pathlib import Path
 import abort
 from progress import progress
 import questions
-from contract import ArmOutput, EvalManifest, ModelUsage, RunManifest
+from contract import (
+    ArmOutput, EvalManifest, ModelUsage, RunManifest, generator_messages,
+    generator_usage_from_nim, model_usage_from_dict, model_usage_from_telemetry,
+)
 
 _HERE = Path(__file__).parent
 DEFAULT_CORPUS = _HERE / "data" / "corpus" / "Salesforce__HERB"
@@ -110,7 +113,7 @@ def open_corpus(corpus_root):
 def build_shared_generator(config):
     """Build the ONE generator (on NIM) injected into every arm.
     Returns a callable generate(question_text, contexts) -> (answer, telemetry),
-    where telemetry = {calls, tokens, time} fills the arm's generator ModelUsage.
+    where telemetry = {calls, tokens_in, tokens_out, time} fills the arm's generator ModelUsage.
     `config['retrieval_only']` -> None (smoke: retrieval without generation).
     linked to: every arm's answer_one_question (the `generate` argument)
     """
@@ -123,7 +126,6 @@ def build_shared_generator(config):
     model = config.get("generator_model", GENERATOR_MODEL)
 
     def generate(question, contexts):
-        ctx = "\n\n".join(contexts)
         t0 = time.perf_counter()
         resp = nim.post("/chat/completions", {
             "model": model,
@@ -135,19 +137,13 @@ def build_shared_generator(config):
             # Output budget. Unset, NIM applies its own low default and long answers
             # come back truncated (finish_reason=length); the 262k context leaves ample room.
             "max_tokens": 8192,
-            "messages": [
-                {"role": "system",
-                 "content": "Answer the question using only the provided documents. Be concise."},
-                {"role": "user",
-                 "content": f"Documents:\n{ctx}\n\nQuestion: {question}"},
-            ],
+            "messages": generator_messages(question, contexts),
             "response_format": {
                 "type": "json_schema",
                 "json_schema": {"name": "answer", "schema": _ANSWER_SCHEMA},
             },
         })
         elapsed = time.perf_counter() - t0
-        tokens = int((resp.get("usage") or {}).get("total_tokens", 0) or 0)
         choices = resp.get("choices") or []
         if not choices:
             raise RuntimeError("generator returned no choices")
@@ -165,7 +161,9 @@ def build_shared_generator(config):
             raise RuntimeError(
                 f"generator did not honour the answer schema "
                 f"(finish_reason={choices[0].get('finish_reason')}): {content!r}") from e
-        return answer, {"calls": 1, "tokens": tokens, "time": elapsed}
+        tokens_in, tokens_out = generator_usage_from_nim(resp.get("usage"))
+        return answer, {"calls": 1, "tokens_in": tokens_in, "tokens_out": tokens_out,
+                        "time": elapsed}
 
     return generate
 
@@ -195,8 +193,8 @@ def _rehydrate(rec):
     """A persisted arm-output record (dict) -> contract.ArmOutput, so the scorer
     reads answers off disk rather than only this session's in-memory ones."""
     return ArmOutput(rec["answer"], rec["contexts"], rec["context_ids"],
-                     rec["search_time_s"], ModelUsage(**rec["generator"]),
-                     ModelUsage(**rec["retrieval"]))
+                     rec["search_time_s"], model_usage_from_dict(rec["generator"]),
+                     model_usage_from_dict(rec["retrieval"]))
 
 
 def run_one_pipeline(pipeline, chosen, corpus, generate, out_dir, k=DEFAULT_TOP_K,
@@ -391,13 +389,13 @@ def _selfcheck():
 
     def fake_generate(text, contexts):
         seen["gen_text"] = text  # the arm must pass ONLY the question text
-        return "ans", {"calls": 1, "tokens": 7, "time": 0.0}
+        return "ans", {"calls": 1, "tokens_in": 3, "tokens_out": 4, "time": 0.0}
 
     def answer_one_question(q, prep, generate, k):
         assert isinstance(q, tuple) and len(q) == 2, f"truth not stripped: {q!r}"
         a, tel = generate(q[1], ["ctx"])
         return ArmOutput(a, ["ctx"], ["cit1"], 0.0,
-                         ModelUsage(tel["calls"], tel["tokens"], tel["time"]), ModelUsage())
+                         model_usage_from_telemetry(tel), ModelUsage())
 
     fake = types.SimpleNamespace(
         __name__="pipelines.fake", prepare_over_corpus=lambda c: prepared,
@@ -419,7 +417,7 @@ def _selfcheck():
         assert bs is prepared.build_stats and seen["gen_text"] == "q1?"
         r = _rows(d)
         assert [x["id"] for x in r] == ["p::a::0", "p::a::1"] and r[0]["answer"] == "ans"
-        assert "question" in r[0] and "ground_truth" not in r[0] and "citations" not in r[0]
+        assert "tokens_in" in r[0]["generator"] and "tokens_out" in r[0]["generator"]
         assert _rows(d, "failures.jsonl") == []  # clean leg: file exists, empty
 
         # resume: same folder -> the two already done are skipped, no duplicates
@@ -476,7 +474,8 @@ def _selfcheck():
         assert ab and calls["n"] <= 24, calls["n"]  # ~12 ran, the rest cancelled
 
     # rehydrate: a persisted record reconstructs the ArmOutput the scorer sees
-    o = ArmOutput("a", ["c"], ["id1"], 1.0, ModelUsage(1, 2, 3.0), ModelUsage())
+    o = ArmOutput("a", ["c"], ["id1"], 1.0,
+                  ModelUsage(calls=1, tokens_in=1, tokens_out=2, time_s=3.0), ModelUsage())
     assert _rehydrate({"id": "x", "question": "q", **asdict(o)}) == o
 
     # manifests carry the run split + provenance

@@ -64,7 +64,7 @@ from typing import Callable, Optional, Union
 import bm25s
 import Stemmer
 
-from contract import ArmOutput, BuildStats, ModelUsage
+from contract import ArmOutput, BuildStats, ModelUsage, unpack_generation
 
 # BM25 reference parameters (Kamalloo et al. 2023 / BEIR).
 K1 = 0.9
@@ -291,27 +291,8 @@ def gather_unit_text(units: list) -> list:
 # --- answer ------------------------------------------------------------------
 
 def _unpack_generation(result, elapsed_s: float) -> tuple:
-    """Normalise a generator's return into (answer, calls, tokens, time_s).
-
-    Accepts: a bare answer string; a (answer, telemetry_dict) pair; or an object
-    exposing .answer plus optional .calls/.tokens/.time. Missing telemetry falls
-    back to calls=1, tokens=0, time=the measured wall time of the call."""
-    if isinstance(result, tuple) and len(result) == 2 and isinstance(result[1], dict):
-        answer, tel = result
-        return (
-            answer,
-            int(tel.get("calls", 1)),
-            int(tel.get("tokens", 0)),
-            float(tel.get("time", elapsed_s)),
-        )
-    if hasattr(result, "answer"):
-        return (
-            result.answer,
-            int(getattr(result, "calls", 1)),
-            int(getattr(result, "tokens", 0)),
-            float(getattr(result, "time", elapsed_s)),
-        )
-    return str(result), 1, 0, elapsed_s
+    """Normalise a generator's return into (answer, ModelUsage)."""
+    return unpack_generation(result, elapsed_s)
 
 
 def answer_one_question(
@@ -334,19 +315,17 @@ def answer_one_question(
     contexts = gather_unit_text(units)
 
     if generate is None:
-        answer, model_calls, model_tokens, model_time_s = "", 0, 0, 0.0
+        answer, gen_usage = "", ModelUsage()
     else:
         g0 = time.perf_counter()
         result = generate(text, contexts)
-        answer, model_calls, model_tokens, model_time_s = _unpack_generation(
-            result, time.perf_counter() - g0
-        )
+        answer, gen_usage = _unpack_generation(result, time.perf_counter() - g0)
 
     return ArmOutput(
         answer=answer,
         contexts=contexts,
         context_ids=context_ids,
         search_time_s=search_time_s,
-        generator=ModelUsage(model_calls, model_tokens, model_time_s),
+        generator=gen_usage,
         retrieval=ModelUsage(),  # sparse retrieval uses no model
     )
