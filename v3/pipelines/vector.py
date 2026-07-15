@@ -78,7 +78,7 @@ import numpy as np
 from tqdm import tqdm
 
 import nim
-from contract import ArmOutput, BuildStats, ModelUsage, split_usage_tokens, unpack_generation
+from contract import ArmOutput, BuildStats, ModelUsage, generator_usage_from_nim, unpack_generation
 
 EMBED_MODEL = "nvidia/llama-nemotron-embed-1b-v2"
 # NIM hosted /embeddings caps: 2048 inputs AND 300k tokens per request. Batch to
@@ -217,7 +217,7 @@ def _embed_request(texts: list, input_type: str) -> tuple:
         lo, ro = _embed_request(texts[:mid], input_type), _embed_request(texts[mid:], input_type)
         return lo[0] + ro[0], lo[1] + ro[1], lo[2] + ro[2], lo[3] + ro[3], lo[4] + ro[4]
 
-    tokens_in, tokens_out = split_usage_tokens(resp.get("usage"))
+    tokens_in, tokens_out = generator_usage_from_nim(resp.get("usage"))
     data = resp.get("data")
     if not data:
         raise RuntimeError(f"NIM /embeddings returned no data (keys={list(resp)})")
