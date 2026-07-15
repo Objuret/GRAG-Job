@@ -19,7 +19,7 @@ import os, sys, json, re, hashlib, subprocess
 from pathlib import Path
 
 # ---- CONFIG ---------------------------------------------------------------
-REPO_ROOT = Path(r"A:\exjobbet\repo")
+REPO_ROOT = Path(__file__).resolve().parent
 OUT = REPO_ROOT / "graphify-out"
 V3_ROOT = REPO_ROOT / "v3"
 ROOT_DOCS = [REPO_ROOT / "CLAUDE.md", REPO_ROOT / "README.md"]
