@@ -80,9 +80,9 @@ def embed_tags(s) -> int:
         return int(dim)
 
     print(f"embedding {len(names)} tag names with {EMBED_MODEL} …")
-    mat, calls, tokens, secs = _embed([_readable(n) for n in names], "passage")
+    mat, calls, tok_in, tok_out, secs = _embed([_readable(n) for n in names], "passage")
     dim = int(mat.shape[1])
-    print(f"  dim={dim}, {calls} calls, {tokens} tokens, {secs:.0f}s")
+    print(f"  dim={dim}, {calls} calls, {tok_in + tok_out} tokens, {secs:.0f}s")
     _write_vectors(s, "UNWIND $rows AS row MATCH (t:Tag {name: row.name}) SET t.emb = row.emb",
                    [{"name": n, "emb": mat[i].tolist()} for i, n in enumerate(names)])
     _vector_index(s, "tag_emb", "Tag", "emb", dim)
@@ -115,9 +115,9 @@ def embed_chunk_descriptions(s, backup) -> int:
 
     cids = sorted(live_ids)
     print(f"embedding {len(cids)} chunk descriptions with {EMBED_MODEL} …")
-    mat, calls, tokens, secs = _embed([by_id[c] for c in cids], "passage")
+    mat, calls, tok_in, tok_out, secs = _embed([by_id[c] for c in cids], "passage")
     dim = int(mat.shape[1])
-    print(f"  dim={dim}, {calls} calls, {tokens} tokens, {secs:.0f}s")
+    print(f"  dim={dim}, {calls} calls, {tok_in + tok_out} tokens, {secs:.0f}s")
     _write_vectors(s, "UNWIND $rows AS row MATCH (c:Chunk {chunk_id: row.cid}) "
                       "SET c.desc_emb = row.emb",
                    [{"cid": c, "emb": mat[i].tolist()} for i, c in enumerate(cids)])

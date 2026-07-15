@@ -13,28 +13,31 @@ text itself lives nowhere in this graph). The whole arm runs on the v3 model
 stack (NIM throughout, no local model):
 
   1. interpret — two NIM passes on the shared v3 model (qwen). Pass 1 emits a
-     self-contained statement of the information need + structured tags + a hard
-     gate (product / section / channel / employee_id / years, only when the query
-     names them). Pass 2 scores each tag across five facets (topic, entities,
-     activity, temporal, evidence); `w_query` is derived from the facet vector
-     (strength × coverage).
+     self-contained statement of the information need + structured tags + scope
+     hints (product / section / channel / employee_id / years, only when the
+     query names them). Pass 2 scores each tag across five facets (topic,
+     entities, activity, temporal, evidence); `w_query` is derived from the
+     facet vector (strength × coverage).
   2. ground — one embed call (query side) for the pass-1 description + the
-     prompt tag names, bare. Each prompt tag kNNs the `tag_emb` index for its
-     nearest corpus tags; each grounded tag carries the grounding cosine as
-     `sim` plus the prompt tag's full facet vector (facet agreement is scored
+     prompt tag names, bare. Each prompt tag keeps its relevance sphere off the
+     `tag_emb` index: the neighbors above the largest gap in the similarity
+     curve, fetched on a doubling schedule — the data's own geometry sets the
+     sphere size. Each grounded tag carries the grounding cosine as `sim`
+     plus the prompt tag's full facet vector (facet agreement is scored
      numerically against the edge's facet arrays, facets are never embedded).
-  3. score — the weighted-overlap Cypher: each prompt tag contributes its best
-     matching `HAS_TAG` edge on a chunk (max over that tag's grounded links),
-     summed across prompt tags, then multiplied by the chunk's
-     description-similarity — cosine of the prompt-description vector against
-     `c.desc_emb`, one more weight in the chain — then top-k. When the tag
-     channel has no grip on the (gated) candidates — attribute/aggregate
-     questions whose tags name the question's form, not any chunk's content —
-     the description channel carries retrieval alone: the same gated candidates
-     ranked by description agreement × chunk-to-file weight (logged, never
-     silent). The oracle sections (answerable / unanswerable questions, product
-     profiles) are excluded so the arm cannot read the gold answer; a question
-     fails loud only when its gate matches no chunks at all.
+  3. rank + fuse — three rankings over the same corpus, fused by reciprocal
+     rank (rank r contributes 1/(1+r); parameter-free and length-blind): the
+     tag channel (weighted overlap — each prompt tag's best `HAS_TAG` edge per
+     chunk, summed; every chunk with any grip, `tagScore > 0` bounds the
+     ranking), the description channel (the description's relevance sphere
+     over `chunk_desc_emb`, same gap cut), and the scope channel (chunks
+     matching the interpreted scope hints, ranked by fields matched). Nothing
+     the interpreter guesses excludes a chunk — scope guides rank, never
+     filters. The fused list is cut at the caller's k. The oracle sections
+     (answerable / unanswerable questions, product profiles) stay outside
+     every channel so the arm cannot read the gold answer. The full
+     interpretation — plan, grounding spheres, ranking depths — is persisted
+     per question in `ArmOutput.meta`.
 
 The graph stores references, never content: a retrieved chunk is a pointer —
 `locator_json` (HERB section/index/indices/field/char_range) on the chunk plus
@@ -58,7 +61,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import logging
 import os
 import re
 import time
@@ -67,10 +69,10 @@ from pathlib import Path
 from typing import Callable, Optional
 
 import nim
-from contract import ArmOutput, BuildStats, ModelUsage
+from contract import (
+    ArmOutput, BuildStats, ModelUsage, generator_usage_from_nim, unpack_generation,
+)
 from pipelines.vector import EMBED_MODEL, _embed
-
-log = logging.getLogger("pipelines.artefact_v1")
 
 # --- graph + retrieval constants (the live herb-eval contract) ----------------
 
@@ -95,13 +97,11 @@ GATE_SECTIONS = (
     "slack", "documents", "meeting_transcripts", "meeting_chats", "prs",
     "urls", "answerable_questions", "unanswerable_questions", "product_profile",
 )
-
-# Grounding: kNN the tag index for GROUNDING_K nearest corpus tags per prompt tag,
-# above an optional cosine floor (0.0 = top-K is the only filter).
-GROUNDING_K = int(os.environ.get("HERB_GROUNDING_K", "10"))
-MIN_SIM = float(os.environ.get("HERB_MIN_SIM", "0.0"))
-MIN_W_CHUNK = 0.0
-MIN_RELEVANCE_TO_FILE = 0.0
+# Sections the interpreter may name as scope hints: the section enum minus the
+# oracle sections — an excluded section can never be retrieved, so offering it
+# would be a contradiction.
+OFFERED_SECTIONS = tuple(s for s in GATE_SECTIONS if s not in EXCLUDED_SECTIONS)
+_EXCLUDED_PARAM = list(EXCLUDED_SECTIONS)
 
 FILLER = {"data", "information", "content", "record", "text", "chunk", "item", "find"}
 COVERAGE_ALPHA = 0.25
@@ -121,39 +121,21 @@ _GROUND_CYPHER = (
 )
 
 
-def _gate_clause(gate: dict) -> tuple[str, dict]:
-    """The hard-gate WHERE fragment + params from the plan's structured gate,
-    ANDed onto the chunk before any tag scoring. Empty when nothing is set."""
-    parts, params = [], {}
-    for f in ("product", "section", "channel", "employee_id"):
-        v = gate.get(f)
-        if v:
-            parts.append(f"AND c.{f} = $g_{f}")
-            params[f"g_{f}"] = v
-    years = gate.get("years") or []
-    if years:
-        params["g_years"] = list(years)
-        parts.append("AND any(y IN $g_years WHERE y IN c.years)")
-    return "\n  ".join(parts), params
-
-
 # One HAS_TAG edge per (chunk, tag), carrying the full facet vector as aligned
 # arrays (`facets` / `w_facets`) plus `w_chunk`. Facet agreement = the dot
 # product of the prompt tag's facet values with the edge's facet weights (a
-# facet absent from the edge contributes 0).
-_SCORE_CYPHER = """
+# facet absent from the edge contributes 0). Every chunk with any tag grip is
+# in the ranking — `tagScore > 0` bounds it.
+_TAG_RANK_CYPHER = """
 UNWIND $queryTags AS qt
 MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk)
-MATCH (c)-[r:HAS_TAG]->(t:Tag {{name: qt.name}})
+MATCH (c)-[r:HAS_TAG]->(t:Tag {name: qt.name})
 WHERE coalesce(c.empty, false) = false
   AND ($datasetId IS NULL OR f.dataset_id = $datasetId)
   AND r.run_id = $runId
-  AND coalesce(r.w_chunk, 0.0) >= $minWChunk
-  AND coalesce(c.relevance_to_file, 1.0) >= $minRelevanceToFile
-  {gate}
   AND NOT (coalesce(c.section, "") IN $excludedSections)
 WITH c, qt, r,
-     reduce(dot = 0.0, fi IN range(0, size(r.facets) - 1) |
+     reduce(dot = 0.0, fi IN range(0, size(coalesce(r.facets, [])) - 1) |
        dot + (CASE r.facets[fi]
                 WHEN 'topic'    THEN qt.topic
                 WHEN 'entities' THEN qt.entities
@@ -163,36 +145,115 @@ WITH c, qt, r,
                 ELSE 0.0
               END) * coalesce(r.w_facets[fi], 0.0)) AS facetTerm
 WITH c, qt.promptIndex AS promptIdx,
-     (qt.w_query * facetTerm * r.w_chunk
+     (qt.w_query * coalesce(facetTerm, 0.0) * coalesce(r.w_chunk, 0.0)
        * coalesce(c.relevance_to_file, 1.0) * qt.sim) AS contrib
 WITH c, promptIdx, max(contrib) AS bestPromptContrib
 WITH c, sum(bestPromptContrib) AS tagScore
 WHERE tagScore > 0
-WITH c, tagScore * vector.similarity.cosine(c.desc_emb, $descVec) AS score
 MATCH (f:File)-[:HAS_CHUNK]->(c)
 RETURN c.chunk_id AS chunkId, c.locator_json AS locator,
-       f.rel_path AS relpath, f.sha256 AS sha256, round(score, 4) AS score
-ORDER BY score DESC
-LIMIT $limit
+       f.rel_path AS relpath, f.sha256 AS sha256, round(tagScore, 4) AS score
+ORDER BY score DESC, chunkId
 """
 
-# The description channel alone: when the tag channel has no grip on the (gated)
-# candidates, chunks rank by prompt-description ↔ chunk-description agreement ×
-# chunk-to-file weight. Same graph, same embeddings — no text search involved.
-_DESC_CYPHER = """
+# Description-channel candidates come off the `chunk_desc_emb` index. Rows are
+# flagged eligible (has its File / not empty / right dataset / not oracle)
+# rather than dropped, so the doubling fetch can tell index exhaustion from
+# filtering.
+_DESC_KNN_CYPHER = """
+CALL db.index.vector.queryNodes($idx, $k, $vec) YIELD node AS c, score AS sim
+OPTIONAL MATCH (f:File)-[:HAS_CHUNK]->(c)
+WITH c, f, sim,
+     (f IS NOT NULL
+      AND coalesce(c.empty, false) = false
+      AND ($datasetId IS NULL OR f.dataset_id = $datasetId)
+      AND NOT (coalesce(c.section, "") IN $excludedSections)) AS eligible
+RETURN c.chunk_id AS chunkId, c.locator_json AS locator,
+       f.rel_path AS relpath, f.sha256 AS sha256, sim, eligible
+ORDER BY sim DESC, chunkId
+"""
+
+
+def _gate_rank_cypher(gate: dict) -> tuple:
+    """The scope channel: every chunk matching at least one interpreted scope
+    hint, ranked by hints matched (description agreement breaks ties). Scope
+    guides rank — it never filters. (None, {}) when no hint is set."""
+    terms, params = [], {}
+    for f in ("product", "section", "channel", "employee_id"):
+        v = gate.get(f)
+        if v:
+            terms.append(f"(CASE WHEN c.{f} = $g_{f} THEN 1 ELSE 0 END)")
+            params[f"g_{f}"] = v
+    if gate.get("years"):
+        terms.append("(CASE WHEN any(y IN $g_years WHERE y IN c.years) THEN 1 ELSE 0 END)")
+        params["g_years"] = list(gate["years"])
+    if not terms:
+        return None, {}
+    cypher = f"""
 MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk)
 WHERE coalesce(c.empty, false) = false
   AND ($datasetId IS NULL OR f.dataset_id = $datasetId)
-  AND coalesce(c.relevance_to_file, 1.0) >= $minRelevanceToFile
-  {gate}
   AND NOT (coalesce(c.section, "") IN $excludedSections)
-WITH c, f, vector.similarity.cosine(c.desc_emb, $descVec)
-       * coalesce(c.relevance_to_file, 1.0) AS score
+WITH c, f, ({" + ".join(terms)}) AS matched
+WHERE matched > 0
 RETURN c.chunk_id AS chunkId, c.locator_json AS locator,
-       f.rel_path AS relpath, f.sha256 AS sha256, round(score, 4) AS score
-ORDER BY score DESC
-LIMIT $limit
+       f.rel_path AS relpath, f.sha256 AS sha256,
+       matched, vector.similarity.cosine(c.desc_emb, $descVec) AS descSim
+ORDER BY matched DESC, descSim DESC, chunkId
 """
+    return cypher, params
+
+
+# --- relevance spheres + fusion (data-cut candidate sets, no constants) --------
+
+_SPHERE_SEED = 16  # initial fetch size for the doubling schedule
+
+
+def _gap_cut(sims: list) -> int:
+    """Sphere boundary on a descending similarity curve: keep everything above
+    the largest drop between consecutive values. A flat curve is one plateau —
+    kept whole."""
+    if len(sims) <= 1:
+        return len(sims)
+    gaps = [sims[i] - sims[i + 1] for i in range(len(sims) - 1)]
+    top = max(gaps)
+    if top <= 0:
+        return len(sims)
+    return gaps.index(top) + 1
+
+
+def _sphere(fetch) -> list:
+    """Doubling fetch until the cut is established — the rows are non-empty and
+    the largest gap sits in the first half of the curve (at least as much tail
+    beyond the cut as sphere before it) — or the index is exhausted. `fetch(n)`
+    returns (rows sorted by sim descending, raw_count); raw_count < n means the
+    index has nothing more to give. Rows can be fewer than raw_count (ineligible
+    hits): a fetch whose rows are all ineligible keeps doubling."""
+    n = _SPHERE_SEED
+    while True:
+        rows, raw = fetch(n)
+        cut = _gap_cut([r["sim"] for r in rows])
+        exhausted = raw < n
+        established = bool(rows) and cut <= len(rows) // 2
+        if exhausted or established:
+            return rows[:cut]
+        n *= 2
+
+
+def _fuse_rankings(rankings: list) -> list:
+    """Reciprocal-rank fusion: rank r (0-based) contributes 1/(1+r); a chunk's
+    fused score sums its contributions across the rankings it appears in.
+    Parameter-free, scale-free, and length-blind — a contribution depends only
+    on how high a chunk ranks, so a long ranking carries no more weight than a
+    short one. Ties break on chunkId so the order is deterministic."""
+    score, payload = {}, {}
+    for rows in rankings:
+        for r, row in enumerate(rows):
+            cid = row["chunkId"]
+            score[cid] = score.get(cid, 0.0) + 1.0 / (1 + r)
+            payload.setdefault(cid, row)
+    ranked = sorted(score.items(), key=lambda kv: (-kv[1], kv[0]))
+    return [payload[cid] for cid, _ in ranked]
 
 
 
@@ -200,9 +261,9 @@ LIMIT $limit
 
 @dataclass
 class Prepared:
-    """Handle returned by prepare(): the live Neo4j driver + BuildStats. The tag
-    grounding vectors live in the graph (the six `tag_emb_<facet>` indexes), so
-    there is nothing to load here beyond the connection."""
+    """Handle returned by prepare(): the live Neo4j driver + BuildStats. The
+    grounding vectors live in the graph (the `tag_emb` and `chunk_desc_emb`
+    indexes), so there is nothing to load here beyond the connection."""
 
     driver: object
     build_stats: Optional[BuildStats] = None
@@ -227,10 +288,10 @@ def _readable(name: str) -> str:
 
 
 def prepare_over_corpus(corpus) -> Prepared:
-    """Open the Neo4j driver and confirm the per-facet grounding indexes are
+    """Open the Neo4j driver and confirm the grounding + description indexes are
     present. `corpus` is accepted for contract parity but unused — this arm reads
     the graph, not the on-disk corpus. Fails loud if `herb-eval` is unreachable or
-    any `tag_emb_<facet>` index is missing (run `reembed_herb_eval.py` first)."""
+    either index is missing (run `reembed_herb_eval.py` first)."""
     t0 = time.perf_counter()
     drv = _driver()
     with drv.session(database=DATABASE) as s:
@@ -317,9 +378,9 @@ _PASS1_SYSTEM = (
     "in plain declarative prose, not a restatement of the question. "
     'STEP 2: derive "tags" FROM that description — specific noun phrases, named entities, systems, or actions. '
     "No generic filler words. "
-    'STEP 3: extract "gate" — hard structured constraints ONLY when the query explicitly names them, else null/[]. '
+    'STEP 3: extract "gate" — structured scope constraints ONLY when the query explicitly names them, else null/[]. '
     'Fields: product (a "*Force"/"*Genie"-style product name if named), '
-    f"section (one of: {', '.join(GATE_SECTIONS)} — map synonyms, e.g. \"pull requests\"->prs, \"chat\"->slack), "
+    f"section (one of: {', '.join(OFFERED_SECTIONS)} — map synonyms, e.g. \"pull requests\"->prs, \"chat\"->slack), "
     'channel (a Slack channel name if given), employee_id (an "eid_..." id if given), '
     "years (array of 4-digit years explicitly mentioned). "
     "Do NOT guess values that are not in the query. "
@@ -336,7 +397,7 @@ _PASS2_SYSTEM = (
 
 
 def _chat_json(model: str, system: str, user: str, max_tokens: int) -> tuple:
-    """One JSON turn on the shared model -> (parsed_json, tokens, time_s).
+    """One JSON turn on the shared model -> (parsed_json, tokens_in, tokens_out, time_s).
     Deterministic, non-thinking, min_tokens=1 (Qwen otherwise emits end-of-turn
     first and returns empty content). The prompt pins the shape and the content is
     parsed tolerantly (`_extract_json`) — the same prompt-and-parse approach the
@@ -355,7 +416,7 @@ def _chat_json(model: str, system: str, user: str, max_tokens: int) -> tuple:
         ],
     })
     elapsed = time.perf_counter() - t0
-    tokens = int((resp.get("usage") or {}).get("total_tokens", 0) or 0)
+    tok_in, tok_out = generator_usage_from_nim(resp.get("usage"))
     choices = resp.get("choices") or []
     finish = choices[0].get("finish_reason") if choices else "no choices"
     content = (choices[0].get("message") or {}).get("content") if choices else None
@@ -364,7 +425,7 @@ def _chat_json(model: str, system: str, user: str, max_tokens: int) -> tuple:
     if finish == "length":
         raise RuntimeError(
             f"interpreter truncated at max_tokens={max_tokens} (finish_reason=length) — raise the budget")
-    return _extract_json(content), tokens, elapsed
+    return _extract_json(content), tok_in, tok_out, elapsed
 
 
 def _clean_tag(raw: str) -> str:
@@ -405,7 +466,7 @@ def _parse_gate(raw) -> dict:
             years.append(yi)
     return {
         "product": s(g.get("product")),
-        "section": section if section in GATE_SECTIONS else None,
+        "section": section if section in OFFERED_SECTIONS else None,
         "channel": s(g.get("channel")),
         "employee_id": s(g.get("employee_id")),
         "years": years,
@@ -413,10 +474,11 @@ def _parse_gate(raw) -> dict:
 
 
 def _interpret(text: str, model: str) -> tuple:
-    """interpret a question -> (plan, calls, tokens, time_s). plan = {description,
-    tags:[{t, facets, w_query}], gate}. Two passes; pass 2 is skipped when pass 1
-    yields no usable tags (retrieval then fails loud for that question)."""
-    p1, tok1, t1 = _chat_json(model, _PASS1_SYSTEM, f"User query: {text}", 512)
+    """interpret a question -> (plan, calls, tokens_in, tokens_out, time_s).
+    plan = {description, tags:[{t, facets, w_query}], gate}. Two passes; pass 2
+    is skipped when pass 1 yields no usable tags (the tag ranking is then empty
+    and the other channels carry retrieval)."""
+    p1, in1, out1, t1 = _chat_json(model, _PASS1_SYSTEM, f"User query: {text}", 512)
     gate = _parse_gate(p1.get("gate"))
     description = p1.get("description") or text
     raw_tags, seen = [], set()
@@ -427,9 +489,9 @@ def _interpret(text: str, model: str) -> tuple:
             raw_tags.append(t)
 
     if not raw_tags:
-        return ({"description": description, "tags": [], "gate": gate}, 1, tok1, t1)
+        return ({"description": description, "tags": [], "gate": gate}, 1, in1, out1, t1)
 
-    p2, tok2, t2 = _chat_json(
+    p2, in2, out2, t2 = _chat_json(
         model, _PASS2_SYSTEM,
         f"Original query: {text}\n\nScore these tags:\n{json.dumps(raw_tags)}", 1024)
     score_map = {row.get("t"): (row.get("facets") or {})
@@ -440,7 +502,7 @@ def _interpret(text: str, model: str) -> tuple:
         facets = {f: float(score_map.get(t, default).get(f, 0.2)) for f in ALL_FACETS}
         tags.append({"t": t, "facets": facets, "w_query": _compute_w_query(facets)})
     return ({"description": description, "tags": tags, "gate": gate},
-            2, tok1 + tok2, t1 + t2)
+            2, in1 + in2, out1 + out2, t1 + t2)
 
 
 # --- ground (embed description + bare tag names, kNN the tag index) -----------
@@ -451,79 +513,101 @@ def _facet_cols(facets: dict) -> dict:
 
 def _ground(session, plan: dict) -> tuple:
     """One embed call (query side) for the pass-1 description + the prompt tag
-    names, bare. Each prompt tag kNNs the `tag_emb` index for its GROUNDING_K
-    nearest corpus tags (above MIN_SIM). Returns (queryTags param list the score
-    Cypher unwinds, the description vector for the desc_emb channel, embed
-    ModelUsage). One param per grounded corpus tag: the grounding cosine as
-    `sim` plus the prompt tag's full facet vector + w_query — the score Cypher
-    matches the vectors against the edge's facet arrays; facets are never
-    embedded and never fanned out."""
+    names, bare. Each prompt tag keeps its relevance sphere off the `tag_emb`
+    index (largest-gap cut). Returns (queryTags
+    param list the tag ranking unwinds, the description vector, embed
+    ModelUsage, per-tag sphere log). One param per grounded corpus tag: the
+    grounding cosine as `sim` plus the prompt tag's full facet vector +
+    w_query — the tag ranking matches the vectors against the edge's facet
+    arrays; facets are never embedded and never fanned out."""
     tags = plan["tags"]
-    qmat, calls, tokens, secs = _embed(
+    qmat, calls, tok_in, tok_out, secs = _embed(
         [plan["description"]] + [_readable(qt["t"]) for qt in tags], "query")
     desc_vec = [float(x) for x in qmat[0]]
 
-    params = []
+    params, spheres = [], []
     for i, qt in enumerate(tags):
+        vec = [float(x) for x in qmat[i + 1]]
+
+        def fetch(n, _vec=vec):
+            recs = list(session.run(_GROUND_CYPHER, idx=GROUND_INDEX, k=n, vec=_vec))
+            rows = [{"name": rec["name"], "sim": float(rec["sim"])}
+                    for rec in recs if rec["name"] and rec["sim"] is not None]
+            return rows, len(recs)
+
+        sphere = _sphere(fetch)
         cols = _facet_cols(qt["facets"])
-        res = session.run(_GROUND_CYPHER, idx=GROUND_INDEX, k=GROUNDING_K,
-                          vec=[float(x) for x in qmat[i + 1]])
-        for rec in res:
-            name, sim = rec["name"], rec["sim"]
-            if not name or sim is None or sim < MIN_SIM:
-                continue
-            params.append({"name": name, "sim": float(sim), "promptIndex": i,
+        for m in sphere:
+            params.append({"name": m["name"], "sim": m["sim"], "promptIndex": i,
                            "w_query": qt["w_query"], **cols})
-    return params, desc_vec, ModelUsage(calls, tokens, secs)
+        spheres.append({"tag": qt["t"],
+                        "sphere": [{"name": m["name"], "sim": round(m["sim"], 4)}
+                                   for m in sphere]})
+    usage = ModelUsage(calls=calls, tokens_in=tok_in, tokens_out=tok_out, time_s=secs)
+    return params, desc_vec, usage, spheres
 
 
-# --- score (weighted overlap over the grounded tags) --------------------------
+# --- rank + fuse (three channels over the same corpus) -------------------------
 
-def _run_desc_channel(session, desc_vec: list, gate_clause: str, gate_params: dict,
-                      k: int) -> list:
-    cypher = _DESC_CYPHER.format(gate=gate_clause)
-    res = session.run(cypher, descVec=desc_vec, datasetId=DATASET_ID,
-                      minRelevanceToFile=MIN_RELEVANCE_TO_FILE,
-                      excludedSections=list(EXCLUDED_SECTIONS), limit=k, **gate_params)
-    return [dict(rec) for rec in res]
+def _desc_ranking(session, desc_vec: list) -> list:
+    """The description channel: the query description's relevance sphere over
+    `chunk_desc_emb` (largest-gap cut on the eligible rows). Ineligible rows
+    stay out of the curve but still count toward index exhaustion."""
+    def fetch(n):
+        raw = 0
+        rows = []
+        for rec in session.run(_DESC_KNN_CYPHER, idx=DESC_INDEX, k=n, vec=desc_vec,
+                               datasetId=DATASET_ID,
+                               excludedSections=_EXCLUDED_PARAM):
+            raw += 1
+            if rec["eligible"]:
+                rows.append({"chunkId": rec["chunkId"], "locator": rec["locator"],
+                             "relpath": rec["relpath"], "sha256": rec["sha256"],
+                             "sim": float(rec["sim"])})
+        return rows, raw
+
+    return _sphere(fetch)
 
 
 def _retrieve(session, plan: dict, k: int) -> tuple:
-    """interpret-plan -> (pointer rows best-first, ground embed ModelUsage). Each
-    row carries {chunkId, locator, relpath, sha256, score} — references only; the
-    caller resolves text from raw.
+    """interpret-plan -> (pointer rows best-first cut at k, ground embed
+    ModelUsage, retrieval meta). Each row carries {chunkId, locator, relpath,
+    sha256, ...} — references only; the caller resolves text from raw.
 
-    The two semantic channels in order: tag scoring (× description agreement)
-    when the prompt's tags grip the candidates; the description channel alone
-    when they don't — attribute/aggregate questions whose tags name the question's
-    form rather than any chunk's content still rank the gated candidates by
-    description agreement (logged, never silent). Fails loud only when the gate
-    itself matches nothing."""
-    gate_clause, gate_params = _gate_clause(plan["gate"])
+    Three rankings over the same corpus — tag overlap, description sphere,
+    scope hints — fused by reciprocal rank. No channel excludes a chunk: an
+    empty tag ranking (no tags, or nothing gripped) or an unset scope simply
+    contributes nothing and the other channels carry. Raises only when every
+    channel is empty — an empty graph."""
+    params, desc_vec, ground_usage, spheres = _ground(session, plan)
 
-    if not plan["tags"]:
-        raise RuntimeError("interpreter produced no usable tags — no tag path for this question")
-
-    params, desc_vec, ground_usage = _ground(session, plan)
+    tag_rows = []
     if params:
-        cypher = _SCORE_CYPHER.format(gate=gate_clause)
-        res = session.run(cypher, queryTags=params, descVec=desc_vec,
-                          datasetId=DATASET_ID, runId=RUN_ID, minWChunk=MIN_W_CHUNK,
-                          minRelevanceToFile=MIN_RELEVANCE_TO_FILE,
-                          excludedSections=list(EXCLUDED_SECTIONS), limit=k, **gate_params)
-        rows = [dict(rec) for rec in res]
-        if rows:
-            return rows, ground_usage
-        log.warning("tag channel scored no chunks (gate=%s) — description channel carries",
-                    plan["gate"])
-    else:
-        log.warning("prompt tags grounded onto nothing — description channel carries")
+        res = session.run(_TAG_RANK_CYPHER, queryTags=params,
+                          datasetId=DATASET_ID, runId=RUN_ID,
+                          excludedSections=_EXCLUDED_PARAM)
+        tag_rows = [dict(rec) for rec in res]
 
-    rows = _run_desc_channel(session, desc_vec, gate_clause, gate_params, k)
-    if not rows:
-        raise RuntimeError(
-            f"no chunks match the gate at all (gate={plan['gate']}) — nothing to retrieve")
-    return rows, ground_usage
+    desc_rows = _desc_ranking(session, desc_vec)
+
+    gate_rows = []
+    gate_cypher, gate_params = _gate_rank_cypher(plan["gate"])
+    if gate_cypher:
+        res = session.run(gate_cypher, descVec=desc_vec, datasetId=DATASET_ID,
+                          excludedSections=_EXCLUDED_PARAM, **gate_params)
+        gate_rows = [dict(rec) for rec in res]
+
+    fused = _fuse_rankings([tag_rows, desc_rows, gate_rows])
+    if not fused:
+        raise RuntimeError("no candidates in any channel — is the graph empty?")
+    meta = {
+        "plan": plan,
+        "grounding": spheres,
+        "rankings": {"tag": len(tag_rows), "desc": len(desc_rows),
+                     "gate": len(gate_rows)},
+        "fused": len(fused),
+    }
+    return fused[:max(0, k)], ground_usage, meta
 
 
 # --- resolve (pointers -> raw text + artifact ids) -----------------------------
@@ -598,31 +682,18 @@ def _resolve_chunk(row: dict, cache: dict) -> tuple:
 
 # --- answer -------------------------------------------------------------------
 
-def _unpack_generation(result, elapsed_s: float) -> tuple:
-    """Normalise the shared generator's return into (answer, calls, tokens,
-    time_s) — mirrors the other arms so the one generator unpacks identically."""
-    if isinstance(result, tuple) and len(result) == 2 and isinstance(result[1], dict):
-        answer, tel = result
-        return (answer, int(tel.get("calls", 1)), int(tel.get("tokens", 0)),
-                float(tel.get("time", elapsed_s)))
-    if hasattr(result, "answer"):
-        return (result.answer, int(getattr(result, "calls", 1)),
-                int(getattr(result, "tokens", 0)), float(getattr(result, "time", elapsed_s)))
-    return str(result), 1, 0, elapsed_s
-
-
 def answer_one_question(question, prepared: Prepared, generate: Optional[Generator],
                         k: int = 50) -> ArmOutput:
-    """ENTRY: interpret -> ground -> score -> top-k chunk text -> generate ->
-    ArmOutput. `generate` is the SHARED generator injected by the orchestrator so
-    generation is identical across arms; None (retrieval-only smoke) leaves the
-    answer empty."""
+    """ENTRY: interpret -> ground -> rank + fuse -> top-k chunk text -> generate
+    -> ArmOutput. `generate` is the SHARED generator injected by the orchestrator
+    so generation is identical across arms; None (retrieval-only smoke) leaves
+    the answer empty."""
     _, text = _qid_text(question)
 
     t0 = time.perf_counter()
-    plan, interp_calls, interp_tokens, interp_time = _interpret(text, INTERPRET_MODEL)
+    plan, interp_calls, interp_in, interp_out, interp_time = _interpret(text, INTERPRET_MODEL)
     with prepared.driver.session(database=DATABASE) as session:
-        rows, ground_usage = _retrieve(session, plan, k)
+        rows, ground_usage, meta = _retrieve(session, plan, k)
     retrieve_wall = time.perf_counter() - t0
 
     # Resolve each pointer row from raw (hash-verified, one read per file per
@@ -645,7 +716,8 @@ def answer_one_question(question, prepared: Prepared, generate: Optional[Generat
     search_time_s = max(0.0, retrieve_wall - interp_time - ground_usage.time_s)
     retrieval_usage = ModelUsage(
         calls=interp_calls + ground_usage.calls,
-        tokens=interp_tokens + ground_usage.tokens,
+        tokens_in=interp_in + ground_usage.tokens_in,
+        tokens_out=interp_out + ground_usage.tokens_out,
         time_s=interp_time + ground_usage.time_s)
 
     if generate is None:
@@ -653,8 +725,7 @@ def answer_one_question(question, prepared: Prepared, generate: Optional[Generat
     else:
         g0 = time.perf_counter()
         result = generate(text, contexts)
-        answer, gc, gt, gs = _unpack_generation(result, time.perf_counter() - g0)
-        gen = ModelUsage(gc, gt, gs)
+        answer, gen = unpack_generation(result, time.perf_counter() - g0)
 
     return ArmOutput(
         answer=answer,
@@ -663,4 +734,5 @@ def answer_one_question(question, prepared: Prepared, generate: Optional[Generat
         search_time_s=search_time_s,
         generator=gen,
         retrieval=retrieval_usage,
+        meta=meta,
     )

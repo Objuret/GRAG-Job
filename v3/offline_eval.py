@@ -42,7 +42,7 @@ def _embed_texts(texts, input_type):
     """Vectors for `texts` in input order via the vector arm's batched embedder —
     handles NIM's input + token caps with split-and-retry, so a large batch can't
     400 on size. L2-normalised (cosine is then just the dot product)."""
-    matrix, _calls, _tokens, _secs = _embed_batched(texts, input_type)
+    matrix, _calls, _tok_in, _tok_out, _secs = _embed_batched(texts, input_type)
     return matrix
 
 

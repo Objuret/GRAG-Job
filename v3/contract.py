@@ -145,6 +145,7 @@ class ArmOutput:
     search_time_s: float                  # total retrieval wall-time
     generator: ModelUsage = field(default_factory=ModelUsage)  # the shared answer-writer (same role every arm)
     retrieval: ModelUsage = field(default_factory=ModelUsage)  # the arm's OWN model use in retrieval (0 for lucene)
+    meta: dict | None = None              # arm-specific retrieval forensics (plan, spheres, ranking depths)
 
 
 @dataclass
