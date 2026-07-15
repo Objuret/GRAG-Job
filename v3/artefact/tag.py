@@ -301,7 +301,8 @@ def _write_build_stats(out: Path, dataset: str, chunks: list, el: float) -> None
     prior = json.loads(stats_path.read_text(encoding="utf-8")) if stats_path.exists() else {"runs": 0, "wall_seconds": 0.0}
     wall = round(prior["wall_seconds"] + el, 1)
     build = BuildStats(build_time_s=wall, models=sorted(by_model),
-                       model=ModelUsage(calls=len(recs), tokens=cum_in + cum_out, time_s=wall))
+                       model=ModelUsage(calls=len(recs), tokens_in=cum_in, tokens_out=cum_out,
+                                        time_s=wall))
     stats = {
         "dataset": dataset,
         "build_stats": asdict(build),

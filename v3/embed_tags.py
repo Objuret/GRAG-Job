@@ -99,7 +99,7 @@ def main() -> None:
         return
 
     t0 = time.perf_counter()
-    matrix, calls, tokens, secs = _embed(phrases, "passage")
+    matrix, calls, tokens_in, tokens_out, secs = _embed(phrases, "passage")
 
     INDEX_DIR.mkdir(parents=True, exist_ok=True)
     fd, tmp = tempfile.mkstemp(dir=INDEX_DIR, suffix=".tmp")
@@ -125,7 +125,7 @@ def main() -> None:
         raise
 
     print(f"embedded {n_unique} phrases ({EMBED_MODEL}) -> {cache}")
-    print(f"  matrix {matrix.shape}, {calls} request(s), {tokens} tokens, {secs:.1f}s")
+    print(f"  matrix {matrix.shape}, {calls} request(s), in={tokens_in} out={tokens_out} tokens, {secs:.1f}s")
     print(f"  build wall {time.perf_counter() - t0:.1f}s")
 
 

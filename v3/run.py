@@ -120,7 +120,7 @@ def main():
         corpus = orchestrator.open_corpus(orchestrator.DEFAULT_CORPUS)
         bs = pipeline.prepare_over_corpus(corpus).build_stats
         print(f"{args.arm} index built - {bs.model.calls} embed calls, "
-              f"{bs.model.tokens} tokens, {bs.build_time_s:.1f}s "
+              f"in={bs.model.tokens_in} out={bs.model.tokens_out} tokens, {bs.build_time_s:.1f}s "
               f"(model: {', '.join(bs.models) or 'none'})")
         return
 

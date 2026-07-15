@@ -72,7 +72,7 @@ from artefact.index import (
     resolve_chunk_text,
 )
 from artefact.interpreter import interpret
-from contract import ArmOutput, BuildStats, ModelUsage
+from contract import ArmOutput, BuildStats, ModelUsage, unpack_generation
 from pipelines.vector import EMBED_MODEL, _embed
 
 log = logging.getLogger("pipelines.artefact")
@@ -147,7 +147,7 @@ def _embed_facet_phrases(phrases: list[str]) -> tuple:
     shared code path. Empty `phrases` returns an empty matrix and zero
     telemetry — the caller skips scoring in that case."""
     if not phrases:
-        return np.zeros((0, 0), dtype=np.float32), 0, 0, 0.0
+        return np.zeros((0, 0), dtype=np.float32), 0, 0, 0, 0.0
     return _embed(phrases, "query")
 
 
@@ -214,7 +214,7 @@ def retrieve_top_k_chunks(question, prepared: Prepared, k: int = DEFAULT_TOP_K) 
     interp_time = float(interp_usage.get("time", 0.0))
     interp_tokens = int(interp_usage.get("tokens", 0) or 0)
 
-    qmat, emb_calls, emb_tokens, emb_time = _embed_facet_phrases(interp["facet_phrases"])
+    qmat, emb_calls, emb_in, emb_out, emb_time = _embed_facet_phrases(interp["facet_phrases"])
 
     phrase_weight = _phrase_weights(prepared.index, qmat)
     base = _chunk_scores(prepared.index, phrase_weight)
@@ -222,35 +222,14 @@ def retrieve_top_k_chunks(question, prepared: Prepared, k: int = DEFAULT_TOP_K) 
 
     k_eff = min(k, len(prepared.index.chunk_ids))
     if k_eff <= 0:
-        return [], interp, interp_usage, (emb_calls, emb_tokens, emb_time), 0.0
+        return [], interp, interp_usage, (emb_calls, emb_in, emb_out, emb_time), 0.0
     top = np.argsort(-boosted, kind="stable")[:k_eff]
     chunks = [prepared.index.chunks_by_id[prepared.index.chunk_ids[int(i)]] for i in top]
     retrieve_wall = time.perf_counter() - t0
-    return chunks, interp, interp_usage, (emb_calls, emb_tokens, emb_time), retrieve_wall
+    return chunks, interp, interp_usage, (emb_calls, emb_in, emb_out, emb_time), retrieve_wall
 
 
 # --- answer -------------------------------------------------------------------
-
-def _unpack_generation(result, elapsed_s: float) -> tuple:
-    """Normalise a generator's return into (answer, calls, tokens, time_s).
-    Mirrors `pipelines.vector._unpack_generation` so the shared generator's
-    three return shapes all unpack identically across arms."""
-    if isinstance(result, tuple) and len(result) == 2 and isinstance(result[1], dict):
-        answer, tel = result
-        return (
-            answer,
-            int(tel.get("calls", 1)),
-            int(tel.get("tokens", 0)),
-            float(tel.get("time", elapsed_s)),
-        )
-    if hasattr(result, "answer"):
-        return (
-            result.answer,
-            int(getattr(result, "calls", 1)),
-            int(getattr(result, "tokens", 0)),
-            float(getattr(result, "time", elapsed_s)),
-        )
-    return str(result), 1, 0, elapsed_s
 
 
 def answer_one_question(
@@ -290,8 +269,12 @@ def answer_one_question(
         contexts.append(resolve_chunk_text(chunk, prepared.data_root, cache=doc_cache))
 
     interp_time = float(interp_usage.get("time", 0.0))
-    interp_tokens = int(interp_usage.get("tokens", 0) or 0)
-    emb_calls, emb_tokens, emb_time = emb_telem
+    interp_in = int(interp_usage.get("tokens_in", 0) or 0)
+    interp_out = int(interp_usage.get("tokens_out", 0) or 0)
+    if not interp_in and not interp_out:
+        legacy = int(interp_usage.get("tokens", 0) or 0)
+        interp_in, interp_out = legacy, 0
+    emb_calls, emb_in, emb_out, emb_time = emb_telem
     # search_time_s = the in-process combinator only (matrix-dot, ranking, id +
     # text resolution). The model-call walls (interpreter + embed) live in
     # `retrieval`, so subtracting them keeps this comparable to lucene's
@@ -299,24 +282,23 @@ def answer_one_question(
     search_time_s = max(0.0, retrieve_wall - interp_time - emb_time)
     retrieval_usage = ModelUsage(
         calls=1 + int(emb_calls),
-        tokens=interp_tokens + int(emb_tokens),
+        tokens_in=interp_in + int(emb_in),
+        tokens_out=interp_out + int(emb_out),
         time_s=interp_time + float(emb_time),
     )
 
     if generate is None:
-        answer, model_calls, model_tokens, model_time_s = "", 0, 0, 0.0
+        answer, gen_usage = "", ModelUsage()
     else:
         g0 = time.perf_counter()
         result = generate(text, contexts)
-        answer, model_calls, model_tokens, model_time_s = _unpack_generation(
-            result, time.perf_counter() - g0
-        )
+        answer, gen_usage = unpack_generation(result, time.perf_counter() - g0)
 
     return ArmOutput(
         answer=answer,
         contexts=contexts,
         context_ids=context_ids,
         search_time_s=search_time_s,
-        generator=ModelUsage(model_calls, model_tokens, model_time_s),
+        generator=gen_usage,
         retrieval=retrieval_usage,
     )

@@ -16,7 +16,6 @@ import argparse
 import json
 from pathlib import Path
 
-
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("run", help="a completed run folder containing arm_outputs.jsonl")
@@ -29,10 +28,9 @@ def main():
             (run / "arm_outputs.jsonl").read_text(encoding="utf-8").splitlines() if x.strip()]
     ks = sorted({int(x) for x in args.ks.split(",") if x.strip()}, reverse=True)
 
+    base = [json.loads(json.dumps(r)) for r in recs]  # fresh copy per k — generator stays as recorded at generation
     for k in ks:  # high -> low: each k trims the previous list further (prefixes nest)
-        for r in recs:
-            r["contexts"] = r["contexts"][:k]
-            r["context_ids"] = r["context_ids"][:k]
+        recs = [{**r, "contexts": r["contexts"][:k], "context_ids": r["context_ids"][:k]} for r in base]
         dst = run.with_name(run.name + f"__k{k}")
         dst.mkdir(exist_ok=True)
         (dst / "arm_outputs.jsonl").write_text(
