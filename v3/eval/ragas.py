@@ -50,9 +50,11 @@ from progress import progress
 from contract import EvalResult
 from eval.ragas_catalog import metrics_to_run
 
-# The decided eval model stack: the shared Qwen generator doubles as the judge,
-# llama-nemotron-embed is the dense embedder — same models, same NIM transport as the arms.
-JUDGE_MODEL = "qwen/qwen3.5-397b-a17b"
+# The decided eval model stack: the shared Qwen generator doubles as the judge of
+# record, llama-nemotron-embed is the dense embedder — same models, same NIM
+# transport as the arms. RAGAS_JUDGE_MODEL swaps the judge for a run (judge
+# shoot-outs, fast iteration); scores are only comparable within one judge.
+JUDGE_MODEL = os.environ.get("RAGAS_JUDGE_MODEL", "qwen/qwen3.5-397b-a17b")
 EMBED_MODEL = "nvidia/llama-nemotron-embed-1b-v2"
 JUDGE_TIMEOUT_S = max(120.0, float(os.environ.get("RAGAS_JUDGE_TIMEOUT_S", "120")))
 JUDGE_MAX_TRIES = max(3, int(os.environ.get("RAGAS_JUDGE_MAX_TRIES", "3")))

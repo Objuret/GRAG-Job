@@ -1,9 +1,10 @@
 """model_test.py — 3-question head-to-head: the full artefact_v1 pipeline
 (interpret + generate) on ONE model per leg, judged by the standard qwen judge.
 
-    python model_test.py glm                # answers + RAGAS eval
+    python model_test.py glm                # answers + RAGAS eval (canon judge)
     python model_test.py qwen --workers 3   # all three questions in flight
     python model_test.py glm --no-eval      # answers only; re-run without it to score
+    python model_test.py glm --judge z-ai/glm-5.2   # re-judge same answers, new dir
 
 Question ids live in model_test_ids.jsonl. Output lands in
 output/artefact_v1__modeltest3_<leg>/ — re-running resumes (answered ids are
@@ -13,6 +14,8 @@ import argparse
 import importlib
 import json
 import os
+import re
+import shutil
 import sys
 from pathlib import Path
 
@@ -33,16 +36,37 @@ def main():
     p.add_argument("-k", type=int, default=50, help="retrieval depth (default 50)")
     p.add_argument("--no-eval", action="store_true",
                    help="answers only — skip RAGAS scoring")
+    p.add_argument("--judge", metavar="MODEL",
+                   help="re-judge the leg's existing answers with this judge model, "
+                        "into a separate __j-<slug> dir (the canon-judged dir is "
+                        "never touched)")
     args = p.parse_args()
+    if args.judge and args.no_eval:
+        p.error("--judge with --no-eval scores nothing")
 
     model = MODELS[args.leg]
     os.environ["HERB_INTERPRET_MODEL"] = model  # read at pipeline import
 
     ids_file = _HERE / "model_test_ids.jsonl"
-    out_dir = _HERE / "output" / f"artefact_v1__modeltest3_{args.leg}"
+    base_dir = _HERE / "output" / f"artefact_v1__modeltest3_{args.leg}"
+    out_dir = base_dir
+    if args.judge:
+        os.environ["RAGAS_JUDGE_MODEL"] = args.judge  # read at eval import
+        slug = re.sub(r"[^a-z0-9.]+", "-", args.judge.split("/")[-1].lower())
+        out_dir = base_dir.parent / f"{base_dir.name}__j-{slug}"
+        # Same answers, different judge: seed the judge dir with the leg's answer
+        # file so resume skips all generation and the run is eval-only.
+        if not (out_dir / "arm_outputs.jsonl").exists():
+            if not (base_dir / "arm_outputs.jsonl").exists():
+                sys.exit(f"no answers to re-judge — run the {args.leg} leg first ({base_dir})")
+            out_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(base_dir / "arm_outputs.jsonl", out_dir / "arm_outputs.jsonl")
+
     n_q = sum(1 for ln in ids_file.read_text(encoding="utf-8").splitlines() if ln.strip())
     pace = "serial" if args.workers == 1 else f"{args.workers} workers"
-    mode = "answers only (no eval)" if args.no_eval else "answers + RAGAS eval"
+    mode = ("answers only (no eval)" if args.no_eval
+            else f"re-judge existing answers ({args.judge})" if args.judge
+            else "answers + RAGAS eval")
     print(f"{args.leg} | {model} | {n_q} questions | k={args.k} | {pace} | {mode}"
           f"\n  ->  {out_dir}", flush=True)
 
