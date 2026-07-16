@@ -82,7 +82,10 @@ DATASET_ID = os.environ.get("HERB_DATASET_ID", "Salesforce__HERB")
 # exactly that run. Override if the graph was tagged under a different run id.
 RUN_ID = os.environ.get("HERB_TAG_RUN_ID", "pilot_full_herb")
 
-INTERPRET_MODEL = "qwen/qwen3.5-397b-a17b"
+# The arm's own retrieval model (the shared generator stays the fairness
+# control). glm answers structured interpretation calls in seconds where the
+# 397B qwen queues into read-timeouts on hosted NIM.
+INTERPRET_MODEL = os.environ.get("HERB_INTERPRET_MODEL", "z-ai/glm-5.2")
 
 # The five facets. Facet agreement is numeric — the prompt tag's facet values
 # against the edge's facet arrays; facets are never embedded.
@@ -397,24 +400,29 @@ _PASS2_SYSTEM = (
 
 
 def _chat_json(model: str, system: str, user: str, max_tokens: int) -> tuple:
-    """One JSON turn on the shared model -> (parsed_json, tokens_in, tokens_out, time_s).
-    Deterministic, non-thinking, min_tokens=1 (Qwen otherwise emits end-of-turn
-    first and returns empty content). The prompt pins the shape and the content is
-    parsed tolerantly (`_extract_json`) — the same prompt-and-parse approach the
-    RAGAS judge uses, not guided structured output. Fails loud and legibly on an
-    empty or length-truncated response rather than as an opaque parse error."""
+    """One JSON turn on the interpreter model -> (parsed_json, tokens_in,
+    tokens_out, time_s). Deterministic. The prompt pins the shape and the content
+    is parsed tolerantly (`_extract_json`) — the same prompt-and-parse approach
+    the RAGAS judge uses, not guided structured output. Fails loud and legibly on
+    an empty or length-truncated response rather than as an opaque parse error.
+    Qwen models take two extra guards: non-thinking pinned (NIM's authoritative
+    switch) and min_tokens=1 (Qwen otherwise emits end-of-turn first and returns
+    empty content)."""
     t0 = time.perf_counter()
-    resp = nim.post("/chat/completions", {
+    payload = {
         "model": model,
         "temperature": 0,
-        "chat_template_kwargs": {"enable_thinking": False},
         "max_tokens": max_tokens,
-        "min_tokens": 1,
         "messages": [
             {"role": "system", "content": system},
             {"role": "user", "content": user},
         ],
-    })
+    }
+    if "qwen" in model:
+        payload["chat_template_kwargs"] = {"enable_thinking": False}
+        payload["min_tokens"] = 1
+    resp = nim.post("/chat/completions", payload,
+                    timeout=480.0)  # a hosted model queues under load; a try must outlast the queue
     elapsed = time.perf_counter() - t0
     tok_in, tok_out = generator_usage_from_nim(resp.get("usage"))
     choices = resp.get("choices") or []

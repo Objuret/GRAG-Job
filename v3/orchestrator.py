@@ -145,7 +145,7 @@ def build_shared_generator(config):
                 "type": "json_schema",
                 "json_schema": {"name": "answer", "schema": _ANSWER_SCHEMA},
             },
-        })
+        }, timeout=480.0)  # the hosted model queues under load; a try must outlast the queue
         elapsed = time.perf_counter() - t0
         choices = resp.get("choices") or []
         if not choices:
