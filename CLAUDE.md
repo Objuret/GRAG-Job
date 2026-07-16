@@ -79,6 +79,12 @@ Details: `graphify-out/REFRESH.md`.
   `python refresh_graph.py` (repo root). It is the ONLY rebuild path (never
   `graphify --update`). If it prints a worklist, process it before the change is done
   (full procedure above).
+- **Every runnable shows life instantly and progress continuously:** the user runs
+  scripts in their own terminal, and that terminal experience is the product. Print
+  the banner before any heavy import (announce slow stages like the eval stack),
+  `flush=True`, and drive the harness progress bars (`v3/progress.py`) for anything
+  long-running. A silent terminal — or a run buried where the user can't watch it —
+  is a bug, full stop.
 - **Critical-review the code you write:** after writing or changing code in `v3/`,
   before you report the work done, run `/critical-review` on the file(s) you just
   changed — pass them in. It spawns the read-only `critical-reviewer` and you resolve
