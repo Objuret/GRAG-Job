@@ -1,9 +1,16 @@
 """Talk to NVIDIA NIM's REST API (OpenAI-compatible).
 
 The generator and the embedder both send their requests through here. This module
-holds the API key and POSTs with retries, while a per-model pacer keeps callers of each
-model under NIM's per-model rate limit. httpx instead of the openai SDK — same endpoints,
-one fewer dependency.
+holds the API keys and POSTs with retries, while a per-(key, model) pacer keeps each
+account's callers of each model under NIM's rate limit. httpx instead of the openai
+SDK — same endpoints, one fewer dependency.
+
+NIM's limits are per ACCOUNT, so extra accounts are extra lanes: the key pool is
+`NVIDIA_API_KEY` (primary) plus every `NVIDIA_API_KEY_WORKER_*`, and each worker
+thread binds to one key round-robin — 3 keys and 3 workers means three questions
+genuinely in flight at once. The round-robin start is PID-offset so two processes
+launched side by side tend to claim different accounts first (a tendency, not a
+guarantee — the hard guarantee is within one process).
 """
 from __future__ import annotations
 
@@ -43,8 +50,13 @@ GIVE_UP_AFTER_S = 300.0
 MAX_DEGRADED_RETRIES = 2
 
 _pace_lock = threading.Lock()
-_next_call_at: dict = defaultdict(float)  # per-model: monotonic time that model's next call may start
+_next_call_at: dict = defaultdict(float)  # per (key_idx, model): monotonic time of that lane's next allowed call
 _completed = [0]  # successful calls so far; a liveness counter for progress displays
+
+_key_pool: list | None = None  # loaded lazily; primary key first, then WORKER_* sorted
+_bind_lock = threading.Lock()
+_bound = threading.local()     # each thread's key index, assigned round-robin on first call
+_next_bind = [os.getpid()]     # PID offset decorrelates side-by-side processes
 
 
 def completed_calls() -> int:
@@ -53,12 +65,13 @@ def completed_calls() -> int:
     return _completed[0]
 
 
-def _wait_my_turn(model: str = "") -> None:
-    """Block until this model's next call is allowed, leaving SECONDS_BETWEEN_CALLS
-    between calls TO THE SAME MODEL across all threads. NIM's rate limit is per-model, so
-    each model paces on its own clock: concurrent callers on different models run in
-    parallel and one model never throttles another. A caller claims its model's next free
-    slot under the lock, then sleeps until it — so calls to a model queue evenly, no burst.
+def _wait_my_turn(model: str = "", key_idx: int = 0) -> None:
+    """Block until this (key, model) lane's next call is allowed, leaving
+    SECONDS_BETWEEN_CALLS between calls on THE SAME ACCOUNT TO THE SAME MODEL across
+    all threads. NIM rate-limits per account per model, so each lane paces on its own
+    clock: callers on different keys or different models run in parallel and never
+    throttle each other. A caller claims its lane's next free slot under the lock,
+    then sleeps until it — so calls on a lane queue evenly, no burst.
 
     A 'q' press unwinds the worker here before it waits, so an in-flight worker stops at
     the next call boundary rather than at the end of a fan-out."""
@@ -66,18 +79,20 @@ def _wait_my_turn(model: str = "") -> None:
         raise abort.Aborted("NIM call skipped — abort requested (pressed q)")
     with _pace_lock:
         now = time.monotonic()
-        start_at = max(now, _next_call_at[model])
-        _next_call_at[model] = start_at + SECONDS_BETWEEN_CALLS
+        start_at = max(now, _next_call_at[(key_idx, model)])
+        _next_call_at[(key_idx, model)] = start_at + SECONDS_BETWEEN_CALLS
     if start_at > now:
         time.sleep(start_at - now)
 
 
-def _back_off(seconds: float, model: str = "") -> None:
-    """Push a model's next-call time out so every worker on THAT model waits. A 429 means
-    that model is over its own rate limit; backing off its clock gives every caller of it
-    the same self-throttle, while callers of other models keep running unaffected."""
+def _back_off(seconds: float, model: str = "", key_idx: int = 0) -> None:
+    """Push one (key, model) lane's next-call time out so every worker on THAT lane
+    waits. A 429 means that account is over its limit for that model; backing off the
+    lane's clock gives every caller of it the same self-throttle, while other lanes
+    keep running unaffected."""
     with _pace_lock:
-        _next_call_at[model] = max(_next_call_at[model], time.monotonic() + seconds)
+        _next_call_at[(key_idx, model)] = max(
+            _next_call_at[(key_idx, model)], time.monotonic() + seconds)
 
 
 _dotenv_loaded = False
@@ -102,12 +117,40 @@ def _load_dotenv() -> None:
 
 
 def require_key() -> str:
-    """The NIM API key, or a loud failure — there is no offline mode."""
-    _load_dotenv()
-    key = os.environ.get("NVIDIA_API_KEY")
-    if not key:
-        raise RuntimeError("NVIDIA_API_KEY not set — NIM access needs it.")
-    return key
+    """The primary NIM API key, or a loud failure — there is no offline mode."""
+    return _keys()[0]
+
+
+def _keys() -> list:
+    """The key pool: NVIDIA_API_KEY first, then every NVIDIA_API_KEY_WORKER_* in
+    name order. Loaded once; fails loud when no key is set at all."""
+    global _key_pool
+    if _key_pool is None:
+        _load_dotenv()
+        pool = []
+        primary = os.environ.get("NVIDIA_API_KEY")
+        if primary:
+            pool.append(primary)
+        for name in sorted(k for k in os.environ if k.startswith("NVIDIA_API_KEY_WORKER_")):
+            if os.environ[name]:
+                pool.append(os.environ[name])
+        if not pool:
+            raise RuntimeError("NVIDIA_API_KEY not set — NIM access needs it.")
+        _key_pool = pool
+    return _key_pool
+
+
+def _thread_key() -> tuple:
+    """(key_idx, key) for the calling thread — bound round-robin on first use and
+    kept for the thread's lifetime, so a worker stays in its own account lane."""
+    pool = _keys()
+    idx = getattr(_bound, "idx", None)
+    if idx is None or idx >= len(pool):
+        with _bind_lock:
+            idx = _next_bind[0] % len(pool)
+            _next_bind[0] += 1
+        _bound.idx = idx
+    return idx, pool[idx]
 
 
 def _delay_after(response: httpx.Response, attempt: int) -> float:
@@ -134,15 +177,16 @@ def post(path: str, payload: dict, timeout: float = 120.0, max_tries: int | None
     or until GIVE_UP_AFTER_S has passed — whichever comes first — then raises loud.
     Every try waits its turn at the shared pacer first (NIM bills retries too), and a
     'q' press unwinds the wait (see _wait_my_turn)."""
-    headers = {"Authorization": f"Bearer {require_key()}"}
-    model = payload.get("model", "")  # NIM rate-limits per model — pace on the model's own clock
+    key_idx, key = _thread_key()  # the thread's own account lane
+    headers = {"Authorization": f"Bearer {key}"}
+    model = payload.get("model", "")  # rate limits are per account per model — pace the lane
     started = time.monotonic()
     last = None
     degraded_tries = 0
     max_tries = MAX_TRIES if max_tries is None else max(1, int(max_tries))
     give_up_after_s = GIVE_UP_AFTER_S if give_up_after_s is None else float(give_up_after_s)
     for attempt in range(max_tries):
-        _wait_my_turn(model)
+        _wait_my_turn(model, key_idx)
         try:
             response = httpx.post(f"{BASE_URL}{path}", json=payload,
                                   headers=headers, timeout=timeout)
@@ -166,8 +210,8 @@ def post(path: str, payload: dict, timeout: float = 120.0, max_tries: int | None
         out_of_tries = attempt == max_tries - 1
         if out_of_tries or time.monotonic() - started + delay >= give_up_after_s:
             break
-        _back_off(delay, model)  # this model's next _wait_my_turn (every caller of it) waits;
-        #                          callers of other models are unaffected
+        _back_off(delay, model, key_idx)  # this lane's next _wait_my_turn (every caller of it)
+        #                                   waits; other keys and models are unaffected
 
     detail = (f"{last.status_code} {last.text[:200]}"
               if isinstance(last, httpx.Response) else repr(last))
@@ -181,6 +225,7 @@ if __name__ == "__main__":
     real_post, real_sleep, real_mono = httpx.post, time.sleep, time.monotonic
     real_gap = SECONDS_BETWEEN_CALLS
     os.environ.setdefault("NVIDIA_API_KEY", "x")
+    _key_pool = ["x"]  # pin the pool so a populated .env cannot spread the self-check threads
 
     # Abort: a set flag makes post() raise before it ever touches the network, so an
     # in-flight worker unwinds at the next call instead of finishing the fan-out.
@@ -225,7 +270,7 @@ if __name__ == "__main__":
     # time out, so the wait is enforced by the pacer (reaching every caller of the model),
     # not by a per-thread sleep. A fake clock that advances on each sleep keeps it
     # deterministic; with one caller each wait still equals the header.
-    SECONDS_BETWEEN_CALLS, _next_call_at[""] = 0.0, 0.0
+    SECONDS_BETWEEN_CALLS, _next_call_at[(0, "")] = 0.0, 0.0
     clk, slept = {"t": 0.0}, []
     time.monotonic = lambda: clk["t"]
 
@@ -246,11 +291,11 @@ if __name__ == "__main__":
     # A model's backoff is shared across its callers: a 429 one caller of a model sees
     # delays that model's next-call time, so another worker on the SAME model is pushed
     # out too (a per-thread sleep would let them keep hammering one model).
-    _next_call_at[""] = 0.0
+    _next_call_at[(0, "")] = 0.0
     base = 1000.0
     time.monotonic = lambda: base
     _back_off(30.0)
-    assert _next_call_at[""] >= base + 30, _next_call_at[""]
+    assert _next_call_at[(0, "")] >= base + 30, _next_call_at[(0, "")]
     time.monotonic = real_mono
 
     # DEGRADED 400 (NIM's transient model-down signal): retried MAX_DEGRADED_RETRIES
@@ -280,7 +325,7 @@ if __name__ == "__main__":
 
     # Pacing math (fake clock, so the test itself never waits): back-to-back calls
     # are spaced exactly SECONDS_BETWEEN_CALLS apart.
-    SECONDS_BETWEEN_CALLS, _next_call_at[""] = 5.0, 0.0
+    SECONDS_BETWEEN_CALLS, _next_call_at[(0, "")] = 5.0, 0.0
     clock, waits = {"t": 100.0}, []
     time.monotonic = lambda: clock["t"]
 
@@ -299,7 +344,7 @@ if __name__ == "__main__":
     # between consecutive calls (not just total time) is what would catch a pacer
     # that serialized them behind one sleep and then let the rest burst.
     httpx.post, time.sleep, time.monotonic = real_post, real_sleep, real_mono
-    SECONDS_BETWEEN_CALLS, _next_call_at[""] = 0.2, real_mono()
+    SECONDS_BETWEEN_CALLS, _next_call_at[(0, "")] = 0.2, real_mono()
     fired = []
 
     def _fire():
@@ -316,5 +361,5 @@ if __name__ == "__main__":
     assert len(fired) == 5 and all(g >= 0.8 * SECONDS_BETWEEN_CALLS for g in gaps), gaps
 
     httpx.post, time.sleep, time.monotonic = real_post, real_sleep, real_mono
-    SECONDS_BETWEEN_CALLS, _next_call_at[""] = real_gap, 0.0
+    SECONDS_BETWEEN_CALLS, _next_call_at[(0, "")] = real_gap, 0.0
     print("nim self-check OK")
