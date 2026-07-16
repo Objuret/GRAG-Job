@@ -283,7 +283,10 @@ def _driver():
         raise RuntimeError("NEO4J_PASSWORD is not set — add it to v3/.env (like NVIDIA_API_KEY).")
     uri = os.environ.get("NEO4J_URI", "neo4j://localhost:7687")
     user = os.environ.get("NEO4J_USER", "neo4j")
-    return GraphDatabase.driver(uri, auth=(user, pw))
+    # Server notifications off: the driver otherwise prints a full DEPRECATION
+    # notice per query (vector-index API rename), drowning the progress bar.
+    return GraphDatabase.driver(uri, auth=(user, pw),
+                                notifications_min_severity="OFF")
 
 
 def _readable(name: str) -> str:
