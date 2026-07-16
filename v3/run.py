@@ -23,8 +23,6 @@ from statistics import mean
 import abort
 import orchestrator
 import questions
-import eval.ragas as ragas
-from eval.ragas_catalog import metrics_to_run
 from run_lock import RunLock
 
 _HERE = Path(__file__).parent
@@ -69,6 +67,7 @@ def _resolve_set(qset, arm, n, ts):
 
 def _print_table(rows, arm, n):
     """Mean per metric over the cells that scored, with an error tally."""
+    from eval.ragas_catalog import metrics_to_run
     ok, err = defaultdict(list), defaultdict(int)
     for r in rows:
         if r["status"] == "ok":
@@ -140,8 +139,12 @@ def main():
     print(f"{args.arm} | set={args.qset} | {n_q} questions | k={args.k} | {pace} | {mode}\n  ->  {out_dir}")
     abort.watch()  # press q to stop the run gracefully (Ctrl+C can be swallowed)
     print("running - press q to abort\n")
+    if args.no_eval:
+        scorer = None
+    else:  # eval deps (ragas/langchain) load only when a run actually scores
+        import eval.ragas as scorer
     with RunLock(out_dir):
-        summary = orchestrator.run(pipeline, None if args.no_eval else ragas, ids_file, config)
+        summary = orchestrator.run(pipeline, scorer, ids_file, config)
 
     if not args.no_eval:
         rows = [json.loads(x) for x in
