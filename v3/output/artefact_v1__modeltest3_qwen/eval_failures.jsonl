@@ -1,0 +1,9 @@
+{"question_id": "MonitorForce::a::5", "metric": "faithfulness", "error": "RuntimeError: NIM /chat/completions gave up after 3 tries / 363s: ReadTimeout('The read operation timed out')"}
+{"question_id": "MonitorForce::a::5", "metric": "answer_correctness", "error": "RuntimeError: NIM /chat/completions gave up after 3 tries / 364s: ReadTimeout('The read operation timed out')"}
+{"question_id": "MonitorForce::a::5", "metric": "context_recall_llm", "error": "RuntimeError: NIM /chat/completions gave up after 3 tries / 364s: ReadTimeout('The read operation timed out')"}
+{"question_id": "ActionGenie::a::0", "metric": "faithfulness", "error": "RuntimeError: NIM /chat/completions gave up after 3 tries / 363s: ReadTimeout('The read operation timed out')"}
+{"question_id": "ActionGenie::a::0", "metric": "answer_correctness", "error": "RuntimeError: NIM /chat/completions gave up after 3 tries / 364s: ReadTimeout('The read operation timed out')"}
+{"question_id": "ActionGenie::a::0", "metric": "context_recall_llm", "error": "RuntimeError: NIM /chat/completions gave up after 3 tries / 364s: ReadTimeout('The read operation timed out')"}
+{"question_id": "SummarizeForce::a::23", "metric": "faithfulness", "error": "RuntimeError: NIM /chat/completions gave up after 3 tries / 363s: ReadTimeout('The read operation timed out')"}
+{"question_id": "SummarizeForce::a::23", "metric": "answer_correctness", "error": "RuntimeError: NIM /chat/completions gave up after 3 tries / 364s: ReadTimeout('The read operation timed out')"}
+{"question_id": "SummarizeForce::a::23", "metric": "context_recall_llm", "error": "RuntimeError: NIM /chat/completions gave up after 3 tries / 364s: ReadTimeout('The read operation timed out')"}

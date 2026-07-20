@@ -1,0 +1,11 @@
+{
+  "scorer": "ragas",
+  "judge_model": "gemini-3.5-flash",
+  "source_run": "output\\lucene__gold100__20260627T003236Z",
+  "arm": "lucene",
+  "timestamp": "2026-07-18T17:20:37.315541+00:00",
+  "judge_backend": null,
+  "judge_effort": null,
+  "judge_usage": null,
+  "judge_elapsed_s": null
+}

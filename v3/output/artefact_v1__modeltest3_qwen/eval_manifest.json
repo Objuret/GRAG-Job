@@ -1,0 +1,7 @@
+{
+  "scorer": "ragas",
+  "judge_model": null,
+  "source_run": "C:\\Coding\\exjobbet\\GRAG-Job\\v3\\output\\artefact_v1__modeltest3_qwen",
+  "arm": "artefact_v1",
+  "timestamp": "2026-07-16T10:24:54.149356+00:00"
+}

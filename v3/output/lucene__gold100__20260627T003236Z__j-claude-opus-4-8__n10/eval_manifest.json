@@ -1,0 +1,10 @@
+{
+  "scorer": "ragas",
+  "judge_model": "claude-opus-4-8",
+  "source_run": "output\\lucene__gold100__20260627T003236Z",
+  "arm": "lucene",
+  "timestamp": "2026-07-18T12:12:44.195681+00:00",
+  "judge_backend": null,
+  "judge_effort": null,
+  "judge_usage": null
+}
