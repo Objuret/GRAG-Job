@@ -14,7 +14,11 @@ guarantee — the hard guarantee is within one process).
 """
 from __future__ import annotations
 
+import json
 import os
+import re
+import shutil
+import subprocess
 import threading
 import time
 from collections import defaultdict
@@ -153,6 +157,68 @@ def _thread_key() -> tuple:
     return idx, pool[idx]
 
 
+# --- claude lane (headless Claude Code CLI) ----------------------------------
+# `claude-*` chat models run through the signed-in claude CLI instead of NIM — ONE
+# lane shared by every caller (generator, interpreter, judge), so a transport fix
+# lands everywhere at once. Subscription-billed. The caller's response_format
+# schema rides `--json-schema` (enforced structured output); the prompt goes via
+# stdin because a k=50 prompt outsizes the Windows command line. No temperature
+# control exists on the CLI — claude answers are not bit-reproducible.
+
+_CLAUDE_EXE = shutil.which("claude") or str(Path.home() / ".local" / "bin" / "claude.exe")
+_FENCE = re.compile(r"^```(?:json)?\s*|\s*```$")
+
+
+def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
+    """One /chat/completions-shaped call on the claude CLI -> an OpenAI-shaped
+    response dict ({choices, usage}), so call sites read it exactly like a NIM
+    reply. NIM-only knobs in the payload (temperature, max/min_tokens,
+    chat_template_kwargs) have no CLI equivalent and are dropped."""
+    model = payload["model"]
+    msgs = payload.get("messages") or []
+    system = "\n\n".join(m.get("content", "") for m in msgs if m.get("role") == "system")
+    prompt = "\n\n".join(m.get("content", "") for m in msgs if m.get("role") != "system")
+    cmd = [_CLAUDE_EXE, "-p", "--model", model, "--output-format", "json"]
+    if system:
+        cmd += ["--system-prompt", system]
+    schema = ((payload.get("response_format") or {}).get("json_schema") or {}).get("schema")
+    if schema:
+        cmd += ["--json-schema", json.dumps(schema)]
+
+    last = None
+    for attempt in range(max_tries):
+        if abort.aborted():
+            raise abort.Aborted("claude call skipped — abort requested (pressed q)")
+        try:
+            r = subprocess.run(cmd, input=prompt, capture_output=True, text=True,
+                               timeout=timeout, encoding="utf-8")
+        except subprocess.TimeoutExpired as err:
+            last = err
+        else:
+            if r.returncode != 0:
+                last = RuntimeError(
+                    f"claude exit {r.returncode}: {(r.stderr or r.stdout)[:200]}")
+            else:
+                try:
+                    data = json.loads(r.stdout)
+                except ValueError as err:
+                    last = RuntimeError(f"claude envelope not JSON: {err} — {r.stdout[:200]}")
+                else:
+                    result = _FENCE.sub("", (data.get("result") or "").strip())
+                    usage = data.get("usage") or {}
+                    with _pace_lock:
+                        _completed[0] += 1
+                    return {
+                        "choices": [{"message": {"content": result},
+                                     "finish_reason": "stop"}],
+                        "usage": {"prompt_tokens": int(usage.get("input_tokens") or 0),
+                                  "completion_tokens": int(usage.get("output_tokens") or 0)},
+                    }
+        if attempt < max_tries - 1:
+            time.sleep(2 ** attempt)
+    raise RuntimeError(f"claude {model} gave up after {max_tries} tries: {last!r}")
+
+
 def _delay_after(response: httpx.Response, attempt: int) -> float:
     """How long to wait before retrying: obey NIM's Retry-After header if it sent
     one (plain seconds or an HTTP date), otherwise back off exponentially."""
@@ -176,7 +242,13 @@ def post(path: str, payload: dict, timeout: float = 120.0, max_tries: int | None
     Retries transient HTTP statuses (408/429/5xx) and network errors up to MAX_TRIES,
     or until GIVE_UP_AFTER_S has passed — whichever comes first — then raises loud.
     Every try waits its turn at the shared pacer first (NIM bills retries too), and a
-    'q' press unwinds the wait (see _wait_my_turn)."""
+    'q' press unwinds the wait (see _wait_my_turn).
+
+    `claude-*` chat models route to the claude lane (see _claude_chat) — no NIM key,
+    no pacer; the CLI's own account limits govern."""
+    if path == "/chat/completions" and str(payload.get("model", "")).startswith("claude"):
+        return _claude_chat(payload, timeout,
+                            MAX_TRIES if max_tries is None else max(1, int(max_tries)))
     key_idx, key = _thread_key()  # the thread's own account lane
     headers = {"Authorization": f"Bearer {key}"}
     model = payload.get("model", "")  # rate limits are per account per model — pace the lane

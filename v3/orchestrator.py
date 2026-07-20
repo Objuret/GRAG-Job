@@ -334,7 +334,7 @@ def run(pipeline, evaluator, ids_file, config=None):
     generate = build_shared_generator(config)
     out = Path(config.get("out_dir") or DEFAULT_OUTPUT / f"{arm}__{evname}")
 
-    _, _, aborted, build_stats = run_one_pipeline(
+    ran, _, aborted, build_stats = run_one_pipeline(
         pipeline, chosen, corpus, generate, out,
         config.get("top_k", DEFAULT_TOP_K), config.get("workers", DEFAULT_WORKERS))
 
@@ -342,12 +342,17 @@ def run(pipeline, evaluator, ids_file, config=None):
     # failures.jsonl as they landed; here we only record provenance off the durable
     # files. Both counts read from disk so they reconcile across resumes:
     # n_ran + n_failed == n_questions (n_failed = chosen not yet answered).
+    # A leg that generated nothing (an eval-only resume) leaves the manifest
+    # alone — it describes the generation run, and its config (e.g. the
+    # generator model) belongs to the leg that produced the answers.
     done = _done_ids(out / "arm_outputs.jsonl")
     n_failed = len(chosen) - len(done)
-    (out / "run_manifest.json").write_text(
-        json.dumps(asdict(build_run_manifest(
-            config, arm, build_stats, len(chosen), len(done), n_failed)),
-            ensure_ascii=False, indent=2), encoding="utf-8")
+    manifest_path = out / "run_manifest.json"
+    if ran or not manifest_path.is_file():
+        manifest_path.write_text(
+            json.dumps(asdict(build_run_manifest(
+                config, arm, build_stats, len(chosen), len(done), n_failed)),
+                ensure_ascii=False, indent=2), encoding="utf-8")
 
     if aborted:  # loud — but every finished answer is already on disk; resume continues
         raise RuntimeError(f"aborted run at {out}: {aborted}")
@@ -365,6 +370,10 @@ def run(pipeline, evaluator, ids_file, config=None):
     results = run_one_evaluator(
         evaluator, [_rehydrate(r) for r in recs], [by_id[r["id"]] for r in recs],
         arm, corpus, eval_path, config.get("workers", DEFAULT_WORKERS))
+    config["judge_backend"] = getattr(evaluator, "LAST_JUDGE_BACKEND", None)
+    config["judge_effort"] = getattr(evaluator, "LAST_JUDGE_REASONING_EFFORT", None)
+    config["judge_usage"] = getattr(evaluator, "LAST_JUDGE_USAGE", None)
+    config["judge_elapsed_s"] = getattr(evaluator, "LAST_JUDGE_WALL_TIME_S", None)
     (out / "eval_manifest.json").write_text(
         json.dumps(asdict(build_eval_manifest(config, evname, arm, out)),
                    ensure_ascii=False, indent=2), encoding="utf-8")

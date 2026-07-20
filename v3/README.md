@@ -25,15 +25,23 @@ share no retrieval code with each other, and nothing with the artefact.
   always runs (it costs nothing), and `SELECTED` adds the judged ones. The
   deterministic backbone is **ID-based** context precision/recall against the gold
   citations (`IDBasedContextPrecision` / `IDBasedContextRecall`, no judge); the
-  judged picks are **faithfulness, answer correctness, context precision, and
-  context recall**. Faithfulness needs no reference, so it transfers to a no-gold
-  set later; the other three lean on the gold answer / citations.
+  judged picks are **faithfulness, answer correctness, and context recall**.
+  `context_precision_llm_ref` stays commented out because it is ~k judge calls per
+  question and turns the slow lane into the whole run. Faithfulness needs no
+  reference, so it transfers to a no-gold set later; the other judged metrics lean
+  on the gold answer / citations.
 
 RAGAS emits raw per-question records (`EvalResult`, tidy long format) — nothing
 pre-aggregated — so paired tests, CIs, per-type splits and judge calibration are
 all possible downstream. Each run writes a `RunManifest` (arm, generator model,
 top-k, questions file, n, timestamp, build stats) and an `EvalManifest` (scorer,
-judge model, source run, arm, timestamp) for reproducibility.
+judge model, backend, reasoning effort, aggregate judge usage including
+reasoning tokens, source run, arm, timestamp) for reproducibility.
+GPT judge runs use the signed-in Codex CLI (the same subscription-authenticated
+pattern as the Claude judge), not `OPENAI_API_KEY`. Gemini judge runs use the
+signed-in Gemini CLI, not an API key. Their manifests contain provider-reported
+input, cached-input, output, and reasoning-token usage, aggregate request time,
+and eval wall time.
 
 ## Data split (the quarantine)
 
@@ -110,10 +118,12 @@ three modes is the pending step — see Still open.)
 - **Provenance** is two manifests — `RunManifest` (generation side) + `EvalManifest`
   (scoring side); no seed, no git-sha.
 - Oracle read in place from raw; pipelines blind to it.
-- **One LLM — generator *and* judge**: `qwen/qwen3.5-397b-a17b` on NVIDIA NIM. It's the
-  generator injected into all three arms (so the only variable is retrieval) AND the
-  LLM-as-judge for the RAGAS judged metrics. Multilingual, so HERB now and the deferred
-  Swedish Bonnier set run on the same model, no swap. Not GPT-4o, so HERB's published
+- **One LLM — generator, one judge by default**: `qwen/qwen3.5-397b-a17b` on NVIDIA
+  NIM is still the shared generator injected into all three arms (so the only variable
+  is retrieval). The judge defaults to the same Qwen model, but `--judge` can swap in
+  Claude or GPT-5.4 mini for cross-checks; the judge backend and aggregate usage are
+  recorded in the eval manifest. Multilingual, so HERB now and the deferred Swedish
+  Bonnier set run on the same generator, no swap. Not GPT-4o, so HERB's published
   baselines get re-run, not cited.
 - **Generation contract — a thin, fixed RAG pipe.** It sends the model one fixed system
   instruction — *"Answer the question using only the provided documents. Be concise."* —

@@ -21,7 +21,9 @@ class ModelUsage:
     model is touched: the shared generator, an arm's own retrieval model, a build."""
     calls: int = 0
     tokens_in: int = 0
+    cached_input_tokens: int = 0
     tokens_out: int = 0
+    reasoning_tokens: int = 0
     time_s: float = 0.0
 
     @property
@@ -64,14 +66,18 @@ def model_usage_from_dict(d: dict) -> ModelUsage:
         return ModelUsage(
             calls=int(d.get("calls", 0) or 0),
             tokens_in=int(d.get("tokens_in", 0) or 0),
+            cached_input_tokens=int(d.get("cached_input_tokens", 0) or 0),
             tokens_out=int(d.get("tokens_out", 0) or 0),
+            reasoning_tokens=int(d.get("reasoning_tokens", 0) or 0),
             time_s=float(d.get("time_s", 0.0) or 0.0),
         )
     tot = int(d.get("tokens", 0) or 0)
     return ModelUsage(
         calls=int(d.get("calls", 0) or 0),
         tokens_in=tot,
+        cached_input_tokens=int(d.get("cached_input_tokens", 0) or 0),
         tokens_out=0,
+        reasoning_tokens=int(d.get("reasoning_tokens", 0) or 0),
         time_s=float(d.get("time_s", 0.0) or 0.0),
     )
 
@@ -82,14 +88,18 @@ def model_usage_from_telemetry(tel: dict, time_s: float = 0.0) -> ModelUsage:
         return ModelUsage(
             calls=int(tel.get("calls", 1)),
             tokens_in=int(tel.get("tokens_in", 0) or 0),
+            cached_input_tokens=int(tel.get("cached_input_tokens", 0) or 0),
             tokens_out=int(tel.get("tokens_out", 0) or 0),
+            reasoning_tokens=int(tel.get("reasoning_tokens", 0) or 0),
             time_s=float(tel.get("time", time_s)),
         )
     tok = int(tel.get("tokens", 0) or 0)
     return ModelUsage(
         calls=int(tel.get("calls", 1)),
         tokens_in=tok,
+        cached_input_tokens=int(tel.get("cached_input_tokens", 0) or 0),
         tokens_out=0,
+        reasoning_tokens=int(tel.get("reasoning_tokens", 0) or 0),
         time_s=float(tel.get("time", time_s)),
     )
 
@@ -189,3 +199,7 @@ class EvalManifest:
     source_run: str
     arm: str
     timestamp: str
+    judge_backend: str | None = None
+    judge_effort: str | None = None
+    judge_usage: ModelUsage | None = None
+    judge_elapsed_s: float | None = None

@@ -3,9 +3,11 @@
 Scores each (arm output, question) on the metrics ragas_catalog.metrics_to_run()
 selects: the deterministic backbone (id-based context precision/recall, n-gram and
 string scores) plus the judged metrics (faithfulness, answer relevance, the LLM/NV
-context metrics, factual correctness, ...). Judge = the shared Qwen on NIM;
-embedder = llama-nemotron-embed on NIM — both through nim.post, the same transport every other
-model call in the harness uses. Emits raw per-question contract.EvalResult (tidy
+context metrics, factual correctness, ...). Judge defaults to the shared Qwen on
+NIM, but `--judge` can swap in Claude (`claude-*`), Codex GPT (`gpt-*`), or
+Gemini (`gemini-*`);
+embedder = llama-nemotron-embed on NIM — the judge and embedder both drive through
+their backend-specific wrappers. Emits raw per-question contract.EvalResult (tidy
 long), one row per (question, metric); nothing pre-aggregated.
 
 Built on RAGAS's legacy metric classes (ragas.metrics). The newer
@@ -37,9 +39,15 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import re
+import shutil
+import subprocess
 import threading
+import tempfile
+import time
 import warnings
 from collections import Counter, defaultdict
+from functools import lru_cache
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -47,20 +55,64 @@ from pathlib import Path
 import abort
 import nim
 from progress import progress
-from contract import EvalResult
+from contract import EvalResult, ModelUsage
 from eval.ragas_catalog import metrics_to_run
 
-# The decided eval model stack: the shared Qwen generator doubles as the judge of
-# record, llama-nemotron-embed is the dense embedder — same models, same NIM
-# transport as the arms. RAGAS_JUDGE_MODEL swaps the judge for a run (judge
-# shoot-outs, fast iteration); scores are only comparable within one judge.
+# The decided eval model stack: the shared Qwen generator remains the default judge
+# of record, llama-nemotron-embed is the dense embedder — same transport as the
+# arms. RAGAS_JUDGE_MODEL swaps the judge for a run (judge shoot-outs, fast
+# iteration); scores are only comparable within one judge.
 JUDGE_MODEL = os.environ.get("RAGAS_JUDGE_MODEL", "qwen/qwen3.5-397b-a17b")
 EMBED_MODEL = "nvidia/llama-nemotron-embed-1b-v2"
-JUDGE_TIMEOUT_S = max(120.0, float(os.environ.get("RAGAS_JUDGE_TIMEOUT_S", "120")))
-JUDGE_MAX_TRIES = max(3, int(os.environ.get("RAGAS_JUDGE_MAX_TRIES", "3")))
+_JUDGE_MODEL_LC = JUDGE_MODEL.lower()
+JUDGE_BACKEND = "gemini-cli" if "gemini" in _JUDGE_MODEL_LC else (
+    "codex-cli" if "gpt-" in _JUDGE_MODEL_LC else (
+        "claude-cli" if "claude" in _JUDGE_MODEL_LC else "nim"))
+JUDGE_REASONING_EFFORT = (
+    os.environ.get("RAGAS_JUDGE_REASONING_EFFORT", "high").strip().lower()
+    if JUDGE_BACKEND == "codex-cli" else None)
+if JUDGE_BACKEND == "codex-cli" and JUDGE_REASONING_EFFORT not in {"low", "medium", "high", "xhigh"}:
+    raise ValueError(
+        "RAGAS_JUDGE_REASONING_EFFORT must be one of low, medium, high, xhigh")
+
+
+def _judge_profile(model: str) -> dict:
+    """How to drive this judge — each model family carries its own settings.
+    `inflight` is the global concurrent-call cap (the shared pool size: RAGAS fans
+    metrics out per item, and every concurrent call occupies one pool thread);
+    `timeout_s`/`tries` shape one call. Claude and GPT judges have no queue to
+    respect and run wide open (RAM/network are the physical limits — one call per
+    verdict). Hosted NIM giants queue for minutes, so a try must outlast the queue
+    and bursts must stay shy (the backend 429s them). Small NIM models answer in
+    seconds — short fuse, fail fast."""
+    model = model.lower()
+    if "claude" in model:
+        return {"inflight": 64, "timeout_s": 120.0, "tries": 2}
+    if "gpt-" in model:
+        return {"inflight": 64, "timeout_s": 180.0, "tries": 2}
+    if "gemini" in model:
+        # Match the other subscription CLI judges: queue every RAGAS cell, with
+        # up to 64 real CLI calls in flight. Set RAGAS_JUDGE_INFLIGHT explicitly
+        # only when an account's quota returns a rate-limit error.
+        return {"inflight": 64, "timeout_s": 180.0, "tries": 2}
+    if any(x in model for x in ("397b", "-675b", "340b", "ultra")):
+        return {"inflight": 8, "timeout_s": 480.0, "tries": 3}
+    return {"inflight": 8, "timeout_s": 90.0, "tries": 3}
+
+
+_PROFILE = _judge_profile(JUDGE_MODEL)
+JUDGE_TIMEOUT_S = max(30.0, float(os.environ.get("RAGAS_JUDGE_TIMEOUT_S", _PROFILE["timeout_s"])))
+JUDGE_MAX_TRIES = max(1, int(os.environ.get("RAGAS_JUDGE_MAX_TRIES", _PROFILE["tries"])))
+JUDGE_INFLIGHT = max(1, int(os.environ.get("RAGAS_JUDGE_INFLIGHT", _PROFILE["inflight"])))
+_CALL_POOL = ThreadPoolExecutor(max_workers=JUDGE_INFLIGHT, thread_name_prefix="judge-call")
 EMBED_TIMEOUT_S = float(os.environ.get("RAGAS_EMBED_TIMEOUT_S", "45"))
 EMBED_MAX_TRIES = int(os.environ.get("RAGAS_EMBED_MAX_TRIES", "1"))
 MAX_JUDGE_CONTEXT_CHARS = int(os.environ.get("RAGAS_MAX_JUDGE_CONTEXT_CHARS", "60000"))
+_JUDGE_USAGE_LOCK = threading.Lock()
+LAST_JUDGE_USAGE = ModelUsage()
+LAST_JUDGE_BACKEND = JUDGE_BACKEND
+LAST_JUDGE_REASONING_EFFORT = JUDGE_REASONING_EFFORT
+LAST_JUDGE_WALL_TIME_S = 0.0
 
 # Eval circuit breaker: N consecutive questions with most NIM-pass cells errored means
 # the judge backend is down — stop loud rather than grind the rest into NaNs; whatever an
@@ -110,18 +162,287 @@ from ragas.metrics._nv_metrics import (  # noqa: E402
 )
 
 
-# --- NIM-backed judge + embedder (RAGAS drivers over nim.post) ----------------
+# --- judge + embedder (RAGAS drivers over backend-specific model calls) -------
+
+_CODEX_EXE = shutil.which("codex")
+# npm installs Windows command shims under %APPDATA%\\npm. PowerShell resolves
+# that directory through its own command search, while Python's shutil.which can
+# miss it when the npm directory is absent from PATH; keep the explicit .cmd
+# fallback so `python run.py` invokes the same CLI the user just tested.
+_GEMINI_NPM_SHIM = Path(os.environ.get("APPDATA", "")) / "npm" / "gemini.cmd"
+_GEMINI_EXE = shutil.which("gemini") or (
+    str(_GEMINI_NPM_SHIM) if _GEMINI_NPM_SHIM.is_file() else None)
+_FENCE = re.compile(r"^```(?:json)?\s*|\s*```$")
+
+
+@lru_cache(maxsize=16)
+def _encoding_for(model: str):
+    try:
+        import tiktoken
+    except Exception:
+        return None
+    try:
+        return tiktoken.encoding_for_model(model)
+    except Exception:
+        return tiktoken.get_encoding("o200k_base")
+
+
+def _estimate_tokens(model: str, text: str) -> int:
+    enc = _encoding_for(model)
+    if enc is None:
+        return 0
+    return len(enc.encode(text or ""))
+
+
+def _record_judge_usage(tokens_in: int, tokens_out: int, reasoning_tokens: int,
+                        elapsed_s: float, cached_input_tokens: int = 0) -> None:
+    with _JUDGE_USAGE_LOCK:
+        LAST_JUDGE_USAGE.calls += 1
+        LAST_JUDGE_USAGE.tokens_in += int(tokens_in or 0)
+        LAST_JUDGE_USAGE.cached_input_tokens += int(cached_input_tokens or 0)
+        LAST_JUDGE_USAGE.tokens_out += int(tokens_out or 0)
+        LAST_JUDGE_USAGE.reasoning_tokens += int(reasoning_tokens or 0)
+        LAST_JUDGE_USAGE.time_s += float(elapsed_s or 0.0)
+
+
+def _claude_verdict(text: str, model: str, timeout_s: float) -> str:
+    """One judge verdict on the shared claude lane (nim._claude_chat — the same
+    transport the generator and interpreter ride). max_tries=1: the judge driver
+    owns retries. The lane already strips fences; CLI usage counters fill the
+    judge accounting, token estimates cover an envelope without them."""
+    started = time.perf_counter()
+    resp = nim.post("/chat/completions",
+                    {"model": model, "messages": [{"role": "user", "content": text}]},
+                    timeout=timeout_s, max_tries=1)
+    clean = ((resp.get("choices") or [{}])[0].get("message") or {}).get("content") or ""
+    usage = resp.get("usage") or {}
+    _record_judge_usage(
+        int(usage.get("prompt_tokens") or 0) or _estimate_tokens(model, text),
+        int(usage.get("completion_tokens") or 0) or _estimate_tokens(model, clean),
+        0, time.perf_counter() - started)
+    return clean
+
+
+def _codex_usage(jsonl: str) -> dict:
+    """The final `turn.completed` event carries Codex CLI's authoritative usage."""
+    usage = {}
+    for line in jsonl.splitlines():
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if event.get("type") == "turn.completed":
+            usage = event.get("usage") or {}
+    return usage
+
+
+def _codex_verdict(text: str, model: str, timeout_s: float) -> str:
+    """Run a subscription-authenticated, isolated `codex exec` verdict.
+
+    Codex emits machine-readable JSONL on stdout; its final event includes real
+    token accounting. `--output-last-message` avoids guessing which streamed
+    message is the verdict, while `--ephemeral` keeps hundreds of judge calls
+    from filling the user's Codex session history.
+    """
+    if not _CODEX_EXE:
+        raise RuntimeError("gpt-* judges need the signed-in `codex` CLI on PATH")
+    started = time.perf_counter()
+    fd, output_file = tempfile.mkstemp(prefix="ragas-codex-", suffix=".json")
+    os.close(fd)
+    output_path = Path(output_file)
+    command = [
+        _CODEX_EXE, "exec", "--ephemeral", "--skip-git-repo-check",
+        "--ignore-user-config", "--ignore-rules", "--sandbox", "read-only",
+        "--ask-for-approval", "never", "--color", "never", "--json",
+        "--output-last-message", str(output_path), "--model", model,
+        "--config", f'model_reasoning_effort="{JUDGE_REASONING_EFFORT}"', "-",
+    ]
+    try:
+        run = subprocess.run(
+            command, input=text, capture_output=True, text=True,
+            timeout=timeout_s, encoding="utf-8", cwd=tempfile.gettempdir())
+        if run.returncode != 0:
+            raise RuntimeError(
+                f"codex judge exit {run.returncode}: {(run.stderr or run.stdout)[:300]}")
+        result = output_path.read_text(encoding="utf-8").strip()
+        if not result:
+            raise RuntimeError("codex judge completed without a final message")
+        clean = _FENCE.sub("", result)
+        usage = _codex_usage(run.stdout)
+        _record_judge_usage(
+            int(usage.get("input_tokens", _estimate_tokens(model, text)) or 0),
+            int(usage.get("output_tokens", _estimate_tokens(model, clean)) or 0),
+            int(usage.get("reasoning_output_tokens", 0) or 0),
+            time.perf_counter() - started,
+            int(usage.get("cached_input_tokens", 0) or 0),
+        )
+        return clean
+    finally:
+        output_path.unlink(missing_ok=True)
+
+
+def _gemini_usage(stats: object) -> tuple[int, int, int, int]:
+    """Extract Gemini CLI's provider token counters from headless JSON stats.
+
+    `--output-format json` returns the CLI's complete session metrics. A
+    headless judge call is one fresh session, but sum all model entries so a
+    future CLI model alias/route change cannot silently drop usage.
+    """
+    if not isinstance(stats, dict):
+        return 0, 0, 0, 0
+    models = stats.get("models")
+    if not isinstance(models, dict):
+        return 0, 0, 0, 0
+    prompt = cached = candidates = thoughts = 0
+    for model_stats in models.values():
+        if not isinstance(model_stats, dict):
+            continue
+        tokens = model_stats.get("tokens")
+        if not isinstance(tokens, dict):
+            continue
+        prompt += int(tokens.get("prompt", 0) or 0)
+        cached += int(tokens.get("cached", 0) or 0)
+        candidates += int(tokens.get("candidates", 0) or 0)
+        thoughts += int(tokens.get("thoughts", 0) or 0)
+    return prompt, cached, candidates, thoughts
+
+
+def _run_gemini_cli(command: list[str], text: str, timeout_s: float,
+                    env: dict[str, str]) -> subprocess.CompletedProcess:
+    """Run one Gemini CLI session and reap its whole process tree on timeout.
+
+    Gemini's Windows launcher can re-exec Node. Killing only Popen's immediate
+    process leaves the child holding stdout/stderr open, making `communicate()`
+    wait forever after its timeout. A tree kill makes the timeout real.
+    """
+    kwargs = {
+        "stdin": subprocess.PIPE,
+        "stdout": subprocess.PIPE,
+        "stderr": subprocess.PIPE,
+        "text": True,
+        "encoding": "utf-8",
+        "cwd": tempfile.gettempdir(),
+        "env": env,
+    }
+    if os.name == "nt":
+        kwargs["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
+    process = subprocess.Popen(command, **kwargs)
+    try:
+        stdout, stderr = process.communicate(input=text, timeout=timeout_s)
+    except subprocess.TimeoutExpired as exc:
+        if os.name == "nt":
+            subprocess.run(
+                ["taskkill", "/PID", str(process.pid), "/T", "/F"],
+                capture_output=True, text=True, check=False,
+            )
+        else:
+            process.kill()
+        stdout, stderr = process.communicate()
+        raise subprocess.TimeoutExpired(
+            command, timeout_s, output=stdout, stderr=stderr) from exc
+    return subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
+
+
+def _gemini_terminal_quota_error(error: Exception) -> bool:
+    """A terminal Gemini quota/entitlement rejection cannot improve with a retry."""
+    text = str(error).lower()
+    return "terminalquotaerror" in text or "daily quota" in text
+
+
+def _gemini_quota_error_row(row: "EvalResult") -> bool:
+    """Whether a cell has Gemini CLI's terminal quota/entitlement rejection."""
+    return (
+        JUDGE_BACKEND == "gemini-cli"
+        and row.status == "error"
+        and _gemini_terminal_quota_error(
+            RuntimeError(str((row.components or {}).get("error", "")))
+        )
+    )
+
+
+def _gemini_verdict(text: str, model: str, timeout_s: float) -> str:
+    """One subscription-authenticated Gemini CLI verdict with real CLI usage.
+
+    RAGAS supplies the entire judging prompt on stdin. Gemini CLI appends that
+    input to the short headless instruction, so the RAGAS prompt itself remains
+    the source of truth for the structured verdict. Each call starts a fresh,
+    isolated CLI session; it cannot read or edit the repository.
+    """
+    if not _GEMINI_EXE:
+        raise RuntimeError("gemini-* judges need the signed-in `gemini` CLI on PATH")
+    started = time.perf_counter()
+    last_error = None
+    attempts = 0
+    for attempt in range(JUDGE_MAX_TRIES):
+        attempts = attempt + 1
+        try:
+            # Do not map this project's historical GEMINI_API setting into the
+            # subprocess. This judge deliberately uses the account signed into
+            # Gemini CLI, matching the Claude CLI transport rather than billed
+            # direct API-key inference.
+            child_env = os.environ.copy()
+            child_env.pop("GEMINI_API_KEY", None)
+            child_env.pop("GOOGLE_API_KEY", None)
+            run = _run_gemini_cli(
+                [_GEMINI_EXE, "-p",
+                 "Follow the instructions in the supplied input exactly. Return only the requested output.",
+                 "--model", model, "--output-format", "json",
+                 "--approval-mode", "plan", "--skip-trust"],
+                text, timeout_s, child_env,
+            )
+            if run.returncode != 0:
+                raise RuntimeError(
+                    f"gemini judge exit {run.returncode}: {(run.stderr or run.stdout)[:300]}")
+            payload = json.loads(run.stdout)
+            if payload.get("error"):
+                error = payload["error"]
+                raise RuntimeError(
+                    f"gemini judge error: {error.get('message', error) if isinstance(error, dict) else error}")
+            clean = _FENCE.sub("", str(payload.get("response") or "").strip())
+            if not clean:
+                raise RuntimeError("Gemini CLI completed without a final response")
+            tokens_in, cached, tokens_out, reasoning = _gemini_usage(payload.get("stats"))
+            _record_judge_usage(
+                tokens_in or _estimate_tokens(model, text),
+                tokens_out or _estimate_tokens(model, clean),
+                reasoning,
+                time.perf_counter() - started,
+                cached,
+            )
+            return clean
+        except Exception as exc:
+            last_error = exc
+            if _gemini_terminal_quota_error(exc):
+                break
+            if attempt + 1 < JUDGE_MAX_TRIES:
+                time.sleep(1.5 * (attempt + 1))
+    raise RuntimeError(f"Gemini judge failed after {attempts} attempt(s): {last_error}")
 
 
 @dataclass
-class _NimJudge(BaseRagasLLM):
-    """RAGAS LLM driven by nim.post — the shared Qwen, same transport as the
-    generator. Implements the three BaseRagasLLM hooks; structured-output parsing is
-    RAGAS's own (it appends format instructions to the prompt)."""
+class _JudgeLLM(BaseRagasLLM):
+    """RAGAS LLM driven by nim.post or a headless subscription CLI.
+    The backend follows the judge model slug: Qwen/NIM by default, Claude for
+    `claude-*`, subscription-authenticated Codex for `gpt-*`, and Gemini CLI for
+    `gemini-*`. Implements the three BaseRagasLLM hooks;
+    structured-output parsing is RAGAS's own (it appends format instructions to
+    the prompt)."""
 
     model: str = JUDGE_MODEL
 
     def _post(self, text, temperature, stop):
+        global LAST_JUDGE_BACKEND
+        model = self.model.lower()
+        if "claude" in model:
+            LAST_JUDGE_BACKEND = "claude-cli"
+            return {}, _claude_verdict(text, self.model, JUDGE_TIMEOUT_S), "stop"
+        if "gemini" in model:
+            LAST_JUDGE_BACKEND = "gemini-cli"
+            return {}, _gemini_verdict(text, self.model, JUDGE_TIMEOUT_S), "stop"
+        if "gpt-" in model:
+            LAST_JUDGE_BACKEND = "codex-cli"
+            return {}, _codex_verdict(text, self.model, JUDGE_TIMEOUT_S), "stop"
+        LAST_JUDGE_BACKEND = "nim"
         resp = nim.post("/chat/completions", {
             "model": self.model,
             "temperature": float(temperature),
@@ -166,13 +487,11 @@ class _NimJudge(BaseRagasLLM):
         return self._complete(prompt.to_string(), n, temperature, stop)
 
     async def agenerate_text(self, prompt, n=1, temperature=1e-8, stop=None, callbacks=None):
-        # A direct, blocking NIM call. Each question owns its event loop and runs one
-        # sequential metric chain, so the loop has nothing else to advance — blocking it
-        # here makes an eval worker hit NIM exactly like a generation worker (a plain
-        # nim.post in its pool thread), instead of bouncing every call through a second
-        # executor thread. The worker pool still gives cross-question concurrency; the
-        # shared pacer still bounds the rate.
-        return self._complete(prompt.to_string(), n, temperature, stop)
+        # Await the blocking call in the shared judge pool, so a metric's per-item
+        # fan-out (RAGAS gathers these) genuinely overlaps. The pool size is the
+        # global in-flight cap; the nim pacer still bounds NIM call rate per lane.
+        return await asyncio.get_running_loop().run_in_executor(
+            _CALL_POOL, lambda: self._complete(prompt.to_string(), n, temperature, stop))
 
     def is_finished(self, response) -> bool:
         return True
@@ -207,10 +526,12 @@ class _NimEmbedder(BaseRagasEmbeddings):
         return self._embed(texts, "passage")
 
     async def aembed_query(self, text):
-        return self.embed_query(text)        # direct blocking call — see _NimJudge.agenerate_text
+        return await asyncio.get_running_loop().run_in_executor(
+            _CALL_POOL, self.embed_query, text)
 
     async def aembed_documents(self, texts):
-        return self.embed_documents(texts)
+        return await asyncio.get_running_loop().run_in_executor(
+            _CALL_POOL, self.embed_documents, texts)
 
 
 # --- catalog name -> RAGAS class + what it needs ------------------------------
@@ -348,9 +669,11 @@ def _to_sample(out, q, gold_text) -> SingleTurnSample:
 
 def score_outputs(outputs, questions, arm="", corpus=None, results_path=None, workers=1):
     """ENTRY: per (output, question) score every metric in metrics_to_run() ->
-    list[contract.EvalResult] (one row per question per metric). judge = Qwen on
-    NIM, embedder = llama-nemotron-embed on NIM. `corpus` (root path) lets the gold-context-text
-    metrics dereference citations to text; the orchestrator supplies it.
+    list[contract.EvalResult] (one row per question per metric). judge = the model
+    named by RAGAS_JUDGE_MODEL (Qwen/NIM by default, Claude or Codex GPT when requested),
+    embedder = llama-nemotron-embed on NIM. `corpus` (root path) lets the
+    gold-context-text metrics dereference citations to text; the orchestrator
+    supplies it.
 
     `workers` scores that many questions concurrently (the same knob generation uses);
     every call still funnels through nim.py's one shared rate cap, so concurrency only
@@ -366,13 +689,35 @@ def score_outputs(outputs, questions, arm="", corpus=None, results_path=None, wo
     # That nesting turned one 429 into minutes of dead retries and, under concurrency,
     # starved the shared pacer so parallel ran slower than serial.
     run_config = RunConfig(max_retries=1)
-    judge, embedder = _NimJudge(run_config=run_config), _NimEmbedder(run_config=run_config)
+    global LAST_JUDGE_USAGE, LAST_JUDGE_BACKEND, LAST_JUDGE_REASONING_EFFORT
+    global LAST_JUDGE_WALL_TIME_S
+    LAST_JUDGE_USAGE = ModelUsage()
+    LAST_JUDGE_BACKEND = JUDGE_BACKEND
+    LAST_JUDGE_REASONING_EFFORT = JUDGE_REASONING_EFFORT
+    LAST_JUDGE_WALL_TIME_S = 0.0
+    if JUDGE_BACKEND == "codex-cli" and not _CODEX_EXE:
+        raise RuntimeError("RAGAS_JUDGE_MODEL starts with gpt- but `codex` is not on PATH")
+    if JUDGE_BACKEND == "gemini-cli" and not _GEMINI_EXE:
+        raise RuntimeError("RAGAS_JUDGE_MODEL starts with gemini- but `gemini` is not on PATH")
+
+    started = time.perf_counter()
+    judge, embedder = _JudgeLLM(run_config=run_config), _NimEmbedder(run_config=run_config)
     metrics = _build_metrics(metrics_to_run(), judge, embedder, run_config)
-    print(f"ragas judge: {JUDGE_MODEL} timeout={JUDGE_TIMEOUT_S:g}s tries={JUDGE_MAX_TRIES}")
+    effort = f" effort={JUDGE_REASONING_EFFORT}" if JUDGE_REASONING_EFFORT else ""
+    print(f"ragas judge: {JUDGE_MODEL} backend={JUDGE_BACKEND}{effort} "
+          f"timeout={JUDGE_TIMEOUT_S:g}s tries={JUDGE_MAX_TRIES}")
     gold_text = corpus_gold_text(corpus) if corpus else {}
     results = _score_all(outputs, questions, arm, metrics, gold_text,
                          results_path, workers)
+    LAST_JUDGE_WALL_TIME_S = time.perf_counter() - started
     _print_status_summary(results)
+    if LAST_JUDGE_USAGE.calls:
+        print(
+            f"ragas judge usage: {LAST_JUDGE_USAGE.calls} call(s), "
+            f"in={LAST_JUDGE_USAGE.tokens_in} cached={LAST_JUDGE_USAGE.cached_input_tokens} "
+            f"out={LAST_JUDGE_USAGE.tokens_out} reasoning={LAST_JUDGE_USAGE.reasoning_tokens} "
+            f"tokens, request-time={LAST_JUDGE_USAGE.time_s:.1f}s "
+            f"wall={LAST_JUDGE_WALL_TIME_S:.1f}s")
     return results
 
 
@@ -434,11 +779,12 @@ def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
     metrics last (~1 call per retrieved context — the slow tail), so every cheap score
     lands before the slow pass grinds alone. An abort or throttle still leaves every
     finished pass on disk, and a pass only touches the metrics it owns.
-    Each pass scores up to `workers` questions at once, one per thread — each in its OWN
-    event loop (asyncio.run), because RAGAS bridges sync<->async with nest_asyncio and
-    sharing one running loop across questions deadlocks it. The shared nim.py pacer (a
-    threading lock) caps the call rate across the threads; the main thread collects each
-    question as it finishes and writes it (no write lock), so the bar tracks real completion.
+    Each pass scores up to `workers` CELLS (question × metric) at once, one per thread —
+    each in its OWN event loop (asyncio.run), because RAGAS bridges sync<->async with
+    nest_asyncio and sharing one running loop deadlocks it. Inside a cell, a metric's
+    per-item fan-out overlaps through the shared judge pool (JUDGE_INFLIGHT is the
+    global in-flight cap); the nim.py pacer still bounds NIM call rate per lane. The
+    main thread collects and writes each cell as it lands, so the bar tracks real work.
 
     Resume (results_path): tracked per CELL. A (question, metric) is done only if it has an
     ok row on disk; errored or missing cells re-score, and ONLY those — never an already-ok
@@ -486,27 +832,26 @@ def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
            if results_path else None)
     results = []
 
-    def _score_question(q, sample, todo, on_cell):
-        """Score this question's still-needed metrics (`todo`: name -> metric) in this
-        worker thread's OWN event loop, ticking the bar as each cell lands — so progress
-        tracks real work, not whole-question completions that bunch up under many workers."""
+    def _score_cell(q, sample, name, metric, on_cell):
+        """Score ONE (question, metric) cell in this worker thread's OWN event loop
+        (asyncio.run — RAGAS bridges sync<->async with nest_asyncio, and sharing a
+        running loop across cells deadlocks it). Cells are the parallel unit: a
+        question's metrics land independently, and a metric's per-item fan-out
+        overlaps through the shared judge pool."""
         async def _go():
-            rows = []
-            for name, metric in todo.items():
-                value, status, comp = await _score_one(metric, sample)
-                rows.append(EvalResult(q.id, q.type, arm, name, value, status, comp, None))
-                on_cell()
-            return rows
-        return asyncio.run(_go())
+            value, status, comp = await _score_one(metric, sample)
+            return EvalResult(q.id, q.type, arm, name, value, status, comp, None)
+        row = asyncio.run(_go())
+        on_cell()
+        return row
 
     def _run_pass(pass_metrics, pass_samples, label) -> str:
-        """Score this pass's questions, up to `workers` at a time in a thread pool,
-        writing each question's rows the moment it FINISHES. The cheap passes tick the
-        bar per cell as each metric lands; the per-context pass tracks NIM calls (one
-        cell is ~k calls, so even per-cell would crawl). Either way the bar moves within
-        seconds, not when whole questions bunch up. Rows are self-identifying by
-        question_id, so the file is free to follow completion order.
-        -> 'ok' | 'user_abort' | 'backend_down'."""
+        """Score this pass's cells, up to `workers` at a time in a thread pool, writing
+        each cell's row the moment it lands. The cheap passes tick the bar per cell;
+        the per-context pass tracks NIM calls (one cell is ~k calls, so even per-cell
+        would crawl). Either way the bar moves within seconds. Rows are
+        self-identifying by question_id, so the file is free to follow completion
+        order. -> 'ok' | 'user_abort' | 'backend_down'."""
         if not pass_metrics or not pass_samples:
             return "ok"
         # The per-context metrics make ~one judge call per retrieved context, so a single
@@ -540,48 +885,63 @@ def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
 
         threading.Thread(target=_heartbeat, daemon=True).start()
         consecutive_failed, outcome = 0, None
+        cells = [(q, sample, name, metric)
+                 for q, sample, todo in pass_samples for name, metric in todo.items()]
+        cells_total = Counter(q.id for q, _, _, _ in cells)
+        cells_left, cells_errored, cells_quota_errored = dict(cells_total), Counter(), Counter()
         try:
             with ThreadPoolExecutor(max_workers=max(1, workers)) as ex:
-                futs = [ex.submit(_score_question, q, sample, todo, _tick_cell)
-                        for q, sample, todo in pass_samples]
+                futs = {ex.submit(_score_cell, q, sample, name, metric, _tick_cell): q
+                        for q, sample, name, metric in cells}
                 for fut in as_completed(futs):
                     if abort.aborted():
                         for f in futs:
                             f.cancel()
                         outcome = "user_abort"
-                        bar.write("[q] eval aborted - every finished question is saved")
+                        bar.write("[q] eval aborted - every finished cell is saved")
                         break
                     try:
-                        rows = fut.result()  # an unexpected raise (e.g. disk full) propagates loud
-                    except abort.Aborted:  # q pressed mid-fan-out — stop; this q writes no cell
+                        row = fut.result()  # an unexpected raise (e.g. disk full) propagates loud
+                    except abort.Aborted:  # q pressed mid-fan-out — stop; this cell writes nothing
                         for f in futs:
                             f.cancel()
                         outcome = "user_abort"
-                        bar.write("[q] eval aborted - every finished question is saved")
+                        bar.write("[q] eval aborted - every finished cell is saved")
                         break
-                    if ffh:
-                        for r in rows:
-                            if r.status == "error":
-                                ffh.write(json.dumps(
-                                    {"question_id": r.question_id, "metric": r.metric,
-                                     "error": (r.components or {}).get("error", "")},
-                                    ensure_ascii=False) + "\n")
+                    if ffh and row.status == "error":
+                        ffh.write(json.dumps(
+                            {"question_id": row.question_id, "metric": row.metric,
+                             "error": (row.components or {}).get("error", "")},
+                            ensure_ascii=False) + "\n")
                         ffh.flush()  # live — errored cells show up the moment they land
                     if fh:
-                        fh.write("".join(json.dumps(asdict(r), ensure_ascii=False) + "\n" for r in rows))
-                        fh.flush()  # whole question at once — durable + resumable
-                    results.extend(rows)
-                    # circuit breaker: a question with most cells errored counts as failed;
-                    # that many in a row means the backend is down.
-                    errored_cells = sum(1 for r in rows if r.status == "error")
-                    consecutive_failed = consecutive_failed + 1 if errored_cells * 2 >= len(rows) else 0
-                    if consecutive_failed >= MAX_CONSECUTIVE_FAILED_QUESTIONS:
-                        for f in futs:
-                            f.cancel()
-                        outcome = "backend_down"
-                        bar.write(f"[abort] {consecutive_failed} questions in a row mostly errored "
-                                  "- judge/embed backend likely down")
-                        break
+                        fh.write(json.dumps(asdict(row), ensure_ascii=False) + "\n")
+                        fh.flush()  # per cell — durable + resumable at cell grain
+                    results.append(row)
+                    # circuit breaker: when a question's LAST cell lands, mostly-errored
+                    # counts as failed; that many in a row means the backend is down.
+                    qid = row.question_id
+                    cells_errored[qid] += row.status == "error"
+                    cells_quota_errored[qid] += _gemini_quota_error_row(row)
+                    cells_left[qid] -= 1
+                    if cells_left[qid] == 0:
+                        failed = cells_errored[qid] * 2 >= cells_total[qid]
+                        consecutive_failed = consecutive_failed + 1 if failed else 0
+                        if consecutive_failed >= MAX_CONSECUTIVE_FAILED_QUESTIONS:
+                            for f in futs:
+                                f.cancel()
+                            quota_exhausted = (
+                                JUDGE_BACKEND == "gemini-cli"
+                                and cells_quota_errored[qid] == cells_errored[qid]
+                                and cells_quota_errored[qid] > 0
+                            )
+                            outcome = "gemini_quota_exhausted" if quota_exhausted else "backend_down"
+                            if quota_exhausted:
+                                bar.write("[abort] Gemini CLI rejected the model with a terminal quota/entitlement error")
+                            else:
+                                bar.write(f"[abort] {consecutive_failed} questions in a row mostly errored "
+                                          "- judge/embed backend likely down")
+                            break
         finally:
             stop.set()
             if per_context and outcome is None:  # finished clean — show the full bar
@@ -612,6 +972,10 @@ def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
     # fail loud like the generation leg — finished questions are on disk, resume continues.
     if status == "user_abort":
         raise RuntimeError("eval aborted (pressed q) - finished questions saved; resume to continue")
+    if status == "gemini_quota_exhausted":
+        raise RuntimeError(
+            "eval stopped: Gemini CLI returned TerminalQuotaError for this model "
+            "(quota or entitlement; this can happen at 0% used) - finished questions saved")
     if status == "backend_down":
         raise RuntimeError(
             f"eval stopped: {MAX_CONSECUTIVE_FAILED_QUESTIONS} questions in a row mostly errored "

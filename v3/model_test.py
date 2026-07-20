@@ -26,20 +26,27 @@ os.chdir(_HERE)
 MODELS = {"glm": "z-ai/glm-5.2", "qwen": "qwen/qwen3.5-397b-a17b"}
 
 
+def _wide_parallel_judge(model: str) -> bool:
+    """Judges with no queue to respect: open every cell at once."""
+    model = model.lower()
+    return "claude" in model or "gpt-" in model or "gemini" in model
+
+
 def main():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("leg", choices=sorted(MODELS),
                    help="which model runs interpret + generate")
-    p.add_argument("--workers", type=int, default=1, metavar="W",
-                   help="questions answered in parallel (one account lane each)")
+    p.add_argument("--workers", type=int, default=None, metavar="W",
+                   help="parallelism: questions while answering, cells while scoring "
+                        "(default 1; a claude-*, gpt-*, or gemini-* judge auto-sizes to every cell at once)")
     p.add_argument("-k", type=int, default=50, help="retrieval depth (default 50)")
     p.add_argument("--no-eval", action="store_true",
                    help="answers only — skip RAGAS scoring")
     p.add_argument("--judge", metavar="MODEL",
                    help="re-judge the leg's existing answers with this judge model, "
                         "into a separate __j-<slug> dir (the canon-judged dir is "
-                        "never touched)")
+                        "never touched; claude-*, gpt-*, and gemini-* auto-max the cell fan-out)")
     args = p.parse_args()
     if args.judge and args.no_eval:
         p.error("--judge with --no-eval scores nothing")
@@ -63,6 +70,14 @@ def main():
             shutil.copy2(base_dir / "arm_outputs.jsonl", out_dir / "arm_outputs.jsonl")
 
     n_q = sum(1 for ln in ids_file.read_text(encoding="utf-8").splitlines() if ln.strip())
+    if args.workers is None:
+        if args.judge and _wide_parallel_judge(args.judge):
+            # Subscription CLI judges queue every cell; their shared judge pool
+            # sets the real in-flight cap.
+            from eval.ragas_catalog import metrics_to_run
+            args.workers = max(1, n_q * len(metrics_to_run()))
+        else:
+            args.workers = 1
     pace = "serial" if args.workers == 1 else f"{args.workers} workers"
     mode = ("answers only (no eval)" if args.no_eval
             else f"re-judge existing answers ({args.judge})" if args.judge
@@ -71,8 +86,6 @@ def main():
           f"\n  ->  {out_dir}", flush=True)
 
     import abort
-    import nim
-    nim._load_dotenv()
     import orchestrator
     from run import _print_table
     from run_lock import RunLock

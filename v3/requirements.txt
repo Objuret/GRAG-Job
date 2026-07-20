@@ -27,6 +27,7 @@ langchain==1.3.13
 langchain-core==1.4.9
 langchain-community==0.3.31
 pydantic==2.13.4
+tiktoken==0.13.0
 # ragas imports these lazily at SCORING time (not at import) — absent, the eval
 # phase crashes mid-run: rapidfuzz (string metrics), sacrebleu (bleu/chrf),
 # rouge_score + nltk (rouge)
