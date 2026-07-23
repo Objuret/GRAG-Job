@@ -1,199 +1,37 @@
-2026_05_25_artefact_audit_and_cleanup_plan_cheap_cleanup_plan	Cheap zero-LLM cleanup plan (chunker+materialize+pattern-delete+docs)
-2026_05_25_artefact_audit_and_cleanup_plan_chunker_drops_timestamps	Defect: chunker discards source timestamps (locator has zero date keys)
-2026_05_25_artefact_audit_and_cleanup_plan_doc	Handoff: graph-RAG artefact audit + cleanup plan (2026-05-25)
-2026_05_25_artefact_audit_and_cleanup_plan_doc_drift	Doc drift: graph_schema.md claims NEXT/Run/legacy writer that live graph lacks
-2026_05_25_artefact_audit_and_cleanup_plan_id_date_tag_pollution	Defect: ~18% of tags are literal IDs/dates, not concepts
-2026_05_25_artefact_audit_and_cleanup_plan_live_graph_audit	Live herb-eval graph audit (4 labels, 3 edge types, no NEXT/Run)
-2026_05_25_artefact_audit_and_cleanup_plan_neo4j_data_move_backup	Infra: Neo4j data moved to A:, herb-eval.dump + herb-eval-backup sibling DB
-2026_05_25_artefact_audit_and_cleanup_plan_pattern_delete_junk_tags	Pattern-delete junk tags via anchored regexes (eid/emp/year/date)
-2026_05_25_artefact_audit_and_cleanup_plan_relevance_calibration	Defect: relevance_to_file calibrated too high to discriminate
-2026_05_25_artefact_audit_and_cleanup_plan_silent_unembedded_tags	Defect: 23 tags silently unembedded (description filter)
-2026_05_25_artefact_audit_and_cleanup_plan_three_weight_layers	Three baked weight layers (relevance_to_file / w_chunk / w_facet)
-2026_05_25_artefact_audit_and_cleanup_plan_w_facet_categorical	Finding: w_facet is categorical (~9-value resolution), not continuous
-2026_05_25_artefact_audit_and_cleanup_plan_years_from_tags	Defect: c.years back-projected from temporal tag names (hard-fields-before-tagging violation)
-2026_05_25_graph_rag_retrieval_redesign_bake_combinator	Bake combinator decision (multiplication rejected)
-2026_05_25_graph_rag_retrieval_redesign_doc	Handoff: graph-RAG retrieval pipeline redesign (2026-05-25)
-2026_05_25_graph_rag_retrieval_redesign_no_query_time_synthesis	No weight synthesis at query time
-2026_05_25_graph_rag_retrieval_redesign_recall_filter_rank_cap	Recall to filter to rank to cap retrieval shape
-2026_05_25_graph_rag_retrieval_redesign_seven_factor_violation	7-factor multiplicative scoreCypher (rejected synthesis)
-2026_05_25_graph_rag_retrieval_redesign_weights_baked_at_index	Weights baked at index time as facts
-2026_05_25_middle_layer_weight_redesign_determinism_goal	Retriever as deterministic function of graph state and query
-2026_05_25_middle_layer_weight_redesign_doc	Handoff: middle-layer weight & retrieval redesign (2026-05-25)
-2026_05_25_middle_layer_weight_redesign_facets_direction_not_filter	Facets as directional alignment signal, not hard filter
-2026_05_25_middle_layer_weight_redesign_semantic_layer_load_bearing	Semantic weights are the load-bearing LLM-produced value
-2026_05_25_middle_layer_weight_redesign_three_roles	Three roles: indexing math, interpreter LLM, retriever graph
-2026_05_25_middle_layer_weight_redesign_w_facet_coarse	w_facet coarse (21 distinct values across 255k edges)
-2026_05_31_v2_artefact_rebuild_and_facet_design_combinator	Combinator = prompt-conditioned weighted dot product (accumulate not max)
-2026_05_31_v2_artefact_rebuild_and_facet_design_doc	Handoff: v2 artefact rebuild design + facet/semantic redesign (2026-05-31)
-2026_05_31_v2_artefact_rebuild_and_facet_design_eval_oracle_holdout	Eval oracle (answerable/unanswerable_questions) must be holdout, not corpus
-2026_05_31_v2_artefact_rebuild_and_facet_design_facet_framework	Facet redesign: facets as semantic dimensions from 7 linguistic traditions
-2026_05_31_v2_artefact_rebuild_and_facet_design_mapping_key	Per-dataset declarative settings-file key (cross-refs + identity only)
-2026_05_31_v2_artefact_rebuild_and_facet_design_nvidia_host	v2 tagger host = NVIDIA NIM (forever-free 40 RPM, rate-limiter required)
-2026_05_31_v2_artefact_rebuild_and_facet_design_reference_resolver_keystone	Keystone implementation = reference resolver (resolve + hash-verify + fail-loud)
-2026_05_31_v2_artefact_rebuild_and_facet_design_reference_triple	Reference triple {file_id, scheme, address} + read-in-place/hash-verify
-2026_05_31_v2_artefact_rebuild_and_facet_design_references_not_copies	v2 core stance: graph is a reference index over untouched raw, not copies
-2026_05_31_v2_artefact_rebuild_and_facet_design_retag_facet_analysis	v1 facets underspecified -> degraded into token-extraction (~18% junk)
-2026_05_31_v2_artefact_rebuild_and_facet_design_routing_model	Retriever routing = weighted activation propagation, no hard filters
-2026_05_31_v2_artefact_rebuild_and_facet_design_shape_probe	Shape probe (dataset-agnostic, recovers structural schema with source names)
-2026_05_31_v2_artefact_rebuild_and_facet_design_v1_snapshot	v1 preserved (tag artefact-v1 @244beb7, branch + dump + sibling DB) = comparison baseline
-2026_05_31_v2_artefact_rebuild_and_facet_design_v2_facet_set	v2 facet set: topic/process/stance/communicative-function/temporal-stance(TAM)
-2026_05_31_v2_artefact_rebuild_and_facet_design_v2_pipeline	v2 pipeline scan to probe to reference to structure to tag to retrieve
-2026_06_03_v2_chunking_model_design_coherent_episode	Chunk as coherent episode, not fixed-size window
-2026_06_03_v2_chunking_model_design_covers_edge	COVERS edge joining record references to chunks
-2026_06_03_v2_chunking_model_design_deterministic_seam_finder	Deterministic boundary seam-finder (no embeddings, no LLM)
-2026_06_03_v2_chunking_model_design_doc	Handoff: v2 chunking model design (2026-06-03)
-2026_06_03_v2_chunking_model_design_materialized_path	Materialized path index as integer components
-2026_06_03_v2_chunking_model_design_no_overlap	No chunk overlap (protects references-not-copies)
-2026_06_03_v2_chunking_model_design_no_parent_node	Subchunks share path prefix, no parent node
-2026_06_03_v2_chunking_model_design_records_vs_prose_per_position	Records-vs-prose is per-position in the tree
-2026_06_03_v2_chunking_model_design_structure_chunk_handoff_depth	Structure-to-chunk handoff depth (read off shape)
-2026_06_04_v2_chunk_cap_and_budget_cap_3000_tokens	Cap approx 3000 tokens (calibration seed)
-2026_06_04_v2_chunk_cap_and_budget_doc	Handoff: v2 chunk cap / budget design (2026-06-04)
-2026_06_04_v2_chunk_cap_and_budget_embedding_placement	Embedding placement: tag concept-embedding on Tag, description-embedding on Chunk, weight on edge
-2026_06_04_v2_chunk_cap_and_budget_focus_span_cap	Chunk cap is the tagger's focus span, not an embedder limit
-2026_06_04_v2_chunk_cap_and_budget_per_content_kind_seams	Seams per content-kind (chat/prose/records) dispatched by probe shape
-2026_06_04_v2_chunk_cap_and_budget_records_canonical_path	Records ride the canonical path; subchunk fragments the only minted tier
-2026_06_04_v2_chunk_cap_and_budget_uniform_split_rule	Uniform split rule: walk to strongest seam, recurse, no minimum size
-2026_06_09_weight_production_measure_not_emit_all_facet_weights_one_edge	All facet weights on the same chunk-tag edge, not one edge per facet
-2026_06_09_weight_production_measure_not_emit_anchoring_reduction	Anchoring reduction 85% single-pass to 12.3% two-pass derived
-2026_06_09_weight_production_measure_not_emit_combinator	Combinator: prompt-conditioned weighted dot product, accumulation not max
-2026_06_09_weight_production_measure_not_emit_doc	State doc 2026-06-09: weight production measure-not-emit
-2026_06_09_weight_production_measure_not_emit_fewer_richer_tags	Fewer, richer phrase-level tags with context on the edge
-2026_06_09_weight_production_measure_not_emit_isotropy_problem	Anisotropic cosine on this corpus (collapses to ~0.8 band)
-2026_06_09_weight_production_measure_not_emit_llm_cannot_weight	An LLM cannot emit correct weights (v1 evidence: 85% round-number anchoring)
-2026_06_09_weight_production_measure_not_emit_measure_dont_emit	Measure, don't emit: geometry produces weights, model never emits a number
-2026_06_09_weight_production_measure_not_emit_tag_description_distance	Tag-vs-description embedding distance as a relevance signal (later killed)
-2026_06_09_weight_production_measure_not_emit_three_edge_weights	Three v2 edge weights (chunk-file, chunk-tag, tag-facet)
-2026_06_09_weight_production_measure_not_emit_w_chunk_formula	v1 w_chunk derivation (strength x coverage_bonus)
-2026_06_11_v2_facet_carriers_and_build_gate_all_facets_evaluations	All facets are evaluations: each facet weight = how much of that facet the tag carries
-2026_06_11_v2_facet_carriers_and_build_gate_asked_for_given_split	Asked-for vs given split: rank by requested dimension, narrow by presupposed scope (no numeric prompt emphasis)
-2026_06_11_v2_facet_carriers_and_build_gate_axis_apparatus_dead	Axis/projection weight apparatus (SemAxis, pole words) is DEAD
-2026_06_11_v2_facet_carriers_and_build_gate_description_dead	Chunk description killed: union of phrase tags IS the chunk content
-2026_06_11_v2_facet_carriers_and_build_gate_design_before_build_gate	Design-before-build gate: no pipeline code until the stage's design is signed off
-2026_06_11_v2_facet_carriers_and_build_gate_doc	State doc 2026-06-11: v2 facet carriers and build gate
-2026_06_11_v2_facet_carriers_and_build_gate_facets_dual_role	Facets dual-purpose: narrowing entry into corpus + prompt-priced weight modifier
-2026_06_11_v2_facet_carriers_and_build_gate_interpreter_contract	Interpreter contract: one toolless LLM call emitting text/categories only (need, subjects, action, function, stance, time, literals, shape)
-2026_06_11_v2_facet_carriers_and_build_gate_linguistics_to_interpreter	Linguistics belongs to the interpreter (decomposing the prompt for tools/routes)
-2026_06_11_v2_facet_carriers_and_build_gate_node_edge_split	Node/edge split: intrinsic per-phrase value on node, sibling-relational value on edge
-2026_06_11_v2_facet_carriers_and_build_gate_per_facet_unique_mechanism	Each facet gets its own unique weight-production mechanism (concept uniform, instrument per-facet)
-2026_06_11_v2_facet_carriers_and_build_gate_phrase_is_the_node	Phrase tag IS the node: per-chunk contextual phrase + embedding, no bare-word shared nodes, no synonym merge
-2026_06_11_v2_facet_carriers_and_build_gate_polarity_not_geometry	Polarity does not survive embedding similarity; stance direction must be explicit text/label
-2026_06_11_v2_facet_carriers_and_build_gate_proximity_linking	Cross-chunk linking by phrase-embedding proximity (emergent neighborhood), not node identity
-2026_06_11_v2_facet_carriers_and_build_gate_scan_probe_built	First v2 pipeline slice built: scan + probe stages, 12 tests green
-2026_06_11_v2_facet_carriers_and_build_gate_sibling_centrality	Sibling centrality: tag's relational value against its chunk's own tag cloud, per facet, on the chunk-tag edge
-2026_06_11_v2_facet_carriers_and_build_gate_swefn_grounding	Swedish FrameNet (SweFN) frame-semantics grounding for the process facet
-2026_06_12_v2_graph_spine_and_literal_matching_ambiguity_rule	Ambiguity rule: all candidates boosted, confidence tiers boost size, jump only on exact-unique single anchor
-2026_06_12_v2_graph_spine_and_literal_matching_chunk_file_weight_dead	Chunk-file relevance weight DEAD (containment edge carries no number; coherence chunking solves filler demotion)
-2026_06_12_v2_graph_spine_and_literal_matching_doc	State doc 2026-06-12: v2 graph spine and literal matching
-2026_06_12_v2_graph_spine_and_literal_matching_docs_removal_not_banners	Docs reconciliation by removal not banners: dead content deleted, tombstones only to block revival
-2026_06_12_v2_graph_spine_and_literal_matching_embed_only_phrase_tags	One embedding surface: embed phrase tags only (no field values, descriptions, or raw chunks)
-2026_06_12_v2_graph_spine_and_literal_matching_field_handling_by_shape	Field handling follows value shape (dates to time-range, id-shaped to id-sets, few-distinct to labels, names raw-only, long text to content); finalize at mapping key
-2026_06_12_v2_graph_spine_and_literal_matching_hard_fields_attributes	Hard fields are indexed chunk attributes (author ids, time range, kind, channel labels, materialized path)
-2026_06_12_v2_graph_spine_and_literal_matching_herb_twins	HERB product twins (ContentForce/ContextForce etc.) only separable by exact matching, not embeddings/string-distance
-2026_06_12_v2_graph_spine_and_literal_matching_id_joins_replace_entity_bridges	Multi-hop via id-joins through chunk attributes + raw directory reads (entity-node bridges impossible without entity nodes)
-2026_06_12_v2_graph_spine_and_literal_matching_literal_matching_pipeline	Literal-matching pipeline: exact+normalization pre-pass, vocab-free interpreter type/wanted-vs-excluded flag, scoped distance lookup on miss, paraphrase to semantics
-2026_06_12_v2_graph_spine_and_literal_matching_multi_hit_boosts_only	Multi-hit rule: multiple hard-field hits = additive boosts only, no multi-anchor jump
-2026_06_12_v2_graph_spine_and_literal_matching_no_corpus_vocab_in_interpreter	No corpus vocabulary in the interpreter's context (cost boundary; deterministic resolution is free)
-2026_06_12_v2_graph_spine_and_literal_matching_no_inventories_in_graph	No value inventories/metadata mirrors in the graph: values live in raw, graph holds field connection + references
-2026_06_12_v2_graph_spine_and_literal_matching_node_attribute_rule	Node/attribute rule: node only if others resolve through it or retrieval walks through it; otherwise an attribute
-2026_06_12_v2_graph_spine_and_literal_matching_spine_source_file_chunk_tag	v2 graph spine: Source to File to Chunk to Tag, nothing else is a node
-2026_06_14_v2_facets_as_relevance_channels_breakthrough	Facets as parallel relevance channels (the breakthrough)
-2026_06_14_v2_facets_as_relevance_channels_combine_channels	Routing sums per-facet channels weighted by prompt's per-facet emphasis
-2026_06_14_v2_facets_as_relevance_channels_derive_corpus_stage0	derive-corpus stage 0: structural eval quarantine, one corpus view only
-2026_06_14_v2_facets_as_relevance_channels_doc	State doc 2026-06-14: facets as parallel relevance channels
-2026_06_14_v2_facets_as_relevance_channels_facet_is_coordinate	A facet is a relevance coordinate / a tag's character, not a bucket
-2026_06_14_v2_facets_as_relevance_channels_open_production	OPEN: how a single phrase's per-facet relevance is produced (measurement, not emission)
-2026_06_14_v2_facets_as_relevance_channels_production_options	Two options: query-time measure (i) vs build-time derived coordinate (ii)
-2026_06_14_v2_facets_as_relevance_channels_reject_abstract_distance	Rejected: tag-embedding vs abstract-facet-embedding distance
-2026_06_14_v2_facets_as_relevance_channels_reject_bucket	Rejected: facet as bucket/container/chunk-attribute
-2026_06_14_v2_facets_as_relevance_channels_reject_design_from_retrieval	Rejected: designing the tagger from the retrieval side
-2026_06_14_v2_facets_as_relevance_channels_relevance_measured	Per-facet relevance is measured/derived downstream, never model-emitted
-2026_06_14_v2_facets_as_relevance_channels_same_facet_matching	Same-facet content-to-content matching (topic to topic, stance to stance)
-2026_06_14_v2_facets_as_relevance_channels_schema_revalidate	Approved tagger output schema predates the breakthrough - reopened, re-validate
-2026_06_14_v2_facets_as_relevance_channels_tag_one_phrase	A tag is ONE phrase carrying meaning; facet structure carries relevance separately
-2026_06_14_v2_facets_as_relevance_channels_v1_concept_sound	v1 tag concept was sound; the model-emitted weights were the rot
-2026_06_14_v2_facets_as_relevance_channels_weights_one_edge	Per-facet weights ride ONE chunk-tag edge (a facet vector)
-2026_06_18_v3_eval_both_scorers	Do BOTH scorers: HERB exact anchor + RAGAS primary lens (not either/or)
-2026_06_18_v3_eval_construct_validity	Construct-validity: answer scoring measures the whole pipeline; deterministic ctx + oracle setting keep an endpoint on retrieval
-2026_06_18_v3_eval_deterministic_ctx	Deterministic citation-based context precision/recall (ID-based / non-LLM), not the judged variants
-2026_06_18_v3_eval_generation_placement_open	OPEN: generation placement (arm-side vs orchestrator-side)
-2026_06_18_v3_eval_harness_doc	State doc 2026-06-18: v3 evaluation harness (HERB + RAGAS)
-2026_06_18_v3_eval_herb_only	HERB only for now; Bonnier deferred
-2026_06_18_v3_eval_metricscore_atoms	Evaluators emit raw per-question MetricScore (tidy long), never pre-aggregated
-2026_06_18_v3_eval_open_locks	Open locks: generator, judge (re-run baselines if not GPT-4o), top-k, question set, calibration size
-2026_06_18_v3_eval_ragas_primary_herb_anchor	RAGAS-on-answer is the primary lens; HERB's exact scorer is the anchor
-2026_06_18_v3_eval_reject_artefact_as_retriever	Rejected: treating the artefact as 'just another retriever' scored by IR recall@k (category error)
-2026_06_18_v3_eval_reject_ragas_useless	Rejected: 'RAGAS is reference-free therefore useless' (overstatement walked back)
-2026_06_18_v3_eval_structural_quarantine	Structural quarantine: corpus physically oracle-stripped; truth read in place from raw
-2026_06_18_v3_eval_three_arms_one_generator	Three arms (artefact/lucene/vector), one shared generator, shared top-k
-2026_06_18_v3_eval_v2_buildsite_v3_clean	Working model: v2 = build-site (mess allowed), v3 = clean lean extraction destination
-2026_06_23_vector_independence_arms_share_only	v3 arms share only the corpus on disk + the injected generator; each reads, indexes and ranks the corpus with its own code (the independent variable the experiment measures); the only shared import is contract.py
-2026_06_23_vector_independence_doc	State doc 2026-06-23: v3 vector arm independence + comment-hygiene canon
-2026_06_23_vector_independence_nim_transport	nim.py = shared NIM REST transport (httpx, OpenAI-compatible endpoints); the orchestrator generator and the vector embedder both POST via nim.post; shared plumbing like contract.py, not retrieval logic; openai SDK is not a dependency
-2026_06_23_vector_independence_no_history_rule	Canon rule: comments, docs and commits state only the present, as if written right the first time; never narrate a past mistake, change, or review finding (it invents fake history and pollutes the graph + memory)
-2026_06_23_vector_independence_open_decisions	Open (undecided): lucene documents.feedback parity, slack userId/channel tokens in the embedded passage, empty-text artifact handling, README anti-sharing phrasing cleanup
-2026_06_25_v3_vector_eval_answer_correctness_added	answer_correctness was missing from ragas_catalog (which claimed to be complete) and was added to the import, _REGISTRY (needs LLM + embeddings) and CATALOG; audit confirmed it was the only genuinely missing metric
-2026_06_25_v3_vector_eval_arms_share_corpus_and_generator	3 arms — artefact (SUT, retrieval graph unbuilt), lucene (BM25 built), vector (dense, index cached) — share ONLY the corpus on disk + the injected generator; each has its own retrieval code
-2026_06_25_v3_vector_eval_baselines_topk_equals_k	Both baselines (lucene, vector) are single-stage no-rerank so top-k = k always; their differentiation is token cost from content size, not count
-2026_06_25_v3_vector_eval_circuit_breaker	Generation circuit breaker aborts after MAX_CONSECUTIVE_FAILURES (default 10) consecutive failures ('backend likely down') — this is what stopped the throttled run at q24
-2026_06_25_v3_vector_eval_doc	State doc 2026-06-25: v3 vector arm + RAGAS-only eval, k-vs-top-k, k=50/gold-100, structured generator, NIM throttle run ops
-2026_06_25_v3_vector_eval_embed_cache	Vector embedding cache: output/embed_cache/llama-nemotron-embed-1b-v2_<hash>.npz (~328 MB, gitignored) + readable <hash>.cost.json, built once (38,540 artifacts, 19 batched calls, ~206s, ~2.72M tokens); EMBED_BATCH raised 64→2048 with split-on-413 recursion and content-addressed atomic write
-2026_06_25_v3_vector_eval_four_judged_metrics	The 4 judged RAGAS metrics: answer_correctness, faithfulness, context_precision (with-reference = context_precision_llm_ref), context_recall (LLMContextRecall = context_recall_llm), plus the free deterministic ones
-2026_06_25_v3_vector_eval_herb_citation_distribution	HERB citation distribution over 815 answerable: min 11, median 52, mean 71, p90 170, p99 298, max 683 — so at k=10 zero questions reach full citation recall; recall@k is structurally capped by HERB, reported honestly, equal across arms for fairness
-2026_06_25_v3_vector_eval_immediate_next_task	Immediate next task: get the gold-100 vector run + RAGAS eval to complete past the NIM throttle — resume run.py --arm vector --set gold -k 50 --out output/vector__gold100__20260625T005804Z with 2s pacing, raise NIM_MIN_INTERVAL_S if still throttled
-2026_06_25_v3_vector_eval_k_50_gold100	k=50 over gold-100 (not the full 1514) is the chosen run: 50 justified by HERB's median 52 citations, recall-meaningful and feasible, and you can truncate stored top-50 to any smaller eval depth (run high, limit later, never higher)
-2026_06_25_v3_vector_eval_k_is_global_ceiling	k = the global CEILING: one fixed number identical for every arm, chosen for experiment feasibility, the controlled variable and the -k CLI flag (currently 50) — the most an arm may retrieve and feed the generator
-2026_06_25_v3_vector_eval_lucene_deterministic_no_cache	Lucene confirmed: real BM25 over 38,540 docs, deterministic (Porter2/Snowball, no model), needs no cache; its BuildStats is 0-model-cost at ~3.9s
-2026_06_25_v3_vector_eval_nim_429_burst_hypothesis	HYPOTHESIS (likely): the NIM 429s are burst-triggered throttling not quota (fast ~14 questions then pegged ~30s/q, token-bucket signature; tiny + 40k-token probes succeeded right after) — confirm by restarting with 2s pacing, else raise NIM_MIN_INTERVAL_S
-2026_06_25_v3_vector_eval_nim_even_pacing	nim.py transport adds an even-pacing floor _MIN_INTERVAL_S (default 2.0s, env NIM_MIN_INTERVAL_S) on top of the sliding-window cap (RATE_LIMIT_PER_MIN=38) to kill the opening burst; retries 408/429/5xx (6 tries / 300s deadline), raises on other 4xx and on retry exhaustion
-2026_06_25_v3_vector_eval_no_eval_parallelism_on_rate_ceiling	UNCERTAIN whether parallelizing helps: if 429s are a rate ceiling concurrency makes it worse; eval concurrency is not built (only generation has --workers) — do not throw parallelism at a rate ceiling
-2026_06_25_v3_vector_eval_no_production_rag_framing	REJECTED: importing a production-RAG / answer-quality-tuning frame (lost-in-the-middle, optimal-k, reranking pools, 'what production feeds the LLM', presupposed reranker) to argue down the design — this is a controlled eval-cutoff comparison, not a product to tune
-2026_06_25_v3_vector_eval_no_ragas_cutoff_param	RAGAS has no @k/cutoff parameter: context-precision is internally a mean of Precision@k over the retrieved list, so to score at a depth you truncate the retrieved list and re-score; free id-based metrics make the depth curve cheap
-2026_06_25_v3_vector_eval_per_question_resumable	Run flow (run.py → orchestrator.run): generate all chosen questions resumably per-question via arm_outputs.jsonl + _done_ids, then RAGAS-score the full set; eval write is per-question append+flush with torn-write recovery, --no-eval = gen only, --build = build+cache index and exit
-2026_06_25_v3_vector_eval_press_q_abort_no_prompt	Press q to abort a run gracefully (abort.py, Windows msvcrt, watch()/aborted()); the blocking y/N pre-run confirmation prompt was removed in favor of mid-run abort
-2026_06_25_v3_vector_eval_ragas_canonical_sources	For any RAGAS question consult canonical sources — EACL 2024 paper arXiv:2309.15217 + docs.ragas.io, not blogs/memory; references are written into lucene.py, vector.py, eval/ragas.py so the user stops re-supplying them
-2026_06_25_v3_vector_eval_ragas_catalog_structure	eval/ragas_catalog.py is canonical: CATALOG (37 metrics), ALWAYS (11 free deterministic always-run), SELECTED (judged opt-ins), metrics_to_run() = ALWAYS + SELECTED = 15 now
-2026_06_25_v3_vector_eval_ragas_only_no_herb_scorer	SCORING IS RAGAS ONLY: there is no HERB scorer; eval/herb.py was deleted and the old HERB+RAGAS / two-way / HERB-anchor framing is dead and purged (supersedes the 2026-06-18 scoring framing)
-2026_06_25_v3_vector_eval_relevant_k_retrieved_k_reference_only	relevant-k (~5, LangChain 4 / LlamaIndex 2) and retrieved-k (~50, MS MARCO top-1000 rerank pool) are literature reference baselines only, not knobs in this harness (no reranker), never conflated with k or top-k
-2026_06_25_v3_vector_eval_structured_output_generator	The shared generator (orchestrator.build_shared_generator) = Mistral Large 3 on NIM at temperature 0 using OpenAI structured output (response_format json_schema, _ANSWER_SCHEMA {answer:string}), parsing json.loads(content)['answer'] and raising per-question on a non-str; only the answer is the model's job
-2026_06_25_v3_vector_eval_supersedes_2026_06_18	Supersedes the 2026-06-18 v3 eval-harness state doc on scoring: that doc's HERB+RAGAS / RAGAS-primary-HERB-anchor / both-scorers framing predates the RAGAS-only and k/top-k decisions and is treated as partially outdated
-2026_06_25_v3_vector_eval_topk_is_per_arm_actual_return	top-k = each arm's ACTUAL return under the ceiling (per-arm, ≤ k), the measured thing read off via the arm's token cost; collapsing k and top-k into one global k is the cardinal sin of this session
-2026_06_25_v3_vector_eval_vector_embedder_nemotron	The vector arm uses nvidia/llama-nemotron-embed-1b-v2 (not all-MiniLM): the references use strong retrieval-tuned embedders, all-MiniLM is English-only + 256-token and cannot fit HERB docs or the deferred Swedish Bonnier set
-2026_06_25_v3_vector_eval_words_are_canon	User's words are the canon: when the user defines the experiment that IS the spec; never 'correct' it with references, production-RAG norms, or training pattern-matching
-artefact_chunk_rationale_1	Stage 4: chunk — form coherent episodes over the recovered structure.  Fully det
-artefact_chunk_rationale_102	Yield each concrete json-pointer a '*'-pattern matches in `data`.     Missing/op
+artefact_chunk_rationale_1	Stage 4: chunk — form coherent episodes over the recovered structure.  Fully d
+artefact_chunk_rationale_102	Yield each concrete json-pointer a '*'-pattern matches in `data`.     Missing/o
 artefact_chunk_rationale_131	Contiguous char spans tiling `text`, each ≤ cap_chars, cut on the     strongest
-artefact_chunk_rationale_156	Over-cap unit → fragments ≤ cap: pack whole leaves; char-span-split a     single
-artefact_chunk_rationale_177	Each record is one coherent chunk of its content leaves — sibling records     ar
-artefact_chunk_rationale_196	Pack consecutive records (source order) toward the cap on clean record     bound
+artefact_chunk_rationale_156	Over-cap unit → fragments ≤ cap: pack whole leaves; char-span-split a     singl
+artefact_chunk_rationale_177	Each record is one coherent chunk of its content leaves — sibling records     a
+artefact_chunk_rationale_196	Pack consecutive records (source order) toward the cap on clean record     boun
 artefact_chunk_rationale_259	Split a channel's time-ordered stream into episodes: a new episode on a     day
-artefact_chunk_rationale_282	Over-cap episode → fragments ≤ cap, recursively cutting at the largest     inter
-artefact_chunk_rationale_298	True when this collection's content leaf is prose (its pointer pattern is     in
-artefact_chunk_rationale_306	Chunk one parsed file. Dispatches each content collection by kind:     conversat
-artefact_chunk_rationale_348	Scan a corpus-view dataset dir and chunk every JSON file in it. The     prose-vs
+artefact_chunk_rationale_282	Over-cap episode → fragments ≤ cap, recursively cutting at the largest     inte
+artefact_chunk_rationale_298	True when this collection's content leaf is prose (its pointer pattern is     i
+artefact_chunk_rationale_306	Chunk one parsed file. Dispatches each content collection by kind:     conversa
+artefact_chunk_rationale_348	Scan a corpus-view dataset dir and chunk every JSON file in it. The     prose-v
 artefact_chunk_rationale_93	RFC 6901 get. Raises (loud) on a miss — used only on known-present pointers.
-artefact_derive_corpus_rationale_1	One-time prep: derive the corpus view a dataset's pipeline run scans.  The publi
-artefact_graph_store_rationale_1	Materialize the artefact graph into Neo4j: `Source -[:CONTAINS]-> File -[:CONTAI
-artefact_graph_store_rationale_102	A chunk reference in the resolver's self-resolving contract     (`resolver_proto
-artefact_graph_store_rationale_129	Load the tags npz into the arrays the ingest needs. Returns the matrix     as fl
-artefact_graph_store_rationale_150	Build one UNWIND row per (chunk, position-in-chunk) tag emission.     `embedding
-artefact_graph_store_rationale_231	Print + return node/edge counts for inspection. Fails loud if the     sentinel i
-artefact_graph_store_rationale_254	Best-effort on-disk size of the Neo4j database directory (local install     layo
-artefact_index_rationale_1	artefact/index.py — the in-memory query engine's view of the lean graph.  Holds
-artefact_index_rationale_110	Build the in-memory index: load the tags npz, mean-center the tag     matrix, an
-artefact_index_rationale_161	Read + hash-verify + parse a product JSON once, memoized in `cache` so     the p
-artefact_index_rationale_187	RFC 6901 get into `doc` (loud on a miss) — a local copy so the per-ref     hot p
-artefact_index_rationale_200	Resolve a chunk's references in order, hash-verified, and concatenate     them i
-artefact_index_rationale_237	The `/collection/index` pointer to the record a ref lives in. A ref's     addres
+artefact_derive_corpus_rationale_1	One-time prep: derive the corpus view a dataset's pipeline run scans.  The pub
+artefact_graph_store_rationale_1	Materialize the artefact graph into Neo4j: `Source -[:CONTAINS]-> File -[:CONTA
+artefact_graph_store_rationale_102	A chunk reference in the resolver's self-resolving contract     (`resolver_prot
+artefact_graph_store_rationale_129	Load the tags npz into the arrays the ingest needs. Returns the matrix     as f
+artefact_graph_store_rationale_150	Build one UNWIND row per (chunk, position-in-chunk) tag emission.     `embeddin
+artefact_graph_store_rationale_231	Print + return node/edge counts for inspection. Fails loud if the     sentinel
+artefact_graph_store_rationale_254	Best-effort on-disk size of the Neo4j database directory (local install     lay
+artefact_index_rationale_1	artefact/index.py — the in-memory query engine's view of the lean graph.  Hold
+artefact_index_rationale_110	Build the in-memory index: load the tags npz, mean-center the tag     matrix, a
+artefact_index_rationale_161	Read + hash-verify + parse a product JSON once, memoized in `cache` so     the
+artefact_index_rationale_187	RFC 6901 get into `doc` (loud on a miss) — a local copy so the per-ref     hot
+artefact_index_rationale_200	Resolve a chunk's references in order, hash-verified, and concatenate     them
+artefact_index_rationale_237	The `/collection/index` pointer to the record a ref lives in. A ref's     addre
 artefact_index_rationale_254	The deduped artifact `id` strings for every record a chunk covers. For     each
-artefact_index_rationale_36	The in-memory artefact index: tag embeddings + chunk metadata + the     chunk-id
+artefact_index_rationale_36	The in-memory artefact index: tag embeddings + chunk metadata + the     chunk-i
 artefact_index_rationale_65	Locate the tags embedding npz. Fails loud if absent or ambiguous.
 artefact_index_rationale_94	Subtract the corpus mean vector, re-L2-normalize. Returns     (centered_matrix,
-artefact_interpreter_rationale_1	Stage query: interpret — one stateless structured call per prompt emits facet ph
+artefact_interpreter_rationale_1	Stage query: interpret — one stateless structured call per prompt emits facet p
 artefact_interpreter_rationale_127	Fail loud on a schema-breaking response — never a silent partial.
 artefact_interpreter_rationale_171	One stateless temp-0 structured call → (parsed_json, usage). Fail loud     on a
 artefact_interpreter_rationale_226	`per_type` per HERB answer type (person/content/company/pr/url).
-artefact_interpreter_rationale_237	Run the interpreter on a stratified slice of the gold-100 set; print     each qu
+artefact_interpreter_rationale_237	Run the interpreter on a stratified slice of the gold-100 set; print     each q
 artefact_prepass_rationale_1	Stage query: pre-pass — deterministic literal matching against the corpus name
 artefact_prepass_rationale_113	excluded if the text immediately before the match ends with an     exclusion ke
 artefact_prepass_rationale_120	Deterministic literal match of `prompt` against the corpus name     directories
@@ -202,99 +40,248 @@ artefact_prepass_rationale_167	Drop a match whose [start, end) is fully containe
 artefact_prepass_rationale_187	Diagnostic: how many names of each kind are loaded.
 artefact_prepass_rationale_60	Load + cache the three name directories. Fail loud on missing files.
 artefact_prepass_rationale_92	Case-fold + collapse whitespace runs to a single space. Returns the     normali
-artefact_probe_rationale_1	Stage 2: probe — recover the structural schema from shape. Meaning-free.  Profil
-artefact_probe_rationale_124	Fuse the shapes of many files into one tree. Order-independent.      With `conte
-artefact_probe_rationale_154	Median length of a scalar position's string instances (0 if it has none).     Th
-artefact_probe_rationale_216	Sets -> sorted lists, and a scalar's `str_lens` distribution -> compact     summ
-artefact_probe_rationale_243	True when a parsed file's top-level object carries a content-collection     root
-artefact_probe_rationale_257	The set of content-leaf pointer patterns that are PROSE (typical length     >= L
-artefact_probe_rationale_57	One value -> its shape signature.      A scalar position carries the lengths of
+artefact_probe_rationale_1	Stage 2: probe — recover the structural schema from shape. Meaning-free.  Prof
+artefact_probe_rationale_124	Fuse the shapes of many files into one tree. Order-independent.      With `con
+artefact_probe_rationale_154	Median length of a scalar position's string instances (0 if it has none).     T
+artefact_probe_rationale_216	Sets -> sorted lists, and a scalar's `str_lens` distribution -> compact     sum
+artefact_probe_rationale_243	True when a parsed file's top-level object carries a content-collection     roo
+artefact_probe_rationale_257	The set of content-leaf pointer patterns that are PROSE (typical length     >=
+artefact_probe_rationale_57	One value -> its shape signature.      A scalar position carries the lengths o
 artefact_probe_rationale_77	Merge two shape signatures (array-element fusion and cross-file fusion).
-artefact_resolver_prototype_rationale_1	v2 reference-resolver prototype — proves the 'graph is references' stance.  A re
+artefact_resolver_prototype_rationale_1	v2 reference-resolver prototype — proves the 'graph is references' stance.  A
 artefact_resolver_prototype_rationale_34	RFC 6901. Raises (loud) on any miss — never returns a silent default.
 artefact_resolver_prototype_rationale_59	ref = {file_path, sha256, scheme, address}. Fail loud on hash mismatch.
-artefact_scan_rationale_1	Stage 1: scan — catalog raw files. Dumb and meaning-free.  Walks a dataset direc
+artefact_scan_rationale_1	Stage 1: scan — catalog raw files. Dumb and meaning-free.  Walks a dataset dir
 artefact_scan_rationale_62	Catalog every file under dataset_dir. Fails loud on the first broken file.
-artefact_tag_rationale_1	Stage 5: tag — one stateless structured call per chunk emits contextual phrase t
+artefact_tag_rationale_1	Stage 5: tag — one stateless structured call per chunk emits contextual phrase
 artefact_tag_rationale_106	`take` items evenly spread across a bucket — variety, deterministic.
 artefact_tag_rationale_114	n chunks stratified across content-kinds (round-robin allocation).
-artefact_tag_rationale_128	Tag n stratified chunks on `model` via NIM; print tags-by-chunk_id and the     u
+artefact_tag_rationale_128	Tag n stratified chunks on `model` via NIM; print tags-by-chunk_id and the
 artefact_tag_rationale_175	chunk_ids already tagged (by any model). Tolerates a torn final line from a
-artefact_tag_rationale_196	Blast-until-wall across a model pool into ONE resumable checkpoint     (output/t
+artefact_tag_rationale_196	Blast-until-wall across a model pool into ONE resumable checkpoint     (output/
 artefact_tag_rationale_291	The artefact arm's build cost in the SAME contract vocabulary the lucene/vector
-artefact_tag_rationale_49	The model's view of the chunk: its content references resolved to text,     in o
-artefact_tag_rationale_63	One stateless temp-0 structured call → (tags, usage). Fail loud on a     null or
-claude_md_always_refresh_graph	Hard rule: always refresh graphify after edits to v3/root canon/external docs
-claude_md_artefact_arm_v3	Artefact arm built natively in v3/artefact/ (scan/probe/derive_corpus/resolver + key)
-claude_md_critical_review_code	Hard rule: critical-review code in v3/ before reporting work done
-claude_md_design_before_build	Hard rule: design before build — sign-off before pipeline code
-claude_md_doc	CLAUDE.md — project instructions / session entry point
-claude_md_docs_track_reality	Hard rule: docs track reality — remove dead content, no banners
-claude_md_graph_spine_closed_canon	Graph spine closed canon: Source → File → Chunk → Tag — references not copies
-claude_md_graphify_navigation_graph	Codebase navigation graph (graphify-out/graph.json) — query before grepping
-claude_md_heed_user_intent	Hard rule: heed user intent, never correct it with stale context
-claude_md_herb_eval_forensic_only	herb-eval Neo4j is forensic baseline only (oracle-contaminated) — never query it
-claude_md_model_emits_no_numbers	Model emits no numbers — tagger and interpreter emit phrases only; chunk description is dead
-claude_md_no_history_comments	Hard rule: no historical/defensive comments — state only the present
-claude_md_plain_english_verify	Hard rule: plain spoken English, verify claims against real system/data
-claude_md_refresh_graph_only_path	refresh_graph.py is the only rebuild path (never graphify --update); process worklist if printed
-claude_md_repo_layout_v3	Repo layout: v3 HERB eval harness (artefact/lucene/vector arms, RAGAS-scored)
-claude_md_session_entry_state_docs	Session entry via state-transfer docs in docs/state/ (gitignored, two live threads)
+artefact_tag_rationale_49	The model's view of the chunk: its content references resolved to text,     in
+artefact_tag_rationale_63	One stateless temp-0 structured call → (tags, usage). Fail loud on a     null o
+claude_md_agent_roster	Agent roster — orchestrator routing: main-chat Claude is the orchestrator — talks to the user, routes every job to a specialist agent, does no hands-on work; plain questions get direct conversational answers; long runs happen in the user's terminal (agents prepare, the user runs); definitions in .claude/agents/ — v3-coder (v3 code changes), critical-reviewer (post-change v3 review), code-optimizer (performance, profiles first), maths-algorithmist (mathematical algorithm design and verification), order-of-operations (pipeline sequencing/data-flow correctness), logician (invariants, proof-or-counterexample), retrieval-scientist (retrieval design and experiments), eval-statistician (significance, judge reliability, judge-run cost math), results-analyst (v3/output numbers, metric validity binding), graph-refresher (refresh_graph.py + worklist processing)
+claude_md_artefact_arm_native	Artefact arm: rebuilt natively in v3/artefact (scan/probe/derive/resolver tested); graph spine Source→File→Chunk→Tag closed canon; references not copies; model emits no numbers; herb-eval (Neo4j) is the prior v1 build — contrast baseline only
+claude_md_doc	CLAUDE.md — repo canon: layout, session entry, graph refresh, hard rules, agent roster, artefact arm
+claude_md_hard_rules	Hard rules: design sign-off before build; plain spoken English; heed user intent over stale context; docs track reality; no historical/defensive comments; visible progress in the user's terminal; critical-review all v3 code changes
+claude_md_nav_graph_refresh	Navigation graph: query graphify first; refresh_graph.py is the ONLY rebuild path (never graphify --update); worklists get model extraction bridged into .concept_index.txt
+claude_md_repo_layout_v3	Repo layout: v3/ is the work — lean HERB eval harness, three arms (artefact / lucene / vector) scored with RAGAS
+claude_md_session_entry_state_docs	Session entry: gitignored state-transfer docs in docs/state (current: 2026-07-22 v1 curve walk, facets verdict, cluster-K; predecessor 2026-07-20 holds pre-walk definitions); newest dated doc is the entry point
+concept_02c1109179bb	3. The embedder contract
+concept_02d340b9f7a1	Confirmed current-code problems
+concept_04cf7c96f59b	v2 Artefact Rebuild — Design
+concept_067443de5ba0	13. Semantic dimensions — the research basis for the facets
+concept_0ff3586a37d0	6. Decisions made
+concept_110e5179dc13	Still open
+concept_131e4fc7f795	**Derive-corpus (one-time prep, per dataset that needs it)** — if the published
+concept_183e13616e93	4. Pipeline skeleton
+concept_1f2dd752dc76	4. What is deliberately absent
+concept_1f81f14ef01f	Run flow — two separate phases
+concept_21ce1fabd197	9. Chunks, tags, and re-tagging
+concept_26d64d81fb54	9.6 Re-tag, do not migrate v1 tags
+concept_2771861958c0	**topic** (aboutness / frame-domain)
+concept_2cb3f56a6b46	Current fusion
+concept_2d4d6156938d	Curve-walk gold-100 result: recall_id 0.7005 / precision_id 0.0545 vs flat baseline 0.6972 / 0.0518 — first variant beating baseline on both; kept hit the 50-ceiling on all 100 questions
+concept_2f602e8b760b	Prompt “information needs” rather than flat voting tags
+concept_33cf890076f0	_curve_k: break in a descending curve — unit square, head-to-tail straight fit, cut at the point furthest below it, 1e-9 noise guard, no dip means keep everything
+concept_34a657144df1	`VizForce::a::16`
+concept_35034836f421	9.1 A chunk is a coherent episode, not a fixed-size window
+concept_37021f154edb	herb-eval.dump
+concept_37521672d51d	4. Exact definitions and notation
+concept_3b0300f0c03e	8. Rejected or dangerous interpretations
+concept_3b3af9f9cecf	1. Purpose of this state document
+concept_3b4cfa421849	13.3 Organizing principle — completeness across the totality + prompt/chunk symmetry
+concept_3b72e656ac67	0. The touchpoints and the inherited invariants
+concept_40d8bbb4cc5b	**Id-space assignment** — which fields carry which id-space (`userId` → employee,
+concept_4238f1f7f11e	Must read
+concept_43674ff3042a	9.5 Tagging unit, context, and no overlap
+concept_44ff24e83ae1	2. The reference triple
+concept_471cc434b2c7	12. Immediate next task
+concept_48d4df4c1515	`ActionGenie::a::1`
+concept_498a22647c2e	v2 model contracts — structured I/O at every model touchpoint
+concept_4d9e09ec3a4a	13.2 Convergence across research traditions
+concept_4e88d2539f40	`ActionGenie::a::7`
+concept_50f3fa1dc8b0	GraphRAG family: Microsoft GraphRAG's communities are permanent and query-blind (the contrast case); HippoRAG 1/2 validate seed-weighted PPR over a tag-like graph; G-Retriever's prize-collecting Steiner tree is a one-shot budgeted subgraph alternative; ToG's stop rule is LLM sufficiency under a hard cap
+concept_53bd15ee3a60	12. Eval implications
+concept_55506ceda341	`CoachForce::a::11`
+concept_5b2e2a124350	**Tag** — resolve references to transient views; derive tags/weights/grounding vectors.
+concept_5da1c2481bc9	Data split (the quarantine)
+concept_5db62e119625	exjobbet — HERB evaluation harness
+concept_5ef818f5de4a	13.1 Why the v1 facets degraded
+concept_604a847ccf73	Substitution failure (do not repeat): the value knee was built instead of the discussed height walk because it was less invasive; the user's concepts are the spec
+concept_6af11e0db0ac	2. The interpreter contract (query time)
+concept_723390e95647	Query-conditioned local graph clustering: Andersen-Chung-Lang PPR + sweep cut formalizes a soft query-relative region with a principled boundary; heat kernel (Kloster-Gleich) is the tighter-radius variant; Crestani's spreading-activation constraints catalogue the flooding failure modes
+concept_7973f7f019a9	**Directories** — which files are id-directories rather than corpus
+concept_7a5d8e2ec85e	**Completeness.** Every dimension in the convergent model is represented *somewhere*
+concept_7a710b02e3b3	Open decision: does stated scope count toward K, or corroborate and rank only
+concept_7cfc2d5d30d9	v3 — HERB evaluation
+concept_7fe7f78a1ef2	Exact empirical probes
+concept_827913389781	Define the area’s unit and membership function.
+concept_834a5118f204	`ActionGenie::a::0`
+concept_83b20e7fce2d	9.3 "Records vs prose" is per-position, not per-file
+concept_83b4b36de3ca	**Symmetry.** Whatever the artefact uses to *retrieve* must be mirrored on the prompt
+concept_88018f6899a1	9.4 The boundary detector is fully deterministic — no embeddings, no LLM
+concept_8932a8f0c4c7	Measurement debts: haiku leg untested on the current build; k=5/10/20 need real runs; the detW2 gain bundles three membership changes
+concept_8b4d2e399ab0	1. The tagger contract (build time)
+concept_8bd1120f8ae1	**Probe** — climb each file, record morphology; drives scheme choice.
+concept_8d1f6cd1f522	7. The graph spine and the node/attribute rule (decided 2026-06-12)
+concept_8d2df88c1f73	Design blockers
+concept_900733fced78	8. The mapping key — a declarative settings file per dataset (finalized 2026-06-12)
+concept_904301841d06	**Reference** — emit reference triples for logical units. No content stored.
+concept_92991f9c066c	Geometric det facet channel (HERB_DET_FACETS support/routing/edges) moved recall ≤ +0.003 at k=50 — facet placement, not facet values, is the open question
+concept_9fa9166feb9c	9. Source-of-truth artifacts
+concept_a12f015151c7	`MonitorForce::a::16`
+concept_a150eddc04d9	HERB_CURVE_K naming flagged by the user (reads as forcing K=1; it is a boolean); rename to HERB_CURVE_WALK=1 or kill the flag — choice pending
+concept_a17ccff45af7	kNN, NNK, cluster, area
+concept_a2bbb56506d2	Facets as query-conditioned routing
+concept_a4b001f2dd63	Current scoring formula
+concept_a663c7f494e4	5. The shape probe — schema is recovered, not authored
+concept_a83da179ef2e	**process** (what happens / transitivity)
+concept_a879d2f81f24	`ForecastForce::a::24`
+concept_a9e51b23c39a	6. Two senses of schema; semantic mapping is a thin overlay
+concept_abf0af27606c	**Scan** — catalog the corpus view's files (hash, format, file_class, split).
+concept_ace35993a8d8	9.7 Research grounding
+concept_b3121c01334e	5. Sign-off checklist — the judgment calls beyond decided design
+concept_b36367b275f5	Value-knee cut rejected by measurement: per-question K equivalent to a flat cut at the same mean depth (0.6368 vs flat-37 0.6397); its break tracks the tag/desc-floor seam, a pool-composition artifact
+concept_b4d75b81ad34	One caveat worth remembering
+concept_b559921a7da9	Scoring with RAGAS
+concept_b64be65737ae	3. Canonical user-established facts
+concept_b9bcac50b286	7. Working hypotheses and uncertain ideas
+concept_bb60616605ae	External reviewer text
+concept_bb9bf01f6b4b	**Structure** — extract the hard-field values (ids, timestamps, kinds, labels) from
+concept_c080ba51b68c	`PersonalizeForce::a::24`
+concept_c19723915a8b	Design documents
+concept_c35b88ba19c3	**Content choice** — which fields are the prose to chunk and tag. The probe flags
+concept_c42b78e68503	Progressive traversal without an answer-sufficiency oracle
+concept_c4682e78f76e	User judgment: the walk and the straight-fit break rule are not helping each other — edges precomputed before opening, no cross-part comparison, chord endpoint-relative where a cluster boundary is local
+concept_c5c557ee5a97	Facet verdict: stored HAS_TAG w_facets are non-signal — weights confined to 0.5–1.0, temporal on 555/20k edges; feeding query facet direction into them (detE) changed 5/100 retrieved sets, recall Δ 0.0000
+concept_c8a2e0a3fa43	13.5 Per-facet extraction specs
+concept_ca0dbb7a229a	5. Current working model
+concept_cb70c8c1ffe8	NNK neighborhoods: redundancy pruning is by design (near-synonym tags get exactly zero weight); no published RAG/passage-retrieval use; if used at all it belongs at tag grounding, not chunk selection
+concept_ced3c972bb56	Cluster-K concept (user canon): the clustering's curve of best fit decides the per-query evidence count K; the caller's k is only the ceiling
+concept_cfac53ea24b2	Graph and evidence units
+concept_d171b72f17a9	11. Open problems
+concept_d22330b055f8	11. LLM host for the tagger
+concept_d39a2aaf5722	3. Resolution model — read in place, hash-verified
+concept_d6fff058e522	LLM-emitted scalars as ranking features: document-level LLM relevance labels can be load-bearing (Thomas et al., Bing/SIGIR 2024) but label-level agreement is fragile and scalar outputs compress; NO published validation of LLM-emitted per-edge numeric weights — HippoRAG-line systems derive weights structurally, LLM only discrete decisions
+concept_d7bb9850fe21	13.4 Dimension → mechanism allocation (the table)
+concept_d97bb9cb2087	`ActionGenie::a::5`
+concept_da5917e5a20e	Five-finding synthesis: weighted score-space fusion over RRF; the more-tags-more-votes pathology starts at emission; PM-2 for the hard-k budget; query-relative areas = seed-weighted local diffusion; LLM per-edge scalars are unvalidated territory
+concept_dba00790c798	2. Current project objective
+concept_dd69f269ebd8	Stated scope floods membership: 338 chunks mean (median 150.5, max 2742) per gold question; the semantic paths' natural K ≈ 30 (anchor 1.6 + widened 15.4 + desc 15.1)
+concept_dd79cf1d002a	Literature anchors: PM-2 proportional slot allocation (SIGIR 2012) for multi-frontier budgets; seed-weighted PPR + sweep cut (HippoRAG) formalizes query-relative areas; no published validation of LLM-emitted per-edge numeric weights
+concept_deaf7ce2cf29	Curve walk (flag HERB_CURVE_K=1): parts widen to their area's edge (_height_edge on merge heights), description doors cut at their similarity break (_curve_k), the whole-need description embedding restored as its own door
+concept_e041b7932a18	NNK usefulness
+concept_e360e10d6c79	Open review items: curve flag absent from run manifests (resume can mix regimes), det-leg contract contradiction, truncate_k invalid on curve-cut runs, sufficiency review silently skipped when the curve keeps fewer than 8
+concept_e3c773c84a7c	Ops: run.py finishes but never exits under redirected stdin (press-q abort watcher) — poll the out dir; use --no-eval for retrieval A/Bs; id metrics computable from arm_outputs.jsonl + questions.jsonl
+concept_e5a303645d67	Progressive budgeted retrieval: PM-2 proportional slot allocation (each of k slots to the most under-served aspect) beat xQuAD on TREC diversity — the published mechanism for multi-frontier selection under hard k; bandit budget allocation across subqueries gains +35% precision
+concept_e683a8560d38	Faceted / multi-aspect query representation: MADRAL fuses aspects into one vector pre-retrieval; its ECIR 2024 reproduction failed (learned aspects can be dead weight); ColBERT's MaxSim-then-sum is the proven score-space per-aspect aggregation
+concept_e7d5aefc1015	Query-relative areas
+concept_e9e571533592	1. Core principle — the graph indexes references, it does not store copies
+concept_ef988fed3e51	**Retrieve** — Match → Filter → Rank → Cap over references + semantics (the routing model, §14).
+concept_f20a200fcc94	Rank fusion theory: RRF is rank-only and erases within-list multipliers (Cormack 2009); normalized-score convex combination beats RRF in- and out-of-domain (Bruch et al., TOIS 2023); weighted RRF puts importance in per-list weights; LLMs emit the prompted subquery count regardless of need (arXiv:2510.18633)
+concept_f2f7d864bbeb	Multi-faceted edge weights: PathSim shows the typed-edge channel must be chosen query-side; HGT shows learned per-relation weighting beats uniform; edge-weighted PPR (Xie KDD 2015) makes query-conditioned edge modulation tractable; CatRAG/MemORAI (2026, unreplicated) do it end-to-end
+concept_f320dca662a1	10. Validation against real HERB data (2026-05-30)
+concept_f447c0210ab5	10. Recent session changes
+concept_f56f9418d403	`CoachForce::a::5`
+concept_f990f9697a90	Open proposal awaiting the user's verdict: one global frontier across all doors on the shared cosine-distance scale; the stop read from the walk's own opened-height trajectory; K = where the walk stopped
+concept_fa8e9be19fae	9.2 The index is a materialized path — canonical throughout, with one minted tier
+concept_fe30f56adc91	_height_edge: two-sided edge rule — shallow-then-jump keeps through the last shallow merge; jump-then-plateau is an isolated anchor and closes at the anchor; steady climb opens whole
+document_4acbc8a5b9e0	README.md
+document_4b6a98ab7e82	MODEL_CONTRACTS.md
+document_56609abb038e	README.md
+document_7edd7f8cabe1	2026-07-20-v1-query-relative-areas.md
+document_80f3077207e3	2026-07-22-v1-curve-walk-facets-and-cluster-k.md
+document_8ab55efe4f14	README.md
+document_ad2a5de6db6b	DESIGN.md
+document_e3b32ff24e7c	2026-07-22-retrieval-literature-sweep.md
 eval_ragas_catalog_rationale_1	ragas_catalog.py — the full RAGAS metric menu + the toggle for which ones a run
 eval_ragas_catalog_rationale_112	The metrics this run scores — exactly SELECTED.
 eval_ragas_catalog_rationale_117	Fail loud before a run if SELECTED is malformed.
-eval_ragas_rationale_1	ragas.py — multidimensional answer/evidence quality via the RAGAS library.  Sc
-eval_ragas_rationale_116	RAGAS LLM driven by nim.post — the shared Qwen, same transport as the     gener
-eval_ragas_rationale_180	RAGAS embeddings driven by nim.post — llama-nemotron-embed, asymmetric: question
-eval_ragas_rationale_259	Instantiate each selected metric with the wrappers it needs, then init() it —
-eval_ragas_rationale_289	Every string leaf of an artifact record, joined — a faithful text rendering of
-eval_ragas_rationale_309	artifact id -> its text. The non-LLM context metrics score retrieved text     a
-eval_ragas_rationale_328	One contract pair -> a RAGAS SingleTurnSample. reference = the gold answer
-eval_ragas_rationale_348	ENTRY: per (output, question) score every metric in metrics_to_run() ->     lis
-eval_ragas_rationale_378	Parsed rows already in results_path. A torn trailing line from a killed write
-eval_ragas_rationale_397	Context-heavy judged metrics concatenate all retrieved contexts into one prompt.
-eval_ragas_rationale_429	Score every (question, metric) cell -> list[EvalResult], in ordered passes: the
-eval_ragas_rationale_621	One line per metric that produced any non-ok cell, so failures are visible at
-eval_ragas_rationale_633	Score one metric on one sample. A per-cell failure is recorded LOUD (status +
-keys_salesforce__herb_content_leaves	Content: JSON-pointer prose leaves chunked and tagged
-keys_salesforce__herb_conversation_seams	Conversation streams grouped into episodes by channel + timestamp
-keys_salesforce__herb_directories	Directories: id-spaces resolved through raw, never mirrored
-keys_salesforce__herb_id_spaces	id-space assignment: fields become id-set attributes at structural scope
-keys_salesforce__herb_kind_discriminator	kind bridges interpreter flag to a directory (person|org|product)
-keys_salesforce__herb_mapping_key	HERB settings-file key (per-dataset meaning declaration)
-keys_salesforce__herb_oracle_quarantine	Oracle not declared: team/customers stripped by derive-corpus, read in place from raw
-keys_salesforce__herb_shape_handling_table	Shape-to-handling table: silence = mirror automatically
-keys_salesforce__herb_three_judgments	Three judgments the key declares: content / directories / id_spaces
-keys_salesforce__herb_unresolved_ref_policy	Unresolved-ref policy: flagged loud at build time, never dropped or invented
+eval_ragas_rationale_1	ragas.py — multidimensional answer/evidence quality via the RAGAS library.  Scor
+eval_ragas_rationale_209	One judge verdict on the shared claude lane (nim._claude_chat — the same     tra
+eval_ragas_rationale_227	The final `turn.completed` event carries Codex CLI's authoritative usage.
+eval_ragas_rationale_240	Run a subscription-authenticated, isolated `codex exec` verdict.      Codex emit
+eval_ragas_rationale_285	Extract Gemini CLI's provider token counters from headless JSON stats.      `--o
+eval_ragas_rationale_312	Run one Gemini CLI session and reap its whole process tree on timeout.      Gemi
+eval_ragas_rationale_347	A terminal Gemini quota/entitlement rejection cannot improve with a retry.
+eval_ragas_rationale_353	Whether a cell has Gemini CLI's terminal quota/entitlement rejection.
+eval_ragas_rationale_364	One subscription-authenticated Gemini CLI verdict with real CLI usage.      RAGA
+eval_ragas_rationale_424	RAGAS LLM driven by nim.post or a headless subscription CLI.     The backend fol
+eval_ragas_rationale_501	RAGAS embeddings driven by nim.post — llama-nemotron-embed, asymmetric: question
+eval_ragas_rationale_582	Instantiate each selected metric with the wrappers it needs, then init() it —
+eval_ragas_rationale_612	Every string leaf of an artifact record, joined — a faithful text rendering of
+eval_ragas_rationale_632	artifact id -> its text. The non-LLM context metrics score retrieved text     ag
+eval_ragas_rationale_651	One contract pair -> a RAGAS SingleTurnSample. reference = the gold answer     (
+eval_ragas_rationale_671	ENTRY: per (output, question) score every metric in metrics_to_run() ->     list
+eval_ragas_rationale_725	Parsed rows already in results_path. A torn trailing line from a killed write
+eval_ragas_rationale_744	Context-heavy judged metrics concatenate all retrieved contexts into one prompt.
+eval_ragas_rationale_776	Score every (question, metric) cell -> list[EvalResult], in ordered passes: the
+eval_ragas_rationale_80	How to drive this judge — each model family carries its own settings.     `infli
+eval_ragas_rationale_987	One line per metric that produced any non-ok cell, so failures are visible at
+eval_ragas_rationale_999	Score one metric on one sample. A per-cell failure is recorded LOUD (status +
 pipelines_artefact_rationale_1	artefact.py — the ARTEFACT arm: interpreter → facet-channel retrieval → answer.
-pipelines_artefact_rationale_106	Load the artefact index once. `corpus` is the corpus root the     orchestrator p
-pipelines_artefact_rationale_132	(id, question_text) from a QuestionWithTruth, dict, (id, text) tuple, or     a b
-pipelines_artefact_rationale_144	Embed facet phrases as the query side of nv-embedqa -> (matrix     [n, d] L2-nor
-pipelines_artefact_rationale_155	Cosine of every tag phrase against every facet phrase, pooled by max ->     `phr
-pipelines_artefact_rationale_172	Accumulate phrase weights over each chunk's tag rows (DESIGN §14.3) ->     `chun
-pipelines_artefact_rationale_183	Add a fixed `PRODUCT_LITERAL_BOOST` to every chunk whose relpath     contains `p
-pipelines_artefact_rationale_203	interpret → embed facet phrases → phrase weights → chunk scores →     structural
-pipelines_artefact_rationale_235	Normalise a generator's return into (answer, calls, tokens, time_s).     Mirrors
-pipelines_artefact_rationale_259	ENTRY: interpret → retrieve top-k chunks → resolve artifact ids + chunk     text
-pipelines_artefact_rationale_89	Handle returned by prepare(); fed back into answer_one_question.     Carries the
-pipelines_artefact_v1_rationale_1	artefact_v1.py — the ARTEFACT-V1 arm: facet-grounded tag retrieval over the Neo4
-pipelines_artefact_v1_rationale_125	The hard-gate WHERE fragment + params from the plan's structured gate,     ANDed
-pipelines_artefact_v1_rationale_203	Handle returned by prepare(): the live Neo4j driver + BuildStats. The tag     gr
-pipelines_artefact_v1_rationale_212	Neo4j driver from the usual v3/.env (loaded by nim, same as every other     secr
-pipelines_artefact_v1_rationale_230	Open the Neo4j driver and confirm the per-facet grounding indexes are     presen
-pipelines_artefact_v1_rationale_271	(id, question_text) from a QuestionWithTruth, dict, (id, text) tuple, or a     b
-pipelines_artefact_v1_rationale_283	First balanced {...} object in the model output, tolerant of code fences     and
-pipelines_artefact_v1_rationale_339	One JSON turn on the shared model -> (parsed_json, tokens, time_s).     Determin
-pipelines_artefact_v1_rationale_375	Tag weight from its facet vector: RMS strength scaled by a coverage bonus     (a
-pipelines_artefact_v1_rationale_389	Normalise the model's loose gate into the strict shape retrieval gates on:     s
-pipelines_artefact_v1_rationale_416	interpret a question -> (plan, calls, tokens, time_s). plan = {description,
-pipelines_artefact_v1_rationale_453	One embed call (query side) for the pass-1 description + the prompt tag     name
-pipelines_artefact_v1_rationale_492	interpret-plan -> (pointer rows best-first, ground embed ModelUsage). Each     r
-pipelines_artefact_v1_rationale_532	Read + hash-verify + parse one raw file, memoized in `cache` so k chunks     int
-pipelines_artefact_v1_rationale_552	Record i of a metadata file: a list root indexes directly; a dict root     (the
-pipelines_artefact_v1_rationale_562	One retrieved pointer row -> (chunk text, [artifact ids]). The locator is     se
-pipelines_artefact_v1_rationale_602	Normalise the shared generator's return into (answer, calls, tokens,     time_s)
-pipelines_artefact_v1_rationale_616	ENTRY: interpret -> ground -> score -> top-k chunk text -> generate ->     ArmOu
+pipelines_artefact_rationale_106	Load the artefact index once. `corpus` is the corpus root the     orchestrator
+pipelines_artefact_rationale_132	(id, question_text) from a QuestionWithTruth, dict, (id, text) tuple, or     a
+pipelines_artefact_rationale_144	Embed facet phrases as the query side of nv-embedqa -> (matrix     [n, d] L2-no
+pipelines_artefact_rationale_155	Cosine of every tag phrase against every facet phrase, pooled by max ->     `ph
+pipelines_artefact_rationale_172	Accumulate phrase weights over each chunk's tag rows (DESIGN §14.3) ->     `chu
+pipelines_artefact_rationale_183	Add a fixed `PRODUCT_LITERAL_BOOST` to every chunk whose relpath     contains `
+pipelines_artefact_rationale_203	interpret → embed facet phrases → phrase weights → chunk scores →     structura
+pipelines_artefact_rationale_238	ENTRY: interpret → retrieve top-k chunks → resolve artifact ids + chunk     tex
+pipelines_artefact_rationale_89	Handle returned by prepare(); fed back into answer_one_question.     Carries th
+pipelines_artefact_v1_det_rationale_1	artefact_v1_det.py — the deterministic leg of the ARTEFACT-V1 arm: the same grap
+pipelines_artefact_v1_det_rationale_102	The question's facet triggers from its literal form: triggered facets     at ful
+pipelines_artefact_v1_det_rationale_118	The trigger weights as a unit-sum direction vector over the anchor     order.
+pipelines_artefact_v1_det_rationale_126	support ← support × (question direction · tag geometry direction), on the     ra
+pipelines_artefact_v1_det_rationale_140	d′(i,j) = d(i,j) × (1 + facet disagreement in the question's channels):     the
+pipelines_artefact_v1_det_rationale_158	Product vocabulary read once per database from the graph's own chunk     fields,
+pipelines_artefact_v1_det_rationale_168	Position of `phrase` as whole words in the lowercased question; -1     when abse
+pipelines_artefact_v1_det_rationale_175	The plan without a model: the question is the single part; stated scope     is w
+pipelines_artefact_v1_det_rationale_87	The five facet-anchor embeddings (unit rows) -> (anchors, the embed's     ModelU
+pipelines_artefact_v1_rationale_1	artefact_v1.py — the ARTEFACT-V1 arm: query-relative fuzzy cluster retrieval ove
+pipelines_artefact_v1_rationale_1028	Open one area: its tags pull their chunks; each chunk keeps its     highest-supp
+pipelines_artefact_v1_rationale_1044	interpret-plan -> (pointer rows cut at k, query embed ModelUsage,     retrieval
+pipelines_artefact_v1_rationale_1439	The interpreter holds the conversation: evidence is shown cumulatively     at th
+pipelines_artefact_v1_rationale_169	A run-tunable coefficient read from the environment, `default` when unset     or
+pipelines_artefact_v1_rationale_347	Cypher boolean terms for the interpreted scope hints, over chunk     fields. ([]
+pipelines_artefact_v1_rationale_361	Structural affinity per tag: the fraction of the tag's edges landing on     hint
+pipelines_artefact_v1_rationale_384	Whether one chunk row matches at least one scope hint.
+pipelines_artefact_v1_rationale_396	Content address for one embedding: (embed model, input_type, text), each     len
+pipelines_artefact_v1_rationale_408	The cached embedding for `key`, or None on a miss. A corrupt or     half-written
+pipelines_artefact_v1_rationale_420	Write one embedding under its content address, published atomically so a     con
+pipelines_artefact_v1_rationale_437	Embed `texts` through the shared NIM embedder with a persistent per-text     cac
+pipelines_artefact_v1_rationale_598	A failed interpreter turn. Carries the model usage spent across the     turn's a
+pipelines_artefact_v1_rationale_613	One JSON turn on the interpreter model -> (parsed_json, tokens_in,     tokens_ou
+pipelines_artefact_v1_rationale_670	Normalise the model's loose gate into strict scope hints: string-or-null     fie
+pipelines_artefact_v1_rationale_697	Pass-2 payload shape: `scores` is a list of rows, each {t: str,     facets: {fac
+pipelines_artefact_v1_rationale_715	interpret a question -> (plan, calls, tokens_in, tokens_out, time_s).     plan =
+pipelines_artefact_v1_rationale_774	Content address for one interpretation: (interpret model, interpreter     signat
+pipelines_artefact_v1_rationale_786	Write one interpreted plan under its content address, published     atomically s
+pipelines_artefact_v1_rationale_803	interpret with a persistent plan cache keyed by (model, prompt     signature, qu
+pipelines_artefact_v1_rationale_827	`a` scaled to unit length along its last axis; a zero vector has no     directio
+pipelines_artefact_v1_rationale_835	The walk's stopping test, read from its own trajectory. The height     gaps betw
+pipelines_artefact_v1_rationale_849	Fuzzy k-NN support aggregated over the doubling level sequence: every     level
+pipelines_artefact_v1_rationale_871	Min-max a path's base scores against the given bounds: hi <= lo (a single     sc
+pipelines_artefact_v1_rationale_882	Min-max normalize a path's per-chunk base scores onto [0, 1] over that     path'
+pipelines_artefact_v1_rationale_892	A pool-independent bounded score: the raw support saturated against a     per-pa
+pipelines_artefact_v1_rationale_901	The number of doubling levels a stated-scope ranked set of size n spans —     th
+pipelines_artefact_v1_rationale_911	Fold a path's per-part/source support dicts into one per-chunk base by     the H
+pipelines_artefact_v1_rationale_928	Put the three paths' bases on a comparable scale by the HERB_NORM mode:     rela
+pipelines_artefact_v1_rationale_951	A priority modifier over the normalized base: strength 0 returns 1 (the     modi
+pipelines_artefact_v1_rationale_960	The anchor leaf's containing-cluster chain through the dendrogram,     finest to
+pipelines_artefact_v1_rationale_994	One part -> its widening levels: [{height, tags: [(name, support)]}]     finest
+pipelines_hybrid_rationale_1	hybrid.py — late-fusion baseline: the lucene (BM25) and vector (dense) arms comb
+pipelines_hybrid_rationale_121	(id, question_text) from a QuestionWithTruth, dict, (id, text) tuple, or a     b
+pipelines_hybrid_rationale_133	Min-max one arm's scores to [0, 1] over its own returned ids. One distinct     v
+pipelines_hybrid_rationale_145	Late-fuse the two arms' ranked (id, score) lists into the top-k artifact ids,
+pipelines_hybrid_rationale_172	ENTRY: retrieve from both arms -> fuse -> ids + text -> generate -> ArmOutput.
+pipelines_hybrid_rationale_42	A run-tunable coefficient read from the environment, `default` when unset or
+pipelines_hybrid_rationale_72	Handle returned by prepare(); fed back into answer_one_question. Holds each
+pipelines_hybrid_rationale_83	Add ModelUsage fields across arms (calls / tokens / time).
+pipelines_hybrid_rationale_96	Uniform prepare entry the orchestrator drives: build BOTH baseline indexes     o
 pipelines_lucene_rationale_1	lucene.py — sparse baseline (BM25, Lucene-variant ranking).  Why it's here: th
 pipelines_lucene_rationale_111	One artifact -> (id, title, contents). None if the record carries no id.
 pipelines_lucene_rationale_154	Flatten HERB into one document per artifact: {id, title, contents, kind}.
@@ -304,8 +291,8 @@ pipelines_lucene_rationale_234	(id, question_text) from a QuestionWithTruth, dic
 pipelines_lucene_rationale_246	Sparse top-k retrieval for the question text -> list of unit dicts     {id, tex
 pipelines_lucene_rationale_281	Read the native artifact id off the unit. Fills ArmOutput.context_ids     (same
 pipelines_lucene_rationale_287	Collect the units' text. Fills ArmOutput.contexts + feeds the generator.
-pipelines_lucene_rationale_294	Normalise a generator's return into (answer, calls, tokens, time_s).      Acce
-pipelines_lucene_rationale_320	ENTRY: retrieve_top_k -> ids + text -> generate -> ArmOutput.      `generate`
+pipelines_lucene_rationale_294	Normalise a generator's return into (answer, ModelUsage).
+pipelines_lucene_rationale_301	ENTRY: retrieve_top_k -> ids + text -> generate -> ArmOutput.      `generate`
 pipelines_lucene_rationale_97	Handle returned by prepare(); fed back into answer_one_question.     Carries th
 pipelines_vector_rationale_1	vector.py — dense baseline (embeddings + cosine), i.e. naive RAG.  Why it's here
 pipelines_vector_rationale_122	Handle returned by prepare(); fed back into answer_one_question. Holds the     L
@@ -313,229 +300,106 @@ pipelines_vector_rationale_136	The text the dense arm embeds for one artifact. E
 pipelines_vector_rationale_165	Read the corpus into one whole artifact per document: {id, text}.      Walks the
 pipelines_vector_rationale_190	Embed one batch in a single NIM call -> (embeddings in input order, calls,     t
 pipelines_vector_rationale_237	Embed texts via nv-embedqa -> (matrix [n, d] float32 L2-normalised, calls,     t
-pipelines_vector_rationale_266	Content-addressed cache file for this index: any change to the model, the     id
-pipelines_vector_rationale_280	prepare(): embed every corpus artifact (as "passage") and hold the     normalise
-pipelines_vector_rationale_347	Uniform prepare entry the orchestrator drives: build the corpus index and     at
-pipelines_vector_rationale_358	(id, question_text) from a QuestionWithTruth, dict, (id, text) tuple, or a     b
-pipelines_vector_rationale_370	Load the precomputed question vectors -> {id: vector [d] float32 L2-normalised}.
-pipelines_vector_rationale_383	Look up the question's precomputed query vector by id, exact brute-force cosine
-pipelines_vector_rationale_414	Native artifact id off the unit. Fills ArmOutput.context_ids (same id space
-pipelines_vector_rationale_420	Collect the units' text. Fills ArmOutput.contexts + feeds the generator.
-pipelines_vector_rationale_427	Normalise a generator's return into (answer, calls, tokens, time_s).      Accept
-pipelines_vector_rationale_453	ENTRY: retrieve_top_k -> ids + text -> generate -> ArmOutput.      `generate` is
-readme_exjobbet_harness	exjobbet — HERB evaluation harness
-state_2026_06_25_glcp_doc	State doc 2026-06-25: artefact tag-facets guide-link + content-profile — the reconciled tag-facet design recovered from git history + transcripts; supersedes the same-day tag-facets-vs-routing doc and DESIGN/MODEL_CONTRACTS facet sections.
-state_2026_06_25_glcp_guide_link	The guide link: a facet is a shared concept both the tag and the prompt are measured-close-to; the match compares those two closenesses (v1 per-facet grounding bridge reborn), keeping symmetry.
-state_2026_06_25_glcp_max_facet_instrument	Candidate instrument (to probe, not trusted): rewrite a tag/prompt to be maximal on a facet, then embed-compare to the original; ranking by closeness = facet-relevance. Research warns it conflates wording change, topic leak, and the facet change.
-state_2026_06_25_glcp_model_emits_no_numbers	The model emits NO numbers (tagger and interpreter); facet weights are measured by geometry downstream, never agent-assigned.
-state_2026_06_25_glcp_postures_to_interpreter	Self-selecting property: closeness-to-a-concept only works for content facets; the postures (stance, communicative-function, TAM) have no single concept to sit close to and fall out to the interpreter.
-state_2026_06_25_glcp_tag_facets_not_routing	Load-bearing cut: tag-facets = a semantic description of the phrase (no numbers); routing = a separate downstream consumer that owns relevance/weighting and does not define what a facet is.
-state_2026_06_25_glcp_the_hollowing	Diagnosis: the v2 redesign hollowed the tag by allocating every dimension to a cheaper structure-or-interpreter home, leaving a bare topic phrase; entities and evidence were misread as facts.
-state_2026_06_25_glcp_topic_to_centrality	Topic is not a facet — the phrase IS the topic; what remains is topic-as-degree = centrality (how central a tag is vs its chunk siblings, chunk-local).
-state_2026_06_25_glcp_v1_content_profile	The real v1 facets were a CONTENT PROFILE: evidence = kind-of-information (definition/example/metric/argument/procedure/case_study/raw_data), entities = named-thing TYPE — both genuine semantic dimensions, not facts.
-state_2026_06_25_tfvr_corpus_relative	Per-facet value is corpus-relative (IDF-like) over the whole tag-corpus, stored as a small facet-vector ATTRIBUTE on the tag — never nodes/edges (too heavy), model emits nothing; calibration, not axis-definition.
-state_2026_06_25_tfvr_doc	State doc 2026-06-25: artefact tag-facets vs routing (the re-split) — the current facet baseline, crystallized from the 06-15/16 session; supersedes the 06-14 relevance-channels framing.
-state_2026_06_25_tfvr_facet_not_coordinate	A tag-facet is a dimension of MEANING read off the phrase, NOT a 'relevance coordinate' — the relevance-coordinate framing (06-14) was routing leaking into the facet definition and is dead.
-state_2026_06_25_tfvr_hollowed_tag	The v2 single-phrase tag is 'hollowed out' (semantics shipped to structure); the facet CONCEPT (not the weighting) returns as a semantic layer on the v2 phrases.
-state_2026_06_25_tfvr_set_reopened	OPEN: the tag-facet SET (which dimensions are tag-native vs interpreter/routing-side) and how each facet axis is DEFINED (corpus-relativity calibrates a tag along an axis but does not define the axis).
-state_2026_06_25_tfvr_the_cut	The cut (user-decided): separate tag-facets from routing — tag-facets = a semantic description of the phrase (v1's concept, no numbers); routing = a separate downstream job that consumes facets and owns relevance/weighting.
-state_2026_06_25_tfvr_topic_is_centrality	Topic is not a facet (the phrase IS the topic); topic-as-degree = the tag's centrality within its chunk, measured against its sibling tags (chunk-local reference frame).
-state_2026_06_25_tfvr_v2_interpreter_flavoured	The v2 five (stance/function/temporal-stance especially) read as interpreter/query-decomposition axes; v1's facets were the tag's actual semantic meaning 'around the tag'.
-state_2026_06_28_abde_build_worker1_graph	BUILD WORKER 1 (graph build, a3e3571f): graph_store.py extended (Tag node + HAS_TAG edge ingest, batched UNWIND 500/batch, BuildMeta sentinel with tag_count, chunk-set alignment check) + index.py new (PreparedIndex dataclass with mean-centered + re-L2-normalized matrix, load_artefact_index, resolve_chunk_text with scheme-aware separator, CYPHER_INSPECT). In-memory shapes: phrases=13776, chunks=5377, tag_emissions=22235, dim=2048, load=3.30s. 6 critical-review findings (all fixed, Clean). BLOCKER: Neo4j not running + no NEO4J_PASSWORD.
-state_2026_06_28_abde_build_worker2_interpreter	BUILD WORKER 2 (interpreter + pre-pass, b6126b9b): prepass.py new (deterministic literal pre-pass: product/employee/customer name matching, exclusion polarity, containment + identical dedup) + interpreter.py new (one-shot NIM interpreter: vocab-free system prompt, json_schema response_format, temp 0, no tools, MUST-NOT regexes, fail-loud validation). Model: z-ai/glm-5.1 (swapped to llama-3.3-70b in worker 3). 10-question smoke: 9/10 succeeded (1 transient NIM 429). 7 critical-review findings (all fixed, Clean).
-state_2026_06_28_abde_build_worker3_query_pipeline	BUILD WORKER 3 (query engine + pipeline + gold-100, ed7a4a1a): pipelines/artefact.py new (Prepared, prepare_over_corpus, retrieve_top_k_chunks, answer_one_question) + index.py extended (_load_verified_doc memoized + hash-verify, _pointer_get, _record_pointer, chunk_artifact_ids) + run.py (--retrieval-only flag) + compare_arms.py new. 4 critical-review findings (all fixed, Clean). Model swap glm-5.1 → llama-3.3-70b. Gold-100 k=10 retrieval-only: 99/100 answered, 1 MUST-NOT violation (caught). context_recall_id 0.199 vs lucene 0.035 vs vector 0.045.
-state_2026_06_28_abde_cause_Nemotron	CAUSE-AND-EFFECT: WHY Nemotron — one embedder in the stack gives a fair mechanism comparison between the artefact arm and the vector arm (the comparison is about facets vs dense, not the embedder). User said 'embedder is nemo' at t81, corrected the assistant's hedge at t82. Embedder = nvidia/llama-nemotron-embed-1b-v2, already used in embed_tags.py and the vector arm.
-state_2026_06_28_abde_cause_accumulate_not_max	CAUSE-AND-EFFECT: WHY the combinator is accumulate-not-max — strong across several relevant facets beats max on one (tagB[func .8, temporal .9]=1.7 beats tagA[func 1.0, temporal .2]=1.2 when both facets relevant). Also why context_precision_id is lower (0.068 vs 0.148) — accumulate + dedupe emits more ids per question, so precision-by-id is diluted. The design showing its hand, not a bug.
-state_2026_06_28_abde_cause_both_DB_and_inmem	CAUSE-AND-EFFECT: WHY both DB + in-memory — user wants the Neo4j DB for visual inspection + size ('just do the db for my sake also, i like the visual representation of it and i want to see the size') AND the in-memory structure for the query engine (at HERB scale no benefit to a DB round-trip; the lean graph is a data structure loaded at prepare()). The DB persists for visual inspection; the in-memory structure loads from the npz for speed. User's t81 'remember it's graph-shaped' — tag nodes are real nodes with edges to chunks, not just rows in a matrix.
-state_2026_06_28_abde_cause_graded_querytime	CAUSE-AND-EFFECT: WHY graded moved to query-time — dissolves three open problems at once: (a) the graded instrument (no probe, no SpLiCE dictionary, no exemplar-region, no max-F rephrase; the prompt's own facet phrase is the live cluster center); (b) axis-definition vs calibration (the axis = the prompt's phrase, live; calibration = a global corpus-relative geometry transform); (c) the no-LLM-judge constraint (the weight is computed live, nothing emitted). Cost: departs from §3 canon for the graded part; user accepted at t52.
-state_2026_06_28_abde_cause_lean_graph	CAUSE-AND-EFFECT: WHY the graph stays lean — the facet layer was becoming a second derived layer inside the graph, exactly the bloat the design rejected elsewhere (§7 killed entity/record nodes for the same reason: copies-not-references). User's t52 'embeddings, values, pointers etc, might be ok' defines the lean graph's content: the spine + tag embeddings + chunk hard-field attributes + references into raw + centrality-on-edge (deferred). Everything facet-related is computed live from the prompt.
-state_2026_06_28_abde_cause_model_swap	CAUSE-AND-EFFECT: WHY the model swap (glm-5.1 → llama-3.3-70b) — NIM was hard-throttling z-ai/glm-5.1 (every call 429s after 6 retries). User skipped the model-choice question at t108, so the assistant made the call: meta/llama-3.3-70b-instruct is proven on HERB tagging and on a different NIM per-model clock from glm-5.1, so the throttle shouldn't carry over. The swap is one line (INTERPRETER_MODEL); the contract is model-agnostic.
-state_2026_06_28_abde_cause_no_hard_filters	CAUSE-AND-EFFECT: WHY no hard filters — a hard filter crushes signal and gates on a JUDGMENT that can be wrong (a true decision mis-tagged 'status' would be silently, totally excluded). 'Mandatory' is achieved by weight concentration, not a gate; the cap does the cutting on the ranked continuum. The structural boost is additive (+1.0), not multiplicative — a multiplicative boost on a zero semantic score would be a hard filter in disguise (§14.4 forbids).
-state_2026_06_28_abde_cause_no_phrase_in_node	CAUSE-AND-EFFECT: WHY no phrase text in graph nodes — the phrase is the embedding's source, not the retrieval handle. The embedding is the handle; the phrase is re-derivable from the tags jsonl (re-embeddable from there, displayed by joining tag-id → phrases when needed). Consistent with references-not-copies: the phrase is a derived label, the embedding is a derived index, both re-derivable from the chunk + the stateless tagger prompt. User raised at t68; assistant agreed at t69.
-state_2026_06_28_abde_cause_uniform_dropped	CAUSE-AND-EFFECT: WHY the uniform vector was dropped — three measurement natures cannot share one shape. Entity-type is categorical (measured by directory join, equality-matched). Activity is graded (measured by embedding geometry, cosine-matched). Centrality is a scalar (chunk-local degree, a weight not a facet). The v1 5-vector forced all three into graded [0,1] fit scores and produced the hollowing.
-state_2026_06_28_abde_conversation_phaseA	Conversation phase A — the design dig (transcript turns t1–t54, 2026-06-27 13:39 → 2026-06-28 01:52): research-doc alternatives → hard-field unlock (the §14.7 directory apparatus IS a guide-link for entity-type) → interpreter-vs-graph facets separation (user correction: 'i separate the facets the interpreter use, and the actual real contextual/semantical facets the graph has in it') → heterogeneous profile (user: 'not all facets should be graded in the same way') → lean-graph + live-facets reframe (user: 'an optimal solution would to NOT have all of this in the graph, intead do it live-prompt-time').
-state_2026_06_28_abde_conversation_phaseB	Conversation phase B — the build (turns t55–t113): user 'it wont cost us anything to try this so we might as well just build it' → assistant proposes HNSW (or FAISS) → user 'wtf is this? HNSW (or FAISS)' → full dot product (no ANN at HERB scale) → user 'shouldnt we just embed them and put the embedding as a node in the graph instead with the reference' → tag node = embedding + chunk-binding, NO phrase text → user 'embedder is nemo... just do the db for my sake also, i like the visual representation' + 'fs,. i just said it's NEMOTRON FFS!' → both Neo4j DB + in-memory, Nemotron embedder → 3 workers (graph build, interpreter+pre-pass, query engine+pipeline+gold-100) → glm-5.1 429d → swap to llama-3.3-70b-instruct → gold-100 k=10 retrieval-only: context_recall_id 0.199 vs lucene 0.035 vs vector 0.045.
-state_2026_06_28_abde_conversation_phaseC	Conversation phase C — the record demand (turns t114–t123): user 'Allright, you need to collect exactly all the information of what you built, how it was built and why, ALL of it, NOTHING can be left out... EXACTLY THE ENTIRE FUCKING BUILD' + 'conversations and memories also count, just because it didnt leave a conversation doesnt mean it shouldnt be saved' + 'make more workers do that in case it takes time' → 3 parallel workers write the code/build record + this design-evolution record + the deferred/next record.
-state_2026_06_28_abde_correction_HNSW	CORRECTION t59: 'wtf is this? HNSW (or FAISS)' — assistant had hedged the ANN choice instead of picking one. Fix: neither — at HERB scale exact kNN over a numpy matrix is instant and trivially correct. Ponytail: pick the simplest thing that works.
-state_2026_06_28_abde_correction_NEMOTRON	CORRECTION t82: 'fs,. i just said it's NEMOTRON FFS!' — assistant had framed the embedder choice as a 'micro-decision' between Nemotron and DESIGN §11's nv-embedqa-1b-v2, even though user had already said 'embedder is nemo' at t81. Fix: Nemotron, settled, no hedge. The assistant's framing of a settled decision as open was the hedge that drew the correction.
-state_2026_06_28_abde_correction_multihop	CORRECTION t27: 'quite alot of multihop, check the HERB documentation instead of asking me' — assistant had claimed HERB is mostly single-hop. Fix: read the HERB dataset card + gold-100 questions, reverse the claim. HERB is fundamentally a multi-hop + aggregation benchmark; the artefact is the first-hop retriever; the aggregation path is a real design gap.
-state_2026_06_28_abde_correction_not_latest_docs	CORRECTION t5: 'no, you are not reading the latest or relevant docs for the artefact, you have missed alot of info here' — assistant had read the older 06-25 state doc, not the reconciled guide-link + content-profile doc. Fix: read the newer state doc + tag.py and re-answer with the guide-link model in mind.
-state_2026_06_28_abde_correction_separate_facets	CORRECTION t18: 'well, i separate the facets the interpreter use, and the actual real contextual/semantical facets the graph has in it' — assistant had conflated the interpreter's prompt-side decomposition with the graph's corpus-side tag-facets. Fix: re-cut on the correct side — the hard-field apparatus + detectors are corpus-end measurement instruments for the graph-side tag-facets; the interpreter uses the same apparatus's other half (literal flagging) to produce the prompt-end. Symmetry + separation preserved.
-state_2026_06_28_abde_correction_uniform_vector	CORRECTION t39: 'uniform vector? what?' — assistant had characterized the v1 model as a 'uniform facet vector' and argued against it, but the user didn't recognize the framing. Fix: clarify that 'uniform vector' = the v1 5-vector of graded [0,1] fit scores, and that the split (categorical / graded / scalar) is only a reframe if the user was picturing all facets as graded-closeness. User's t42 'not all facets should be graded in the same way' confirms the split lands.
-state_2026_06_28_abde_discarded_HNSW_FAISS	DISCARDED: HNSW / FAISS for the tag embedding index — dropped at t60 when user said 'wtf is this? HNSW (or FAISS)'. At HERB scale (~13,776 tags) exact kNN over a numpy matrix is instant and trivially correct. HNSW/FAISS are for millions of vectors — premature complexity. One matmul, no approximation.
-state_2026_06_28_abde_discarded_INSTRUCTOR	DISCARDED: INSTRUCTOR-conditioning (encoder conditioned per facet, no rewrite) — still bakes a per-facet vector at index time, which the lean-graph reframe rejects. The instruction is also adjacent to the dead cosine(tag, embed('facet')) comparison.
-state_2026_06_28_abde_discarded_SpLiCE	DISCARDED: SpLiCE / sparse-code-over-dictionary (NN-LASSO over a fixed concept dictionary) — the lean-graph reframe moved graded facets to query-time; there's no baked per-facet coordinate to solve for, and the dictionary would be exactly the bloat the user rejected. Live cosine to the prompt's facet phrase replaces it.
-state_2026_06_28_abde_discarded_baked_graded	DISCARDED: baking graded facets at index (the §3 canon: per-facet value = corpus-relative measure, stored as a tag attribute vector) — dropped at t52 when user said 'an optimal solution would to NOT have all of this in the graph, intead do it live-prompt-time, because of the size it's becoming'. Graded facets + corpus-relational weights move to query time; categorical + centrality + embeddings stay baked.
-state_2026_06_28_abde_discarded_exemplar_region	DISCARDED for graded, KEPT (deferred) for categorical: the exemplar-region route (difference-of-means over real F-maximal tags, mined deterministically) — dropped for graded because query-time clustering replaces it; kept for categorical (entity-type via directory join, info-kind via detectors) as baked tag attributes (pass 2).
-state_2026_06_28_abde_discarded_hard_clustering	DISCARDED: hard clustering (hard-assign each tag to its top facet, rank within) — rejected by §14.4 (no hard filters; facets order, never filter). The combinator uses continuous coefficients, not gates. Soft-assign (continuous cosine per facet, weighted sum) = what the design already specifies.
-state_2026_06_28_abde_discarded_kNN	DISCARDED: kNN as the retrieval primitive — at this scale it's a full dot product (tag_matrix @ facet_phrases.T → [n_phrases, n_facets]), every tag gets its facet-weight vector in one shot. kNN would be an optimization to avoid computing the full matrix, but at 13,776 × ~5 the full multiply is cheaper than building an index.
-state_2026_06_28_abde_discarded_maxF_rephrase	DISCARDED: the max-F-rephrase instrument (rewrite the tag to be 'max of this facet', embed-compare) — rewrite-distance conflates incidental wording change + topic leak + the actual facet change; tracks surface variation more than the attribute. Replaced by query-time clustering (the prompt's own facet phrase is the live cluster center; no rewrite, no probe, no rewrite-distance).
-state_2026_06_28_abde_discarded_per_facet_edges	DISCARDED (already dead): per-facet edges (v1 mistake) — one edge per facet carrying that facet's weight. Replaced by one edge per tag carrying the whole relational layer. In the lean-graph build, the edge carries only centrality (deferred); graded weights are query-time.
-state_2026_06_28_abde_discarded_relationship_layer	DISCARDED: a relationship layer in the graph (record nodes / relationship edges for multi-hop) — §7 killed it deliberately as the 'copies disease at the node level'. Multi-hop is handled by chunk attributes (ids, kind, product) + references into raw + directory joins + a query-side composition path, not by new nodes.
-state_2026_06_28_abde_discarded_relevance_coordinate	DISCARDED: 'facet = relevance coordinate' (the 06-14 framing) — routing leaking into the facet definition. Replaced by the guide-link model (06-25): a facet is a concept both tag and prompt are measured-close-to.
-state_2026_06_28_abde_discarded_single_hop_claim	DISCARDED: 'HERB is mostly single-hop' (assistant's t25 claim) — reversed at t31 after user 'quite alot of multihop, check the HERB documentation instead of asking me'. HERB dataset card: 'Deep Search and Long Context Reasoning... multi-hop questions.' Every gold-100 question is multi-hop; several need aggregation. The artefact is the first-hop retriever; the chain lives in the generator + raw-via-references + directory joins.
-state_2026_06_28_abde_discarded_uniform_vector	DISCARDED: the uniform graded facet vector (v1's 5-vector of [0,1] fit scores, same instrument, same shape) — three measurement natures (categorical / graded / scalar) cannot share one shape; forced them into graded and produced the hollowing (entity-type + info-kind misread as facts and deleted). User's load-bearing cut at t42: 'not all facets should be graded in the same way'.
-state_2026_06_28_abde_discarded_v2_5facet	DISCARDED: the 5-facet v2 set (topic, process, stance, communicative-function, temporal-stance/TAM) — assistant-synthesized, never user-hard-approved; hollowed the tag (every dimension had a cheaper structure-or-interpreter home, so the v2 tag became a bare topic phrase). The content profile (activity, entity-type, information-kind, centrality) replaces it; postures (stance/function/TAM) go to the interpreter.
-state_2026_06_28_abde_doc	State doc 2026-06-28: artefact build design-evolution + conversation + memory record — the COMPLETE intellectual provenance of the lean-graph + live-facets build (every turn, every verbatim load-bearing user statement, every discarded idea, every correction, the cause-and-effect chain, the memory audit, the build-time decisions, the user's working style). Companion to the code/build record (state_2026_06_28_lglf_doc) and the deferred/next record.
-state_2026_06_28_abde_memory_audit_MEMORY	MEMORY AUDIT: MEMORY.md NEEDS UPDATING (the index) — the 'Tag-facets vs routing' entry points to the 06-25 state doc as current; after this build, the current facet baseline is the lean-graph + live-facets design — point to the three 2026-06-28 state docs instead. The 'Facet semantic framework' entry should extend to 'STALE on the 5-facet set; the content profile replaces it; graded facets are query-time.' The 'Retriever routing model' entry should note the realized combinator + Nemotron embedder correction.
-state_2026_06_28_abde_memory_audit_facet_semantic_framework	MEMORY AUDIT: facet-semantic-framework.md STALE (confirmed + extended) — stale on 'facet = relevance coordinate' + entities/evidence misread + the entire 5-facet v2 set (dropped). The content profile (activity, entity-type, information-kind, centrality) replaces it; postures go to the interpreter; graded facets are query-time. The SFL/appraisal/PMEST/AMR/RST synthesis is background, not the spec. Needs a rewrite stating the current design.
-state_2026_06_28_abde_memory_audit_retag_facet_analysis	MEMORY AUDIT: retag-facet-analysis.md STALE (confirmed) — repeats the evidence=sourcing misread. The v1 tag pollution analysis (~18% eid/year junk) is valid history; the 'promote temporal+entity to structure' prescription is right for FACTS (eid, dates) but wrong about semantic dimensions (entity-TYPE, information-KIND are real facets, not facts). Needs a rewrite separating fact-from-meaning cleanly.
-state_2026_06_28_abde_memory_audit_retriever_routing_model	MEMORY AUDIT: retriever-routing-model.md PARTIALLY STALE (needs updating) — the routing model is canon (weighted activation propagation; combinator = promptFacetRelevance · facetWeights, accumulate not max; NO hard filters; hard fields fold in as soft boosts), BUT: the facet-weight-vector framing predates per-chunk phrase tags; the embedding-axis-projection machinery is DEAD (plain cosine, no axis projection); the embedder line is STALE (says nv-embedqa-1b-v2, build uses Nemotron). Needs a refresh stating the realized combinator + Nemotron embedder + query-time-facets realization.
-state_2026_06_28_abde_memory_audit_tag_facets_vs_routing	MEMORY AUDIT: tag-facets-vs-routing.md STALE (confirmed + extended) — the guide-link model is still canon (a facet is a concept both tag and prompt are measured-close-to), BUT the realization is now query-time clustering for graded facets, not a baked per-facet vector. 'One edge per tag carrying the whole facet vector' is departed for the graded part. Corpus-relational value moves from a per-facet baked value to a global geometry transform applied live. Needs a rewrite stating the lean-graph + live-facets realization.
-state_2026_06_28_abde_memory_audit_v3_artefact_subsystem	MEMORY AUDIT: v3-artefact-subsystem.md NEEDS UPDATING — the graph is now built (was the unbuilt part); pipelines/artefact.py is now implemented (was a stub); 36 tests pass (was 16). The 'graph (chunk→tag→retrieve) is the unbuilt part' line is stale.
-state_2026_06_28_abde_user_working_style	User's working style (from the conversation + MEMORY.md 'How I work'): terse, hates verbosity (shortest correct answer; no option-menu walls; take real positions); conversation is source of truth (memory is downstream); verify before asserting (never assert from training; verify against running system + online); no cost estimates (user judges cost themselves); no Claude attribution; fail loud (fallback/degradation = bloat); casual profanity = intensity not hostility; heed user intent don't correct it; design before build; no historical/defensive comments; state/handoff = utmost care; no cutting corners; user owns execution.
-state_2026_06_28_abde_verbatim_quotes	Verbatim load-bearing user quotes (cited by transcript turn [tNN]): t5 'no, you are not reading the latest or relevant docs for the artefact, you have missed alot of info here' | t18 'i separate the facets the interpreter use, and the actual real contextual/semantical facets the graph has in it' | t27 'quite alot of multihop, check the HERB documentation instead of asking me' | t39 'uniform vector? what?' | t42 'not all facets should be graded in the same way' | t52 'an optimal solution would to NOT have all of this in the graph, intead do it live-prompt-time, because of the size it's becoming' | t59 'wtf is this? HNSW (or FAISS)' | t68 'shouldnt we just embed them and put the embedding as a node in the graph instead with the reference' | t81 'just do the db for my sake also, i like the visual representation of it and i want to see the size' | t82 'fs,. i just said it's NEMOTRON FFS!' | t114 'EXACTLY THE ENTIRE FUCKING BUILD' | t119 'conversations and memories also count, just because it didnt leave a conversation doesnt mean it shouldnt be saved'.
-state_2026_06_28_blocker_embedder_throttle	BLOCKER: embedder nvidia/llama-nemotron-embed-1b-v2 started erroring mid-eval (400 Bad Request from /v1/embeddings) - semantic_similarity circuit-broke at 10/99 (nan for artefact; lucene+vector completed at ~0.32); NIM-wide throttle progressing.
-state_2026_06_28_blocker_generator_down	BLOCKER: generator qwen/qwen3.5-397b-a17b hard-down (ReadTimeout 365s) - 005000Z run n_ran=0 n_failed=100; blocks the 3 judged RAGAS metrics (faithfulness/answer_correctness/context_recall_llm) + answer-quality comparison; unblocks when NIM recovers.
-state_2026_06_28_blocker_must_not_violation	BLOCKER: llama-3.3-70b 1/100 MUST-NOT violation - emitted eid_bac7c6c4 as a person literal token on PersonalizeForce::a::34; validator caught it loudly; per-model MUST-NOT violation rate worth characterizing.
-state_2026_06_28_combinator_pass1	Pass-1 combinator: mean-center query against corpus mean -> cosine of every tag vs every facet_phrase -> pool by MAX across facet phrases (one pooled set) -> ACCUMULATE phrase weights over chunk tag rows -> +1.0 product-literal boost on relpath; no per-chunk-size normalization, no per-facet-axis split.
-state_2026_06_28_deferred_aggregation_path	DEFERRED: the aggregation path (answer_shape=aggregate) - semantic filter + full recall + group-by chunk attribute + directory join + count/max; 30+ gold-100 questions mis-routed through top-k; biggest design gap; needs sign-off (semantic filter threshold + scope + group-by set).
-state_2026_06_28_deferred_categorical_attrs	DEFERRED: categorical tag-attributes - entity-type via directory join (research 9.1) + info-kind via detectors (research 8.1: quantulum3 metric, imperative-POS procedure, Hearst/DiMLex definition/example); the guide-link categorical end; needs interpreter-emits-vs-combinator-clusters sign-off.
-state_2026_06_28_deferred_centrality	DEFERRED: centrality (chunk-local scalar on the chunk->tag edge) - TextRank/degree/PPR on the chunk tag-similarity graph (research 7); the one phrase-robust facet; a weight not a retrieval signal; needs which-measure + combine-rule sign-off.
-state_2026_06_28_deferred_chunk_attrs	DEFERRED: chunk attribute extraction (date/person/org) - DESIGN 4 step 4 Structure stage materializes them as chunk attributes for structural joins; pass 1 only joins on kind+product; needs boost-magnitude-schedule + date-overlap-rule sign-off.
-state_2026_06_28_deferred_fuzzy_prepass	DEFERRED: the fuzzy-embedding pre-pass (user 'few dimensions of ranking' idea) - embed hard-field names for fuzzy-unless-exact weighted match; exact-unique still jumps, fuzzy never jumps; needs sign-off to lift DESIGN 14.7 'no embedded value vocabulary' principle.
-state_2026_06_28_deferred_geometry_transform	DEFERRED: corpus-relative geometry transform refinements - soft-ZCA, cluster-local isotropy, IDF-weighting (research 1.2/6); pass 1 uses mean-centering only; needs which-transform sign-off validated by the orthogonality probe (the 1.3 whitening-vs-clusters trap).
-state_2026_06_28_deferred_neo4j_build	DEFERRED (blocked): Neo4j DB build - graph_store.py is built + ready (writes Source->File->Chunk->Tag into herb-v3 with embeddings as float[] + BuildMeta sentinel); blocked on Neo4j not running + no NEO4J_PASSWORD (parent action).
-state_2026_06_28_deferred_per_facet_split	DEFERRED: per-facet-axis split in the combinator - score each facet axis separately + combine per DESIGN 14.3 (promptFacetRelevance . facetWeights); pass 1 pools unlabelled; needs interpreter-labels-vs-engine-clusters sign-off + the 14.3 normalization.
-state_2026_06_28_doc	State doc 2026-06-28: artefact arm pass-1 build record - deferred pieces, open problems, NIM blockers, k=10 baseline, next-task fork (the lean-graph + live-facets retrieval arm).
-state_2026_06_28_eval_precision_dilution	Eval result: context_precision_id 0.068 vs vector 0.148 (lucene 0.102) - accumulate + dedupe dilutes precision; per-chunk-size normalization (DESIGN 14.3 open) is the knob to tune.
-state_2026_06_28_eval_recall_proof	Eval result: context_recall_id 0.199 vs lucene 0.035 vs vector 0.045 (~4-5x at k=10) - the retrieval-quality proof that the lean-graph + live-facet mechanism beats both baselines on citation-based recall.
-state_2026_06_28_eval_tiling_gap	Eval result: context_recall_nonllm 0.023 vs lucene 0.041 / vector 0.050 - the chunk-text tiling gap; artefact tiles source differently than per-artifact baselines (json_pointer chunks join with newline, char_span with empty string); worth investigating.
-state_2026_06_28_lglf_blocker_generator_down	BLOCKER: shared generator qwen/qwen3.5-397b-a17b hard-down (ReadTimeout after 365s per call). --retrieval-only flag added to run.py routes around it (build_shared_generator returns None; ArmOutput.answer empty). Judged metrics (faithfulness/answer_correctness/context_recall_llm) blocked — same model is the judge.
-state_2026_06_28_lglf_combinator_pass1	Pass-1 combinator: Q_c = (Q - mean_vector) re-L2-normalized; S = matrix_centered @ Q_c.T; phrase_weight[i] = max_j S[i,j]; chunk_score[j] = sum_{i in tag_rows[j]} phrase_weight[i] (ACCUMULATE not max); additive PRODUCT_LITERAL_BOOST +1.0 per wanted product literal whose products/<name>.json is in relpath. No hard filters; the cap cuts.
-state_2026_06_28_lglf_context_ids_resolution	context_ids = chunk_artifact_ids(chunk, data_root, cache): for each ref, walk its pointer back to /collection/index, resolve that record (hash-verified, memoized), read its top-level id field, dedupe. Same id space as gold citations + other arms' context_ids, so RAGAS citation-based metrics compare like-for-like.
-state_2026_06_28_lglf_doc	State doc 2026-06-28: artefact arm lean-graph + live-facets build record — the COMPLETE build (every file, function, relationship, decision) of the artefact as a runnable retrieval arm; supersedes the 06-25 guide-link doc on the instrument (max-F-rephrase dropped) and DESIGN/MODEL_CONTRACTS facet sections.
-state_2026_06_28_lglf_eval_context_recall_id_0_199	Eval result (gold-100 k=10 retrieval-only): context_recall_id 0.199 (n=99) vs lucene 0.035 (n=100) vs vector 0.045 (n=100) — ~4-5x the gold-citation recall. The structured facet-channel retrieval + product-literal boost finds the right artifacts far more reliably than dense/sparse baselines.
-state_2026_06_28_lglf_eval_precision_dilution	Eval result: context_precision_id 0.068 vs lucene 0.102 vs vector 0.148 — LOWER. The accumulate-not-max + dedupe design emits more ids per question (k=10 chunks → up to ~67 deduped context_ids vs 10 for baselines), so precision-by-id is diluted. High recall, lower precision — the design's hand.
-state_2026_06_28_lglf_graph_store_herb_v3	graph_store.py ingests the lean graph into Neo4j DB herb-v3 (NEVER herb-eval — the superseded oracle-contaminated v1 build). Tag node carries embedding (float[]) + embedding_row + embedding_dim; tag_id = {chunk_id}#{position}. :BuildMeta sentinel (chunk_count + tag_count) written LAST — its presence means ingest finished. BLOCKED on Neo4j running + NEO4J_PASSWORD.
-state_2026_06_28_lglf_heterogeneous_profile	Heterogeneous facet profile: categorical (entity-type via directory join, info-kind via detectors DEFERRED) / graded (activity/argument/case_study via query-time clustering) / scalar (centrality DEFERRED). Replaces v1's uniform w_facet 5-vector — three different measurement natures cannot share one vector.
-state_2026_06_28_lglf_interpreter_llama_33_70b	Interpreter model = meta/llama-3.3-70b-instruct (swapped from z-ai/glm-5.1 which 429d on the first gold-100 run). One-shot temp-0 structured NIM call, no tools, response_format json_schema. Contract model-agnostic — system prompt + json_schema + MUST-NOT regexes + validation all identical across models. Swap is a one-line change at INTERPRETER_MODEL.
-state_2026_06_28_lglf_lean_graph	Lean graph: Tag node = embedding + chunk-binding, NO phrase text in the node (phrase lives in tags jsonl, re-embeddable via embed_tags.py). Source→File→Chunk→Tag spine; hard fields as chunk attributes; references into untouched raw.
-state_2026_06_28_lglf_live_facets	Live facets: graded structure derived query-time (NOT baked at index) — interpreter emits facet_phrases, pipelines/artefact embeds them, mean-centers against corpus mean, dot-products against the tag matrix, max-pools across facet phrases, accumulates over chunk tag rows. Dissolves the instrument + axis-definition + calibration open problems.
-state_2026_06_28_lglf_mean_centering	Mean-centering as pass 1 of corpus-relative geometry (research §1.2): subtract corpus mean vector, re-L2-normalize; mitigates cone-effect + anisotropy + rogue dimensions. Original matrix retained for ablation. A zero-norm row after centering is left at zero.
-state_2026_06_28_lglf_must_not_regex	Interpreter MUST-NOT regex: \b(?:eid_[0-9a-f]+|CUST-\d+|PR[-#]?\d+|#\d{2,})\b|https?://\S+|\b(?:19|20)\d{2}\b|\b\d{4}-\d{2}-\d{2}\b — ids/dates/years/URLs/PR-numbers/channel-ids never in facet_phrases or literal tokens. _validate fails loud on any hit (no silent partial).
-state_2026_06_28_lglf_must_not_violation_1_100	1/100 MUST-NOT violation: llama-3.3-70b emitted eid_bac7c6c4 as a literal token for PersonalizeForce::a::34. The _validate fail-loud caught it (no silent partial); the run continued. Per-model violation rate is an open measurement (1/100 for llama-3.3-70b; glm-5.1 unmeasurable — 429d).
-state_2026_06_28_lglf_next_fork	Immediate next task (fork): (A) aggregate-path design pass — semantic filter + full recall + group-by-attribute + directory-join (DESIGN §14.6 structural-query path; 30+ HERB questions are answer_shape=aggregate, currently logged + returned as top-k); OR (B) wait for NIM + judged-metric comparison (re-run gold-100 k=10 with generator up + k=5).
-state_2026_06_28_lglf_prepared_index	PreparedIndex (artefact/index.py): in-memory view of the lean graph — matrix (mean-centered + re-L2-normalized), matrix_raw (original L2-normalized), mean_vector, phrases, chunk_ids, chunk_kinds, chunk_tag_rows, phrase_to_chunks, chunks_by_id. Fails loud on stale npz (chunk set + per-chunk kind must match chunker).
-state_2026_06_28_lglf_prepass_lookback_anchored	Pre-pass exclusion polarity (lookback-anchored regex): the exclusion keyword must be the LAST word(s) immediately before the match (only an optional determiner in between). Kills false positives a bare 'within 30 chars' rule produces on real HERB phrasing ('discussed but not implemented in X', 'sets the product apart from IBM Watson') while catching 'apart from PitchForce' / 'not X'.
-state_2026_06_28_lglf_rejected_uniform_vector	REJECTED: the uniform facet vector (v1's w_facet 5-vector on every tag), baking graded facets at index, per-facet edges, facets-on-chunk, model-emitted numbers, stance-via-geometry, phrase text in the graph node, the max-F-rephrase instrument (rewrite-distance conflates incidental wording + topic leak + facet change), hard filters in ranking, 'facet = relevance coordinate', the entities/evidence misread, the v2 five-facet set as canon, comparing a tag to an abstract facet-label embedding, the chunk description, designing from the retrieval side.
-state_2026_06_28_next_fork	NEXT TASK (OPEN pending user call): fork A aggregate-path design pass (pure design, no NIM, unblocks 30+ questions) / B wait for NIM + re-run 3 arms with judged metrics + k=5 / C categorical detectors + centrality + chunk attrs + geometry (build-out, needs sign-offs). Assistant recommends A first.
-state_2026_06_28_open_aggregation_design	OPEN problem (new): the aggregation-path design - semantic filter threshold (cosine cutoff / rank-cutoff / relative-to-max) + scope-narrowing rule (product only / +date_range +kind) + group-by attribute set + Cypher-vs-in-memory; needs sign-off before coding per CLAUDE.md design-before-build.
-state_2026_06_28_pass1_baseline	Pass-1 lean-graph + live-facets retrieval baseline BUILT + RAN on gold-100 at k=10 retrieval-only: deterministic spine + tagger phrases + embedder npz + mean-centered PreparedIndex + literal pre-pass + structured interpreter + max-pool/accumulate combinator + product-literal boost; beats lucene+vector on citation recall ~4-5x.
-tests_smoke_chunk_rationale_1	Smoke over the real HERB corpus (design §16: full pipeline on the whole corpus i
+pipelines_vector_rationale_267	Content-addressed cache file for this index: any change to the model, the     id
+pipelines_vector_rationale_281	prepare(): embed every corpus artifact (as "passage") and hold the     normalise
+pipelines_vector_rationale_357	Uniform prepare entry the orchestrator drives: build the corpus index and     at
+pipelines_vector_rationale_368	(id, question_text) from a QuestionWithTruth, dict, (id, text) tuple, or a     b
+pipelines_vector_rationale_380	Load the precomputed question vectors -> {id: vector [d] float32 L2-normalised}.
+pipelines_vector_rationale_393	Look up the question's precomputed query vector by id, exact brute-force cosine
+pipelines_vector_rationale_424	Native artifact id off the unit. Fills ArmOutput.context_ids (same id space
+pipelines_vector_rationale_430	Collect the units' text. Fills ArmOutput.contexts + feeds the generator.
+pipelines_vector_rationale_437	Normalise a generator's return into (answer, ModelUsage).
+pipelines_vector_rationale_444	ENTRY: retrieve_top_k -> ids + text -> generate -> ArmOutput.      `generate` is
+tests_smoke_chunk_rationale_1	Smoke over the real HERB corpus (design §16: full pipeline on the whole corpus
 tests_test_chunk_rationale_1	Golden tests for the deterministic chunker (design §9, §16): pure functions, no
-tests_test_probe_rationale_1	Golden tests for the shape probe — the deterministic prefix is cheap to lock dow
-v3_ablate_boost_rationale_1	Ablation: attribute the gold-100 k=10 context_recall_id between the corpus-gener
-v3_ablate_boost_rationale_68	Resume: per-question records already computed (id -> record). The     interprete
-v3_abort_rationale_1	abort.py — press 'q' to stop a running gen/eval loop.  Ctrl+C can be swallowed m
-v3_abort_rationale_16	Raised from inside an in-flight call when q has been pressed, so a worker     pa
-v3_abort_rationale_25	Start a daemon thread that sets the abort flag when q/Q is pressed. No-op     wh
-v3_artefact_design_build_time_validation	Build-time validation catches tagger errors before a full run: the deterministic prefix runs free with golden tests, tags get code data-quality assertions (SPADE/promptfoo), error analysis on ~20-40 traces precedes the assertions, catching needs ~30 draws vs measuring 250-500.
-v3_artefact_design_chunk_coherent_episode	A chunk is a coherent episode, not a fixed-size window; the cap (3000 tokens) is the tagger focus-span guardrail that closes a packed run or splits an oversized unit, never a fill target.
-v3_artefact_design_chunk_materialized_path_tiers	The materialized path is integer components; canonical record-position tiers map to json_pointer spots, but derived-grouping tiers (channel-ordinal, episode-ordinal, split fragment-ordinal) correspond to nothing addressable in source — the chunk source position lives in its refs for those.
-v3_artefact_design_chunk_per_position_dispatch	Records-vs-prose is decided per position by content-kind: conversation streams (channel + adaptive time-gap episodes), prose-leaf records (one chunk per record, siblings never merged), short structured records (pack consecutive toward the cap).
-v3_artefact_design_chunk_refs_per_leaf_lossless	A chunk references its content leaves directly into untouched raw (the content projection, not inter-leaf bytes); the exact-tiling guarantee is per-leaf — an over-cap leaf char-span fragments tile that leaf exactly.
-v3_artefact_design_coherent_episode_chunk	A chunk is a coherent episode (thread/conversation/document), not a fixed-size window; the ~3000-token cap is a guardrail set at the tagger's effective focus span, not an embedder limit.
-v3_artefact_design_derive_corpus_quarantine	Stage-0 derive-corpus structurally quarantines RAG-unsafe surfaces (HERB eval oracle + team/customers membership links) into a corpus view the probe cannot sense; contamination is impossible by construction, the eval reads the oracle in place from raw.
-v3_artefact_design_deterministic_seam_finder	One fully deterministic top-down seam-finder (no embeddings, no LLM) does episode segmentation and over-budget splitting, with per-content-kind seams dispatched by probe shape and a uniform walk-to-strongest-seam-and-recurse split rule, no minimum size.
-v3_artefact_design_doc	v3 artefact subsystem design: the references-not-copies graph-RAG artefact built natively in v3 — spine, reference triple, resolution, pipeline, probe, mapping key, chunks/tags, routing, facets, build-time validation.
-v3_artefact_design_facet_set	Facets are parallel relevance channels / a tag's character (not buckets): topic, process, stance, communicative-function, temporal-stance(TAM), allocated facts→structure and semantics→facets across seven converging linguistic traditions; the model emits no numbers.
-v3_artefact_design_graph_spine	The graph spine is closed canon: Source → File → Chunk → Tag are the only nodes; nothing else (records, branches, metadata directories) is materialized.
-v3_artefact_design_literal_matching_prepass	A deterministic pre-pass matches the prompt against actual hard-field values read at query time through field connections (no pre-embedded value vocabulary): exact literals give strong boosts, the toolless one-shot interpreter flags type/wanted-vs-excluded, a scoped string-distance lookup catches typos.
-v3_artefact_design_mapping_key	The mapping key is a per-dataset declarative settings file read by one generic loader: shape→handling is automatic (repetition ratio splits attribute vs raw), and only three meaning judgments — content choice, directories+kind, id-space assignment — are declared.
-v3_artefact_design_materialized_path	The chunk index is a materialized path of integer components — canonical source structure top to bottom, records included — with the subchunk split the only minted non-canonical tier (no parent node); the path does triple duty: ancestry, expansion, diversity.
-v3_artefact_design_node_attribute_rule	Node-vs-attribute rule: a thing is a node only when others resolve through its facts or retrieval walks through it; otherwise it is an indexed attribute you filter or boost by, riding at the structural scope where the value sits.
-v3_artefact_design_per_chunk_tags	Each emitted tag is its own per-chunk :Tag node bound to one chunk (no shared vocabulary); same phrase elsewhere is text equality, making retag/delete local and lossless, with a shared view derivable by normalized text.
-v3_artefact_design_pipeline_skeleton	Pipeline: derive-corpus → scan → probe → reference → structure → tag → retrieve (Match→Filter→Rank→Cap), each arm reading references over the untouched corpus view.
-v3_artefact_design_reference_triple	A reference is {file_id, scheme, address}; the scheme (json_pointer / char_span / row / reference-only) is chosen by data shape, and rendered prose is a transient tagger view, never stored.
-v3_artefact_design_references_not_copies	Core principle: the graph indexes references into untouched authoritative raw source plus a derived semantic layer; content is resolved on demand, never stored as a mutated second copy (v1's c.content prose was the inversion).
-v3_artefact_design_resolution_hash_verify	Resolution reads raw in place under data_root by relative path; identity is the content hash (file_id = sha256[:24]); the hash is verified on resolve and resolution fails loud on mismatch — no content-addressed store.
-v3_artefact_design_routing_model	Retrieval is weighted activation propagation (no hard filters): a prompt-conditioned weighted dot product accumulates per-facet channels at chunks, hard fields enter as soft boosts, and a deterministic exact single-anchor jump narrows with a loud automatic widen.
-v3_artefact_design_shape_probe	The shape probe climbs each parsed file and recovers the structural schema with zero meaning knowledge — one fused shape tree, repetition collapsed, per-field repetition ratio — describing shape + candidates only, leaving entity-vs-content to the mapping.
-v3_artefact_design_stateless_tagger	One stateless temp-0 structured-output call per chunk (phrases out, no description, no numbers, instance discarded), graph-assembled context handed in as explicit input — statelessness is the precondition for build-time validation.
-v3_artefact_model_contracts_closed_enums_are_attributes	Closed-facet labels (function, temporal_stance, literal kind, answer_shape) are chunk attributes or universal enums living in the fixed prompt — never embedded — while open facets are the only thing the pipeline ever embeds.
-v3_artefact_model_contracts_deliberately_absent	Deliberately absent: no answerer/generation contract (specced with the eval harness), no LLM-judge (died with the description carrier), and no per-dataset prompt variants (one tagger + one interpreter prompt).
-v3_artefact_model_contracts_doc	v2 model contracts: the structured I/O at every model touchpoint (tagger, interpreter, embedder), inherited invariants, deliberately-absent contracts, and the sign-off checklist of judgment calls.
-v3_artefact_model_contracts_embedder_contract	The embedder contract: the asymmetric nv-embedqa-1b-v2 embeds exactly one thing — phrase tags (passage) and their prompt-side facet mirror (query) — at native 2048 dims, L2-normalized, under the shared limiter.
-v3_artefact_model_contracts_inherited_invariants	Every contract inherits: no numbers cross the model boundary either direction; stateless temp-0 one-call-per-unit; schema-enforced output that fails loud; one shared async rate limiter; vocab-free model contexts.
-v3_artefact_model_contracts_interpreter_contract	The interpreter contract: one toolless temp-0 call per prompt emitting literals (kind+polarity), prompt-side facet phrases, a structural date_range, and answer_shape — extracting exactly the axes retrieval uses, no coefficients.
-v3_artefact_model_contracts_must_not_appear	MUST-NOT rule: ids, dates/years, URLs, PR numbers, and channel ids never appear in tagger output — those are facts that become structure (the v1 pollution); enforced as promptfoo regression assertions with no model in the loop.
-v3_artefact_model_contracts_schema_revalidation	Status: the verbally-approved tagger output schema predates the 2026-06-14 facet reframe (facets = relevance channels, same-facet matching), so per-facet carriers are REOPENED and must be re-validated before encoding.
-v3_artefact_model_contracts_signoff_checklist	The sign-off checklist: each judgment call beyond decided design (per-facet carriers, marked spans, context envelope, native dims, answer_shape, current date) is asked in conversation with its schema inline — the doc itself is never the approval.
-v3_artefact_model_contracts_tagger_contract	The tagger contract: one temp-0 call per chunk over a chunk-envelope, emitting open contextual-phrase lists (topic/process/stance) plus closed-enum chunk attributes (function/temporal_stance), source-language, no numbers.
-v3_artefact_model_contracts_three_touchpoints	A model touches an item in exactly three places — tagger (build, per chunk), interpreter (query, per prompt), embedder (build+query, per phrase) — everything else is deterministic and free.
-v3_build_question_sets_rationale_17	The gold-N: a balanced ANSWERABLE subset, drawn by seeded round-robin     over t
-v3_build_questions_rationale_1	build_questions.py — one-shot: build the HERB question set from raw.  HERB ships
-v3_compare_arms_rationale_1	compare_arms.py — side-by-side RAGAS comparison across the gold-100 runs.  Walks
+tests_test_probe_rationale_1	Golden tests for the shape probe — the deterministic prefix is cheap to lock do
+v3_ablate_boost_rationale_1	Ablation: attribute the gold-100 k=10 context_recall_id between the corpus-gene
+v3_ablate_boost_rationale_68	Resume: per-question records already computed (id -> record). The     interpret
+v3_abort_rationale_1	abort.py — press 'q' to stop a running gen/eval loop.  Ctrl+C can be swallowed
+v3_abort_rationale_16	Raised from inside an in-flight call when q has been pressed, so a worker     p
+v3_abort_rationale_25	Start a daemon thread that sets the abort flag when q/Q is pressed. No-op     w
+v3_backfill_token_split_rationale_1	backfill_token_split.py — add tokens_in/tokens_out ONLY on rows with no token da
+v3_build_question_sets_rationale_17	The gold-N: a balanced ANSWERABLE subset, drawn by seeded round-robin     over
+v3_build_questions_rationale_1	build_questions.py — one-shot: build the HERB question set from raw.  HERB shi
+v3_compare_arms_rationale_1	compare_arms.py — side-by-side RAGAS comparison across the gold-100 runs.  Wal
 v3_compare_arms_rationale_28	(arm, k) -> {metric: [values...]} over the ok cells in eval_results.jsonl.
 v3_contract_rationale_1	contract.py — the shared shapes every arm and evaluator imports.
-v3_contract_rationale_16	One model's cost — calls / tokens / wall-time. Reused wherever a model is     to
-v3_contract_rationale_54	Provenance for a `questions` run — answers generated by ONE arm.
-v3_contract_rationale_68	Provenance for an `evals` run — ONE scorer over one run file.
-v3_embed_questions_rationale_1	embed_questions.py — precompute the dense (vector) arm's question vectors.  Run
-v3_embed_tags_rationale_1	embed_tags.py — precompute the artefact arm's tag-embedding index.  The lean gra
+v3_contract_rationale_108	Normalise a generator return into (answer, ModelUsage).
+v3_contract_rationale_131	Add tokens_in/tokens_out only when generator has no token fields at all.
+v3_contract_rationale_182	Provenance for a `questions` run — answers generated by ONE arm.
+v3_contract_rationale_198	Provenance for an `evals` run — ONE scorer over one run file.
+v3_contract_rationale_20	One model's cost — calls / tokens_in / tokens_out / wall-time. Reused wherever a
+v3_contract_rationale_40	The exact system + user messages the shared generator sends to NIM.
+v3_contract_rationale_48	The structured JSON body the generator returns.
+v3_contract_rationale_53	tokens_in/tokens_out from a NIM /chat/completions usage block.
+v3_contract_rationale_64	Rehydrate ModelUsage from a persisted dict (arm_outputs / run_manifest).
+v3_contract_rationale_86	Build ModelUsage from a generator telemetry dict.
+v3_embed_questions_rationale_1	embed_questions.py — precompute the dense (vector) arm's question vectors.  Ru
+v3_embed_tags_rationale_1	embed_tags.py — precompute the artefact arm's tag-embedding index.  The lean g
 v3_embed_tags_rationale_39	Read the tags jsonl -> records [{chunk_id, kind, tags: [...]}].
-v3_embed_tags_rationale_50	Content-addressed cache: any change to the model, the tags file, or the     dedu
-v3_export_raw_rationale_1	export_raw.py — dump all eval_results to a single long-format CSV.      python e
+v3_embed_tags_rationale_50	Content-addressed cache: any change to the model, the tags file, or the     ded
+v3_export_raw_rationale_1	export_raw.py — dump all eval_results to a single long-format CSV.      python
+v3_judge_probe_rationale_1	judge_probe.py — survey every chat-capable NIM model as a RAGAS-judge candidate.
+v3_model_test_rationale_1	model_test.py — 3-question generator head-to-head through artefact_v1. Interpret
+v3_model_test_rationale_30	Judges with no queue to respect: open every cell at once.
 v3_nim_rationale_1	Talk to NVIDIA NIM's REST API (OpenAI-compatible).  The generator and the embedd
-v3_nim_rationale_105	The NIM API key, or a loud failure — there is no offline mode.
-v3_nim_rationale_114	How long to wait before retrying: obey NIM's Retry-After header if it sent     o
-v3_nim_rationale_131	POST payload to BASE_URL + path and return the parsed JSON body.      Retries tr
-v3_nim_rationale_51	Count of successful NIM calls — a live heartbeat for a progress bar, since one
-v3_nim_rationale_57	Block until this model's next call is allowed, leaving SECONDS_BETWEEN_CALLS
-v3_nim_rationale_76	Push a model's next-call time out so every worker on THAT model waits. A 429 mea
-v3_nim_rationale_87	Read KEY=VALUE lines from a sibling .env into the environment, once, without
+v3_nim_rationale_106	Read KEY=VALUE lines from a sibling .env into the environment, once, without
+v3_nim_rationale_124	The primary NIM API key, or a loud failure — there is no offline mode.
+v3_nim_rationale_129	The key pool: NVIDIA_API_KEY first, then every NVIDIA_API_KEY_WORKER_* in     na
+v3_nim_rationale_148	(key_idx, key) for the calling thread — bound round-robin on first use and     k
+v3_nim_rationale_173	One /chat/completions-shaped call on the claude CLI -> an OpenAI-shaped     resp
+v3_nim_rationale_223	How long to wait before retrying: obey NIM's Retry-After header if it sent     o
+v3_nim_rationale_240	POST payload to BASE_URL + path and return the parsed JSON body.      Retries tr
+v3_nim_rationale_67	Count of successful NIM calls — a live heartbeat for a progress bar, since one
+v3_nim_rationale_73	Block until this (key, model) lane's next call is allowed, leaving     SECONDS_B
+v3_nim_rationale_93	Push one (key, model) lane's next-call time out so every worker on THAT lane
 v3_offline_eval_rationale_1	offline_eval.py — score run folders with the no-judge metrics.  Step 2 of the de
 v3_offline_eval_rationale_42	Vectors for `texts` in input order via the vector arm's batched embedder —     h
-v3_orchestrator_rationale_1	orchestrator.py — wires ONE pipeline + ONE evaluator over the chosen questions a
-v3_orchestrator_rationale_111	Build the ONE generator (on NIM) injected into every arm.     Returns a callable
-v3_orchestrator_rationale_179	Strip the truth: hand the arm the question's id + text ONLY, as the (id,     tex
-v3_orchestrator_rationale_188	Ids already answered — one per line in arm_outputs.jsonl. This is the resume
-v3_orchestrator_rationale_198	A persisted arm-output record (dict) -> contract.ArmOutput, so the scorer     re
-v3_orchestrator_rationale_208	Prepare the arm once, then answer the questions concurrently, writing each     a
-v3_orchestrator_rationale_279	-> list[contract.EvalResult]. The arm label + corpus (so an evaluator can     de
-v3_orchestrator_rationale_289	Provenance for the generation side -> contract.RunManifest (timestamp now,     U
+v3_orchestrator_rationale_1	orchestrator.py — wires ONE pipeline + ONE evaluator over the chosen questions
+v3_orchestrator_rationale_101	Handle onto the RAG-safe corpus — the only data a pipeline sees. Validates
+v3_orchestrator_rationale_114	Build the ONE generator (on NIM) injected into every arm.     Returns a callabl
+v3_orchestrator_rationale_177	Strip the truth: hand the arm the question's id + text ONLY, as the (id,     te
+v3_orchestrator_rationale_186	Ids already answered — one per line in arm_outputs.jsonl. This is the resume
+v3_orchestrator_rationale_196	A persisted arm-output record (dict) -> contract.ArmOutput, so the scorer     r
+v3_orchestrator_rationale_206	Prepare the arm once, then answer the questions concurrently, writing each
+v3_orchestrator_rationale_277	-> list[contract.EvalResult]. The arm label + corpus (so an evaluator can     d
+v3_orchestrator_rationale_287	Provenance for the generation side -> contract.RunManifest (timestamp now,
 v3_orchestrator_rationale_307	Provenance for the eval side -> contract.EvalManifest (timestamp now, UTC).
 v3_orchestrator_rationale_318	pipelines.lucene' / 'eval.ragas' -> 'lucene' / 'ragas' (run + output label).
 v3_orchestrator_rationale_323	TOP ENTRY. Generation writes each answer to out_dir/arm_outputs.jsonl as it
-v3_orchestrator_rationale_384	Wiring check with fakes — no NIM, no bm25s, no disk questions. Verifies the
-v3_orchestrator_rationale_55	Load the full question set (truth hydrated from raw via questions.jsonl)     and
-v3_orchestrator_rationale_77	Ids from a jsonl id-set file (output/question_ids.jsonl, gold100.jsonl,     or a
-v3_orchestrator_rationale_98	Handle onto the RAG-safe corpus — the only data a pipeline sees. Validates     t
+v3_orchestrator_rationale_395	Wiring check with fakes — no NIM, no bm25s, no disk questions. Verifies the
+v3_orchestrator_rationale_58	Load the full question set (truth hydrated from raw via questions.jsonl)     an
+v3_orchestrator_rationale_80	Ids from a jsonl id-set file (output/question_ids.jsonl, gold100.jsonl,     or
 v3_progress_rationale_1	Stable CLI progress bars for the v3 harness.
 v3_progress_rationale_8	tqdm tuned for Windows terminals and captured logs.
-v3_questions_rationale_1	questions.py — load the HERB question set from data/questions.jsonl.  Each recor
+v3_questions_rationale_1	questions.py — load the HERB question set from data/questions.jsonl.  Each rec
 v3_questions_rationale_15	The HERB question set as QuestionWithTruth records.
-v3_readme_construct_validity	Caveat worth remembering: answer-level scoring measures the whole pipeline not retrieval alone — a strong generator can mask retrieval quality — so the deterministic context precision/recall is what keeps an endpoint pointed directly at retrieval, the artefact's actual claim.
-v3_readme_contract_shared_shapes	contract.py holds the shared shapes everything imports (QuestionWithTruth, ModelUsage, ArmOutput, BuildStats, EvalResult, RunManifest, EvalManifest).
-v3_readme_data_quarantine	The data split is a quarantine: data/corpus/ has the oracle stripped and pipelines see ONLY this via a truth-free prompt, data/raw/ holds full HERB (~1514 questions + ground_truth + citations inside the product files) read by evaluators in place, and metadata/ (employee/customer/team) stays on both sides as legitimate retrieval data.
-v3_readme_deterministic_id_context	The deterministic RAGAS backbone is ID-based context precision/recall against the gold citations (IDBasedContextPrecision / IDBasedContextRecall, no judge); the judged picks are faithfulness, answer correctness, context precision and context recall.
-v3_readme_doc	v3/README.md — the in-repo canon design reference for the v3 HERB evaluation harness: three arms (artefact/lucene/vector), one shared generator, shared corpus on disk, scored with RAGAS.
-v3_readme_faithfulness_transfers_no_gold	Faithfulness needs no reference so it transfers to a no-gold set later; the other three judged metrics (answer correctness, context precision, context recall) lean on the gold answer / citations.
-v3_readme_generator_neutral_pipe	Generation contract — a thin fixed RAG pipe: one fixed system instruction ("Answer the question using only the provided documents. Be concise.") then the question exactly as posed plus the arm's retrieved passages as a labelled user turn, taking back a structured {answer}; generic grounding not retrieval engineering, held byte-identical across all three arms so the only variable stays retrieval; any thin/empty-context handling is an individual arm's own concern.
-v3_readme_gold100_set	build_question_sets.py writes id-set views (full/answerable/unanswerable, 1514/815/699) plus the gold-100 — a balanced answerable subset drawn by seeded round-robin over HERB types (equal allocation ~20/type); equal allocation keeps every type usable per-type but does not match HERB's natural mix, so report per-type and don't compare the gold-100 aggregate to HERB's published average.
-v3_readme_lucene_arm	The lucene arm is built on bm25s method="lucene" (the Lucene/Elasticsearch BM25 variant, k1=0.9 / b=0.4 BEIR reference values) reproducing Lucene's scoring exactly with Lucene-like EN-stopword + Snowball/Porter2 analysis; one document per artifact, artifacts-only index justified because all 17,087 gold citations resolve to an artifact id.
-v3_readme_nim_transport	nim.py is the one NVIDIA NIM REST transport through which generator, embedder and judge all POST — shared harness plumbing, not retrieval code.
-v3_readme_one_llm_generator_and_judge	One LLM serves as both generator and judge — qwen/qwen3.5-397b-a17b on NVIDIA NIM; multilingual so HERB now and the deferred Swedish Bonnier set run on the same model, and being not GPT-4o means HERB's published baselines are re-run, not cited.
-v3_readme_one_shared_generator	All three arms answer with the SAME generator (built once in the orchestrator and injected) so any difference is retrieval, not the LLM; beyond that generator and the corpus on disk the arms share nothing — each reads, indexes and ranks the corpus with its own code, sharing no retrieval code.
-v3_readme_oracle_free_record	The questions run record carries no oracle (one oracle-free row per question, appended as it goes so a crash keeps what finished), so you can read it and see the quarantine held; a hard error fails loud and stops.
-v3_readme_orchestrator_role	orchestrator.py owns the shared generator, runs an arm through generation and a scorer through evaluation, and writes the manifests; it currently runs a single combined path and splitting it into the three modes is the pending step.
-v3_readme_question_ids_minted	Question ids are minted deterministically (HERB ships no native id): <product>::a|u::<index> from (product file, array, position), 815 answerable + 699 unanswerable = 1514 unique, the paired-test join key; questions.load_questions hydrates QuestionWithTruth from raw with an exact id filter that raises on an unmatched id.
-v3_readme_ragas_only_scorer	RAGAS (eval/ragas.py) is the only scorer; the full RAGAS metric menu lives in eval/ragas_catalog.py — every judge-free deterministic metric always runs (costs nothing) and SELECTED adds the judged ones.
-v3_readme_raw_per_question_records	RAGAS emits raw per-question records (EvalResult, tidy long format) with nothing pre-aggregated, so paired tests, CIs, per-type splits and judge calibration are all possible downstream.
-v3_readme_split_telemetry	Per-question telemetry is split: ArmOutput.generator (the shared answer-writer, identical across arms) versus ArmOutput.retrieval (the arm's OWN retrieval-time model cost — vector's query embed, zero for lucene).
-v3_readme_still_open	Still open: the orchestrator split into questions/evals/full modes with per-run-folder run identity, the top-k budget value, which set to run (gold-100 vs the full 815+699), and the judge-calibration subset size.
-v3_readme_three_arms	The harness runs chosen HERB questions through three arms — artifact (the artefact graph: interpreter → facet retrieval → answer, system under test), lucene (BM25 baseline, own index), vector (dense naive-RAG baseline, own index) — and scores each arm's answer with RAGAS.
-v3_readme_two_manifests_provenance	Each run writes a RunManifest (arm, generator model, top-k, questions file, n, timestamp, build stats) on the generation side and an EvalManifest (scorer, judge model, source run, arm, timestamp) on the scoring side; no seed, no git-sha.
-v3_readme_two_phase_run_flow	Generation and scoring are split into two separate phases (modes questions / evals / full) so iterating a scorer never re-runs the LLM; the questions phase answers chosen questions writing an oracle-free records.jsonl + run_manifest.json, the evals phase re-joins truth by id and writes eval_results.jsonl + eval_manifest.json.
-v3_readme_vector_design	The vector arm is built on embedder nvidia/llama-nemotron-embed-1b-v2 on NIM (multilingual incl. Swedish, 8192-token context), reading the corpus with its OWN reader into one document per artifact embedded WHOLE (no truncation/chunking), exact brute-force cosine (no ANN), keeping each artifact's native id — a deliberate capable multilingual dense baseline, NOT the English-only 256-token all-MiniLM textbook naive-RAG default.
 v3_reembed_herb_eval_rationale_1	Embed the herb-eval graph's semantic layer with the v3 embedder (nemotron).  The
 v3_reembed_herb_eval_rationale_52	Drop + recreate one cosine vector index — a re-run after a dimension     change
 v3_reembed_herb_eval_rationale_67	Tag names, bare, one vector per tag reachable through the arm's tagging     run
 v3_reembed_herb_eval_rationale_93	Each chunk's description (text read from the backup, embedding input     only) -
+v3_requirements_env	v3/requirements.txt — harness environment pins (provisional laptop-reconstructed; desktop .venv is the canonical record)
+v3_requirements_ragas_scoring_deps	RAGAS scoring-time deps pinned for offline metrics (rapidfuzz, sacrebleu, rouge_score, nltk) + scipy for NNK grounding
 v3_run_lock_rationale_1	Single-writer guard for run output folders.
 v3_run_rationale_1	run.py — the single entry point for an evaluation run: choose an arm, a question
-v3_run_rationale_37	Write a fixed dev id-set (one answerable per HERB type first, then in file     o
-v3_run_rationale_56	--set -> (ids_file, out_dir). smoke = a fresh dev id-set under output/smoke/;
-v3_run_rationale_71	Mean per metric over the cells that scored, with an error tally.
+v3_run_rationale_101	qwen/qwen3.5-397b-a17b' -> 'qwen3.5-397b-a17b' — dir-safe judge tag for     __j
+v3_run_rationale_107	Judges with no queue to respect: open every cell at once.
+v3_run_rationale_113	n of `ids` by round-robin over the HERB answer types, file order within each
+v3_run_rationale_130	--rejudge: score existing run folders' answers under --judge, each into a     s
+v3_run_rationale_40	Write a fixed dev id-set (one answerable per HERB type first, then in file
+v3_run_rationale_59	Resolve a named fixed question set or an explicit id-set path.
+v3_run_rationale_68	--set -> (ids_file, out_dir). smoke = a fresh dev id-set under output/smoke/;
+v3_run_rationale_84	Mean per metric over the cells that scored, with an error tally.
+v3_test_artefact_v1_rationale_1	Regression checks for artefact_v1 query-relative level-walk retrieval.
+v3_test_artefact_v1_rationale_1048	HERB_WALK_GATE=1: the flat-regime widening gate counts only the chunks     the t
+v3_test_artefact_v1_rationale_295	Scripted Neo4j stand-in: ground rows are keyed by call order (one per     part);
+v3_test_artefact_v1_rationale_537	The curve walk (HERB_CURVE_WALK=1): one progressive frontier opens the     cheap
+v3_test_artefact_v1_rationale_64	One opened-area chunk row: the tag-support base plus the highest-support     edg
+v3_test_artefact_v1_rationale_807	The three paths score on one scale: min-max base per path, strength-lerp     mod
+v3_test_artefact_v1_rationale_845	HERB_AGG / HERB_NORM / HERB_NORM_SCOPE select cells of the combine grid;     the
+v3_test_hybrid_rationale_1	Regression checks for the hybrid arm — min-max late fusion of the lucene and vec
+v3_test_hybrid_rationale_110	A vector stand-in: retrieve returns (ranked unit dicts, ModelUsage), the pair
+v3_test_hybrid_rationale_99	A lucene stand-in: prepare hands back a Prepared-ish with a BuildStats;     retr
+v3_test_ragas_gemini_cli_rationale_1	Regression checks for Gemini CLI process and quota handling.
 v3_truncate_k_rationale_1	truncate_k.py — re-emit a run's arm_outputs at each eval depth k, no regeneratio
+v3_truncate_k_rationale_24	One arm_outputs record cut to its first k chunks, ids rebuilt from the     kept

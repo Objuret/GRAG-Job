@@ -1,5 +1,5 @@
-"""model_test.py — 3-question head-to-head: the full artefact_v1 pipeline
-(interpret + generate) on ONE model per leg, judged by the standard qwen judge.
+"""model_test.py — 3-question generator head-to-head through artefact_v1.
+Interpretation is fixed to Claude Haiku; only the shared generator changes per leg.
 
     python model_test.py glm                # answers + RAGAS eval (canon judge)
     python model_test.py qwen --workers 3   # all three questions in flight
@@ -7,8 +7,8 @@
     python model_test.py glm --judge z-ai/glm-5.2   # re-judge same answers, new dir
 
 Question ids live in model_test_ids.jsonl. Output lands in
-output/artefact_v1__modeltest3_<leg>/ — re-running resumes (answered ids are
-skipped; the eval scores the full persisted set).
+output/artefact_v1__modeltest3_<leg>__i-claude-haiku-4-5/ — re-running resumes
+(answered ids are skipped; the eval scores the full persisted set).
 """
 import argparse
 import importlib
@@ -36,7 +36,7 @@ def main():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("leg", choices=sorted(MODELS),
-                   help="which model runs interpret + generate")
+                   help="which model generates answers")
     p.add_argument("--workers", type=int, default=None, metavar="W",
                    help="parallelism: questions while answering, cells while scoring "
                         "(default 1; a claude-*, gpt-*, or gemini-* judge auto-sizes to every cell at once)")
@@ -52,10 +52,10 @@ def main():
         p.error("--judge with --no-eval scores nothing")
 
     model = MODELS[args.leg]
-    os.environ["HERB_INTERPRET_MODEL"] = model  # read at pipeline import
 
     ids_file = _HERE / "model_test_ids.jsonl"
-    base_dir = _HERE / "output" / f"artefact_v1__modeltest3_{args.leg}"
+    base_dir = (_HERE / "output" /
+                f"artefact_v1__modeltest3_{args.leg}__i-claude-haiku-4-5")
     out_dir = base_dir
     if args.judge:
         os.environ["RAGAS_JUDGE_MODEL"] = args.judge  # read at eval import
@@ -82,7 +82,8 @@ def main():
     mode = ("answers only (no eval)" if args.no_eval
             else f"re-judge existing answers ({args.judge})" if args.judge
             else "answers + RAGAS eval")
-    print(f"{args.leg} | {model} | {n_q} questions | k={args.k} | {pace} | {mode}"
+    print(f"{args.leg} generator | {model} | interpreter=claude-haiku-4-5 | "
+          f"{n_q} questions | k={args.k} | {pace} | {mode}"
           f"\n  ->  {out_dir}", flush=True)
 
     import abort

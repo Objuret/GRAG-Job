@@ -33,7 +33,7 @@ from run_lock import RunLock
 _HERE = Path(__file__).parent
 DATA = _HERE / "data"
 OUTPUT = _HERE / "output"
-ARMS = ("lucene", "vector", "artefact", "artefact_v1")
+ARMS = ("lucene", "vector", "hybrid", "artefact", "artefact_v1", "artefact_v1_det")
 
 
 def _write_dev_ids(n, dest):
@@ -55,16 +55,26 @@ def _write_dev_ids(n, dest):
     return dest
 
 
+def _fixed_ids_file(qset):
+    """Resolve a named fixed question set or an explicit id-set path."""
+    if qset == "gold":
+        return DATA / "gold100.jsonl"
+    if qset == "10smoke":
+        return DATA / "10smoke.jsonl"
+    return Path(qset)
+
+
 def _resolve_set(qset, arm, n, ts):
     """--set -> (ids_file, out_dir). smoke = a fresh dev id-set under output/smoke/;
-    gold = data/gold100.jsonl; full = the whole set (ids_file None); else a path."""
+    10smoke = the fixed ten-question comparison set; gold = data/gold100.jsonl;
+    full = the whole set (ids_file None); else a path."""
     if qset == "smoke":
         out = OUTPUT / "smoke" / f"{arm}__smoke__{ts}"
         out.mkdir(parents=True, exist_ok=True)
         return _write_dev_ids(n, out / "question_ids.jsonl"), out
     if qset == "full":
         return None, OUTPUT / f"{arm}__full__{ts}"
-    ids = DATA / "gold100.jsonl" if qset == "gold" else Path(qset)
+    ids = _fixed_ids_file(qset)
     if not ids.is_file():
         raise SystemExit(f"id-set file not found: {ids}")
     return ids, OUTPUT / f"{arm}__{ids.stem}__{ts}"
@@ -143,7 +153,7 @@ def _rejudge(args):
     ids = [i for i in by_id if i in common]
     set_stem = None
     if args.qset not in ("smoke", "full"):  # gold or an ids file narrows the set
-        ids_file = DATA / "gold100.jsonl" if args.qset == "gold" else Path(args.qset)
+        ids_file = _fixed_ids_file(args.qset)
         if not ids_file.is_file():
             raise SystemExit(f"id-set file not found: {ids_file}")
         listed = orchestrator._read_ids(ids_file)
@@ -226,8 +236,9 @@ def main():
         description="Run one retrieval arm over a question set and score it with RAGAS.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     p.add_argument("--arm", choices=ARMS, default="lucene", help="retrieval arm")
-    p.add_argument("--set", dest="qset", default="smoke", metavar="smoke|gold|full|FILE",
-                   help="questions: smoke (dev subset), gold (gold-100), full (all), "
+    p.add_argument("--set", dest="qset", default="smoke", metavar="smoke|10smoke|gold|full|FILE",
+                   help="questions: smoke (dev subset), 10smoke (fixed comparison ten), "
+                        "gold (gold-100), full (all), "
                         "or a path to an id-set jsonl")
     p.add_argument("-n", type=int, default=None, metavar="N",
                    help="question subset size: dev subset for --set smoke (default 5); "

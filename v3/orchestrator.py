@@ -291,6 +291,7 @@ def build_run_manifest(config, arm, build_stats, n_questions, n_ran, n_failed):
         arm=arm,
         generator_model=(None if config.get("retrieval_only")
                          else config.get("generator_model", GENERATOR_MODEL)),
+        interpreter_model=config.get("interpreter_model"),
         top_k=config.get("top_k", DEFAULT_TOP_K),
         questions_file=str(config.get("questions_path") or questions.QUESTIONS),
         n_questions=n_questions,
@@ -298,6 +299,7 @@ def build_run_manifest(config, arm, build_stats, n_questions, n_ran, n_failed):
         n_failed=n_failed,
         timestamp=datetime.now(timezone.utc).isoformat(),
         build_stats=build_stats,
+        retrieval_flags=config.get("retrieval_flags"),
     )
 
 
@@ -325,8 +327,10 @@ def run(pipeline, evaluator, ids_file, config=None):
     -> {out_dir, n_questions, n_ran, n_failed, n_results}.
     linked to: all of the above; run.py is the CLI over this.
     """
-    config = config or {}
+    config = dict(config or {})
     arm = _arm_name(pipeline)
+    config.setdefault("interpreter_model", getattr(pipeline, "INTERPRET_MODEL", None))
+    config.setdefault("retrieval_flags", getattr(pipeline, "RETRIEVAL_FLAGS", None))
     evname = _arm_name(evaluator) if evaluator is not None else "gen"
 
     chosen = load_chosen_questions(ids_file, config.get("questions_path"))
@@ -493,6 +497,7 @@ def _selfcheck():
     # manifests carry the run split + provenance
     rm = build_run_manifest({}, "fake", prepared.build_stats, 10, 7, 3)
     assert rm.arm == "fake" and rm.generator_model == GENERATOR_MODEL
+    assert rm.interpreter_model is None
     assert (rm.n_questions, rm.n_ran, rm.n_failed) == (10, 7, 3)
     em = build_eval_manifest({}, "herb", "fake", "src")
     assert (em.scorer, em.arm, em.source_run) == ("herb", "fake", "src")

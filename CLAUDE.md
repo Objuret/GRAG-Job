@@ -14,7 +14,16 @@ Work continues across sessions via **state-transfer documents in `docs/state/`**
 These are gitignored (present in the working tree, never committed), so a fresh
 clone starts empty — they live on the machine where the work happened.
 
-1. **Current entry state docs (read before doing anything else)** — two live threads:
+1. **Current entry state docs (read before doing anything else):**
+   - **V1 curve walk, facets verdict, cluster-K (current):**
+     `docs/state/2026-07-22-v1-curve-walk-facets-and-cluster-k.md` — the user's
+     cluster-K concept, the measured facet/value-knee/curve-walk results, the open
+     design question (walk and best-fit judged not mutually helping; global-frontier
+     re-reading awaiting the user's verdict), and the queued decisions (stated scope
+     vs K, flag rename). **Read this first for any artefact_v1 retrieval work.**
+     Its predecessor `docs/state/2026-07-20-v1-query-relative-areas.md` holds the
+     pre-walk definitions and probes.
+   - Two older live threads retained for their narrower build/eval context:
    - **Artefact tag-facet design:** `docs/state/2026-06-25-artefact-facets-guide-link-and-content-profile.md`
      — complete reconciled facet design (content-profile + guide-link); facets = weight+direction
      measured by geometry (sibling comparison), one edge per tag carrying the full facet vector;
@@ -90,6 +99,25 @@ Details: `graphify-out/REFRESH.md`.
   changed — pass them in. It spawns the read-only `critical-reviewer` and you resolve
   its findings with it until the code converges. Skip only for trivial non-logic
   edits (a rename, a comment, a one-line config tweak).
+
+## Agent roster — orchestrator routing
+
+The main-chat Claude is the orchestrator: it talks to the user and routes every job
+to a specialist agent; it does no hands-on work itself. Plain questions get direct
+conversational answers — no agents, no tool calls. Long runs still happen in the
+user's terminal: agents prepare, the user runs. Definitions live in
+`.claude/agents/`. Route by task:
+
+- **v3-coder** — any code change in `v3/`.
+- **critical-reviewer** — post-change review of `v3/` code (the hard rule above).
+- **code-optimizer** — performance work; profiles first, benchmarks before/after.
+- **maths-algorithmist** — mathematical algorithm design and verification.
+- **order-of-operations** — sequencing/data-flow correctness of pipelines and algorithms.
+- **logician** — invariants, boolean/set logic, proof-or-counterexample checks.
+- **retrieval-scientist** — retrieval design and experiment proposals.
+- **eval-statistician** — significance, sample size, judge reliability, judge-run cost math.
+- **results-analyst** — reading `v3/output/`, reporting numbers (metric validity binding).
+- **graph-refresher** — `python refresh_graph.py` + worklist processing.
 
 ## Artefact arm — built natively in `v3/artefact/`
 

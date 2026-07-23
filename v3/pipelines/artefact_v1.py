@@ -1,143 +1,303 @@
-"""artefact_v1.py — the ARTEFACT-V1 arm: facet-grounded tag retrieval over the
-Neo4j `herb-eval` graph (the v1 artefact build), scored head-to-head with the
-lucene and vector arms under the same shared generator and the same RAGAS eval.
+"""artefact_v1.py — the ARTEFACT-V1 arm: query-relative fuzzy cluster retrieval
+over the Neo4j `herb-eval` graph (the v1 artefact build), scored head-to-head
+with the lucene and vector arms under the same shared generator and RAGAS eval.
 
 The graph under test is `Source -[:CONTAINS]-> File -[:HAS_CHUNK]-> Chunk
 -[:HAS_TAG]-> Tag`, holding no content — structure, weights, and embeddings
-only. Each `HAS_TAG` edge carries `w_chunk`, `w_facet`, `facet`, and `run_id`.
-The semantic layer is two nemotron vector families written by
-`reembed_herb_eval.py` (run once before this arm): the tag IS its embedding —
-each `:Tag` name embedded bare as `t.emb` under the `tag_emb` cosine index —
-and each chunk's description IS an embedding, `c.desc_emb` (the description
-text itself lives nowhere in this graph). The whole arm runs on the v3 model
-stack (NIM throughout, no local model):
+only. Each `HAS_TAG` edge carries `w_chunk`, `w_facets`, `facets`, and
+`run_id`. The semantic layer is the nemotron tag family written by
+`reembed_herb_eval.py` (run once before this arm): each `:Tag` name embedded
+bare as `t.emb` under the `tag_emb` cosine index. Query interpretation uses the
+signed-in Claude CLI; query embeddings use NIM.
 
-  1. interpret — two NIM passes on the shared v3 model (qwen). Pass 1 emits a
-     self-contained statement of the information need + structured tags + scope
-     hints (product / section / channel / employee_id / years, only when the
-     query names them). Pass 2 scores each tag across five facets (topic,
-     entities, activity, temporal, evidence); `w_query` is derived from the
-     facet vector (strength × coverage).
-  2. ground — one embed call (query side) for the pass-1 description + the
-     prompt tag names, bare. Each prompt tag keeps its relevance sphere off the
-     `tag_emb` index: the neighbors above the largest gap in the similarity
-     curve, fetched on a doubling schedule — the data's own geometry sets the
-     sphere size. Each grounded tag carries the grounding cosine as `sim`
-     plus the prompt tag's full facet vector (facet agreement is scored
-     numerically against the edge's facet arrays, facets are never embedded).
-  3. rank + fuse — three rankings over the same corpus, fused by reciprocal
-     rank (rank r contributes 1/(1+r); parameter-free and length-blind): the
-     tag channel (weighted overlap — each prompt tag's best `HAS_TAG` edge per
-     chunk, summed; every chunk with any grip, `tagScore > 0` bounds the
-     ranking), the description channel (the description's relevance sphere
-     over `chunk_desc_emb`, same gap cut), and the scope channel (chunks
-     matching the interpreted scope hints, ranked by fields matched). Nothing
-     the interpreter guesses excludes a chunk — scope guides rank, never
-     filters. The fused list is cut at the caller's k. The oracle sections
-     (answerable / unanswerable questions, product profiles) stay outside
-     every channel so the arm cannot read the gold answer. The full
-     interpretation — plan, grounding spheres, ranking depths — is persisted
-     per question in `ArmOutput.meta`.
+Retrieval is the user's query-relative area design. Areas are born and die with
+each query — nothing cluster-shaped is precomputed or stored:
+
+  1. interpret — two Claude Haiku passes. Pass 1 emits a self-contained
+     statement of the information need plus the prompt parts (specific noun
+     phrases / entities / actions). Pass 2 scores each part across five facets
+     (topic, entities, activity, temporal, evidence).
+  2. levels — each part is embedded and gathers its local tag pool from
+     `tag_emb` over a doubling sequence of kNN levels. Multi-k support: every
+     level contributes fuzzy k-NN weight (inverse squared distance, Keller et
+     al. 1985) for the tags inside it, so a tag near the part at every level
+     accumulates more support than one that only appears at the widest — no
+     single k is trusted. The pool's tags then cluster by their embedding
+     distances TO EACH OTHER (average-linkage): the part anchors at its
+     highest-support tag, and the anchor's containing-cluster chain through
+     the dendrogram — finest to coarsest — is the part's widening levels,
+     each carrying its merge height as the level's distance.
+  3. walk — every part's anchor level opens unconditionally (each part
+     searches through its own area), and every part also opens a description
+     lookup: the same fuzzy multi-k mechanism over `chunk_desc_emb`,
+     chunk-level. Widening events across all parts open in ascending merge
+     height (the globally tightest next level first). An opened level's tags
+     pull their chunks, each chunk keeping its highest-support tag. Widen only
+     while the distinct-chunk pool is still short of the caller's k, then cut
+     the pooled chunks at k by value. Hard stop at k; no answer-sufficiency
+     oracle. With `HERB_CURVE_WALK=1` the clustering decides the K: the
+     description neighborhoods are clustered like tag pools — anchor chunk plus
+     a dendrogram chain — and one progressive frontier opens the cheapest next
+     level anywhere, tag or description. The frontier's own trajectory is the
+     query's curve of best fit: when the next opening's height gap jumps out of
+     the fit of the gaps walked so far, the walk stops. K = the distinct chunks
+     the opened areas vouch for, the caller's k only the ceiling; stated scope
+     corroborates value and competes for the K slots but never sets the count.
+
+     Value scores on one scale, identical in both regimes. Each of the three
+     paths — tag areas, description lookups, stated scope — gives a chunk a base
+     (the tag support, the description support, or the scope support, summed
+     across the parts or sources that vouch for it) and min-max normalizes that
+     base over its own candidate pool. Priority modifiers lift the normalized
+     base by an exposed strength `s` as base × (1 + s·(m − 1)): the tag path's
+     facet agreement, `w_chunk` and `relevance_to_file`, the description path's
+     hint-match factor, the scope path's match fraction — each a boost, never a
+     filter. The three lifted scores combine as a weighted sum (`W_TAG` /
+     `W_DESC` / `W_SCOPE`) over the union, so evidence the whole plan touches
+     outranks evidence a single broad tag grips. The aggregation and the
+     normalization are selectable — `HERB_AGG` (sum / max), `HERB_NORM`
+     (relative / absolute / none) and `HERB_NORM_SCOPE` (per-path / global) —
+     the defaults being sum and per-path min-max.
+
+  4. sufficiency — the interpreter holds the conversation: the walk's
+     evidence is shown to it cumulatively at the doubling level sequence and
+     at each level it decides whether it can answer. Sufficient → exactly the
+     evidence seen is kept; never sufficient → the full retrieval stands. The
+     caller's k is the forced stop either way.
+
+  Structure enters by order of operations: what the query STATES resolves
+  before what the interpreter reads into it. Stated scope (product / section
+  / channel / employee_id / years — extracted only when explicitly named) is
+  its own path whose pool is the matching chunk set — no clustering, nothing
+  fuzzy about a stated fact. Its base is the fuzzy support over description
+  distances to the need, extended across the whole matching set, and its match
+  fraction is the priority modifier over that normalized base. For the
+  interpreted parts, structure raises, never filters: a tag's support scales by
+  (1 + the fraction of its edges landing on hint-matching chunks) before the
+  anchor is chosen, and anything with no structural touch keeps its full
+  semantic weight; a description chunk that matches a stated hint carries the
+  hint modifier over its normalized base. Every coefficient — the three path
+  weights and the per-modifier strengths — is read from the environment
+  (RETRIEVAL_FLAGS) so a run documents and sweeps its own value model.
 
 The graph stores references, never content: a retrieved chunk is a pointer —
-`locator_json` (HERB section/index/indices/field/char_range) on the chunk plus
-`rel_path` + `sha256` on its file — and the arm resolves the text from the raw
-files under `v3/data/raw` at answer time, hash-verified, failing loud on any
-drifted file or dangling pointer. `context_ids` are the HERB artifact `id`s of
-the records a chunk covers (read from the raw records themselves), the same id
-space the gold citations use, so the id-based context metrics compare
-like-for-like with lucene/vector. Metadata chunks (directories, org tree) have
-no artifact ids and contribute none.
+`locator_json` on the chunk plus `rel_path` + `sha256` on its file — resolved
+from raw under `v3/data/raw` at answer time, hash-verified. `context_ids` are
+HERB artifact ids from the raw records. Oracle sections stay outside retrieval.
 
-The shared v3 generator writes the answer from the resolved chunk text, so the
-only thing that differs from lucene/vector is retrieval. Contract mirrors the
-other arms: `prepare_over_corpus(corpus) -> Prepared` opens the Neo4j driver and
-checks the grounding indexes; `answer_one_question(question, prepared, generate,
-k) -> ArmOutput` runs interpret → ground → score → resolve → generate per
-question. The question is read for id + text ONLY; truth fields are never
-touched.
+Contract: `prepare_over_corpus(corpus) -> Prepared`; `answer_one_question(...)
+-> ArmOutput`. The question is read for id + text ONLY.
 """
 from __future__ import annotations
 
 import hashlib
+import inspect
 import json
 import os
 import re
+import tempfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Optional
 
+import numpy as np
+from scipy.cluster.hierarchy import linkage
+from scipy.spatial.distance import squareform
+
+import abort
 import nim
 from contract import (
     ArmOutput, BuildStats, ModelUsage, generator_usage_from_nim, unpack_generation,
 )
 from pipelines.vector import EMBED_MODEL, _embed
 
-# --- graph + retrieval constants (the live herb-eval contract) ----------------
+# --- graph + retrieval constants ---------------------------------------------
 
 DATABASE = os.environ.get("NEO4J_DATABASE", "herb-eval")
 DATASET_ID = os.environ.get("HERB_DATASET_ID", "Salesforce__HERB")
-# HAS_TAG edges are stamped with the tagging run that wrote them; retrieval reads
-# exactly that run. Override if the graph was tagged under a different run id.
 RUN_ID = os.environ.get("HERB_TAG_RUN_ID", "pilot_full_herb")
 
-# The arm's own retrieval model (the shared generator stays the fairness
-# control). glm answers structured interpretation calls in seconds where the
-# 397B qwen queues into read-timeouts on hosted NIM.
-INTERPRET_MODEL = os.environ.get("HERB_INTERPRET_MODEL", "z-ai/glm-5.2")
+INTERPRET_MODEL = "claude-haiku-4-5"
 
-# The five facets. Facet agreement is numeric — the prompt tag's facet values
-# against the edge's facet arrays; facets are never embedded.
 ALL_FACETS = ("topic", "entities", "activity", "temporal", "evidence")
-GROUND_INDEX = "tag_emb"          # :Tag(emb) — the tag IS its embedding
-DESC_INDEX = "chunk_desc_emb"     # :Chunk(desc_emb) — the description IS an embedding
+GROUND_INDEX = "tag_emb"
+DESC_INDEX = "chunk_desc_emb"
 
-# Eval-safety: the gold-answer records and oracle product profiles never enter
-# retrieval, so the arm cannot read its own evaluation.
-EXCLUDED_SECTIONS = ("answerable_questions", "unanswerable_questions", "product_profile")
+# The doubling kNN level sequence: each level contributes fuzzy k-NN support
+# for the tags inside it; the widest level is the part's whole pool.
+K_LEVELS = (8, 16, 32, 64)
+
+# Post-filtered kNN queries over-fetch the vector index by this factor and
+# trim back to the intended width, giving the row filters headroom before
+# they narrow the neighborhood.
+KNN_OVERFETCH = 4
+
+# The curve walk: with HERB_CURVE_WALK=1, one progressive frontier walks all
+# semantic areas cheapest-first and stops where its own trajectory breaks —
+# the clustering decides the per-query evidence count under the caller's k
+# ceiling. It selects membership and K; the value scale is identical in both
+# regimes.
+CURVE_WALK = os.environ.get("HERB_CURVE_WALK") == "1"
+
+# With HERB_DOOR_TRACE=1 every pooled chunk's per-path values and resolve
+# pointers land in meta.door_trace — observability only, retrieval untouched.
+# Heavy (whole pool per question); for diagnosis runs.
+DOOR_TRACE = os.environ.get("HERB_DOOR_TRACE") == "1"
+
+# Flat-regime widening gate: with HERB_WALK_GATE=1 the widening loop counts
+# only chunks the tag areas reached, so description and stated-scope finds rank
+# and compete at the cut without stopping the walk (the curve walk's frontier
+# carries its own stop).
+WALK_GATE = os.environ.get("HERB_WALK_GATE") == "1"
+
+# Fresh interpretation: with HERB_FRESH_INTERP=1 the haiku leg re-runs the
+# interpreter instead of reading a cached plan, then refreshes the cache. The
+# default reuses the cached interpretation, which both saves the call and
+# freezes the plan across a retrieval sweep so the comparison is not confounded
+# by interpreter sampling.
+FRESH_INTERP = os.environ.get("HERB_FRESH_INTERP") == "1"
+
+# Sufficiency review: with HERB_NO_REVIEW=1 the haiku leg keeps the full
+# retrieved set instead of letting the interpreter truncate it by content. The
+# default runs the review; disabling it lets a retrieval sweep measure retrieval
+# alone, with no per-question content cut confounding the depth.
+NO_REVIEW = os.environ.get("HERB_NO_REVIEW") == "1"
+
+
+def _env_float(name: str, default: float) -> float:
+    """A run-tunable coefficient read from the environment, `default` when unset
+    or blank. A non-numeric value fails loud rather than silently reverting."""
+    raw = os.environ.get(name)
+    if raw is None or not raw.strip():
+        return default
+    return float(raw)
+
+
+# Per-path combine weights: each of the three paths (tag areas / description
+# lookups / stated scope) contributes its normalized, modifier-adjusted base to
+# the cross-path sum scaled by its weight, so relative influence is a coefficient
+# rather than an accident of a scoring function's raw magnitude.
+W_TAG = _env_float("HERB_W_TAG", 1.0)
+W_DESC = _env_float("HERB_W_DESC", 1.0)
+W_SCOPE = _env_float("HERB_W_SCOPE", 1.0)
+
+# Priority-modifier strengths: a modifier m applies over the normalized base as
+# base * (1 + strength * (m - 1)) — strength 0 leaves the base untouched,
+# strength 1 is the modifier's full factor. The tag facet-term modifier defaults
+# inert: the stored edge facet weights measure as non-signal, so lifting by them
+# would inject noise until a sweep earns a higher strength.
+STR_FACET = _env_float("HERB_STR_FACET", 0.0)
+STR_WCHUNK = _env_float("HERB_STR_WCHUNK", 1.0)
+STR_RELEVANCE = _env_float("HERB_STR_RELEVANCE", 1.0)
+STR_DESC_HINT = _env_float("HERB_STR_DESC_HINT", 1.0)
+STR_SCOPE_MATCH = _env_float("HERB_STR_SCOPE_MATCH", 1.0)
+
+# Combine-space mode switches — all additive over the default pipeline (AGG ->
+# normalize -> modifier lerp -> weighted sum), the defaults reproducing it.
+#   HERB_AGG        sum (default) | max — how a path folds a chunk's support over
+#                   the parts/sources that vouch for it: sum lifts a corroborated
+#                   chunk, max keeps its single best contribution.
+#   HERB_NORM       relative (default) | absolute | none — how each path's base
+#                   scores reach a comparable scale before the weighted sum:
+#                   relative min-max over a pool, absolute saturation against a
+#                   fixed reference (pool-independent), or none (raw base).
+#   HERB_NORM_SCOPE per_path (default) | global — for relative only: min-max over
+#                   each path's own pool, or over the union of all paths' bases;
+#                   inert when HERB_NORM is not relative.
+AGG = os.environ.get("HERB_AGG", "sum")
+NORM = os.environ.get("HERB_NORM", "relative")
+NORM_SCOPE = os.environ.get("HERB_NORM_SCOPE", "per_path")
+if AGG not in ("sum", "max"):
+    raise ValueError(f"HERB_AGG must be 'sum' or 'max', got {AGG!r}")
+if NORM not in ("relative", "absolute", "none"):
+    raise ValueError(f"HERB_NORM must be 'relative', 'absolute' or 'none', got {NORM!r}")
+if NORM_SCOPE not in ("per_path", "global"):
+    raise ValueError(f"HERB_NORM_SCOPE must be 'per_path' or 'global', got {NORM_SCOPE!r}")
+
+# The absolute-normalization reference. _ABS_UNIT is the support one level of a
+# chunk at a reference cosine distance earns (1 / dist^2); a path's reference is
+# that scaled by the number of levels a top-ranked member spans, so
+# base / (base + ref) saturates to 0.5 at the reference distance for EVERY path
+# regardless of how deep it stacks — the stated-scope path's extension no longer
+# inflates it against tag and description. Tag and description pools never
+# extend, so their reference is fixed at len(K_LEVELS) levels; stated scope's is
+# level-count-aware per query.
+_ABS_REF_DIST = 0.5
+_ABS_UNIT = 1.0 / _ABS_REF_DIST ** 2
+_ABS_REF = len(K_LEVELS) * _ABS_UNIT
+
+# Manifest provenance: the regime switches and every combine coefficient,
+# recorded by the runner in run_manifest.json so a run is self-documenting and
+# sweepable.
+RETRIEVAL_FLAGS = {
+    "HERB_CURVE_WALK": CURVE_WALK, "HERB_DOOR_TRACE": DOOR_TRACE,
+    "HERB_WALK_GATE": WALK_GATE, "HERB_FRESH_INTERP": FRESH_INTERP,
+    "HERB_NO_REVIEW": NO_REVIEW,
+    "HERB_AGG": AGG, "HERB_NORM": NORM, "HERB_NORM_SCOPE": NORM_SCOPE,
+    "HERB_W_TAG": W_TAG, "HERB_W_DESC": W_DESC, "HERB_W_SCOPE": W_SCOPE,
+    "HERB_STR_FACET": STR_FACET, "HERB_STR_WCHUNK": STR_WCHUNK,
+    "HERB_STR_RELEVANCE": STR_RELEVANCE, "HERB_STR_DESC_HINT": STR_DESC_HINT,
+    "HERB_STR_SCOPE_MATCH": STR_SCOPE_MATCH,
+}
+
+# Content-addressed on-disk caches under output/. The query-embed cache keys a
+# question's part/description vectors by (embed model, input_type, text); the
+# interpretation cache keys the haiku plan by (interpret model, question text,
+# and a signature of the interpreter's prompts and code). Both persist across
+# runs. A cached vector is served only for the same model and exact text; a
+# cached plan only when the model, the question, and the interpreter's prompts
+# and code are all unchanged — an edit to any of them yields a fresh key.
+EMBED_CACHE_DIR = Path(__file__).resolve().parent.parent / "output" / "query_embed_cache"
+INTERP_CACHE_DIR = Path(__file__).resolve().parent.parent / "output" / "interp_cache"
+
 GATE_SECTIONS = (
     "slack", "documents", "meeting_transcripts", "meeting_chats", "prs",
     "urls", "answerable_questions", "unanswerable_questions", "product_profile",
 )
-# Sections the interpreter may name as scope hints: the section enum minus the
-# oracle sections — an excluded section can never be retrieved, so offering it
-# would be a contradiction.
-OFFERED_SECTIONS = tuple(s for s in GATE_SECTIONS if s not in EXCLUDED_SECTIONS)
+
+EXCLUDED_SECTIONS = ("answerable_questions", "unanswerable_questions", "product_profile")
 _EXCLUDED_PARAM = list(EXCLUDED_SECTIONS)
+# Sections the interpreter may name as scope hints: the enum minus the oracle
+# sections — an excluded section can never be retrieved.
+OFFERED_SECTIONS = tuple(s for s in GATE_SECTIONS if s not in EXCLUDED_SECTIONS)
 
 FILLER = {"data", "information", "content", "record", "text", "chunk", "item", "find"}
-COVERAGE_ALPHA = 0.25
 
-# The raw files the graph's pointers resolve against (File.rel_path is relative
-# to this root; File.sha256 is verified on every read).
 RAW_ROOT = Path(__file__).resolve().parent.parent / "data" / "raw"
 
 Generator = Callable[[str, list], object]
 
 
-# --- Cypher (the weighted-overlap retrieval over the graph contract) ----------
+# --- Cypher ------------------------------------------------------------------
 
-_GROUND_CYPHER = (
-    "CALL db.index.vector.queryNodes($idx, $k, $vec) YIELD node, score "
-    "RETURN node.name AS name, score AS sim"
-)
+# The part's tag pool, best-first by index score with the tag name as the
+# stable tiebreaker — level membership and the anchor read this order. Pooled
+# tags carry at least one HAS_TAG edge from the active run; the index is
+# over-fetched to give the run filter headroom and the trim caps the pool at
+# its width. The surviving width lands in the walk meta per part.
+_GROUND_CYPHER = """
+CALL db.index.vector.queryNodes($idx, $fetch, $vec) YIELD node, score
+WHERE EXISTS { MATCH (node)<-[r:HAS_TAG]-(:Chunk) WHERE r.run_id = $runId }
+RETURN node.name AS name, score AS sim, node.emb AS emb
+ORDER BY sim DESC, name
+LIMIT $k
+"""
 
-
-# One HAS_TAG edge per (chunk, tag), carrying the full facet vector as aligned
-# arrays (`facets` / `w_facets`) plus `w_chunk`. Facet agreement = the dot
-# product of the prompt tag's facet values with the edge's facet weights (a
-# facet absent from the edge contributes 0). Every chunk with any tag grip is
-# in the ranking — `tagScore > 0` bounds it.
-_TAG_RANK_CYPHER = """
-UNWIND $queryTags AS qt
-MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk)
-MATCH (c)-[r:HAS_TAG]->(t:Tag {name: qt.name})
+# An opened area's tags pull their chunks; each chunk keeps its highest-support
+# tag and that edge's priority-modifier components. The base score is the tag
+# support (qt.weight); facetTerm is the part's facet values against the edge's
+# facet arrays, riding the same edge as w_chunk and relevance_to_file. The
+# components return raw — the strength lerp and the per-path normalization apply
+# in Python on the shared scale.
+_AREA_CHUNKS_CYPHER = """
+UNWIND $tags AS qt
+MATCH (t:Tag {name: qt.name})<-[r:HAS_TAG]-(c:Chunk)<-[:HAS_CHUNK]-(f:File)
 WHERE coalesce(c.empty, false) = false
   AND ($datasetId IS NULL OR f.dataset_id = $datasetId)
   AND r.run_id = $runId
   AND NOT (coalesce(c.section, "") IN $excludedSections)
-WITH c, qt, r,
+WITH c, f, qt, r,
      reduce(dot = 0.0, fi IN range(0, size(coalesce(r.facets, [])) - 1) |
        dot + (CASE r.facets[fi]
                 WHEN 'topic'    THEN qt.topic
@@ -147,135 +307,169 @@ WITH c, qt, r,
                 WHEN 'evidence' THEN qt.evidence
                 ELSE 0.0
               END) * coalesce(r.w_facets[fi], 0.0)) AS facetTerm
-WITH c, qt.promptIndex AS promptIdx,
-     (qt.w_query * coalesce(facetTerm, 0.0) * coalesce(r.w_chunk, 0.0)
-       * coalesce(c.relevance_to_file, 1.0) * qt.sim) AS contrib
-WITH c, promptIdx, max(contrib) AS bestPromptContrib
-WITH c, sum(bestPromptContrib) AS tagScore
-WHERE tagScore > 0
+WITH c, f, qt.weight AS support, coalesce(facetTerm, 0.0) AS facetTerm,
+     coalesce(r.w_chunk, 0.0) AS w_chunk,
+     coalesce(c.relevance_to_file, 1.0) AS relevance
+ORDER BY support DESC, w_chunk DESC
+WITH c, f, collect({support: support, facetTerm: facetTerm,
+                    w_chunk: w_chunk, relevance: relevance})[0] AS best
+RETURN c.chunk_id AS chunkId, c.locator_json AS locator,
+       f.rel_path AS relpath, f.sha256 AS sha256,
+       best.support AS support, best.facetTerm AS facetTerm,
+       best.w_chunk AS w_chunk, best.relevance AS relevance
+"""
+
+# The description surface: the same fuzzy mechanism on the chunk-description
+# embeddings — the part kNNs `chunk_desc_emb` directly. Structural fields ride
+# along so scope hints can raise a chunk's weight in Python; the curve walk's
+# variant also carries the embeddings, which it clusters into an area. The
+# index is over-fetched and trimmed back to the neighborhood width; the
+# empty/dataset/section filters spend the headroom first.
+_DESC_KNN_TEMPLATE = """
+CALL db.index.vector.queryNodes($idx, $fetch, $vec) YIELD node AS c, score AS sim
 MATCH (f:File)-[:HAS_CHUNK]->(c)
-RETURN c.chunk_id AS chunkId, c.locator_json AS locator,
-       f.rel_path AS relpath, f.sha256 AS sha256, round(tagScore, 4) AS score
-ORDER BY score DESC, chunkId
-"""
-
-# Description-channel candidates come off the `chunk_desc_emb` index. Rows are
-# flagged eligible (has its File / not empty / right dataset / not oracle)
-# rather than dropped, so the doubling fetch can tell index exhaustion from
-# filtering.
-_DESC_KNN_CYPHER = """
-CALL db.index.vector.queryNodes($idx, $k, $vec) YIELD node AS c, score AS sim
-OPTIONAL MATCH (f:File)-[:HAS_CHUNK]->(c)
-WITH c, f, sim,
-     (f IS NOT NULL
-      AND coalesce(c.empty, false) = false
-      AND ($datasetId IS NULL OR f.dataset_id = $datasetId)
-      AND NOT (coalesce(c.section, "") IN $excludedSections)) AS eligible
-RETURN c.chunk_id AS chunkId, c.locator_json AS locator,
-       f.rel_path AS relpath, f.sha256 AS sha256, sim, eligible
-ORDER BY sim DESC, chunkId
-"""
-
-
-def _gate_rank_cypher(gate: dict) -> tuple:
-    """The scope channel: every chunk matching at least one interpreted scope
-    hint, ranked by hints matched (description agreement breaks ties). Scope
-    guides rank — it never filters. (None, {}) when no hint is set."""
-    terms, params = [], {}
-    for f in ("product", "section", "channel", "employee_id"):
-        v = gate.get(f)
-        if v:
-            terms.append(f"(CASE WHEN c.{f} = $g_{f} THEN 1 ELSE 0 END)")
-            params[f"g_{f}"] = v
-    if gate.get("years"):
-        terms.append("(CASE WHEN any(y IN $g_years WHERE y IN c.years) THEN 1 ELSE 0 END)")
-        params["g_years"] = list(gate["years"])
-    if not terms:
-        return None, {}
-    cypher = f"""
-MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk)
 WHERE coalesce(c.empty, false) = false
   AND ($datasetId IS NULL OR f.dataset_id = $datasetId)
   AND NOT (coalesce(c.section, "") IN $excludedSections)
-WITH c, f, ({" + ".join(terms)}) AS matched
-WHERE matched > 0
 RETURN c.chunk_id AS chunkId, c.locator_json AS locator,
-       f.rel_path AS relpath, f.sha256 AS sha256,
-       matched, vector.similarity.cosine(c.desc_emb, $descVec) AS descSim
-ORDER BY matched DESC, descSim DESC, chunkId
+       f.rel_path AS relpath, f.sha256 AS sha256, sim,{emb}
+       c.product AS product, c.section AS section, c.channel AS channel,
+       c.employee_id AS employee_id, c.years AS years
+ORDER BY sim DESC, chunkId
+LIMIT $k
 """
-    return cypher, params
+_DESC_KNN_CYPHER = _DESC_KNN_TEMPLATE.format(emb="")
+_DESC_KNN_EMB_CYPHER = _DESC_KNN_TEMPLATE.format(
+    emb="\n       c.desc_emb AS desc_emb,")
 
 
-# --- relevance spheres + fusion (data-cut candidate sets, no constants) --------
-
-_SPHERE_SEED = 16  # initial fetch size for the doubling schedule
-
-
-def _gap_cut(sims: list) -> int:
-    """Sphere boundary on a descending similarity curve: keep everything above
-    the largest drop between consecutive values. A flat curve is one plateau —
-    kept whole."""
-    if len(sims) <= 1:
-        return len(sims)
-    gaps = [sims[i] - sims[i + 1] for i in range(len(sims) - 1)]
-    top = max(gaps)
-    if top <= 0:
-        return len(sims)
-    return gaps.index(top) + 1
+def _hint_terms(gate: dict) -> tuple:
+    """Cypher boolean terms for the interpreted scope hints, over chunk
+    fields. ([], {}) when no hint is set."""
+    terms, params = [], {}
+    for f in ("product", "section", "channel", "employee_id"):
+        if gate.get(f):
+            terms.append(f"c.{f} = $g_{f}")
+            params[f"g_{f}"] = gate[f]
+    if gate.get("years"):
+        terms.append("any(y IN $g_years WHERE y IN coalesce(c.years, []))")
+        params["g_years"] = list(gate["years"])
+    return terms, params
 
 
-def _sphere(fetch) -> list:
-    """Doubling fetch until the cut is established — the rows are non-empty and
-    the largest gap sits in the first half of the curve (at least as much tail
-    beyond the cut as sphere before it) — or the index is exhausted. `fetch(n)`
-    returns (rows sorted by sim descending, raw_count); raw_count < n means the
-    index has nothing more to give. Rows can be fewer than raw_count (ineligible
-    hits): a fetch whose rows are all ineligible keeps doubling."""
-    n = _SPHERE_SEED
-    while True:
-        rows, raw = fetch(n)
-        cut = _gap_cut([r["sim"] for r in rows])
-        exhausted = raw < n
-        established = bool(rows) and cut <= len(rows) // 2
-        if exhausted or established:
-            return rows[:cut]
-        n *= 2
+def _tag_affinity(session, names: list, gate: dict) -> dict:
+    """Structural affinity per tag: the fraction of the tag's edges landing on
+    hint-matching chunks, in [0, 1]. Structure vouches for tags the embedding
+    cannot see. {} when no hint is set."""
+    terms, params = _hint_terms(gate)
+    if not terms:
+        return {}
+    cypher = f"""
+UNWIND $names AS name
+MATCH (t:Tag {{name: name}})<-[r:HAS_TAG]-(c:Chunk)<-[:HAS_CHUNK]-(f:File)
+WHERE r.run_id = $runId
+  AND coalesce(c.empty, false) = false
+  AND ($datasetId IS NULL OR f.dataset_id = $datasetId)
+  AND NOT (coalesce(c.section, "") IN $excludedSections)
+RETURN name, count(c) AS total,
+       sum(CASE WHEN {" OR ".join(terms)} THEN 1 ELSE 0 END) AS hits
+"""
+    res = session.run(cypher, names=names, runId=RUN_ID, datasetId=DATASET_ID,
+                      excludedSections=_EXCLUDED_PARAM, **params)
+    return {rec["name"]: (float(rec["hits"]) / float(rec["total"]))
+            for rec in res if rec["total"]}
 
 
-def _fuse_rankings(rankings: list) -> list:
-    """Reciprocal-rank fusion: rank r (0-based) contributes 1/(1+r); a chunk's
-    fused score sums its contributions across the rankings it appears in.
-    Parameter-free, scale-free, and length-blind — a contribution depends only
-    on how high a chunk ranks, so a long ranking carries no more weight than a
-    short one. Ties break on chunkId so the order is deterministic."""
-    score, payload = {}, {}
-    for rows in rankings:
-        for r, row in enumerate(rows):
-            cid = row["chunkId"]
-            score[cid] = score.get(cid, 0.0) + 1.0 / (1 + r)
-            payload.setdefault(cid, row)
-    ranked = sorted(score.items(), key=lambda kv: (-kv[1], kv[0]))
-    return [payload[cid] for cid, _ in ranked]
+def _hint_match(row: dict, gate: dict) -> bool:
+    """Whether one chunk row matches at least one scope hint."""
+    for f in ("product", "section", "channel", "employee_id"):
+        if gate.get(f) and row.get(f) == gate[f]:
+            return True
+    if gate.get("years") and set(gate["years"]) & set(row.get("years") or []):
+        return True
+    return False
 
 
+# --- query-embed cache -------------------------------------------------------
 
-# --- prepare ------------------------------------------------------------------
+def _embed_key(text: str, input_type: str) -> str:
+    """Content address for one embedding: (embed model, input_type, text), each
+    length-prefixed so no field's bytes can forge a boundary and alias a
+    different text onto the same key. A new embedder id yields a new key."""
+    h = hashlib.sha256()
+    for field in (EMBED_MODEL, input_type, text):
+        b = field.encode("utf-8")
+        h.update(len(b).to_bytes(8, "big"))
+        h.update(b)
+    return h.hexdigest()
+
+
+def _load_cached_vec(key: str):
+    """The cached embedding for `key`, or None on a miss. A corrupt or
+    half-written file reads as a miss — never a wrong hit."""
+    path = EMBED_CACHE_DIR / f"{key}.npy"
+    if not path.is_file():
+        return None
+    try:
+        return np.load(path)
+    except (ValueError, OSError):
+        return None
+
+
+def _store_cached_vec(key: str, vec: np.ndarray) -> None:
+    """Write one embedding under its content address, published atomically so a
+    concurrent reader never loads a partial vector."""
+    EMBED_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=EMBED_CACHE_DIR, suffix=".tmp")
+    try:
+        with os.fdopen(fd, "wb") as f:
+            np.save(f, np.asarray(vec, dtype=np.float32))
+        os.replace(tmp, EMBED_CACHE_DIR / f"{key}.npy")
+    except BaseException:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+
+
+def _embed_cached(texts: list, input_type: str) -> tuple:
+    """Embed `texts` through the shared NIM embedder with a persistent per-text
+    cache keyed by (model, input_type, text). Hits load from disk; the misses
+    embed in one batch and each new vector is stored content-addressed. Usage
+    counts the miss embed only — a fully-cached call reports zero NIM cost, the
+    same shape pipelines.vector._embed returns."""
+    keys = [_embed_key(t, input_type) for t in texts]
+    rows: dict = {}
+    misses, miss_at = [], []
+    for i, (t, key) in enumerate(zip(texts, keys)):
+        vec = _load_cached_vec(key)
+        if vec is None:
+            misses.append(t)
+            miss_at.append(i)
+        else:
+            rows[i] = vec
+    calls = tok_in = tok_out = 0
+    secs = 0.0
+    if misses:
+        mat, calls, tok_in, tok_out, secs = _embed(misses, input_type)
+        for j, i in enumerate(miss_at):
+            vec = np.asarray(mat[j], dtype=np.float32)
+            rows[i] = vec
+            _store_cached_vec(keys[i], vec)
+    return (np.asarray([rows[i] for i in range(len(texts))], dtype=np.float32),
+            calls, tok_in, tok_out, secs)
+
+
+# --- prepare -----------------------------------------------------------------
 
 @dataclass
 class Prepared:
-    """Handle returned by prepare(): the live Neo4j driver + BuildStats. The
-    grounding vectors live in the graph (the `tag_emb` and `chunk_desc_emb`
-    indexes), so there is nothing to load here beyond the connection."""
-
     driver: object
     build_stats: Optional[BuildStats] = None
 
 
 def _driver():
-    """Neo4j driver from the usual v3/.env (loaded by nim, same as every other
-    secret) — fail loud, no silent default. NEO4J_URI / NEO4J_USER default to the
-    local install; NEO4J_PASSWORD is required (set it in v3/.env)."""
     from neo4j import GraphDatabase
     nim._load_dotenv()
     pw = os.environ.get("NEO4J_PASSWORD")
@@ -283,60 +477,53 @@ def _driver():
         raise RuntimeError("NEO4J_PASSWORD is not set — add it to v3/.env (like NVIDIA_API_KEY).")
     uri = os.environ.get("NEO4J_URI", "neo4j://localhost:7687")
     user = os.environ.get("NEO4J_USER", "neo4j")
-    # Server notifications off: the driver otherwise prints a full DEPRECATION
-    # notice per query (vector-index API rename), drowning the progress bar.
     return GraphDatabase.driver(uri, auth=(user, pw),
                                 notifications_min_severity="OFF")
 
 
-def _readable(name: str) -> str:
-    return name.replace("_", " ").strip()
-
-
 def prepare_over_corpus(corpus) -> Prepared:
-    """Open the Neo4j driver and confirm the grounding + description indexes are
-    present. `corpus` is accepted for contract parity but unused — this arm reads
-    the graph, not the on-disk corpus. Fails loud if `herb-eval` is unreachable or
-    either index is missing (run `reembed_herb_eval.py` first)."""
     t0 = time.perf_counter()
     drv = _driver()
-    with drv.session(database=DATABASE) as s:
-        s.run("RETURN 1").consume()  # loud now if the DB is down or misnamed
-        present = s.run(
-            "SHOW INDEXES YIELD name WHERE name IN [$t, $d] "
-            "RETURN collect(name) AS names", t=GROUND_INDEX, d=DESC_INDEX).single()["names"]
-        # Every chunk must carry a description vector — the score chain multiplies
-        # by it, and a null would silently drop the chunk from every result.
-        no_desc = s.run(
-            "MATCH (c:Chunk) WHERE c.desc_emb IS NULL RETURN count(c) AS n").single()["n"]
-        # Pointer resolution assumes exactly one File per Chunk — the score Cypher
-        # re-MATCHes the file after aggregation, so a violation would duplicate
-        # output rows. Assert the invariant once here, not per query.
-        multi = s.run(
-            "MATCH (c:Chunk) WITH c, count { (:File)-[:HAS_CHUNK]->(c) } AS n "
-            "WHERE n <> 1 RETURN count(*) AS bad").single()["bad"]
-    if multi:
-        raise RuntimeError(
-            f"{multi} chunk(s) in {DATABASE!r} without exactly one File — "
-            f"pointer resolution would be ambiguous")
-    missing = sorted({GROUND_INDEX, DESC_INDEX} - set(present))
-    if missing or no_desc:
-        raise RuntimeError(
-            f"semantic layer incomplete in {DATABASE!r} (missing indexes: {missing or 'none'}, "
-            f"chunks without desc_emb: {no_desc}) — run `python reembed_herb_eval.py` once.")
-    build_stats = BuildStats(
-        build_time_s=time.perf_counter() - t0,
-        model=ModelUsage(),            # no model call at prepare; tags are pre-embedded in the graph
-        models=[EMBED_MODEL],
+    try:
+        with drv.session(database=DATABASE) as s:
+            s.run("RETURN 1").consume()
+            present = s.run(
+                "SHOW INDEXES YIELD name WHERE name IN [$t, $d] "
+                "RETURN collect(name) AS names",
+                t=GROUND_INDEX, d=DESC_INDEX).single()["names"]
+            # completeness is judged on the retrieved population: empty chunks
+            # never leave a retrieval query
+            no_desc = s.run(
+                "MATCH (c:Chunk) WHERE coalesce(c.empty, false) = false "
+                "AND c.desc_emb IS NULL RETURN count(c) AS n").single()["n"]
+            multi = s.run(
+                "MATCH (c:Chunk) WITH c, count { (:File)-[:HAS_CHUNK]->(c) } AS n "
+                "WHERE n <> 1 RETURN count(*) AS bad").single()["bad"]
+        if multi:
+            raise RuntimeError(
+                f"{multi} chunk(s) in {DATABASE!r} without exactly one File — "
+                f"pointer resolution would be ambiguous")
+        missing = sorted({GROUND_INDEX, DESC_INDEX} - set(present))
+        if missing or no_desc:
+            raise RuntimeError(
+                f"semantic layer incomplete in {DATABASE!r} (missing indexes: {missing or 'none'}, "
+                f"non-empty chunks without desc_emb: {no_desc}) — run `python reembed_herb_eval.py` once.")
+    except Exception:
+        drv.close()
+        raise
+    return Prepared(
+        driver=drv,
+        build_stats=BuildStats(
+            build_time_s=time.perf_counter() - t0,
+            model=ModelUsage(),
+            models=[EMBED_MODEL],
+        ),
     )
-    return Prepared(driver=drv, build_stats=build_stats)
 
 
-# --- interpret (two NIM passes on the shared v3 model) ------------------------
+# --- interpret (two Claude Haiku CLI passes) ----------------------------------
 
 def _qid_text(question) -> tuple:
-    """(id, question_text) from a QuestionWithTruth, dict, (id, text) tuple, or a
-    bare string. Reads ONLY id + question — truth fields are never touched."""
     if hasattr(question, "question") and hasattr(question, "id"):
         return question.id, question.question
     if isinstance(question, dict):
@@ -347,8 +534,6 @@ def _qid_text(question) -> tuple:
 
 
 def _extract_json(text: str) -> dict:
-    """First balanced {...} object in the model output, tolerant of code fences
-    and surrounding prose. Braces inside strings are ignored."""
     fence = re.search(r"```(?:json)?\s*([\s\S]*?)```", text)
     body = fence.group(1).strip() if fence else text
     start = body.find("{")
@@ -378,18 +563,17 @@ def _extract_json(text: str) -> dict:
 
 
 _PASS1_SYSTEM = (
-    "You interpret a user query for graph retrieval. Work in two steps. "
+    "You interpret a user query for graph retrieval. Work in three steps. "
     'STEP 1: write "description" — a concise, self-contained 1-3 sentence statement of the '
-    "underlying information need (what the user actually wants to find, including implied entities/scope), "
-    "in plain declarative prose, not a restatement of the question. "
-    'STEP 2: derive "tags" FROM that description — specific noun phrases, named entities, systems, or actions. '
-    "No generic filler words. "
-    'STEP 3: extract "gate" — structured scope constraints ONLY when the query explicitly names them, else null/[]. '
-    'Fields: product (a "*Force"/"*Genie"-style product name if named), '
+    "underlying information need (what the user actually wants to find, including implied "
+    "entities/scope), in plain declarative prose, not a restatement of the question. "
+    'STEP 2: derive "tags" FROM that description — the query\'s distinct parts as specific '
+    "noun phrases, named entities, systems, or actions. No generic filler words. "
+    'STEP 3: extract "gate" — structured scope hints ONLY when the query explicitly names them, '
+    'else null/[]. Fields: product (a "*Force"/"*Genie"-style product name if named), '
     f"section (one of: {', '.join(OFFERED_SECTIONS)} — map synonyms, e.g. \"pull requests\"->prs, \"chat\"->slack), "
     'channel (a Slack channel name if given), employee_id (an "eid_..." id if given), '
-    "years (array of 4-digit years explicitly mentioned). "
-    "Do NOT guess values that are not in the query. "
+    "years (array of 4-digit years explicitly mentioned). Do NOT guess values not in the query. "
     'Return ONLY valid JSON: {"description":"...","tags":["tag1"],'
     '"gate":{"product":null,"section":null,"channel":null,"employee_id":null,"years":[]}}.'
 )
@@ -401,17 +585,37 @@ _PASS2_SYSTEM = (
     'Return ONLY valid JSON: {"scores":[{"t":"tag","facets":{"topic":0.0,"entities":0.0,"activity":0.0,"temporal":0.0,"evidence":0.0}}]}'
 )
 
+_REVIEW_SYSTEM = (
+    "You are driving evidence retrieval for a question. You see the evidence "
+    "collected so far, best-first. Decide whether it is sufficient to answer "
+    "the question. Say sufficient ONLY when the answer is actually contained "
+    "in the evidence shown — more evidence arrives if you say it is not. "
+    'Return ONLY valid JSON: {"sufficient": true} or {"sufficient": false}.'
+)
 
-def _chat_json(model: str, system: str, user: str, max_tokens: int) -> tuple:
+
+class InterpreterError(RuntimeError):
+    """A failed interpreter turn. Carries the model usage spent across the
+    turn's attempts, so a caller that survives the failure still accounts
+    its cost."""
+
+    def __init__(self, message: str, calls: int = 0, tokens_in: int = 0,
+                 tokens_out: int = 0, time_s: float = 0.0):
+        super().__init__(message)
+        self.calls = calls
+        self.tokens_in = tokens_in
+        self.tokens_out = tokens_out
+        self.time_s = time_s
+
+
+def _chat_json(model: str, system: str, user: str, max_tokens: int,
+               validate: Optional[Callable[[dict], None]] = None) -> tuple:
     """One JSON turn on the interpreter model -> (parsed_json, tokens_in,
-    tokens_out, time_s). Deterministic. The prompt pins the shape and the content
-    is parsed tolerantly (`_extract_json`) — the same prompt-and-parse approach
-    the RAGAS judge uses, not guided structured output. Fails loud and legibly on
-    an empty or length-truncated response rather than as an opaque parse error.
-    Qwen models take two extra guards: non-thinking pinned (NIM's authoritative
-    switch) and min_tokens=1 (Qwen otherwise emits end-of-turn first and returns
-    empty content)."""
-    t0 = time.perf_counter()
+    tokens_out, time_s), usage summed over attempts. A malformed emission —
+    unparseable JSON, or a payload `validate` rejects with ValueError — gets
+    one retry; an empty or truncated response fails immediately, naming its
+    finish_reason. Every failure raises InterpreterError carrying the usage
+    spent."""
     payload = {
         "model": model,
         "temperature": 0,
@@ -421,45 +625,50 @@ def _chat_json(model: str, system: str, user: str, max_tokens: int) -> tuple:
             {"role": "user", "content": user},
         ],
     }
-    if "qwen" in model:
-        payload["chat_template_kwargs"] = {"enable_thinking": False}
-        payload["min_tokens"] = 1
-    resp = nim.post("/chat/completions", payload,
-                    timeout=480.0)  # a hosted model queues under load; a try must outlast the queue
-    elapsed = time.perf_counter() - t0
-    tok_in, tok_out = generator_usage_from_nim(resp.get("usage"))
-    choices = resp.get("choices") or []
-    finish = choices[0].get("finish_reason") if choices else "no choices"
-    content = (choices[0].get("message") or {}).get("content") if choices else None
-    if not content:
-        raise RuntimeError(f"interpreter returned empty content (finish_reason={finish})")
-    if finish == "length":
-        raise RuntimeError(
-            f"interpreter truncated at max_tokens={max_tokens} (finish_reason=length) — raise the budget")
-    return _extract_json(content), tok_in, tok_out, elapsed
+    calls = tok_in = tok_out = 0
+    elapsed = 0.0
+
+    def fail(message: str) -> InterpreterError:
+        return InterpreterError(message, calls=calls, tokens_in=tok_in,
+                                tokens_out=tok_out, time_s=elapsed)
+
+    for attempt in (1, 2):
+        t0 = time.perf_counter()
+        resp = nim.post("/chat/completions", payload, timeout=480.0)
+        elapsed += time.perf_counter() - t0
+        calls += 1
+        ti, to = generator_usage_from_nim(resp.get("usage"))
+        tok_in += ti
+        tok_out += to
+        choices = resp.get("choices") or []
+        finish = choices[0].get("finish_reason") if choices else "no choices"
+        content = (choices[0].get("message") or {}).get("content") if choices else None
+        if not content:
+            raise fail(f"interpreter returned empty content (finish_reason={finish})")
+        if finish == "length":
+            raise fail(
+                f"interpreter truncated at max_tokens={max_tokens} (finish_reason=length) — raise the budget")
+        try:
+            parsed = _extract_json(content)
+            if validate is not None:
+                validate(parsed)
+            return parsed, tok_in, tok_out, elapsed
+        except ValueError as e:
+            if attempt == 2:
+                raise fail(f"interpreter emitted a malformed payload twice: {e}") from e
 
 
 def _clean_tag(raw: str) -> str:
     return re.sub(r"^_+|_+$", "", re.sub(r"[^a-z0-9]+", "_", raw.lower()))
 
 
-def _compute_w_query(facets: dict) -> float:
-    """Tag weight from its facet vector: RMS strength scaled by a coverage bonus
-    (a tag spread across facets weighs more than a one-facet spike of equal RMS)."""
-    vals = [float(facets.get(f, 0.0)) for f in ALL_FACETS]
-    n = len(vals)
-    s = sum(vals)
-    s2 = sum(v * v for v in vals)
-    if s2 == 0:
-        return 0.0
-    strength = (s2 / n) ** 0.5
-    coverage = ((s * s) / (n * s2)) ** COVERAGE_ALPHA
-    return round(strength * coverage, 2)
+def _readable(name: str) -> str:
+    return name.replace("_", " ").strip()
 
 
 def _parse_gate(raw) -> dict:
-    """Normalise the model's loose gate into the strict shape retrieval gates on:
-    string-or-null fields, a section restricted to the known set, 4-digit years."""
+    """Normalise the model's loose gate into strict scope hints: string-or-null
+    fields, a section restricted to the offered set, 4-digit years."""
     g = raw if isinstance(raw, dict) else {}
 
     def s(v):
@@ -484,155 +693,697 @@ def _parse_gate(raw) -> dict:
     }
 
 
+def _validate_scores(parsed: dict) -> None:
+    """Pass-2 payload shape: `scores` is a list of rows, each {t: str,
+    facets: {facet: number}}. A violation raises ValueError, which
+    `_chat_json` retries like any malformed emission."""
+    scores = parsed.get("scores")
+    if not isinstance(scores, list):
+        raise ValueError(f"scores is not a list: {type(scores).__name__}")
+    for row in scores:
+        if not isinstance(row, dict) or not isinstance(row.get("t"), str):
+            raise ValueError(f"score row malformed: {row!r}")
+        facets = row.get("facets")
+        if not isinstance(facets, dict):
+            raise ValueError(f"facets missing for tag {row['t']!r}")
+        for f, v in facets.items():
+            if isinstance(v, bool) or not isinstance(v, (int, float)):
+                raise ValueError(f"facet {f!r} of tag {row['t']!r} is not a number: {v!r}")
+
+
 def _interpret(text: str, model: str) -> tuple:
     """interpret a question -> (plan, calls, tokens_in, tokens_out, time_s).
-    plan = {description, tags:[{t, facets, w_query}], gate}. Two passes; pass 2
-    is skipped when pass 1 yields no usable tags (the tag ranking is then empty
-    and the other channels carry retrieval)."""
+    plan = {description, parts:[{t, facets}], gate}. Pass 2 is skipped when
+    pass 1 yields no usable parts; the description then stands in as the
+    single part. Tags pass 2 leaves unscored keep the neutral default and are
+    listed in plan["unscored"]."""
     p1, in1, out1, t1 = _chat_json(model, _PASS1_SYSTEM, f"User query: {text}", 512)
-    gate = _parse_gate(p1.get("gate"))
     description = p1.get("description") or text
-    raw_tags, seen = [], set()
+    gate = _parse_gate(p1.get("gate"))
+    raw_parts, seen = [], set()
     for raw in (p1.get("tags") or []):
         t = _clean_tag(str(raw))
         if len(t) > 1 and t not in FILLER and t not in seen:
             seen.add(t)
-            raw_tags.append(t)
+            raw_parts.append(t)
 
-    if not raw_tags:
-        return ({"description": description, "tags": [], "gate": gate}, 1, in1, out1, t1)
+    if not raw_parts:
+        neutral = {f: 0.2 for f in ALL_FACETS}
+        return ({"description": description,
+                 "parts": [{"t": description, "facets": neutral}],
+                 "gate": gate},
+                1, in1, out1, t1)
 
     p2, in2, out2, t2 = _chat_json(
         model, _PASS2_SYSTEM,
-        f"Original query: {text}\n\nScore these tags:\n{json.dumps(raw_tags)}", 1024)
-    score_map = {row.get("t"): (row.get("facets") or {})
+        f"Original query: {text}\n\nScore these tags:\n{json.dumps(raw_parts)}", 1024,
+        validate=_validate_scores)
+    # echoed tags match on the same cleaned form the parts carry, so case or
+    # spacing drift in the echo cannot detach a score row
+    score_map = {_clean_tag(row["t"]): (row.get("facets") or {})
                  for row in (p2.get("scores") or [])}
     default = {f: 0.2 for f in ALL_FACETS}
-    tags = []
-    for t in raw_tags:
-        facets = {f: float(score_map.get(t, default).get(f, 0.2)) for f in ALL_FACETS}
-        tags.append({"t": t, "facets": facets, "w_query": _compute_w_query(facets)})
-    return ({"description": description, "tags": tags, "gate": gate},
-            2, in1 + in2, out1 + out2, t1 + t2)
+    unscored = [t for t in raw_parts if t not in score_map]
+    parts = []
+    for t in raw_parts:
+        facets = {f: min(1.0, max(0.0, float(score_map.get(t, default).get(f, 0.2))))
+                  for f in ALL_FACETS}
+        parts.append({"t": t, "facets": facets})
+    plan = {"description": description, "parts": parts, "gate": gate}
+    if unscored:
+        plan["unscored"] = unscored
+    return plan, 2, in1 + in2, out1 + out2, t1 + t2
 
 
-# --- ground (embed description + bare tag names, kNN the tag index) -----------
+# --- interpretation cache ----------------------------------------------------
 
-def _facet_cols(facets: dict) -> dict:
-    return {f: float(facets.get(f, 0.0)) for f in ALL_FACETS}
-
-
-def _ground(session, plan: dict) -> tuple:
-    """One embed call (query side) for the pass-1 description + the prompt tag
-    names, bare. Each prompt tag keeps its relevance sphere off the `tag_emb`
-    index (largest-gap cut). Returns (queryTags
-    param list the tag ranking unwinds, the description vector, embed
-    ModelUsage, per-tag sphere log). One param per grounded corpus tag: the
-    grounding cosine as `sim` plus the prompt tag's full facet vector +
-    w_query — the tag ranking matches the vectors against the edge's facet
-    arrays; facets are never embedded and never fanned out."""
-    tags = plan["tags"]
-    qmat, calls, tok_in, tok_out, secs = _embed(
-        [plan["description"]] + [_readable(qt["t"]) for qt in tags], "query")
-    desc_vec = [float(x) for x in qmat[0]]
-
-    params, spheres = [], []
-    for i, qt in enumerate(tags):
-        vec = [float(x) for x in qmat[i + 1]]
-
-        def fetch(n, _vec=vec):
-            recs = list(session.run(_GROUND_CYPHER, idx=GROUND_INDEX, k=n, vec=_vec))
-            rows = [{"name": rec["name"], "sim": float(rec["sim"])}
-                    for rec in recs if rec["name"] and rec["sim"] is not None]
-            return rows, len(recs)
-
-        sphere = _sphere(fetch)
-        cols = _facet_cols(qt["facets"])
-        for m in sphere:
-            params.append({"name": m["name"], "sim": m["sim"], "promptIndex": i,
-                           "w_query": qt["w_query"], **cols})
-        spheres.append({"tag": qt["t"],
-                        "sphere": [{"name": m["name"], "sim": round(m["sim"], 4)}
-                                   for m in sphere]})
-    usage = ModelUsage(calls=calls, tokens_in=tok_in, tokens_out=tok_out, time_s=secs)
-    return params, desc_vec, usage, spheres
+# The prompts AND the code that shape an interpretation. Folding a signature of
+# both into the cache key means editing a prompt, the tag cleaner, the gate
+# parser, the score validator, the JSON extractor, the facet set, the filler
+# set, or the interpret flow itself invalidates every cached plan, so a reused
+# plan always matches the interpreter that would produce it now.
+_INTERP_SIG = hashlib.sha256("\x00".join([
+    _PASS1_SYSTEM, _PASS2_SYSTEM, repr(sorted(FILLER)), repr(ALL_FACETS),
+    inspect.getsource(_interpret), inspect.getsource(_clean_tag),
+    inspect.getsource(_parse_gate), inspect.getsource(_validate_scores),
+    inspect.getsource(_extract_json),
+]).encode("utf-8")).hexdigest()
 
 
-# --- rank + fuse (three channels over the same corpus) -------------------------
+def _interp_key(text: str, model: str) -> str:
+    """Content address for one interpretation: (interpret model, interpreter
+    signature, question text), length-prefixed against boundary aliasing. A
+    change to the model, the prompts, or the interpreter code yields a new key."""
+    h = hashlib.sha256()
+    for field in (model, _INTERP_SIG, text):
+        b = field.encode("utf-8")
+        h.update(len(b).to_bytes(8, "big"))
+        h.update(b)
+    return h.hexdigest()
 
-def _desc_ranking(session, desc_vec: list) -> list:
-    """The description channel: the query description's relevance sphere over
-    `chunk_desc_emb` (largest-gap cut on the eligible rows). Ineligible rows
-    stay out of the curve but still count toward index exhaustion."""
-    def fetch(n):
-        raw = 0
-        rows = []
-        for rec in session.run(_DESC_KNN_CYPHER, idx=DESC_INDEX, k=n, vec=desc_vec,
-                               datasetId=DATASET_ID,
-                               excludedSections=_EXCLUDED_PARAM):
-            raw += 1
-            if rec["eligible"]:
-                rows.append({"chunkId": rec["chunkId"], "locator": rec["locator"],
-                             "relpath": rec["relpath"], "sha256": rec["sha256"],
-                             "sim": float(rec["sim"])})
-        return rows, raw
 
-    return _sphere(fetch)
+def _store_interp(key: str, plan: dict) -> None:
+    """Write one interpreted plan under its content address, published
+    atomically so a concurrent reader never loads a partial plan."""
+    INTERP_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=INTERP_CACHE_DIR, suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(plan, f, ensure_ascii=False)
+        os.replace(tmp, INTERP_CACHE_DIR / f"{key}.json")
+    except BaseException:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+
+
+def _interpret_cached(text: str, model: str) -> tuple:
+    """interpret with a persistent plan cache keyed by (model, prompt
+    signature, question text). A hit returns the stored plan with zero
+    interpreter usage — no LLM call — so a retrieval sweep reuses one frozen
+    interpretation per question instead of re-sampling it. HERB_FRESH_INTERP=1
+    re-runs the interpreter and refreshes the cache; a corrupt or shapeless
+    cache file reads as a miss, never a wrong plan. Same return shape as
+    _interpret."""
+    key = _interp_key(text, model)
+    path = INTERP_CACHE_DIR / f"{key}.json"
+    if not FRESH_INTERP and path.is_file():
+        try:
+            plan = json.loads(path.read_text(encoding="utf-8"))
+        except (ValueError, OSError):
+            plan = None
+        if isinstance(plan, dict) and isinstance(plan.get("parts"), list):
+            return plan, 0, 0, 0, 0.0
+    plan, calls, tok_in, tok_out, secs = _interpret(text, model)
+    _store_interp(key, plan)
+    return plan, calls, tok_in, tok_out, secs
+
+
+# --- query-relative areas (fuzzy clusters over the part's tag pool) -----------
+
+def _unit(a: np.ndarray) -> np.ndarray:
+    """`a` scaled to unit length along its last axis; a zero vector has no
+    direction and stays zero."""
+    norms = np.linalg.norm(a, axis=-1, keepdims=True)
+    norms[norms == 0] = 1.0
+    return a / norms
+
+
+def _gap_break(gaps: list, gap: float) -> bool:
+    """The walk's stopping test, read from its own trajectory. The height
+    gaps between the openings walked so far are the curve's fit; the next
+    opening breaks the curve when its gap jumps more than two standard
+    deviations above their mean — this-merge-close, next-merge-far, judged
+    locally. Fewer than three walked gaps carry no spread to judge against,
+    and a jump must clear float noise — an excess of rounding-error size is
+    never a break."""
+    if len(gaps) < 3 or gap <= 1e-9:
+        return False
+    return gap > float(np.mean(gaps)) + 2.0 * float(np.std(gaps)) + 1e-9
+
+
+def _multi_k_support(dists: np.ndarray, extend: bool = False,
+                     normalize: bool = True) -> np.ndarray:
+    """Fuzzy k-NN support aggregated over the doubling level sequence: every
+    level contributes inverse-squared-distance weight for the members inside
+    it, so no single k decides the neighborhood. Normalized over the pool by
+    default; with `normalize` off the raw inverse-square weights return —
+    a pure function of distance, one scale shared by every area. With
+    `extend`, the doubling continues until the sequence covers the whole
+    ranked set — every member carries support, deeper levels carry less."""
+    levels = list(K_LEVELS)
+    if extend:
+        while levels[-1] < len(dists):
+            levels.append(levels[-1] * 2)
+    support = np.zeros(len(dists))
+    for k in levels:
+        kk = min(k, len(dists))
+        support[:kk] += 1.0 / np.maximum(dists[:kk], 1e-6) ** 2
+    if not normalize:
+        return support
+    total = support.sum()
+    return support / total if total > 0 else support
+
+
+def _norm_pool(base: dict, lo: float, hi: float) -> dict:
+    """Min-max a path's base scores against the given bounds: hi <= lo (a single
+    scale point) maps every member to 1, an empty base to nothing."""
+    if not base:
+        return {}
+    if hi <= lo:
+        return {cid: 1.0 for cid in base}
+    span = hi - lo
+    return {cid: (v - lo) / span for cid, v in base.items()}
+
+
+def _minmax(raw: dict) -> dict:
+    """Min-max normalize a path's per-chunk base scores onto [0, 1] over that
+    path's own candidate pool: the pool's strongest chunk lands at 1, its
+    weakest at 0, decoupling the path's influence from the raw magnitude of its
+    scoring function."""
+    if not raw:
+        return {}
+    return _norm_pool(raw, min(raw.values()), max(raw.values()))
+
+
+def _absolute(base: float, ref: float) -> float:
+    """A pool-independent bounded score: the raw support saturated against a
+    per-path reference, base / (base + ref). The reference scales with the
+    levels the path stacks, so a top match at the reference distance scores 0.5
+    in every path; order within a path is preserved and a path that found only
+    weak matches keeps low scores instead of stretching its best to 1."""
+    return base / (base + ref)
+
+
+def _n_levels(n: int) -> int:
+    """The number of doubling levels a stated-scope ranked set of size n spans —
+    the level multiplicity a top-ranked member accumulates. Tag and description
+    pools never extend, so their multiplicity is always len(K_LEVELS)."""
+    levels = list(K_LEVELS)
+    while levels[-1] < n:
+        levels.append(levels[-1] * 2)
+    return len(levels)
+
+
+def _agg(slots: list) -> dict:
+    """Fold a path's per-part/source support dicts into one per-chunk base by
+    the HERB_AGG mode: sum lifts a chunk each part corroborates, max keeps its
+    single best contribution."""
+    base: dict = {}
+    for slot in slots:
+        for cid, sup in slot.items():
+            if cid not in base:
+                base[cid] = sup
+            elif AGG == "max":
+                base[cid] = max(base[cid], sup)
+            else:
+                base[cid] = base[cid] + sup
+    return base
+
+
+def _normalize(tag_base: dict, desc_base: dict, scope_base: dict,
+               scope_levels: int) -> tuple:
+    """Put the three paths' bases on a comparable scale by the HERB_NORM mode:
+    relative min-max (HERB_NORM_SCOPE per-path, or global over the union of all
+    three), absolute saturation against a per-path level-count-aware reference,
+    or none (raw). `scope_levels` is the stated-scope path's per-query level
+    multiplicity, so equal distance scores equal across paths under absolute.
+    Returns the three normalized base dicts."""
+    if NORM == "none":
+        return tag_base, desc_base, scope_base
+    if NORM == "absolute":
+        scope_ref = scope_levels * _ABS_UNIT
+        return ({cid: _absolute(v, _ABS_REF) for cid, v in tag_base.items()},
+                {cid: _absolute(v, _ABS_REF) for cid, v in desc_base.items()},
+                {cid: _absolute(v, scope_ref) for cid, v in scope_base.items()})
+    if NORM_SCOPE == "global":
+        allvals = [*tag_base.values(), *desc_base.values(), *scope_base.values()]
+        lo = min(allvals) if allvals else 0.0
+        hi = max(allvals) if allvals else 0.0
+        return (_norm_pool(tag_base, lo, hi), _norm_pool(desc_base, lo, hi),
+                _norm_pool(scope_base, lo, hi))
+    return _minmax(tag_base), _minmax(desc_base), _minmax(scope_base)
+
+
+def _mod(m: float, strength: float) -> float:
+    """A priority modifier over the normalized base: strength 0 returns 1 (the
+    modifier is inert), strength 1 returns the raw factor `m`, values between
+    interpolate. Clamped at 0 so a strength past 1 damps toward zero but never
+    flips sign — a modifier lifts or damps what it vouches for, it never sends a
+    reached chunk below an unreached one or decides membership."""
+    return max(0.0, 1.0 + strength * (m - 1.0))
+
+
+def _level_chain(embs: np.ndarray, anchor: int, dist_shaper=None) -> list:
+    """The anchor leaf's containing-cluster chain through the dendrogram,
+    finest to coarsest: [(height, added_leaf_indices)]. Level 0 is the anchor
+    alone at height 0; each later level is the merge that grew the anchor's
+    cluster, adding the sibling's leaves at that merge's height. The heights
+    are cosine distances — one scale, comparable across parts. A caller-
+    supplied `dist_shaper(embs, D) -> D` may reshape the mutual distances
+    before clustering, so the areas themselves form query-relatively."""
+    n = len(embs)
+    if n == 1:
+        return [(0.0, [0])]
+    D = 1.0 - np.clip(embs @ embs.T, -1.0, 1.0)
+    np.fill_diagonal(D, 0.0)
+    if dist_shaper is not None:
+        D = dist_shaper(embs, D)
+        np.fill_diagonal(D, 0.0)
+    Z = linkage(squareform(D, checks=False), method="average")
+
+    members = {i: [i] for i in range(n)}
+    for i, (a, b, _, _) in enumerate(Z):
+        members[n + i] = members[int(a)] + members[int(b)]
+
+    levels = [(0.0, [anchor])]
+    node = anchor
+    for i, (a, b, height, _) in enumerate(Z):
+        a, b = int(a), int(b)
+        if node in (a, b):
+            sibling = b if node == a else a
+            levels.append((float(height), list(members[sibling])))
+            node = n + i
+    return levels
+
+
+def _part_levels(session, part: dict, vec: np.ndarray, gate: dict,
+                 shaper=None, dist_shaper=None) -> list:
+    """One part -> its widening levels: [{height, tags: [(name, support)]}]
+    finest to coarsest. Support is raw fuzzy multi-k weight raised by structural
+    affinity — support × (1 + affinity) — so a part's tag supports stay on the
+    one distance-derived scale the combine step normalizes, and scope hints
+    inform where the part anchors without ever zeroing an unrelated tag. A
+    caller-supplied `shaper(names, embs, support) -> support` may reshape support
+    from the pool's own geometry before the anchor is chosen. The part anchors at
+    its highest-support tag; each level is the dendrogram merge that widens the
+    anchor's cluster, carrying the merge height."""
+    recs = list(session.run(
+        _GROUND_CYPHER, idx=GROUND_INDEX, k=K_LEVELS[-1],
+        fetch=KNN_OVERFETCH * K_LEVELS[-1], runId=RUN_ID,
+        vec=[float(x) for x in vec]))
+    rows = [(r["name"], r["sim"], r["emb"]) for r in recs
+            if r["name"] and r["sim"] is not None and r["emb"] is not None]
+    if not rows:
+        return []
+    names = [n for n, _, _ in rows]
+    embs = _unit(np.asarray([e for _, _, e in rows], dtype=np.float64))
+    dists = np.array([1.0 - float(s) for _, s, _ in rows])
+
+    support = _multi_k_support(dists, normalize=False)
+    affinity = _tag_affinity(session, names, gate)
+    if affinity:
+        support = support * np.array([1.0 + affinity.get(n, 0.0) for n in names])
+    if shaper is not None:
+        support = shaper(names, embs, support)
+    anchor = int(np.argmax(support))
+    return [{"height": h,
+             "tags": [(names[i], float(support[i])) for i in added]}
+            for h, added in _level_chain(embs, anchor, dist_shaper)]
+
+
+def _open_area(session, area: dict, facets: dict) -> list:
+    """Open one area: its tags pull their chunks; each chunk keeps its
+    highest-support tag, carrying that edge's facet agreement, w_chunk and
+    relevance_to_file as the tag path's priority modifiers over the tag-support
+    base."""
+    cols = {f: float(facets.get(f, 0.0)) for f in ALL_FACETS}
+    res = session.run(
+        _AREA_CHUNKS_CYPHER,
+        tags=[{"name": n, "weight": s, **cols} for n, s in area["tags"]],
+        datasetId=DATASET_ID,
+        runId=RUN_ID,
+        excludedSections=_EXCLUDED_PARAM,
+    )
+    return [dict(rec) for rec in res]
 
 
 def _retrieve(session, plan: dict, k: int) -> tuple:
-    """interpret-plan -> (pointer rows best-first cut at k, ground embed
-    ModelUsage, retrieval meta). Each row carries {chunkId, locator, relpath,
-    sha256, ...} — references only; the caller resolves text from raw.
+    """interpret-plan -> (pointer rows cut at k, query embed ModelUsage,
+    retrieval meta). Every part anchors at its tightest cluster (level 0) and
+    widens up its own dendrogram; widening events across all parts open in
+    ascending merge height (the globally tightest next level first) and only
+    while the distinct-chunk pool — with `HERB_WALK_GATE=1`, only the chunks
+    the tag areas reached — is short of k. With `HERB_CURVE_WALK=1` one
+    progressive frontier walks all semantic areas — tag areas and clustered
+    description neighborhoods — cheapest opening first on the shared
+    cosine-height scale, and stops when the next opening's gap breaks the fit
+    of the gaps walked so far (`_gap_break`); K = the distinct chunks the
+    opened areas vouch for, capped by the caller's k.
 
-    Three rankings over the same corpus — tag overlap, description sphere,
-    scope hints — fused by reciprocal rank. No channel excludes a chunk: an
-    empty tag ranking (no tags, or nothing gripped) or an unset scope simply
-    contributes nothing and the other channels carry. Raises only when every
-    channel is empty — an empty graph."""
-    params, desc_vec, ground_usage, spheres = _ground(session, plan)
+    Membership is the union of what the three paths — tag areas, description
+    lookups, stated scope — find; description and scope stay finders, never
+    trimmed to the tag chunks. Value is scored on one scale in both regimes:
+    each path's per-chunk base (tag support / description support / scope
+    support, summed across the parts or sources that vouch for a chunk) is
+    min-max normalized over that path's own pool, its priority modifiers (facet
+    agreement, w_chunk and relevance_to_file for tags; a hint match for
+    descriptions; the match fraction for scope) lift the normalized base by
+    their exposed strengths, and the three lifted scores combine as a weighted
+    sum (W_TAG / W_DESC / W_SCOPE). Stated scope corroborates value and competes
+    for the K slots but never sets the count."""
+    if k <= 0:
+        raise ValueError("k must be positive")
 
-    tag_rows = []
-    if params:
-        res = session.run(_TAG_RANK_CYPHER, queryTags=params,
-                          datasetId=DATASET_ID, runId=RUN_ID,
-                          excludedSections=_EXCLUDED_PARAM)
-        tag_rows = [dict(rec) for rec in res]
+    parts = plan["parts"]
+    qmat, calls, tok_in, tok_out, secs = _embed_cached(
+        [plan["description"]] + [_readable(p["t"]) for p in parts], "query")
+    usage = ModelUsage(calls=calls, tokens_in=tok_in, tokens_out=tok_out, time_s=secs)
+    need_vec = _unit(np.asarray([float(x) for x in qmat[0]], dtype=np.float64))
 
-    desc_rows = _desc_ranking(session, desc_vec)
+    gate = plan.get("gate") or {}
+    shaper = plan.get("_support_shaper")        # callables, never serialized
+    dist_shaper = plan.get("_distance_shaper")
+    anchors = []   # every part's level 0 — always opened
+    widening = []  # (height, part_index, level)
+    part_vecs = []
+    level_log = []
+    for i, part in enumerate(parts):
+        vec = _unit(np.asarray([float(x) for x in qmat[i + 1]], dtype=np.float64))
+        part_vecs.append(vec)
+        levels = _part_levels(session, part, vec, gate, shaper, dist_shaper)
+        level_log.append({
+            "part": part["t"],
+            # the tag-pool width the run filter left standing
+            "pool": sum(len(lv["tags"]) for lv in levels),
+            "levels": [{"height": round(lv["height"], 4),
+                        "size": len(lv["tags"]),
+                        "tags": [n for n, _ in lv["tags"][:6]]}
+                       for lv in levels],
+        })
+        # the chain's level 0 is the anchor; every later level widens, whatever
+        # its merge height
+        for li, lv in enumerate(levels):
+            if li == 0:
+                anchors.append((i, lv))
+            else:
+                widening.append((lv["height"], i, lv))
+    if not anchors:
+        raise RuntimeError("no tag pool for any prompt part — is tag_emb empty?")
+    widening.sort(key=lambda x: x[0])
 
-    gate_rows = []
-    gate_cypher, gate_params = _gate_rank_cypher(plan["gate"])
-    if gate_cypher:
-        res = session.run(gate_cypher, descVec=desc_vec, datasetId=DATASET_ID,
-                          excludedSections=_EXCLUDED_PARAM, **gate_params)
-        gate_rows = [dict(rec) for rec in res]
+    pool: set = set()          # every chunk any path found — the union membership
+    semantic: set = set()      # chunks the tag/description paths vouch for — the K
+    tag_reached: set = set()   # chunks a tag area reached — the walk-gate count
+    payload: dict = {}
+    walk = []
 
-    fused = _fuse_rankings([tag_rows, desc_rows, gate_rows])
-    if not fused:
-        raise RuntimeError("no candidates in any channel — is the graph empty?")
+    # Raw per-path bases, held off the shared scale until the combine step
+    # normalizes each pool. Tag and description sum a chunk's best support
+    # across the parts/sources that vouch for it; scope is a single source.
+    tag_slots = [dict() for _ in parts]  # per part: chunkId -> best tag support
+    tag_supp: dict = {}                  # chunkId -> its top tag support
+    tag_mods: dict = {}                  # chunkId -> (facetTerm, w_chunk, relevance) at that support
+    desc_sources: list = []              # each a dict chunkId -> best description support
+    desc_hint: dict = {}                 # chunkId -> description priority modifier (2.0 on a hint match)
+    scope_base: dict = {}                # chunkId -> scope support
+    scope_match: dict = {}               # chunkId -> stated-scope match fraction
+    scope_n = 0                          # stated-scope matching-set size — its level multiplicity
+
+    def _pointer(row):
+        return {f: row[f] for f in ("chunkId", "locator", "relpath", "sha256")}
+
+    def open_level(height, pi, level):
+        rows = _open_area(session, level, parts[pi]["facets"])
+        fresh = 0
+        for row in rows:
+            cid = row["chunkId"]
+            sup = float(row["support"])
+            if cid not in pool:
+                fresh += 1
+                pool.add(cid)
+            semantic.add(cid)
+            tag_reached.add(cid)
+            # a first sighting always records a base (even a shaped-to-zero
+            # support), so a tag-reached chunk is scored, never dropped from
+            # selection while it still counts in the walk
+            if cid not in tag_slots[pi] or sup > tag_slots[pi][cid]:
+                tag_slots[pi][cid] = sup
+            # the chunk's top-support edge across all parts supplies its tag modifiers
+            if cid not in tag_supp or sup > tag_supp[cid]:
+                tag_supp[cid] = sup
+                tag_mods[cid] = (float(row["facetTerm"]), float(row["w_chunk"]),
+                                 float(row["relevance"]))
+            payload.setdefault(cid, _pointer(row))
+        walk.append({"part": parts[pi]["t"], "path": "tag", "height": round(height, 4),
+                     "tags": len(level["tags"]), "chunks": len(rows), "new": fresh})
+
+    def _record_desc(slot, rows, vals):
+        """Record one description source's rows into its slot (best support per
+        chunk) and set the shared hint modifier on any chunk a scope hint
+        matches. Returns the count new to the union."""
+        hinted = bool(_hint_terms(gate)[0])
+        fresh = 0
+        for row, val in zip(rows, vals):
+            cid = row["chunkId"]
+            if cid not in pool:
+                fresh += 1
+                pool.add(cid)
+            semantic.add(cid)
+            v = float(val)
+            if v > slot.get(cid, 0.0):
+                slot[cid] = v
+            if hinted and _hint_match(row, gate):
+                desc_hint[cid] = 2.0
+            payload.setdefault(cid, _pointer(row))
+        return fresh
+
+    def open_desc(vec, label):
+        """A part's description lookup: fuzzy multi-k support over
+        `chunk_desc_emb`, chunk-level, its own source in the description pool."""
+        recs = list(session.run(
+            _DESC_KNN_CYPHER, idx=DESC_INDEX, k=K_LEVELS[-1],
+            fetch=KNN_OVERFETCH * K_LEVELS[-1],
+            vec=[float(x) for x in vec],
+            datasetId=DATASET_ID, excludedSections=_EXCLUDED_PARAM))
+        rows = [dict(r) for r in recs if r["sim"] is not None]
+        if not rows:
+            return
+        dists = np.array([1.0 - float(r["sim"]) for r in rows])
+        vals = _multi_k_support(dists, normalize=False)
+        slot: dict = {}
+        desc_sources.append(slot)
+        fresh = _record_desc(slot, rows, vals)
+        walk.append({"part": label, "path": "desc", "chunks": len(rows), "new": fresh})
+
+    def open_desc_area(vec, label):
+        """A description area for the curve walk: the chunk-description
+        neighborhood of one prompt vector, clustered exactly like a tag pool.
+        Its base is the raw fuzzy support of each chunk's distance to the
+        vector; the neighborhood anchors at its highest-support chunk and its
+        dendrogram chain supplies widening events on the same cosine-height
+        scale the tag areas walk. Opens the anchor level now and returns the
+        widening events [(height, open_fn)] for the frontier."""
+        recs = list(session.run(
+            _DESC_KNN_EMB_CYPHER, idx=DESC_INDEX, k=K_LEVELS[-1],
+            fetch=KNN_OVERFETCH * K_LEVELS[-1],
+            vec=[float(x) for x in vec],
+            datasetId=DATASET_ID, excludedSections=_EXCLUDED_PARAM))
+        rows = [dict(r) for r in recs
+                if r["sim"] is not None and r["desc_emb"] is not None]
+        if not rows:
+            return []
+        dists = np.array([1.0 - float(r["sim"]) for r in rows])
+        vals = _multi_k_support(dists, normalize=False)
+        embs = _unit(np.asarray([r["desc_emb"] for r in rows], dtype=np.float64))
+        chain = _level_chain(embs, int(np.argmax(vals)))
+        slot: dict = {}
+        desc_sources.append(slot)
+
+        def open_members(height, added):
+            fresh = _record_desc(slot, [rows[j] for j in added],
+                                 [vals[j] for j in added])
+            walk.append({"part": label, "path": "desc", "height": round(height, 4),
+                         "chunks": len(added), "new": fresh})
+
+        open_members(*chain[0])
+        return [(h, (lambda h=h, added=added: open_members(h, added)))
+                for h, added in chain[1:]]
+
+    def open_stated_scope():
+        """The stated-scope path: the query names its scope, so the pool is the
+        matching chunk set — no clustering, no similarity gate to get in. Its
+        base is fuzzy support over description distances to the need (extended
+        across the whole matching set — a stated fact has no horizon); the match
+        fraction is its priority modifier. Absent hints mean no scope path."""
+        terms, params = _hint_terms(gate)
+        if not terms:
+            return
+        matched_expr = " + ".join(f"(CASE WHEN {t} THEN 1 ELSE 0 END)" for t in terms)
+        cypher = f"""
+MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk)
+WHERE coalesce(c.empty, false) = false
+  AND ($datasetId IS NULL OR f.dataset_id = $datasetId)
+  AND NOT (coalesce(c.section, "") IN $excludedSections)
+  AND ({" OR ".join(terms)})
+WITH c, f, ({matched_expr}) AS matched,
+     vector.similarity.cosine(c.desc_emb, $descVec) AS sim
+RETURN c.chunk_id AS chunkId, c.locator_json AS locator,
+       f.rel_path AS relpath, f.sha256 AS sha256, matched, sim
+ORDER BY sim DESC, chunkId
+"""
+        recs = list(session.run(cypher, descVec=[float(x) for x in need_vec],
+                                datasetId=DATASET_ID,
+                                excludedSections=_EXCLUDED_PARAM, **params))
+        rows = [dict(r) for r in recs if r["sim"] is not None]
+        if not rows:
+            return
+        nonlocal scope_n
+        scope_n = len(rows)
+        dists = np.array([1.0 - float(r["sim"]) for r in rows])
+        vals = _multi_k_support(dists, extend=True, normalize=False)
+        fresh = 0
+        for row, val in zip(rows, vals):
+            cid = row["chunkId"]
+            if cid not in pool:
+                fresh += 1
+                pool.add(cid)
+            sup = float(val)
+            if sup > scope_base.get(cid, 0.0):
+                scope_base[cid] = sup
+                scope_match[cid] = float(row["matched"]) / len(terms)
+            payload.setdefault(cid, _pointer(row))
+        walk.append({"part": "stated-scope", "path": "scope",
+                     "chunks": len(rows), "new": fresh})
+
+    for pi, lv in anchors:
+        open_level(0.0, pi, lv)
+
+    stopped = False
+    opened = 0
+    if CURVE_WALK:
+        seq = iter(range(1 << 30))
+        frontier = [(h, next(seq), (lambda h=h, pi=pi, lv=lv: open_level(h, pi, lv)))
+                    for h, pi, lv in widening]
+        for pi in range(len(parts)):
+            frontier += [(h, next(seq), fn) for h, fn in
+                         open_desc_area(part_vecs[pi], parts[pi]["t"])]
+        if plan["description"] not in (
+                {p["t"] for p in parts} | {_readable(p["t"]) for p in parts}):
+            # the whole-need description is its own area: the question as one
+            # thought, matched against the chunk descriptions
+            frontier += [(h, next(seq), fn) for h, fn in
+                         open_desc_area(need_vec, "description")]
+        open_stated_scope()
+        # One frontier, cheapest opening anywhere first; the walked gaps are
+        # the query's curve and the stop is where the next gap breaks it.
+        frontier.sort(key=lambda e: e[:2])
+        gaps, last_h = [], 0.0
+        for height, _, open_fn in frontier:
+            gap = height - last_h
+            if _gap_break(gaps, gap):
+                stopped = True
+                break
+            open_fn()
+            gaps.append(gap)
+            last_h = height
+        opened = len(gaps)
+    else:
+        for pi in range(len(parts)):
+            open_desc(part_vecs[pi], parts[pi]["t"])
+        open_stated_scope()
+        for height, pi, lv in widening:
+            # the widening gate: the whole pool, or with HERB_WALK_GATE=1
+            # only the chunks the tag areas themselves reached
+            walked = len(tag_reached) if WALK_GATE else len(pool)
+            if walked >= k:
+                break
+            open_level(height, pi, lv)
+    if not pool:
+        raise RuntimeError("opened areas produced no evidence chunks")
+    if CURVE_WALK and not semantic:
+        raise RuntimeError(
+            "semantic areas vouch for no chunks — stated scope alone filled the pool")
+
+    # Each path folds a chunk's best support over the parts/sources that vouch
+    # for it (HERB_AGG: sum lifts a corroborated chunk, max keeps its single
+    # best), the bases reach a comparable scale (HERB_NORM / HERB_NORM_SCOPE),
+    # the strength-graded modifiers lift them, and the three combine as a
+    # weighted sum over the union.
+    tag_base = _agg(tag_slots)
+    desc_base = _agg(desc_sources)
+    tag_norm, desc_norm, scope_norm = _normalize(
+        tag_base, desc_base, scope_base, _n_levels(scope_n))
+    tag_score, desc_score, scope_score = {}, {}, {}
+    for cid, nb in tag_norm.items():
+        ft, wc, rel = tag_mods[cid]
+        tag_score[cid] = nb * _mod(ft, STR_FACET) * _mod(wc, STR_WCHUNK) * _mod(rel, STR_RELEVANCE)
+    for cid, nb in desc_norm.items():
+        desc_score[cid] = nb * _mod(desc_hint.get(cid, 1.0), STR_DESC_HINT)
+    for cid, nb in scope_norm.items():
+        scope_score[cid] = nb * _mod(scope_match.get(cid, 1.0), STR_SCOPE_MATCH)
+
+    totals: dict = {}
+    for cid, s in tag_score.items():
+        totals[cid] = totals.get(cid, 0.0) + W_TAG * s
+    for cid, s in desc_score.items():
+        totals[cid] = totals.get(cid, 0.0) + W_DESC * s
+    for cid, s in scope_score.items():
+        totals[cid] = totals.get(cid, 0.0) + W_SCOPE * s
+
+    ranked = sorted(totals.items(), key=lambda kv: (-kv[1], kv[0]))
+    kept_k = min(len(semantic), k) if CURVE_WALK else k
+    ranked = ranked[:kept_k]
+    selected = [{**payload[cid], "score": round(sc, 4)} for cid, sc in ranked]
+
     meta = {
-        "plan": plan,
-        "grounding": spheres,
-        "rankings": {"tag": len(tag_rows), "desc": len(desc_rows),
-                     "gate": len(gate_rows)},
-        "fused": len(fused),
+        # a serializable copy of the plan: private keys carry callables and
+        # stay out
+        "plan": {key: val for key, val in plan.items() if not key.startswith("_")},
+        "knn_levels": list(K_LEVELS),
+        "parts": level_log,
+        "walk": walk,
+        "retrieved": len(selected),
     }
-    return fused[:max(0, k)], ground_usage, meta
+    if CURVE_WALK:
+        meta["curve_walk"] = {"pool": len(totals), "semantic": len(semantic),
+                              "kept": kept_k, "stopped": stopped,
+                              "opened": opened}
+    if DOOR_TRACE:
+        meta["door_trace"] = [
+            {**payload[cid],
+             "tag": round(W_TAG * tag_score.get(cid, 0.0), 6),
+             "desc": round(W_DESC * desc_score.get(cid, 0.0), 6),
+             "scope": round(W_SCOPE * scope_score.get(cid, 0.0), 6),
+             "total": round(totals[cid], 6)}
+            for cid in sorted(totals, key=lambda c: (-totals[c], c))]
+    return selected, usage, meta
 
 
-# --- resolve (pointers -> raw text + artifact ids) -----------------------------
+# --- resolve -----------------------------------------------------------------
 
 def _load_verified_doc(relpath: str, sha256: str, cache: dict):
-    """Read + hash-verify + parse one raw file, memoized in `cache` so k chunks
-    into the same file cost one read per question. A drifted file is refused,
-    never served — the graph's pointers are only valid against the bytes they
-    were built from."""
     key = (relpath, sha256)
     doc = cache.get(key)
     if doc is not None:
         return doc
-    data = (RAW_ROOT / relpath).read_bytes()
+    path = (RAW_ROOT / relpath).resolve()
+    if not path.is_relative_to(RAW_ROOT):
+        raise RuntimeError(
+            f"locator relpath {relpath!r} resolves outside the raw root — refusing to read it")
+    data = path.read_bytes()
     actual = hashlib.sha256(data).hexdigest()
     if actual != sha256:
         raise RuntimeError(
@@ -644,9 +1395,6 @@ def _load_verified_doc(relpath: str, sha256: str, cache: dict):
 
 
 def _nth_entry(root, i: int):
-    """Record i of a metadata file: a list root indexes directly; a dict root
-    (the employee directory, keyed by eid) takes the i-th entry in file order,
-    kept as {key: value} so the id stays visible in the rendered text."""
     if isinstance(root, list):
         return root[i]
     k, v = list(root.items())[i]
@@ -654,12 +1402,6 @@ def _nth_entry(root, i: int):
 
 
 def _resolve_chunk(row: dict, cache: dict) -> tuple:
-    """One retrieved pointer row -> (chunk text, [artifact ids]). The locator is
-    self-describing: `metadata` rows resolve into the metadata file (directories /
-    org tree — no artifact ids there); product rows resolve `doc[section]` by
-    index/indices, or slice one field by char_range for part chunks. Records
-    render as compact JSON; ids come off the raw records, deduped in rank order.
-    Any dangling pointer (bad index, missing field) raises — never a silent skip."""
     loc = json.loads(row["locator"])
     doc = _load_verified_doc(row["relpath"], row["sha256"], cache)
 
@@ -674,7 +1416,7 @@ def _resolve_chunk(row: dict, cache: dict) -> tuple:
         return "\n".join(json.dumps(r, ensure_ascii=False) for r in recs), []
 
     arr = doc[loc["section"]]
-    if "char_range" in loc:  # a part chunk: one slice of one field of one record
+    if "char_range" in loc:
         rec = arr[loc["index"]]
         start, end = loc["char_range"]
         text = rec[loc["field"]][start:end]
@@ -691,45 +1433,106 @@ def _resolve_chunk(row: dict, cache: dict) -> tuple:
     return "\n".join(json.dumps(r, ensure_ascii=False) for r in recs), ids
 
 
-# --- answer -------------------------------------------------------------------
+# --- answer ------------------------------------------------------------------
+
+def _sufficient_cut(text: str, contexts: list) -> tuple:
+    """The interpreter holds the conversation: evidence is shown cumulatively
+    at the doubling level sequence (capped at what was retrieved) and at each
+    level the interpreter decides whether it can answer. Sufficient → keep
+    exactly the evidence seen; never sufficient → the full retrieval stands
+    (the hard k cap is the forced stop). A review-call failure keeps the full
+    retrieval and is logged, never silent; the usage the failed call spent
+    still counts.
+    Returns (kept, review_log, calls, tokens_in, tokens_out, time_s)."""
+    kept = len(contexts)
+    log = []
+    calls = tok_in = tok_out = 0
+    time_s = 0.0
+    for lv in [l for l in K_LEVELS if l < len(contexts)]:
+        digest = "\n\n".join(f"[{i + 1}] {contexts[i][:240]}" for i in range(lv))
+        try:
+            verdict, ti, to, el = _chat_json(
+                INTERPRET_MODEL, _REVIEW_SYSTEM,
+                f"Question: {text}\n\nEvidence so far (top {lv}):\n{digest}", 128)
+        except abort.Aborted:  # q pressed mid-call — stop the run, no fallback
+            raise
+        except Exception as e:
+            calls += getattr(e, "calls", 0)
+            tok_in += getattr(e, "tokens_in", 0)
+            tok_out += getattr(e, "tokens_out", 0)
+            time_s += getattr(e, "time_s", 0.0)
+            log.append({"at": lv, "decision": "fallback",
+                        "error": f"{type(e).__name__}: {e}"})
+            break
+        calls += 1
+        tok_in += ti
+        tok_out += to
+        time_s += el
+        sufficient = bool(verdict.get("sufficient"))
+        log.append({"at": lv, "sufficient": sufficient})
+        if sufficient:
+            kept = lv
+            break
+    return kept, log, calls, tok_in, tok_out, time_s
+
 
 def answer_one_question(question, prepared: Prepared, generate: Optional[Generator],
                         k: int = 50) -> ArmOutput:
-    """ENTRY: interpret -> ground -> rank + fuse -> top-k chunk text -> generate
-    -> ArmOutput. `generate` is the SHARED generator injected by the orchestrator
-    so generation is identical across arms; None (retrieval-only smoke) leaves
-    the answer empty."""
     _, text = _qid_text(question)
 
     t0 = time.perf_counter()
-    plan, interp_calls, interp_in, interp_out, interp_time = _interpret(text, INTERPRET_MODEL)
+    plan, interp_calls, interp_in, interp_out, interp_time = _interpret_cached(text, INTERPRET_MODEL)
     with prepared.driver.session(database=DATABASE) as session:
         rows, ground_usage, meta = _retrieve(session, plan, k)
+    meta["interpreter"] = {"model": INTERPRET_MODEL, "backend": "claude-cli"}
     retrieve_wall = time.perf_counter() - t0
 
-    # Resolve each pointer row from raw (hash-verified, one read per file per
-    # question). context_ids land in the gold-citation id space, rank-ordered.
     doc_cache: dict = {}
     contexts: list[str] = []
     context_ids: list[str] = []
+    chunk_id_lists: list[list[str]] = []
     seen: set[str] = set()
     for row in rows:
         chunk_text, ids = _resolve_chunk(row, doc_cache)
         contexts.append(chunk_text)
+        chunk_id_lists.append(ids)
         for aid in ids:
             if aid not in seen:
                 seen.add(aid)
                 context_ids.append(aid)
+    # The interpreter decides when it has enough: evidence levels reviewed
+    # cumulatively; sufficient → keep exactly what was seen, hard k the cap.
+    # With HERB_NO_REVIEW=1 the review is off and the full retrieved set stands,
+    # so a retrieval sweep measures retrieval with no per-question content cut.
+    if NO_REVIEW:
+        kept, review_log = len(contexts), []
+        rev_calls = rev_in = rev_out = 0
+        rev_time = 0.0
+    else:
+        kept, review_log, rev_calls, rev_in, rev_out, rev_time = _sufficient_cut(text, contexts)
+    contexts = contexts[:kept]
+    chunk_id_lists = chunk_id_lists[:kept]
+    seen = set()
+    context_ids = []
+    for ids in chunk_id_lists:
+        for aid in ids:
+            if aid not in seen:
+                seen.add(aid)
+                context_ids.append(aid)
+    meta["review"] = {"kept": kept, "rounds": review_log}
+    # meta["retrieved"] counts what retrieval selected; "returned" what the
+    # sufficiency cut let through
+    meta["returned"] = len(contexts)
+    # per-chunk artifact ids, aligned with contexts — depth studies truncate
+    # chunks and rebuild the id list from what is kept
+    meta["chunk_ids"] = chunk_id_lists
 
-    # search_time_s = the in-process Neo4j combinator only. The interpreter and the
-    # grounding embed are NIM walls, carried in `retrieval`, so subtracting both
-    # keeps this comparable to the other arms' search time.
     search_time_s = max(0.0, retrieve_wall - interp_time - ground_usage.time_s)
     retrieval_usage = ModelUsage(
-        calls=interp_calls + ground_usage.calls,
-        tokens_in=interp_in + ground_usage.tokens_in,
-        tokens_out=interp_out + ground_usage.tokens_out,
-        time_s=interp_time + ground_usage.time_s)
+        calls=interp_calls + ground_usage.calls + rev_calls,
+        tokens_in=interp_in + ground_usage.tokens_in + rev_in,
+        tokens_out=interp_out + ground_usage.tokens_out + rev_out,
+        time_s=interp_time + ground_usage.time_s + rev_time)
 
     if generate is None:
         answer, gen = "", ModelUsage()
