@@ -111,7 +111,7 @@ three modes is the pending step — see Still open.)
 - **RAGAS selection**: deterministic (judge-free) metrics always run because they cost
   nothing; the judged ones are opted in via `SELECTED` in `eval/ragas_catalog.py`.
   Deterministic context precision/recall = the **ID-based** variants against the gold citations.
-  Computed with the **RAGAS library** (validated/citable), judge = the Mistral above.
+  Computed with the **RAGAS library** (validated/citable); the judged metrics use the default haiku judge (`claude-haiku-4-5`).
 - **Per-question telemetry is split**: `ArmOutput.generator` (the shared answer-writer,
   identical across arms) vs `ArmOutput.retrieval` (the arm's OWN retrieval-time model cost —
   vector's query embed; zero for lucene).
@@ -120,9 +120,10 @@ three modes is the pending step — see Still open.)
 - Oracle read in place from raw; pipelines blind to it.
 - **One LLM — generator, one judge by default**: `qwen/qwen3.5-397b-a17b` on NVIDIA
   NIM is still the shared generator injected into all three arms (so the only variable
-  is retrieval). The judge defaults to the same Qwen model, but `--judge` can swap in
-  Claude or GPT-5.4 mini for cross-checks; the judge backend and aggregate usage are
-  recorded in the eval manifest. Multilingual, so HERB now and the deferred Swedish
+  is retrieval). The judge defaults to haiku (`claude-haiku-4-5`) through the headless
+  Claude CLI, but `--judge` can swap in another Claude, GPT-5.4 mini, or Gemini model
+  for cross-checks; the judge backend and aggregate usage are recorded in the eval
+  manifest. Multilingual, so HERB now and the deferred Swedish
   Bonnier set run on the same generator, no swap. Not GPT-4o, so HERB's published
   baselines get re-run, not cited.
 - **Generation contract — a thin, fixed RAG pipe.** It sends the model one fixed system

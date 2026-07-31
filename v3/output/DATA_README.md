@@ -63,4 +63,4 @@ canon-judged results remain valid as a second judge's opinion; a 10-question
   `claude-sonnet-5` on 2026-07-20 after an eval-only resume had overwritten it
   with the config default; the answers themselves were never regenerated.
 - Vector June `eval_manifest.json` has `judge_model: null` — it predates judge
-  provenance recording; its judge was the canon qwen3.5-397b.
+  provenance recording; its judge was qwen3.5-397b.

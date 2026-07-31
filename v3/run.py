@@ -259,10 +259,12 @@ def main():
                         "RAGAS scoring")
     p.add_argument("--retrieval-only", action="store_true",
                    help="retrieval only — no generation (generator=None); ArmOutput.answer "
-                        "is empty. RAGAS retrieval metrics (context_precision_id, "
-                        "context_recall_id, context_precision_nonllm, context_recall_nonllm) "
-                        "still score real values; answer-based metrics are 0. Use when the "
-                        "shared generator is down but retrieval comparison is still wanted.")
+                        "is empty. RAGAS scores only the judge-free, embed-free metrics "
+                        "(context_precision_id, context_recall_id, context_precision_nonllm, "
+                        "context_recall_nonllm, and the deterministic answer-vs-gold string "
+                        "scores); the judge+embed pass is skipped, so zero NIM scoring calls. "
+                        "Use when the shared generator is down but retrieval comparison is "
+                        "still wanted.")
     p.add_argument("--generator", metavar="MODEL",
                    help="generator model for this run (default: the shared canon "
                         "generator; claude-* runs through headless Claude Code)")
@@ -311,9 +313,7 @@ def main():
     if args.out:
         out_dir = Path(args.out)
     config = {"top_k": args.k, "workers": args.workers, "out_dir": str(out_dir),
-              "retrieval_only": args.retrieval_only,
-              # provenance: the eval manifest records which judge scored the run
-              "judge_model": os.environ.get("RAGAS_JUDGE_MODEL")}
+              "retrieval_only": args.retrieval_only}
     if args.generator:
         config["generator_model"] = args.generator
 

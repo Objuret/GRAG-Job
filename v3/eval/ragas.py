@@ -3,9 +3,9 @@
 Scores each (arm output, question) on the metrics ragas_catalog.metrics_to_run()
 selects: the deterministic backbone (id-based context precision/recall, n-gram and
 string scores) plus the judged metrics (faithfulness, answer relevance, the LLM/NV
-context metrics, factual correctness, ...). Judge defaults to the shared Qwen on
-NIM, but `--judge` can swap in Claude (`claude-*`), Codex GPT (`gpt-*`), or
-Gemini (`gemini-*`);
+context metrics, factual correctness, ...). The judge defaults to haiku
+(`claude-haiku-4-5`) through the headless Claude CLI; `--judge` (RAGAS_JUDGE_MODEL)
+swaps in another Claude (`claude-*`), Codex GPT (`gpt-*`), or Gemini (`gemini-*`);
 embedder = llama-nemotron-embed on NIM — the judge and embedder both drive through
 their backend-specific wrappers. Emits raw per-question contract.EvalResult (tidy
 long), one row per (question, metric); nothing pre-aggregated.
@@ -56,13 +56,13 @@ import abort
 import nim
 from progress import progress
 from contract import EvalResult, ModelUsage
-from eval.ragas_catalog import metrics_to_run
+from eval.ragas_catalog import CATALOG, metrics_to_run
 
-# The decided eval model stack: the shared Qwen generator remains the default judge
-# of record, llama-nemotron-embed is the dense embedder — same transport as the
-# arms. RAGAS_JUDGE_MODEL swaps the judge for a run (judge shoot-outs, fast
-# iteration); scores are only comparable within one judge.
-JUDGE_MODEL = os.environ.get("RAGAS_JUDGE_MODEL", "qwen/qwen3.5-397b-a17b")
+# The decided eval model stack: haiku through the headless Claude CLI is the default
+# judge, llama-nemotron-embed on NIM is the dense embedder. RAGAS_JUDGE_MODEL swaps
+# the judge for a run (judge shoot-outs, fast iteration); scores are only comparable
+# within one judge.
+JUDGE_MODEL = os.environ.get("RAGAS_JUDGE_MODEL", "claude-haiku-4-5")
 EMBED_MODEL = "nvidia/llama-nemotron-embed-1b-v2"
 _JUDGE_MODEL_LC = JUDGE_MODEL.lower()
 JUDGE_BACKEND = "gemini-cli" if "gemini" in _JUDGE_MODEL_LC else (
@@ -111,6 +111,9 @@ MAX_JUDGE_CONTEXT_CHARS = int(os.environ.get("RAGAS_MAX_JUDGE_CONTEXT_CHARS", "6
 _JUDGE_USAGE_LOCK = threading.Lock()
 LAST_JUDGE_USAGE = ModelUsage()
 LAST_JUDGE_BACKEND = JUDGE_BACKEND
+# The judge model an actual scoring cell invoked. None until a judge cell fires, so a
+# retrieval-only or judge-free pass reports no judge model.
+LAST_JUDGE_MODEL = None
 LAST_JUDGE_REASONING_EFFORT = JUDGE_REASONING_EFFORT
 LAST_JUDGE_WALL_TIME_S = 0.0
 
@@ -422,16 +425,17 @@ def _gemini_verdict(text: str, model: str, timeout_s: float) -> str:
 @dataclass
 class _JudgeLLM(BaseRagasLLM):
     """RAGAS LLM driven by nim.post or a headless subscription CLI.
-    The backend follows the judge model slug: Qwen/NIM by default, Claude for
-    `claude-*`, subscription-authenticated Codex for `gpt-*`, and Gemini CLI for
-    `gemini-*`. Implements the three BaseRagasLLM hooks;
+    The backend follows the judge model slug: Claude for `claude-*` (the default,
+    haiku), subscription-authenticated Codex for `gpt-*`, Gemini CLI for `gemini-*`,
+    and NIM otherwise (e.g. Qwen). Implements the three BaseRagasLLM hooks;
     structured-output parsing is RAGAS's own (it appends format instructions to
     the prompt)."""
 
     model: str = JUDGE_MODEL
 
     def _post(self, text, temperature, stop):
-        global LAST_JUDGE_BACKEND
+        global LAST_JUDGE_BACKEND, LAST_JUDGE_MODEL
+        LAST_JUDGE_MODEL = self.model
         model = self.model.lower()
         if "claude" in model:
             LAST_JUDGE_BACKEND = "claude-cli"
@@ -667,13 +671,18 @@ def _to_sample(out, q, gold_text) -> SingleTurnSample:
 
 # --- scoring ------------------------------------------------------------------
 
-def score_outputs(outputs, questions, arm="", corpus=None, results_path=None, workers=1):
+def score_outputs(outputs, questions, arm="", corpus=None, results_path=None, workers=1,
+                  retrieval_only=False):
     """ENTRY: per (output, question) score every metric in metrics_to_run() ->
     list[contract.EvalResult] (one row per question per metric). judge = the model
-    named by RAGAS_JUDGE_MODEL (Qwen/NIM by default, Claude or Codex GPT when requested),
-    embedder = llama-nemotron-embed on NIM. `corpus` (root path) lets the
-    gold-context-text metrics dereference citations to text; the orchestrator
-    supplies it.
+    named by RAGAS_JUDGE_MODEL (haiku via the Claude CLI by default, another Claude,
+    Codex GPT, or Gemini when requested), embedder = llama-nemotron-embed on NIM.
+    `corpus` (root path) lets the gold-context-text metrics dereference citations to
+    text; the orchestrator supplies it.
+
+    `retrieval_only` keeps only the judge-free, embed-free metrics (the id/nonllm
+    retrieval scores): with no generator the answers are empty, so the judge and embed
+    metrics have nothing real to score and their NIM pass never runs.
 
     `workers` scores that many questions concurrently (the same knob generation uses);
     every call still funnels through nim.py's one shared rate cap, so concurrency only
@@ -689,10 +698,11 @@ def score_outputs(outputs, questions, arm="", corpus=None, results_path=None, wo
     # That nesting turned one 429 into minutes of dead retries and, under concurrency,
     # starved the shared pacer so parallel ran slower than serial.
     run_config = RunConfig(max_retries=1)
-    global LAST_JUDGE_USAGE, LAST_JUDGE_BACKEND, LAST_JUDGE_REASONING_EFFORT
-    global LAST_JUDGE_WALL_TIME_S
+    global LAST_JUDGE_USAGE, LAST_JUDGE_BACKEND, LAST_JUDGE_MODEL
+    global LAST_JUDGE_REASONING_EFFORT, LAST_JUDGE_WALL_TIME_S
     LAST_JUDGE_USAGE = ModelUsage()
     LAST_JUDGE_BACKEND = JUDGE_BACKEND
+    LAST_JUDGE_MODEL = None
     LAST_JUDGE_REASONING_EFFORT = JUDGE_REASONING_EFFORT
     LAST_JUDGE_WALL_TIME_S = 0.0
     if JUDGE_BACKEND == "codex-cli" and not _CODEX_EXE:
@@ -702,10 +712,14 @@ def score_outputs(outputs, questions, arm="", corpus=None, results_path=None, wo
 
     started = time.perf_counter()
     judge, embedder = _JudgeLLM(run_config=run_config), _NimEmbedder(run_config=run_config)
-    metrics = _build_metrics(metrics_to_run(), judge, embedder, run_config)
-    effort = f" effort={JUDGE_REASONING_EFFORT}" if JUDGE_REASONING_EFFORT else ""
-    print(f"ragas judge: {JUDGE_MODEL} backend={JUDGE_BACKEND}{effort} "
-          f"timeout={JUDGE_TIMEOUT_S:g}s tries={JUDGE_MAX_TRIES}")
+    selected = metrics_to_run()
+    if retrieval_only:
+        selected = [n for n in selected if not CATALOG[n].judge and not CATALOG[n].embed]
+    metrics = _build_metrics(selected, judge, embedder, run_config)
+    if not retrieval_only:  # no judge runs on empty answers, so don't announce one
+        effort = f" effort={JUDGE_REASONING_EFFORT}" if JUDGE_REASONING_EFFORT else ""
+        print(f"ragas judge: {JUDGE_MODEL} backend={JUDGE_BACKEND}{effort} "
+              f"timeout={JUDGE_TIMEOUT_S:g}s tries={JUDGE_MAX_TRIES}")
     gold_text = corpus_gold_text(corpus) if corpus else {}
     results = _score_all(outputs, questions, arm, metrics, gold_text,
                          results_path, workers)

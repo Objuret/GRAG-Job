@@ -15,14 +15,20 @@ These are gitignored (present in the working tree, never committed), so a fresh
 clone starts empty — they live on the machine where the work happened.
 
 1. **Current entry state docs (read before doing anything else):**
-   - **V1 curve walk, facets verdict, cluster-K (current):**
-     `docs/state/2026-07-22-v1-curve-walk-facets-and-cluster-k.md` — the user's
-     cluster-K concept, the measured facet/value-knee/curve-walk results, the open
-     design question (walk and best-fit judged not mutually helping; global-frontier
-     re-reading awaiting the user's verdict), and the queued decisions (stated scope
-     vs K, flag rename). **Read this first for any artefact_v1 retrieval work.**
-     Its predecessor `docs/state/2026-07-20-v1-query-relative-areas.md` holds the
-     pre-walk definitions and probes.
+   - **Audit, full revert, corroboration probe (current):**
+     `docs/state/2026-07-28-audit-absorption-full-revert-corroboration-probe.md` —
+     the five-reviewer audit verdicts on every shipping claim, the full revert to
+     `5006fed`, the absorbed rewrite-thread lessons (topic ≠ evidence, membership
+     measurements, evidence-budget design), the graph topology/adjacency facts
+     (one gold file per question; discrimination inside scope territory is the
+     whole residual), and the open-decisions list. **Read this first for any
+     artefact_v1 retrieval work.** The corroboration probe it specs has since
+     run: real signal, redundant with description distance (verdict in memory);
+     oracle headroom +0.21 in-territory; the Part-J discriminator remains
+     unfound. Predecessors `docs/state/2026-07-25-combine-clusterk-hybrid-and-judged-eval-usage-burn.md`
+     (combine sweep, cluster-K runs, hybrid arm, judged-eval burn) and
+     `docs/state/2026-07-22-v1-curve-walk-facets-and-cluster-k.md` (cluster-K
+     concept, curve-walk results) hold the definitions behind it.
    - Two older live threads retained for their narrower build/eval context:
    - **Artefact tag-facet design:** `docs/state/2026-06-25-artefact-facets-guide-link-and-content-profile.md`
      — complete reconciled facet design (content-profile + guide-link); facets = weight+direction
@@ -53,8 +59,9 @@ How to use it:
 
 - **Answering questions about the code:** query the graph FIRST, before grepping —
   `graphify query "<question>"`, `graphify explain "<node>"`, `graphify path "A" "B"`.
-- **After changing files:** run `python refresh_graph.py` (repo root) to rebuild the
-  graph. It is the ONLY rebuild path; never run `graphify --update` (drops the
+- **Rebuilding:** run `python refresh_graph.py` (repo root) once per commit, right
+  before committing — it batches every edit since the last refresh. It is the ONLY
+  rebuild path; never run `graphify --update` (drops the
   external-doc bridges). If it prints a worklist, a doc needs model extraction:
   process `graphify-out/.refresh_worklist.json` — extract each listed doc, bridging
   into the existing concepts in `graphify-out/.concept_index.txt`; write committed
@@ -83,30 +90,32 @@ Details: `graphify-out/REFRESH.md`.
   "previously/now", "no longer", "NOT because", "do not factor out", no
   review-finding labels. Remove the mistake and write the correct version plainly;
   comments feed the graph and memory, so scar tissue pollutes every future session.
-- **Always refresh the navigation graph after changing files:** after any edit to
-  `v3/`, root canon, or the external state/handoff docs, run
-  `python refresh_graph.py` (repo root). It is the ONLY rebuild path (never
-  `graphify --update`). If it prints a worklist, process it before the change is done
-  (full procedure above).
+- **Refresh the navigation graph at commit time:** run `python refresh_graph.py`
+  (repo root) once per commit, right before committing — one refresh covering every
+  edit to `v3/`, root canon, or the external state/handoff docs since the last one.
+  Never per-edit; doc extraction is expensive, so all changed docs ride the same
+  pass. It is the ONLY rebuild path (never `graphify --update`). If it prints a
+  worklist, process it before committing (full procedure above).
 - **Every runnable shows life instantly and progress continuously:** the user runs
   scripts in their own terminal, and that terminal experience is the product. Print
   the banner before any heavy import (announce slow stages like the eval stack),
   `flush=True`, and drive the harness progress bars (`v3/progress.py`) for anything
   long-running. A silent terminal — or a run buried where the user can't watch it —
   is a bug, full stop.
-- **Critical-review the code you write:** after writing or changing code in `v3/`,
-  before you report the work done, run `/critical-review` on the file(s) you just
-  changed — pass them in. It spawns the read-only `critical-reviewer` and you resolve
-  its findings with it until the code converges. Skip only for trivial non-logic
-  edits (a rename, a comment, a one-line config tweak).
+- **Critical-review logic changes only:** after changing real logic in `v3/`, run
+  `/critical-review` on the changed file(s) — in the background, one batched review
+  per work burst, findings resolved until the code converges. Config flips, default
+  changes, renames, comments, help text, and doc lines get no review.
 
 ## Agent roster — orchestrator routing
 
 The main-chat Claude is the orchestrator: it talks to the user and routes every job
 to a specialist agent; it does no hands-on work itself. Plain questions get direct
-conversational answers — no agents, no tool calls. Long runs still happen in the
-user's terminal: agents prepare, the user runs. Definitions live in
-`.claude/agents/`. Route by task:
+conversational answers — no agents, no tool calls. Agents always run in the
+background — a foreground agent freezes the conversation. Prompts are scoped to the
+change: a two-line change gets a two-line prompt, never a tree-wide audit unless the
+user asks for one. Long runs still happen in the user's terminal: agents prepare,
+the user runs. Definitions live in `.claude/agents/`. Route by task:
 
 - **v3-coder** — any code change in `v3/`.
 - **critical-reviewer** — post-change review of `v3/` code (the hard rule above).

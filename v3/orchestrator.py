@@ -273,14 +273,16 @@ def run_one_pipeline(pipeline, chosen, corpus, generate, out_dir, k=DEFAULT_TOP_
 
 
 def run_one_evaluator(evaluator, outputs, chosen, arm="", corpus=None, results_path=None,
-                      workers=1):
+                      workers=1, retrieval_only=False):
     """-> list[contract.EvalResult]. The arm label + corpus (so an evaluator can
     dereference gold citations to text), results_path (so the scorer writes each
-    question's cells as they land — crash-safe + resumable), and workers (questions
-    scored concurrently — the same knob generation uses) pass through.
+    question's cells as they land — crash-safe + resumable), workers (questions
+    scored concurrently — the same knob generation uses), and retrieval_only (score
+    only the judge-free, embed-free metrics when no generator ran) pass through.
     linked to: evaluator.score_outputs"""
     return evaluator.score_outputs(outputs, chosen, arm=arm, corpus=corpus,
-                                   results_path=results_path, workers=workers)
+                                   results_path=results_path, workers=workers,
+                                   retrieval_only=retrieval_only)
 
 
 def build_run_manifest(config, arm, build_stats, n_questions, n_ran, n_failed):
@@ -373,7 +375,9 @@ def run(pipeline, evaluator, ids_file, config=None):
     eval_path = out / "eval_results.jsonl"
     results = run_one_evaluator(
         evaluator, [_rehydrate(r) for r in recs], [by_id[r["id"]] for r in recs],
-        arm, corpus, eval_path, config.get("workers", DEFAULT_WORKERS))
+        arm, corpus, eval_path, config.get("workers", DEFAULT_WORKERS),
+        config.get("retrieval_only", False))
+    config["judge_model"] = getattr(evaluator, "LAST_JUDGE_MODEL", None)
     config["judge_backend"] = getattr(evaluator, "LAST_JUDGE_BACKEND", None)
     config["judge_effort"] = getattr(evaluator, "LAST_JUDGE_REASONING_EFFORT", None)
     config["judge_usage"] = getattr(evaluator, "LAST_JUDGE_USAGE", None)
