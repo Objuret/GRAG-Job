@@ -1,0 +1,24 @@
+{
+  "arm": "artefact_v1",
+  "generator_model": "claude-sonnet-5",
+  "top_k": 50,
+  "questions_file": "C:\\Coding\\exjobbet\\GRAG-Job\\v3\\data\\questions.jsonl",
+  "n_questions": 100,
+  "n_ran": 100,
+  "n_failed": 0,
+  "timestamp": "2026-07-19T19:28:21.766395+00:00",
+  "build_stats": {
+    "build_time_s": 4.393857699993532,
+    "model": {
+      "calls": 0,
+      "tokens_in": 0,
+      "cached_input_tokens": 0,
+      "tokens_out": 0,
+      "reasoning_tokens": 0,
+      "time_s": 0.0
+    },
+    "models": [
+      "nvidia/llama-nemotron-embed-1b-v2"
+    ]
+  }
+}

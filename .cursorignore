@@ -1,0 +1,13 @@
+# =============================================================================
+# QUARANTINE — see quarantine/DO_NOT_READ_UNLESS_LEGACY.md
+# HERB work: ignore legacy prompt bodies + archived mirror + noise.
+# NOTE: backend/agents/*.py and indexing orchestrator shims are TINY loaders — not ignored.
+# =============================================================================
+.claude/
+backend/.plan/
+backend/prompts/
+docs/backend/prompts.md
+frontend/updated/
+
+# Full archived legacy Python (loaded at runtime by shims under backend/)
+quarantine/legacy_mirror/

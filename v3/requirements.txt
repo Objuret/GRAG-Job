@@ -1,0 +1,41 @@
+# v3 harness environment.
+#
+# PROVISIONAL — laptop-reconstructed pins. The canonical record is the desktop
+# venv that produced the June/July runs; replace this file with its freeze:
+#   A:\exjobbet\repo\.venv\Scripts\python.exe -m pip freeze > v3\requirements.txt
+# and rebuild any other machine's venv from the result. Where these pins and the
+# desktop freeze disagree, the desktop wins — judged RAGAS metrics can change
+# between ragas versions, so eval comparability follows the desktop's stack.
+#
+# Build the repo venv from this on any machine:
+#   python -m venv .venv && .venv\Scripts\pip install -r v3/requirements.txt
+# langchain-community must stay <0.4: ragas 0.4.x imports chat-model paths the
+# 0.4 line removed.
+
+numpy==2.4.6
+scipy==1.16.3
+httpx==0.28.1
+tqdm==4.67.1
+neo4j==6.2.0
+transformers==5.12.1
+bm25s==0.2.14
+PyStemmer==3.1.0
+
+# eval (RAGAS judge stack)
+ragas==0.4.3
+datasets==5.0.0
+langchain==1.3.13
+langchain-core==1.4.9
+langchain-community==0.3.31
+pydantic==2.13.4
+tiktoken==0.13.0
+# ragas imports these lazily at SCORING time (not at import) — absent, the eval
+# phase crashes mid-run: rapidfuzz (string metrics), sacrebleu (bleu/chrf),
+# rouge_score + nltk (rouge)
+rapidfuzz==3.14.5
+sacrebleu==2.6.0
+rouge_score==0.1.2
+nltk==3.10.0
+
+# dev
+pytest==9.1.1

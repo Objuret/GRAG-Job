@@ -1,0 +1,7 @@
+{
+  "scorer": "ragas",
+  "judge_model": null,
+  "source_run": "output\\smoke\\probe2",
+  "arm": "vector",
+  "timestamp": "2026-06-26T12:56:54.867386+00:00"
+}

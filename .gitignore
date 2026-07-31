@@ -7,17 +7,47 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .venv/
-backend/.venv/
 
-# Backend data payloads
-backend/data/raw/
-graph_export/latest/
+# Local agent / planning noise
+.claude/
+v1/backend/.plan/
 
-# Frontend dependencies and builds
+# Quarantined legacy implementation
+v1/quarantine/legacy_mirror/
+
+# v2 stage artifacts (manifest/probe dumps for eyeballing — regenerable)
+v2/backend/v2/out/
+
+# Data payloads (working copies; storage archive lives outside the repo)
+v1/backend/.work/
+v1/backend/data/tagging_runs/*/
+v2/backend/data/raw/
+v2/backend/data/corpus/
+v2/backend/data/baselines/*.db
+
+# v1 export/run artifacts
+v1/graph_export/latest/
+v1/graph_export/*.pre_cluster_rename_*.zip
+v1/graph_export/grag_graph_latest.zip
+v1/backend/evaluation/*.jsonl
+v1/backend/evaluation/*.json
+v1/ragas_exports/*
+!v1/ragas_exports/.gitkeep
+
+# Frontend dependencies and builds (v1)
 node_modules/
 dist/
 dist-ssr/
+v1/frontend/public/models/Xenova/e5-small-v2/onnx/model.onnx
+
+# v3 large regenerable binary indices
+v3/output/embed_cache/
+v3/output/artefact_index/
 
 # Logs
 logs/
 *.log
+
+# Local continuity docs (state/handoff skills) — in-repo but not committed
+docs/state/
+docs/handoff/

@@ -1,0 +1,10 @@
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "context_precision_id", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "context_recall_id", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "context_precision_nonllm", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "context_recall_nonllm", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "string_similarity", "value": 0.14830508474576276, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "bleu", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "rouge", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "chrf", "value": 0.058242800941808524, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "exact_match", "value": 0.0, "status": "ok", "components": {}, "human_label": null}
+{"question_id": "ActionGenie::a::0", "type": "person", "arm": "vector", "metric": "string_presence", "value": 0.0, "status": "ok", "components": {}, "human_label": null}

@@ -1,0 +1,7 @@
+{
+  "scorer": "herb",
+  "judge_model": null,
+  "source_run": "output/smoke/gen_lucene",
+  "arm": "lucene",
+  "timestamp": "2026-06-23T19:38:09.615324+00:00"
+}

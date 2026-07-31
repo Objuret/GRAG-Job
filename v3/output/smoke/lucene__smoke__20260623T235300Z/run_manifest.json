@@ -1,0 +1,19 @@
+{
+  "arm": "lucene",
+  "generator_model": "mistralai/mistral-large-3-675b-instruct-2512",
+  "top_k": 10,
+  "questions_file": "A:\\exjobbet\\repo\\v3\\data\\questions.jsonl",
+  "n_questions": 5,
+  "n_ran": 0,
+  "n_failed": 5,
+  "timestamp": "2026-06-23T23:53:35.679500+00:00",
+  "build_stats": {
+    "build_time_s": 2.7251626000070246,
+    "model": {
+      "calls": 0,
+      "tokens": 0,
+      "time_s": 0.0
+    },
+    "models": []
+  }
+}

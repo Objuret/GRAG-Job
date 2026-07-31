@@ -1,0 +1,10 @@
+{
+  "scorer": "ragas",
+  "judge_model": "claude-opus-4-8",
+  "source_run": "output\\vector__gold100__20260625T121031Z",
+  "arm": "vector",
+  "timestamp": "2026-07-18T12:14:26.021337+00:00",
+  "judge_backend": null,
+  "judge_effort": null,
+  "judge_usage": null
+}

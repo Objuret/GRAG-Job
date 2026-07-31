@@ -1,0 +1,100 @@
+{"id": "KnowledgeForce::a::19", "type": "company", "question": "Find the name of company that reported the maximum number of issues that didn’t need fixes in KnowledgeForce?"}
+{"id": "SearchFlow::a::10", "type": "content", "question": "What are the changes suggested by QA Specialist to improve the Technical Specifications Document for SearchFlow?"}
+{"id": "SearchForce::a::20", "type": "person", "question": "Find the employee IDs of engineers who authored maximum number of PRs in SearchForce for bug fixes that are now reopened by customers."}
+{"id": "SentimentForce::a::17", "type": "pr", "question": "Can you provide links to the approved PRs for the UI/UX updates to the user interface dashboard in SentimentForce?"}
+{"id": "SearchFlow::a::16", "type": "url", "question": "Find the demo URLs shared by team members for SearchFlow's competitor products?"}
+{"id": "EdgeForce::a::18", "type": "company", "question": "Find the names of companies were affected by issues in the AI Processing Engine in EdgeForce that caused latency in real-time data processing for time-sensitive applications?"}
+{"id": "FlowForce::a::4", "type": "content", "question": "What issues were reported by customers for the previous release of FlowForce?"}
+{"id": "SentimentForce::a::21", "type": "person", "question": "Find the employee ID of engineer with the highest number of unapproved feature development PRs in SentimentForce?"}
+{"id": "ExplainabilityForce::a::8", "type": "pr", "question": "Could you provide the links to the PRs for the Salesforce integration - Schema management feature in ExplainabilityForce that need to be merged?"}
+{"id": "EdgeForce::a::11", "type": "url", "question": "Find the demo URLs shared by team members for the previous version of EdgeForce?"}
+{"id": "SearchFlow::a::41", "type": "company", "question": "Find the name of company that has the maximum number of unresolved bugs in SearchFlow?"}
+{"id": "CollaborateForce::a::32", "type": "content", "question": "Find all unresolved issues reported by CloudSync in the CollaborateForce product?"}
+{"id": "AnomalyForce::a::28", "type": "person", "question": "What is the employee ID of engineers who resolved issues with the Data Processing Pipeline in AnomalyForce that were causing inaccurate insights from historical data analysis and affecting strategic decision-making?"}
+{"id": "CoachForce::a::7", "type": "pr", "question": "Can you provide links to PRs for the CRM integration feature in CoachForce that were not approved?"}
+{"id": "ForecastForce::a::11", "type": "url", "question": "Find the demo URLs shared by team members for the previous version of ForecastForce?"}
+{"id": "PersonalizeForce::a::26", "type": "company", "question": "Find the names of companies were affected by issues in the API Gateway of PersonalizeForce that caused slow response times and user frustration?"}
+{"id": "ContextForce::a::5", "type": "content", "question": "What issues were reported during QA testing for the previous release of ContextForce?"}
+{"id": "InsightForce::a::4", "type": "person", "question": "Find employee IDs of the authors and key reviewers of the System Design Document for the InsightForce product?"}
+{"id": "PitchForce::a::34", "type": "pr", "question": "Find all PR links submitted by eid_932ce89c to resolve bugs reported by BlueWave in PitchForce"}
+{"id": "SearchForce::a::11", "type": "url", "question": "Find the demo URLs shared by team members for the previous version of SearchForce?"}
+{"id": "EdgeForce::a::7", "type": "company", "question": "Find names of companies that reported issues with the previous release of EdgeForce?"}
+{"id": "ContentForce::a::13", "type": "content", "question": "What features could not be added to ContentForce due to change in product direction?"}
+{"id": "VizForce::a::37", "type": "person", "question": "What is the employee ID of engineers who resolved issues with the Database & Data Management System in VizForce that were causing corrupted visualizations and leading to inaccurate analysis?"}
+{"id": "SearchForce::a::12", "type": "pr", "question": "Could you provide the links to the approved PRs for enhancing natural language processing capabilities in SearchForce that need to be closed?"}
+{"id": "PersonalizeForce::a::13", "type": "url", "question": "Find the demo URLs shared by team members for PersonalizeForce's competitor products?"}
+{"id": "SearchFlow::a::28", "type": "company", "question": "Find the names of companies were affected by issues in the AI Model & Search Algorithm in SearchFlow that caused decreased search accuracy and disrupted workflow?"}
+{"id": "ProposalForce::a::13", "type": "content", "question": "What are the weaknesses of ProposalForce's competitor products?"}
+{"id": "FeedbackForce::a::2", "type": "person", "question": "Find employee IDs of the authors and key reviewers of the Product Requirements Document for the FeedbackForce product?"}
+{"id": "PitchForce::a::19", "type": "pr", "question": "Could you provide the links to the PRs for expanding CRM integration capabilities in PitchForce that need to be merged?"}
+{"id": "SentimentForce::a::11", "type": "url", "question": "Find the demo URLs shared by team members for the previous version of SentimentForce?"}
+{"id": "ProposalForce::a::24", "type": "company", "question": "Find the name of company that has the maximum number of active bugs in ProposalForce."}
+{"id": "KnowledgeForce::a::8", "type": "content", "question": "What are the changes suggested by UX Researcher to improve the Product Requirements Document for KnowledgeForce?"}
+{"id": "TrendForce::a::8", "type": "person", "question": "Find employee IDs of QA specialists who worked on the previous release of TrendForce?"}
+{"id": "WorkFlowGenie::a::10", "type": "pr", "question": "Can you find links to PRs for performance optimization through edge computing and data caching in WorkFlowGenie that were reverted due to changes in product direction?"}
+{"id": "KnowledgeForce::a::13", "type": "url", "question": "Find the demo URLs shared by team members for KnowledgeForce's competitor products?"}
+{"id": "SecurityForce::a::24", "type": "company", "question": "Find the name of company that has the maximum number of active bugs in SecurityForce."}
+{"id": "ForecastForce::a::26", "type": "content", "question": "Find bugs reported by CloudSync in ForecastForce that did not require any fixes?"}
+{"id": "SecurityForce::a::8", "type": "person", "question": "Find employee IDs of team members who provided insights on the strengths and weaknesses of SecurityForce's competitor products?"}
+{"id": "SearchForce::a::15", "type": "pr", "question": "Can you provide the links to the PRs for the implementation of context awareness algorithms in SearchForce that need to be merged?"}
+{"id": "CollaborateForce::a::16", "type": "url", "question": "Find the demo URLs shared by team members for CollaborateForce's competitor products?"}
+{"id": "ForecastForce::a::9", "type": "company", "question": "Find names of companies that highlighted strengths of the previous release of ForecastForce?"}
+{"id": "SearchFlow::a::13", "type": "content", "question": "What are the weaknesses of SearchFlow's competitor products?"}
+{"id": "SentimentForce::a::8", "type": "person", "question": "Find employee IDs of QA specialists who worked on the previous release of SentimentForce?"}
+{"id": "PitchForce::a::15", "type": "pr", "question": "Can you provide links to the PRs related to enhancing NLP models in PitchForce that were reverted because they introduced bugs in the product?"}
+{"id": "TrendForce::a::11", "type": "url", "question": "Find the demo URLs shared by team members for the previous version of TrendForce?"}
+{"id": "AnomalyForce::a::23", "type": "company", "question": "Find the names of companies were affected by issues in the User Interface & Data Visualization of AnomalyForce that caused delays and potential data loss in real-time monitoring?"}
+{"id": "VizForce::a::0", "type": "content", "question": "What are the changes suggested by Engineering Lead to improve the Market Research Report for VizForce?"}
+{"id": "ContextForce::a::22", "type": "person", "question": "Find the employee IDs of engineers who authored maximum number of PRs in ContextForce for bug fixes that are now reopened by customers."}
+{"id": "CollaborateForce::a::21", "type": "pr", "question": "Can you find links to the PRs for the API design with GraphQL in CollaborateForce that need to be merged?"}
+{"id": "SummarizeForce::a::13", "type": "url", "question": "Find the demo URLs shared by team members for SummarizeForce's competitor products?"}
+{"id": "SecurityForce::a::23", "type": "company", "question": "Find the name of company that has the maximum number of reopened bugs in SecurityForce."}
+{"id": "SearchFlow::a::4", "type": "content", "question": "What are the changes suggested by Chief Product Officer to improve the Product Vision Document for SearchFlow?"}
+{"id": "VizForce::a::35", "type": "person", "question": "What is the employee ID of engineers who resolved issues with the API & Data Integration Layer in VizForce that were causing data compatibility challenges and increasing development time for developers?"}
+{"id": "CoachForce::a::9", "type": "pr", "question": "Can you find links to PRs for developing user training and support materials in CoachForce that were not approved?"}
+{"id": "AutoTuneForce::a::11", "type": "url", "question": "Find the demo URLs shared by team members for the previous version of AutoTuneForce?"}
+{"id": "AnomalyForce::a::27", "type": "company", "question": "Find the names of companies were affected by issues in the Data Processing Pipeline of AnomalyForce that led to inaccurate insights and flawed strategic decision-making?"}
+{"id": "PersonalizeForce::a::10", "type": "content", "question": "What are the weaknesses of PersonalizeForce's competitor products?"}
+{"id": "ForecastForce::a::3", "type": "person", "question": "Find employee IDs of Engineering Leads who worked on the previous release of ForecastForce?"}
+{"id": "CoachForce::a::8", "type": "pr", "question": "Can you provide links to the approved PRs for the CRM integration feature in CoachForce?"}
+{"id": "SecurityForce::a::10", "type": "url", "question": "Find the demo URLs shared by team members for SecurityForce's competitor products?"}
+{"id": "KnowledgeForce::a::20", "type": "company", "question": "Find the name of company that has the maximum number of unresolved bugs in KnowledgeForce?"}
+{"id": "TrendForce::a::17", "type": "content", "question": "Find features for TrendForce that were discussed but not implemented?"}
+{"id": "EdgeForce::a::30", "type": "person", "question": "Find the employee ID of engineers who resolved the maximum number of customer bugs in EdgeForce"}
+{"id": "SecurityForce::a::14", "type": "pr", "question": "Could you provide links to the approved PRs for integrating advanced threat intelligence capabilities in SecurityForce?"}
+{"id": "ContentForce::a::10", "type": "url", "question": "Find the demo URLs shared by team members for ContentForce's competitor products?"}
+{"id": "SupportForce::a::10", "type": "company", "question": "Find the names of companies were affected by issues in the User Interface of SupportForce that caused delays and potential data loss, reducing productivity?"}
+{"id": "KnowledgeForce::a::0", "type": "content", "question": "What are the changes suggested by Engineering Lead to improve the Market Research Report for KnowledgeForce?"}
+{"id": "MonitorForce::a::11", "type": "person", "question": "Find the employee ID of engineer with the highest number of approved feature development PRs in MonitorForce?"}
+{"id": "LeadForce::a::14", "type": "pr", "question": "Can you provide links to PRs related to the real-time engagement tracking feature in LeadForce that were reverted because they introduced bugs in the product?"}
+{"id": "ProposalForce::a::16", "type": "url", "question": "Find the demo URLs shared by team members for ProposalForce's competitor products?"}
+{"id": "ActionGenie::a::23", "type": "company", "question": "Find the name of company that has the maximum number of resolved bugs in ActionGenie"}
+{"id": "AnomalyForce::a::2", "type": "content", "question": "What are the changes suggested by UX Researcher to improve the Market Research Report for AnomalyForce?"}
+{"id": "SupportForce::a::17", "type": "person", "question": "What is the employee ID of engineers who resolved the security module issue in SupportForce that posed a risk of arbitrary code execution and data access?"}
+{"id": "AnomalyForce::a::16", "type": "pr", "question": "Can you provide links to the approved PRs for expanding security measures in AnomalyForce?"}
+{"id": "AnomalyForce::a::10", "type": "url", "question": "Find the demo URLs shared by team members for AnomalyForce's competitor products?"}
+{"id": "TrendForce::a::22", "type": "company", "question": "Find the name of company that has the maximum number of active bugs in TrendForce."}
+{"id": "InsightForce::a::8", "type": "content", "question": "What new features about the build authentication API are added to InsightForce?"}
+{"id": "TrendForce::a::1", "type": "person", "question": "Find employee IDs of Product Managers who worked on the previous release of TrendForce?"}
+{"id": "SentimentForce::a::18", "type": "pr", "question": "Can you provide links to PRs related to data compliance and security enhancement in SentimentForce that were not approved?"}
+{"id": "VizForce::a::16", "type": "url", "question": "Find the demo URLs shared by team members for VizForce's competitor products?"}
+{"id": "CollaborationForce::a::26", "type": "company", "question": "Find the name of company that has the maximum number of unresolved bugs in CollaborationForce?"}
+{"id": "SearchFlow::a::11", "type": "content", "question": "What are the changes suggested by Product Manager to improve the Technical Specifications Document for SearchFlow?"}
+{"id": "CollaborationForce::a::17", "type": "person", "question": "Find the employee ID of engineers who resolved issues with the Database Query System in CollaborationForce that were causing slow response times and affecting team efficiency?"}
+{"id": "TrendForce::a::13", "type": "pr", "question": "Can you provide links to PRs related to the automated scaling feature in TrendForce that were not approved?"}
+{"id": "ContextForce::a::11", "type": "url", "question": "Find the demo URLs shared by team members for the previous version of ContextForce?"}
+{"id": "AutoTuneForce::a::19", "type": "company", "question": "Find the name of company that has the maximum number of reopened bugs in AutoTuneForce."}
+{"id": "VizForce::a::2", "type": "content", "question": "What are the changes suggested by UX Researcher to improve the Market Research Report for VizForce?"}
+{"id": "InsightForce::a::1", "type": "person", "question": "Find employee IDs of the authors and key reviewers of the Product Vision Document for the InsightForce product?"}
+{"id": "TrendForce::a::14", "type": "pr", "question": "Can you provide links to the approved PRs for implementing automated scaling in TrendForce?"}
+{"id": "PitchForce::a::11", "type": "url", "question": "Find the demo URLs shared by team members for the previous version of PitchForce?"}
+{"id": "SupportForce::a::22", "type": "company", "question": "Find the name of company that has the maximum number of resolved bugs in SupportForce"}
+{"id": "KnowledgeForce::a::1", "type": "content", "question": "What are the changes suggested by Marketing Manager to improve the Market Research Report for KnowledgeForce?"}
+{"id": "CoachForce::a::2", "type": "person", "question": "Find employee IDs of the authors and key reviewers of the Product Requirements Document for the CoachForce product?"}
+{"id": "ForecastForce::a::12", "type": "pr", "question": "Can you find links to PRs for developing customizable forecast models in ForecastForce that were not approved?"}
+{"id": "FlowForce::a::11", "type": "url", "question": "Find the demo URLs shared by team members for the previous version of FlowForce?"}
+{"id": "EdgeForce::a::9", "type": "company", "question": "Find names of companies that highlighted strengths of the previous release of EdgeForce?"}
+{"id": "SentimentForce::a::22", "type": "content", "question": "Find features for SentimentForce that were discussed but not implemented?"}
+{"id": "ContextForce::a::8", "type": "person", "question": "Find employee IDs of QA specialists who worked on the previous release of ContextForce?"}
+{"id": "ForecastForce::a::15", "type": "pr", "question": "Can you provide links to the approved PRs for the security enhancements in ForecastForce?"}
+{"id": "LeadForce::a::11", "type": "url", "question": "Find the demo URLs shared by team members for the previous version of LeadForce?"}

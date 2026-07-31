@@ -1,0 +1,7 @@
+{
+  "scorer": "ragas",
+  "judge_model": "qwen/qwen3.5-397b-a17b",
+  "source_run": "output\\lucene__gold100__20260627T003236Z",
+  "arm": "lucene",
+  "timestamp": "2026-06-27T23:16:14.505714+00:00"
+}

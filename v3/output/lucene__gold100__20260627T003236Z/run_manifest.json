@@ -1,0 +1,19 @@
+{
+  "arm": "lucene",
+  "generator_model": "qwen/qwen3.5-397b-a17b",
+  "top_k": 50,
+  "questions_file": "A:\\exjobbet\\repo\\v3\\data\\questions.jsonl",
+  "n_questions": 100,
+  "n_ran": 100,
+  "n_failed": 0,
+  "timestamp": "2026-06-27T22:43:46.780693+00:00",
+  "build_stats": {
+    "build_time_s": 2.904652700002771,
+    "model": {
+      "calls": 0,
+      "tokens": 0,
+      "time_s": 0.0
+    },
+    "models": []
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "dataset": "Salesforce__HERB",
+  "build_stats": {
+    "build_time_s": 19070.8,
+    "model": {
+      "calls": 5377,
+      "tokens": 2668378,
+      "time_s": 19070.8
+    },
+    "models": [
+      "meta/llama-3.3-70b-instruct",
+      "nvidia/llama-3.3-nemotron-super-49b-v1",
+      "z-ai/glm-5.1"
+    ]
+  },
+  "chunks_tagged": 5377,
+  "chunks_total": 5377,
+  "tokens_in": 2492789,
+  "tokens_out": 175589,
+  "tags_total": 22235,
+  "tags_per_chunk": 4.1,
+  "by_model": {
+    "z-ai/glm-5.1": 18,
+    "nvidia/llama-3.3-nemotron-super-49b-v1": 3653,
+    "meta/llama-3.3-70b-instruct": 1706
+  },
+  "runs": 4,
+  "wall_seconds": 19070.8
+}

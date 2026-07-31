@@ -1,0 +1,19 @@
+{
+  "arm": "lucene",
+  "generator_model": "nvidia / llama-3.1-nemotron-ultra-253b-v1",
+  "top_k": 50,
+  "questions_file": "A:\\exjobbet\\repo\\v3\\data\\questions.jsonl",
+  "n_questions": 1,
+  "n_ran": 0,
+  "n_failed": 1,
+  "timestamp": "2026-06-27T22:09:36.007577+00:00",
+  "build_stats": {
+    "build_time_s": 2.6897949000122026,
+    "model": {
+      "calls": 0,
+      "tokens": 0,
+      "time_s": 0.0
+    },
+    "models": []
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "scorer": "ragas",
+  "judge_model": "claude-haiku-4-5",
+  "source_run": "output\\lucene__gold100__20260627T003236Z",
+  "arm": "lucene",
+  "timestamp": "2026-07-18T12:09:39.247120+00:00",
+  "judge_backend": null,
+  "judge_effort": null,
+  "judge_usage": null
+}

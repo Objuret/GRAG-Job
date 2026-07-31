@@ -1,0 +1,29 @@
+{
+  "model": "z-ai/glm-5.1",
+  "dataset": "Salesforce__HERB",
+  "build_stats": {
+    "build_time_s": 34.7,
+    "model": {
+      "calls": 0,
+      "tokens": 0,
+      "time_s": 34.7
+    },
+    "models": [
+      "z-ai/glm-5.1"
+    ]
+  },
+  "chunks_tagged": 0,
+  "chunks_total": 5377,
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "tags_total": 0,
+  "tags_per_chunk": 0,
+  "runs": 1,
+  "wall_seconds": 34.7,
+  "this_run": {
+    "tagged": 0,
+    "failed": 0,
+    "calls": 0,
+    "seconds": 34.7
+  }
+}

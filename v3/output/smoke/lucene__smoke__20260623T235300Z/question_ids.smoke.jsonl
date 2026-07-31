@@ -1,0 +1,5 @@
+{"id": "ActionGenie::a::0", "type": "person", "question": "Find employee IDs of the authors and key reviewers of the Market Research Report for the ActionGenie product?"}
+{"id": "ActionGenie::a::5", "type": "content", "question": "What new features related to integration with third-party Slack apps are added to ActionGenie?"}
+{"id": "ActionGenie::a::11", "type": "company", "question": "Find the names of companies were affected by issues in the NLP Model & Language Processing of ActionGenie that led to inaccurate action suggestions and workflow disruptions for non-English speaking teams?"}
+{"id": "ActionGenie::a::21", "type": "pr", "question": "Find all PR links submitted by eid_8c5414f1 to resolve bugs reported by TechCorp in ActionGenie"}
+{"id": "AnomalyForce::a::10", "type": "url", "question": "Find the demo URLs shared by team members for AnomalyForce's competitor products?"}

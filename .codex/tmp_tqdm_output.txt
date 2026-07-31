@@ -1,0 +1,10 @@
+﻿System.Management.Automation.RemoteException
+scoring ? judge + embed (NIM):   0%|          | 0/2 [00:00<?, ?cell/s]
+scoring ? judge + embed (NIM):   0%|          | 0/2 [00:00<?, ?cell/s, 0 nim calls]
+scoring ? judge + embed (NIM):  50%|#####     | 1/2 [00:00<?, ?cell/s, 1 nim calls]
+scoring ? judge + embed (NIM): 100%|##########| 2/2 [00:00<?, ?cell/s, 1 nim calls]
+System.Management.Automation.RemoteException
+scoring ? context-precision (1 call/context ? slow):   0%|          | 0/2 [00:00<?, ?cell/s]
+scoring ? context-precision (1 call/context ? slow):   0%|          | 0/2 [00:00<?, ?cell/s, 0 nim calls]
+scoring ? context-precision (1 call/context ? slow):  50%|#####     | 1/2 [00:00<00:00, 1998.24cell/s, 1 nim calls]
+scoring ? context-precision (1 call/context ? slow): 100%|##########| 2/2 [00:00<00:00, 3996.48cell/s, 1 nim calls]

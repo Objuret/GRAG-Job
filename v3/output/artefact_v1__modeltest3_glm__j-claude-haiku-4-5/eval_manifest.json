@@ -1,0 +1,7 @@
+{
+  "scorer": "ragas",
+  "judge_model": null,
+  "source_run": "C:\\Coding\\exjobbet\\GRAG-Job\\v3\\output\\artefact_v1__modeltest3_glm__j-claude-haiku-4-5",
+  "arm": "artefact_v1",
+  "timestamp": "2026-07-17T10:20:46.192695+00:00"
+}
