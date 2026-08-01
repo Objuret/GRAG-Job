@@ -283,37 +283,41 @@ pipelines_artefact_v1_det_rationale_168	Position of `phrase` as whole words in t
 pipelines_artefact_v1_det_rationale_175	The plan without a model: the question is the single part; stated scope     is
 pipelines_artefact_v1_det_rationale_87	The five facet-anchor embeddings (unit rows) -> (anchors, the embed's     Model
 pipelines_artefact_v1_rationale_1	artefact_v1.py — the ARTEFACT-V1 arm: query-relative fuzzy cluster retrieval ov
-pipelines_artefact_v1_rationale_1028	Open one area: its tags pull their chunks; each chunk keeps its     highest-sup
-pipelines_artefact_v1_rationale_1044	interpret-plan -> (pointer rows cut at k, query embed ModelUsage,     retrieval
-pipelines_artefact_v1_rationale_1439	The interpreter holds the conversation: evidence is shown cumulatively     at t
-pipelines_artefact_v1_rationale_169	A run-tunable coefficient read from the environment, `default` when unset     o
-pipelines_artefact_v1_rationale_347	Cypher boolean terms for the interpreted scope hints, over chunk     fields. ([
-pipelines_artefact_v1_rationale_361	Structural affinity per tag: the fraction of the tag's edges landing on     hin
-pipelines_artefact_v1_rationale_384	Whether one chunk row matches at least one scope hint.
-pipelines_artefact_v1_rationale_396	Content address for one embedding: (embed model, input_type, text), each     le
-pipelines_artefact_v1_rationale_408	The cached embedding for `key`, or None on a miss. A corrupt or     half-writte
-pipelines_artefact_v1_rationale_420	Write one embedding under its content address, published atomically so a     co
-pipelines_artefact_v1_rationale_437	Embed `texts` through the shared NIM embedder with a persistent per-text     ca
-pipelines_artefact_v1_rationale_598	A failed interpreter turn. Carries the model usage spent across the     turn's
-pipelines_artefact_v1_rationale_613	One JSON turn on the interpreter model -> (parsed_json, tokens_in,     tokens_o
-pipelines_artefact_v1_rationale_670	Normalise the model's loose gate into strict scope hints: string-or-null     fi
-pipelines_artefact_v1_rationale_697	Pass-2 payload shape: `scores` is a list of rows, each {t: str,     facets: {fa
-pipelines_artefact_v1_rationale_715	interpret a question -> (plan, calls, tokens_in, tokens_out, time_s).     plan
-pipelines_artefact_v1_rationale_774	Content address for one interpretation: (interpret model, interpreter     signa
-pipelines_artefact_v1_rationale_786	Write one interpreted plan under its content address, published     atomically
-pipelines_artefact_v1_rationale_803	interpret with a persistent plan cache keyed by (model, prompt     signature, q
-pipelines_artefact_v1_rationale_827	`a` scaled to unit length along its last axis; a zero vector has no     directi
-pipelines_artefact_v1_rationale_835	The walk's stopping test, read from its own trajectory. The height     gaps bet
-pipelines_artefact_v1_rationale_849	Fuzzy k-NN support aggregated over the doubling level sequence: every     level
-pipelines_artefact_v1_rationale_871	Min-max a path's base scores against the given bounds: hi <= lo (a single     s
-pipelines_artefact_v1_rationale_882	Min-max normalize a path's per-chunk base scores onto [0, 1] over that     path
-pipelines_artefact_v1_rationale_892	A pool-independent bounded score: the raw support saturated against a     per-p
-pipelines_artefact_v1_rationale_901	The number of doubling levels a stated-scope ranked set of size n spans —     t
-pipelines_artefact_v1_rationale_911	Fold a path's per-part/source support dicts into one per-chunk base by     the
-pipelines_artefact_v1_rationale_928	Put the three paths' bases on a comparable scale by the HERB_NORM mode:     rel
-pipelines_artefact_v1_rationale_951	A priority modifier over the normalized base: strength 0 returns 1 (the     mod
-pipelines_artefact_v1_rationale_960	The anchor leaf's containing-cluster chain through the dendrogram,     finest t
-pipelines_artefact_v1_rationale_994	One part -> its widening levels: [{height, tags: [(name, support)]}]     finest
+pipelines_artefact_v1_rationale_1014	A priority modifier over the normalized base: strength 0 returns 1 (the     mod
+pipelines_artefact_v1_rationale_1023	The anchor leaf's containing-cluster chain through the dendrogram,     finest t
+pipelines_artefact_v1_rationale_1061	The cache entry name for one build of the membership matrices: the     database
+pipelines_artefact_v1_rationale_1068	The cached membership matrices, loaded once per process: `U` stacked     (n_fac
+pipelines_artefact_v1_rationale_1086	Cluster guidance g per pool tag, in [0, 1]. The part's facet values     normali
+pipelines_artefact_v1_rationale_1113	One part -> its widening levels: [{height, tags: [(name, support)]}]     finest
+pipelines_artefact_v1_rationale_1151	Open one area: its tags pull their chunks; each chunk keeps its     highest-sup
+pipelines_artefact_v1_rationale_1167	interpret-plan -> (pointer rows cut at k, query embed ModelUsage,     retrieval
+pipelines_artefact_v1_rationale_1612	The interpreter holds the conversation: evidence is shown cumulatively     at t
+pipelines_artefact_v1_rationale_178	A run-tunable coefficient read from the environment, `default` when unset     o
+pipelines_artefact_v1_rationale_187	A run-tunable integer read from the environment, `default` when unset     or bl
+pipelines_artefact_v1_rationale_410	Cypher boolean terms for the interpreted scope hints, over chunk     fields. ([
+pipelines_artefact_v1_rationale_424	Structural affinity per tag: the fraction of the tag's edges landing on     hin
+pipelines_artefact_v1_rationale_447	Whether one chunk row matches at least one scope hint.
+pipelines_artefact_v1_rationale_459	Content address for one embedding: (embed model, input_type, text), each     le
+pipelines_artefact_v1_rationale_471	The cached embedding for `key`, or None on a miss. A corrupt or     half-writte
+pipelines_artefact_v1_rationale_483	Write one embedding under its content address, published atomically so a     co
+pipelines_artefact_v1_rationale_500	Embed `texts` through the shared NIM embedder with a persistent per-text     ca
+pipelines_artefact_v1_rationale_661	A failed interpreter turn. Carries the model usage spent across the     turn's
+pipelines_artefact_v1_rationale_676	One JSON turn on the interpreter model -> (parsed_json, tokens_in,     tokens_o
+pipelines_artefact_v1_rationale_733	Normalise the model's loose gate into strict scope hints: string-or-null     fi
+pipelines_artefact_v1_rationale_760	Pass-2 payload shape: `scores` is a list of rows, each {t: str,     facets: {fa
+pipelines_artefact_v1_rationale_778	interpret a question -> (plan, calls, tokens_in, tokens_out, time_s).     plan
+pipelines_artefact_v1_rationale_837	Content address for one interpretation: (interpret model, interpreter     signa
+pipelines_artefact_v1_rationale_849	Write one interpreted plan under its content address, published     atomically
+pipelines_artefact_v1_rationale_866	interpret with a persistent plan cache keyed by (model, prompt     signature, q
+pipelines_artefact_v1_rationale_890	`a` scaled to unit length along its last axis; a zero vector has no     directi
+pipelines_artefact_v1_rationale_898	The walk's stopping test, read from its own trajectory. The height     gaps bet
+pipelines_artefact_v1_rationale_912	Fuzzy k-NN support aggregated over the doubling level sequence: every     level
+pipelines_artefact_v1_rationale_934	Min-max a path's base scores against the given bounds: hi <= lo (a single     s
+pipelines_artefact_v1_rationale_945	Min-max normalize a path's per-chunk base scores onto [0, 1] over that     path
+pipelines_artefact_v1_rationale_955	A pool-independent bounded score: the raw support saturated against a     per-p
+pipelines_artefact_v1_rationale_964	The number of doubling levels a stated-scope ranked set of size n spans —     t
+pipelines_artefact_v1_rationale_974	Fold a path's per-part/source support dicts into one per-chunk base by     the
+pipelines_artefact_v1_rationale_991	Put the three paths' bases on a comparable scale by the HERB_NORM mode:     rel
 pipelines_hybrid_rationale_1	hybrid.py — late-fusion baseline: the lucene (BM25) and vector (dense) arms comb
 pipelines_hybrid_rationale_121	(id, question_text) from a QuestionWithTruth, dict, (id, text) tuple, or a     b
 pipelines_hybrid_rationale_133	Min-max one arm's scores to [0, 1] over its own returned ids. One distinct     v
@@ -362,6 +366,13 @@ v3_abort_rationale_25	Start a daemon thread that sets the abort flag when q/Q is
 v3_backfill_token_split_rationale_1	backfill_token_split.py — add tokens_in/tokens_out ONLY on rows with no token da
 v3_build_question_sets_rationale_17	The gold-N: a balanced ANSWERABLE subset, drawn by seeded round-robin     over
 v3_build_questions_rationale_1	build_questions.py — one-shot: build the HERB question set from raw.  HERB shi
+v3_build_tag_clusters_rationale_1	Build the artefact arm's cluster-guide cache: five per-facet fuzzy membership ma
+v3_build_tag_clusters_rationale_124	Fuzzy membership of every row of X over the prototypes, float32 rows     summing
+v3_build_tag_clusters_rationale_133	The tag pool under the arm's tagging run, sorted by name -> (names,     unit-nor
+v3_build_tag_clusters_rationale_50	Per-tag facet participation ω, an (n_tags, n_facets) matrix: row t,     column f
+v3_build_tag_clusters_rationale_64	The floored participation ω̃ = λ + (1 − λ)·ω: every tag keeps at least     λ wei
+v3_build_tag_clusters_rationale_71	k-means++ prototypes over unit rows: D² seeding on cosine distance,     uniform
+v3_build_tag_clusters_rationale_97	Weighted spherical k-means from a shared init -> (prototypes, Lloyd     iteratio
 v3_compare_arms_rationale_1	compare_arms.py — side-by-side RAGAS comparison across the gold-100 runs.  Wal
 v3_compare_arms_rationale_28	(arm, k) -> {metric: [values...]} over the ok cells in eval_results.jsonl.
 v3_contract_rationale_1	contract.py — the shared shapes every arm and evaluator imports.
@@ -423,21 +434,26 @@ v3_requirements_env	v3/requirements.txt — harness environment pins (provisiona
 v3_requirements_ragas_scoring_deps	RAGAS scoring-time deps pinned for offline metrics (rapidfuzz, sacrebleu, rouge_score, nltk) + scipy for NNK grounding
 v3_run_lock_rationale_1	Single-writer guard for run output folders.
 v3_run_rationale_1	run.py — the single entry point for an evaluation run: choose an arm, a question
-v3_run_rationale_101	qwen/qwen3.5-397b-a17b' -> 'qwen3.5-397b-a17b' — dir-safe judge tag for     __j
-v3_run_rationale_107	Judges with no queue to respect: open every cell at once.
-v3_run_rationale_113	n of `ids` by round-robin over the HERB answer types, file order within each
-v3_run_rationale_130	--rejudge: score existing run folders' answers under --judge, each into a     s
-v3_run_rationale_40	Write a fixed dev id-set (one answerable per HERB type first, then in file
-v3_run_rationale_59	Resolve a named fixed question set or an explicit id-set path.
-v3_run_rationale_68	--set -> (ids_file, out_dir). smoke = a fresh dev id-set under output/smoke/;
-v3_run_rationale_84	Mean per metric over the cells that scored, with an error tally.
+v3_run_rationale_103	qwen/qwen3.5-397b-a17b' -> 'qwen3.5-397b-a17b' — dir-safe judge tag for     __j
+v3_run_rationale_109	Judges with no queue to respect: open every cell at once.
+v3_run_rationale_115	n of `ids` by round-robin over the HERB answer types, file order within each
+v3_run_rationale_132	--rejudge: score existing run folders' answers under --judge, each into a     s
+v3_run_rationale_236	--flag NAME=VALUE -> (NAME, VALUE). A spec with no '=' or an empty name     fai
+v3_run_rationale_246	Set each --flag pair in THIS process's environment — before any pipeline     mo
+v3_run_rationale_42	Write a fixed dev id-set (one answerable per HERB type first, then in file
+v3_run_rationale_61	Resolve a named fixed question set or an explicit id-set path.
+v3_run_rationale_70	--set -> (ids_file, out_dir). smoke = a fresh dev id-set under output/smoke/;
+v3_run_rationale_86	Mean per metric over the cells that scored, with an error tally.
 v3_test_artefact_v1_rationale_1	Regression checks for artefact_v1 query-relative level-walk retrieval.
-v3_test_artefact_v1_rationale_1048	HERB_WALK_GATE=1: the flat-regime widening gate counts only the chunks     the
-v3_test_artefact_v1_rationale_295	Scripted Neo4j stand-in: ground rows are keyed by call order (one per     part)
-v3_test_artefact_v1_rationale_537	The curve walk (HERB_CURVE_WALK=1): one progressive frontier opens the     chea
-v3_test_artefact_v1_rationale_64	One opened-area chunk row: the tag-support base plus the highest-support     ed
-v3_test_artefact_v1_rationale_807	The three paths score on one scale: min-max base per path, strength-lerp     mo
-v3_test_artefact_v1_rationale_845	HERB_AGG / HERB_NORM / HERB_NORM_SCOPE select cells of the combine grid;     th
+v3_test_artefact_v1_rationale_1119	HERB_WALK_GATE=1: the flat-regime widening gate counts only the chunks     the
+v3_test_artefact_v1_rationale_1163	HERB_TAG_FIRST=1: the flat regime runs the tag stage first — the     widening w
+v3_test_artefact_v1_rationale_1278	HERB_STR_GUIDE > 0: the part's facet blend of the cached per-facet     membersh
+v3_test_artefact_v1_rationale_1412	build_tag_clusters' math on synthetic vectors — no graph, no model.
+v3_test_artefact_v1_rationale_304	Scripted Neo4j stand-in: ground rows are keyed by call order (one per     part)
+v3_test_artefact_v1_rationale_546	The curve walk (HERB_CURVE_WALK=1): one progressive frontier opens the     chea
+v3_test_artefact_v1_rationale_73	One opened-area chunk row: the tag-support base plus the highest-support     ed
+v3_test_artefact_v1_rationale_878	The three paths score on one scale: min-max base per path, strength-lerp     mo
+v3_test_artefact_v1_rationale_916	HERB_AGG / HERB_NORM / HERB_NORM_SCOPE select cells of the combine grid;     th
 v3_test_hybrid_rationale_1	Regression checks for the hybrid arm — min-max late fusion of the lucene and vec
 v3_test_hybrid_rationale_110	A vector stand-in: retrieve returns (ranked unit dicts, ModelUsage), the pair
 v3_test_hybrid_rationale_99	A lucene stand-in: prepare hands back a Prepared-ish with a BuildStats;     retr

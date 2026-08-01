@@ -1,6 +1,9 @@
 """Regression checks for artefact_v1 query-relative level-walk retrieval."""
+import argparse
+import ast
 import hashlib
 import inspect
+import os
 import shutil
 import tempfile
 import unittest
@@ -9,6 +12,8 @@ from unittest.mock import patch
 
 import numpy as np
 
+import build_tag_clusters as btc
+import run
 from pipelines import artefact_v1 as arm
 from pipelines import artefact_v1_det as det
 
@@ -23,6 +28,8 @@ _MODULE_FLAGS = (patch.object(arm, "CURVE_WALK", False),
                  patch.object(arm, "WALK_GATE", False),
                  patch.object(arm, "FRESH_INTERP", False),
                  patch.object(arm, "NO_REVIEW", False),
+                 patch.object(arm, "TAG_FIRST", False),
+                 patch.object(arm, "TAG_ADMIT", 0.0),
                  patch.object(arm, "AGG", "sum"),
                  patch.object(arm, "NORM", "relative"),
                  patch.object(arm, "NORM_SCOPE", "per_path"),
@@ -33,7 +40,9 @@ _MODULE_FLAGS = (patch.object(arm, "CURVE_WALK", False),
                  patch.object(arm, "STR_WCHUNK", 1.0),
                  patch.object(arm, "STR_RELEVANCE", 1.0),
                  patch.object(arm, "STR_DESC_HINT", 1.0),
-                 patch.object(arm, "STR_SCOPE_MATCH", 1.0))
+                 patch.object(arm, "STR_SCOPE_MATCH", 1.0),
+                 patch.object(arm, "STR_GUIDE", 0.0),
+                 patch.object(arm, "GUIDE_TAU", 0.01))
 
 _CACHE_TMP = None
 _CACHE_PATCHES = ()
@@ -734,27 +743,46 @@ class RetrievalFlagTests(unittest.TestCase):
                            ("HERB_DOOR_TRACE", "DOOR_TRACE"),
                            ("HERB_WALK_GATE", "WALK_GATE"),
                            ("HERB_FRESH_INTERP", "FRESH_INTERP"),
-                           ("HERB_NO_REVIEW", "NO_REVIEW")):
+                           ("HERB_NO_REVIEW", "NO_REVIEW"),
+                           ("HERB_TAG_FIRST", "TAG_FIRST")):
             self.assertIn(f'{const} = os.environ.get("{env}") == "1"', src)
 
     def test_the_combine_coefficients_read_from_the_environment(self):
         src = inspect.getsource(arm)
         for env, const in (("HERB_W_TAG", "W_TAG"), ("HERB_W_DESC", "W_DESC"),
                            ("HERB_W_SCOPE", "W_SCOPE"),
+                           ("HERB_TAG_ADMIT", "TAG_ADMIT"),
                            ("HERB_STR_FACET", "STR_FACET"),
                            ("HERB_STR_WCHUNK", "STR_WCHUNK"),
                            ("HERB_STR_RELEVANCE", "STR_RELEVANCE"),
                            ("HERB_STR_DESC_HINT", "STR_DESC_HINT"),
-                           ("HERB_STR_SCOPE_MATCH", "STR_SCOPE_MATCH")):
+                           ("HERB_STR_SCOPE_MATCH", "STR_SCOPE_MATCH"),
+                           ("HERB_STR_GUIDE", "STR_GUIDE"),
+                           ("HERB_GUIDE_TAU", "GUIDE_TAU"),
+                           ("HERB_GUIDE_M", "GUIDE_M"),
+                           ("HERB_GUIDE_LAMBDA", "GUIDE_LAMBDA")):
             self.assertIn(f'{const} = _env_float("{env}"', src)
+
+    def test_the_guide_integer_config_reads_strict_from_the_environment(self):
+        src = inspect.getsource(arm)
+        for env, const in (("HERB_GUIDE_C", "GUIDE_C"),
+                           ("HERB_GUIDE_SEED", "GUIDE_SEED")):
+            self.assertIn(f'{const} = _env_int("{env}"', src)
+        self.assertEqual(arm._env_int("HERB_GUIDE_C_UNSET_XYZ", 96), 96)
+        with patch.dict(os.environ, {"HERB_GUIDE_C_BAD_XYZ": "many"}):
+            with self.assertRaises(ValueError):
+                arm._env_int("HERB_GUIDE_C_BAD_XYZ", 96)
 
     def test_both_legs_manifests_carry_the_combine_coefficients(self):
         for flags in (arm.RETRIEVAL_FLAGS, det.RETRIEVAL_FLAGS):
             for name in ("HERB_CURVE_WALK", "HERB_WALK_GATE", "HERB_NO_REVIEW",
+                         "HERB_TAG_FIRST", "HERB_TAG_ADMIT",
                          "HERB_AGG", "HERB_NORM", "HERB_NORM_SCOPE", "HERB_W_TAG",
                          "HERB_W_DESC", "HERB_W_SCOPE", "HERB_STR_FACET",
                          "HERB_STR_WCHUNK", "HERB_STR_RELEVANCE",
-                         "HERB_STR_DESC_HINT", "HERB_STR_SCOPE_MATCH"):
+                         "HERB_STR_DESC_HINT", "HERB_STR_SCOPE_MATCH",
+                         "HERB_STR_GUIDE", "HERB_GUIDE_TAU", "HERB_GUIDE_C",
+                         "HERB_GUIDE_M", "HERB_GUIDE_LAMBDA", "HERB_GUIDE_SEED"):
                 self.assertIn(name, flags)
 
     def test_the_mode_switches_reject_an_unknown_value(self):
@@ -767,6 +795,49 @@ class RetrievalFlagTests(unittest.TestCase):
     def test_the_facet_strength_defaults_inert(self):
         self.assertEqual(arm._env_float("HERB_STR_FACET_UNSET_XYZ", arm.STR_FACET),
                          arm.STR_FACET)
+
+
+class RunFlagTests(unittest.TestCase):
+    def test_a_flag_spec_parses_to_its_name_value_pair(self):
+        self.assertEqual(run._flag("HERB_TAG_FIRST=1"), ("HERB_TAG_FIRST", "1"))
+        self.assertEqual(run._flag("HERB_STR_GUIDE=1.0"), ("HERB_STR_GUIDE", "1.0"))
+        self.assertEqual(run._flag("A=b=c"), ("A", "b=c"))  # the value keeps its '='
+        self.assertEqual(run._flag("HERB_X="), ("HERB_X", ""))  # blank = unset = the pipeline's true default
+
+    def test_a_malformed_flag_spec_fails_at_parse(self):
+        for bad in ("HERB_TAG_FIRST", "=1", "="):
+            with self.assertRaises(argparse.ArgumentTypeError):
+                run._flag(bad)
+
+    def test_flags_land_in_this_process_environment_only(self):
+        with patch.dict(os.environ, {}, clear=False):
+            run._apply_flags([("HERB_RUN_FLAG_TEST_XYZ", "1")])
+            self.assertEqual(os.environ["HERB_RUN_FLAG_TEST_XYZ"], "1")
+        self.assertNotIn("HERB_RUN_FLAG_TEST_XYZ", os.environ)
+
+    def test_a_blank_value_unsets_a_session_env_var(self):
+        with patch.dict(os.environ, {"HERB_RUN_FLAG_TEST_XYZ": "1"}, clear=False):
+            run._apply_flags([("HERB_RUN_FLAG_TEST_XYZ", "")])
+            self.assertNotIn("HERB_RUN_FLAG_TEST_XYZ", os.environ)
+
+    def test_flags_apply_before_any_pipeline_or_eval_import(self):
+        # the apply site precedes the pipeline import, main's eval import, and
+        # the _rejudge call whose body holds the rejudge path's eval import;
+        # run.py's module scope imports from neither package
+        src = inspect.getsource(run.main)
+        apply_at = src.index("_apply_flags(args.flag)")
+        self.assertLess(apply_at, src.index("importlib.import_module"))
+        self.assertLess(apply_at, src.index("import eval.ragas"))
+        self.assertLess(apply_at, src.index("_rejudge(args)"))
+        self.assertIn("import eval.ragas", inspect.getsource(run._rejudge))
+        for node in ast.parse(inspect.getsource(run)).body:
+            names = ([a.name for a in node.names] if isinstance(node, ast.Import)
+                     else [node.module or ""] if isinstance(node, ast.ImportFrom)
+                     else [])
+            for name in names:
+                self.assertFalse(name in ("pipelines", "eval")
+                                 or name.startswith(("pipelines.", "eval.")),
+                                 f"module-scope import {name} defeats --flag")
 
 
 class NormalizeTests(unittest.TestCase):
@@ -1086,6 +1157,295 @@ class WalkGateTests(unittest.TestCase):
              patch.object(arm, "_part_levels", return_value=levels):
             arm._retrieve(session, plan, k=4)
         self.assertNotIn(("t1",), session.opened)
+
+
+class TagFirstTests(unittest.TestCase):
+    """HERB_TAG_FIRST=1: the flat regime runs the tag stage first — the
+    widening walk completes on tag reach alone, description and stated scope
+    open after it, and the combine gate scales any chunk no matched tag
+    reached by HERB_TAG_ADMIT."""
+
+    @staticmethod
+    def _session():
+        # desc + scope hold four chunks; the tag areas hold one chunk per level
+        chunks = {("t0",): [_row("c-t0", 0.5)], ("t1",): [_row("c-t1", 0.5)]}
+        return _Session(
+            [], chunks,
+            desc_rows=[[_desc_row("d1", 0.9), _desc_row("d2", 0.85)]],
+            scope_rows=[{"chunkId": "s1", "locator": "{}",
+                         "relpath": "Salesforce__HERB/products/TestForce.json",
+                         "sha256": "sha", "matched": 1, "sim": 0.8},
+                        {"chunkId": "s2", "locator": "{}",
+                         "relpath": "Salesforce__HERB/products/TestForce.json",
+                         "sha256": "sha", "matched": 1, "sim": 0.7}],
+        )
+
+    def test_the_walk_completes_on_tag_reach_alone(self):
+        # desc + scope would fill k=4 on their own; the tag stage still widens
+        # because its gate counts only what the tag areas reached
+        levels = _levels((0.0, "t0"), (0.5, "t1"))
+        session = self._session()
+        plan = _plan(["p"], dict(_NO_GATE, product="TestForce"))
+        with patch.object(arm, "_embed", side_effect=_fake_embed), \
+             patch.object(arm, "_part_levels", return_value=levels), \
+             patch.object(arm, "TAG_FIRST", True):
+            arm._retrieve(session, plan, k=4)
+        self.assertIn(("t1",), session.opened)
+
+    def test_tag_walk_entries_precede_description_and_scope(self):
+        levels = _levels((0.0, "t0"), (0.5, "t1"))
+        session = self._session()
+        plan = _plan(["p"], dict(_NO_GATE, product="TestForce"))
+        with patch.object(arm, "_embed", side_effect=_fake_embed), \
+             patch.object(arm, "_part_levels", return_value=levels), \
+             patch.object(arm, "TAG_FIRST", True):
+            _, _, meta = arm._retrieve(session, plan, k=4)
+        self.assertEqual([w["path"] for w in meta["walk"]],
+                         ["tag", "tag", "desc", "scope"])
+
+    def test_admit_zero_keeps_only_tag_reached_chunks_when_the_tags_cover_k(self):
+        # the description best (ungated 1.0) is gated to 0 and loses even the
+        # tie against the weakest tag-reached chunk
+        levels = _levels((0.0, "t0"))
+        session = _Session(
+            [], {("t0",): [_row("c-hi", 0.9), _row("c-lo", 0.3)]},
+            desc_rows=[[_desc_row("c-d", 0.95)]])
+        with patch.object(arm, "_embed", side_effect=_fake_embed), \
+             patch.object(arm, "_part_levels", return_value=levels), \
+             patch.object(arm, "TAG_FIRST", True), \
+             patch.object(arm, "TAG_ADMIT", 0.0):
+            rows, _, meta = arm._retrieve(session, _plan(["p"]), k=2)
+        self.assertEqual([r["chunkId"] for r in rows], ["c-hi", "c-lo"])
+        self.assertEqual(meta["tag_first"],
+                         {"admit": 0.0, "tag_reached": 2, "pool": 3,
+                          "kept_unreached": 0})
+
+    def test_admit_zero_backfills_an_underfilled_k_by_ungated_score(self):
+        # two tag-reached chunks under k=4: the k contract still fills, the
+        # backfill orders by ungated score and carries the gated zero
+        levels = _levels((0.0, "t0"), (0.5, "t1"))
+        session = self._session()
+        plan = _plan(["p"], dict(_NO_GATE, product="TestForce"))
+        with patch.object(arm, "_embed", side_effect=_fake_embed), \
+             patch.object(arm, "_part_levels", return_value=levels), \
+             patch.object(arm, "TAG_FIRST", True), \
+             patch.object(arm, "TAG_ADMIT", 0.0):
+            rows, _, meta = arm._retrieve(session, plan, k=4)
+        self.assertEqual([r["chunkId"] for r in rows],
+                         ["c-t0", "c-t1", "d1", "s1"])
+        self.assertEqual([r["score"] for r in rows[2:]], [0.0, 0.0])
+        self.assertEqual(meta["tag_first"],
+                         {"admit": 0.0, "tag_reached": 2, "pool": 6,
+                          "kept_unreached": 2})
+
+    def test_a_fractional_admit_lets_an_unreached_chunk_compete(self):
+        # at admit 0.5 the gated description best (0.5) outranks the weakest
+        # tag-reached chunk (0.0) — a measured penalty, not a filter
+        levels = _levels((0.0, "t0"))
+        session = _Session(
+            [], {("t0",): [_row("c-hi", 0.9), _row("c-lo", 0.3)]},
+            desc_rows=[[_desc_row("c-d", 0.95)]])
+        with patch.object(arm, "_embed", side_effect=_fake_embed), \
+             patch.object(arm, "_part_levels", return_value=levels), \
+             patch.object(arm, "TAG_FIRST", True), \
+             patch.object(arm, "TAG_ADMIT", 0.5):
+            rows, _, _ = arm._retrieve(session, _plan(["p"]), k=2)
+        self.assertEqual([r["chunkId"] for r in rows], ["c-hi", "c-d"])
+        self.assertEqual(rows[1]["score"], 0.5)
+
+    def test_an_exact_gated_tie_goes_to_the_tag_reached_chunk(self):
+        # both chunks carry gated 1.0 and the chunkId order favors the
+        # description chunk; the reached-beats-unreached key ranks the tag
+        # chunk first
+        levels = _levels((0.0, "t0"))
+        session = _Session([], {("t0",): [_row("c-b", 0.5)]},
+                           desc_rows=[[_desc_row("c-a", 0.9)]])
+        with patch.object(arm, "_embed", side_effect=_fake_embed), \
+             patch.object(arm, "_part_levels", return_value=levels), \
+             patch.object(arm, "TAG_FIRST", True), \
+             patch.object(arm, "TAG_ADMIT", 1.0):
+            rows, _, _ = arm._retrieve(session, _plan(["p"]), k=2)
+        self.assertEqual([r["chunkId"] for r in rows], ["c-b", "c-a"])
+
+    def test_the_curve_walk_combination_fails_loud(self):
+        with patch.object(arm, "TAG_FIRST", True), \
+             patch.object(arm, "CURVE_WALK", True):
+            with self.assertRaisesRegex(ValueError, "HERB_CURVE_WALK"):
+                arm._retrieve(_Session([], {}), _plan(["p"]), k=5)
+
+
+class GuideTests(unittest.TestCase):
+    """HERB_STR_GUIDE > 0: the part's facet blend of the cached per-facet
+    membership matrices lifts tag support by (1 + STR_GUIDE · g)."""
+
+    @staticmethod
+    def _tables(names=("near_a", "far_a")):
+        # synthetic membership fixture: every facet matrix row sums to 1 and
+        # every cell sits strictly inside (0, 1)
+        rng = np.random.default_rng(7)
+        U = rng.random((len(arm.ALL_FACETS), len(names), 4))
+        U /= U.sum(axis=2, keepdims=True)
+        return {"U": U, "row": {n: i for i, n in enumerate(names)}}
+
+    @staticmethod
+    def _session():
+        ground = [[_ground_row("near_a", 0.9, [1.0, 0.0]),
+                   _ground_row("far_a", 0.5, [0.0, 1.0])]]
+        chunks = {("near_a",): [_row("c1", 0.8)], ("far_a",): [_row("c2", 0.7)]}
+        return _Session(ground, chunks)
+
+    def test_an_all_zero_facet_profile_blends_uniformly(self):
+        zero = {f: 0.0 for f in arm.ALL_FACETS}
+        flat = {f: 0.2 for f in arm.ALL_FACETS}
+        with patch.object(arm, "_GUIDE", self._tables()):
+            g_zero = arm._guidance(["near_a"], zero)
+            g_flat = arm._guidance(["near_a"], flat)
+        self.assertAlmostEqual(float(g_zero[0]), float(g_flat[0]), places=12)
+
+    def test_a_flat_profile_is_the_uniform_blend(self):
+        tables = self._tables()
+        with patch.object(arm, "_GUIDE", tables):
+            g = arm._guidance(["near_a"], {f: 0.2 for f in arm.ALL_FACETS})
+        cells = np.full((len(arm.ALL_FACETS), 1), 0.2) * tables["U"][:, 0, :]
+        expected = float(np.where(cells >= arm.GUIDE_TAU, cells, 0.0).sum())
+        self.assertAlmostEqual(float(g[0]), expected, places=12)
+
+    def test_guidance_stays_inside_the_unit_interval(self):
+        skew = {"topic": 1.0, "entities": 0.3, "activity": 0.0,
+                "temporal": 0.0, "evidence": 0.7}
+        with patch.object(arm, "_GUIDE", self._tables()):
+            g = arm._guidance(["near_a", "far_a"], skew)
+        self.assertTrue(np.all(g >= 0.0))
+        self.assertTrue(np.all(g <= 1.0 + 1e-12))
+
+    def test_a_tag_outside_the_cache_index_keeps_g_zero(self):
+        stats = {"matched": 0, "unmatched": 0, "g_sum": 0.0, "g_n": 0}
+        with patch.object(arm, "_GUIDE", self._tables()):
+            g = arm._guidance(["near_a", "nowhere"],
+                              {f: 0.2 for f in arm.ALL_FACETS}, stats)
+        self.assertEqual(float(g[1]), 0.0)
+        self.assertGreater(float(g[0]), 0.0)
+        self.assertEqual((stats["matched"], stats["unmatched"]), (1, 1))
+        self.assertEqual(stats["g_n"], 2)
+
+    def test_the_lift_scales_support_by_one_plus_str_guide_times_g(self):
+        # tau 0 keeps every cell, so a cached tag's g is exactly its blend
+        # total = 1 and the lift is exactly (1 + STR_GUIDE)
+        part = {"t": "p", "facets": {f: 0.2 for f in arm.ALL_FACETS}}
+        vec = np.array([1.0, 0.0])
+        base = arm._part_levels(self._session(), part, vec, dict(_NO_GATE))
+        with patch.object(arm, "_GUIDE", self._tables()), \
+             patch.object(arm, "STR_GUIDE", 2.0), \
+             patch.object(arm, "GUIDE_TAU", 0.0):
+            lifted = arm._part_levels(self._session(), part, vec, dict(_NO_GATE))
+        base_sup = {n: s for lv in base for n, s in lv["tags"]}
+        lift_sup = {n: s for lv in lifted for n, s in lv["tags"]}
+        for name in ("near_a", "far_a"):
+            self.assertAlmostEqual(lift_sup[name], base_sup[name] * 3.0)
+
+    @staticmethod
+    def _offset_tables():
+        # three pad rows push the pool tags to cache rows 3 and 4, so a pool
+        # index never equals its cache row and g must land through the
+        # name -> row map. near_a's uniform row (cells 0.2 * 0.25 = 0.05)
+        # drops entirely below tau 0.06; far_a's concentrated row keeps one
+        # 0.2 * 0.97 = 0.194 cell per facet, so g_near = 0 and g_far = 0.97.
+        names = ("pad_0", "pad_1", "pad_2", "near_a", "far_a")
+        U = np.full((len(arm.ALL_FACETS), len(names), 4), 0.25)
+        U[:, 4, :] = [0.97, 0.01, 0.01, 0.01]
+        return {"U": U, "row": {n: i for i, n in enumerate(names)}}
+
+    def test_each_tag_lifts_by_its_own_g_and_the_anchor_follows(self):
+        # near_a leads on distance (support 400 vs ~330.6); only far_a's row
+        # survives tau, so its lift (x 1.485) overtakes and the anchor flips.
+        ground = lambda: [[_ground_row("near_a", 0.9, [1.0, 0.0]),
+                           _ground_row("far_a", 0.89, [0.0, 1.0])]]
+        chunks = {("near_a",): [_row("c1", 0.8)], ("far_a",): [_row("c2", 0.7)]}
+        part = {"t": "p", "facets": {f: 0.2 for f in arm.ALL_FACETS}}
+        vec = np.array([1.0, 0.0])
+        base = arm._part_levels(_Session(ground(), chunks), part, vec,
+                                dict(_NO_GATE))
+        with patch.object(arm, "_GUIDE", self._offset_tables()), \
+             patch.object(arm, "STR_GUIDE", 0.5), \
+             patch.object(arm, "GUIDE_TAU", 0.06):
+            lifted = arm._part_levels(_Session(ground(), chunks), part, vec,
+                                      dict(_NO_GATE))
+        base_sup = {n: s for lv in base for n, s in lv["tags"]}
+        lift_sup = {n: s for lv in lifted for n, s in lv["tags"]}
+        self.assertAlmostEqual(lift_sup["far_a"],
+                               base_sup["far_a"] * (1.0 + 0.5 * 0.97))
+        self.assertAlmostEqual(lift_sup["near_a"], base_sup["near_a"])
+        plain, guided = _Session(ground(), chunks), _Session(ground(), chunks)
+        with patch.object(arm, "_embed", side_effect=_fake_embed):
+            arm._retrieve(plain, _plan(["p"]), k=1)
+        with patch.object(arm, "_embed", side_effect=_fake_embed), \
+             patch.object(arm, "_GUIDE", self._offset_tables()), \
+             patch.object(arm, "STR_GUIDE", 0.5), \
+             patch.object(arm, "GUIDE_TAU", 0.06):
+            arm._retrieve(guided, _plan(["p"]), k=1)
+        self.assertEqual(plain.opened[0], ("near_a",))
+        self.assertEqual(guided.opened[0], ("far_a",))
+
+    def test_tau_at_one_drops_every_cell_and_the_lift_is_inert(self):
+        with patch.object(arm, "_embed", side_effect=_fake_embed):
+            base, _, _ = arm._retrieve(self._session(), _plan(["p"]), k=2)
+        with patch.object(arm, "_embed", side_effect=_fake_embed), \
+             patch.object(arm, "_GUIDE", self._tables()), \
+             patch.object(arm, "STR_GUIDE", 1.0), \
+             patch.object(arm, "GUIDE_TAU", 1.0):
+            guided, _, meta = arm._retrieve(self._session(), _plan(["p"]), k=2)
+        self.assertEqual(base, guided)
+        self.assertEqual(meta["guide"],
+                         {"str": 1.0, "tau": 1.0, "C": arm.GUIDE_C,
+                          "m": arm.GUIDE_M, "matched": 2, "unmatched": 0,
+                          "mean_g": 0.0})
+
+    def test_off_touches_no_cache(self):
+        with patch.object(arm, "_embed", side_effect=_fake_embed), \
+             patch.object(arm, "_guide_tables") as tables:
+            _, _, meta = arm._retrieve(self._session(), _plan(["p"]), k=2)
+        tables.assert_not_called()
+        self.assertNotIn("guide", meta)
+
+
+class GuideBuildTests(unittest.TestCase):
+    """build_tag_clusters' math on synthetic vectors — no graph, no model."""
+
+    @staticmethod
+    def _pool(n=40, dim=8, seed=3):
+        rng = np.random.default_rng(seed)
+        X = rng.normal(size=(n, dim))
+        return X / np.linalg.norm(X, axis=1, keepdims=True)
+
+    def test_membership_rows_sum_to_one(self):
+        X = self._pool()
+        V, _ = btc.weighted_spherical_kmeans(
+            X, np.ones(len(X)), btc.kmeanspp_init(X, 4, seed=11))
+        U = btc.memberships(X, V, 1.5)
+        self.assertEqual(U.dtype, np.float32)
+        self.assertTrue(np.allclose(U.sum(axis=1), 1.0, atol=1e-5))
+
+    def test_facet_participation_counts_edge_fractions(self):
+        omega = btc.facet_participation(
+            [[["topic"], ["topic", "evidence"]], [[]]])
+        topic, evidence = (btc._FACET_COL["topic"], btc._FACET_COL["evidence"])
+        self.assertEqual(omega[0][topic], 1.0)       # topic on 2/2 edges
+        self.assertEqual(omega[0][evidence], 0.5)    # evidence on 1/2
+        self.assertTrue((omega[1] == 0.0).all())     # a facet-less edge
+        floored = btc.floor_participation(omega, 0.05)
+        self.assertAlmostEqual(floored[1][topic], 0.05)
+        self.assertAlmostEqual(floored[0][topic], 1.0)
+
+    def test_the_build_is_deterministic_for_a_fixed_seed(self):
+        X = self._pool()
+        w = np.linspace(0.1, 1.0, len(X))
+        out = []
+        for _ in range(2):
+            V, it = btc.weighted_spherical_kmeans(
+                X, w, btc.kmeanspp_init(X, 4, seed=20260731))
+            out.append((btc.memberships(X, V, 1.5), it))
+        self.assertEqual(out[0][1], out[1][1])
+        self.assertTrue(np.array_equal(out[0][0], out[1][0]))
 
 
 class ResolveGuardTests(unittest.TestCase):

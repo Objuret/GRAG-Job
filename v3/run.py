@@ -10,6 +10,7 @@ working. Every setting is a flag — see `python run.py --help`.
     python run.py --set full --no-eval     # arm run: answers only, skip RAGAS
     python run.py --set my_ids.jsonl       # a custom id-set jsonl
     python run.py -n 20 -k 15 --workers 8  # subset size / top-k / parallelism
+    python run.py --flag HERB_TAG_FIRST=1  # a HERB_* toggle for this run only
     python run.py --rejudge output/<run> --judge claude-haiku-4-5 -n 10
                                            # re-score a run's answers, other judge
     python run.py --help                   # every option + its default
@@ -19,6 +20,7 @@ import importlib
 import json
 import os
 import re
+import sys
 from collections import defaultdict
 from dataclasses import asdict
 from datetime import datetime, timezone
@@ -230,6 +232,36 @@ def _rejudge(args):
     print(f"\ndone - {len(folders)} folder(s) re-judged with {args.judge}")
 
 
+def _flag(spec):
+    """--flag NAME=VALUE -> (NAME, VALUE). A spec with no '=' or an empty name
+    fails at parse; the value passes through as a string, so the pipeline's own
+    env parsing validates it."""
+    name, sep, value = spec.partition("=")
+    if not sep or not name:
+        raise argparse.ArgumentTypeError(f"expected NAME=VALUE, got {spec!r}")
+    return name, value
+
+
+def _apply_flags(pairs):
+    """Set each --flag pair in THIS process's environment — before any pipeline
+    module imports, so constants read at import time see them — and print the
+    flags the run carries. A --flag overwrites a session env var of the same
+    name; a blank value (--flag NAME=) removes the name, so the run sees the
+    pipeline's own default; nothing persists past the process."""
+    if not pairs:
+        return
+    for name, value in pairs:
+        if value:
+            os.environ[name] = value
+        else:
+            os.environ.pop(name, None)
+    # print through the stream's own encoding so a value its codepage cannot
+    # carry degrades to '?' instead of killing the run under a redirected stdout
+    line = "flags: " + "  ".join(f"{n}={v}" for n, v in pairs)
+    enc = getattr(sys.stdout, "encoding", None) or "utf-8"
+    print(line.encode(enc, "replace").decode(enc, "replace"), flush=True)
+
+
 def main():
     p = argparse.ArgumentParser(
         prog="run.py",
@@ -277,12 +309,22 @@ def main():
                    help="re-score these existing run folders' answers with --judge, each "
                         "into a sibling __j-<slug> dir (sources untouched; --set/-n narrow "
                         "the ids, --arm/-k are ignored)")
+    p.add_argument("--flag", action="append", type=_flag, default=[], metavar="NAME=VALUE",
+                   help="set an env var for THIS run only (repeatable), e.g. "
+                        "--flag HERB_TAG_FIRST=1 — applied in this process before the "
+                        "pipeline module imports, so toggles read at import time see it; "
+                        "overrides a session env var of the same name and never sticks "
+                        "past the run. A blank value (--flag NAME=) removes the name, "
+                        "so the run sees the pipeline's own default. Values pass "
+                        "through as strings; the pipeline's own env parsing "
+                        "validates them")
     args = p.parse_args()
 
     if args.n is not None and args.n < 1:
         p.error("-n must be >= 1")
     if args.workers is not None and args.workers < 1:
         p.error("--workers must be >= 1")
+    _apply_flags(args.flag)
     if args.judge:
         os.environ["RAGAS_JUDGE_MODEL"] = args.judge  # read at eval import
     if args.rejudge:

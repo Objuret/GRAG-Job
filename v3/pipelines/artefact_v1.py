@@ -164,6 +164,15 @@ FRESH_INTERP = os.environ.get("HERB_FRESH_INTERP") == "1"
 # alone, with no per-question content cut confounding the depth.
 NO_REVIEW = os.environ.get("HERB_NO_REVIEW") == "1"
 
+# Tags-first retrieval: with HERB_TAG_FIRST=1 the flat regime runs the tag
+# stage first and makes it authoritative. The widening walk completes gated on
+# tag reach alone, description and stated scope open after it, and at the
+# combine a chunk no matched tag reached carries its combined score scaled by
+# HERB_TAG_ADMIT — the tag layer decides selection, the other paths
+# corroborate. Exclusive with HERB_CURVE_WALK (the two regimes walk
+# differently); the combination fails loud at retrieval.
+TAG_FIRST = os.environ.get("HERB_TAG_FIRST") == "1"
+
 
 def _env_float(name: str, default: float) -> float:
     """A run-tunable coefficient read from the environment, `default` when unset
@@ -174,6 +183,15 @@ def _env_float(name: str, default: float) -> float:
     return float(raw)
 
 
+def _env_int(name: str, default: int) -> int:
+    """A run-tunable integer read from the environment, `default` when unset
+    or blank. A non-integer value fails loud rather than silently reverting."""
+    raw = os.environ.get(name)
+    if raw is None or not raw.strip():
+        return default
+    return int(raw)
+
+
 # Per-path combine weights: each of the three paths (tag areas / description
 # lookups / stated scope) contributes its normalized, modifier-adjusted base to
 # the cross-path sum scaled by its weight, so relative influence is a coefficient
@@ -181,6 +199,17 @@ def _env_float(name: str, default: float) -> float:
 W_TAG = _env_float("HERB_W_TAG", 1.0)
 W_DESC = _env_float("HERB_W_DESC", 1.0)
 W_SCOPE = _env_float("HERB_W_SCOPE", 1.0)
+
+# The tags-first admit coefficient: under HERB_TAG_FIRST a chunk no matched tag
+# reached keeps its combined score times this factor. 0 is a hard filter —
+# unreached chunks only backfill an under-filled k, ordered by their ungated
+# score; a fraction is a measured penalty they compete under; 1 keeps the score
+# and leaves only the reached-beats-unreached tie order. One sweepable
+# coefficient covers the whole weight/filter range.
+TAG_ADMIT = _env_float("HERB_TAG_ADMIT", 0.0)
+
+if TAG_FIRST:
+    print(f"artefact_v1: tags-first retrieval on (HERB_TAG_ADMIT={TAG_ADMIT})", flush=True)
 
 # Priority-modifier strengths: a modifier m applies over the normalized base as
 # base * (1 + strength * (m - 1)) — strength 0 leaves the base untouched,
@@ -192,6 +221,32 @@ STR_WCHUNK = _env_float("HERB_STR_WCHUNK", 1.0)
 STR_RELEVANCE = _env_float("HERB_STR_RELEVANCE", 1.0)
 STR_DESC_HINT = _env_float("HERB_STR_DESC_HINT", 1.0)
 STR_SCOPE_MATCH = _env_float("HERB_STR_SCOPE_MATCH", 1.0)
+
+# Cluster-guided tag weighting: five per-facet fuzzy membership matrices over
+# the tag pool, built once by `build_tag_clusters.py` and cached under
+# output/tag_cluster_cache/. Per part, the facet values blend the five
+# membership rows of each pool tag, cells below HERB_GUIDE_TAU drop, and the
+# surviving mass g in [0, 1] lifts tag support as support × (1 + STR_GUIDE·g)
+# before the anchor is chosen. Strength 0 is off — no cache load, no code
+# path. C / M / LAMBDA / SEED name the cache entry the arm reads, so a run
+# documents the exact build it guided with.
+STR_GUIDE = _env_float("HERB_STR_GUIDE", 0.0)
+GUIDE_TAU = _env_float("HERB_GUIDE_TAU", 0.01)
+GUIDE_C = _env_int("HERB_GUIDE_C", 128)
+GUIDE_M = _env_float("HERB_GUIDE_M", 1.5)
+GUIDE_LAMBDA = _env_float("HERB_GUIDE_LAMBDA", 0.05)
+GUIDE_SEED = _env_int("HERB_GUIDE_SEED", 20260731)
+if STR_GUIDE < 0.0:
+    raise ValueError(f"HERB_STR_GUIDE must be >= 0.0, got {STR_GUIDE!r}")
+if GUIDE_M <= 1.0:
+    raise ValueError(
+        f"HERB_GUIDE_M (the fuzzifier) must be > 1.0, got {GUIDE_M!r} — "
+        f"membership exponents divide by m - 1, and m < 1 flips them toward "
+        f"the farthest prototype")
+
+if STR_GUIDE > 0:
+    print(f"artefact_v1: cluster guide on (HERB_STR_GUIDE={STR_GUIDE}, "
+          f"tau={GUIDE_TAU}, C={GUIDE_C}, m={GUIDE_M})", flush=True)
 
 # Combine-space mode switches — all additive over the default pipeline (AGG ->
 # normalize -> modifier lerp -> weighted sum), the defaults reproducing it.
@@ -234,11 +289,15 @@ RETRIEVAL_FLAGS = {
     "HERB_CURVE_WALK": CURVE_WALK, "HERB_DOOR_TRACE": DOOR_TRACE,
     "HERB_WALK_GATE": WALK_GATE, "HERB_FRESH_INTERP": FRESH_INTERP,
     "HERB_NO_REVIEW": NO_REVIEW,
+    "HERB_TAG_FIRST": TAG_FIRST, "HERB_TAG_ADMIT": TAG_ADMIT,
     "HERB_AGG": AGG, "HERB_NORM": NORM, "HERB_NORM_SCOPE": NORM_SCOPE,
     "HERB_W_TAG": W_TAG, "HERB_W_DESC": W_DESC, "HERB_W_SCOPE": W_SCOPE,
     "HERB_STR_FACET": STR_FACET, "HERB_STR_WCHUNK": STR_WCHUNK,
     "HERB_STR_RELEVANCE": STR_RELEVANCE, "HERB_STR_DESC_HINT": STR_DESC_HINT,
     "HERB_STR_SCOPE_MATCH": STR_SCOPE_MATCH,
+    "HERB_STR_GUIDE": STR_GUIDE, "HERB_GUIDE_TAU": GUIDE_TAU,
+    "HERB_GUIDE_C": GUIDE_C, "HERB_GUIDE_M": GUIDE_M,
+    "HERB_GUIDE_LAMBDA": GUIDE_LAMBDA, "HERB_GUIDE_SEED": GUIDE_SEED,
 }
 
 # Content-addressed on-disk caches under output/. The query-embed cache keys a
@@ -250,6 +309,10 @@ RETRIEVAL_FLAGS = {
 # and code are all unchanged — an edit to any of them yields a fresh key.
 EMBED_CACHE_DIR = Path(__file__).resolve().parent.parent / "output" / "query_embed_cache"
 INTERP_CACHE_DIR = Path(__file__).resolve().parent.parent / "output" / "interp_cache"
+
+# The cluster-guide cache: one entry per HERB_GUIDE_* constant set, written by
+# `build_tag_clusters.py`. The arm only reads it, and only when STR_GUIDE > 0.
+GUIDE_CACHE_DIR = Path(__file__).resolve().parent.parent / "output" / "tag_cluster_cache"
 
 GATE_SECTIONS = (
     "slack", "documents", "meeting_transcripts", "meeting_chats", "prs",
@@ -989,17 +1052,75 @@ def _level_chain(embs: np.ndarray, anchor: int, dist_shaper=None) -> list:
     return levels
 
 
+# --- cluster guide (per-facet fuzzy memberships over the tag pool) ------------
+
+_GUIDE: Optional[dict] = None
+
+
+def _guide_key() -> str:
+    """The cache entry name for one build of the membership matrices: the
+    database, the tagging run, and every constant the build depends on."""
+    return (f"{DATABASE}__{RUN_ID}__C{GUIDE_C}__m{GUIDE_M}"
+            f"__lam{GUIDE_LAMBDA}__seed{GUIDE_SEED}")
+
+
+def _guide_tables() -> dict:
+    """The cached membership matrices, loaded once per process: `U` stacked
+    (n_facets, n_tags, C) in ALL_FACETS order, plus the tag-name -> row index.
+    The manifest is written last by the build, so its presence marks a complete
+    entry; a missing one fails loud naming the build step."""
+    global _GUIDE
+    if _GUIDE is None:
+        entry = GUIDE_CACHE_DIR / _guide_key()
+        if not (entry / "manifest.json").is_file():
+            raise RuntimeError(
+                f"tag-cluster cache missing at {entry} — run `python build_tag_clusters.py` once.")
+        with np.load(entry / "memberships.npz") as z:
+            U = np.stack([z[f] for f in ALL_FACETS])
+        names = json.loads((entry / "tags.json").read_text(encoding="utf-8"))
+        _GUIDE = {"U": U, "row": {n: i for i, n in enumerate(names)}}
+    return _GUIDE
+
+
+def _guidance(names: list, facets: dict, stats: Optional[dict] = None) -> np.ndarray:
+    """Cluster guidance g per pool tag, in [0, 1]. The part's facet values
+    normalize to a unit-sum blend (an all-zero profile blends uniformly — a
+    flat profile IS the uniform blend), the blend scales each facet's
+    membership row, cells below GUIDE_TAU drop, and g is the surviving mass.
+    A tag the cache index does not carry keeps g = 0. `stats` accumulates the
+    matched/unmatched counts and the g mass for the retrieval meta."""
+    tables = _guide_tables()
+    U, row = tables["U"], tables["row"]
+    phi = np.array([float(facets.get(f, 0.0)) for f in ALL_FACETS])
+    total = phi.sum()
+    phi = phi / total if total > 0 else np.full(len(ALL_FACETS), 1.0 / len(ALL_FACETS))
+    g = np.zeros(len(names))
+    hit = [(i, row[n]) for i, n in enumerate(names) if n in row]
+    if hit:
+        at, rows = zip(*hit)
+        cells = phi[:, None, None] * U[:, list(rows), :]
+        g[list(at)] = np.where(cells >= GUIDE_TAU, cells, 0.0).sum(axis=(0, 2))
+    if stats is not None:
+        stats["matched"] += len(hit)
+        stats["unmatched"] += len(names) - len(hit)
+        stats["g_sum"] += float(g.sum())
+        stats["g_n"] += len(names)
+    return g
+
+
 def _part_levels(session, part: dict, vec: np.ndarray, gate: dict,
-                 shaper=None, dist_shaper=None) -> list:
+                 shaper=None, dist_shaper=None, guide_stats=None) -> list:
     """One part -> its widening levels: [{height, tags: [(name, support)]}]
     finest to coarsest. Support is raw fuzzy multi-k weight raised by structural
     affinity — support × (1 + affinity) — so a part's tag supports stay on the
     one distance-derived scale the combine step normalizes, and scope hints
-    inform where the part anchors without ever zeroing an unrelated tag. A
-    caller-supplied `shaper(names, embs, support) -> support` may reshape support
-    from the pool's own geometry before the anchor is chosen. The part anchors at
-    its highest-support tag; each level is the dendrogram merge that widens the
-    anchor's cluster, carrying the merge height."""
+    inform where the part anchors without ever zeroing an unrelated tag. With
+    STR_GUIDE > 0 cluster guidance lifts it the same way — support ×
+    (1 + STR_GUIDE·g) — from the part's facet blend of the cached membership
+    matrices. A caller-supplied `shaper(names, embs, support) -> support` may
+    reshape support from the pool's own geometry before the anchor is chosen.
+    The part anchors at its highest-support tag; each level is the dendrogram
+    merge that widens the anchor's cluster, carrying the merge height."""
     recs = list(session.run(
         _GROUND_CYPHER, idx=GROUND_INDEX, k=K_LEVELS[-1],
         fetch=KNN_OVERFETCH * K_LEVELS[-1], runId=RUN_ID,
@@ -1016,6 +1137,8 @@ def _part_levels(session, part: dict, vec: np.ndarray, gate: dict,
     affinity = _tag_affinity(session, names, gate)
     if affinity:
         support = support * np.array([1.0 + affinity.get(n, 0.0) for n in names])
+    if STR_GUIDE > 0:
+        support = support * (1.0 + STR_GUIDE * _guidance(names, part["facets"], guide_stats))
     if shaper is not None:
         support = shaper(names, embs, support)
     anchor = int(np.argmax(support))
@@ -1053,6 +1176,14 @@ def _retrieve(session, plan: dict, k: int) -> tuple:
     of the gaps walked so far (`_gap_break`); K = the distinct chunks the
     opened areas vouch for, capped by the caller's k.
 
+    With `HERB_TAG_FIRST=1` (flat regime only — the curve-walk combination
+    raises) the tag stage runs first and is authoritative: the widening walk
+    completes gated on tag reach alone, description and stated scope open
+    after it, and at the combine a chunk no matched tag reached carries its
+    combined score times `HERB_TAG_ADMIT`. Ties go to tag-reached chunks, and
+    when the tag stage reached fewer than k the ungated score orders the
+    backfill that keeps the k contract.
+
     Membership is the union of what the three paths — tag areas, description
     lookups, stated scope — find; description and scope stay finders, never
     trimmed to the tag chunks. Value is scored on one scale in both regimes:
@@ -1066,6 +1197,10 @@ def _retrieve(session, plan: dict, k: int) -> tuple:
     for the K slots but never sets the count."""
     if k <= 0:
         raise ValueError("k must be positive")
+    if TAG_FIRST and CURVE_WALK:
+        raise ValueError(
+            "HERB_TAG_FIRST=1 is a flat-regime restructure and HERB_CURVE_WALK=1 "
+            "walks its own frontier — run one regime at a time")
 
     parts = plan["parts"]
     qmat, calls, tok_in, tok_out, secs = _embed_cached(
@@ -1076,6 +1211,8 @@ def _retrieve(session, plan: dict, k: int) -> tuple:
     gate = plan.get("gate") or {}
     shaper = plan.get("_support_shaper")        # callables, never serialized
     dist_shaper = plan.get("_distance_shaper")
+    guide_stats = ({"matched": 0, "unmatched": 0, "g_sum": 0.0, "g_n": 0}
+                   if STR_GUIDE > 0 else None)
     anchors = []   # every part's level 0 — always opened
     widening = []  # (height, part_index, level)
     part_vecs = []
@@ -1083,7 +1220,8 @@ def _retrieve(session, plan: dict, k: int) -> tuple:
     for i, part in enumerate(parts):
         vec = _unit(np.asarray([float(x) for x in qmat[i + 1]], dtype=np.float64))
         part_vecs.append(vec)
-        levels = _part_levels(session, part, vec, gate, shaper, dist_shaper)
+        levels = _part_levels(session, part, vec, gate, shaper, dist_shaper,
+                              guide_stats)
         level_log.append({
             "part": part["t"],
             # the tag-pool width the run filter left standing
@@ -1300,6 +1438,16 @@ ORDER BY sim DESC, chunkId
             gaps.append(gap)
             last_h = height
         opened = len(gaps)
+    elif TAG_FIRST:
+        # the tag stage first: the widening walk completes on tag reach alone,
+        # then description and stated scope open to corroborate what it found
+        for height, pi, lv in widening:
+            if len(tag_reached) >= k:
+                break
+            open_level(height, pi, lv)
+        for pi in range(len(parts)):
+            open_desc(part_vecs[pi], parts[pi]["t"])
+        open_stated_scope()
     else:
         for pi in range(len(parts)):
             open_desc(part_vecs[pi], parts[pi]["t"])
@@ -1343,9 +1491,20 @@ ORDER BY sim DESC, chunkId
     for cid, s in scope_score.items():
         totals[cid] = totals.get(cid, 0.0) + W_SCOPE * s
 
-    ranked = sorted(totals.items(), key=lambda kv: (-kv[1], kv[0]))
-    kept_k = min(len(semantic), k) if CURVE_WALK else k
-    ranked = ranked[:kept_k]
+    if TAG_FIRST:
+        # the combine gate: a chunk no matched tag reached carries its combined
+        # score times TAG_ADMIT. Gated score ranks; ties go to tag-reached
+        # chunks; the ungated score orders the unreached backfill that keeps
+        # the k contract when the tag stage reached fewer than k.
+        gated = {cid: v if cid in tag_reached else v * TAG_ADMIT
+                 for cid, v in totals.items()}
+        order = sorted(totals, key=lambda cid: (
+            -gated[cid], cid not in tag_reached, -totals[cid], cid))
+        ranked = [(cid, gated[cid]) for cid in order[:k]]
+    else:
+        ranked = sorted(totals.items(), key=lambda kv: (-kv[1], kv[0]))
+        kept_k = min(len(semantic), k) if CURVE_WALK else k
+        ranked = ranked[:kept_k]
     selected = [{**payload[cid], "score": round(sc, 4)} for cid, sc in ranked]
 
     meta = {
@@ -1361,12 +1520,26 @@ ORDER BY sim DESC, chunkId
         meta["curve_walk"] = {"pool": len(totals), "semantic": len(semantic),
                               "kept": kept_k, "stopped": stopped,
                               "opened": opened}
+    if TAG_FIRST:
+        meta["tag_first"] = {
+            "admit": TAG_ADMIT, "tag_reached": len(tag_reached),
+            "pool": len(totals),
+            "kept_unreached": sum(1 for cid, _ in ranked
+                                  if cid not in tag_reached)}
+    if STR_GUIDE > 0:
+        meta["guide"] = {
+            "str": STR_GUIDE, "tau": GUIDE_TAU, "C": GUIDE_C, "m": GUIDE_M,
+            "matched": guide_stats["matched"],
+            "unmatched": guide_stats["unmatched"],
+            "mean_g": round(guide_stats["g_sum"] / guide_stats["g_n"], 4)
+                      if guide_stats["g_n"] else 0.0}
     if DOOR_TRACE:
         meta["door_trace"] = [
             {**payload[cid],
              "tag": round(W_TAG * tag_score.get(cid, 0.0), 6),
              "desc": round(W_DESC * desc_score.get(cid, 0.0), 6),
              "scope": round(W_SCOPE * scope_score.get(cid, 0.0), 6),
+             **({"gate": round(gated[cid], 6)} if TAG_FIRST else {}),
              "total": round(totals[cid], 6)}
             for cid in sorted(totals, key=lambda c: (-totals[c], c))]
     return selected, usage, meta
