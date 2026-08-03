@@ -5,14 +5,32 @@
 - **`v3/`** — the work: a lean HERB evaluation harness (three arms — artefact /
   lucene / vector — scored with RAGAS). Self-contained. Design
   reference: `v3/README.md`.
+- **`docs/canon/`** — the committed record: what the user specified, how the system was
+  built, and where the repo's own claims diverge from either. Regenerate the underlying
+  corpus with `tools/canon_extract.py`.
 - Root canon (`CLAUDE.md`, `README.md`) + the gitignored state/handoff docs under
   `docs/` complete the picture.
 
 ## Session entry point — read this first
 
-Work continues across sessions via **state-transfer documents in `docs/state/`**.
-These are gitignored (present in the working tree, never committed), so a fresh
-clone starts empty — they live on the machine where the work happened.
+**`docs/canon/README.md` — the canon library. Read it before anything else.** It is
+committed, so it travels with the repo and with every clone.
+
+- **`docs/canon/USER_CANON.md`** — the user's verbatim words, 469 sourced quotes,
+  2026-05-14 → 2026-08-03. What was actually specified, in his language.
+- **`docs/canon/DESIGN_HISTORY.md`** — how the system was designed and built, era by
+  era, every claim carrying its `git show` command or doc citation.
+- **`docs/canon/CANON_AUDIT.md`** — which prescriptive claims in this repo's docs,
+  memory and agent definitions are grounded in the record, and which are not.
+- **`docs/canon/OPEN_DECISIONS.md`** — what is unresolved and waiting on the user.
+
+**Trust ordering:** the user's verbatim words outrank every doc, every memory entry and
+every agent's output. Where a doc conflicts with the record, the record wins, and the
+conflict goes to the user as a question — never resolved silently.
+
+Then the **state-transfer documents in `docs/state/`**. These are gitignored (present in
+the working tree, never committed), so a fresh clone starts empty — they live on the
+machine where the work happened.
 
 1. **Current entry state docs (read before doing anything else):**
    - **Audit, full revert, corroboration probe (current):**
@@ -73,6 +91,9 @@ Details: `graphify-out/REFRESH.md`.
 
 ## Hard rules
 
+- **An agent's own output is not canon:** producing a document, a report or a run does
+  not make its contents decided. A design claim is attributed to the user only when
+  `docs/canon/USER_CANON.md` carries the quote; otherwise it is a proposal, and says so.
 - **Design before build:** no pipeline code until the relevant stage's design is
   explicitly signed off by the user. Present decided-vs-open, get the sign-off.
 - **Talk to the user in plain spoken English, short answers** — no jargon walls, no
