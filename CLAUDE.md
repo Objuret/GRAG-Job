@@ -73,6 +73,12 @@ Details: `graphify-out/REFRESH.md`.
   not make its contents decided. A design claim is attributed to the user only when a
   turn in `docs/canon/raw/user_turns_all.md` carries the quote, cited by line;
   otherwise it is a proposal, and says so.
+- **A correction lands in the file, in the same turn.** When the user corrects
+  something, the artefact it affects is updated before the reply — never acknowledged in
+  conversation and left for later, where it washes away with the context.
+- **He rules, you propose.** Nothing is marked settled, no file is rewritten, no `v3/`
+  code is touched and nothing is deleted without him saying so. Where the contradiction
+  map says a fix needs his ruling, ask — one question, when the work reaches it.
 - **Design before build:** no pipeline code until the relevant stage's design is
   explicitly signed off by the user. Present decided-vs-open, get the sign-off.
 - **Talk to the user in plain spoken English, short answers** — no jargon walls, no
