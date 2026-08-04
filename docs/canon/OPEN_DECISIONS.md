@@ -1,5 +1,11 @@
 # OPEN_DECISIONS — everything genuinely unresolved
 
+> **Interpretation, produced 2026-08-03, unreviewed by the user.** An agent built this in a few
+> hours. It holds no status above any other document in this repo, and "unresolved" here is an
+> agent's reading, not the user's. Every entry holds only as far as the citation attached to it:
+> intent is the user's own typed turns in `docs/canon/raw/user_turns_all.jsonl`, state is the
+> git history. Listed unreviewed in `docs/canon/REVIEW_REGISTER.md`.
+
 Pulled from `USER_CANON.md`, `CANON_AUDIT.md`, `raw/git_record.md` and
 `raw/desktop_docs_record.md`. Nothing here is invented and nothing is recommended: each entry
 states the evidence, its date, its source, and what a ruling from him would settle.

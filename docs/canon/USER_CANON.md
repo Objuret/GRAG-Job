@@ -1,5 +1,13 @@
 # USER_CANON — what the user actually said
 
+> **Interpretation, produced 2026-08-03, unreviewed by the user.** An agent built this in a few
+> hours. It holds no status above any other document in this repo. The quotes themselves are
+> verbatim intent, but which quotes were selected, how they were grouped and what the headings
+> call them are all agent judgement, and 115 entries are second-hand `[DOC]` recoveries rather
+> than chat. Every claim holds only as far as the citation attached to it; intent itself is
+> `docs/canon/raw/user_turns_all.jsonl`, and every quote here is checkable against it. Listed
+> unreviewed in `docs/canon/REVIEW_REGISTER.md`.
+
 Verbatim only. Every line inside a quote is the user's own text, spelling, and profanity
 intact. Nothing here is smoothed, corrected, or paraphrased. Where a section needs
 interpretation to be usable, it appears on a line beginning **`Reading:`** and never

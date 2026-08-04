@@ -361,3 +361,37 @@ The 127 desktop turns and the 803-turn merged corpus stand with these bounds:
   on tools whose transcripts are in no Claude Code projects directory.
 - The laptop corpus is live and still growing; `user_turns.jsonl` is a snapshot
   taken earlier on 2026-08-03 and is merged here unmodified.
+
+---
+
+# Reconciliation
+
+Appended 2026-08-04. The run record above is unchanged; this section states how its figures
+relate to the laptop pass and to the merged corpus.
+
+**The counts in the `Counts` section are desktop-only; the `Merged corpus` section is the merge
+of both machines.** The laptop pass is `EXTRACT_REPORT.md`, and every figure in that file is
+laptop-only in the same way.
+
+Both passes close on the same identity, and so does their sum:
+
+```
+seen = kept + rejected + collapsed
+laptop    10,313 =   676 +  9,547 + 90
+desktop      824 =   127 +    697 +  0
+merged    11,137 =   803 + 10,244 + 90
+```
+
+The desktop per-rule table sums to its rejected total: 620 + 29 + 21 + 17 + 10 = 697.
+
+**The merge is a concatenation.** `Collapsed in the merge: 0` above is exact — the two halves
+share no `uuid`, no `(timestamp, text)` pair and no session id, so 676 + 127 = 803 with nothing
+removed. Descriptions of the corpus as "merged and deduped" are wrong: the only deduplication in
+the whole pipeline is the 90 collapses inside the laptop pass, upstream of its 676.
+
+**The 845 dropped subagent turns are outside the 824.** They were excluded at file discovery, so
+they were never counted as seen and do not appear in any column of the identity above.
+
+The 2026-07-06 row of the day-level coverage table reads 766 desktop records. That is a count of
+transcript records of any type on one day; it is unrelated to the 766 that arises from
+subtracting the laptop's rejected from its seen.

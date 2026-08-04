@@ -1,5 +1,17 @@
 # CLAUDE.md
 
+> **Interpretation, not intent.** This file is agents' claims about how this project should
+> work, written over months; being written here is not the user's approval of it. Intent — what
+> was supposed to be built — lives only in the user's own typed turns
+> (`docs/canon/raw/user_turns*`). State — what exists — lives in the git history and the code,
+> and is evidence of drift from intent, never justification for it.
+> `docs/canon/CANON_AUDIT.md` checks 117 prescriptive claims across the repo's instruction
+> surfaces against the record — 65 grounded in a user quote, 17 agent-origin, 11 contradicting
+> the record, 24 stale — of which 20 come from this file. That audit is interpretation too, and
+> unreviewed: one more opinion, not a ruling. Both files are listed `unreviewed` in
+> `docs/canon/REVIEW_REGISTER.md`, with the rest of the pile. Check a claim against intent
+> before acting on it.
+
 ## Repo layout
 
 - **`v3/`** — the work: a lean HERB evaluation harness (three arms — artefact /
@@ -8,62 +20,28 @@
 - **`docs/canon/`** — the committed record: what the user specified, how the system was
   built, and where the repo's own claims diverge from either. Regenerate the underlying
   corpus with `tools/canon_extract.py`.
-- Root canon (`CLAUDE.md`, `README.md`) + the gitignored state/handoff docs under
-  `docs/` complete the picture.
+- **`CLAUDE.md`, `README.md`** — this repo's working instructions, written by agents.
+  The gitignored state/handoff docs under `docs/` hold the per-session detail.
 
 ## Session entry point — read this first
 
-**`docs/canon/README.md` — the canon library. Read it before anything else.** It is
-committed, so it travels with the repo and with every clone.
+1. **`docs/canon/raw/user_turns_all.md`** — the user's own 803 typed turns,
+   2026-05-14 → 2026-08-03. The only evidence of what he asked for. Any claim about
+   his intent cites a turn by line (`turns:L<n>`); no turn, no claim.
+2. **`docs/canon/CONTRADICTION_MAP.md`** — where his rulings and the system disagree.
+   Each collision is layered, cited, and carries what fixing it takes: an engine
+   change, a graph rebuild, a doc correction, or a ruling only he can give.
+3. **The rest of `docs/canon/`** — `USER_CANON.md`, `DESIGN_HISTORY.md`,
+   `CANON_AUDIT.md`, `OPEN_DECISIONS.md`, the git and desktop-doc records, the review
+   apparatus. Reference material, opened when a specific claim is in dispute. Not
+   required reading.
 
-- **`docs/canon/USER_CANON.md`** — the user's verbatim words, 469 sourced quotes,
-  2026-05-14 → 2026-08-03. What was actually specified, in his language.
-- **`docs/canon/DESIGN_HISTORY.md`** — how the system was designed and built, era by
-  era, every claim carrying its `git show` command or doc citation.
-- **`docs/canon/CANON_AUDIT.md`** — which prescriptive claims in this repo's docs,
-  memory and agent definitions are grounded in the record, and which are not.
-- **`docs/canon/OPEN_DECISIONS.md`** — what is unresolved and waiting on the user.
+Working notes sit beside that: `docs/state/` (gitignored, machine-local, newest first)
+and `docs/handoff/` (frozen). Each is dated and describes its own moment.
 
-**Trust ordering:** the user's verbatim words outrank every doc, every memory entry and
-every agent's output. Where a doc conflicts with the record, the record wins, and the
-conflict goes to the user as a question — never resolved silently.
-
-Then the **state-transfer documents in `docs/state/`**. These are gitignored (present in
-the working tree, never committed), so a fresh clone starts empty — they live on the
-machine where the work happened.
-
-1. **Current entry state docs (read before doing anything else):**
-   - **Audit, full revert, corroboration probe (current):**
-     `docs/state/2026-07-28-audit-absorption-full-revert-corroboration-probe.md` —
-     the five-reviewer audit verdicts on every shipping claim, the full revert to
-     `5006fed`, the absorbed rewrite-thread lessons (topic ≠ evidence, membership
-     measurements, evidence-budget design), the graph topology/adjacency facts
-     (one gold file per question; discrimination inside scope territory is the
-     whole residual), and the open-decisions list. **Read this first for any
-     artefact_v1 retrieval work.** The corroboration probe it specs has since
-     run: real signal, redundant with description distance (verdict in memory);
-     oracle headroom +0.21 in-territory; the Part-J discriminator remains
-     unfound. Predecessors `docs/state/2026-07-25-combine-clusterk-hybrid-and-judged-eval-usage-burn.md`
-     (combine sweep, cluster-K runs, hybrid arm, judged-eval burn) and
-     `docs/state/2026-07-22-v1-curve-walk-facets-and-cluster-k.md` (cluster-K
-     concept, curve-walk results) hold the definitions behind it.
-   - Two older live threads retained for their narrower build/eval context:
-   - **Artefact tag-facet design:** `docs/state/2026-06-25-artefact-facets-guide-link-and-content-profile.md`
-     — complete reconciled facet design (content-profile + guide-link); facets = weight+direction
-     measured by geometry (sibling comparison), one edge per tag carrying the full facet vector;
-     supersedes `artefact-tag-facets-vs-routing.md` (same date, earlier) and DESIGN.md §13–14 /
-     MODEL_CONTRACTS §1. **Do not re-derive from DESIGN.md/MODEL_CONTRACTS.md — those are stale.**
-   - **Eval harness:** `docs/state/2026-06-25-v3-vector-eval-k-vs-topk-ragas-ops.md` — vector
-     arm + RAGAS-only eval: k-vs-top-k, the judged metrics (faithfulness, answer_correctness,
-     context_recall_llm), k=50 / gold-100, structured-output
-     generator, NIM-throttle run ops.
-2. **State doc folder (dated; newest = entry point):** `docs/state/`
-3. **Canon design reference (in-repo):** `v3/README.md`.
-4. **Persistent memory (auto-loads in Claude Code; other agents read it manually):**
-   `C:\Users\Djuret\.claude\projects\a--exjobbet-repo\memory\MEMORY.md`
-5. **Frozen historical handoffs (do not edit):** `docs/handoff/`
-
-When a newer state doc supersedes the entry point, update line 1 here in the same pass.
+**Trust ordering:** his words outrank every doc, memory entry and agent output. Where a
+doc conflicts with the record, the record wins and the conflict goes to him as a
+question — never resolved silently.
 
 ## Codebase navigation graph (graphify)
 
@@ -92,8 +70,9 @@ Details: `graphify-out/REFRESH.md`.
 ## Hard rules
 
 - **An agent's own output is not canon:** producing a document, a report or a run does
-  not make its contents decided. A design claim is attributed to the user only when
-  `docs/canon/USER_CANON.md` carries the quote; otherwise it is a proposal, and says so.
+  not make its contents decided. A design claim is attributed to the user only when a
+  turn in `docs/canon/raw/user_turns_all.md` carries the quote, cited by line;
+  otherwise it is a proposal, and says so.
 - **Design before build:** no pipeline code until the relevant stage's design is
   explicitly signed off by the user. Present decided-vs-open, get the sign-off.
 - **Talk to the user in plain spoken English, short answers** — no jargon walls, no
@@ -149,16 +128,26 @@ the user runs. Definitions live in `.claude/agents/`. Route by task:
 - **results-analyst** — reading `v3/output/`, reporting numbers (metric validity binding).
 - **graph-refresher** — `python refresh_graph.py` + worklist processing.
 
-## Artefact arm — built natively in `v3/artefact/`
+## Artefact arm — the modified v1 artefact
 
-The artefact is the system under test, rebuilt natively in `v3/artefact/`. Its
-deterministic stages exist and are tested (`python -m pytest artefact/tests` from
+The system under test is the modified v1 artefact: `v3/pipelines/artefact_v1.py` and
+`v3/pipelines/artefact_v1_det.py`, retrieval code written inside the v3 harness,
+querying the `herb-eval` Neo4j graph (`DATABASE` defaults to `herb-eval`,
+`artefact_v1.py:117`). Every artefact number the project reports comes from that pair.
+The graph is the v1 build: content stripped, the semantic layer re-embedded with the
+v3 embedder (`v3/reembed_herb_eval.py`), never retagged — its chunking, tag vocabulary
+and baked `w_chunk` / `w_facets` / `relevance_to_file` values are fixed unless it is
+rebuilt or retagged. Never query `herb`: that is the oracle-contaminated pilot
+database, a different DB.
+
+`v3/artefact/` holds the native rebuild — the user's own next generation, after the
+benchmarks. Its stages and tests live there (`python -m pytest artefact/tests` from
 `v3/`): `scan.py` (file catalog → sha256/file_id), `probe.py` (shape recovery, RFC
-6901 pointers), `derive_corpus.py` (oracle strip), `resolver_prototype.py` (reference
-resolution, hash-verified). The HERB mapping key (`keys/Salesforce__HERB.yaml`) and
-the design references (`DESIGN.md`, `MODEL_CONTRACTS.md`) live there too. The graph
-proper — chunk → tag → facet retrieval — is the unbuilt part; `pipelines/artifact.py`
-is the arm entry that drives it. The design carried forward:
+6901 pointers), `chunk.py`, `tag.py`, `derive_corpus.py` (oracle strip),
+`resolver_prototype.py` (reference resolution, hash-verified), `index.py`,
+`graph_store.py`, `interpreter.py`, the HERB mapping key
+(`keys/Salesforce__HERB.yaml`) and the design references (`DESIGN.md`,
+`MODEL_CONTRACTS.md`); `pipelines/artefact.py` is its arm entry. The design it carries:
 
 - **The graph spine is closed canon:** `Source → File → Chunk → Tag` are the only
   nodes. Hard fields are chunk attributes. The graph is references into untouched
@@ -166,6 +155,3 @@ is the arm entry that drives it. The design carried forward:
   directories into it.
 - **The model emits no numbers, ever** (tagger and interpreter). The chunk
   description is dead. Tags are per-chunk contextual phrases.
-- **`herb-eval` (Neo4j) is the prior artefact build under the superseded design** — a
-  contrast/forensic baseline only, not adopted. The v3 artefact rebuilds from raw
-  natively in `v3/artefact/`; never query `herb` (oracle-contaminated).

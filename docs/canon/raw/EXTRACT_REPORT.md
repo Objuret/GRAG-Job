@@ -189,3 +189,34 @@ The 676 kept turns are **complete for this laptop**, with these bounds:
 - Subagent prompts cannot leak in - none are persisted in this corpus at all.
 - 12 turns are flagged `is_paste`; the longest kept turn is 12,800 characters
   and the shortest is 2.
+
+---
+
+# Reconciliation
+
+Appended 2026-08-04. The run record above is unchanged; this section states how its figures
+relate to the merged corpus, because they had been quoted elsewhere as if they were merged
+totals.
+
+**Every figure in this report is laptop-only.** This was the first of two extraction passes.
+The desktop pass is `EXTRACT_REPORT_desktop.md`, which also carries the merge.
+
+The four counts close exactly:
+
+```
+seen = kept + rejected + collapsed
+10,313 = 676 + 9,547 + 90
+```
+
+The per-rule table sums to the rejected total: 6,380 + 2,530 + 373 + 202 + 45 + 16 + 1 = 9,547.
+
+**`10,313 − 9,547 = 766` is not a turn count.** It omits the 90 collapsed duplicates, which come
+out of the same pool: 766 − 90 = 676, the figure reported above. Reading this report's numbers as
+`seen − rejected` produces 766, which corresponds to nothing.
+
+**The 676 is half the corpus, not the corpus.** The merged corpus is 803 turns: these 676 plus
+the desktop's 127. The two halves share no `uuid`, no `(timestamp, text)` pair and no session, so
+the merge removed nothing — the 90 collapses recorded here happened inside this laptop pass,
+before the 676 was written, and have no counterpart at merge time.
+
+Merged totals, for reference: 11,137 seen, 10,244 rejected, 90 collapsed, 803 kept.

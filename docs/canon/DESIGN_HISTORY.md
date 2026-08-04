@@ -1,5 +1,13 @@
 # DESIGN_HISTORY — how this system was actually designed and built
 
+> **Interpretation, produced 2026-08-03, unreviewed by the user.** An agent built this in a few
+> hours. It holds no status above any other document in this repo. Every statement holds only as
+> far as the citation attached to it — a `git show` command, a doc reference, a dated quote —
+> and the selection and ordering of what appears here is agent judgement. Underneath it sit
+> state, the git history, which proves what was built and never that it was intended; and
+> intent, the user's own typed turns in `docs/canon/raw/user_turns_all.jsonl`. Listed unreviewed
+> in `docs/canon/REVIEW_REGISTER.md`.
+
 **2026-05-07 → 2026-08-03.** One timeline, fused from two independent forensic records
 plus the verbatim user canon. Nothing here is new research and nothing here is a new
 conclusion: every statement below already exists in a source record, and arrives with the

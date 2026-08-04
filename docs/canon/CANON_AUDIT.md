@@ -1,5 +1,12 @@
 # Canon audit — what the repo tells agents vs. what the user actually said
 
+> **Interpretation, produced 2026-08-03, unreviewed by the user.** An agent built this in a few
+> hours. It does not sit above the material it adjudicates — it is one more claim about intent
+> and state, pending review, and its verdicts are not rulings. Every verdict holds only as far
+> as the citation attached to it: intent is the user's own typed turns in
+> `docs/canon/raw/user_turns_all.jsonl`, state is the git history, and every verdict is
+> checkable against them. Listed unreviewed in `docs/canon/REVIEW_REGISTER.md`.
+
 **Question asked.** Where does this repo's canon state something the user never said, and
 where does it contradict something he did say?
 

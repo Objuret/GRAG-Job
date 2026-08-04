@@ -1,5 +1,17 @@
 # v3 — HERB evaluation
 
+> **Interpretation, not intent.** This file is agents' claims about how this harness should
+> work, written over months; being written here is not the user's approval of it. Intent — what
+> was supposed to be built — lives only in the user's own typed turns
+> (`docs/canon/raw/user_turns*`). State — what exists — lives in the git history and the code,
+> and is evidence of drift from intent, never justification for it.
+> `docs/canon/CANON_AUDIT.md` checks 117 prescriptive claims across the repo's instruction
+> surfaces against the record — 65 grounded in a user quote, 17 agent-origin, 11 contradicting
+> the record, 24 stale — of which 12 come from this file. That audit is interpretation too, and
+> unreviewed: one more opinion, not a ruling. Both files are listed `unreviewed` in
+> `docs/canon/REVIEW_REGISTER.md`, with the rest of the pile. Check a claim against intent
+> before acting on it.
+
 This is the eval harness for comparing the artefact against baselines on HERB.
 
 ## Goal
@@ -8,7 +20,7 @@ Run the chosen HERB questions through three arms, get an answer from each, score
 those answers with RAGAS.
 
 Three arms:
-- **artifact** — the artefact graph (interpreter → facet retrieval → answer). The system under test, built natively in v3.
+- **artefact_v1** — the artefact graph (interpreter → tag/facet retrieval → answer). The system under test: the modified v1 artefact, `pipelines/artefact_v1.py` with its interpreter-free leg `pipelines/artefact_v1_det.py`, querying the `herb-eval` graph.
 - **lucene** — BM25 baseline. Its own index over the corpus.
 - **vector** — dense / naive-RAG baseline. Its own index over the corpus.
 
@@ -84,7 +96,9 @@ three modes is the pending step — see Still open.)
   ModelUsage, ArmOutput, BuildStats, EvalResult, RunManifest, EvalManifest).
 - `nim.py` — the one NVIDIA NIM REST transport (generator, embedder and judge all
   POST through it); shared harness plumbing, not retrieval code.
-- `pipelines/` — `artifact.py`, `lucene.py`, `vector.py`.
+- `pipelines/` — `artefact_v1.py` and `artefact_v1_det.py` (the arm under test and its
+  interpreter-free leg), `lucene.py`, `vector.py`, `hybrid.py`, and `artefact.py` (the
+  native rebuild's arm entry).
 - `eval/` — `ragas.py` and `ragas_catalog.py` (the full RAGAS metric menu:
   deterministic metrics always run, judged ones via the `SELECTED` toggle).
 - `orchestrator.py` — owns the shared generator; runs an arm through generation and

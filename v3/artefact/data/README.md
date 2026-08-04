@@ -1,8 +1,8 @@
 # herb-eval.dump
 
-Neo4j dump of `herb-eval`, the superseded artefact graph (`artefact_v1`'s
-forensic-contrast baseline — see root `CLAUDE.md`). Not the current native
-pass-1 graph (`herb-v3`), which isn't built yet.
+Neo4j dump of `herb-eval`, the v1 artefact graph — the one the `artefact_v1` arm
+queries (see root `CLAUDE.md`). The native rebuild's graph (`herb-v3`) is a
+separate, later build.
 
 Restore on any machine with Neo4j installed:
 
