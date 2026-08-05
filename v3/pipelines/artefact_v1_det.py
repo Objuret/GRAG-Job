@@ -1,11 +1,12 @@
 """artefact_v1_det.py — the deterministic leg of the ARTEFACT-V1 arm: the same
 graph mechanism with zero interpreter calls.
 
-The question text is the single prompt part, embedded raw. Stated scope comes
-from literal matches only: product names read from the graph's own chunk
-vocabulary, section names from the offered enum as literal words or their
-readable phrases, `eid_…` employee ids and 4-digit years by pattern. Facets
-are direction-neutral. The walk, the value system, and the hard k are
+The question text is the single prompt part, embedded with underscores read as
+spaces; the need vector is the question verbatim. Stated scope comes from
+literal matches only: product names read from the graph's own chunk vocabulary,
+section names from the offered enum as literal words or their readable phrases,
+`eid_…` employee ids and 4-digit years by pattern. Facets are
+direction-neutral. The walk, the value system, and the hard k are
 artefact_v1's, unchanged; there is no sufficiency review. The only model
 calls are embeddings — the query, plus a once-per-process embed of the five
 facet anchors when a facet channel is on, both counted in the question's
@@ -45,12 +46,12 @@ _PRODUCTS: dict = {}
 #                            stretches the mutual distances the clusters are
 #                            built from — the areas themselves form
 #                            query-relatively; agreeing pairs keep their true
-#                            distance, disagreeing pairs at most double
+#                            distance, and the stretch is capped by the sum of
+#                            the question direction's two largest facet weights
 #   HERB_DET_FACETS=edges    the question's direction feeds the parts' facet
-#                            channels, so the per-EDGE stored facet weights
-#                            differentiate the chunks under one tag — the same
-#                            tag relevance-weights its chunks differently per
-#                            prompt
+#                            channels, so the per-edge stored facet weights
+#                            enter facetTerm; HERB_STR_FACET sets how much of
+#                            it reaches the score
 #   HERB_DET_FACETS=all      all three placements together
 _FACET_MODE = os.environ.get("HERB_DET_FACETS", "")
 FACETS_ON = _FACET_MODE in ("1", "support", "all")
@@ -140,8 +141,9 @@ def _facet_router(text: str):
     """d′(i,j) = d(i,j) × (1 + facet disagreement in the question's channels):
     the clusters — the routing — form query-relatively. Disagreement is the
     question-direction-weighted L1 gap between the tags' geometric facet
-    directions, in [0, 1]: agreeing pairs keep their true distance,
-    disagreeing pairs land at most twice as far."""
+    directions, in [0, 1]: agreeing pairs keep their true distance, and the
+    stretch is capped by the sum of the question direction's two largest facet
+    weights."""
     qdir = _facet_direction(text)
     A, _ = _anchors()
 

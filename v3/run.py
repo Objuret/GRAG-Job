@@ -10,7 +10,7 @@ working. Every setting is a flag — see `python run.py --help`.
     python run.py --set full --no-eval     # arm run: answers only, skip RAGAS
     python run.py --set my_ids.jsonl       # a custom id-set jsonl
     python run.py -n 20 -k 15 --workers 8  # subset size / top-k / parallelism
-    python run.py --flag HERB_TAG_FIRST=1  # a HERB_* toggle for this run only
+    python run.py --flag HERB_WALK_GATE=1  # a HERB_* toggle for this run only
     python run.py --rejudge output/<run> --judge claude-haiku-4-5 -n 10
                                            # re-score a run's answers, other judge
     python run.py --help                   # every option + its default
@@ -311,7 +311,7 @@ def main():
                         "the ids, --arm/-k are ignored)")
     p.add_argument("--flag", action="append", type=_flag, default=[], metavar="NAME=VALUE",
                    help="set an env var for THIS run only (repeatable), e.g. "
-                        "--flag HERB_TAG_FIRST=1 — applied in this process before the "
+                        "--flag HERB_WALK_GATE=1 — applied in this process before the "
                         "pipeline module imports, so toggles read at import time see it; "
                         "overrides a session env var of the same name and never sticks "
                         "past the run. A blank value (--flag NAME=) removes the name, "

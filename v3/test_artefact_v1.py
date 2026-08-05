@@ -28,8 +28,6 @@ _MODULE_FLAGS = (patch.object(arm, "CURVE_WALK", False),
                  patch.object(arm, "WALK_GATE", False),
                  patch.object(arm, "FRESH_INTERP", False),
                  patch.object(arm, "NO_REVIEW", False),
-                 patch.object(arm, "TAG_FIRST", False),
-                 patch.object(arm, "TAG_ADMIT", 0.0),
                  patch.object(arm, "AGG", "sum"),
                  patch.object(arm, "NORM", "relative"),
                  patch.object(arm, "NORM_SCOPE", "per_path"),
@@ -41,6 +39,7 @@ _MODULE_FLAGS = (patch.object(arm, "CURVE_WALK", False),
                  patch.object(arm, "STR_RELEVANCE", 1.0),
                  patch.object(arm, "STR_DESC_HINT", 1.0),
                  patch.object(arm, "STR_SCOPE_MATCH", 1.0),
+                 patch.object(arm, "DESC_HINT_M", 2.0),
                  patch.object(arm, "STR_GUIDE", 0.0),
                  patch.object(arm, "GUIDE_TAU", 0.01))
 
@@ -743,20 +742,19 @@ class RetrievalFlagTests(unittest.TestCase):
                            ("HERB_DOOR_TRACE", "DOOR_TRACE"),
                            ("HERB_WALK_GATE", "WALK_GATE"),
                            ("HERB_FRESH_INTERP", "FRESH_INTERP"),
-                           ("HERB_NO_REVIEW", "NO_REVIEW"),
-                           ("HERB_TAG_FIRST", "TAG_FIRST")):
+                           ("HERB_NO_REVIEW", "NO_REVIEW")):
             self.assertIn(f'{const} = os.environ.get("{env}") == "1"', src)
 
     def test_the_combine_coefficients_read_from_the_environment(self):
         src = inspect.getsource(arm)
         for env, const in (("HERB_W_TAG", "W_TAG"), ("HERB_W_DESC", "W_DESC"),
                            ("HERB_W_SCOPE", "W_SCOPE"),
-                           ("HERB_TAG_ADMIT", "TAG_ADMIT"),
                            ("HERB_STR_FACET", "STR_FACET"),
                            ("HERB_STR_WCHUNK", "STR_WCHUNK"),
                            ("HERB_STR_RELEVANCE", "STR_RELEVANCE"),
                            ("HERB_STR_DESC_HINT", "STR_DESC_HINT"),
                            ("HERB_STR_SCOPE_MATCH", "STR_SCOPE_MATCH"),
+                           ("HERB_DESC_HINT_M", "DESC_HINT_M"),
                            ("HERB_STR_GUIDE", "STR_GUIDE"),
                            ("HERB_GUIDE_TAU", "GUIDE_TAU"),
                            ("HERB_GUIDE_M", "GUIDE_M"),
@@ -776,11 +774,11 @@ class RetrievalFlagTests(unittest.TestCase):
     def test_both_legs_manifests_carry_the_combine_coefficients(self):
         for flags in (arm.RETRIEVAL_FLAGS, det.RETRIEVAL_FLAGS):
             for name in ("HERB_CURVE_WALK", "HERB_WALK_GATE", "HERB_NO_REVIEW",
-                         "HERB_TAG_FIRST", "HERB_TAG_ADMIT",
                          "HERB_AGG", "HERB_NORM", "HERB_NORM_SCOPE", "HERB_W_TAG",
                          "HERB_W_DESC", "HERB_W_SCOPE", "HERB_STR_FACET",
                          "HERB_STR_WCHUNK", "HERB_STR_RELEVANCE",
                          "HERB_STR_DESC_HINT", "HERB_STR_SCOPE_MATCH",
+                         "HERB_DESC_HINT_M",
                          "HERB_STR_GUIDE", "HERB_GUIDE_TAU", "HERB_GUIDE_C",
                          "HERB_GUIDE_M", "HERB_GUIDE_LAMBDA", "HERB_GUIDE_SEED"):
                 self.assertIn(name, flags)
@@ -799,13 +797,13 @@ class RetrievalFlagTests(unittest.TestCase):
 
 class RunFlagTests(unittest.TestCase):
     def test_a_flag_spec_parses_to_its_name_value_pair(self):
-        self.assertEqual(run._flag("HERB_TAG_FIRST=1"), ("HERB_TAG_FIRST", "1"))
+        self.assertEqual(run._flag("HERB_WALK_GATE=1"), ("HERB_WALK_GATE", "1"))
         self.assertEqual(run._flag("HERB_STR_GUIDE=1.0"), ("HERB_STR_GUIDE", "1.0"))
         self.assertEqual(run._flag("A=b=c"), ("A", "b=c"))  # the value keeps its '='
         self.assertEqual(run._flag("HERB_X="), ("HERB_X", ""))  # blank = unset = the pipeline's true default
 
     def test_a_malformed_flag_spec_fails_at_parse(self):
-        for bad in ("HERB_TAG_FIRST", "=1", "="):
+        for bad in ("HERB_WALK_GATE", "=1", "="):
             with self.assertRaises(argparse.ArgumentTypeError):
                 run._flag(bad)
 
@@ -910,6 +908,55 @@ class CombineTests(unittest.TestCase):
             rows, _, _ = arm._retrieve(session, _plan(["p"]), k=2)
         self.assertEqual(rows[0]["chunkId"], "c-hi")
         self.assertGreater(rows[0]["score"], rows[1]["score"])
+
+    @staticmethod
+    def _hint_session():
+        # a tag chunk plus a three-row description pool whose middle row carries
+        # the stated product: min-max leaves the hinted chunk between the pool's
+        # floor and its closest match, where the modifier can move it
+        ground = [[_ground_row("a", 0.9, [1.0, 0.0])]]
+        return _Session(
+            ground,
+            {("a",): [_row("c-tag", 0.5)]},
+            desc_rows=[[_desc_row("c-top", 0.9),
+                        _desc_row("c-hint", 0.88, product="TestForce"),
+                        _desc_row("c-floor", 0.5)]],
+        )
+
+    def _hint_rows(self, hint_m, strength=1.0):
+        gate = dict(_NO_GATE, product="TestForce")
+        with patch.object(arm, "_embed", side_effect=_fake_embed), \
+             patch.object(arm, "DESC_HINT_M", hint_m), \
+             patch.object(arm, "STR_DESC_HINT", strength):
+            rows, _, _ = arm._retrieve(self._hint_session(), _plan(["p"], gate), k=4)
+        return rows
+
+    def test_the_hint_factor_scales_a_matching_description_chunks_score(self):
+        # DESC_HINT_M is the factor STR_DESC_HINT grades: at full strength the
+        # hinted chunk scores its normalized base times that factor, while the
+        # unhinted rows of the same pool keep their scores.
+        at_one = {r["chunkId"]: r["score"] for r in self._hint_rows(1.0)}
+        at_two = {r["chunkId"]: r["score"] for r in self._hint_rows(2.0)}
+        self.assertGreater(at_two["c-hint"], at_one["c-hint"])
+        self.assertAlmostEqual(at_two["c-hint"], 2.0 * at_one["c-hint"], places=3)
+        self.assertEqual(at_two["c-top"], at_one["c-top"])
+
+    def test_the_hint_factor_moves_a_matching_chunk_past_the_pools_best(self):
+        # mid-pool on distance: at 2.0 the hinted chunk outranks the pool's
+        # closest description match; at 0.0 the modifier takes its score away
+        # and it ranks below that same chunk.
+        lifted = [r["chunkId"] for r in self._hint_rows(2.0)]
+        removed = [r["chunkId"] for r in self._hint_rows(0.0)]
+        self.assertLess(lifted.index("c-hint"), lifted.index("c-top"))
+        self.assertGreater(removed.index("c-hint"), removed.index("c-top"))
+
+    def test_the_hint_factor_is_inert_at_zero_hint_strength(self):
+        # STR_DESC_HINT=0 holds the modifier at 1.0 whatever the factor is, so
+        # DESC_HINT_M reaches neither the score nor the ranking.
+        quiet = {r["chunkId"]: r["score"] for r in self._hint_rows(1.0, strength=0.0)}
+        loud = {r["chunkId"]: r["score"] for r in self._hint_rows(4.0, strength=0.0)}
+        self.assertEqual(loud, quiet)
+        self.assertLess(loud["c-hint"], loud["c-top"])
 
 
 class CombineModeTests(unittest.TestCase):
@@ -1157,121 +1204,6 @@ class WalkGateTests(unittest.TestCase):
              patch.object(arm, "_part_levels", return_value=levels):
             arm._retrieve(session, plan, k=4)
         self.assertNotIn(("t1",), session.opened)
-
-
-class TagFirstTests(unittest.TestCase):
-    """HERB_TAG_FIRST=1: the flat regime runs the tag stage first — the
-    widening walk completes on tag reach alone, description and stated scope
-    open after it, and the combine gate scales any chunk no matched tag
-    reached by HERB_TAG_ADMIT."""
-
-    @staticmethod
-    def _session():
-        # desc + scope hold four chunks; the tag areas hold one chunk per level
-        chunks = {("t0",): [_row("c-t0", 0.5)], ("t1",): [_row("c-t1", 0.5)]}
-        return _Session(
-            [], chunks,
-            desc_rows=[[_desc_row("d1", 0.9), _desc_row("d2", 0.85)]],
-            scope_rows=[{"chunkId": "s1", "locator": "{}",
-                         "relpath": "Salesforce__HERB/products/TestForce.json",
-                         "sha256": "sha", "matched": 1, "sim": 0.8},
-                        {"chunkId": "s2", "locator": "{}",
-                         "relpath": "Salesforce__HERB/products/TestForce.json",
-                         "sha256": "sha", "matched": 1, "sim": 0.7}],
-        )
-
-    def test_the_walk_completes_on_tag_reach_alone(self):
-        # desc + scope would fill k=4 on their own; the tag stage still widens
-        # because its gate counts only what the tag areas reached
-        levels = _levels((0.0, "t0"), (0.5, "t1"))
-        session = self._session()
-        plan = _plan(["p"], dict(_NO_GATE, product="TestForce"))
-        with patch.object(arm, "_embed", side_effect=_fake_embed), \
-             patch.object(arm, "_part_levels", return_value=levels), \
-             patch.object(arm, "TAG_FIRST", True):
-            arm._retrieve(session, plan, k=4)
-        self.assertIn(("t1",), session.opened)
-
-    def test_tag_walk_entries_precede_description_and_scope(self):
-        levels = _levels((0.0, "t0"), (0.5, "t1"))
-        session = self._session()
-        plan = _plan(["p"], dict(_NO_GATE, product="TestForce"))
-        with patch.object(arm, "_embed", side_effect=_fake_embed), \
-             patch.object(arm, "_part_levels", return_value=levels), \
-             patch.object(arm, "TAG_FIRST", True):
-            _, _, meta = arm._retrieve(session, plan, k=4)
-        self.assertEqual([w["path"] for w in meta["walk"]],
-                         ["tag", "tag", "desc", "scope"])
-
-    def test_admit_zero_keeps_only_tag_reached_chunks_when_the_tags_cover_k(self):
-        # the description best (ungated 1.0) is gated to 0 and loses even the
-        # tie against the weakest tag-reached chunk
-        levels = _levels((0.0, "t0"))
-        session = _Session(
-            [], {("t0",): [_row("c-hi", 0.9), _row("c-lo", 0.3)]},
-            desc_rows=[[_desc_row("c-d", 0.95)]])
-        with patch.object(arm, "_embed", side_effect=_fake_embed), \
-             patch.object(arm, "_part_levels", return_value=levels), \
-             patch.object(arm, "TAG_FIRST", True), \
-             patch.object(arm, "TAG_ADMIT", 0.0):
-            rows, _, meta = arm._retrieve(session, _plan(["p"]), k=2)
-        self.assertEqual([r["chunkId"] for r in rows], ["c-hi", "c-lo"])
-        self.assertEqual(meta["tag_first"],
-                         {"admit": 0.0, "tag_reached": 2, "pool": 3,
-                          "kept_unreached": 0})
-
-    def test_admit_zero_backfills_an_underfilled_k_by_ungated_score(self):
-        # two tag-reached chunks under k=4: the k contract still fills, the
-        # backfill orders by ungated score and carries the gated zero
-        levels = _levels((0.0, "t0"), (0.5, "t1"))
-        session = self._session()
-        plan = _plan(["p"], dict(_NO_GATE, product="TestForce"))
-        with patch.object(arm, "_embed", side_effect=_fake_embed), \
-             patch.object(arm, "_part_levels", return_value=levels), \
-             patch.object(arm, "TAG_FIRST", True), \
-             patch.object(arm, "TAG_ADMIT", 0.0):
-            rows, _, meta = arm._retrieve(session, plan, k=4)
-        self.assertEqual([r["chunkId"] for r in rows],
-                         ["c-t0", "c-t1", "d1", "s1"])
-        self.assertEqual([r["score"] for r in rows[2:]], [0.0, 0.0])
-        self.assertEqual(meta["tag_first"],
-                         {"admit": 0.0, "tag_reached": 2, "pool": 6,
-                          "kept_unreached": 2})
-
-    def test_a_fractional_admit_lets_an_unreached_chunk_compete(self):
-        # at admit 0.5 the gated description best (0.5) outranks the weakest
-        # tag-reached chunk (0.0) — a measured penalty, not a filter
-        levels = _levels((0.0, "t0"))
-        session = _Session(
-            [], {("t0",): [_row("c-hi", 0.9), _row("c-lo", 0.3)]},
-            desc_rows=[[_desc_row("c-d", 0.95)]])
-        with patch.object(arm, "_embed", side_effect=_fake_embed), \
-             patch.object(arm, "_part_levels", return_value=levels), \
-             patch.object(arm, "TAG_FIRST", True), \
-             patch.object(arm, "TAG_ADMIT", 0.5):
-            rows, _, _ = arm._retrieve(session, _plan(["p"]), k=2)
-        self.assertEqual([r["chunkId"] for r in rows], ["c-hi", "c-d"])
-        self.assertEqual(rows[1]["score"], 0.5)
-
-    def test_an_exact_gated_tie_goes_to_the_tag_reached_chunk(self):
-        # both chunks carry gated 1.0 and the chunkId order favors the
-        # description chunk; the reached-beats-unreached key ranks the tag
-        # chunk first
-        levels = _levels((0.0, "t0"))
-        session = _Session([], {("t0",): [_row("c-b", 0.5)]},
-                           desc_rows=[[_desc_row("c-a", 0.9)]])
-        with patch.object(arm, "_embed", side_effect=_fake_embed), \
-             patch.object(arm, "_part_levels", return_value=levels), \
-             patch.object(arm, "TAG_FIRST", True), \
-             patch.object(arm, "TAG_ADMIT", 1.0):
-            rows, _, _ = arm._retrieve(session, _plan(["p"]), k=2)
-        self.assertEqual([r["chunkId"] for r in rows], ["c-b", "c-a"])
-
-    def test_the_curve_walk_combination_fails_loud(self):
-        with patch.object(arm, "TAG_FIRST", True), \
-             patch.object(arm, "CURVE_WALK", True):
-            with self.assertRaisesRegex(ValueError, "HERB_CURVE_WALK"):
-                arm._retrieve(_Session([], {}), _plan(["p"]), k=5)
 
 
 class GuideTests(unittest.TestCase):

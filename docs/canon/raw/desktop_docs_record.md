@@ -115,6 +115,11 @@ left explicitly open and blocking implementation.
 
 > "`memory/baseline-is-sql-agent.md` (added this session) | Lucene baseline is being dropped; **SQL-agent is the thesis comparison.** Do not frame analyses around Lucene going forward." — **[USER-STATED — paraphrase]**
 
+**Superseded** by his first-hand statement of 06-30: *"what the fuck are you on about, we have ran
+lucene and vector, you can see EXACTLY what we have ran on them, we will do the same on the v1
+artefact"* (`user_turns_all.md`:L382). Lucene/vector is the operative baseline set; this 05-25
+ruling is dead and is not to be cited as live. Detail in §5.9.
+
 **The pivot.** Doc #3 (the audit) §TL;DR:
 
 > "**This conversation pivoted hard:** the user said *"fuck the instinct, talk about reality"* and declared the frontend not interesting for the session. … **The frontend retrieval redesign from the prior handoff is shelved for now. Do not pick it up unless the user re-opens it.**" — **[USER-STATED]**
@@ -1507,13 +1512,17 @@ agreement. **Recommended, not locked** (subset size open)."* The `MetricScore` r
 uncalibrated. Flagged as an agent recommendation the user never ruled on — but it is the only
 proposed defence of the judged metrics, and it is empty.
 
-### 5.9 The SQL-agent baseline — adopted, then silently un-adopted
+### 5.9 The SQL-agent baseline — adopted, then superseded
 
 **[USER-STATED — paraphrase]**, 05-25: *"Lucene baseline is being dropped; **SQL-agent is the
 thesis comparison.** Do not frame analyses around Lucene going forward."* A memory file was written
 for it and both 05-25 handoffs instruct the next agent accordingly. By 06-18 the v3 harness is
-lucene + vector + artefact, and `baselines/sql_agent.py` is listed as *"dead"* v2 cruft. No
-document records the reversal. Not in the git contradiction list.
+lucene + vector + artefact, and `baselines/sql_agent.py` is listed as *"dead"* v2 cruft.
+
+**Superseded, first-hand, 06-30:** *"what the fuck are you on about, we have ran lucene and vector,
+you can see EXACTLY what we have ran on them, we will do the same on the v1 artefact"*
+(`user_turns_all.md`:L382). Lucene/vector is the operative baseline set. The 05-25 ruling is dead;
+no SQL-agent arm exists in `v3/pipelines/`, and nothing mining this corpus may revive it.
 
 ### 5.10 Smaller items
 

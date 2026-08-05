@@ -16,7 +16,12 @@
 
 - **`v3/`** — the work: a lean HERB evaluation harness (three arms — artefact /
   lucene / vector — scored with RAGAS). Self-contained. Design
-  reference: `v3/README.md`.
+  reference: `v3/README.md`. Every hard-coded constant and tunable in the tree,
+  with where its value came from, is inventoried in `v3/CONSTANTS.md`; run
+  results live in `v3/output/`, described by `v3/output/DATA_README.md`.
+- **`docs/ENVIRONMENT.md`** — the two machines: paths, python, the Neo4j start
+  recipe, graphify, NIM, the headless claude CLI, where the state-transfer docs
+  sit. Machine facts belong here, never in an agent's memory.
 - **`docs/canon/`** — the committed record: what the user specified, how the system was
   built, and where the repo's own claims diverge from either. Regenerate the underlying
   corpus with `tools/canon_extract.py`.
@@ -48,8 +53,8 @@ question — never resolved silently.
 A graphify navigation graph for the codebase — a search tool.
 
 - **Graph — `graphify-out/graph.json`:** covers v3/ + the in-repo (gitignored)
-  state/handoff docs in `docs/state` + `docs/handoff` + root canon (CLAUDE.md,
-  README.md), wired by bridge edges.
+  state/handoff docs in `docs/state` + `docs/handoff` + the root instruction
+  files (CLAUDE.md, README.md), wired by bridge edges.
 
 How to use it:
 
@@ -81,6 +86,18 @@ Details: `graphify-out/REFRESH.md`.
   map says a fix needs his ruling, ask — one question, when the work reaches it.
 - **Design before build:** no pipeline code until the relevant stage's design is
   explicitly signed off by the user. Present decided-vs-open, get the sign-off.
+- **Gold-blindness — whoever designs retrieval never sees the questions or the
+  gold.** *"you should not have the questions/gold available to you, there is 0%
+  good that can come out of taht"* / *"can we make sure 'you' never see them?
+  that you only get the variable/pointer to it?"* (08-02,
+  `docs/canon/raw/user_turns_all.md`:4253, :4257). retrieval-scientist,
+  maths-algorithmist and v3-coder do not open `v3/data/questions.jsonl` or any
+  run's `arm_outputs.jsonl` (question text and retrieved contexts); they specify
+  runs by pointer and read results from `eval_results.jsonl` — per-question
+  metric values keyed by question id and type — plus the manifests. Recall is
+  read from those records, never recomputed against gold. results-analyst and
+  eval-statistician read everything: reporting is their job and they design
+  nothing.
 - **Talk to the user in plain spoken English, short answers** — no jargon walls, no
   spec-sheet dumps. Verify claims against the real system/data before asserting.
 - **Heed the user's intent — never "correct" it with stale context.** When the user
@@ -90,6 +107,9 @@ Details: `graphify-out/REFRESH.md`.
 - **Docs track reality:** when a decision closes, update the design doc + memory in
   the same pass, by removal of dead content, not banners. Dated state/handoff docs
   are frozen — they describe that moment.
+- **Every constant in `v3/` is a row in `v3/CONSTANTS.md`:** `check_constants.py`
+  holds the table to the source, and `v3/test_constants_inventory.py` fails the
+  suite on drift.
 - **No historical or defensive comments:** code, docs and commit messages state only
   the present — what the code is and does now, as if written correctly the first
   time. Never narrate a past mistake, a change, or a review finding — no
@@ -98,7 +118,8 @@ Details: `graphify-out/REFRESH.md`.
   comments feed the graph and memory, so scar tissue pollutes every future session.
 - **Refresh the navigation graph at commit time:** run `python refresh_graph.py`
   (repo root) once per commit, right before committing — one refresh covering every
-  edit to `v3/`, root canon, or the external state/handoff docs since the last one.
+  edit to `v3/`, the root instruction files, or the external state/handoff docs
+  since the last one.
   Never per-edit; doc extraction is expensive, so all changed docs ride the same
   pass. It is the ONLY rebuild path (never `graphify --update`). If it prints a
   worklist, process it before committing (full procedure above).
@@ -135,6 +156,13 @@ the user runs. Definitions live in `.claude/agents/`. Route by task:
 - **graph-refresher** — `python refresh_graph.py` + worklist processing.
 
 ## Artefact arm — the modified v1 artefact
+
+**Baseline means lucene and vector** — the comparison arms, and nothing else.
+`artefact_v1.py` and `artefact_v1_det.py` are two configurations of the system
+under test; neither is a baseline, and a measurement of either is never a
+pass-bar. Which leg is the reported artefact configuration is undecided: *"until
+decided upon, there is no 'baseline' artefact, a comparable baseline are the
+vector and lucene arms"* (08-04). No surface may assume one.
 
 The system under test is the modified v1 artefact: `v3/pipelines/artefact_v1.py` and
 `v3/pipelines/artefact_v1_det.py`, retrieval code written inside the v3 harness,

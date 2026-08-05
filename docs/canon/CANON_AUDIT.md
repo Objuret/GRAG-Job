@@ -236,8 +236,10 @@ violation at its core and cannot tell whether to fix the code or the doc. The 07
 panel spent a review cycle on exactly this ("the interpreter emits facet numbers — check against
 canon").
 
-### 10. "Chase the score" framing baked into the memory index
-**[CONTRADICTS-USER]** · `memory/project_gold100_results_and_judge.md`, `project_heldout100_generalization.md`
+### 10. "Chase the score" framing baked into the memory index — **fixed 2026-08-04**
+**[CONTRADICTS-USER]** · the two memory entries are deleted; run numbers live in
+`v3/output/DATA_README.md`, recomputed from disk and carrying the unmatched-unit rule.
+No memory entry holds a run number. The finding below is what they said.
 
 > **Memory index, top two lines:** "artefact **0.594 vs vector 0.112 / lucene 0.074** … **wins all
 > five type cells** … the lead generalizes"; "artefact **leads all valid metrics** (recall_id 0.64
@@ -250,9 +252,11 @@ canon").
 > unit artifact**; matched-budget ~1.8× is the real lead" — recorded in a *different* memory entry
 > that does not correct the two above it.
 
-**What it caused.** The first thing any agent reads is a scoreboard the user disowned, quoting a
-number a later audit invalidated. Two memory entries assert the win; a third quietly says it is
-mostly an artifact; nothing reconciles them.
+**What it caused.** The first thing any agent read was a scoreboard the user disowned, quoting a
+number a later audit invalidated: two memory entries asserted the win, a third quietly said it was
+mostly an artifact, and nothing reconciled them. One record now carries all three readings —
+k=50 unmatched (disqualified as a lead), matched 500-id budget (~1.79×), and the claims that fail
+their own significance test.
 
 ---
 
@@ -363,8 +367,8 @@ agents citing other agents.
 | 4.3 | Index line: "Ground answers in current repo docs — never analyze from stale/legacy/quarantined files **or git archaeology**" | **[CONTRADICTS-USER]** as summarised | **Ranked item 4.** In fairness the *body* of `feedback_grounding.md` is more careful — it says "Git is fine as a tool; the earlier 'stop gitting' was about using archaeology to *avoid* reading docs, not a ban on git." The index line drops that clause, and the index is what agents skim. Once the working branch was deliberately cleared of the design era, "read current repo docs instead of git" became an instruction to stay ignorant. |
 | 4.4 | `feedback_commit_style.md`: "Do NOT include the `Co-Authored-By: Claude` trailer … **Why:** This is the user's exjobb (master's thesis)" | Rule **[AGENT-ORIGIN]** (unsupported in the surviving record); rationale **[CONTRADICTS-USER]** | Zero hits for "co-author", "attribution", or "footer" in 803 turns — though the May/June gap could hold it, and the desktop `no-claude-attribution.md` suggests it is real. The **rationale** is contradicted flatly: 06-14 *"drop the fucking thesis... it's done, this is post-thesis work"*; 07-22 *"thesis? wtf? we are building the fucking artefact here"*; 07-30 *"why the fuck are you going on about 'the thesis'?"*. |
 | 4.5 | `feedback_trust_revoked.md`: "Take **NO action** … without an explicit instruction naming that action. Questions get answers … Neither gets a tool call beyond read-only lookups." | **[GROUNDED]** at origin, **[STALE]** in its absolutist form | Origin is solid (07-16: *"trust revoked you fucking maniac"*; *"Me having a fucking opinion will NEVER be a fucking command"*). But the user then spent two weeks demanding the opposite: *"just fucking DO shit ok"* (07-21), *"build it ffs"* (07-31), *"why the fuck dont you understand that you should spend almost all of your time in finding a good SOLUTION, not fucking testing"* (07-30), and *"and you fucking just run off and start working without a single fucking word again"* (07-30 — wanting narration, not paralysis). Read absolutely, this entry produces the passivity he complained about. |
-| 4.6 | `project_gold100_results_and_judge.md`: "artefact **leads all valid metrics** (recall_id 0.64 vs 0.09/0.11)" | **[STALE]** / **[CONTRADICTS-USER]** in framing | **Ranked item 10.** Invalidated by the 07-28 audit ("~85% unit artifact"), and the framing is what the user disowned on 07-25. |
-| 4.7 | `project_heldout100_generalization.md`: "artefact 0.594 vs vector 0.112 / lucene 0.074 … **the lead generalizes**" | **[STALE]** in the same way | Same unit-artifact caveat applies (unmatched evidence budgets); the entry does not carry it. |
+| 4.6 | "artefact **leads all valid metrics** (recall_id 0.64 vs 0.09/0.11)" | **[FIXED 2026-08-04]** | **Ranked item 10.** The entry is deleted. `v3/output/DATA_README.md` carries the number with the unmatched-unit rule, and records that "leads all valid metrics" fails its own test (`answer_correctness` vs vector p=0.096). |
+| 4.7 | "artefact 0.594 vs vector 0.112 / lucene 0.074 … **the lead generalizes**" | **[FIXED 2026-08-04]** | The entry is deleted. The held-out numbers are in the run record, read at k=50 and labelled unmatched-unit. |
 | 4.8 | `feedback_visible_progress.md`: "print within 1s, heartbeat per model call, **never bury runs in background tasks**" | **[GROUNDED]** | 07-16 08:42/08:53/09:00. The user asked for it to be written into the .md. |
 | 4.9 | `feedback_background_workers.md`: "**always** run_in_background true; foreground agent runs freeze the chat" | **[GROUNDED]** | 07-29 22:48. Note it sits in direct tension with 4.8's "never bury runs in background tasks" — the distinction (agents background, *runs* foreground in the user's terminal) is real but is not stated in either entry. |
 | 4.10 | `feedback_never_relaunch_expensive_runs.md` / `feedback_judge_run_cost_math.md` | **[GROUNDED]** | 07-17, 07-23, 07-24 usage burns, quoted at 3.7. |
@@ -487,7 +491,7 @@ still lost*, and the file that would fix this audit is itself unreachable.
 
 | # | What the user said | Date | Status |
 |---|---|---|---|
-| 1 | "honestly, **you should not have the questions/gold available to you**, there is 0% good that can come out of taht" / "can we make sure 'you' never see them? that you only get the variable/pointer to it?" | 08-02 | **Nowhere.** Not in CLAUDE.md, not in any agent definition, not in memory. The single most important anti-leakage instruction in the project is enforced only by whoever remembers to put it in a prompt. |
+| 1 | "honestly, **you should not have the questions/gold available to you**, there is 0% good that can come out of taht" / "can we make sure 'you' never see them? that you only get the variable/pointer to it?" | 08-02 | **Enforced.** A CLAUDE.md hard rule and a hard rule in each designing agent (retrieval-scientist, maths-algorithmist, v3-coder): `v3/data/questions.jsonl` and `arm_outputs.jsonl` are closed to them; runs are specified by pointer and read back from `eval_results.jsonl` (metric values by question id and type). results-analyst and eval-statistician keep full access — they report, they do not design. |
 | 2 | "**we are NOT doing the v3 artefact, we are doing the v1artefact** … EVERYTHING i have been TRYING to build for weeks now, have been the actual v1artefact" | 07-26 | **Nowhere** — and the opposite is written into CLAUDE.md and v3/README. |
 | 3 | "**i do NOT like arbitrary choices for k or any number or value, fucking BASE it on something**" / "also, arbitrarily decided hard limits, like the 64 chunk limit, i bet there is way more than 1 of these dumb limits lying around" | 07-15, 08-02 | USER_CANON only → unreachable. Absent from CLAUDE.md and every agent definition — while those definitions hard-code bars (0.7926, +0.03, p<0.05). |
 | 4 | "**Dude, your dates and times are ALWAYS wrong, please stop from trying to measure time**, it's genuinely terrible and just builds a false narrative in YOUR mind" | 07-29 | **Nowhere.** Agents still compute durations and date-reason in reports. |

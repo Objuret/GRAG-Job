@@ -433,7 +433,11 @@ On **07-30** he asked to make it "informed by the tags first … as IT WAS FUCKI
 >
 > ok, maybe that was dumb, but a thought atleast" — **[CHAT] 06-30**
 
-### How they must NOT be combined
+### On combining them — objections, none of them a ruling
+
+Which math combines the weights is undecided and is what the experiments test
+(`CONTRADICTION_MAP.md` T13). These are his reservations, quoted as reservations; neither
+multiplication nor summation is recorded here as settled, in either direction.
 
 > "specifically multiplication i am not sold on" — **[DOC] 05-25**
 
@@ -718,7 +722,9 @@ Ten days apart, opposite positions, both hedged by him (`"..?"`, `"i THINK"`, `"
 
 > "this is ONLY RAGAS" — **[DOC] 06-25**, said twice and emphatically. `eval/herb.py` was deleted the same session.
 
-**Reading:** these two are one week apart and are a straight reversal. The consequence, which no document weighs against the decision: every number this project reports is RAGAS-only, and none is comparable to HERB's published leaderboard.
+**Reading:** these two are one week apart and are a straight reversal. The consequence — every number this project reports is RAGAS-only, and none is comparable to HERB's published leaderboard — is accepted by him:
+
+> "we have never used the herb score and has no intention to" — **08-04**, ruling on the consequence directly. RAGAS-only is the reported basis; leaderboard comparability is not wanted.
 
 ### Standing rulings
 
@@ -1421,7 +1427,7 @@ One line each, quote-anchored. **↺** marks a reversal of something earlier in 
 | 05-14 | First surviving human turn | "Can you see and onboard yourself?" **[CHAT]** |
 | 05-14 | Quarantine, don't delete: originals boxed, copies rewritten HERB-only | "i said QUARANTINE the originals, dont fucking toss shit, and REWRITE the \"copies\"" **[CHAT]** |
 | 05-25 | Frontend retrieval redesign shelved; live audit of `herb-eval` runs instead | "fuck the instinct, talk about reality" **[DOC]** |
-| 05-25 | Multiplication rejected as the combinator | "specifically multiplication i am not sold on" **[DOC]** |
+| 05-25 | Doubt about multiplication as the combinator — a reservation, not a ruling; which math combines the weights is undecided and is what the experiments test (`CONTRADICTION_MAP.md` T13) | "specifically multiplication i am not sold on" **[DOC]** |
 | 05-25 | The facet program's origin statement | "give the tag a more semantical weight and direction" **[DOC]** |
 | 05-25 | SQL-agent replaces Lucene as the baseline | recorded as a user ruling in both 05-25 handoffs **[DOC]** |
 | 05-30/31 | v2 pivot: references, not copies. No hard filters anywhere (strong user stance). Agent proposes the five-facet set — never hard-approved | **[DOC]** |
@@ -1547,8 +1553,6 @@ The research catalog is candid that none of this is settled science: *"No benchm
 
 ## D. Adopted then silently un-adopted — no reversal recorded anywhere
 
-- **The SQL-agent baseline.** 05-25: Lucene is dropped, SQL-agent is the comparison, a memory file is written, both handoffs instruct the next agent accordingly. By 06-18 the harness is lucene + vector + artefact and `baselines/sql_agent.py` is listed as dead cruft. **No document records the reversal.**
-- **The HERB anchor metric.** *"no, i am saying we do both."* (06-18) → a 45-line stub of six `...` bodies → deleted on 06-28 inside a commit titled `feat: update graphify-out (533 files)`. The reason is a real user decision (*"this is ONLY RAGAS"*), but the consequence — **no number this project reports is comparable to HERB's published leaderboard** — is weighed against the decision nowhere.
 - **The controlled canonical vocabulary.** Deleted 05-13 in a commit titled "Rework HERB chunking and tagging frames", with one substituted table cell as its only prose trace. Its decision-log entries D2/D3/D4 still read `Status: Active`. **No user statement about it exists in any source.**
 - **`(:File)-[:TAGGED]->(:Tag)` and `weight_global`.** The deterministic file rollup vanished. Not discussed in any doc, comment or commit.
 - **Bonnier / the second dataset.** Deferred by him on 06-14, never resumed. It was the only planned test of whether the design generalizes beyond HERB, and the sole stated rationale for the Mistral tagger choice.

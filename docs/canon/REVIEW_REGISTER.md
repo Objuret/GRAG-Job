@@ -4,10 +4,11 @@
 > more agent artifact. It appears in its own table and holds the same status as everything
 > listed in it.
 
-This is the worklist for going through the agent-written material in this project. Every row
-starts at `unreviewed`, including the four `docs/canon/` documents — an agent produced those on
-2026-08-03 in a few hours, and they carry no more standing than a memory file or a state doc.
-Nothing here outranks anything else here by age, by title, or by being cited elsewhere.
+This is the pile for going through the agent-written material in this project; `REVIEW_WORKLIST.md`
+cuts the same pile by claim instead of by file. Every row starts at `unreviewed`, including the
+`docs/canon/` documents — an agent produced those over two days, and they carry no more standing
+than a memory file or a state doc. Nothing here outranks anything else here by age, by title, or
+by being cited elsewhere.
 
 **Three kinds of thing, repo-wide.** *Intent* — what was supposed to be built — exists only in
 the user's own typed turns (`docs/canon/raw/user_turns*`), with the honest caveat that a machine
@@ -31,19 +32,23 @@ questioned.
   that pointers exist, **not** that they support the claims. `none found` means the file asserts
   without pointing anywhere.
 
-## 1. docs/canon — the four documents and this register
+## 1. docs/canon — the documents and the review apparatus
 
-Agent-written 2026-08-03. `CANON_AUDIT.md` adjudicates other files; that does not exempt it from
-the pile.
+Agent-written 2026-08-03/04. `CANON_AUDIT.md` adjudicates other files and `REVIEW_WORKLIST.md`
+lists claims to check; neither is exempt from the pile.
 
 | File | What it claims to be | Last written | Status | Evidence pointers found |
 |---|---|---|---|---|
 | `docs/canon/CANON_AUDIT.md` | Canon audit — what the repo tells agents vs. what the user actually said | 2026-08-03 | unreviewed | git refs, run dirs, corpus, canon docs |
+| `docs/canon/CONTRADICTION_MAP.md` | CONTRADICTION MAP — his statements versus everything that contradicts them, layer-scoped | 2026-08-04 | unreviewed | quote tags, git refs, run dirs, corpus, canon docs |
 | `docs/canon/DESIGN_HISTORY.md` | DESIGN_HISTORY — how this system was actually designed and built | 2026-08-03 | unreviewed | quote tags, git refs, corpus, canon docs |
 | `docs/canon/OPEN_DECISIONS.md` | OPEN_DECISIONS — everything genuinely unresolved | 2026-08-03 | unreviewed | quote tags, git refs, run dirs, corpus, canon docs |
 | `docs/canon/README.md` | docs/canon — the record, and how far each part of it can be trusted | 2026-08-03 | unreviewed | quote tags, git refs, corpus, canon docs |
 | `docs/canon/USER_CANON.md` | USER_CANON — what the user actually said | 2026-08-03 | unreviewed | quote tags, git refs, corpus, canon docs |
 | `docs/canon/REVIEW_REGISTER.md` | REVIEW_REGISTER — the pile, one row per agent-written artifact | 2026-08-03 | unreviewed | canon docs, corpus |
+| `docs/canon/REVIEW_PROTOCOL.md` | REVIEW_PROTOCOL — how a claim gets reviewed | 2026-08-04 | unreviewed | canon docs, corpus |
+| `docs/canon/REVIEW_WORKLIST.md` | REVIEW_WORKLIST — one row per claim | 2026-08-04 | unreviewed | git refs, run dirs, corpus, canon docs |
+| `docs/canon/NEW_SESSION_PROMPT.md` | The session starter | 2026-08-04 | unreviewed | canon docs |
 
 ## 2. docs/canon/raw — records and corpus
 
@@ -80,6 +85,8 @@ them, not the prose inside them:
 |---|---|---|---|---|
 | `CLAUDE.md` | CLAUDE.md | 2026-08-03 | unreviewed | git refs, run dirs, canon docs |
 | `README.md` | exjobbet — HERB evaluation harness | 2026-06-28 | unreviewed | none found |
+| `docs/ENVIRONMENT.md` | ENVIRONMENT — machine-specific facts for the two machines | 2026-08-04 | unreviewed | canon docs, run dirs |
+| `v3/CONSTANTS.md` | Constants and tunables in `v3/` | 2026-08-04 | unreviewed | corpus, git refs, run dirs, canon docs |
 | `v3/README.md` | v3 — HERB evaluation | 2026-08-03 | unreviewed | canon docs |
 | `v3/artefact/DESIGN.md` | v2 Artefact Rebuild — Design | 2026-06-28 | unreviewed | git refs |
 | `v3/artefact/MODEL_CONTRACTS.md` | v2 model contracts — structured I/O at every model touchpoint | 2026-06-28 | unreviewed | none found |
@@ -138,21 +145,13 @@ On the OneDrive state-transfer folder — the flat set; several are not mirrored
 | `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/feedback_visible_progress.md` | name: visible-progress-is-a-hard-requirement | 2026-08-03 | unreviewed | none found |
 | `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/project_adversarial_panel_verdicts.md` | name: v1-adversarial-panel-verdicts | 2026-08-03 | unreviewed | none found |
 | `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/project_agent_roster.md` | name: project-agent-roster | 2026-08-03 | unreviewed | run dirs |
-| `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/project_audit_panel_2026_07_28.md` | name: audit-panel-2026-07-28 | 2026-08-03 | unreviewed | git refs |
 | `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/project_benchmark_validity_caveats.md` | name: benchmark-validity-caveats | 2026-08-03 | unreviewed | git refs, run dirs |
-| `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/project_combine_sweep_and_hybrid_results.md` | name: combine-sweep-and-hybrid-results | 2026-08-03 | unreviewed | git refs |
 | `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/project_corroboration_probe_verdict.md` | name: corroboration-probe-verdict | 2026-08-03 | unreviewed | git refs |
 | `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/project_curve_cut_experiment.md` | name: v1-curve-cut-experiment | 2026-08-03 | unreviewed | none found |
-| `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/project_gold100_results_and_judge.md` | name: gold100-results-and-judge | 2026-08-03 | unreviewed | git refs, run dirs |
-| `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/project_headless_claude_models.md` | name: headless-claude-models | 2026-08-03 | unreviewed | none found |
-| `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/project_heldout100_generalization.md` | name: heldout100-generalization | 2026-08-03 | unreviewed | run dirs |
-| `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/project_laptop_env_limits.md` | name: laptop-env-limits-no-graphify-broken-venv | 2026-08-03 | unreviewed | git refs |
-| `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/project_source_of_truth.md` | name: Source of truth — djuret/monorepo branch + docs/ tree | 2026-08-03 | unreviewed | none found |
 | `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/project_terminology_canon.md` | name: project-terminology-canon | 2026-08-03 | unreviewed | run dirs |
 | `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/project_v1_lineage_and_cost_delta.md` | name: v1-lineage-and-cost-delta | 2026-08-03 | unreviewed | none found |
 | `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/project_v1_machinery_fix_and_toggles.md` | name: v1-machinery-fix-and-toggles | 2026-08-03 | unreviewed | git refs |
 | `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/project_v1_ordering_diagnosis.md` | name: v1-ordering-diagnosis | 2026-08-03 | unreviewed | git refs, run dirs |
-| `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/project_v3_artefact_state_docs_missing.md` | name: v3-state-docs-location-onedrive | 2026-08-03 | unreviewed | none found |
 
 ## 6. Memory — desktop (copy under docs/canon/raw)
 
@@ -257,8 +256,9 @@ complete and so drift between copy and live stays visible.
 
 ## 8. Agent definitions
 
-`.claude/agents/` is gitignored, so these travel with the machine rather than the repo. They are
-the surface that turns a written claim into an enforced rule.
+`.claude/agents/` is committed, so a definition change is a diff both machines see. The rest of
+`.claude/` — `settings.local.json` and the legacy worktrees — stays ignored. These are the surface
+that turns a written claim into an enforced rule.
 
 | File | What it claims to be | Last written | Status | Evidence pointers found |
 |---|---|---|---|---|
@@ -363,7 +363,7 @@ Stated rather than omitted, because the pile has to be complete to be a worklist
   extracted from, not documents to review. Other projects' memory directories on this machine
   (ARC, Neural-Nursery, New-Mem-Order) are outside this project.
 - **`v3/` source code and its comments** carry agent-written claims as well. Not enumerated.
-- **Counts.** 5 canon documents + this register, 6 raw records, 6 corpus files, 2 root docs,
-  5 v3 docs, 5 in-repo state docs, 11 OneDrive state docs, 32 live laptop memory files,
+- **Counts.** 9 canon documents + this register, 6 raw records, 6 corpus files, 3 root docs,
+  6 v3 docs, 5 in-repo state docs, 11 OneDrive state docs, 24 live laptop memory files,
   53 desktop memory copies, 32 laptop memory copies, 10 agent definitions, 3 other tree docs,
   57 legacy worktree docs.

@@ -16,15 +16,21 @@ This is the eval harness for comparing the artefact against baselines on HERB.
 
 ## Goal
 
-Run the chosen HERB questions through three arms, get an answer from each, score
+Run the chosen HERB questions through the arms, get an answer from each, score
 those answers with RAGAS.
 
-Three arms:
-- **artefact_v1** — the artefact graph (interpreter → tag/facet retrieval → answer). The system under test: the modified v1 artefact, `pipelines/artefact_v1.py` with its interpreter-free leg `pipelines/artefact_v1_det.py`, querying the `herb-eval` graph.
+**Baseline means lucene and vector** — the comparison arms:
 - **lucene** — BM25 baseline. Its own index over the corpus.
 - **vector** — dense / naive-RAG baseline. Its own index over the corpus.
+- **hybrid** — a third comparison arm, late fusion of those two (`pipelines/hybrid.py`).
 
-All three answer with the **same generator** (built once in the orchestrator and
+The system under test is the modified v1 artefact, querying the `herb-eval` graph:
+`pipelines/artefact_v1.py` plans with a model, `pipelines/artefact_v1_det.py` plans
+deterministically. They are two configurations of it, not baselines, and which leg is
+the reported one is undecided — the ruling and what it forbids are in `CLAUDE.md`
+§"Artefact arm", the numbers under it in `output/DATA_README.md`.
+
+Every arm answers with the **same generator** (built once in the orchestrator and
 injected), so any difference is retrieval, not the LLM. Beyond that generator and
 the **corpus on disk**, the arms share **nothing** — each reads, indexes and ranks
 the corpus with its own code (how it does so is what the comparison measures); they
@@ -115,10 +121,22 @@ three modes is the pending step — see Still open.)
   published average. Point the orchestrator's ids-file at whichever view you run.
 - `smoke.py` — tiny wiring check.
 - `data/` — `corpus/`, `raw/`.  `output/` — results (per-run folders; `smoke/` for checks).
+- `CONSTANTS.md` — every hard-coded constant and tunable in this tree, with where its
+  value came from. `check_constants.py` holds the table to the source and
+  `test_constants_inventory.py` fails the suite on drift. A new constant is a new row.
+- `output/DATA_README.md` — the run record: what every run in `output/` is, what it
+  scores, and what it may be used to claim. Every number recomputed from the folders.
+  No number is quoted anywhere else.
 
 ## Decided
 
-- RAGAS is the only scorer. Three arms, one shared generator, and a top-k budget shared across arms (that it's *shared* is decided; the value itself is still open — see below).
+- RAGAS is the only scorer, and nothing it reports is leaderboard-comparable against
+  HERB's published figures — accepted, not a gap to close.
+- One shared generator across every arm, and one k. **k is shared; the retrieval budget
+  it buys is not** — an artefact context is a graph chunk carrying ~10 artifact ids, a
+  baseline context is one artifact carrying one, so at a common k the artefact arms hold
+  ~10× the ids and the scoring ceiling differs too. `output/DATA_README.md` carries that
+  rule and governs every cross-arm number under it.
 - **Generation and scoring are separate phases** (`questions` / `evals` / `full`), so
   iterating a scorer never re-runs the generator. The `questions` record is **oracle-free**;
   `evals` re-joins `type` + `ground_truth` + `citations` by id from `data/questions.jsonl`.
@@ -174,7 +192,9 @@ three modes is the pending step — see Still open.)
 
 - **Orchestrator split** into the three `questions` / `evals` / `full` modes, with a
   per-run-folder run identity (so a gold-100 run and a full run don't clobber).
-- **top-k** budget.
+- **Which framing of the matched-budget result ships** — the absolute recall gap or the
+  ratio (`docs/canon/CONTRADICTION_MAP.md` T10). k is 50 and user-set; what a common k
+  buys per arm is what differs.
 - **Which set to run** — gold-100 (built; seeded stratified draw) vs the full 815 + 699.
 - **Judge calibration** subset size (to validate the judged RAGAS metrics).
 

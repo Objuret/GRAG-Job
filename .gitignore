@@ -8,8 +8,9 @@ __pycache__/
 .pytest_cache/
 .venv/
 
-# Local agent / planning noise
-.claude/
+# Local agent / planning noise — the agent definitions are canon and travel with the repo
+.claude/*
+!.claude/agents/
 v1/backend/.plan/
 
 # Quarantined legacy implementation

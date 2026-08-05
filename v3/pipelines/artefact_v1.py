@@ -1,6 +1,7 @@
 """artefact_v1.py — the ARTEFACT-V1 arm: query-relative fuzzy cluster retrieval
-over the Neo4j `herb-eval` graph (the v1 artefact build), scored head-to-head
-with the lucene and vector arms under the same shared generator and RAGAS eval.
+over the Neo4j `herb-eval` graph (the v1 artefact build), run in the v3 harness
+beside the lucene and vector arms under the shared generator contract and RAGAS
+eval.
 
 The graph under test is `Source -[:CONTAINS]-> File -[:HAS_CHUNK]-> Chunk
 -[:HAS_TAG]-> Tag`, holding no content — structure, weights, and embeddings
@@ -11,9 +12,11 @@ bare as `t.emb` under the `tag_emb` cosine index. Query interpretation uses the
 signed-in Claude CLI; query embeddings use NIM.
 
 Retrieval is the user's query-relative area design. Areas are born and die with
-each query — nothing cluster-shaped is precomputed or stored:
+each query:
 
-  1. interpret — two Claude Haiku passes. Pass 1 emits a self-contained
+  1. interpret — two Claude Haiku passes; the default serves the cached plan
+     when one exists, so a repeat run makes no interpreter call, and
+     `HERB_FRESH_INTERP=1` re-runs them. Pass 1 emits a self-contained
      statement of the information need plus the prompt parts (specific noun
      phrases / entities / actions). Pass 2 scores each part across five facets
      (topic, entities, activity, temporal, evidence).
@@ -38,11 +41,12 @@ each query — nothing cluster-shaped is precomputed or stored:
      oracle. With `HERB_CURVE_WALK=1` the clustering decides the K: the
      description neighborhoods are clustered like tag pools — anchor chunk plus
      a dendrogram chain — and one progressive frontier opens the cheapest next
-     level anywhere, tag or description. The frontier's own trajectory is the
-     query's curve of best fit: when the next opening's height gap jumps out of
-     the fit of the gaps walked so far, the walk stops. K = the distinct chunks
-     the opened areas vouch for, the caller's k only the ceiling; stated scope
-     corroborates value and competes for the K slots but never sets the count.
+     level anywhere, tag or description. The gaps between the openings walked
+     so far are the spread the next one is tested against: when its height gap
+     sits more than two standard deviations above their mean, the walk stops.
+     K = the distinct chunks the opened areas vouch for, the caller's k only
+     the ceiling; stated scope corroborates value and competes for the K slots
+     but never sets the count.
 
      Value scores on one scale, identical in both regimes. Each of the three
      paths — tag areas, description lookups, stated scope — gives a chunk a base
@@ -51,13 +55,15 @@ each query — nothing cluster-shaped is precomputed or stored:
      base over its own candidate pool. Priority modifiers lift the normalized
      base by an exposed strength `s` as base × (1 + s·(m − 1)): the tag path's
      facet agreement, `w_chunk` and `relevance_to_file`, the description path's
-     hint-match factor, the scope path's match fraction — each a boost, never a
-     filter. The three lifted scores combine as a weighted sum (`W_TAG` /
-     `W_DESC` / `W_SCOPE`) over the union, so evidence the whole plan touches
-     outranks evidence a single broad tag grips. The aggregation and the
-     normalization are selectable — `HERB_AGG` (sum / max), `HERB_NORM`
-     (relative / absolute / none) and `HERB_NORM_SCOPE` (per-path / global) —
-     the defaults being sum and per-path min-max.
+     hint-match factor, the scope path's match fraction. Strength 0 leaves the
+     base untouched whatever `m` is; strength 1 makes the factor `m` itself, so
+     there an `m` above 1 lifts, below 1 damps, and 0 removes that path's
+     contribution for the chunk. The three lifted scores combine as
+     a weighted sum (`W_TAG` / `W_DESC` / `W_SCOPE`) over the union, so evidence
+     the whole plan touches outranks evidence a single broad tag grips. The
+     aggregation and the normalization are selectable — `HERB_AGG` (sum / max),
+     `HERB_NORM` (relative / absolute / none) and `HERB_NORM_SCOPE` (per-path /
+     global) — the defaults being sum and per-path min-max.
 
   4. sufficiency — the interpreter holds the conversation: the walk's
      evidence is shown to it cumulatively at the doubling level sequence and
@@ -83,7 +89,8 @@ each query — nothing cluster-shaped is precomputed or stored:
 The graph stores references, never content: a retrieved chunk is a pointer —
 `locator_json` on the chunk plus `rel_path` + `sha256` on its file — resolved
 from raw under `v3/data/raw` at answer time, hash-verified. `context_ids` are
-HERB artifact ids from the raw records. Oracle sections stay outside retrieval.
+HERB artifact ids from the raw records. Retrieval excludes the oracle sections
+by `c.section`; resolution reads the raw file whole.
 
 Contract: `prepare_over_corpus(corpus) -> Prepared`; `answer_one_question(...)
 -> ArmOutput`. The question is read for id + text ONLY.
@@ -128,9 +135,8 @@ DESC_INDEX = "chunk_desc_emb"
 # for the tags inside it; the widest level is the part's whole pool.
 K_LEVELS = (8, 16, 32, 64)
 
-# Post-filtered kNN queries over-fetch the vector index by this factor and
-# trim back to the intended width, giving the row filters headroom before
-# they narrow the neighborhood.
+# The over-fetch multiplier on both vector indexes: a kNN query asks the index
+# for this many times the intended width, and the LIMIT trims back to it.
 KNN_OVERFETCH = 4
 
 # The curve walk: with HERB_CURVE_WALK=1, one progressive frontier walks all
@@ -164,15 +170,6 @@ FRESH_INTERP = os.environ.get("HERB_FRESH_INTERP") == "1"
 # alone, with no per-question content cut confounding the depth.
 NO_REVIEW = os.environ.get("HERB_NO_REVIEW") == "1"
 
-# Tags-first retrieval: with HERB_TAG_FIRST=1 the flat regime runs the tag
-# stage first and makes it authoritative. The widening walk completes gated on
-# tag reach alone, description and stated scope open after it, and at the
-# combine a chunk no matched tag reached carries its combined score scaled by
-# HERB_TAG_ADMIT — the tag layer decides selection, the other paths
-# corroborate. Exclusive with HERB_CURVE_WALK (the two regimes walk
-# differently); the combination fails loud at retrieval.
-TAG_FIRST = os.environ.get("HERB_TAG_FIRST") == "1"
-
 
 def _env_float(name: str, default: float) -> float:
     """A run-tunable coefficient read from the environment, `default` when unset
@@ -194,33 +191,26 @@ def _env_int(name: str, default: int) -> int:
 
 # Per-path combine weights: each of the three paths (tag areas / description
 # lookups / stated scope) contributes its normalized, modifier-adjusted base to
-# the cross-path sum scaled by its weight, so relative influence is a coefficient
-# rather than an accident of a scoring function's raw magnitude.
+# the cross-path sum scaled by its weight.
 W_TAG = _env_float("HERB_W_TAG", 1.0)
 W_DESC = _env_float("HERB_W_DESC", 1.0)
 W_SCOPE = _env_float("HERB_W_SCOPE", 1.0)
 
-# The tags-first admit coefficient: under HERB_TAG_FIRST a chunk no matched tag
-# reached keeps its combined score times this factor. 0 is a hard filter —
-# unreached chunks only backfill an under-filled k, ordered by their ungated
-# score; a fraction is a measured penalty they compete under; 1 keeps the score
-# and leaves only the reached-beats-unreached tie order. One sweepable
-# coefficient covers the whole weight/filter range.
-TAG_ADMIT = _env_float("HERB_TAG_ADMIT", 0.0)
-
-if TAG_FIRST:
-    print(f"artefact_v1: tags-first retrieval on (HERB_TAG_ADMIT={TAG_ADMIT})", flush=True)
-
 # Priority-modifier strengths: a modifier m applies over the normalized base as
 # base * (1 + strength * (m - 1)) — strength 0 leaves the base untouched,
 # strength 1 is the modifier's full factor. The tag facet-term modifier defaults
-# inert: the stored edge facet weights measure as non-signal, so lifting by them
-# would inject noise until a sweep earns a higher strength.
+# to strength 0, so the stored edge facet weights reach no score; the one sweep
+# at full strength lands inside ±0.035 recall of no change, too wide to separate
+# the channel from inert either way.
 STR_FACET = _env_float("HERB_STR_FACET", 0.0)
 STR_WCHUNK = _env_float("HERB_STR_WCHUNK", 1.0)
 STR_RELEVANCE = _env_float("HERB_STR_RELEVANCE", 1.0)
 STR_DESC_HINT = _env_float("HERB_STR_DESC_HINT", 1.0)
 STR_SCOPE_MATCH = _env_float("HERB_STR_SCOPE_MATCH", 1.0)
+
+# The description path's hint-match modifier: the factor a description chunk
+# matching a stated scope hint carries into the lerp STR_DESC_HINT grades.
+DESC_HINT_M = _env_float("HERB_DESC_HINT_M", 2.0)
 
 # Cluster-guided tag weighting: five per-facet fuzzy membership matrices over
 # the tag pool, built once by `build_tag_clusters.py` and cached under
@@ -274,27 +264,24 @@ if NORM_SCOPE not in ("per_path", "global"):
 # chunk at a reference cosine distance earns (1 / dist^2); a path's reference is
 # that scaled by the number of levels a top-ranked member spans, so
 # base / (base + ref) saturates to 0.5 at the reference distance for EVERY path
-# regardless of how deep it stacks — the stated-scope path's extension no longer
-# inflates it against tag and description. Tag and description pools never
-# extend, so their reference is fixed at len(K_LEVELS) levels; stated scope's is
+# regardless of how deep it stacks. Tag and description pools never extend, so
+# their reference is fixed at len(K_LEVELS) levels; stated scope's is
 # level-count-aware per query.
 _ABS_REF_DIST = 0.5
 _ABS_UNIT = 1.0 / _ABS_REF_DIST ** 2
 _ABS_REF = len(K_LEVELS) * _ABS_UNIT
 
-# Manifest provenance: the regime switches and every combine coefficient,
-# recorded by the runner in run_manifest.json so a run is self-documenting and
-# sweepable.
+# Manifest provenance: the regime switches and the environment-exposed combine
+# coefficients, recorded by the runner in run_manifest.json.
 RETRIEVAL_FLAGS = {
     "HERB_CURVE_WALK": CURVE_WALK, "HERB_DOOR_TRACE": DOOR_TRACE,
     "HERB_WALK_GATE": WALK_GATE, "HERB_FRESH_INTERP": FRESH_INTERP,
     "HERB_NO_REVIEW": NO_REVIEW,
-    "HERB_TAG_FIRST": TAG_FIRST, "HERB_TAG_ADMIT": TAG_ADMIT,
     "HERB_AGG": AGG, "HERB_NORM": NORM, "HERB_NORM_SCOPE": NORM_SCOPE,
     "HERB_W_TAG": W_TAG, "HERB_W_DESC": W_DESC, "HERB_W_SCOPE": W_SCOPE,
     "HERB_STR_FACET": STR_FACET, "HERB_STR_WCHUNK": STR_WCHUNK,
     "HERB_STR_RELEVANCE": STR_RELEVANCE, "HERB_STR_DESC_HINT": STR_DESC_HINT,
-    "HERB_STR_SCOPE_MATCH": STR_SCOPE_MATCH,
+    "HERB_STR_SCOPE_MATCH": STR_SCOPE_MATCH, "HERB_DESC_HINT_M": DESC_HINT_M,
     "HERB_STR_GUIDE": STR_GUIDE, "HERB_GUIDE_TAU": GUIDE_TAU,
     "HERB_GUIDE_C": GUIDE_C, "HERB_GUIDE_M": GUIDE_M,
     "HERB_GUIDE_LAMBDA": GUIDE_LAMBDA, "HERB_GUIDE_SEED": GUIDE_SEED,
@@ -337,8 +324,8 @@ Generator = Callable[[str, list], object]
 # The part's tag pool, best-first by index score with the tag name as the
 # stable tiebreaker — level membership and the anchor read this order. Pooled
 # tags carry at least one HAS_TAG edge from the active run; the index is
-# over-fetched to give the run filter headroom and the trim caps the pool at
-# its width. The surviving width lands in the walk meta per part.
+# over-fetched and the trim caps the pool at its width. The surviving width
+# lands in the walk meta per part.
 _GROUND_CYPHER = """
 CALL db.index.vector.queryNodes($idx, $fetch, $vec) YIELD node, score
 WHERE EXISTS { MATCH (node)<-[r:HAS_TAG]-(:Chunk) WHERE r.run_id = $runId }
@@ -350,9 +337,10 @@ LIMIT $k
 # An opened area's tags pull their chunks; each chunk keeps its highest-support
 # tag and that edge's priority-modifier components. The base score is the tag
 # support (qt.weight); facetTerm is the part's facet values against the edge's
-# facet arrays, riding the same edge as w_chunk and relevance_to_file. The
-# components return raw — the strength lerp and the per-path normalization apply
-# in Python on the shared scale.
+# facet arrays, riding the same edge as w_chunk, while relevance_to_file is a
+# chunk property, one value for every edge into it. The components return raw —
+# the strength lerp and the per-path normalization apply in Python on the shared
+# scale.
 _AREA_CHUNKS_CYPHER = """
 UNWIND $tags AS qt
 MATCH (t:Tag {name: qt.name})<-[r:HAS_TAG]-(c:Chunk)<-[:HAS_CHUNK]-(f:File)
@@ -386,8 +374,7 @@ RETURN c.chunk_id AS chunkId, c.locator_json AS locator,
 # embeddings — the part kNNs `chunk_desc_emb` directly. Structural fields ride
 # along so scope hints can raise a chunk's weight in Python; the curve walk's
 # variant also carries the embeddings, which it clusters into an area. The
-# index is over-fetched and trimmed back to the neighborhood width; the
-# empty/dataset/section filters spend the headroom first.
+# index is over-fetched and the LIMIT trims it back to the neighborhood width.
 _DESC_KNN_TEMPLATE = """
 CALL db.index.vector.queryNodes($idx, $fetch, $vec) YIELD node AS c, score AS sim
 MATCH (f:File)-[:HAS_CHUNK]->(c)
@@ -422,8 +409,8 @@ def _hint_terms(gate: dict) -> tuple:
 
 def _tag_affinity(session, names: list, gate: dict) -> dict:
     """Structural affinity per tag: the fraction of the tag's edges landing on
-    hint-matching chunks, in [0, 1]. Structure vouches for tags the embedding
-    cannot see. {} when no hint is set."""
+    hint-matching chunks, in [0, 1]. It reweights the embedding's pool, raising
+    the tags the stated scope also touches. {} when no hint is set."""
     terms, params = _hint_terms(gate)
     if not terms:
         return {}
@@ -554,8 +541,8 @@ def prepare_over_corpus(corpus) -> Prepared:
                 "SHOW INDEXES YIELD name WHERE name IN [$t, $d] "
                 "RETURN collect(name) AS names",
                 t=GROUND_INDEX, d=DESC_INDEX).single()["names"]
-            # completeness is judged on the retrieved population: empty chunks
-            # never leave a retrieval query
+            # the retrieved population, under the same empty guard the
+            # retrieval queries carry
             no_desc = s.run(
                 "MATCH (c:Chunk) WHERE coalesce(c.empty, false) = false "
                 "AND c.desc_emb IS NULL RETURN count(c) AS n").single()["n"]
@@ -677,7 +664,7 @@ def _chat_json(model: str, system: str, user: str, max_tokens: int,
     tokens_out, time_s), usage summed over attempts. A malformed emission —
     unparseable JSON, or a payload `validate` rejects with ValueError — gets
     one retry; an empty or truncated response fails immediately, naming its
-    finish_reason. Every failure raises InterpreterError carrying the usage
+    finish_reason. Those failures raise InterpreterError carrying the usage
     spent."""
     payload = {
         "model": model,
@@ -823,8 +810,7 @@ def _interpret(text: str, model: str) -> tuple:
 # The prompts AND the code that shape an interpretation. Folding a signature of
 # both into the cache key means editing a prompt, the tag cleaner, the gate
 # parser, the score validator, the JSON extractor, the facet set, the filler
-# set, or the interpret flow itself invalidates every cached plan, so a reused
-# plan always matches the interpreter that would produce it now.
+# set, or the interpret flow itself invalidates every cached plan.
 _INTERP_SIG = hashlib.sha256("\x00".join([
     _PASS1_SYSTEM, _PASS2_SYSTEM, repr(sorted(FILLER)), repr(ALL_FACETS),
     inspect.getsource(_interpret), inspect.getsource(_clean_tag),
@@ -895,13 +881,11 @@ def _unit(a: np.ndarray) -> np.ndarray:
 
 
 def _gap_break(gaps: list, gap: float) -> bool:
-    """The walk's stopping test, read from its own trajectory. The height
-    gaps between the openings walked so far are the curve's fit; the next
-    opening breaks the curve when its gap jumps more than two standard
-    deviations above their mean — this-merge-close, next-merge-far, judged
-    locally. Fewer than three walked gaps carry no spread to judge against,
-    and a jump must clear float noise — an excess of rounding-error size is
-    never a break."""
+    """The walk's stopping test, read from the walk's own gaps: the next
+    opening breaks the walk when its height gap jumps more than two standard
+    deviations above their mean, over every gap walked so far. Three gaps are
+    the minimum history the test fires on, and a jump must clear float noise —
+    an excess of rounding-error size is never a break."""
     if len(gaps) < 3 or gap <= 1e-9:
         return False
     return gap > float(np.mean(gaps)) + 2.0 * float(np.std(gaps)) + 1e-9
@@ -911,11 +895,12 @@ def _multi_k_support(dists: np.ndarray, extend: bool = False,
                      normalize: bool = True) -> np.ndarray:
     """Fuzzy k-NN support aggregated over the doubling level sequence: every
     level contributes inverse-squared-distance weight for the members inside
-    it, so no single k decides the neighborhood. Normalized over the pool by
-    default; with `normalize` off the raw inverse-square weights return —
-    a pure function of distance, one scale shared by every area. With
-    `extend`, the doubling continues until the sequence covers the whole
-    ranked set — every member carries support, deeper levels carry less."""
+    it, so support is a staircase over the level sequence with distance
+    modulating inside each step. Normalized over the pool by default; with
+    `normalize` off the raw inverse-square weights return — a pure function
+    of distance, one scale shared by every area. With `extend`, the doubling
+    continues until the sequence covers the whole ranked set — every member
+    carries support, deeper levels carry less."""
     levels = list(K_LEVELS)
     if extend:
         while levels[-1] < len(dists):
@@ -945,7 +930,7 @@ def _minmax(raw: dict) -> dict:
     """Min-max normalize a path's per-chunk base scores onto [0, 1] over that
     path's own candidate pool: the pool's strongest chunk lands at 1, its
     weakest at 0, decoupling the path's influence from the raw magnitude of its
-    scoring function."""
+    scoring function, and a single-member pool lands at 1."""
     if not raw:
         return {}
     return _norm_pool(raw, min(raw.values()), max(raw.values()))
@@ -1013,9 +998,8 @@ def _normalize(tag_base: dict, desc_base: dict, scope_base: dict,
 def _mod(m: float, strength: float) -> float:
     """A priority modifier over the normalized base: strength 0 returns 1 (the
     modifier is inert), strength 1 returns the raw factor `m`, values between
-    interpolate. Clamped at 0 so a strength past 1 damps toward zero but never
-    flips sign — a modifier lifts or damps what it vouches for, it never sends a
-    reached chunk below an unreached one or decides membership."""
+    interpolate. Clamped at 0 so a strength past 1 damps toward zero without
+    flipping sign; the damped score ranks and is cut at k like any other."""
     return max(0.0, 1.0 + strength * (m - 1.0))
 
 
@@ -1149,9 +1133,9 @@ def _part_levels(session, part: dict, vec: np.ndarray, gate: dict,
 
 def _open_area(session, area: dict, facets: dict) -> list:
     """Open one area: its tags pull their chunks; each chunk keeps its
-    highest-support tag, carrying that edge's facet agreement, w_chunk and
-    relevance_to_file as the tag path's priority modifiers over the tag-support
-    base."""
+    highest-support tag, carrying that edge's facet agreement and w_chunk plus
+    the chunk's own relevance_to_file as the tag path's priority modifiers over
+    the tag-support base."""
     cols = {f: float(facets.get(f, 0.0)) for f in ALL_FACETS}
     res = session.run(
         _AREA_CHUNKS_CYPHER,
@@ -1172,17 +1156,9 @@ def _retrieve(session, plan: dict, k: int) -> tuple:
     the tag areas reached — is short of k. With `HERB_CURVE_WALK=1` one
     progressive frontier walks all semantic areas — tag areas and clustered
     description neighborhoods — cheapest opening first on the shared
-    cosine-height scale, and stops when the next opening's gap breaks the fit
-    of the gaps walked so far (`_gap_break`); K = the distinct chunks the
-    opened areas vouch for, capped by the caller's k.
-
-    With `HERB_TAG_FIRST=1` (flat regime only — the curve-walk combination
-    raises) the tag stage runs first and is authoritative: the widening walk
-    completes gated on tag reach alone, description and stated scope open
-    after it, and at the combine a chunk no matched tag reached carries its
-    combined score times `HERB_TAG_ADMIT`. Ties go to tag-reached chunks, and
-    when the tag stage reached fewer than k the ungated score orders the
-    backfill that keeps the k contract.
+    cosine-height scale, and stops when the next opening's gap jumps two
+    standard deviations above the gaps walked so far (`_gap_break`); K = the
+    distinct chunks the opened areas vouch for, capped by the caller's k.
 
     Membership is the union of what the three paths — tag areas, description
     lookups, stated scope — find; description and scope stay finders, never
@@ -1197,10 +1173,6 @@ def _retrieve(session, plan: dict, k: int) -> tuple:
     for the K slots but never sets the count."""
     if k <= 0:
         raise ValueError("k must be positive")
-    if TAG_FIRST and CURVE_WALK:
-        raise ValueError(
-            "HERB_TAG_FIRST=1 is a flat-regime restructure and HERB_CURVE_WALK=1 "
-            "walks its own frontier — run one regime at a time")
 
     parts = plan["parts"]
     qmat, calls, tok_in, tok_out, secs = _embed_cached(
@@ -1224,7 +1196,7 @@ def _retrieve(session, plan: dict, k: int) -> tuple:
                               guide_stats)
         level_log.append({
             "part": part["t"],
-            # the tag-pool width the run filter left standing
+            # the tag-pool width
             "pool": sum(len(lv["tags"]) for lv in levels),
             "levels": [{"height": round(lv["height"], 4),
                         "size": len(lv["tags"]),
@@ -1255,7 +1227,7 @@ def _retrieve(session, plan: dict, k: int) -> tuple:
     tag_supp: dict = {}                  # chunkId -> its top tag support
     tag_mods: dict = {}                  # chunkId -> (facetTerm, w_chunk, relevance) at that support
     desc_sources: list = []              # each a dict chunkId -> best description support
-    desc_hint: dict = {}                 # chunkId -> description priority modifier (2.0 on a hint match)
+    desc_hint: dict = {}                 # chunkId -> description priority modifier (DESC_HINT_M on a hint match)
     scope_base: dict = {}                # chunkId -> scope support
     scope_match: dict = {}               # chunkId -> stated-scope match fraction
     scope_n = 0                          # stated-scope matching-set size — its level multiplicity
@@ -1274,9 +1246,8 @@ def _retrieve(session, plan: dict, k: int) -> tuple:
                 pool.add(cid)
             semantic.add(cid)
             tag_reached.add(cid)
-            # a first sighting always records a base (even a shaped-to-zero
-            # support), so a tag-reached chunk is scored, never dropped from
-            # selection while it still counts in the walk
+            # a first sighting always records a base, so a tag-reached chunk
+            # carries a tag score into the combine
             if cid not in tag_slots[pi] or sup > tag_slots[pi][cid]:
                 tag_slots[pi][cid] = sup
             # the chunk's top-support edge across all parts supplies its tag modifiers
@@ -1304,7 +1275,7 @@ def _retrieve(session, plan: dict, k: int) -> tuple:
             if v > slot.get(cid, 0.0):
                 slot[cid] = v
             if hinted and _hint_match(row, gate):
-                desc_hint[cid] = 2.0
+                desc_hint[cid] = DESC_HINT_M
             payload.setdefault(cid, _pointer(row))
         return fresh
 
@@ -1425,8 +1396,8 @@ ORDER BY sim DESC, chunkId
             frontier += [(h, next(seq), fn) for h, fn in
                          open_desc_area(need_vec, "description")]
         open_stated_scope()
-        # One frontier, cheapest opening anywhere first; the walked gaps are
-        # the query's curve and the stop is where the next gap breaks it.
+        # One frontier, cheapest opening anywhere first; the stop is the gap
+        # that sits two standard deviations above the mean of the walked gaps.
         frontier.sort(key=lambda e: e[:2])
         gaps, last_h = [], 0.0
         for height, _, open_fn in frontier:
@@ -1438,16 +1409,6 @@ ORDER BY sim DESC, chunkId
             gaps.append(gap)
             last_h = height
         opened = len(gaps)
-    elif TAG_FIRST:
-        # the tag stage first: the widening walk completes on tag reach alone,
-        # then description and stated scope open to corroborate what it found
-        for height, pi, lv in widening:
-            if len(tag_reached) >= k:
-                break
-            open_level(height, pi, lv)
-        for pi in range(len(parts)):
-            open_desc(part_vecs[pi], parts[pi]["t"])
-        open_stated_scope()
     else:
         for pi in range(len(parts)):
             open_desc(part_vecs[pi], parts[pi]["t"])
@@ -1491,20 +1452,9 @@ ORDER BY sim DESC, chunkId
     for cid, s in scope_score.items():
         totals[cid] = totals.get(cid, 0.0) + W_SCOPE * s
 
-    if TAG_FIRST:
-        # the combine gate: a chunk no matched tag reached carries its combined
-        # score times TAG_ADMIT. Gated score ranks; ties go to tag-reached
-        # chunks; the ungated score orders the unreached backfill that keeps
-        # the k contract when the tag stage reached fewer than k.
-        gated = {cid: v if cid in tag_reached else v * TAG_ADMIT
-                 for cid, v in totals.items()}
-        order = sorted(totals, key=lambda cid: (
-            -gated[cid], cid not in tag_reached, -totals[cid], cid))
-        ranked = [(cid, gated[cid]) for cid in order[:k]]
-    else:
-        ranked = sorted(totals.items(), key=lambda kv: (-kv[1], kv[0]))
-        kept_k = min(len(semantic), k) if CURVE_WALK else k
-        ranked = ranked[:kept_k]
+    ranked = sorted(totals.items(), key=lambda kv: (-kv[1], kv[0]))
+    kept_k = min(len(semantic), k) if CURVE_WALK else k
+    ranked = ranked[:kept_k]
     selected = [{**payload[cid], "score": round(sc, 4)} for cid, sc in ranked]
 
     meta = {
@@ -1520,12 +1470,6 @@ ORDER BY sim DESC, chunkId
         meta["curve_walk"] = {"pool": len(totals), "semantic": len(semantic),
                               "kept": kept_k, "stopped": stopped,
                               "opened": opened}
-    if TAG_FIRST:
-        meta["tag_first"] = {
-            "admit": TAG_ADMIT, "tag_reached": len(tag_reached),
-            "pool": len(totals),
-            "kept_unreached": sum(1 for cid, _ in ranked
-                                  if cid not in tag_reached)}
     if STR_GUIDE > 0:
         meta["guide"] = {
             "str": STR_GUIDE, "tau": GUIDE_TAU, "C": GUIDE_C, "m": GUIDE_M,
@@ -1539,7 +1483,6 @@ ORDER BY sim DESC, chunkId
              "tag": round(W_TAG * tag_score.get(cid, 0.0), 6),
              "desc": round(W_DESC * desc_score.get(cid, 0.0), 6),
              "scope": round(W_SCOPE * scope_score.get(cid, 0.0), 6),
-             **({"gate": round(gated[cid], 6)} if TAG_FIRST else {}),
              "total": round(totals[cid], 6)}
             for cid in sorted(totals, key=lambda c: (-totals[c], c))]
     return selected, usage, meta

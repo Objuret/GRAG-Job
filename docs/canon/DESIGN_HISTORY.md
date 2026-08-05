@@ -2113,8 +2113,8 @@ orchestrator docstring all cleaned, with a note that the first grep pass missed 
 `v3/README.md` lines) and §8 makes reintroduction a named trap.
 
 **The attribution changes; the consequence does not.** Every number the project reports is
-RAGAS-only, and none is comparable to HERB's published leaderboard. No document in any of
-the three records weighs that consequence against the decision.
+RAGAS-only, and none is comparable to HERB's published leaderboard. He accepts that
+consequence: *"we have never used the herb score and has no intention to"* (08-04).
 
 The judged metric set also changed without comment in the same commit —
 `git show 8a640bf -- v3/README.md`:
@@ -3784,8 +3784,9 @@ reintroduction a named trap.
 
 **Resolved status: documented reversal — a user decision, not a silent drop.** The
 attribution changes; **the consequence does not**: every number the project reports is
-RAGAS-only and none is comparable to HERB's published leaderboard, and **no document
-anywhere weighs that consequence against the decision** (`USER_CANON.md` §9 says so too).
+RAGAS-only and none is comparable to HERB's published leaderboard. He ruled on that
+consequence directly — *"we have never used the herb score and has no intention to"*
+(08-04) — so RAGAS-only is the accepted reporting basis.
 
 ---
 

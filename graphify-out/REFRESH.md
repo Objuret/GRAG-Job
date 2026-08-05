@@ -6,7 +6,7 @@ you rebuild it with `refresh_graph.py` (repo root).
 ## What the graph covers
 
 - **`graphify-out/`** : v3/ + in-repo (gitignored) state/handoff docs
-  (docs/state, docs/handoff) + root canon (CLAUDE.md, README.md), wired by bridge
+  (docs/state, docs/handoff) + the root instruction files (CLAUDE.md, README.md), wired by bridge
   edges. The benchmark dataset (`v3/data`) and run outputs (`v3/output`) are excluded.
 
 `refresh_graph.py` is the single rebuild authority — never `graphify --update` (it
