@@ -307,9 +307,9 @@ than k chunks.
 per chain level, `a` = mean distance inside the cluster, `b` = mean distance from it to the pool
 remainder, and the area's edge is the last level where `a < b` — an identity, not a threshold, and
 his 07-31 *"best fit as the fuzzy cutoff-point for the cluster's edges"* read literally. What blocks
-it is **V1-GRAPH, not mathematics**: 14.4% of tags are verbatim slugs of source fields (1,636 PR
-titles, 1,199 URLs) and 14.6% carry a digit, and the tightest cluster in the tag space is 488
-`github_pr_NNNN` tags at 0.94 intra-cosine. The strongest mutual-distance structure available is the
+it is **V1-GRAPH, not mathematics** — the tag layer is polluted with the source's own field values,
+measured and layered as **`CONTRADICTION_MAP.md` T15**, the third baked problem beside the oracle
+residue and the facet set. The strongest mutual-distance structure available is the
 contamination, so a boundary-finder finds that first — which is what the 07-22 panel saw when two
 different CoachForce questions produced an identical chain and identical K=5. The remedy is a
 **retag**; the only in-engine alternative is filtering slug tags from the pool, which is a hard
