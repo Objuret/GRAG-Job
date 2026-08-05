@@ -1,7 +1,7 @@
-# REVIEW_REGISTER — the pile, one row per agent-written artifact
+# REVIEW_REGISTER — the pile, one row per agent-written document
 
 > **Interpretation, produced 2026-08-03, unreviewed by the user.** This register is itself one
-> more agent artifact. It appears in its own table and holds the same status as everything
+> more agent-written document. It appears in its own table and holds the same status as everything
 > listed in it.
 
 This is the pile for going through the agent-written material in this project; `REVIEW_WORKLIST.md`
@@ -45,7 +45,7 @@ lists claims to check; neither is exempt from the pile.
 | `docs/canon/OPEN_DECISIONS.md` | OPEN_DECISIONS — everything genuinely unresolved | 2026-08-03 | unreviewed | quote tags, git refs, run dirs, corpus, canon docs |
 | `docs/canon/README.md` | docs/canon — the record, and how far each part of it can be trusted | 2026-08-03 | unreviewed | quote tags, git refs, corpus, canon docs |
 | `docs/canon/USER_CANON.md` | USER_CANON — what the user actually said | 2026-08-03 | unreviewed | quote tags, git refs, corpus, canon docs |
-| `docs/canon/REVIEW_REGISTER.md` | REVIEW_REGISTER — the pile, one row per agent-written artifact | 2026-08-03 | unreviewed | canon docs, corpus |
+| `docs/canon/REVIEW_REGISTER.md` | REVIEW_REGISTER — the pile, one row per agent-written document | 2026-08-03 | unreviewed | canon docs, corpus |
 | `docs/canon/REVIEW_PROTOCOL.md` | REVIEW_PROTOCOL — how a claim gets reviewed | 2026-08-04 | unreviewed | canon docs, corpus |
 | `docs/canon/REVIEW_WORKLIST.md` | REVIEW_WORKLIST — one row per claim | 2026-08-04 | unreviewed | git refs, run dirs, corpus, canon docs |
 | `docs/canon/NEW_SESSION_PROMPT.md` | The session starter | 2026-08-04 | unreviewed | canon docs |

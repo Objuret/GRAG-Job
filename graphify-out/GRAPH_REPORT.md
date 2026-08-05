@@ -48,26 +48,26 @@
 - [[_COMMUNITY_derive_corpus()|derive_corpus()]]
 - [[_COMMUNITY_Matched id-budget comparison (~500 ids e...|Matched id-budget comparison (~500 ids e...]]
 - [[_COMMUNITY__normalize()|_normalize()]]
-- [[_COMMUNITY_InterpreterError|InterpreterError]]
+- [[_COMMUNITY_Top-level scripts `build_question_sets....|Top-level scripts: `build_question_sets....]]
 - [[_COMMUNITY_CombineModeTests|CombineModeTests]]
 - [[_COMMUNITY_FuseTests|FuseTests]]
 - [[_COMMUNITY_CLAUDE.md — the repo's working instructi...|CLAUDE.md — the repo's working instructi...]]
 - [[_COMMUNITY_MODEL_CONTRACTS|MODEL_CONTRACTS.md]]
 - [[_COMMUNITY_2026-07-22-retrieval-literature-sweep|2026-07-22-retrieval-literature-sweep.md]]
 - [[_COMMUNITY_score_outputs()|score_outputs()]]
+- [[_COMMUNITY_artefact.py — the ARTEFACT arm interpre...|artefact.py — the ARTEFACT arm: interpre...]]
 - [[_COMMUNITY_GeminiCliRegressionTests|GeminiCliRegressionTests]]
 - [[_COMMUNITY__JudgeLLM|_JudgeLLM]]
 - [[_COMMUNITY__NimEmbedder|_NimEmbedder]]
-- [[_COMMUNITY_artefact.py — the ARTEFACT arm interpre...|artefact.py — the ARTEFACT arm: interpre...]]
+- [[_COMMUNITY__embed_cached()|_embed_cached()]]
 - [[_COMMUNITY__guide_tables()|_guide_tables()]]
 - [[_COMMUNITY_InterpCacheTests|InterpCacheTests]]
 - [[_COMMUNITY_backfill_file()|backfill_file()]]
-- [[_COMMUNITY_`run.py` — the CLI `ARMS` is the 6 arm...|`run.py` — the CLI: `ARMS` is the 6 arm...]]
-- [[_COMMUNITY_Top-level scripts `build_question_sets....|Top-level scripts: `build_question_sets....]]
 - [[_COMMUNITY_`contract.py`, `progress.py`, `run_lock....|`contract.py`, `progress.py`, `run_lock....]]
 - [[_COMMUNITY_CombineTests|CombineTests]]
 - [[_COMMUNITY_LevelChainTests|LevelChainTests]]
 - [[_COMMUNITY_RetrievalFlagTests|RetrievalFlagTests]]
+- [[_COMMUNITY_abort.py|abort.py]]
 - [[_COMMUNITY_GapBreakTests|GapBreakTests]]
 - [[_COMMUNITY_GuideBuildTests|GuideBuildTests]]
 - [[_COMMUNITY_Pass2ValidationTests|Pass2ValidationTests]]
@@ -176,8 +176,8 @@ Cohesion: 0.14
 Nodes (22): json_pointer(), main(), v2 reference-resolver prototype — proves the 'graph is references' stance.  A, RFC 6901. Raises (loud) on any miss — never returns a silent default., ref = {file_path, sha256, scheme, address}. Fail loud on hash mismatch., resolve(), sha256_of(), unescape() (+14 more)
 
 ### Community 14 - "artefact_v1.py"
-Cohesion: 0.11
-Nodes (25): _embed_cached(), _embed_key(), _env_int(), _gap_break(), _hint_match(), _load_cached_vec(), _load_verified_doc(), _mod() (+17 more)
+Cohesion: 0.12
+Nodes (22): _driver(), _env_int(), _gap_break(), _hint_match(), InterpreterError, _load_verified_doc(), _mod(), _n_levels() (+14 more)
 
 ### Community 15 - "AnswerContractTests"
 Cohesion: 0.12
@@ -267,9 +267,9 @@ Nodes (12): You report the statistics; you do not interpret them: *"framing? jus
 Cohesion: 0.20
 Nodes (12): _absolute(), _agg(), _minmax(), _norm_pool(), _normalize(), Min-max a path's base scores against the given bounds: hi <= lo (a single     s, Min-max normalize a path's per-chunk base scores onto [0, 1] over that     path, A pool-independent bounded score: the raw support saturated against a     per-p (+4 more)
 
-### Community 38 - "InterpreterError"
+### Community 38 - "Top-level scripts: `build_question_sets...."
 Cohesion: 0.18
-Nodes (10): _driver(), InterpreterError, prepare_over_corpus(), A failed interpreter turn. Carries the model usage spent across the     turn's, RuntimeError, Aborted, abort.py — press 'q' to stop a running gen/eval loop.  Ctrl+C can be swallowed, Raised from inside an in-flight call when q has been pressed, so a worker     p (+2 more)
+Nodes (11): The gold-N: a balanced ANSWERABLE subset, drawn by seeded round-robin     over, embed_tags.py — precompute the artefact arm's tag-embedding index.  The lean g, _probe_model(), judge_probe.py — survey every chat-capable NIM model as a RAGAS-judge candidate., _verdict(), model_test.py — 3-question generator head-to-head through artefact_v1. Interpret, --rejudge: score existing run folders' answers under --judge, each into a     s, Resolve a named fixed question set or an explicit id-set path. (+3 more)
 
 ### Community 41 - "CLAUDE.md — the repo's working instructi..."
 Cohesion: 0.20
@@ -287,41 +287,41 @@ Nodes (9): GraphRAG family: Microsoft GraphRAG's communities are permanent and q
 Cohesion: 0.20
 Nodes (10): _build_metrics(), corpus_gold_text(), _print_status_summary(), One line per metric that produced any non-ok cell, so failures are visible at, Instantiate each selected metric with the wrappers it needs, then init() it —, Every string leaf of an artifact record, joined — a faithful text rendering of, artifact id -> its text. The non-LLM context metrics score retrieved text     ag, ENTRY: per (output, question) score every metric in metrics_to_run() ->     list (+2 more)
 
-### Community 45 - "GeminiCliRegressionTests"
+### Community 45 - "artefact.py — the ARTEFACT arm: interpre..."
+Cohesion: 0.20
+Nodes (10): artefact.py — the ARTEFACT arm: interpreter → facet-channel retrieval → answer., Ablation: attribute the gold-100 k=10 context_recall_id between the corpus-gene, contract.py — the shared shapes every arm and evaluator imports., Talk to NVIDIA NIM's REST API (OpenAI-compatible).  The generator and the embe, Judges with no queue to respect: open every cell at once., `pipelines/artefact.py` — the v3-native arm entry: `DEFAULT_TOP_K` = 10 is `unknown` and this arm appears in 0 of 121 run manifests; `PRODUCT_LITERAL_BOOST` = 1.0 is an additive lift on every chunk in a named product's file, `unknown` — the comment offers a rationale ("roughly one strong facet-phrase match") with no measurement, and `ablate_boost.py` was built to attribute it with its result recorded nowhere; `TODAY` = "2026-06-28" is a frozen build date hard-coded as the run's "today", passed to `interpret` as `current_date`; `_KEY_PATH` is the one dataset mapping key `artefact/keys/Salesforce__HERB.yaml`; the `argsort` tiebreak `kind="stable"` is derived from determinism, `nim.py` — transport, pacing, retries: `BASE_URL` is NVIDIA's published endpoint; `SECONDS_BETWEEN_CALLS` / `NIM_SECONDS_BETWEEN_CALLS` = 3.0 is the per-(key, model) spacing and is `unknown`, with the comment beside it describing a different value ("5s is ~12 calls/min, well under NIM's 40/min"); the 1.5 s pacing floor is derived from NIM's 40/min per-account ceiling, below which NIM 429s. `MAX_TRIES` = 6 (five retries, also the claude lane's default and the number the self-check asserts) and `GIVE_UP_AFTER_S` = 300.0 (the call's total wall-clock budget, counting request time and pacer waits, not the backoff alone) are `unknown`, as are the 120.0 s default request timeout, `MAX_DEGRADED_RETRIES` = 2 and its 3.0 s delay. `RETRYABLE_STATUS` = {408, 429, 500, 502, 503, 504} is the standard transient-status set and `2 ** attempt` is standard exponential backoff. `_CLAUDE_EXE` falls back to `~/.local/bin/claude.exe`, the install location `docs/ENVIRONMENT.md` records as absent from the agent shell's PATH, and `--output-format json` is the only machine-readable CLI output, GPT judge runs use the signed-in Codex CLI (the same subscription-authenticated pattern as the Claude judge), not `OPENAI_API_KEY`, and Gemini judge runs use the signed-in Gemini CLI, not an API key. Their manifests contain provider-reported input, cached-input, output and reasoning-token usage, aggregate request time, and eval wall time (+2 more)
+
+### Community 46 - "GeminiCliRegressionTests"
 Cohesion: 0.22
 Nodes (3): GeminiCliRegressionTests, Regression checks for Gemini CLI process and quota handling., _TimeoutProcess
 
-### Community 46 - "_JudgeLLM"
+### Community 47 - "_JudgeLLM"
 Cohesion: 0.33
 Nodes (3): BaseRagasLLM, _JudgeLLM, RAGAS LLM driven by nim.post or a headless subscription CLI.     The backend fol
 
-### Community 47 - "_NimEmbedder"
+### Community 48 - "_NimEmbedder"
 Cohesion: 0.32
 Nodes (3): BaseRagasEmbeddings, _NimEmbedder, RAGAS embeddings driven by nim.post — llama-nemotron-embed, asymmetric: question
 
-### Community 48 - "artefact.py — the ARTEFACT arm: interpre..."
+### Community 49 - "_embed_cached()"
 Cohesion: 0.25
-Nodes (8): artefact.py — the ARTEFACT arm: interpreter → facet-channel retrieval → answer., Ablation: attribute the gold-100 k=10 context_recall_id between the corpus-gene, contract.py — the shared shapes every arm and evaluator imports., Talk to NVIDIA NIM's REST API (OpenAI-compatible).  The generator and the embe, `pipelines/artefact.py` — the v3-native arm entry: `DEFAULT_TOP_K` = 10 is `unknown` and this arm appears in 0 of 121 run manifests; `PRODUCT_LITERAL_BOOST` = 1.0 is an additive lift on every chunk in a named product's file, `unknown` — the comment offers a rationale ("roughly one strong facet-phrase match") with no measurement, and `ablate_boost.py` was built to attribute it with its result recorded nowhere; `TODAY` = "2026-06-28" is a frozen build date hard-coded as the run's "today", passed to `interpret` as `current_date`; `_KEY_PATH` is the one dataset mapping key `artefact/keys/Salesforce__HERB.yaml`; the `argsort` tiebreak `kind="stable"` is derived from determinism, `nim.py` — transport, pacing, retries: `BASE_URL` is NVIDIA's published endpoint; `SECONDS_BETWEEN_CALLS` / `NIM_SECONDS_BETWEEN_CALLS` = 3.0 is the per-(key, model) spacing and is `unknown`, with the comment beside it describing a different value ("5s is ~12 calls/min, well under NIM's 40/min"); the 1.5 s pacing floor is derived from NIM's 40/min per-account ceiling, below which NIM 429s. `MAX_TRIES` = 6 (five retries, also the claude lane's default and the number the self-check asserts) and `GIVE_UP_AFTER_S` = 300.0 (the call's total wall-clock budget, counting request time and pacer waits, not the backoff alone) are `unknown`, as are the 120.0 s default request timeout, `MAX_DEGRADED_RETRIES` = 2 and its 3.0 s delay. `RETRYABLE_STATUS` = {408, 429, 500, 502, 503, 504} is the standard transient-status set and `2 ** attempt` is standard exponential backoff. `_CLAUDE_EXE` falls back to `~/.local/bin/claude.exe`, the install location `docs/ENVIRONMENT.md` records as absent from the agent shell's PATH, and `--output-format json` is the only machine-readable CLI output, File map: `contract.py` holds the shared shapes everything imports (QuestionWithTruth, ModelUsage, ArmOutput, BuildStats, EvalResult, RunManifest, EvalManifest); `nim.py` is the one NVIDIA NIM REST transport that the generator, embedder and judge all POST through — shared harness plumbing, not retrieval code; `pipelines/` holds `artefact_v1.py` and `artefact_v1_det.py` (the arm under test and its interpreter-free leg), `lucene.py`, `vector.py`, `hybrid.py`, and `artefact.py` (the native rebuild's arm entry); `eval/` holds `ragas.py` and `ragas_catalog.py`; `orchestrator.py` owns the shared generator, runs an arm through generation and a scorer through evaluation, and writes the manifests; `smoke.py` is a tiny wiring check; `data/` holds `corpus/` and `raw/`, `output/` holds results as per-run folders with `smoke/` for checks, RAGAS emits raw per-question records (`EvalResult`, tidy long format) with nothing pre-aggregated, so paired tests, CIs, per-type splits and judge calibration are all possible downstream
+Nodes (8): _embed_cached(), _embed_key(), _load_cached_vec(), Content address for one embedding: (embed model, input_type, text), each     le, The cached embedding for `key`, or None on a miss. A corrupt or     half-writte, Write one embedding under its content address, published atomically so a     co, Embed `texts` through the shared NIM embedder with a persistent per-text     ca, _store_cached_vec()
 
-### Community 49 - "_guide_tables()"
+### Community 50 - "_guide_tables()"
 Cohesion: 0.25
 Nodes (8): _guide_key(), _guide_tables(), The cache entry name for one build of the membership matrices: the     database, The cached membership matrices, loaded once per process: `U` stacked     (n_fac, Cluster guidance g per pool tag, in [0, 1]. The part's facet values     normali, Build the artefact arm's cluster-guide cache: five per-facet fuzzy membership ma, k-means++ prototypes over unit rows: D² seeding on cosine distance,     uniform, Cluster-guide constants on the artefact arm: `STR_GUIDE` / `HERB_STR_GUIDE` = 0.0 means off — no cache load, no `guide_stats`, no `guide` meta block — and values below 0 fail loud at import; it is `swept` with evidence not retained, the "cluster guide, −0.003, t −1.36" figure matching DATA_README's flat guide-alone row (−0.0019, CI [−0.0049, +0.0010]) rather than the walk-gate-varying `WG_GUIDE__gold100` (−0.0231, whose delta the gate alone accounts for at −0.0204). `GUIDE_TAU` = 0.01 is the membership-cell floor, cited by name in `canon:CONTRADICTION_MAP.md` §2 as one of the arm's unbased constants; `GUIDE_C` = 128 is the k-means prototype count per facet; `GUIDE_M` = 1.5 is the fuzzifier, whose `> 1.0` guard is derived (the exponent divides by `m − 1`) while 1.5 itself has no record; `GUIDE_LAMBDA` = 0.05 is the participation floor λ in ω̃ = λ + (1−λ)·ω; `GUIDE_SEED` = 20260731 is the k-means++ seed, its digits the build date rather than a property of the data. All four name the cache entry
 
-### Community 51 - "backfill_file()"
+### Community 52 - "backfill_file()"
 Cohesion: 0.38
 Nodes (6): backfill_file(), main(), Path, backfill_token_split.py — add tokens_in/tokens_out ONLY on rows with no token da, backfill_generator_usage(), Add tokens_in/tokens_out only when generator has no token fields at all.
 
-### Community 52 - "`run.py` — the CLI: `ARMS` is the 6 arm..."
-Cohesion: 0.29
-Nodes (7): The gold-N: a balanced ANSWERABLE subset, drawn by seeded round-robin     over, Judges with no queue to respect: open every cell at once., --rejudge: score existing run folders' answers under --judge, each into a     s, Resolve a named fixed question set or an explicit id-set path., `run.py` — the CLI: `ARMS` is the 6 arm names accepted by `--arm`, derived from the modules under `pipelines/`; `data/gold100.jsonl` is the id set `--set gold` runs, derived as the named fixed set but not the file `build_question_sets.py` writes (6/100 overlap), and `data/10smoke.jsonl` is the named fixed comparison set. `-n` = 5 is `unknown`; `--workers` = 1 is derived as "safest under NIM's rate cap", the no-overlap floor; the rejudge worker auto-size `len(ids) × len(metrics_to_run())` opens every cell at once because the shared judge pool `JUDGE_INFLIGHT` is the real cap, and the wide-parallel judge families (`claude`, `gpt-`, `gemini`) are the subscription CLI lanes with no NIM queue. The run-id timestamp format `%Y%m%dT%H%M%SZ` UTC is ISO-8601 basic and sortable, and the judge slug pattern keeps `__j-<slug>` directory-safe, GPT judge runs use the signed-in Codex CLI (the same subscription-authenticated pattern as the Claude judge), not `OPENAI_API_KEY`, and Gemini judge runs use the signed-in Gemini CLI, not an API key. Their manifests contain provider-reported input, cached-input, output and reasoning-token usage, aggregate request time, and eval wall time, `build_question_sets.py` writes the `{id, type, question}` id-set views to `output/` — full / answerable / unanswerable (1514 / 815 / 699) — plus `question_ids.gold100.jsonl`, the gold-100: a balanced answerable subset drawn by seeded round-robin over the HERB types (equal allocation, ~20/type). Equal allocation keeps every type usable per-type; it does not match HERB's natural mix, so report per-type and do not compare the gold-100 aggregate to HERB's published average. Point the orchestrator's ids-file at whichever view you run
-
-### Community 53 - "Top-level scripts: `build_question_sets...."
-Cohesion: 0.33
-Nodes (6): embed_tags.py — precompute the artefact arm's tag-embedding index.  The lean g, _probe_model(), judge_probe.py — survey every chat-capable NIM model as a RAGAS-judge candidate., _verdict(), model_test.py — 3-question generator head-to-head through artefact_v1. Interpret, Top-level scripts: `build_question_sets.py`'s `GOLD_N` = 100 is `unknown` because the shipped `data/gold100.jsonl` is not reproducible from the script (6/100 overlap), so the constant does not describe the set in use, and `GOLD_SEED` = 0 is arbitrary, while the equal-allocation round-robin draw is derived with its cost stated (the natural mix is lopsided, person 260 … url 20). `reembed_herb_eval.py`'s `BACKUP_DATABASE` = "herb-eval-backup" is the read-only source of chunk-description text, `WRITE_BATCH` = 500 is `unknown`, and the `'cosine'` similarity both `tag_emb` and `chunk_desc_emb` are created with is the metric every kNN in the arm scores under. `build_tag_clusters.py`'s `MAX_ITER` = 60, `TOL` = 1e-7 and the 1e-6 membership distance floor are `unknown`, while `_FACET_COL` is `ALL_FACETS`'s order enumerated. `compare_arms.py`'s `DIR_RE` is `unknown` and does not match the run-folder naming scheme it exists to read: "`[a-z]+` matches neither `artefact_v1` nor `artefact_v1_det`. The cross-arm table printer has never displayed the artefact". `model_test.py`'s `MODELS` is user-specified — "how good is glm 5.2 compared to qwen? perhaps do a test between 3 questions? do full question-answer-eval on the same 3 questions with full glm vs full qwen" (turns:L929). `ablate_boost.py`'s `K` = 10 is a one-off experiment constant whose ablation result is recorded nowhere, and `judge_probe.py`'s `_CONTEXT` and `_PROMPT` are agent-written prose
-
-### Community 54 - "`contract.py`, `progress.py`, `run_lock...."
+### Community 53 - "`contract.py`, `progress.py`, `run_lock...."
 Cohesion: 0.38
 Nodes (6): main(), progress(), Stable CLI progress bars for the v3 harness., tqdm tuned for Windows terminals and captured logs., _selfcheck(), `contract.py`, `progress.py`, `run_lock.py`, `abort.py`, `questions.py`, `prompt_tokens.py`: `GENERATOR_SYSTEM` = "Answer the question using only the provided documents. Be concise." is `unknown` — the fairness property of one prompt for all arms is designed, the wording has no record. The tqdm settings `ascii=True` and `dynamic_ncols=True` and the `disable` on a non-tty are derived from the target terminal and from captured logs not filling with bar frames. `run_lock.py`'s two acquire attempts are one stale-clear then one attempt, and its Win32 access flag 0x1000 (`PROCESS_QUERY_LIMITED_INFORMATION`) and running exit code 259 (`STILL_ACTIVE`) are borrowed API constants, while the `.run.lock` file name is `unknown`. `abort.py`'s 0.1 s poll interval is `unknown` (responsiveness is the shape of the rule, not the number) and the `q`/`Q` keys are the ones the harness advertises. `prompt_tokens.py`'s `_TOKENIZER_ID` = "Qwen/Qwen3-8B" is `unknown`: the family follows `GENERATOR_MODEL`, the 8B checkpoint does not
+
+### Community 57 - "abort.py"
+Cohesion: 0.33
+Nodes (5): Aborted, abort.py — press 'q' to stop a running gen/eval loop.  Ctrl+C can be swallowed, Raised from inside an in-flight call when q has been pressed, so a worker     p, Start a daemon thread that sets the abort flag when q/Q is pressed. No-op     w, watch()
 
 ### Community 62 - "Regime flags on the artefact arm, all de..."
 Cohesion: 0.50
@@ -375,7 +375,7 @@ Nodes (3): Run-folder provenance: detREBUILD, detREBUILD_artComp, detPOOLCUT, de
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `v3/CONSTANTS.md — the inventory of every hard-coded constant and tunable in `v3/`, one row per value, each carrying where the value came from` connect `v3/CONSTANTS.md — the inventory of every...` to `AnswerContractTests`, `artefact_v1_det.py`, `CountsSectionTests`, `v3/README.md — the HERB evaluation harne...`, `_chat_json()`, `Baseline means lucene and vector — the c...`, ``v3/artefact/` holds the native rebuild...`, `2026-07-25-combine-clusterk-hybrid-and-j...`, `_part_levels()`, `ragas.py — multidimensional answer/evide...`, `Matched id-budget comparison (~500 ids e...`, `_normalize()`, `CLAUDE.md — the repo's working instructi...`, `artefact.py — the ARTEFACT arm: interpre...`, `_guide_tables()`, ``run.py` — the CLI: `ARMS` is the 6 arm...`, `Top-level scripts: `build_question_sets....`, ``contract.py`, `progress.py`, `run_lock....`, `Regime flags on the artefact arm, all de...`, ``K_LEVELS` = (8, 16, 32, 64) is the doub...`, `vector.py — dense baseline (embeddings +...`, `Run-folder provenance: detREBUILD, detRE...`?**
+- **Why does `v3/CONSTANTS.md — the inventory of every hard-coded constant and tunable in `v3/`, one row per value, each carrying where the value came from` connect `v3/CONSTANTS.md — the inventory of every...` to `AnswerContractTests`, `artefact_v1_det.py`, `CountsSectionTests`, `v3/README.md — the HERB evaluation harne...`, `_chat_json()`, `Baseline means lucene and vector — the c...`, ``v3/artefact/` holds the native rebuild...`, `2026-07-25-combine-clusterk-hybrid-and-j...`, `_part_levels()`, `ragas.py — multidimensional answer/evide...`, `Matched id-budget comparison (~500 ids e...`, `_normalize()`, `Top-level scripts: `build_question_sets....`, `CLAUDE.md — the repo's working instructi...`, `artefact.py — the ARTEFACT arm: interpre...`, `_guide_tables()`, ``contract.py`, `progress.py`, `run_lock....`, `Regime flags on the artefact arm, all de...`, ``K_LEVELS` = (8, 16, 32, 64) is the doub...`, `vector.py — dense baseline (embeddings +...`, `Run-folder provenance: detREBUILD, detRE...`?**
   _High betweenness centrality (0.349) - this node is a cross-community bridge._
 - **Why does `Regression checks for artefact_v1 query-relative level-walk retrieval.` connect `v3/CONSTANTS.md — the inventory of every...` to `test_artefact_v1.py`?**
   _High betweenness centrality (0.242) - this node is a cross-community bridge._

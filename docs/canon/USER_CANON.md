@@ -1542,7 +1542,7 @@ Asked one day before this record ends. No implementation recorded.
 
 The research catalog is candid that none of this is settled science: *"No benchmark evaluates any of this on short context-free phrase-tags into a small facet set; the behavior on a real tag corpus is an experiment, not a literature fact."* The experiment was designed three times and never run.
 
-## C. Constants that no artifact ever derives
+## C. Constants nobody based on anything
 
 | Constant | Status |
 |---|---|

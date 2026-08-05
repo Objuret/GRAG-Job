@@ -70,7 +70,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "v3_ablate_boost_rationale_1",
-      "community": 48,
+      "community": 45,
       "norm_label": "ablation: attribute the gold-100 k=10 context_recall_id between the corpus-gene"
     },
     {
@@ -90,7 +90,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "v3_abort",
-      "community": 38,
+      "community": 57,
       "norm_label": "abort.py"
     },
     {
@@ -100,7 +100,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "v3_abort_aborted",
-      "community": 38,
+      "community": 57,
       "norm_label": "aborted"
     },
     {
@@ -110,7 +110,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "runtimeerror",
-      "community": 38,
+      "community": 14,
       "norm_label": "runtimeerror"
     },
     {
@@ -120,7 +120,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "v3_abort_watch",
-      "community": 38,
+      "community": 57,
       "norm_label": "watch()"
     },
     {
@@ -130,7 +130,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "v3_abort_rationale_1",
-      "community": 38,
+      "community": 57,
       "norm_label": "abort.py \u2014 press 'q' to stop a running gen/eval loop.  ctrl+c can be swallowed"
     },
     {
@@ -140,7 +140,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "v3_abort_rationale_16",
-      "community": 38,
+      "community": 57,
       "norm_label": "raised from inside an in-flight call when q has been pressed, so a worker     p"
     },
     {
@@ -150,7 +150,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "v3_abort_rationale_25",
-      "community": 38,
+      "community": 57,
       "norm_label": "start a daemon thread that sets the abort flag when q/q is pressed. no-op     w"
     },
     {
@@ -2490,7 +2490,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "v3_backfill_token_split",
-      "community": 51,
+      "community": 52,
       "norm_label": "backfill_token_split.py"
     },
     {
@@ -2500,7 +2500,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "v3_backfill_token_split_backfill_file",
-      "community": 51,
+      "community": 52,
       "norm_label": "backfill_file()"
     },
     {
@@ -2510,7 +2510,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "v3_backfill_token_split_py_path",
-      "community": 51,
+      "community": 52,
       "norm_label": "path"
     },
     {
@@ -2520,7 +2520,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "v3_backfill_token_split_main",
-      "community": 51,
+      "community": 52,
       "norm_label": "main()"
     },
     {
@@ -2530,7 +2530,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "v3_backfill_token_split_rationale_1",
-      "community": 51,
+      "community": 52,
       "norm_label": "backfill_token_split.py \u2014 add tokens_in/tokens_out only on rows with no token da"
     },
     {
@@ -2570,7 +2570,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "v3_build_question_sets_rationale_17",
-      "community": 52,
+      "community": 38,
       "norm_label": "the gold-n: a balanced answerable subset, drawn by seeded round-robin     over"
     },
     {
@@ -2710,7 +2710,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "v3_build_tag_clusters_rationale_1",
-      "community": 49,
+      "community": 50,
       "norm_label": "build the artefact arm's cluster-guide cache: five per-facet fuzzy membership ma"
     },
     {
@@ -2740,7 +2740,7 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "v3_build_tag_clusters_rationale_71",
-      "community": 49,
+      "community": 50,
       "norm_label": "k-means++ prototypes over unit rows: d2 seeding on cosine distance,     uniform"
     },
     {
@@ -2950,7 +2950,7 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "v3_contract_backfill_generator_usage",
-      "community": 51,
+      "community": 52,
       "norm_label": "backfill_generator_usage()"
     },
     {
@@ -3010,7 +3010,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "v3_contract_rationale_1",
-      "community": 48,
+      "community": 45,
       "norm_label": "contract.py \u2014 the shared shapes every arm and evaluator imports."
     },
     {
@@ -3090,7 +3090,7 @@
       "source_location": "L131",
       "_origin": "ast",
       "id": "v3_contract_rationale_131",
-      "community": 51,
+      "community": 52,
       "norm_label": "add tokens_in/tokens_out only when generator has no token fields at all."
     },
     {
@@ -3200,7 +3200,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "v3_embed_tags_rationale_1",
-      "community": 53,
+      "community": 38,
       "norm_label": "embed_tags.py \u2014 precompute the artefact arm's tag-embedding index.  the lean g"
     },
     {
@@ -3380,7 +3380,7 @@
       "source_location": "L426",
       "_origin": "ast",
       "id": "eval_ragas_judgellm",
-      "community": 46,
+      "community": 47,
       "norm_label": "_judgellm"
     },
     {
@@ -3390,7 +3390,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "baseragasllm",
-      "community": 46,
+      "community": 47,
       "norm_label": "baseragasllm"
     },
     {
@@ -3400,7 +3400,7 @@
       "source_location": "L436",
       "_origin": "ast",
       "id": "eval_ragas_judgellm_post",
-      "community": 46,
+      "community": 47,
       "norm_label": "._post()"
     },
     {
@@ -3410,7 +3410,7 @@
       "source_location": "L471",
       "_origin": "ast",
       "id": "eval_ragas_judgellm_verdict",
-      "community": 46,
+      "community": 47,
       "norm_label": "._verdict()"
     },
     {
@@ -3420,7 +3420,7 @@
       "source_location": "L486",
       "_origin": "ast",
       "id": "eval_ragas_judgellm_complete",
-      "community": 46,
+      "community": 47,
       "norm_label": "._complete()"
     },
     {
@@ -3430,7 +3430,7 @@
       "source_location": "L490",
       "_origin": "ast",
       "id": "eval_ragas_judgellm_generate_text",
-      "community": 46,
+      "community": 47,
       "norm_label": ".generate_text()"
     },
     {
@@ -3440,7 +3440,7 @@
       "source_location": "L493",
       "_origin": "ast",
       "id": "eval_ragas_judgellm_agenerate_text",
-      "community": 46,
+      "community": 47,
       "norm_label": ".agenerate_text()"
     },
     {
@@ -3450,7 +3450,7 @@
       "source_location": "L500",
       "_origin": "ast",
       "id": "eval_ragas_judgellm_is_finished",
-      "community": 46,
+      "community": 47,
       "norm_label": ".is_finished()"
     },
     {
@@ -3460,7 +3460,7 @@
       "source_location": "L504",
       "_origin": "ast",
       "id": "eval_ragas_nimembedder",
-      "community": 47,
+      "community": 48,
       "norm_label": "_nimembedder"
     },
     {
@@ -3470,7 +3470,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "baseragasembeddings",
-      "community": 47,
+      "community": 48,
       "norm_label": "baseragasembeddings"
     },
     {
@@ -3500,7 +3500,7 @@
       "source_location": "L513",
       "_origin": "ast",
       "id": "eval_ragas_nimembedder_embed",
-      "community": 47,
+      "community": 48,
       "norm_label": "._embed()"
     },
     {
@@ -3510,7 +3510,7 @@
       "source_location": "L526",
       "_origin": "ast",
       "id": "eval_ragas_nimembedder_embed_query",
-      "community": 47,
+      "community": 48,
       "norm_label": ".embed_query()"
     },
     {
@@ -3520,7 +3520,7 @@
       "source_location": "L529",
       "_origin": "ast",
       "id": "eval_ragas_nimembedder_embed_documents",
-      "community": 47,
+      "community": 48,
       "norm_label": ".embed_documents()"
     },
     {
@@ -3530,7 +3530,7 @@
       "source_location": "L532",
       "_origin": "ast",
       "id": "eval_ragas_nimembedder_aembed_query",
-      "community": 47,
+      "community": 48,
       "norm_label": ".aembed_query()"
     },
     {
@@ -3540,7 +3540,7 @@
       "source_location": "L536",
       "_origin": "ast",
       "id": "eval_ragas_nimembedder_aembed_documents",
-      "community": 47,
+      "community": 48,
       "norm_label": ".aembed_documents()"
     },
     {
@@ -3760,7 +3760,7 @@
       "source_location": "L427",
       "_origin": "ast",
       "id": "eval_ragas_rationale_427",
-      "community": 46,
+      "community": 47,
       "norm_label": "ragas llm driven by nim.post or a headless subscription cli.     the backend fol"
     },
     {
@@ -3770,7 +3770,7 @@
       "source_location": "L505",
       "_origin": "ast",
       "id": "eval_ragas_rationale_505",
-      "community": 47,
+      "community": 48,
       "norm_label": "ragas embeddings driven by nim.post \u2014 llama-nemotron-embed, asymmetric: question"
     },
     {
@@ -4000,7 +4000,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "v3_judge_probe",
-      "community": 53,
+      "community": 38,
       "norm_label": "judge_probe.py"
     },
     {
@@ -4010,7 +4010,7 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "v3_judge_probe_verdict",
-      "community": 53,
+      "community": 38,
       "norm_label": "_verdict()"
     },
     {
@@ -4020,7 +4020,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "v3_judge_probe_probe_model",
-      "community": 53,
+      "community": 38,
       "norm_label": "_probe_model()"
     },
     {
@@ -4030,7 +4030,7 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "v3_judge_probe_main",
-      "community": 54,
+      "community": 53,
       "norm_label": "main()"
     },
     {
@@ -4040,7 +4040,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "v3_judge_probe_rationale_1",
-      "community": 53,
+      "community": 38,
       "norm_label": "judge_probe.py \u2014 survey every chat-capable nim model as a ragas-judge candidate."
     },
     {
@@ -4080,7 +4080,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "v3_model_test_rationale_1",
-      "community": 53,
+      "community": 38,
       "norm_label": "model_test.py \u2014 3-question generator head-to-head through artefact_v1. interpret"
     },
     {
@@ -4280,7 +4280,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "v3_nim_rationale_1",
-      "community": 48,
+      "community": 45,
       "norm_label": "talk to nvidia nim's rest api (openai-compatible).  the generator and the embe"
     },
     {
@@ -4900,7 +4900,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "pipelines_artefact_rationale_1",
-      "community": 48,
+      "community": 45,
       "norm_label": "artefact.py \u2014 the artefact arm: interpreter \u2192 facet-channel retrieval \u2192 answer."
     },
     {
@@ -5060,7 +5060,7 @@
       "source_location": "L445",
       "_origin": "ast",
       "id": "pipelines_artefact_v1_embed_key",
-      "community": 14,
+      "community": 49,
       "norm_label": "_embed_key()"
     },
     {
@@ -5070,7 +5070,7 @@
       "source_location": "L457",
       "_origin": "ast",
       "id": "pipelines_artefact_v1_load_cached_vec",
-      "community": 14,
+      "community": 49,
       "norm_label": "_load_cached_vec()"
     },
     {
@@ -5080,7 +5080,7 @@
       "source_location": "L469",
       "_origin": "ast",
       "id": "pipelines_artefact_v1_store_cached_vec",
-      "community": 14,
+      "community": 49,
       "norm_label": "_store_cached_vec()"
     },
     {
@@ -5100,7 +5100,7 @@
       "source_location": "L486",
       "_origin": "ast",
       "id": "pipelines_artefact_v1_embed_cached",
-      "community": 14,
+      "community": 49,
       "norm_label": "_embed_cached()"
     },
     {
@@ -5120,7 +5120,7 @@
       "source_location": "L522",
       "_origin": "ast",
       "id": "pipelines_artefact_v1_driver",
-      "community": 38,
+      "community": 14,
       "norm_label": "_driver()"
     },
     {
@@ -5130,7 +5130,7 @@
       "source_location": "L534",
       "_origin": "ast",
       "id": "pipelines_artefact_v1_prepare_over_corpus",
-      "community": 38,
+      "community": 14,
       "norm_label": "prepare_over_corpus()"
     },
     {
@@ -5160,7 +5160,7 @@
       "source_location": "L647",
       "_origin": "ast",
       "id": "pipelines_artefact_v1_interpretererror",
-      "community": 38,
+      "community": 14,
       "norm_label": "interpretererror"
     },
     {
@@ -5170,7 +5170,7 @@
       "source_location": "L652",
       "_origin": "ast",
       "id": "pipelines_artefact_v1_interpretererror_init",
-      "community": 38,
+      "community": 14,
       "norm_label": ".__init__()"
     },
     {
@@ -5380,7 +5380,7 @@
       "source_location": "L1044",
       "_origin": "ast",
       "id": "pipelines_artefact_v1_guide_key",
-      "community": 49,
+      "community": 50,
       "norm_label": "_guide_key()"
     },
     {
@@ -5390,7 +5390,7 @@
       "source_location": "L1051",
       "_origin": "ast",
       "id": "pipelines_artefact_v1_guide_tables",
-      "community": 49,
+      "community": 50,
       "norm_label": "_guide_tables()"
     },
     {
@@ -5560,7 +5560,7 @@
       "source_location": "L446",
       "_origin": "ast",
       "id": "pipelines_artefact_v1_rationale_446",
-      "community": 14,
+      "community": 49,
       "norm_label": "content address for one embedding: (embed model, input_type, text), each     le"
     },
     {
@@ -5570,7 +5570,7 @@
       "source_location": "L458",
       "_origin": "ast",
       "id": "pipelines_artefact_v1_rationale_458",
-      "community": 14,
+      "community": 49,
       "norm_label": "the cached embedding for `key`, or none on a miss. a corrupt or     half-writte"
     },
     {
@@ -5580,7 +5580,7 @@
       "source_location": "L470",
       "_origin": "ast",
       "id": "pipelines_artefact_v1_rationale_470",
-      "community": 14,
+      "community": 49,
       "norm_label": "write one embedding under its content address, published atomically so a     co"
     },
     {
@@ -5590,7 +5590,7 @@
       "source_location": "L487",
       "_origin": "ast",
       "id": "pipelines_artefact_v1_rationale_487",
-      "community": 14,
+      "community": 49,
       "norm_label": "embed `texts` through the shared nim embedder with a persistent per-text     ca"
     },
     {
@@ -5600,7 +5600,7 @@
       "source_location": "L648",
       "_origin": "ast",
       "id": "pipelines_artefact_v1_rationale_648",
-      "community": 38,
+      "community": 14,
       "norm_label": "a failed interpreter turn. carries the model usage spent across the     turn's"
     },
     {
@@ -5790,7 +5790,7 @@
       "source_location": "L1045",
       "_origin": "ast",
       "id": "pipelines_artefact_v1_rationale_1045",
-      "community": 49,
+      "community": 50,
       "norm_label": "the cache entry name for one build of the membership matrices: the     database"
     },
     {
@@ -5800,7 +5800,7 @@
       "source_location": "L1052",
       "_origin": "ast",
       "id": "pipelines_artefact_v1_rationale_1052",
-      "community": 49,
+      "community": 50,
       "norm_label": "the cached membership matrices, loaded once per process: `u` stacked     (n_fac"
     },
     {
@@ -5810,7 +5810,7 @@
       "source_location": "L1070",
       "_origin": "ast",
       "id": "pipelines_artefact_v1_rationale_1070",
-      "community": 49,
+      "community": 50,
       "norm_label": "cluster guidance g per pool tag, in [0, 1]. the part's facet values     normali"
     },
     {
@@ -6880,7 +6880,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "v3_progress",
-      "community": 54,
+      "community": 53,
       "norm_label": "progress.py"
     },
     {
@@ -6890,7 +6890,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "v3_progress_progress",
-      "community": 54,
+      "community": 53,
       "norm_label": "progress()"
     },
     {
@@ -6900,7 +6900,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "v3_progress_selfcheck",
-      "community": 54,
+      "community": 53,
       "norm_label": "_selfcheck()"
     },
     {
@@ -6910,7 +6910,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "v3_progress_rationale_1",
-      "community": 54,
+      "community": 53,
       "norm_label": "stable cli progress bars for the v3 harness."
     },
     {
@@ -6920,7 +6920,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "v3_progress_rationale_8",
-      "community": 54,
+      "community": 53,
       "norm_label": "tqdm tuned for windows terminals and captured logs."
     },
     {
@@ -7220,7 +7220,7 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "v3_run_rationale_61",
-      "community": 52,
+      "community": 38,
       "norm_label": "resolve a named fixed question set or an explicit id-set path."
     },
     {
@@ -7260,7 +7260,7 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "v3_run_rationale_109",
-      "community": 52,
+      "community": 45,
       "norm_label": "judges with no queue to respect: open every cell at once."
     },
     {
@@ -7280,7 +7280,7 @@
       "source_location": "L132",
       "_origin": "ast",
       "id": "v3_run_rationale_132",
-      "community": 52,
+      "community": 38,
       "norm_label": "--rejudge: score existing run folders' answers under --judge, each into a     s"
     },
     {
@@ -7590,7 +7590,7 @@
       "source_location": "L190",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_unitnormtests",
-      "community": 56,
+      "community": 55,
       "norm_label": "unitnormtests"
     },
     {
@@ -7600,7 +7600,7 @@
       "source_location": "L191",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_unitnormtests_test_zero_rows_stay_finite",
-      "community": 56,
+      "community": 55,
       "norm_label": ".test_zero_rows_stay_finite()"
     },
     {
@@ -7610,7 +7610,7 @@
       "source_location": "L197",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_unitnormtests_test_a_single_vector_scales_to_unit_length",
-      "community": 56,
+      "community": 55,
       "norm_label": ".test_a_single_vector_scales_to_unit_length()"
     },
     {
@@ -7770,7 +7770,7 @@
       "source_location": "L275",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_levelchaintests",
-      "community": 56,
+      "community": 55,
       "norm_label": "levelchaintests"
     },
     {
@@ -7780,7 +7780,7 @@
       "source_location": "L276",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_levelchaintests_unit",
-      "community": 56,
+      "community": 55,
       "norm_label": "._unit()"
     },
     {
@@ -7790,7 +7790,7 @@
       "source_location": "L280",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_levelchaintests_test_chain_widens_through_own_family_before_the_far_one",
-      "community": 56,
+      "community": 55,
       "norm_label": ".test_chain_widens_through_own_family_before_the_far_one()"
     },
     {
@@ -7800,7 +7800,7 @@
       "source_location": "L298",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_levelchaintests_test_single_tag_pool_is_one_level",
-      "community": 56,
+      "community": 55,
       "norm_label": ".test_single_tag_pool_is_one_level()"
     },
     {
@@ -8140,7 +8140,7 @@
       "source_location": "L738",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_retrievalflagtests",
-      "community": 57,
+      "community": 56,
       "norm_label": "retrievalflagtests"
     },
     {
@@ -8150,7 +8150,7 @@
       "source_location": "L739",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_retrievalflagtests_test_the_boolean_flags_parse_strict_env_one",
-      "community": 57,
+      "community": 56,
       "norm_label": ".test_the_boolean_flags_parse_strict_env_one()"
     },
     {
@@ -8160,7 +8160,7 @@
       "source_location": "L748",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_retrievalflagtests_test_the_combine_coefficients_read_from_the_environment",
-      "community": 57,
+      "community": 56,
       "norm_label": ".test_the_combine_coefficients_read_from_the_environment()"
     },
     {
@@ -8170,7 +8170,7 @@
       "source_location": "L764",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_retrievalflagtests_test_the_guide_integer_config_reads_strict_from_the_environment",
-      "community": 57,
+      "community": 56,
       "norm_label": ".test_the_guide_integer_config_reads_strict_from_the_environment()"
     },
     {
@@ -8180,7 +8180,7 @@
       "source_location": "L774",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_retrievalflagtests_test_both_legs_manifests_carry_the_combine_coefficients",
-      "community": 57,
+      "community": 56,
       "norm_label": ".test_both_legs_manifests_carry_the_combine_coefficients()"
     },
     {
@@ -8190,7 +8190,7 @@
       "source_location": "L786",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_retrievalflagtests_test_the_mode_switches_reject_an_unknown_value",
-      "community": 57,
+      "community": 56,
       "norm_label": ".test_the_mode_switches_reject_an_unknown_value()"
     },
     {
@@ -8200,7 +8200,7 @@
       "source_location": "L793",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_retrievalflagtests_test_the_facet_strength_defaults_inert",
-      "community": 57,
+      "community": 56,
       "norm_label": ".test_the_facet_strength_defaults_inert()"
     },
     {
@@ -8360,7 +8360,7 @@
       "source_location": "L875",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_combinetests",
-      "community": 55,
+      "community": 54,
       "norm_label": "combinetests"
     },
     {
@@ -8400,7 +8400,7 @@
       "source_location": "L913",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_combinetests_hint_session",
-      "community": 55,
+      "community": 54,
       "norm_label": "._hint_session()"
     },
     {
@@ -8410,7 +8410,7 @@
       "source_location": "L926",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_combinetests_hint_rows",
-      "community": 55,
+      "community": 54,
       "norm_label": "._hint_rows()"
     },
     {
@@ -8420,7 +8420,7 @@
       "source_location": "L934",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_combinetests_test_the_hint_factor_scales_a_matching_description_chunks_score",
-      "community": 55,
+      "community": 54,
       "norm_label": ".test_the_hint_factor_scales_a_matching_description_chunks_score()"
     },
     {
@@ -8430,7 +8430,7 @@
       "source_location": "L944",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_combinetests_test_the_hint_factor_moves_a_matching_chunk_past_the_pools_best",
-      "community": 55,
+      "community": 54,
       "norm_label": ".test_the_hint_factor_moves_a_matching_chunk_past_the_pools_best()"
     },
     {
@@ -8440,7 +8440,7 @@
       "source_location": "L953",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_combinetests_test_the_hint_factor_is_inert_at_zero_hint_strength",
-      "community": 55,
+      "community": 54,
       "norm_label": ".test_the_hint_factor_is_inert_at_zero_hint_strength()"
     },
     {
@@ -8620,7 +8620,7 @@
       "source_location": "L1105",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_interpcachetests",
-      "community": 50,
+      "community": 51,
       "norm_label": "interpcachetests"
     },
     {
@@ -8630,7 +8630,7 @@
       "source_location": "L1108",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_interpcachetests_test_a_hit_returns_the_cached_plan_without_a_call",
-      "community": 50,
+      "community": 51,
       "norm_label": ".test_a_hit_returns_the_cached_plan_without_a_call()"
     },
     {
@@ -8640,7 +8640,7 @@
       "source_location": "L1118",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_interpcachetests_test_fresh_interp_bypasses_the_cache",
-      "community": 50,
+      "community": 51,
       "norm_label": ".test_fresh_interp_bypasses_the_cache()"
     },
     {
@@ -8650,7 +8650,7 @@
       "source_location": "L1127",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_interpcachetests_test_a_model_change_misses",
-      "community": 50,
+      "community": 51,
       "norm_label": ".test_a_model_change_misses()"
     },
     {
@@ -8660,7 +8660,7 @@
       "source_location": "L1134",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_interpcachetests_test_the_key_folds_in_the_interpreter_signature",
-      "community": 50,
+      "community": 51,
       "norm_label": ".test_the_key_folds_in_the_interpreter_signature()"
     },
     {
@@ -8670,7 +8670,7 @@
       "source_location": "L1143",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_interpcachetests_sig",
-      "community": 50,
+      "community": 51,
       "norm_label": "._sig()"
     },
     {
@@ -8680,7 +8680,7 @@
       "source_location": "L1151",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_interpcachetests_test_the_interpreter_signature_covers_prompts_facets_and_code",
-      "community": 50,
+      "community": 51,
       "norm_label": ".test_the_interpreter_signature_covers_prompts_facets_and_code()"
     },
     {
@@ -8690,7 +8690,7 @@
       "source_location": "L1158",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_interpcachetests_test_the_key_changes_when_the_json_extractor_source_changes",
-      "community": 50,
+      "community": 51,
       "norm_label": ".test_the_key_changes_when_the_json_extractor_source_changes()"
     },
     {
@@ -9130,7 +9130,7 @@
       "source_location": "L876",
       "_origin": "ast",
       "id": "v3_test_artefact_v1_rationale_876",
-      "community": 55,
+      "community": 54,
       "norm_label": "the three paths score on one scale: min-max base per path, strength-lerp     mo"
     },
     {
@@ -9740,7 +9740,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "v3_test_ragas_gemini_cli",
-      "community": 45,
+      "community": 46,
       "norm_label": "test_ragas_gemini_cli.py"
     },
     {
@@ -9750,7 +9750,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "v3_test_ragas_gemini_cli_timeoutprocess",
-      "community": 45,
+      "community": 46,
       "norm_label": "_timeoutprocess"
     },
     {
@@ -9760,7 +9760,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "v3_test_ragas_gemini_cli_timeoutprocess_init",
-      "community": 45,
+      "community": 46,
       "norm_label": ".__init__()"
     },
     {
@@ -9770,7 +9770,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "v3_test_ragas_gemini_cli_timeoutprocess_communicate",
-      "community": 45,
+      "community": 46,
       "norm_label": ".communicate()"
     },
     {
@@ -9780,7 +9780,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "v3_test_ragas_gemini_cli_geminicliregressiontests",
-      "community": 45,
+      "community": 46,
       "norm_label": "geminicliregressiontests"
     },
     {
@@ -9790,7 +9790,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "v3_test_ragas_gemini_cli_geminicliregressiontests_teardown",
-      "community": 45,
+      "community": 46,
       "norm_label": ".teardown()"
     },
     {
@@ -9800,7 +9800,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "v3_test_ragas_gemini_cli_geminicliregressiontests_test_timeout_kills_the_entire_windows_cli_tree",
-      "community": 45,
+      "community": 46,
       "norm_label": ".test_timeout_kills_the_entire_windows_cli_tree()"
     },
     {
@@ -9810,7 +9810,7 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "v3_test_ragas_gemini_cli_geminicliregressiontests_test_daily_quota_failure_does_not_retry",
-      "community": 45,
+      "community": 46,
       "norm_label": ".test_daily_quota_failure_does_not_retry()"
     },
     {
@@ -9820,7 +9820,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "v3_test_ragas_gemini_cli_geminicliregressiontests_test_terminal_quota_cell_is_identified_for_the_circuit_breaker",
-      "community": 45,
+      "community": 46,
       "norm_label": ".test_terminal_quota_cell_is_identified_for_the_circuit_breaker()"
     },
     {
@@ -9830,7 +9830,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "v3_test_ragas_gemini_cli_rationale_1",
-      "community": 45,
+      "community": 46,
       "norm_label": "regression checks for gemini cli process and quota handling."
     },
     {
@@ -10051,7 +10051,7 @@
       "source_file": "C:/Coding/exjobbet/GRAG-Job/v3/CONSTANTS.md",
       "source_location": "c:\\Coding\\exjobbet\\GRAG-Job\\v3\\CONSTANTS.md",
       "id": "v3constants_guide_cache",
-      "community": 49,
+      "community": 50,
       "norm_label": "cluster-guide constants on the artefact arm: `str_guide` / `herb_str_guide` = 0.0 means off \u2014 no cache load, no `guide_stats`, no `guide` meta block \u2014 and values below 0 fail loud at import; it is `swept` with evidence not retained, the \"cluster guide, \u22120.003, t \u22121.36\" figure matching data_readme's flat guide-alone row (\u22120.0019, ci [\u22120.0049, +0.0010]) rather than the walk-gate-varying `wg_guide__gold100` (\u22120.0231, whose delta the gate alone accounts for at \u22120.0204). `guide_tau` = 0.01 is the membership-cell floor, cited by name in `canon:contradiction_map.md` \u00a72 as one of the arm's unbased constants; `guide_c` = 128 is the k-means prototype count per facet; `guide_m` = 1.5 is the fuzzifier, whose `> 1.0` guard is derived (the exponent divides by `m \u2212 1`) while 1.5 itself has no record; `guide_lambda` = 0.05 is the participation floor \u03bb in \u03c9 = \u03bb + (1\u2212\u03bb)\u00b7\u03c9; `guide_seed` = 20260731 is the k-means++ seed, its digits the build date rather than a property of the data. all four name the cache entry"
     },
     {
@@ -10141,7 +10141,7 @@
       "source_file": "C:/Coding/exjobbet/GRAG-Job/v3/CONSTANTS.md",
       "source_location": "c:\\Coding\\exjobbet\\GRAG-Job\\v3\\CONSTANTS.md",
       "id": "v3constants_native_arm_entry",
-      "community": 48,
+      "community": 45,
       "norm_label": "`pipelines/artefact.py` \u2014 the v3-native arm entry: `default_top_k` = 10 is `unknown` and this arm appears in 0 of 121 run manifests; `product_literal_boost` = 1.0 is an additive lift on every chunk in a named product's file, `unknown` \u2014 the comment offers a rationale (\"roughly one strong facet-phrase match\") with no measurement, and `ablate_boost.py` was built to attribute it with its result recorded nowhere; `today` = \"2026-06-28\" is a frozen build date hard-coded as the run's \"today\", passed to `interpret` as `current_date`; `_key_path` is the one dataset mapping key `artefact/keys/salesforce__herb.yaml`; the `argsort` tiebreak `kind=\"stable\"` is derived from determinism"
     },
     {
@@ -10168,7 +10168,7 @@
       "source_file": "C:/Coding/exjobbet/GRAG-Job/v3/CONSTANTS.md",
       "source_location": "c:\\Coding\\exjobbet\\GRAG-Job\\v3\\CONSTANTS.md",
       "id": "v3constants_run_cli_rows",
-      "community": 52,
+      "community": 38,
       "norm_label": "`run.py` \u2014 the cli: `arms` is the 6 arm names accepted by `--arm`, derived from the modules under `pipelines/`; `data/gold100.jsonl` is the id set `--set gold` runs, derived as the named fixed set but not the file `build_question_sets.py` writes (6/100 overlap), and `data/10smoke.jsonl` is the named fixed comparison set. `-n` = 5 is `unknown`; `--workers` = 1 is derived as \"safest under nim's rate cap\", the no-overlap floor; the rejudge worker auto-size `len(ids) \u00d7 len(metrics_to_run())` opens every cell at once because the shared judge pool `judge_inflight` is the real cap, and the wide-parallel judge families (`claude`, `gpt-`, `gemini`) are the subscription cli lanes with no nim queue. the run-id timestamp format `%y%m%dt%h%m%sz` utc is iso-8601 basic and sortable, and the judge slug pattern keeps `__j-<slug>` directory-safe"
     },
     {
@@ -10177,7 +10177,7 @@
       "source_file": "C:/Coding/exjobbet/GRAG-Job/v3/CONSTANTS.md",
       "source_location": "c:\\Coding\\exjobbet\\GRAG-Job\\v3\\CONSTANTS.md",
       "id": "v3constants_small_modules_rows",
-      "community": 54,
+      "community": 53,
       "norm_label": "`contract.py`, `progress.py`, `run_lock.py`, `abort.py`, `questions.py`, `prompt_tokens.py`: `generator_system` = \"answer the question using only the provided documents. be concise.\" is `unknown` \u2014 the fairness property of one prompt for all arms is designed, the wording has no record. the tqdm settings `ascii=true` and `dynamic_ncols=true` and the `disable` on a non-tty are derived from the target terminal and from captured logs not filling with bar frames. `run_lock.py`'s two acquire attempts are one stale-clear then one attempt, and its win32 access flag 0x1000 (`process_query_limited_information`) and running exit code 259 (`still_active`) are borrowed api constants, while the `.run.lock` file name is `unknown`. `abort.py`'s 0.1 s poll interval is `unknown` (responsiveness is the shape of the rule, not the number) and the `q`/`q` keys are the ones the harness advertises. `prompt_tokens.py`'s `_tokenizer_id` = \"qwen/qwen3-8b\" is `unknown`: the family follows `generator_model`, the 8b checkpoint does not"
     },
     {
@@ -10186,7 +10186,7 @@
       "source_file": "C:/Coding/exjobbet/GRAG-Job/v3/CONSTANTS.md",
       "source_location": "c:\\Coding\\exjobbet\\GRAG-Job\\v3\\CONSTANTS.md",
       "id": "v3constants_nim_rows",
-      "community": 48,
+      "community": 45,
       "norm_label": "`nim.py` \u2014 transport, pacing, retries: `base_url` is nvidia's published endpoint; `seconds_between_calls` / `nim_seconds_between_calls` = 3.0 is the per-(key, model) spacing and is `unknown`, with the comment beside it describing a different value (\"5s is ~12 calls/min, well under nim's 40/min\"); the 1.5 s pacing floor is derived from nim's 40/min per-account ceiling, below which nim 429s. `max_tries` = 6 (five retries, also the claude lane's default and the number the self-check asserts) and `give_up_after_s` = 300.0 (the call's total wall-clock budget, counting request time and pacer waits, not the backoff alone) are `unknown`, as are the 120.0 s default request timeout, `max_degraded_retries` = 2 and its 3.0 s delay. `retryable_status` = {408, 429, 500, 502, 503, 504} is the standard transient-status set and `2 ** attempt` is standard exponential backoff. `_claude_exe` falls back to `~/.local/bin/claude.exe`, the install location `docs/environment.md` records as absent from the agent shell's path, and `--output-format json` is the only machine-readable cli output"
     },
     {
@@ -10213,7 +10213,7 @@
       "source_file": "C:/Coding/exjobbet/GRAG-Job/v3/CONSTANTS.md",
       "source_location": "c:\\Coding\\exjobbet\\GRAG-Job\\v3\\CONSTANTS.md",
       "id": "v3constants_top_level_scripts_rows",
-      "community": 53,
+      "community": 38,
       "norm_label": "top-level scripts: `build_question_sets.py`'s `gold_n` = 100 is `unknown` because the shipped `data/gold100.jsonl` is not reproducible from the script (6/100 overlap), so the constant does not describe the set in use, and `gold_seed` = 0 is arbitrary, while the equal-allocation round-robin draw is derived with its cost stated (the natural mix is lopsided, person 260 ... url 20). `reembed_herb_eval.py`'s `backup_database` = \"herb-eval-backup\" is the read-only source of chunk-description text, `write_batch` = 500 is `unknown`, and the `'cosine'` similarity both `tag_emb` and `chunk_desc_emb` are created with is the metric every knn in the arm scores under. `build_tag_clusters.py`'s `max_iter` = 60, `tol` = 1e-7 and the 1e-6 membership distance floor are `unknown`, while `_facet_col` is `all_facets`'s order enumerated. `compare_arms.py`'s `dir_re` is `unknown` and does not match the run-folder naming scheme it exists to read: \"`[a-z]+` matches neither `artefact_v1` nor `artefact_v1_det`. the cross-arm table printer has never displayed the artefact\". `model_test.py`'s `models` is user-specified \u2014 \"how good is glm 5.2 compared to qwen? perhaps do a test between 3 questions? do full question-answer-eval on the same 3 questions with full glm vs full qwen\" (turns:l929). `ablate_boost.py`'s `k` = 10 is a one-off experiment constant whose ablation result is recorded nowhere, and `judge_probe.py`'s `_context` and `_prompt` are agent-written prose"
     },
     {
@@ -10303,7 +10303,7 @@
       "source_file": "C:/Coding/exjobbet/GRAG-Job/v3/README.md",
       "source_location": "c:\\Coding\\exjobbet\\GRAG-Job\\v3\\README.md",
       "id": "v3readme_raw_records",
-      "community": 48,
+      "community": 45,
       "norm_label": "ragas emits raw per-question records (`evalresult`, tidy long format) with nothing pre-aggregated, so paired tests, cis, per-type splits and judge calibration are all possible downstream"
     },
     {
@@ -10321,7 +10321,7 @@
       "source_file": "C:/Coding/exjobbet/GRAG-Job/v3/README.md",
       "source_location": "c:\\Coding\\exjobbet\\GRAG-Job\\v3\\README.md",
       "id": "v3readme_cli_judges",
-      "community": 52,
+      "community": 45,
       "norm_label": "gpt judge runs use the signed-in codex cli (the same subscription-authenticated pattern as the claude judge), not `openai_api_key`, and gemini judge runs use the signed-in gemini cli, not an api key. their manifests contain provider-reported input, cached-input, output and reasoning-token usage, aggregate request time, and eval wall time"
     },
     {
@@ -10366,7 +10366,7 @@
       "source_file": "C:/Coding/exjobbet/GRAG-Job/v3/README.md",
       "source_location": "c:\\Coding\\exjobbet\\GRAG-Job\\v3\\README.md",
       "id": "v3readme_files_map",
-      "community": 48,
+      "community": 45,
       "norm_label": "file map: `contract.py` holds the shared shapes everything imports (questionwithtruth, modelusage, armoutput, buildstats, evalresult, runmanifest, evalmanifest); `nim.py` is the one nvidia nim rest transport that the generator, embedder and judge all post through \u2014 shared harness plumbing, not retrieval code; `pipelines/` holds `artefact_v1.py` and `artefact_v1_det.py` (the arm under test and its interpreter-free leg), `lucene.py`, `vector.py`, `hybrid.py`, and `artefact.py` (the native rebuild's arm entry); `eval/` holds `ragas.py` and `ragas_catalog.py`; `orchestrator.py` owns the shared generator, runs an arm through generation and a scorer through evaluation, and writes the manifests; `smoke.py` is a tiny wiring check; `data/` holds `corpus/` and `raw/`, `output/` holds results as per-run folders with `smoke/` for checks"
     },
     {
@@ -10393,7 +10393,7 @@
       "source_file": "C:/Coding/exjobbet/GRAG-Job/v3/README.md",
       "source_location": "c:\\Coding\\exjobbet\\GRAG-Job\\v3\\README.md",
       "id": "v3readme_gold100",
-      "community": 52,
+      "community": 38,
       "norm_label": "`build_question_sets.py` writes the `{id, type, question}` id-set views to `output/` \u2014 full / answerable / unanswerable (1514 / 815 / 699) \u2014 plus `question_ids.gold100.jsonl`, the gold-100: a balanced answerable subset drawn by seeded round-robin over the herb types (equal allocation, ~20/type). equal allocation keeps every type usable per-type; it does not match herb's natural mix, so report per-type and do not compare the gold-100 aggregate to herb's published average. point the orchestrator's ids-file at whichever view you run"
     },
     {
@@ -34302,5 +34302,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "62006ab98bfe53c7c2678e2090ccf642c0890a36"
+  "built_at_commit": "8d6f115d3a51bba511e878a23159e2facc1d590e"
 }
