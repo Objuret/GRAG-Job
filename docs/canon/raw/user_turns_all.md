@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-803 turns, chronological. Verbatim text; no edits.
+920 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -4375,6 +4375,10 @@ Search the entire repo for exactly ALL information I (the user, fucking ME) i ha
 
 you are active on the desktop too, even got an active remote to it, do your thing there if you need something
 
+## 2026-08-03 12:43 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+you are claude, you ca open the active remote chat open on the desktop and get access to it straight up
+
 ## 2026-08-03 12:51 · desktop · 63f43344-af0f-47a1-82a1-d7fb51858e46.jsonl
 
 Copy this machine's Claude Code history for the GRAG-Job / exjobbet thesis project
@@ -4389,4 +4393,795 @@ so my laptop session can mine it. Do not extract or summarise anything — raw c
    (docs\state, docs\handoff, or wherever they live here).
 4. Report back: directories found, file count, total size, and the earliest and latest
    timestamp inside them.
+
+## 2026-08-03 13:04 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+ok, it did it
+
+## 2026-08-03 14:03 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+is all of this only based on docs?
+
+## 2026-08-03 14:10 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+Ok, first i tink these things you have gathered now should be structured and organised
+
+## 2026-08-03 14:49 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+point claude.md and commit etc new correctly named branch
+
+## 2026-08-03 15:00 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+ok, so, a new session will find all of this instantly?
+
+## 2026-08-03 17:41 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+point 3 sounds a bit dumb there, wtf is memory.md?
+
+## 2026-08-03 17:42 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+i want NOTHING treated as canon for the next conversation because i obviously want no messy fucking bias to what is actually correct or not
+
+## 2026-08-03 17:49 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+i obviously did/do not want you to remove/delete anything, it existed for a reason, but it should be saved somewhere with that caveat. and i am sure as fuck not ok with you doing something like "CLAUDE.md stripped of every claim the audit found agent-invented, contradicting you, or stale. Deleted, not annotated — no banners, no "previously". What's left is what you actually said, plus the mechanical repo facts.
+" fucking dumb.. also, "Agent definitions cleaned — including the five terms labelled "your concepts" that appear nowhere in your 803 turns.
+" cleaned? wtf does that mean?
+and "The canon library labels itself honestly: USER_CANON.md is your words and the only authority; the design history, the audit and the open-decisions list are agent analyses that hold exactly as far as their citations and are to be verified, not believed.
+" is my words? several agents say so? literally like every other piece of data we have here?
+
+## 2026-08-03 17:55 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+the point i am making is that all these things also should be in the "review-pile" of all the other docs
+
+## 2026-08-03 18:09 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+mm, and create a short snippet to start off a new sisseion with to solve this debacle
+
+## 2026-08-03 19:17 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+git objects?
+
+## 2026-08-03 19:56 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+yeah but saying it's canon is ambigous, canon is beeing used for several things here, as truth, but truth of ideas vs truth as "this code exist" is not the same, especially if the code-git-whatever existing, is build based on incorrect ai interpretations.
+
+## 2026-08-03 19:57 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+yes
+
+## 2026-08-03 20:21 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+and the snippet i want?
+
+## 2026-08-03 20:33 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+which mode and effort do you recommend?
+
+## 2026-08-03 20:39 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+you never mentioner which model..
+
+## 2026-08-03 20:50 · laptop · 6a698725-7914-4ba6-b2a7-56fbca2be80c.jsonl
+
+Read docs/canon/README.md first, then docs/canon/REVIEW_REGISTER.md. Nothing else.
+
+Three separate things, and you keep them apart. Intent — what was supposed to be built —
+exists only in my own typed turns, docs/canon/raw/user_turns*. State — what actually
+exists — is the git history itself: commits, diffs, and the actual file contents at each
+commit, plus the code and the run outputs. Interpretation — every document, memory file,
+state doc and agent definition in this project, the docs/canon/ docs dated 2026-08-03
+included — is some agent's claim about intent or state, all of it unreviewed, holding only
+as far as its citations.
+
+State is evidence of drift from intent, never justification for it. "It is in the code"
+and "the commit says so" are not arguments to me — they are the thing I am questioning.
+
+The job: work through REVIEW_REGISTER.md with me, item by item. For each one, tell me what
+it claims, what evidence actually backs it, and where it conflicts with my own words. I
+rule on it. You don't mark anything reviewed, resolve a conflict, rewrite a file or delete
+anything without me saying so.
+
+Short answers, plain English. Branch is user-canon-record. Don't write memory files.
+
+## 2026-08-03 21:36 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+The burning question tho, did you construct these docs for human readability, internal logic, efficiency or llm ingestion? what was your reasoning while constructing this? The point is, the first response back i got from the new session made my spidersenses tingle a bit so i am here to solve this
+
+## 2026-08-03 21:43 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+well, the logic for making it for llm ingestion was 100% correct, IS IT THAT THOUGH? make a fresh agent read it with your snippet and see what you get back
+
+## 2026-08-03 21:52 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+*paste / file drop · 1684 chars*
+
+for transparency this is the one i got and was talking about, so you can see and compare etc:
+"
+Read both. Here's the shape of what you've asked me to walk.
+
+The pile: ~215 rows in 10 sections. Roughly:
+
+§1 — the 5 canon docs + the register itself (6)
+§2 — raw records and corpus (12; 6 of them are the corpus itself, where the thing to review is the filter, not the prose)
+§3 — root and v3 docs (7) — includes CLAUDE.md
+§4 — state docs (5 in-repo + 11 OneDrive)
+§5–7 — memory: 32 live laptop, 53 desktop copies, 32 laptop copies (117 rows, heavily duplicated)
+§8 — 10 agent definitions
+§9 — 3 other tree docs
+§10 — 57 legacy worktree docs
+Two things before we start.
+
+The register's own order is not the leverage order. §1 is the newest material — written yesterday, read by nobody. What actually shapes what agents do to your repo every session is CLAUDE.md (§3), the live laptop memory (§5), and the agent definitions (§8). Those three are the enforcement surface: a claim there becomes a rule an agent obeys without asking. Everything else is inert until someone reads it.
+
+Three sections are near-free. §6 and §7 are copies of memory that lives elsewhere — reviewing the live file settles the copy. §10 is 57 docs describing a build you superseded. Deciding those as blocks, once, would take ~200 rows off the list without you reading 200 files.
+
+I'd start with CLAUDE.md, since it's the file every session loads and the audit says 20 of its claims are suspect. But it's your call.
+
+For each item I'll need to open the file it names — you said read nothing else, so I'm asking before I do.
+
+Where do you want to start, and do I have the go-ahead to open files as we reach them?
+"
+
+## 2026-08-03 22:17 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+yeah, so, intent, reason etc, fix..
+also, build it in a way to forces the agent to be thorough and NOT LAZY
+
+## 2026-08-03 22:53 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+and snippet?
+
+## 2026-08-03 23:06 · laptop · 0c80d9e4-aa2f-414f-8b6e-3059d8221115.jsonl
+
+*paste / file drop · 1578 chars*
+
+Read docs/canon/README.md, then docs/canon/REVIEW_PROTOCOL.md, then start
+docs/canon/REVIEW_WORKLIST.md at row 1. Nothing else.
+
+Three separate things, and you keep them apart. Intent — what was supposed to be built —
+exists only in my own typed turns, docs/canon/raw/user_turns*. State — what actually
+exists — is the git history itself: commits, diffs, and the actual file contents at each
+commit, plus the code and the run outputs. Interpretation — every document, memory file,
+state doc and agent definition in this project, the docs/canon/ docs dated 2026-08-03
+included — is some agent's claim about intent or state, all of it unreviewed, holding only
+as far as its citations.
+
+State is evidence of drift from intent, never justification for it. "It is in the code"
+and "the commit says so" are not arguments to me — they are the thing I am questioning.
+
+The job: work the worklist with me, one row at a time. Per row — the claim, the check you
+actually ran with its output pasted, what would have refuted it and what that search
+returned, then one of supported / unsupported / contradicted / cannot-determine. No output
+pasted means no verdict, and you say so yourself. Interpretation documents are never
+evidence, including the audit and the canon docs. I rule; you don't mark anything
+reviewed, resolve a conflict, rewrite a file or delete anything without me saying so.
+
+Do not open with a summary, an inventory or a recommended order. First thing you say is
+row 1 and its evidence.
+
+Short answers, plain English. Branch is user-canon-record. Don't write memory files.
+
+## 2026-08-03 23:21 · laptop · 0c80d9e4-aa2f-414f-8b6e-3059d8221115.jsonl
+
+is this it..?
+
+## 2026-08-03 23:22 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+*paste / file drop · 2608 chars*
+
+this was all i got:"
+W-C01
+CLAIM      "This file is agents' claims about how this project should work, written over
+           months; being written here is not the user's approval of it."
+           (surface confirmed at CLAUDE.md:3-4, text reads as the worklist has it)
+KIND       intent
+
+CHECK      CQ "just because the text is in the repo|pretend its canon"
+OUTPUT     L762  2026-08-02T09:21  you do understand that just because the text is in the
+           repo, that doesnt mean i was the one that ok'd it or put it there, right? you
+           literally put shit in writing and pretend its canon
+           -> 1 hit(s)
+
+QUOTE      "you do understand that just because the text is in the repo, that doesnt mean i
+           was the one that ok'd it or put it there, right? you literally put shit in writing
+           and pretend its canon"
+           2026-08-02, user_turns_all.jsonl L762
+
+REFUTE     A turn where you treat repo text as your approval — calling CLAUDE.md your rules,
+           calling something canon because it is written, or telling an agent to follow the
+           file as authored.
+SEARCHED   CQ "claude\.md|the \.md|CLAUDEmd"
+RETURNED   L191  2026-07-16T08:53  we have fucking "progress graphics" on everything else
+           here, seriously, if i start yelling at you, perhaps thats a thing you should have
+           in the .md for all of this..
+           -> 1 hit(s)
+SEARCHED   CQ "is canon|are canon|as canon|my canon|canon is"
+RETURNED   -> 0 hit(s)
+
+           Side check on "written over months":
+CHECK      git log --follow --format='%h %ad %s' --date=short -- CLAUDE.md | tail -5
+OUTPUT     78a3e38 2026-07-16 ... canon rule: runnables show life instantly
+           8a640bf 2026-06-28 feat: update graphify-out (533 files)
+           0733a9d 2026-06-23 feat: update graphify-out (76 files)
+           4da9c5b 2026-06-18 feat: update graphify-out (213 files)
+           0efff16 2026-06-15 Separate repo into v1/ (frozen) and v2/ (active) siblings
+           8 commits total, earliest 2026-06-15.
+
+VERDICT    supported
+PROPOSED   Nothing to rule. The banner's operative sentence is a near-restatement of your
+           own words at L762. One thing worth your eye: the refutation search turned up L191,
+           you asking for a rule to be put in the .md — so some content there is yours by
+           request, which the banner's flat "not the user's approval" doesn't distinguish.
+           "Written over months" is thin: the file's tracked history is 2026-06-15 → now,
+           about seven weeks over three calendar months.
+"
+as a respone on your snippet there
+
+## 2026-08-04 11:46 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+it did that, with all 233 of them.. 233.. you  wtf..
+Consider the actual size and scope of this whole project, i dont mean the actual docs, code and all shit that exists, i mean the concept, the target etc.. The genuine expected size of the build and concept. 233 pages of shit to review.. that is about 230 too many in my mindm how in the goddamn fuck is this even a possibility and it's so insanely absurd that you thought this was a, no, THE best solution to this.. literally no shot in hell that i can actually read all of this and make a single decision about anything, dude.. you literally have the humanity's collected knowledge on human behaviour, psychology, human optimization and all behavioural knowledge of our entire species.. and you did this..
+
+## 2026-08-04 11:48 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+do you even understand what the point of this whole task you are doing? tell me why you are doing this
+
+## 2026-08-04 11:53 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+exactly, so, how DO we solve this?
+
+## 2026-08-04 11:54 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+how about this, you have gathered everything I SAID, right?
+
+## 2026-08-04 11:54 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+second hand in docs? what?
+
+## 2026-08-04 11:56 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+ah, fair, they are something, but second hand yes..
+so, shouldt we map out everything i have said, vs everything that contradicts that? ordered by date i guess, also, there is a diff between v1, v2-3 artefacts and so on
+
+## 2026-08-04 12:03 · laptop · d0a892a0-9c51-4faf-9053-72f87b8b8556.jsonl
+
+Ah, we probably should have separated these repos fully huh? i think having the different versions really have fucked up all ai efforts here
+
+## 2026-08-04 12:05 · laptop · d0a892a0-9c51-4faf-9053-72f87b8b8556.jsonl
+
+obviously we would not touch a single fucking thing in this repo, we would create a new repo and only import the correct things..
+
+## 2026-08-04 12:34 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+wait wtf just happened here?
+
+## 2026-08-04 12:35 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+i asked a question and you did a massive fucking job instead of answering me
+
+## 2026-08-04 12:35 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+but this is not influenced, messed with, tainted by you or anything else now?
+
+## 2026-08-04 12:37 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+you dont seem to also get that we are "living in v3" but have made a modified v1 artefact in there too?
+
+## 2026-08-04 12:43 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+i am only talking to you so you can make the fucking map/doc correct you dont seem yo understand that you need to update/redo the discussed parts every fucking time you get corrected by me, this is the fucking issue all the goddamn time, you speak like you have understood and fucking done something, when you in reality havent done shit about it and it just gets washed away by context
+
+## 2026-08-04 15:05 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+" The code is already right. " WHAT DO YOU MEAN BY THAT?
+
+## 2026-08-04 15:07 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+ok, you are beeing weird again and forgettng the actual task here, work towards fucking finishing you task instead of pussyfooting around causing more issues
+
+## 2026-08-04 15:34 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+what ARE you actualyl doing now?
+
+## 2026-08-04 15:43 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+you actually changed code?
+
+## 2026-08-04 15:46 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+and how do we introduce this to a new agent/chat/session?
+
+## 2026-08-04 16:04 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+stfu, ill work on this fucking branch until its all clean and correct alwys give me the correct prompt to start a new conversation
+
+## 2026-08-04 16:04 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+what is that fucking format?
+
+## 2026-08-04 16:06 · laptop · 44703b8e-2288-40f8-ad40-58f5443d3da8.jsonl
+
+Work docs/canon/CONTRADICTION_MAP.md with me.
+
+## 2026-08-04 16:06 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+mm
+
+## 2026-08-04 16:09 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+Work docs/canon/CONTRADICTION_MAP.md with me.
+
+## 2026-08-04 16:23 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+Nope, thats it, work it through
+
+## 2026-08-04 16:25 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+this was about which sort of math would be used to combine the weights
+
+## 2026-08-04 16:33 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+mark that down as canonically undecided because we are testing what is the best solution there
+
+## 2026-08-04 17:23 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+yeah... that is already settlet
+
+## 2026-08-04 18:40 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+we have never used the herb score and has no intention to
+
+## 2026-08-04 19:31 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+the point was that the agent had access to goldtruth and started showing signs of fitting
+
+## 2026-08-05 04:30 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+yes, fix
+
+## 2026-08-05 04:36 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+inventory?
+
+## 2026-08-05 04:37 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+i mean, sure, yeah, this is a useful table to have, actually all our variables we use like that should be in this table
+
+## 2026-08-05 04:46 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+continue
+
+## 2026-08-05 05:02 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+wait wtf, how on earth do we have 235 rows of variables!?
+
+## 2026-08-05 05:04 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+v3/CONSTANTS.md .... are these correct? i mean the descriptions of them etc, be thorough
+
+## 2026-08-05 05:05 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+ok, as long as this is clear, but is this document linked to anything? i hope you are updating code-comments and other stuff at the same time you are updating docs or whatever we are doing here
+
+## 2026-08-05 05:08 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+we can do the code comment after you and i have done our work
+
+## 2026-08-05 05:08 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+we can do the code COMMENTS after you and i have done our work*
+let's carry on
+
+## 2026-08-05 05:13 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+go on
+
+## 2026-08-05 05:20 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+why do these even exist?
+
+## 2026-08-05 05:21 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+yes, but why is this information here at all? i dont get it, its the headline for a run? wtf is this even?
+
+## 2026-08-05 05:25 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+you think any of these is a good thing to keep in memory?
+
+## 2026-08-05 05:26 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+i seems smarter to keep the most recent/relevant info in the .md ?
+
+## 2026-08-05 05:27 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+the local env's should also be in a doc, no? i mean, it feels fucking retarded to just keep this stuff "in memory"
+
+## 2026-08-05 05:27 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+mm
+
+## 2026-08-05 05:29 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+go
+
+## 2026-08-05 06:22 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+continue
+
+## 2026-08-05 06:30 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+until  decided upon, there is no "baseline" artefact, a comparable baseline are the vector and lucene arms, no?
+
+## 2026-08-05 06:39 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+doit
+
+## 2026-08-05 06:47 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+what are you even saying dude
+
+## 2026-08-05 06:47 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+off? i dont get it, are tags off?
+
+## 2026-08-05 06:58 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+that sounds like a specific thing that was tested or something
+
+## 2026-08-05 07:01 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+*paste / file drop · 6061 chars*
+
+i had an agent review the doc and it came back with this:
+"
+Read-site sweep done. It confirmed the earlier verdicts and turned up two new defects in rows I had passed as clean — both the "used in N places, description names one" failure the brief asked me to hunt.
+
+Coverage correction
+No rows were uncovered. The table holds 70 rows at lines 33–102 and 11 at 108–118, and my audit worked through all 81 by name. The 55 came from my report's closing sentence, where I repeated the brief's count instead of counting the table — an arithmetic error in the summary line, not a gap in the work. The brief's line ranges (29–103 / 104–119) map to 48/7 only if you subtract the header and separator rows twice; the real spans are 33–102 and 108–118.
+
+New defects (found by the deeper read-site pass)
+row	doc says	code says	severity
+ALL_FACETS (:37)	"the five-facet vocabulary the interpreter scores and the edges carry"	Also fixes the canonical axis order of the guide cache: :1079 restacks the .npz membership matrices as [z[f] for f in ALL_FACETS] and :1094-96 builds the facet blend in the same order, so reordering the tuple silently misaligns every membership row against its blend weight. Also folded into the interpretation cache key (:829), so an edit to it invalidates all cached plans. Description names 2 of 6 roles	incomplete
+_ANCHOR_TEXTS (det :112)	"the embedded anchors each tag's geometry is scored against"	Second read site at det:121 uses the dict purely for key order, aligning the question's trigger vector with the anchor matrix rows — the alignment G @ qdir (:135) and (gap * qdir) (:152) depend on. It carries an undocumented invariant: its key order must match ALL_FACETS, or the support and routing maths silently score against the wrong facets	incomplete
+Everything else in the sweep confirmed the original verdicts. GROUND_INDEX/DESC_INDEX also serve the startup index-presence check (:556, :569), but since that validates the very index the row names, I did not score it a defect.
+
+Corrected totals
+58 of the 81 rows are clean on all four axes; 23 carry at least one defect (20 in the v1 section, 3 in det). My first report's "34 of 55" should read "58 of 81" — the defect table was already complete apart from the two rows above.
+
+Further undocumented constants
+None beyond the 11 already listed. The sweep surfaced no new numeric or string literals meeting the inclusion rule. It did expose one undocumented invariant rather than a constant: _ANCHOR_TEXTS key order must equal ALL_FACETS order, enforced nowhere and asserted nowhere.
+
+Full 81-row checklist
+pipelines/artefact_v1.py, lines 33–102 (70) — defective marked ✗:
+**✗**DATABASE, **✗**DATASET_ID, **✗**RUN_ID, **✗**INTERPRET_MODEL, **✗**ALL_FACETS, GROUND_INDEX, DESC_INDEX, **✗**K_LEVELS, KNN_OVERFETCH, CURVE_WALK, **✗**DOOR_TRACE, WALK_GATE, **✗**FRESH_INTERP, NO_REVIEW, **✗**TAG_FIRST, W_TAG, W_DESC, W_SCOPE, **✗**TAG_ADMIT, STR_FACET, STR_WCHUNK, **✗**STR_RELEVANCE, STR_DESC_HINT, STR_SCOPE_MATCH, STR_GUIDE, GUIDE_TAU, GUIDE_C, GUIDE_M, GUIDE_LAMBDA, GUIDE_SEED, **✗**AGG, **✗**NORM, **✗**NORM_SCOPE, _ABS_REF_DIST, _ABS_UNIT, _ABS_REF, EMBED_CACHE_DIR, INTERP_CACHE_DIR, **✗**GUIDE_CACHE_DIR, **✗**GATE_SECTIONS, EXCLUDED_SECTIONS, **✗**FILLER, RAW_ROOT, NEO4J URI default, NEO4J user default, **✗**interpreter temperature, interpreter retry count, interpreter NIM timeout, year sanity range, pass-1 max_tokens, **✗**neutral facet value, pass-2 max_tokens, facet clamp, _gap_break minimum history, _gap_break float-noise floor, _gap_break threshold, distance floor in fuzzy support, _tag_affinity lift, tag-pool width, tag-pool fetch, level-log tag sample, description hint modifier, desc-kNN width/fetch, frontier sequence bound, selected-score rounding, door-trace rounding, review digest length, review max_tokens, **✗**review evidence ladder, answer_one_question k default.
+
+pipelines/artefact_v1_det.py, lines 108–118 (11):
+INTERPRET_MODEL, _EID, _YEAR, ✗_FACET_MODE, ✗_ANCHOR_TEXTS, ✗_FACET_WORDS, neutral facet floor, triggered facet weight, facet-direction epsilon, routing disagreement clamp, answer_one_question k default.
+
+result: All 81 artefact-arm rows were in fact audited (the "55" was a bad summary count, not a coverage gap) — corrected tally 58 clean / 23 defective, with 2 new incomplete-description defects found in ALL_FACETS and _ANCHOR_TEXTS, both hiding a facet-ordering invariant that nothing enforces.
+
+All 238 rows are verified — there was no coverage gap; the "55" was a bad summary count in the agent's own report. Corrected: 190 clean, 48 defective.
+
+The last pass found one thing that isn't a documentation problem:
+
+A facet-ordering invariant that nothing enforces. _ANCHOR_TEXTS's key order must match ALL_FACETS's order — det:121 uses the dict for key order to align the question's trigger vector against the anchor matrix, and :1079/:1094 restack the guide cache's membership matrices by ALL_FACETS. Reorder either one and the support and routing maths silently score against the wrong facets. No assert, no test, no comment.
+
+So the answer to your question: the descriptions are mostly right, and the defects cluster in three kinds.
+
+Wrong descriptions (13) — GATE_SECTIONS inverted, MAX_TRIES counting retries instead of tries, GIVE_UP_AFTER_S called a backoff budget when it's wall clock, three rows documenting behaviour of a function nothing calls, two live constants labelled dead-code leaks, SELECTED's "30 feedable" against 28 actual, one fabricated value.
+Incomplete (12) — constants whose description names one read site when they have three or six. Several of those hide real coupling, like DATABASE and RUN_ID composing the cluster-guide cache key.
+Bad citations (23) — stale line numbers, an off-by-one quote cite, provenance pointing at sections that don't contain the claim, and one self-contradiction about whether the DESIGN §15 sweep exists.
+Plus ~42 undocumented constants, led by coalesce(r.w_chunk, 0.0) — the one that can zero a chunk's whole tag score — the three live judge knobs, and two Neo4j env defaults.
+"
+
+## 2026-08-05 07:25 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+it wants to do this as solution:
+"
+Verified the important one. artefact_v1.py:374 reads coalesce(r.w_chunk, 0.0), and that value multiplies the tag term at :1480 with STR_WCHUNK defaulting to 1.0. So _mod(0.0, 1.0) returns 0 and a HAS_TAG edge with a missing w_chunk zeroes that chunk's entire tag score.
+
+The neutral element for a multiplier is 1.0, not 0.0. Coalescing a missing multiplier to zero turns "we don't know" into "annihilate". It's a hard filter arriving through a null default — the thing your 07-15 no-gates rule is about, and it lands right on the multiplication question you marked undecided this morning.
+
+Whether it ever fires depends on whether any edge in herb-eval actually lacks w_chunk. That's one Cypher query, but it needs Neo4j up.
+
+The second real finding is the facet-ordering invariant: _ANCHOR_TEXTS key order must match ALL_FACETS order or the support and routing maths score against the wrong facets — no assert, no test, no comment.
+
+On the table itself: the review is right and the corrections are doc work I can do — 13 wrong descriptions, 12 incomplete, 23 bad citations, ~42 missing constants.
+
+Three separate things, so three separate calls:
+
+Fix CONSTANTS.md — doc-only, no sign-off needed beyond your go.
+The w_chunk coalesce — a code change to v3/, so it's yours to rule on. Want the null-count query run first?
+The facet-ordering invariant — also code. Cheapest fix is an assert at import.
+"
+is this reasonable?
+
+## 2026-08-05 07:27 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+well the design is to have the tags/weights to be PART of the routing to the final bag of chosen chunks, right?
+
+## 2026-08-05 07:43 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+yeah, no
+
+## 2026-08-05 07:43 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+*paste / file drop · 1674 chars*
+
+it answered this:
+"
+Yes, mostly right. The arithmetic checks out — _mod(v, s) = 1 + s(v−1), so _mod(0, 1.0) is 0, and it's consistent with the known _mod(rel, 0) = 1.0. Splitting doc-work from code-work is correct, and asking for the null-count query before proposing a code change is the right order.
+
+Three corrections:
+
+Two of its framings are inference, not fact. A null default isn't a designed gate — calling it "the thing your 07-15 no-gates rule is about" is a reading, not something you said. Same with "the multiplication question you marked undecided this morning" — the map lists multiplication as an engine-change contradiction; whether you marked anything is its claim, not your action. Make it say which is yours and which is its.
+The likely answer is that it never fires. The built graph carries w_chunk on every HAS_TAG edge per the corpus facts, so the coalesce is probably dead defensive code — still wrong in principle, but the query will most likely return zero and there'd be nothing to fix. Worth knowing before it's framed as a live bug.
+Its doc-fix scope misses the structural defects. Not just the 48 rows: the section preamble is false ("every constant line added exactly once and never modified" — INTERPRET_MODEL had three values), and the Counts section doesn't close (238 rows, not 235; derived 100, not 97).
+And one thing it should think about rather than just execute: 23 of the 48 defects are stale line numbers. That's the format failing, not the author — every edit to artefact_v1.py rots the table again. Either drop exact line cites, or add a checker that verifies them mechanically. Otherwise you're re-running this audit in a month.
+"
+
+## 2026-08-05 07:44 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+doit
+
+## 2026-08-05 07:45 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+*paste / file drop · 1685 chars*
+
+re-"
+It's right on the substance, and one of its corrections lands on something I told you as a fact.
+
+I relayed a false finding. I told you git log -p showed every constant line was added once and never modified — and I used that to argue the sweeps never fed back into the defaults, which softened the overfitting charge in entry 1. INTERPRET_MODEL has had three values, so the universal claim is false and the inference resting on it isn't safe. Entry 1 shouldn't stay softened on that basis.
+
+Its framing correction is fair on one of two. "The thing your 07-15 no-gates rule is about" was my reading, not your words — that should have been marked. The other one isn't inference: you told me this morning to mark the multiplication question canonically undecided because it's under test, and it's recorded as T13. That reviewer doesn't have this conversation, so it read my sentence as a claim about the map.
+
+And it's right that the coalesce is probably dead. If every HAS_TAG edge carries w_chunk, the query returns zero and there's nothing to fix beyond the wrong neutral. Worth knowing before anyone calls it a bug.
+
+The structural point is the best of it. 23 of 48 defects are stale line numbers — that's the format rotting, not the author slipping, and it'll rot again on the next edit to artefact_v1.py. Fix: cite constants by symbol name, not file:line, and add a checker that greps each named symbol and fails if it's missing. Then the table can't silently go stale.
+
+So the doc pass gets bigger than I said: 48 rows, the false preamble, the counts that don't close (238 not 235, derived 100 not 97), ~42 missing constants, and the line-number format itself.
+
+Go on that?
+"
+
+## 2026-08-05 07:45 · laptop · 444da4e2-06c6-4bdb-ace7-b9ed76cabb4e.jsonl
+
+re-"
+Yes, go — with two refinements.
+
+Don't over-retract entry 1. The false claim is the universal one. But INTERPRET_MODEL is a model id, not a tunable — a model swap isn't evidence that a swept value fed back into a default, which is what the softening actually rested on. Have it re-run the check restricted to the numeric tunables (W_*, STR_*, K_LEVELS, GUIDE_*, the thresholds) before deciding entry 1 is unsafe. The narrow claim may well survive intact, and then entry 1 stands where it was — for a stated reason rather than a false one.
+
+Make the checker verify the value, not just the symbol. Grepping for a name catches deletion and rename, which is the smaller half. What rots quietly is a default changing while the table keeps the old number — MAX_TRIES = 6 becoming 8, TAG_ADMIT moving off 0.0. Parse the assignment and compare the value; fail on mismatch. Same effort, catches the class that actually misled this audit.
+
+Everything else in it is sound, including the retraction — that's the behaviour you want, and it caught it on its own.
+"
+
+## 2026-08-05 08:26 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+*paste / file drop · 1684 chars*
+
+re-"
+The correction pass is done, and the table was undercounting itself: 307 rows, not 235.
+
+provenance	rows
+unknown	111
+derived	156
+borrowed	21
+user-specified	11
+swept	8
+Counts close now. All 23 stale citations are gone structurally — no line numbers anywhere in the table, rows cite file + symbol. ~70 constants were missing entirely, including the coalesce(r.w_chunk, 0.0) you'd expect, now recorded with its consequence spelled out, plus six more Cypher coalesce defaults, the three live judge knobs and two Neo4j env defaults.
+
+Two things it caught that I had wrong:
+
+I told you 25 numeric tunables. It's 23 — POOL_FETCH and TAG_MIN_SIM aren't in the tree at all. The map now says 23.
+One row carried a fabricated value: a smoke question id that exists nowhere. The real thing is a hardcoded HERB question sitting as a default prompt in artefact/interpreter.py's __main__.
+check_constants.py is at the repo root and passes clean. It was smoke-tested against injected drift and caught all four kinds — changed number, changed flag default, changed collection size, renamed symbol. Honest gap: 135 of 307 rows are bare literals with no symbol, so they can't be checked mechanically; it reports them as unchecked rather than pretending.
+
+The facet-ordering invariant is now written down in its own section, marked as an unenforced invariant with both failure modes — a facet missing here drops silently out of every direction vector while its trigger word can still fire.
+
+One thing I should flag rather than assume: v3/output/DATA_README.md shows as modified, and it wasn't this agent. Want me to look at what changed there before we do anything else with the results migration?
+"
+
+## 2026-08-05 08:28 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+doit?
+
+## 2026-08-05 08:28 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+i get the extreme feeling we now have a sea of useless "runs" saved which just confuse all agents
+
+## 2026-08-05 08:29 · laptop · e8886c06-4c11-4cb5-8ac1-972b5d45ae6e.jsonl
+
+doit
+
+## 2026-08-05 08:41 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+delete partial and the derived
+
+## 2026-08-05 08:46 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+115 run folders!? 115!?
+
+## 2026-08-05 08:47 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+we are talking about output folders, you understand this, right?
+
+## 2026-08-05 08:48 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+since the results were saved somewhere, its no use keeping them, correct
+
+## 2026-08-05 08:49 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+agreed
+
+## 2026-08-05 08:53 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+exempt
+
+## 2026-08-05 09:07 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+yes
+
+## 2026-08-05 09:10 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+sure
+
+## 2026-08-05 09:16 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+no, lets continue the work
+
+## 2026-08-05 09:22 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+allright, so, now it's time to clean and make sure this is updated and repeated in only the correct places, so docs,  codecomments and so on, but, i think we'll get another agent session for that and you just make sure that everything you have done here is updated as it should be and as we discussed.. and when done, give me the prompt for the next agent
+
+## 2026-08-05 09:29 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+dude, if you give me that format, everything will be returned in that format too..
+
+## 2026-08-05 09:33 · laptop · a0b3c29d-5c2f-4991-85a0-e8986e7cb3d6.jsonl
+
+nope, you misunderstood me, i meant the TEXTFORMAT, you are doing some fucking MD format here or some shit
+
+## 2026-08-05 09:33 · laptop · 2d5a9560-73e8-476c-99fb-0bff3d735c76.jsonl
+
+*paste / file drop · 5153 chars*
+
+Work the propagation pass on the GRAG-Job repo: every decision made in the previous
+session must be stated in exactly one correct place, and nowhere else. Docs, code
+comments, agent definitions, the review apparatus.
+
+Read first, in this order:
+1. docs/canon/raw/user_turns_all.md — his own turns. Any claim about intent cites a
+   line (turns:L<n>); no turn, no claim.
+2. docs/canon/CONTRADICTION_MAP.md — Part 1 is down to 4 entries.
+3. v3/output/DATA_README.md and v3/CONSTANTS.md — the run record and the constants
+   inventory. Both are new and both are authoritative.
+4. CLAUDE.md and docs/ENVIRONMENT.md.
+
+WHAT THE PREVIOUS SESSION SETTLED — do not reopen, do not re-derive:
+- Baseline means lucene and vector, the comparison arms. artefact_v1.py and
+  artefact_v1_det.py are two configurations of the system under test; neither is a
+  baseline and no measurement of either is a pass-bar. Which leg is the reported
+  artefact configuration is UNDECIDED (map T14) — never assume one.
+- Gold-blindness is enforced: retrieval-scientist, maths-algorithmist and v3-coder do
+  not open v3/data/questions.jsonl or any run's arm_outputs.jsonl. They specify runs by
+  pointer and read eval_results.jsonl. results-analyst and eval-statistician keep full
+  access.
+- Which math combines the weights (product vs sum) is canonically undecided — it is what
+  the experiments test (map T13). Do not record either form as decided.
+- RAGAS only; nothing is leaderboard-comparable and he accepts that.
+- Run numbers live in v3/output/DATA_README.md. Machine facts live in
+  docs/ENVIRONMENT.md. Memory holds neither.
+
+THE WORK:
+
+1. Code comments contradicted by measurement. v3/CONSTANTS.md lists 235 constants, 100
+   of them with no evidence for their value. At least two comments assert things the
+   measurements contradict:
+   - KNN_OVERFETCH=4 (artefact_v1.py:131-134) claims it gives "the row filters headroom
+     before they narrow the neighborhood"; measured filter survival is exactly 1.0, so
+     nothing narrows.
+   - artefact_v1.py:1307 carries a bare 2.0 desc-hint boost — the only priority modifier
+     not exposed as a HERB_STR_* coefficient, so it appears in no manifest and no sweep.
+   Sweep the arm's comments against CONSTANTS.md and report every comment that states a
+   purpose the code or the data does not support. Fix the comments. Whether the bare 2.0
+   becomes a named knob is the user's call, not a cleanup — ask.
+
+2. Queued engine change, needs his go before you touch code: delete HERB_TAG_FIRST,
+   HERB_TAG_ADMIT and the gated branch at artefact_v1.py:1494-1503. His ruling: tags and
+   their weights are PART of the routing to the final bag — they route and weight, they
+   never exclude. The flag promotes one of three contributors into a gatekeeper.
+
+3. docs/canon/REVIEW_WORKLIST.md has roughly 15 rows targeting memory files that were
+   deleted (project_gold100_results_and_judge, project_heldout100_generalization,
+   project_combine_sweep_and_hybrid_results, project_audit_panel_2026_07_28,
+   project_laptop_env_limits, project_headless_claude_models,
+   project_v3_artefact_state_docs_missing). Retarget each row to where the claim now
+   lives, or mark it resolved where the claim is gone. The raw copies under
+   docs/canon/raw/laptop_memory/ still exist and are frozen evidence — never edit those.
+
+4. Check v3/README.md against the new surfaces: it should point at CONSTANTS.md and
+   DATA_README.md and use the baseline terminology above.
+
+5. Run python refresh_graph.py from the repo root before committing — one refresh
+   covering everything. Process the worklist if it prints one. Never graphify --update.
+
+DECISIONS ONLY HE CAN MAKE — ask, one at a time, when the work reaches them:
+- Which leg is the reported artefact configuration (map T14).
+- Which framing ships: at a matched 500-id budget the reading is artefact_v1_det 0.7339
+  vs vector 0.4100 / hybrid 0.3883 / lucene 0.2742 — a gap of ~0.32 or a ratio of ~1.79×.
+  Same measurement, two sentences (map T10).
+- Whether flag-gated derivation counts as "based on something": his clustering decides K
+  only under HERB_CURVE_WALK, and the per-facet cluster guide only at HERB_STR_GUIDE>0.
+  A default run takes a flat k (map entry 2).
+- Which of the gold-100-swept constants may stand at all, given the 08-02 gold-blindness
+  rule (map entry 1).
+- project_source_of_truth.md points at origin/djuret/monorepo as the live line of work —
+  legacy from the old repo. Delete or keep?
+- .claude/ is gitignored, so the gold-blindness rules and baseline terminology added to
+  the agent definitions exist on the laptop only and will not reach his desktop.
+
+HARD RULES: talk to him in plain spoken English, short — no jargon walls. He rules, you
+propose: nothing is marked settled, no v3/ code is touched and nothing is deleted without
+him saying so. A correction lands in the file in the same turn, never acknowledged and
+left for later. No historical or defensive narration anywhere you write — present tense,
+what the thing IS. After any real logic change in v3/, run /critical-review on the changed
+files. Long runs happen in his terminal: prepare, he runs.
+
+## 2026-08-05 11:32 · laptop · 2d5a9560-73e8-476c-99fb-0bff3d735c76.jsonl
+
+go on then
+
+## 2026-08-05 13:54 · laptop · 2d5a9560-73e8-476c-99fb-0bff3d735c76.jsonl
+
+yes, i do want the k, not the made up bullshit
+
+## 2026-08-05 13:59 · laptop · 2d5a9560-73e8-476c-99fb-0bff3d735c76.jsonl
+
+perhaps that also should be an open "undecided" question then
+
+## 2026-08-05 14:02 · laptop · 2d5a9560-73e8-476c-99fb-0bff3d735c76.jsonl
+
+"constants no artifact ever derives" wtf does that even mean?
+
+## 2026-08-05 14:06 · laptop · 2d5a9560-73e8-476c-99fb-0bff3d735c76.jsonl
+
+mmm
+
+## 2026-08-05 14:07 · laptop · 2d5a9560-73e8-476c-99fb-0bff3d735c76.jsonl
+
+ok, so, if i ask a new agent about the state of lucene, the artefact and vector arms, what answer do you expect?
+
+## 2026-08-05 14:16 · laptop · 2d5a9560-73e8-476c-99fb-0bff3d735c76.jsonl
+
+what is happening here?
+
+## 2026-08-05 14:24 · laptop · 2d5a9560-73e8-476c-99fb-0bff3d735c76.jsonl
+
+that was too much to read, wtf just happened? i asked what answer you expected from another agent and you did a fucking massive job?
+
+## 2026-08-05 14:27 · laptop · 2d5a9560-73e8-476c-99fb-0bff3d735c76.jsonl
+
+just fucking tell me what happened, nothing more
+
+## 2026-08-05 14:31 · laptop · 2d5a9560-73e8-476c-99fb-0bff3d735c76.jsonl
+
+yeah im asking about the finished agent
+
+## 2026-08-05 14:34 · laptop · 2d5a9560-73e8-476c-99fb-0bff3d735c76.jsonl
+
+yeah, didnt i have a conversation about that specific tag issue?
+
+## 2026-08-05 14:38 · laptop · 2d5a9560-73e8-476c-99fb-0bff3d735c76.jsonl
+
+yeah that might have been the trigger for this whole purge actually
+
+## 2026-08-05 14:40 · laptop · 2d5a9560-73e8-476c-99fb-0bff3d735c76.jsonl
+
+and in that context, have we actually achieved that? you kinda just mentioned that the codecomments and text was still false
+
+## 2026-08-05 14:43 · laptop · 2d5a9560-73e8-476c-99fb-0bff3d735c76.jsonl
+
+seems you actually must add a rule,memory and info about actually UPDATING SAID THING after we actually fucking spoke about it then
 

@@ -72,11 +72,11 @@ them, not the prose inside them:
 
 | File | What it claims to be | Last written | Status | Evidence pointers found |
 |---|---|---|---|---|
-| `docs/canon/raw/user_turns.md` | Laptop half of the corpus — 676 verbatim human turns, from 2026-07-06 (md) | 2026-08-03 | unreviewed | n/a — this file is the evidence |
-| `docs/canon/raw/user_turns_all.md` | The merged corpus — 803 verbatim human turns, 2026-05-14 to 2026-08-03 (md) | 2026-08-03 | unreviewed | n/a — this file is the evidence |
+| `docs/canon/raw/user_turns.md` | Laptop half of the corpus — 793 verbatim human turns, from 2026-07-06 (md) | 2026-08-03 | unreviewed | n/a — this file is the evidence |
+| `docs/canon/raw/user_turns_all.md` | The merged corpus — 920 verbatim human turns, 2026-05-14 to 2026-08-05 (md) | 2026-08-03 | unreviewed | n/a — this file is the evidence |
 | `docs/canon/raw/user_turns_desktop.md` | Desktop half of the corpus — 127 verbatim human turns, from 2026-05-14 (md) | 2026-08-03 | unreviewed | n/a — this file is the evidence |
-| `docs/canon/raw/user_turns.jsonl` | Laptop half of the corpus — 676 verbatim human turns, from 2026-07-06 (jsonl) | 2026-08-03 | unreviewed | n/a — this file is the evidence |
-| `docs/canon/raw/user_turns_all.jsonl` | The merged corpus — 803 verbatim human turns, 2026-05-14 to 2026-08-03 (jsonl) | 2026-08-03 | unreviewed | n/a — this file is the evidence |
+| `docs/canon/raw/user_turns.jsonl` | Laptop half of the corpus — 793 verbatim human turns, from 2026-07-06 (jsonl) | 2026-08-03 | unreviewed | n/a — this file is the evidence |
+| `docs/canon/raw/user_turns_all.jsonl` | The merged corpus — 920 verbatim human turns, 2026-05-14 to 2026-08-05 (jsonl) | 2026-08-03 | unreviewed | n/a — this file is the evidence |
 | `docs/canon/raw/user_turns_desktop.jsonl` | Desktop half of the corpus — 127 verbatim human turns, from 2026-05-14 (jsonl) | 2026-08-03 | unreviewed | n/a — this file is the evidence |
 
 ## 3. Root and v3 documents
@@ -138,6 +138,7 @@ On the OneDrive state-transfer folder — the flat set; several are not mirrored
 | `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/feedback_judge_run_cost_math.md` | name: judge-run-cost-math | 2026-08-03 | unreviewed | none found |
 | `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/feedback_never_relaunch_expensive_runs.md` | name: never-relaunch-expensive-runs | 2026-08-03 | unreviewed | none found |
 | `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/feedback_orchestrator_mode.md` | name: feedback-orchestrator-mode | 2026-08-03 | unreviewed | none found |
+| `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/feedback_record_the_ruling.md` | name: record-the-ruling-in-the-same-turn | 2026-08-05 | unreviewed | corpus |
 | `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/feedback_react_to_anger.md` | name: react-to-anger-dont-route-around-it | 2026-08-03 | unreviewed | none found |
 | `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/feedback_reusable_tools.md` | name: reusable-tools-not-custom-scripts | 2026-08-03 | unreviewed | none found |
 | `C:/Users/jocke/.claude/projects/C--Coding-exjobbet-GRAG-Job/memory/feedback_trust_revoked.md` | name: trust-revoked-explicit-instruction-only | 2026-08-03 | unreviewed | git refs |
@@ -364,6 +365,6 @@ Stated rather than omitted, because the pile has to be complete to be a worklist
   (ARC, Neural-Nursery, New-Mem-Order) are outside this project.
 - **`v3/` source code and its comments** carry agent-written claims as well. Not enumerated.
 - **Counts.** 9 canon documents + this register, 6 raw records, 6 corpus files, 3 root docs,
-  6 v3 docs, 5 in-repo state docs, 11 OneDrive state docs, 24 live laptop memory files,
+  6 v3 docs, 5 in-repo state docs, 11 OneDrive state docs, 25 live laptop memory files,
   53 desktop memory copies, 32 laptop memory copies, 10 agent definitions, 3 other tree docs,
   57 legacy worktree docs.

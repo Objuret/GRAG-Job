@@ -14,7 +14,7 @@ where does it contradict something he did say?
 
 | Source | What it is | Strength |
 |---|---|---|
-| `docs/canon/raw/user_turns_all.jsonl` / `.md` | 803 verbatim human turns, 2026-05-14 → 2026-08-03, byte-verified against the raw transcripts | first-hand |
+| `docs/canon/raw/user_turns_all.jsonl` / `.md` | 920 verbatim human turns, 2026-05-14 → 2026-08-05, byte-verified against the raw transcripts. This audit's readings were made against the 803 extant on 08-03 | first-hand |
 | `docs/canon/raw/desktop_docs_record.md` | user rulings + verbatim quotes recovered from the May/June desktop design docs | second-hand (agent-written notes of a conversation) |
 | `docs/canon/raw/git_record.md` | 18 numbered contradictions from git objects alone | artifact-level, authorship-blind |
 

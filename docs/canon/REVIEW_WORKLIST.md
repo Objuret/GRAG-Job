@@ -21,7 +21,7 @@ notices. Not by how wrong it looks.
 | Tier | Surface | Why here | Rows |
 |---|---|---|--:|
 | 1 | `CLAUDE.md` | Loads every session, for every agent. A wrong line here is read thousands of times. | 50 |
-| 2 | The 24 live laptop memory files | Auto-load every session. Same reach as tier 1, less scrutiny. | 70 |
+| 2 | The 25 live laptop memory files | Auto-load every session. Same reach as tier 1, less scrutiny. | 70 |
 | 3 | The 10 `.claude/agents/*.md` definitions | Become hard rules the instant an agent spawns. The audit found this surface's grounded-to-invented ratio the worst in the repo. | 50 |
 | 4 | `v3/README.md` | Carries a `## Decided` heading, which makes every line under it a canon claim. | 28 |
 | 5 | Everything else | Inert until someone opens it: `DESIGN.md` + `MODEL_CONTRACTS.md`, the desktop-memory claims, the state docs, the `docs/canon/` documents. | 40 |
@@ -88,7 +88,7 @@ it. Read the blackout rule below before converting any zero into a verdict.
 
 ## Two things that will bite whoever works this list
 
-**The corpus blackouts.** The corpus is 803 turns, 2026-05-14 → 2026-08-03. Nothing survives
+**The corpus blackouts.** The corpus is 920 turns, 2026-05-14 → 2026-08-05; this list's rows were written against the 803 extant on 08-03. Nothing survives
 before 05-14, and **05-16 → 05-26** and **05-29 → 06-26** hold zero turns. A claim whose only
 support would sit in those windows returns zero hits *by construction*. That is
 `cannot-determine`, never `unsupported`.
@@ -196,7 +196,7 @@ whole epistemics layer that nothing has checked.
 
 ---
 
-## Tier 2 — the 24 live laptop memory files (70 claims)
+## Tier 2 — the 25 live laptop memory files (70 claims)
 
 `C:\Users\jocke\.claude\projects\c--Coding-exjobbet-GRAG-Job\memory\`. These auto-load into every
 Claude Code session on this machine — the same reach as `CLAUDE.md`, with none of the scrutiny.

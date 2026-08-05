@@ -17,11 +17,42 @@ had been accumulating as rules — an agent wrote a term or a number, a later ag
 
 Read this file before anything else in `docs/canon/`.
 
-**Two things carry the work.** `raw/user_turns_all.md` is the evidence — his 803 turns, the
+**Two things carry the work.** `raw/user_turns_all.md` is the evidence — his 920 turns, the
 only source of intent, cited by line. `CONTRADICTION_MAP.md` is the live list of where those
 rulings and the system disagree, each collision layered, cited, and carrying what fixing it
 takes: an engine change, a graph rebuild, a doc correction, or a ruling only he can give.
 Everything else in this folder is reference, opened when a specific claim is in dispute.
+
+## The record has an end date, and it is not today
+
+**Check `raw/user_turns_all.jsonl`'s last timestamp before citing the corpus as the record.**
+It is a snapshot, not a live feed: it holds what had been said when the extractor last ran, and
+every ruling given after that exists in conversation only until someone writes it down.
+
+```
+python -c "import json; r=[json.loads(l) for l in open('docs/canon/raw/user_turns_all.jsonl',encoding='utf-8')]; print(len(r), r[0]['iso_timestamp'][:16], r[-1]['iso_timestamp'][:16])"
+```
+
+Keeping it current is two steps, both at commit time, and `CLAUDE.md`'s hard rules require them:
+
+1. **The ruling lands in the file that owns it** — `CONTRADICTION_MAP.md` for a collision,
+   `OPEN_DECISIONS.md` for something still open, the code or `v3/CONSTANTS.md` for a constant or
+   a flag — before the reply goes out.
+2. **The corpus is extended**, so it carries the turn itself. A ruling recorded only in an
+   interpretation document is an agent's paraphrase with no source behind it, which is the
+   condition the 08-02 mining order was given to end.
+
+A corpus that stops being extended rebuilds the problem this folder exists to fix: surfaces
+asserting what the user wants, with nothing underneath them.
+
+**Extend by union. Never overwrite.** `tools/canon_extract.py` reads Claude Code transcripts, and
+Claude Code deletes old ones — so the corpus is **not reproducible from its sources**. A re-run on
+2026-08-05 gained 106 turns and lost one, 2026-07-06 08:07 (*"ok, exactly where are we with the
+whole artefact concept/build?"*), whose session file is gone from disk; the committed corpus is
+now its only copy. Union a fresh extraction into the committed one, account for every turn the
+run drops, and only then write. A plain re-run silently destroys evidence, and the arithmetic in
+`raw/EXTRACT_REPORT*.md` describes the pass that produced the file — it does not describe what a
+later pass would produce.
 
 ## Three kinds of thing. None of them is "authority"
 
@@ -29,7 +60,7 @@ Everything else in this folder is reference, opened when a specific claim is in 
 `raw/user_turns_all.jsonl` · `.md`. Nothing else carries intent — not a document, not a commit,
 not a memory file. **Its one honest caveat: a machine decided what counted as a human turn** —
 across both machines 11,137 user-role records were seen and 10,244 were rejected by a named rule,
-leaving the 803 turns in the corpus (full arithmetic below). The corpus begins 2026-05-14, with
+leaving 803 turns (full arithmetic below); the corpus has since been extended by union to 920, through 2026-08-05. The corpus begins 2026-05-14, with
 chat blackouts 05-16 → 05-26 and 05-29 → 06-26. The rules, tallies, false-negative audits and
 discard samples are in `raw/EXTRACT_REPORT*.md` and `raw/rejected_sample*.md`: audited, not
 infallible.
@@ -70,8 +101,8 @@ a `[CHAT]` quote is checkable in the corpus.
 
 | File | What it is | Standing |
 |---|---|---|
-| `raw/user_turns_all.jsonl` · `.md` | The corpus: 803 verbatim turns, both machines merged, chronological, no edits. | **Intent** — the only source of it (machine-filtered). |
-| `raw/user_turns.*` · `raw/user_turns_desktop.*` | The two halves before merge — laptop 676 (from 07-06), desktop 127 (from 05-14). | **Intent** (machine-filtered). |
+| `raw/user_turns_all.jsonl` · `.md` | The corpus: 920 verbatim turns, both machines merged, chronological, no edits. | **Intent** — the only source of it (machine-filtered). |
+| `raw/user_turns.*` · `raw/user_turns_desktop.*` | The two halves before merge — laptop 793 (from 07-06), desktop 127 (from 05-14). | **Intent** (machine-filtered). |
 | `raw/EXTRACT_REPORT*.md` · `raw/rejected_sample*.md` | The filter's own accounting, **one pair per machine**: counts, per-rule rejects, byte-identity verification, false-negative audit, samples of what was thrown out. Every figure inside is for that machine alone; `_desktop` also carries the merge. | Tool output. Read it to judge how much intent the filter dropped. |
 | `CONTRADICTION_MAP.md` | Every statement of his that something contradicts, layered (V1-GRAPH / V1-ENGINE / V1-ORIGINAL / V2-DESIGN / V3-NATIVE / CROSS) so cross-layer false collisions cannot appear: 12 live collisions with the remedy each needs, 12 tensions awaiting his judgement, 14 near-collisions scoping dissolves, and the standing uncontradicted record. | **Interpretation**, unreviewed. The live list — every entry checkable against the corpus line it cites. |
 | `USER_CANON.md` | 469 quotes selected from the corpus and arranged into 13 design subjects, 10 working-relationship subjects, a 60-row timeline, a never-built inventory. Quotes verbatim; **the choosing, grouping and headings are agent judgement**, and 115 entries are second-hand `[DOC]` recoveries from agent-written docs rather than chat. | **Interpretation**, unreviewed. An index into the record, not the record. |
@@ -157,7 +188,7 @@ table describe the 2026-08-03 snapshot that produced the corpus.
 
 ## Coverage, and where it stops
 
-- **803 turns, 2026-05-14 → 2026-08-03** — laptop 676 + desktop 127, concatenated. Nothing was
+- **920 turns, 2026-05-14 → 2026-08-03** — laptop 793 + desktop 127, concatenated. Nothing was
   removed at merge time; the two halves do not overlap. See the arithmetic below.
 - **Nothing before 05-14 survives as chat.** The first commit is 2026-05-07. That first week — the
   52-file Neo4j pipeline, the 12-entry decision log, the original graph schema, the controlled

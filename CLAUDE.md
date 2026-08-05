@@ -30,8 +30,8 @@
 
 ## Session entry point — read this first
 
-1. **`docs/canon/raw/user_turns_all.md`** — the user's own 803 typed turns,
-   2026-05-14 → 2026-08-03. The only evidence of what he asked for. Any claim about
+1. **`docs/canon/raw/user_turns_all.md`** — the user's own 920 typed turns,
+   2026-05-14 → 2026-08-05. The only evidence of what he asked for. Any claim about
    his intent cites a turn by line (`turns:L<n>`); no turn, no claim.
 2. **`docs/canon/CONTRADICTION_MAP.md`** — where his rulings and the system disagree.
    Each collision is layered, cited, and carries what fixing it takes: an engine
@@ -81,6 +81,20 @@ Details: `graphify-out/REFRESH.md`.
 - **A correction lands in the file, in the same turn.** When the user corrects
   something, the artefact it affects is updated before the reply — never acknowledged in
   conversation and left for later, where it washes away with the context.
+- **So does a ruling, and the record includes his own words.** Anything he decides,
+  reverses, or rules out is written where that thing lives before the reply goes out —
+  and `docs/canon/raw/user_turns*` is extended so it carries the turn itself, not just an
+  agent's paraphrase of it. **Check the corpus's last timestamp before citing it as the
+  record.** A corpus that stops before today cannot be "the only evidence of what he
+  asked for", and a ruling that exists only in an interpretation doc has no source behind
+  it. The canon-mining order (08-02) exists because agents built on their own claims
+  instead of his; a record that stops being extended recreates exactly that.
+- **The corpus is extended by union, never replaced.** `tools/canon_extract.py` reads
+  Claude Code transcripts, and Claude Code deletes old ones: a re-run on 2026-08-05
+  gained 106 turns and *lost* one whose session file no longer exists. The committed
+  corpus is the only surviving copy of anything whose transcript has aged out, so a fresh
+  extraction is unioned into it and every dropped turn is accounted for before the file
+  is written. Overwriting it destroys evidence that cannot be re-derived.
 - **He rules, you propose.** Nothing is marked settled, no file is rewritten, no `v3/`
   code is touched and nothing is deleted without him saying so. Where the contradiction
   map says a fix needs his ruling, ask — one question, when the work reaches it.

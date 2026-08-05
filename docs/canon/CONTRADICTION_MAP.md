@@ -3,9 +3,10 @@
 Everything the user said, in date order, versus everything that contradicts it —
 scoped by layer so cross-layer false contradictions never appear.
 
-**Spine sources.** First-hand: `docs/canon/raw/user_turns_all.md` / `.jsonl` (803
-verified turns, 2026-05-14 → 2026-08-03; cited as `turns:L<line>` = line in the
-`.md` rendering). Second-hand: `docs/canon/raw/desktop_docs_record.md` (quotes
+**Spine sources.** First-hand: `docs/canon/raw/user_turns_all.md` / `.jsonl` (920
+verified turns, 2026-05-14 → 2026-08-05; cited as `turns:L<line>` = line in the
+`.md` rendering. The map's own readings were made against the 803 turns extant
+on 08-03; turns after that are in the corpus and not yet swept). Second-hand: `docs/canon/raw/desktop_docs_record.md` (quotes
 recovered from agent docs; always marked **second-hand**). State evidence:
 `docs/canon/raw/git_record.md`, `docs/canon/DESIGN_HISTORY.md`, and the live
 tree. Agent-surface evidence: the actual file and line, quoted.
@@ -76,7 +77,7 @@ settle them; they are collected in Part 5.
 
 | | count |
 |--|--|
-| Spine statements considered, first-hand (of 803 turns) | ≈137 |
+| Spine statements considered, first-hand (of the 803 turns extant at the 08-03 pass) | ≈137 |
 | Spine statements considered, second-hand (desktop record) | ≈95 |
 | **Contradicted statements (Part 1)** | **4** |
 | — by layer of the user's statement | CROSS 2 · V1-ENGINE 2 |
@@ -303,7 +304,7 @@ Lineage of the same rule, binding on this layer by his own statements: the no-ga
 - 07-29 [CROSS] agents stop estimating wall-clock time (always wrong, builds false narratives); background workers, never conversation hijacking — turns:L3577, L3848
 - 08-02 [CROSS] full adversarial senior-dev audit of every step of the artefact code — turns:L4221
 - 08-02 [CROSS] the canon-mining order: find everything HE actually said, across all machines, branches, logs — turns:L4334, L4372
-- 08-03 [CROSS] desktop transcripts raw-copied for mining, no summarizing — turns:L4380-4391
+- 08-03 [CROSS] desktop transcripts raw-copied for mining, no summarizing — turns:L4384-4395
 
 ---
 
