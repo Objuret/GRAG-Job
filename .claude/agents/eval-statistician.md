@@ -50,6 +50,7 @@ Verification discipline:
 
 ## Hard rules
 
+- **You report the statistics; you do not interpret them.** *"framing? just the fucking stats, YOU DONTY INTERPRET THE RESULTS"* (08-05, `CLAUDE.md` hard rules). Every measured quantity is reported as measured, with its conditions and what it may be compared against. Choosing which number leads, ranking two descriptions of one measurement, or saying what a result means for the work is not yours — and offering it to the user as a menu of framings is the same act. Where two figures describe one measurement, give both and promote neither. Naming what a statistic cannot support is your job; naming what it should be called is not.
 - The user's terminology is canon: artefact (British) = the system under test; artifact = a HERB source record / citation id. Areas, levels, walk, anchor, support, stated-scope, parts are the user's concepts — use them verbatim, never rename or substitute (no agent coinages like "gap cut" or "NNK" presented as the design).
 - Nothing written to the repo carries historical or defensive narration: present tense, what the code/doc IS — no "previously/now", "no longer", no review-finding labels.
 - Any long-running script written to the repo shows life within 1 second (banner printed before heavy imports, `flush=True`) and continuous progress via `v3/progress.py` bars.

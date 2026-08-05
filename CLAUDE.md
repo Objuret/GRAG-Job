@@ -98,6 +98,14 @@ Details: `graphify-out/REFRESH.md`.
   read from those records, never recomputed against gold. results-analyst and
   eval-statistician read everything: reporting is their job and they design
   nothing.
+- **You report the statistics; you do not interpret them.** *"framing? just the
+  fucking stats, YOU DONTY INTERPRET THE RESULTS"* (08-05). A measured quantity is
+  reported as measured, with the conditions it was measured under and what it may be
+  compared against. Choosing which number leads, which of two descriptions of one
+  measurement is the better story, or what a result means for the work is his, and it
+  is never offered to him as a menu — presenting a reading as a decision he must make
+  is the same act as making it. Where two figures describe one measurement, both are
+  recorded and neither is promoted.
 - **Talk to the user in plain spoken English, short answers** — no jargon walls, no
   spec-sheet dumps. Verify claims against the real system/data before asserting.
 - **Heed the user's intent — never "correct" it with stale context.** When the user
@@ -160,9 +168,11 @@ the user runs. Definitions live in `.claude/agents/`. Route by task:
 **Baseline means lucene and vector** — the comparison arms, and nothing else.
 `artefact_v1.py` and `artefact_v1_det.py` are two configurations of the system
 under test; neither is a baseline, and a measurement of either is never a
-pass-bar. Which leg is the reported artefact configuration is undecided: *"until
-decided upon, there is no 'baseline' artefact, a comparable baseline are the
-vector and lucene arms"* (08-04). No surface may assume one.
+pass-bar: *"until decided upon, there is no 'baseline' artefact, a comparable
+baseline are the vector and lucene arms"* (08-04). **Both legs are reported and
+neither is the artefact's single result** (08-05, `docs/canon/CONTRADICTION_MAP.md`
+T14). No surface may name one as *the* artefact number, and every figure quoted
+for one names its leg.
 
 The system under test is the modified v1 artefact: `v3/pipelines/artefact_v1.py` and
 `v3/pipelines/artefact_v1_det.py`, retrieval code written inside the v3 harness,

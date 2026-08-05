@@ -26,9 +26,10 @@ those answers with RAGAS.
 
 The system under test is the modified v1 artefact, querying the `herb-eval` graph:
 `pipelines/artefact_v1.py` plans with a model, `pipelines/artefact_v1_det.py` plans
-deterministically. They are two configurations of it, not baselines, and which leg is
-the reported one is undecided — the ruling and what it forbids are in `CLAUDE.md`
-§"Artefact arm", the numbers under it in `output/DATA_README.md`.
+deterministically. They are two configurations of it, not baselines, and both are
+reported — neither is the artefact's single result, and every figure names its leg. The
+ruling and what it forbids are in `CLAUDE.md` §"Artefact arm", the numbers under it in
+`output/DATA_README.md`.
 
 Every arm answers with the **same generator** (built once in the orchestrator and
 injected), so any difference is retrieval, not the LLM. Beyond that generator and
@@ -192,9 +193,9 @@ three modes is the pending step — see Still open.)
 
 - **Orchestrator split** into the three `questions` / `evals` / `full` modes, with a
   per-run-folder run identity (so a gold-100 run and a full run don't clobber).
-- **Which framing of the matched-budget result ships** — the absolute recall gap or the
-  ratio (`docs/canon/CONTRADICTION_MAP.md` T10). k is 50 and user-set; what a common k
-  buys per arm is what differs.
+- **A matched-character-budget comparison at n=100.** The only one that exists is the
+  `__b72000` family on 10smoke (n=10), and it binds the artefact arm alone. The 500-id
+  runs match ids exactly and characters not at all.
 - **Which set to run** — gold-100 (built; seeded stratified draw) vs the full 815 + 699.
 - **Judge calibration** subset size (to validate the judged RAGAS metrics).
 

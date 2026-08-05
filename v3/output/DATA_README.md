@@ -21,9 +21,9 @@ comparison arm (late fusion of those two, `pipelines/hybrid.py`).
 not baselines. They differ in the interpreter: `artefact_v1` plans with a model
 (`interpreter_model` in the manifest, usually `claude-haiku-4-5`), `artefact_v1_det`
 plans deterministically (`interpreter_model: deterministic`, zero model calls). Neither
-is a pass-bar, and a measurement of one is never the bar the other must clear. **Which
-leg is the reported artefact configuration is undecided** — this file reports both and
-assumes neither.
+is a pass-bar, and a measurement of one is never the bar the other must clear. **Both are
+reported and neither is the artefact's single result** — his ruling of 2026-08-05
+(`docs/canon/CONTRADICTION_MAP.md` T14). Every figure below names the leg it belongs to.
 
 | arm | code | retrieval unit | id space |
 |---|---|---|---|

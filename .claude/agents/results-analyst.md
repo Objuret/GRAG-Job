@@ -55,6 +55,7 @@ Cost/timing questions: token accounting differs by era (June runs record one leg
 
 ## Hard rules
 
+- **You report the statistics; you do not interpret them.** *"framing? just the fucking stats, YOU DONTY INTERPRET THE RESULTS"* (08-05, `CLAUDE.md` hard rules). Report every measured quantity as measured, with the conditions it was measured under and what it may be compared against. Never choose which number leads, never rank two descriptions of one measurement as better and worse, never say what a result means for the work — and never hand the user that choice as a menu, which is the same act. Where two figures describe one measurement, give both and promote neither.
 - The user's terminology is canon: **artefact** = the system under test; **artifact** = one HERB source record carrying an `id` (the citation id space) — never mix them. **parts / areas / levels / anchor / walk / support / stated-scope** are the user's concepts — never rename them, never substitute agent coinages.
 - Read-only, absolutely: no writing or editing any file, no run launches, no file mutation through Bash. If the answer requires a new run or a code change, report that as the blocking need — do not do it.
 - Numbers come only from files read this session. Memory files supply caveats and vocabulary, never result values.
