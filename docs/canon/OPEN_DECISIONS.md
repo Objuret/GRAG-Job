@@ -13,9 +13,9 @@ states the evidence, its date, its source, and what a ruling from him would sett
 All dates are 2026. `[CHAT]` = his own keystrokes; `[DOC]` = recovered from an agent-written doc
 that quoted him. Trust ordering and coverage limits: `README.md`.
 
-**Counts.** §1 unresolved reversals **7** · §2 specified and never built **23** · §3 questions
+**Counts.** §1 unresolved reversals **7** · §2 specified and never built **24** · §3 questions
 never answered **12** · §4 instructions recorded nowhere **17** · §5 audit findings awaiting a
-ruling **28**. **87 open items.**
+ruling **28**. **88 open items.**
 
 ---
 
@@ -253,7 +253,7 @@ The research catalog is candid that none of this is settled science: *"No benchm
 this on short context-free phrase-tags into a small facet set; the behavior on a real tag corpus is
 an experiment, not a literature fact."*
 
-### 2C — Constants no artifact ever derives (4)
+### 2C — Constants no artifact ever derives (5)
 
 Against his standing rule: *"i do NOT like arbitrary choices for k or any number or value, fucking
 BASE it on something"* — **[CHAT] 07-15**. `USER_CANON.md` §7 and Part IV C.
@@ -271,7 +271,27 @@ hardened it to "fixed by design" with no decision behind it (§5, item A13).
 
 **15. `POOL_FETCH`, the 64-chunk limit, `K_LEVELS`.** *"also, arbitrarily decided hard limits, like
 the 64 chunk limit, i bet there is way more than 1 of these dumb limits lying around not beeing
-seen"* — **[CHAT] 08-02**. Never enumerated since.
+seen"* — **[CHAT] 08-02**. Enumerated since: `v3/CONSTANTS.md` inventories every constant in the
+tree and classes 148 of 305 rows `unknown`.
+
+**16. Whether a derived stop rule exists on these objects at all.** The question underneath decision
+**23**. His ruling requires K to come from the clustering rather than from `K_LEVELS` — but every
+mechanism tried so far decides where a query's evidence ends with a number somebody picked:
+`_gap_break`'s two-sigma threshold, its three-gap minimum history and its 1e-9 floor; the value-knee;
+the chord walk. On the one that ships, the 07-22 panel measured the statistic as carrying almost no
+order information — shuffled gaps give 60.1±4.1 stops against 67 real — and recorded that no
+spacing-based rule is calibratable on these chains.
+
+**The open question: does any quantity computable from what the arm already has decide a stop without
+a hand-set threshold?** The available objects are the tag pool's pairwise embedding distances, the
+average-linkage dendrogram and its merge heights, the per-part support, the description
+neighbourhood, and the stated-scope matching set. Nobody has established that one exists, and nobody
+has established that none does.
+
+If none does, the ruling cannot be satisfied as stated, and what it becomes is his: a derived K
+resting on a stated approximation, or `K_LEVELS` kept and declared arbitrary in the write-up. Neither
+is chosen here. A proposal answering this is a proposal, not a ruling — and a rule that needs a
+hand-set threshold has not answered it.
 
 ### 2D — Adopted, then silently un-adopted, with no reversal recorded (5)
 
@@ -356,12 +376,10 @@ stand between the ruling and code, and none of them is settled by it:
 
 - **The walk has to run.** Decision **21** — in the flat regime the level chain is built and
   discarded, so there is nothing for a K to be derived from.
-- **The stop rule has to be derived too.** The one path where clustering decides K today is
-  `HERB_CURVE_WALK`, and its stop is `_gap_break`: `gap > mean + 2·std + 1e-9` over the gaps walked
-  so far. The 2.0, the three-gap minimum history and the 1e-9 floor are each `unknown` in
-  `v3/CONSTANTS.md`, and the 07-22 panel measured the statistic as carrying almost no order
-  information (shuffled gaps give 60.1±4.1 stops against 67 real). Substituting one made-up number
-  for another is not what the ruling asks for.
+- **The stop rule has to be derived too**, and whether one exists on these objects at all is
+  itself unsettled — decision **16**. The path where clustering decides K today stops on
+  `_gap_break`, whose threshold, warm-up and floor are all picked, so enabling it substitutes one
+  made-up number for another rather than satisfying the ruling.
 - **R3 stays open.** Whether the clusters are computed at build or per query is a separate question
   and this ruling does not touch it.
 
