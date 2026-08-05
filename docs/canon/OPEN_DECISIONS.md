@@ -306,7 +306,43 @@ generalizes beyond HERB — see **R6** — and the sole stated rationale for the
 **21. The 08-02 tag-layer diagnosis.** He pasted it — the tag path finds 3 chunks/question out of a
 ~418-chunk pool, zero widening levels ever open, `GUIDE_TAU = 0.0` makes every tag's guide value
 exactly 1, and `HERB_TAG_FIRST` bundles a walk restructure with a gate — and answered *"so, lets fix
-that and try it"* **[CHAT] 08-02**. Whether it was fixed is not in the record.
+that and try it"* **[CHAT] 08-02**. Where each part stands:
+
+- **The gate.** `HERB_TAG_FIRST` and `HERB_TAG_ADMIT` are not knobs in the engine and the combine has
+  a single ranking path, on his 08-04 ruling that tags route and weight but never exclude
+  (`CONTRADICTION_MAP.md` Part 1 entry 4).
+- **`GUIDE_TAU`.** It is `0.01` (`artefact_v1.py` · `GUIDE_TAU`), held to that value by
+  `check_constants.py`; the diagnosis's `0.0` describes no shipped configuration. The value is
+  underived — `v3/CONSTANTS.md` classes it `unknown`.
+- **The widening walk is inert, and that is what remains open.** In the flat regime the description
+  lookup (64 chunks) and the stated-scope path (136 at its floor — the smallest product partition of
+  4,869 retrievable chunks) fill the pool before the widening loop's first check, which breaks at
+  `len(pool) >= k`. At k=50 no level opens. The dendrogram chain above the anchor is built per part
+  per question and never walked; the tag path carries one chunk on 89 of 100 questions.
+
+**The option set reduces to two.** Reordering the walk ahead of description and stated scope, and
+counting tag reach at the gate (`HERB_WALK_GATE=1`), are the same code path: during the loop `pool`
+is written only by `open_level`, so `pool ≡ tag_reached` throughout and the break fires at the same
+level. Both are already measured, at 0.7135 against the shipped default's 0.7339. Bounding stated
+scope and decoupling the description width from `K_LEVELS[-1]` are each individually inert — either
+path alone still fills the pool past k=50 — though the width is separately his (`turns:L4217`, the 64
+he named) and is decision 15 below.
+
+**Why 0.7135 does not settle it.** Counting tag reach moves the tag path's normalization pool from
+one element — where min-max returns a constant 1.0, carrying no query information — to ~141 with real
+spread, so membership and the value system change together. No constant-depth control at matched mean
+depth exists, which is the comparator that decided the curve cut. Every cell ran under
+`NORM_SCOPE=per_path`, and no `WALK_GATE × global` run exists. And `context_recall_id` is a set
+metric, with no rank-aware metric anywhere in `eval/ragas_catalog.py`, so it cannot see a re-ranking
+that does not cross k.
+
+**What a blind answer needs.** Choosing among the options by gold-100 recall is the exposure named in
+`CONTRADICTION_MAP.md` Part 1 entry 1. The blind route runs through an `artefact_v1_det` held-out-100
+run, which `v3/output/DATA_README.md` records as absent.
+
+**Related.** The curve regime has no pool-size test at all, so the walk is live there; what stops a
+walk is the single question underneath both regimes, and his own *"i dont think the walk and the 'best
+fit' is helping eachother, you?"* (07-22) is the question form of it, recorded at **C11**.
 
 **22. The evidence-cap / matched-token-budget work.** Existed only inside the thread he ordered
 fully reverted on 07-28 (*"no, there is no semi-revert option here, either you absorb the knowledge
