@@ -350,7 +350,20 @@ or its gone"*) and did not survive the revert. It is the work that would answer 
 diagnosis: *"k=50 does not mean the same for all arms, and thats retarded"*.
 
 **23. Cluster-K itself.** Defined 07-21, respecified 07-31, **never on the load-bearing path in any
-shipped configuration**. Gated on **R3**.
+shipped configuration**. **Ruled 2026-08-05: it belongs there.** *"yes, i do want the k, not the made
+up bullshit"* — per-query K derived from his clustering, not the `K_LEVELS` staircase. Three things
+stand between the ruling and code, and none of them is settled by it:
+
+- **The walk has to run.** Decision **21** — in the flat regime the level chain is built and
+  discarded, so there is nothing for a K to be derived from.
+- **The stop rule has to be derived too.** The one path where clustering decides K today is
+  `HERB_CURVE_WALK`, and its stop is `_gap_break`: `gap > mean + 2·std + 1e-9` over the gaps walked
+  so far. The 2.0, the three-gap minimum history and the 1e-9 floor are each `unknown` in
+  `v3/CONSTANTS.md`, and the 07-22 panel measured the statistic as carrying almost no order
+  information (shuffled gaps give 60.1±4.1 stops against 67 real). Substituting one made-up number
+  for another is not what the ruling asks for.
+- **R3 stays open.** Whether the clusters are computed at build or per query is a separate question
+  and this ruling does not touch it.
 
 ---
 
