@@ -84,7 +84,7 @@ settle them; they are collected in Part 5.
 | — carrying a type-(a) self-reversal | 0 |
 | — carrying type-(b) built-state evidence | 4 (V1-ENGINE 3 · CROSS 1) |
 | — carrying type-(c) agent-surface claims | 2 (both CROSS) |
-| Possible tension, judgement needed (Part 2) | 13 (V1-ENGINE 5 · CROSS 4 · V1-GRAPH 4) |
+| Possible tension, judgement needed (Part 2) | 14 (V1-ENGINE 5 · CROSS 4 · V1-GRAPH 5) |
 | Cross-layer near-collisions dissolved by scoping (Part 3) | 14 |
 | Standing (uncontradicted) statements (Part 4) | 84 subject-lines (closely-related turns merged) |
 | Layer-ambiguous statements (Part 5) | 5 |
@@ -187,6 +187,10 @@ Lineage of the same rule, binding on this layer by his own statements: the no-ga
   **It breaches his own standing rule.** "the actual content should never exist in the graph at all" (07-06, turns:L538) — Part 3, D3, records V1-GRAPH as compliant on chunk *content*, and it is; the tag layer is where the copies survive, and D3 does not cover it.
   **Why it is load-bearing now.** Any rule that reads structure out of tag-to-tag distance finds the slug bins before it finds evidence, because they are the strongest structure in the space. That is what closes the derived-K design at `OPEN_DECISIONS` 16, and the 07-22 panel had already measured the symptom — two different CoachForce questions producing an identical chain and an identical K=5. The only in-engine mitigation is excluding slug or digit tags from the pool, which is a hard filter on the tag layer and collides head-on with Part 1 entry 4 and the 07-15 no-gates ruling.
   **Layer & fix:** **graph retag** — V1-GRAPH, so no retrieval-code edit reaches it, and it is the third baked problem beside T3 and T9. Nobody has proposed the rebuild. What is open is his: retag, accept and declare the tag layer's provenance, or stop resting design decisions on tag geometry. [V1-GRAPH]
+- **T16 · most of the corpus never becomes a chunk, and nothing records that as a decision.** Measured (`state:2026-08-02-corpus-facts.md`): **7 of 38 leaf positions in the HERB mapping key are declared content — 42,774 of 304,253 leaf instances, 14.1%.** The other 85.9% is present in the raw files and reaches no chunk, so it is unreachable by any arm that queries the graph. Re-derivable: census `v3/data/corpus/Salesforce__HERB/**` against the `content:` entries in `v3/artefact/keys/Salesforce__HERB.yaml`. Two findings in the same record bound it: the key declares 6 sections and the code reads only `content` and `conversation` — `sources`, `directories` and `id_spaces` are read by zero lines — and all 3 metadata files produce 0 chunks.
+  **Why it is a tension and not a defect.** Selecting which leaf positions carry retrievable content is a real design choice, and 14.1% may be the right one. What is missing is any record that it *was* a choice: no turn of his selects it, and no doc states it as decided. It is the shape of the thing he objects to — *"i do NOT like arbitrary choices for k or any number or value, fucking BASE it on something"* (07-15, turns:L779) — applied to coverage rather than to a constant.
+  **What it bounds.** Every recall number the project reports is against gold citations that live in the raw files; if a gold citation's text sits in one of the 31 undeclared leaf positions, no arm querying the graph can reach it and the ceiling is not what the id arithmetic says. Whether that happens, and how often, is unmeasured.
+  **Layer & fix:** **graph rebuild** if the declared set changes — V1-GRAPH, chunking is baked. A **user ruling** on whether 14.1% coverage is the intended design; the measurement to bound its cost is cheap and has never been run. [V1-GRAPH]
 
 ---
 
