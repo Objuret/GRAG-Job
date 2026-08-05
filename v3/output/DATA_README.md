@@ -361,12 +361,21 @@ arm at depth k.
 runs 0.0217 → 0.0894 for lucene and 0.0284 → 0.1129 for vector across that range. These
 were produced by re-slicing the k=50 runs, not as fresh runs at each depth.
 
-The artefact arm has no valid gold-100 depth curve. Its k=50 run lacks `meta.chunk_ids`,
-so truncating it discards the chunks' own ids and measures a truncated id list — the
-`__k25` slice read 0.1309 against the parent's 0.6363 for that reason alone. The only
-sound artefact depth curve is on 10smoke with ids rebuilt: 0.1804 / 0.3313 / 0.4453 /
-0.7269 at k = 5 / 10 / 20 / 50 (n=10). A gold-100 artefact depth curve needs a fresh run
-per depth, or a k=50 run that records `meta.chunk_ids`.
+**The interpreting leg** has no valid gold-100 depth curve: `artefact_v1__gold100__20260718T231758Z`
+carries no `meta.chunk_ids` on any of its 100 rows, so truncating it discards the chunks' own ids and
+measures a truncated id list — the `__k25` slice read 0.1309 against the parent's 0.6363 for that
+reason alone. Its rows fail `truncate_k.truncate_record`'s own guard (`len(context_ids) !=
+len(contexts)` on 100/100). A depth curve for that leg needs a fresh run per depth, or a k=50 run
+that records the field.
+
+**The det leg does not have that problem.** `artefact_v1_det.py` writes `meta.chunk_ids`
+unconditionally, and `artefact_v1_det__gold100__20260801T072455Z` carries it on 100/100 rows: outer
+length 50 = `len(contexts)` on every row, and dedup-flattening it in order reproduces the stored
+`context_ids` exactly — same ids, same order, 100/100. `artefact_v1_clusterKglob__gold100__20260723T170853Z`
+carries it too. So a gold-100 depth curve, and a constant-depth control at any depth, come from
+`truncate_k.py` on either of those with no new run.
+
+The 10smoke curve with ids rebuilt: 0.1804 / 0.3313 / 0.4453 / 0.7269 at k = 5 / 10 / 20 / 50 (n=10).
 
 ## Sweep families
 

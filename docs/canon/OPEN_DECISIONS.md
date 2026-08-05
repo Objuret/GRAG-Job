@@ -293,6 +293,37 @@ resting on a stated approximation, or `K_LEVELS` kept and declared arbitrary in 
 is chosen here. A proposal answering this is a proposal, not a ruling — and a rule that needs a
 hand-set threshold has not answered it.
 
+**Measured 2026-08-05, and it reframes the whole question: per-query K has never bound on gold-100.**
+The only surviving gold-100 run where the clustering decides K,
+`artefact_v1_clusterKglob__gold100__20260723T170853Z`, has `meta.curve_walk.kept` = 50 on 100 of 100
+questions — a point mass — against a `semantic` minimum of 122, so `kept_k = min(len(semantic), k)`
+took the caller's ceiling every time. The stop rule fired on all 100 (`stopped` true, 7–146 levels
+opened) and never reached the depth. **Every number ever quoted for that configuration is ordering
+and membership; none of it measures a derived K.** Two consequences: the mechanism is untested rather
+than tested-and-weak, and a derived K only becomes observable at all where the walk gathers fewer
+than k chunks.
+
+**A standing proposal against this question (2026-08-05, unaccepted).** A constant-free edge exists:
+per chain level, `a` = mean distance inside the cluster, `b` = mean distance from it to the pool
+remainder, and the area's edge is the last level where `a < b` — an identity, not a threshold, and
+his 07-31 *"best fit as the fuzzy cutoff-point for the cluster's edges"* read literally. What blocks
+it is **V1-GRAPH, not mathematics**: 14.4% of tags are verbatim slugs of source fields (1,636 PR
+titles, 1,199 URLs) and 14.6% carry a digit, and the tightest cluster in the tag space is 488
+`github_pr_NNNN` tags at 0.94 intra-cosine. The strongest mutual-distance structure available is the
+contamination, so a boundary-finder finds that first — which is what the 07-22 panel saw when two
+different CoachForce questions produced an identical chain and identical K=5. The remedy is a
+**retag**; the only in-engine alternative is filtering slug tags from the pool, which is a hard
+filter on the tag layer and collides with Part 1 entry 4. A gold-free, question-free probe over ~200
+pseudo-queries would settle whether the verdict holds, at zero model cost, with its decision rule
+stated before it runs. **Unauthorised as of this writing.**
+
+**And one structural fact that bounds what a derived K can ever be claimed to do.**
+`context_recall_id` is a set metric over the union of the kept chunks' ids, so dropping a chunk can
+only remove ids: for any K ≤ k on the same ordering, recall can only hold or fall. A derived K
+cannot improve the project's deterministic endpoint — it is an efficiency claim (ids and characters
+given up per point of recall), never a recall claim, and any past "K mechanism raised recall" result
+was ordering travelling with it.
+
 ### 2D — Adopted, then silently un-adopted, with no reversal recorded (5)
 
 `USER_CANON.md` Part IV D.
