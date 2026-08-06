@@ -497,9 +497,27 @@ three together cost most.
 | `artefact_v1_detK…20260721T230502Z` | 0.6368 | −0.0971 | 377.0 |
 
 Their manifests are identical apart from the timestamp — every `HERB_*` flag sits at the
-default and no other field distinguishes them. **What each varied is not recoverable from
-disk.** The scores are real; the attribution is not. `detK` retrieves 37.1 contexts /
-377 ids on average, so it clearly cut the pool, but the mechanism is unrecorded.
+default and no other field distinguishes them, so **the attribution is not recoverable from
+the run folders**. It survives in one place only: the machine-local state doc
+`2026-07-22-v1-curve-walk-facets-and-cluster-k.md`, which names each and reports the same
+recall figures this table recomputes from disk, to the digit.
+
+| run | what it varied, per that doc | sets changed vs baseline |
+|---|---|---|
+| `detf` | the facet support-shaper placement | 43/100 |
+| `detA` | all facet placements (reported identical to `detf`) | 43/100 |
+| `detE` | the per-edge facet placement | 5/100 |
+| `detR` | the facet router — distance stretching | **0/100** |
+| `detW` | the curve walk before the `_height_edge` isolated-anchor fix | — |
+| `detW2` | the curve walk after it | — |
+
+That doc is machine-local, agent-written and unreviewed, so this is attribution by a single
+uncorroborated source — but it is the only one, and the numbers agree. Two things it records
+that bear on live questions: `detR` changed nothing because the widening never fires in the
+shipped build, and `detW2` kept exactly 50 on all 100 questions, so its per-query K never
+bound either. It also states that `detW`/`detW2` bundled three membership changes at once, so
+their +0.003 is not attributable to any one mechanism. `detK` retrieves 37.1 contexts / 377
+ids on average, so it clearly cut the pool; that doc does not say how.
 
 ### Named det experiments (2026-07-25 → 07-28), vs the shipped default 0.7339
 
@@ -593,8 +611,9 @@ State these as gaps, not as results either way.
 - **No cost or wall-clock comparison of the arms at a matched budget.** Judge-side token
   usage was never persisted for any eval in this shipment (`judge_usage: null`
   everywhere).
-- **What `detA` / `detE` / `detR` / `detf` / `detW` / `detW2` / `detK` varied.** Not
-  recorded in any manifest field.
+- **What `detK` varied.** Not recorded in any manifest field. The rest of that family —
+  `detA` / `detE` / `detR` / `detf` / `detW` / `detW2` — is attributed by one machine-local
+  state doc and by nothing on disk (see the probe table above).
 
 ---
 

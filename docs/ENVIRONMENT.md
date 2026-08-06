@@ -88,6 +88,13 @@ each).
 Two traps: `--bare` skips keychain reads and fails with "Not logged in"; and headless
 reads stdin, so redirect it (`< /dev/null`) to avoid a 3s stall.
 
+Measured throughput, 2026-07-17, haiku: **5.3 s per verdict serial, and 4 verdicts in
+6.6 s concurrently.** That is the only latency figure anyone has recorded for this lane,
+and it is what a judge-run cost estimate should be built on rather than a guess. Source:
+the machine-local `2026-07-17-judge-shootout-rebuilt-artefact-v1-laptop.md`; not
+re-measured since, and no judge run in `v3/output/` persisted timing to check it against
+(`judge_elapsed_s` is null in every eval manifest).
+
 ### State-transfer docs
 
 They sit **flat** under the OneDrive additional working directory —
