@@ -1,0 +1,41 @@
+{
+  "arm": "artefact_v1_five_questions",
+  "generator_model": null,
+  "interpreter_model": "deterministic",
+  "top_k": 50,
+  "questions_file": "C:\\Coding\\exjobbet\\GRAG-Job\\v3\\data\\questions.jsonl",
+  "n_questions": 100,
+  "n_ran": 100,
+  "n_failed": 0,
+  "timestamp": "2026-08-12T13:50:05.884301+00:00",
+  "build_stats": {
+    "build_time_s": 54.65394120011479,
+    "model": {
+      "calls": 0,
+      "tokens_in": 0,
+      "cached_input_tokens": 0,
+      "tokens_out": 0,
+      "reasoning_tokens": 0,
+      "time_s": 0.0
+    },
+    "models": [
+      "nvidia/llama-nemotron-embed-1b-v2"
+    ]
+  },
+  "retrieval_flags": {
+    "HERB_FQ_ROLE_SOURCE": "derived",
+    "HERB_FQ_ROLE_FIT": "raw",
+    "HERB_FQ_ENTITY_AGG": "max",
+    "HERB_FQ_ACTIVITY_AGG": "max",
+    "HERB_FQ_EVIDENCE": "label",
+    "HERB_FQ_SILENT": "floor",
+    "HERB_FQ_COMBINE": "additive",
+    "HERB_FQ_W_TOPIC": 1.0,
+    "HERB_FQ_W_ENTITIES": 1.0,
+    "HERB_FQ_W_ACTIVITY": 1.0,
+    "HERB_FQ_W_TEMPORAL": 1.0,
+    "HERB_FQ_W_EVIDENCE": 1.0,
+    "HERB_FQ_TIME_SCALE": 0.0,
+    "HERB_FACET_PRIOR": 0.5
+  }
+}

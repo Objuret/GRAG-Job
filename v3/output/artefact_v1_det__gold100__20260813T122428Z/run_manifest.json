@@ -1,0 +1,51 @@
+{
+  "arm": "artefact_v1_det",
+  "generator_model": null,
+  "interpreter_model": "deterministic",
+  "top_k": 50,
+  "questions_file": "C:\\Coding\\exjobbet\\GRAG-Job\\v3\\data\\questions.jsonl",
+  "n_questions": 100,
+  "n_ran": 100,
+  "n_failed": 0,
+  "timestamp": "2026-08-13T12:26:14.827614+00:00",
+  "build_stats": {
+    "build_time_s": 6.510030800003733,
+    "model": {
+      "calls": 0,
+      "tokens_in": 0,
+      "cached_input_tokens": 0,
+      "tokens_out": 0,
+      "reasoning_tokens": 0,
+      "time_s": 0.0
+    },
+    "models": [
+      "nvidia/llama-nemotron-embed-1b-v2"
+    ]
+  },
+  "retrieval_flags": {
+    "HERB_CURVE_WALK": false,
+    "HERB_DOOR_TRACE": false,
+    "HERB_DESC_CUT": true,
+    "HERB_FRESH_INTERP": false,
+    "HERB_NO_REVIEW": false,
+    "HERB_AGG": "sum",
+    "HERB_NORM": "relative",
+    "HERB_NORM_SCOPE": "per_path",
+    "HERB_W_TAG": 1.0,
+    "HERB_W_DESC": 1.0,
+    "HERB_W_SCOPE": 1.0,
+    "HERB_STR_FACET": 0.0,
+    "HERB_STR_WCHUNK": 1.0,
+    "HERB_STR_RELEVANCE": 1.0,
+    "HERB_STR_DESC_HINT": 1.0,
+    "HERB_STR_SCOPE_MATCH": 1.0,
+    "HERB_DESC_HINT_M": 2.0,
+    "HERB_STR_GUIDE": 0.0,
+    "HERB_GUIDE_TAU": 0.01,
+    "HERB_GUIDE_C": 128,
+    "HERB_GUIDE_M": 1.5,
+    "HERB_GUIDE_LAMBDA": 0.05,
+    "HERB_GUIDE_SEED": 20260731,
+    "HERB_DET_FACETS": null
+  }
+}
