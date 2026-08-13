@@ -1,0 +1,74 @@
+{
+ "db_census": {
+  "channel_edges": 2669,
+  "channel_nodes": 294,
+  "involves": {
+   "doc_author": 786,
+   "participant": 9964,
+   "pr_author": 3492,
+   "reviewer": 4349,
+   "speaker": 13690
+  },
+  "mentions": {
+   "cust": 1043,
+   "eid": 8591
+  },
+  "person_kinds": {
+   "cust": 120,
+   "eid": 514,
+   "emp": 4590,
+   "malformed": 9
+  },
+  "person_total": 5233,
+  "product_edges": 4808,
+  "product_nodes": 30
+ },
+ "derived_census": {
+  "channel_edges": 2669,
+  "channel_nodes": 294,
+  "involves": {
+   "doc_author": 786,
+   "participant": 9964,
+   "pr_author": 3492,
+   "reviewer": 4349,
+   "speaker": 13690
+  },
+  "mention_persons": {
+   "cust": 120,
+   "eid": 514
+  },
+  "mentions": {
+   "cust": 1043,
+   "eid": 8591,
+   "emp": 0
+  },
+  "person_kinds": {
+   "eid": 512,
+   "emp": 4590,
+   "malformed": 9
+  },
+  "product_edges": 4808,
+  "product_nodes": 30
+ },
+ "elapsed_s": 10.3,
+ "mention_only_persons": {
+  "cust": 120,
+  "eid": 2
+ },
+ "person_total": 5233,
+ "relationship_types": {
+  "channel": "IN_CHANNEL",
+  "involves": "INVOLVES",
+  "mentions": "MENTIONS",
+  "product": "IN_PRODUCT"
+ },
+ "structured_persons": 5111,
+ "target_database": "herb-eval-v2",
+ "timestamp": "2026-08-12T20:37:09Z",
+ "written": {
+  "channel_edges": 2669,
+  "involves": 32281,
+  "mentions": 9634,
+  "product_edges": 4808
+ }
+}

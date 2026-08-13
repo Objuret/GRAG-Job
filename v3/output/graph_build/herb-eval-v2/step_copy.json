@@ -1,0 +1,174 @@
+{
+ "constraints_recreated": 7,
+ "elapsed_s": 1018.9,
+ "indexes_recreated": 17,
+ "nodes_copied": 24619,
+ "rels_copied": 72815,
+ "source_before": {
+  "checksums": {
+   "chunk_id_chars": 116856,
+   "desc_emb_present": 4869,
+   "desc_emb_sum": 781.5247437889192,
+   "file_bytes_sum": 28923399,
+   "has_tag_run_id_present": 67913,
+   "has_tag_w_chunk_sum": 37248.64999999994,
+   "tag_emb_present": 19716,
+   "tag_emb_sum": -29210.289297089657,
+   "tag_name_chars": 481627,
+   "token_estimate_sum": 3850319
+  },
+  "labels": {
+   "Chunk": 4869,
+   "File": 33,
+   "Source": 1,
+   "Tag": 19716
+  },
+  "node_prop_coverage": {
+   "Chunk": {
+    "channel": 2669,
+    "chunk_id": 4869,
+    "chunk_ref": 4869,
+    "created_at": 4869,
+    "desc_emb": 4869,
+    "doc_field": 569,
+    "employee_id": 30,
+    "end_offset": 4869,
+    "file_id": 4869,
+    "item_index": 1163,
+    "kind": 4869,
+    "locator_json": 4869,
+    "metadata_section": 61,
+    "msg_index_end": 3706,
+    "msg_index_start": 3706,
+    "ordinal": 4869,
+    "parent_ref": 4869,
+    "part_index": 569,
+    "product": 4808,
+    "relevance_to_file": 4869,
+    "section": 4808,
+    "start_offset": 4869,
+    "subsection": 14,
+    "token_estimate": 4869,
+    "years": 3476
+   },
+   "File": {
+    "created_at": 33,
+    "dataset_id": 33,
+    "dispatch_mode": 33,
+    "file_id": 33,
+    "file_path": 33,
+    "format_family": 33,
+    "rel_path": 33,
+    "sha256": 33,
+    "size_bytes": 33
+   },
+   "Source": {
+    "created_at": 1,
+    "dataset_id": 1,
+    "source_id": 1
+   },
+   "Tag": {
+    "emb": 19716,
+    "name": 19716
+   }
+  },
+  "rel_prop_coverage": {
+   "HAS_TAG": {
+    "facets": 67913,
+    "run_id": 67913,
+    "w_chunk": 67913,
+    "w_facets": 67913
+   }
+  },
+  "rels": {
+   "CONTAINS": 33,
+   "HAS_CHUNK": 4869,
+   "HAS_TAG": 67913
+  }
+ },
+ "source_database": "herb-eval",
+ "target_after_copy": {
+  "checksums": {
+   "chunk_id_chars": 116856,
+   "desc_emb_present": 4869,
+   "desc_emb_sum": 781.5247437889192,
+   "file_bytes_sum": 28923399,
+   "has_tag_run_id_present": 67913,
+   "has_tag_w_chunk_sum": 37248.64999999994,
+   "tag_emb_present": 19716,
+   "tag_emb_sum": -29210.289297089657,
+   "tag_name_chars": 481627,
+   "token_estimate_sum": 3850319
+  },
+  "labels": {
+   "Chunk": 4869,
+   "File": 33,
+   "Source": 1,
+   "Tag": 19716
+  },
+  "node_prop_coverage": {
+   "Chunk": {
+    "channel": 2669,
+    "chunk_id": 4869,
+    "chunk_ref": 4869,
+    "created_at": 4869,
+    "desc_emb": 4869,
+    "doc_field": 569,
+    "employee_id": 30,
+    "end_offset": 4869,
+    "file_id": 4869,
+    "item_index": 1163,
+    "kind": 4869,
+    "locator_json": 4869,
+    "metadata_section": 61,
+    "msg_index_end": 3706,
+    "msg_index_start": 3706,
+    "ordinal": 4869,
+    "parent_ref": 4869,
+    "part_index": 569,
+    "product": 4808,
+    "relevance_to_file": 4869,
+    "section": 4808,
+    "start_offset": 4869,
+    "subsection": 14,
+    "token_estimate": 4869,
+    "years": 3476
+   },
+   "File": {
+    "created_at": 33,
+    "dataset_id": 33,
+    "dispatch_mode": 33,
+    "file_id": 33,
+    "file_path": 33,
+    "format_family": 33,
+    "rel_path": 33,
+    "sha256": 33,
+    "size_bytes": 33
+   },
+   "Source": {
+    "created_at": 1,
+    "dataset_id": 1,
+    "source_id": 1
+   },
+   "Tag": {
+    "emb": 19716,
+    "name": 19716
+   }
+  },
+  "rel_prop_coverage": {
+   "HAS_TAG": {
+    "facets": 67913,
+    "run_id": 67913,
+    "w_chunk": 67913,
+    "w_facets": 67913
+   }
+  },
+  "rels": {
+   "CONTAINS": 33,
+   "HAS_CHUNK": 4869,
+   "HAS_TAG": 67913
+  }
+ },
+ "target_database": "herb-eval-v2",
+ "timestamp": "2026-08-12T20:36:02Z"
+}
