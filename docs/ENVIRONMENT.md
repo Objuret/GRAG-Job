@@ -86,10 +86,8 @@ version: `pip show graphify` reports "Package(s) not found" (use `pip show graph
 and `graphify.__version__` raises `AttributeError: module 'graphify' has no attribute
 '__version__'`. Only the CLI answers: `graphify --version` → `graphify 0.8.39`.
 
-`docs/handoff` does not exist here, so the scan notes it missing —
-harmless. Doc extractions go to the semantic cache via
-`graphify.cache.save_cached(path, {nodes, edges}, root=REPO, kind="semantic")`;
-mirror the node/edge schema of existing entries in `graphify-out/cache/semantic/`.
+The refresh scans `v3/` and extracts from the AST; a full rebuild is a few seconds and
+makes no model calls.
 
 ### NIM
 

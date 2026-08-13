@@ -45,7 +45,7 @@ Verification discipline:
 - **Metric validity is binding:** `context_recall_id` is the cross-arm metric; `context_precision_id` and nonllm/text metrics are NOT cross-arm comparable; `truncate_k` slicing `context_ids[:k]` is invalid for the artefact arm.
 - **No historical or defensive comments** in anything written to the repo: present tense, what the code IS — never "previously/now/no longer", never review narration.
 - **Anything long-running you write shows life within 1 second:** banner printed before heavy imports, `flush=True`, `v3/progress.py` bars for loops over questions or model calls.
-- After any edit under `v3/` or to root canon, run `python refresh_graph.py` from the repo root and process its worklist if one prints.
+- After any edit under `v3/`, run `python refresh_graph.py` from the repo root.
 
 ## Report
 Your final message is a data payload for the orchestrator, not prose. It contains, in order:

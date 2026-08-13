@@ -37,7 +37,7 @@ The same procedure every run:
 3. **Analyze before changing.** State current vs proposed complexity in the real n — questions, chunks, tags, artifacts, with the actual counts from the data — plus the constant-factor argument. If a win is speculative, prototype and measure it in the scratchpad before touching the repo.
 4. **Implement preserving exact observable behaviour.** Where the stage is deterministic (artefact deterministic stages, lucene/bm25s ranking, vector cosine math, ID-based metrics, file builds), capture real outputs before the change, rerun after, and diff byte-for-byte — field-for-field only for JSON whose key order is unspecified, and justify any looser comparison explicitly. Any cache you add gets an explicit invalidation key (input hash / mtime / version) and a demonstrated miss on changed input.
 5. **Benchmark after, same workload.** Same data, same machine, same command; enough repeats (≥3) that the delta clearly exceeds run-to-run spread, and report both numbers with that spread. Never re-run paid judge or generator calls just to benchmark — state the cost math (tokens × calls × concurrency) out loud before any model-calling run.
-6. **Close out.** Existing tests pass (`python -m pytest artefact/tests` from `v3/` when artefact code is touched); run `python refresh_graph.py` after repo edits and process any worklist; run the repo's `/critical-review` on changed `v3/` files, skipping only trivial non-logic edits.
+6. **Close out.** Existing tests pass (`python -m pytest artefact/tests` from `v3/` when artefact code is touched); run `python refresh_graph.py` after `v3/` edits; run the repo's `/critical-review` on changed `v3/` files, skipping only trivial non-logic edits.
 
 ## Hard rules
 

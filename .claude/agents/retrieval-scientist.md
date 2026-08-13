@@ -58,7 +58,7 @@ Verification discipline:
 - Nothing written to the repo carries historical or defensive narration: present tense, what the code/doc IS — no "previously/now/no longer", no review-finding labels.
 - Anything long-running you write shows life within 1 second and progress continuously: banner printed before heavy imports, flush=True on every print, v3/progress.py bars for loops over questions or model calls, runs in the user-visible foreground.
 - No pipeline code without the user's explicit design sign-off; present decided-vs-open first. Extend the harness's general tools (folder/ids/model tools, standard table printers) — never weld a script to one experiment.
-- After changing files, run `python refresh_graph.py` from the repo root (never `graphify --update`) and process any worklist. After writing or changing v3 code, run /critical-review on the changed files before reporting the work done.
+- After changing files under `v3/`, run `python refresh_graph.py` from the repo root (never `graphify --update`). After writing or changing v3 code, run /critical-review on the changed files before reporting the work done.
 - Three canon conflicts stand open for the USER (project_adversarial_panel_verdicts.md item 5): flag them when touched, never resolve them yourself.
 
 ## Report

@@ -56,25 +56,19 @@ question — never resolved silently.
 
 ## Codebase navigation graph (graphify)
 
-A graphify navigation graph for the codebase — a search tool.
+A graphify navigation graph for the `v3/` code — a search tool.
 
-- **Graph — `graphify-out/graph.json`:** covers v3/ + the in-repo (gitignored)
-  state docs in `docs/state` + the root instruction
-  files (CLAUDE.md, README.md), wired by bridge edges.
+- **Graph — `graphify-out/graph.json`:** the v3 source tree, minus the benchmark
+  dataset (`v3/data`) and the run outputs (`v3/output`). Code only — no docs.
 
 How to use it:
 
 - **Answering questions about the code:** query the graph FIRST, before grepping —
   `graphify query "<question>"`, `graphify explain "<node>"`, `graphify path "A" "B"`.
-- **Rebuilding:** run `python refresh_graph.py` (repo root) once per commit, right
-  before committing — it batches every edit since the last refresh. It is the ONLY
-  rebuild path; never run `graphify --update` (drops the
-  external-doc bridges). If it prints a worklist, a doc needs model extraction:
-  process `graphify-out/.refresh_worklist.json` — extract each listed doc, bridging
-  into the existing concepts in `graphify-out/.concept_index.txt`; write committed
-  repo docs to graphify's semantic cache and the gitignored state docs as
-  sidecar fragments in `graphify-out/.external_cache/`
-  (`{source_file,hash,nodes,edges}`) — then re-run `python refresh_graph.py`.
+- **Rebuilding:** run `python refresh_graph.py` (repo root) when the code has moved,
+  at the end of a work burst. It reads the AST — seconds, no model calls. It is the
+  ONLY rebuild path; never run `graphify --update`, which rescopes the graph to the
+  whole repo.
 
 Details: `graphify-out/REFRESH.md`.
 
@@ -144,13 +138,10 @@ Details: `graphify-out/REFRESH.md`.
   "previously/now", "no longer", "NOT because", "do not factor out", no
   review-finding labels. Remove the mistake and write the correct version plainly;
   comments feed the graph and memory, so scar tissue pollutes every future session.
-- **Refresh the navigation graph at commit time:** run `python refresh_graph.py`
-  (repo root) once per commit, right before committing — one refresh covering every
-  edit to `v3/`, the root instruction files, or the external state docs
-  since the last one.
-  Never per-edit; doc extraction is expensive, so all changed docs ride the same
-  pass. It is the ONLY rebuild path (never `graphify --update`). If it prints a
-  worklist, process it before committing (full procedure above).
+- **Refresh the navigation graph when the code has moved:** run
+  `python refresh_graph.py` (repo root) at the end of a work burst, covering every
+  edit to `v3/` since the last one. It is the ONLY rebuild path (never
+  `graphify --update`).
 - **Every runnable shows life instantly and progress continuously:** the user runs
   scripts in their own terminal, and that terminal experience is the product. Print
   the banner before any heavy import (announce slow stages like the eval stack),
@@ -181,7 +172,7 @@ the user runs. Definitions live in `.claude/agents/`. Route by task:
 - **retrieval-scientist** — retrieval design and experiment proposals.
 - **eval-statistician** — significance, sample size, judge reliability, judge-run cost math.
 - **results-analyst** — reading `v3/output/`, reporting numbers (metric validity binding).
-- **graph-refresher** — `python refresh_graph.py` + worklist processing.
+- **graph-refresher** — `python refresh_graph.py`.
 
 ## Artefact arm — the modified v1 artefact
 
