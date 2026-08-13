@@ -2,8 +2,9 @@
 """
 refresh_graph.py - rebuild the graphify navigation graph in one command.
 
-The graph covers graphify-out/ : v3/ + the in-repo (gitignored) state/handoff
-docs (docs/state, docs/handoff) + root canon (CLAUDE.md, README.md).
+The graph covers graphify-out/ : v3/ + the in-repo (gitignored) state docs
+(docs/state) + root canon (CLAUDE.md, README.md) + the committed record under
+docs/canon/ (its whole tree, raw/ included).
 
 Usage (exposed as `regraph` in PowerShell + bash):
   regraph          rebuild the graph
@@ -23,9 +24,9 @@ REPO_ROOT = Path(__file__).resolve().parent
 OUT = REPO_ROOT / "graphify-out"
 V3_ROOT = REPO_ROOT / "v3"
 ROOT_DOCS = [REPO_ROOT / "CLAUDE.md", REPO_ROOT / "README.md"]
+CANON_ROOT = REPO_ROOT / "docs" / "canon"
 EXTERNAL = [
-    (REPO_ROOT / "docs" / "handoff", "handoff/"),
-    (REPO_ROOT / "docs" / "state",   "state/"),
+    (REPO_ROOT / "docs" / "state", "state/"),
 ]
 # ---------------------------------------------------------------------------
 
@@ -232,7 +233,8 @@ def main_active():
     code = collect_code(det["files"])
     repo_docs = [f for k in ("document", "paper", "image") for f in det["files"].get(k, [])]
     repo_docs += [str(p) for p in ROOT_DOCS if p.is_file()]
-    print(f"  v3 code: {len(code)} | docs (v3+root): {len(repo_docs)}")
+    repo_docs += [str(p) for p in sorted(CANON_ROOT.rglob("*.md"))]
+    print(f"  v3 code: {len(code)} | docs (v3+root+canon): {len(repo_docs)}")
 
     cn, ce, ch, uncached = check_semantic_cache(repo_docs, root=REPO_ROOT)
     if not INIT_MARKER.exists():

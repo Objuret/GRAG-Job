@@ -3,14 +3,32 @@
 The current record of every evaluation run in `v3/output/`: what each run is, what it
 scores, and what it may be used to claim.
 
-Every number here is recomputed from the run folders themselves — `run_manifest.json`,
+**Every number here that still has a folder** is recomputed from that folder — `run_manifest.json`,
 `eval_manifest.json`, `eval_results.jsonl`, `arm_outputs.jsonl`. `context_recall_id` is
-recomputed for every folder from `arm_outputs.jsonl` against
+recomputed from `arm_outputs.jsonl` against
 `data/questions.jsonl` citations (RAGAS `IDBasedContextRecall`: |retrieved ∩ gold| /
 |gold|, over sets of string ids) and agrees exactly with the stored `eval_results.jsonl`
 on all 26 retained folders carrying both — max absolute difference 0.00e+00, no cell
-skipped. Rows that cannot be verified this way are marked UNVERIFIED, and figures whose
-folder is no longer retained say so in place.
+skipped **among those 26**. Rows that cannot be verified this way are marked UNVERIFIED, and
+figures whose folder is no longer retained say so in place.
+
+**That qualifier covers most of this file.** Counting the distinct run-folder names quoted below
+(backticked tokens containing `__`, with elided `…` forms resolved by prefix): **60 names, of which
+27 resolve to a directory under `v3/output/` and 33 do not.** None of the 33 is in any commit on
+any ref either — `git log --all --diff-filter=A` finds no add for them — so they cannot be
+restored from history. Their numbers are this document's own record and nothing corroborates them.
+The 33 include every folder behind the WTAG, WG, TAGINFORM and named-det-experiment tables.
+
+Four of the five `…__probe` folders are in that group and are worth naming, because the prose
+below reads as if they were folders: only `artefact_v1_detGLOB__gold100__probe` is a directory.
+`artefact_v1_detNONE`, `artefact_v1_detABS`, `artefact_v1_detMAX` and `artefact_v1_detCUR`
+survive **only** as 249–251-byte terminal logs (`v3/output/artefact_v1_det*__gold100__probe.log`,
+gitignored by `*.log`). Each log holds five lines — a banner and `100/100 answered, 0 failed` —
+and records **no recall figure and no flag value**. So every det-probe number quoted below
+(`detNONE` 0.7390, `detABS` 0.7321, `detMAX` per-question-identical, `detCUR`
+per-question-identical) is **unsupported**: the log proves the run finished and nothing more.
+`artefact_v1_detGLOB__gold100__probe` is the one that can still be checked, and even it carries no
+`eval_results.jsonl` — see the sweep section.
 
 ## Arms and terminology
 
@@ -32,10 +50,25 @@ reported and neither is the artefact's single result** — his ruling of 2026-08
 | `hybrid` | `pipelines/hybrid.py` | one whole HERB artifact | native artifact `id` |
 | `artefact_v1` | `pipelines/artefact_v1.py` | one graph chunk | every artifact id the chunk carries |
 | `artefact_v1_det` | `pipelines/artefact_v1_det.py` | one graph chunk | every artifact id the chunk carries |
+| `artefact_v1_relevance_weight` | `pipelines/artefact_v1_relevance_weight.py` | one graph chunk | every artifact id the chunk carries |
+| `artefact_v1_five_questions` | `pipelines/artefact_v1_five_questions.py` | one graph chunk | every artifact id the chunk carries |
 
 `lucene`, `vector` and `hybrid` index `data/corpus/Salesforce__HERB/products/` only
-(`lucene.py:161`, `vector.py:175`); the artefact arms query the `herb-eval` Neo4j graph,
-which also covers `metadata/`.
+(`lucene.py:161`, `vector.py:175`); the artefact arms query a Neo4j graph, which also
+covers `metadata/`.
+
+**Which graph an artefact run queried is recorded on exactly one run.** `DATABASE`
+resolves from `NEO4J_DATABASE` at run time (`artefact_v1.py` · `DATABASE`, defaulting to
+`herb-eval`) and nothing wrote it into a manifest until `graph_identity()`
+(`orchestrator.py` · `graph_identity`) was added. Of the 35 `run_manifest.json` files
+under `v3/output/`, **one carries a `graph` block**:
+`artefact_v1_det__gold100__20260813T174353Z`, which records `herb-eval-v2`. For every
+other artefact run in this file the database is **UNVERIFIED from disk** — inferable from
+the default and from the run's date, never read off the record.
+
+`artefact_v1_relevance_weight` and `artefact_v1_five_questions` are two further
+configurations of the system under test, on the same footing as the other two: neither is
+a baseline and neither is a pass-bar.
 
 ## The unmatched-unit rule — applies to every cross-arm number below
 
@@ -190,6 +223,79 @@ gold-100 per-type, same metric — **company (n=5) and url (n=1) are anecdotes**
 | `vector__gold100…` | 0.087 | 0.115 | 0.155 | 0.070 | 0.046 |
 | `lucene__gold100…` | 0.056 | 0.099 | 0.111 | 0.072 | 0.034 |
 
+## The 2026-08-08 → 08-13 runs — two new arms, and the first run on a second graph
+
+All eight are gold-100, k=50, retrieval-only (`generator_model: null`, `judge_model: null`,
+no answers written), deterministic interpreter, embedder
+`nvidia/llama-nemotron-embed-1b-v2`, n=100 unless stated, every folder **machine-local**.
+Each holds the same 10 judge-free metrics; the six answer-vs-gold text metrics
+(`string_similarity`, `bleu`, `rouge`, `chrf`, `exact_match`, `string_presence`) are
+0.000000 with sd 0 in all of them, because no answers were generated. Recomputed from each
+folder's `eval_results.jsonl` this pass, and cross-checked against each folder's
+`arm_outputs.jsonl` (`|set(context_ids) ∩ set(citations)| / |citations|`): max absolute
+difference 0.00e+00 on 100/100 cells in every scored run.
+
+| run | arm | config recorded | recall_id | contexts/q | ids/q | chars/q |
+|---|---|---|---|---|---|---|
+| `artefact_v1_relevance_weight__gold100__20260808T071137Z` | relevance_weight | `HERB_DEMAND=read` | 0.2590 | 20.36 | 145.4 | 87,229 |
+| `artefact_v1_relevance_weight__gold100__20260810T200231Z` | relevance_weight | `HERB_DEMAND=flat` | 0.2477 | 19.12 | 127.2 | 80,063 |
+| `artefact_v1_relevance_weight__gold100__20260811T084924Z` | relevance_weight | `HERB_DEMAND=read` | 0.2590 | 20.36 | 145.4 | 87,229 |
+| `artefact_v1_relevance_weight__gold100__20260811T104337Z` | relevance_weight | `HERB_DEMAND=centred` | 0.3340 | 23.46 | 193.1 | 107,143 |
+| `artefact_v1_five_questions__gold100__20260812T134447Z` | five_questions | 13 `HERB_FQ_*` flags, all weights 1.0 | 0.4003 | 50.00 | 493.7 | 245,517 |
+| `artefact_v1_det__gold100__20260813T122428Z` | artefact_v1_det | 25 flags, shipped defaults | 0.7590 | 50.00 | 484.0 | 243,427 |
+| `artefact_v1_det__gold100__20260813T174353Z` | artefact_v1_det | same 25 + 10 person/role flags, `HERB_W_PERSON=1.0` | 0.7583 | 50.00 | 483.4 | 243,298 |
+
+`…20260811T084924Z` is **per-question identical to `…20260808T071137Z`** — W/L/T 0/0/100,
+mean difference 0.000000, and identical stored `context_ids` on 100/100 questions. They
+record the same `HERB_DEMAND=read`.
+
+Two folders in the family carry no aggregate and are not in the table:
+`artefact_v1_relevance_weight__gold100__20260810T194642Z` has no `run_manifest.json`, no
+`eval_manifest.json` and no `eval_results.jsonl` — 57 `arm_outputs.jsonl` rows and a live
+`.run.lock` (pid 25468, started 2026-08-10T19:46:57Z), so it is an interrupted run; its 57
+rows recompute to recall_id 0.2469 (n=57) and its `HERB_DEMAND` value is recorded nowhere.
+`artefact_v1_relevance_weight__gold100__20260810T200159Z` is an **empty directory** — zero
+files, nothing on disk names what it was. Both contradict this file's own rule that
+unfinished runs are deleted rather than kept.
+
+Per-type `context_recall_id` — company (n=5) and url (n=1) are anecdotes:
+
+| run | person (22) | content (55) | pr (17) | company (5) | url (1) |
+|---|---|---|---|---|---|
+| `…relevance_weight…20260808T071137Z` / `…20260811T084924Z` | 0.260 | 0.279 | 0.175 | 0.225 | 0.724 |
+| `…relevance_weight…20260810T200231Z` | 0.246 | 0.266 | 0.174 | 0.225 | 0.655 |
+| `…relevance_weight…20260811T104337Z` | 0.322 | 0.370 | 0.173 | 0.439 | 0.839 |
+| `…five_questions…20260812T134447Z` | 0.330 | 0.475 | 0.230 | 0.456 | 0.471 |
+| `…det…20260813T122428Z` | 0.661 | 0.788 | 0.757 | 0.862 | 0.851 |
+| `…det…20260813T174353Z` | 0.661 | 0.788 | 0.753 | 0.862 | 0.851 |
+
+### The two 2026-08-13 det runs — the only paired comparison here
+
+| pair | delta | 95% CI | W/L/T |
+|---|---|---|---|
+| `…20260813T174353Z` − `…20260813T122428Z` | −0.0007 | [−0.0022, +0.0007] | 0/1/99 |
+
+The one non-tied question is `PersonalizeForce::a::34` (type `pr`): 0.9268 against 1.0000.
+The sign test over the single non-tied pair gives p = 1.000. Stored `context_ids` differ on
+that same 1 of 100 questions. The CI is the normal approximation on the paired
+per-question delta, computed for this table; no harness tool defines a CI method.
+
+**What differs between them, from the manifests, and what does not.** Same question set
+(the same 100 gold-100 ids), same `top_k`, same arm, same interpreter, same embedder, same
+values on all 25 flags both record. Differing: the later run records
+`graph.database: "herb-eval-v2"` (`source_database: herb-eval`, `removed_tags_sha256`
+`6a279b34…`, build `2026-08-12T20:38:00Z`) and ten person/role flags at
+`HERB_W_PERSON=1.0`; the earlier run records **no `graph` block at all**, so **the database
+it queried is UNVERIFIED** and the pair cannot be stated as a same-graph comparison from
+the record. Whether the person-path code existed when the earlier run fired is also not in
+the folder — manifests carry no git sha.
+
+**What the person path did on this run, from `meta.person`, present on 100/100 rows.**
+Weight 1.0 on 100/100; a resolved named person on **1 of 100 questions**; chunks reached
+through the path on that same 1 question (143 chunks); the `mentions` audit list non-empty
+on 31 of 100 (mean length 1.32) — those are recorded surfaces, not resolutions. This is the
+first run in the file with the path on, and one question exercised it.
+
 ## Judged metrics
 
 Two judged comparisons exist. Both are gold-100; neither covers held-out-100.
@@ -283,10 +389,37 @@ throughout — this study bounds judge disagreement, it does not measure any arm
 
 # Run inventory
 
-**This file is the record; the folders are the evidence kept for it.** 35 run folders
-remain under `v3/output/`, plus 5 cache/asset dirs (`embed_cache`, `interp_cache`,
-`query_embed_cache`, `tag_cluster_cache`, `tags`) and 3 auxiliary dirs
-(`ablation_boost_vs_facets`, `poolcut_forensic`, `smoke`).
+**This file is the record; the folders are the evidence kept for it.** 54 run folders
+remain under `v3/output/` — 35 of them carrying a `run_manifest.json` — plus 5 cache/asset
+dirs (`embed_cache`, `interp_cache`, `query_embed_cache`, `tag_cluster_cache`, `tags`) and
+4 auxiliary dirs (`ablation_boost_vs_facets`, `poolcut_forensic`, `smoke`, `graph_build`).
+`graph_build/` is not a run: it holds the build record of a database (below).
+
+**Tracked vs machine-local — check this before citing a folder.** "On disk" is not "in the repo".
+Of the 54 run folders, **23 are tracked in git and 31 exist only on this laptop**
+(`git ls-files v3/output/<dir>` is empty for those 31; they show as `??` in `git status`). A fresh
+clone gets the 23 and nothing else, so 31 folders' worth of evidence has exactly one copy and no
+backup.
+
+| group | tracked | machine-local only |
+|---|---|---|
+| all run folders | 23 | 31 |
+| "Headline runs — cite these" (13) | 5 | **8** |
+| matched-budget trio (`veck500`, `hybk500`, `luck500`) | 0 | **3** |
+| the 2026-08-08 → 08-13 runs (7 scored) | 7 | 0 |
+
+The tracked 23 are the June/July gold-100 `lucene` and `vector` runs, their `__j-*` re-judges, the
+8 `__n10` judge-agreement dirs, `artefact_v1__gold100__20260718T231758Z`, the 3 `modeltest3`
+dirs, and the 7 scored 2026-08-08 → 08-13 runs. **Everything else from 2026-07-23 onward is
+untracked**: every `JUDGE_*` folder, all three k=500
+runs, `hybrid__gold100__20260723T153637Z`, `artefact_v1_clusterKglob…`,
+`artefact_v1_detGLOB…probe`, both `detK` runs, `artefact_v1_det__gold100__20260801T072455Z` (the
+shipped default), and all three held-out-100 runs.
+
+Two consequences the sections below depend on. The **entire matched-budget comparison** — the one
+reading this file calls like-for-like — rests on three folders in no commit. And the shipped-default
+det run that anchors every sweep delta is untracked too. Marked per row below as (tracked) or
+(machine-local).
 
 What is kept on disk, and why:
 
@@ -303,35 +436,107 @@ that did not finish are not kept — an incomplete run carries no citable aggreg
 depth truncations are not kept, because `truncate_k.py` re-slices them from a parent run
 on demand.
 
+**"Remade in minutes" is true only on this machine.** It assumes three caches that a clone does
+not have — and unlike the vector arm's `embed_cache`, none of them is even gitignored, so they are
+silently absent rather than deliberately excluded:
+
+| cache | entries | in git | in `.gitignore` |
+|---|---|---|---|
+| `interp_cache` | 300 `.json` | no | **no** — merely never added |
+| `query_embed_cache` | 805 `.npy` | no | **no** — merely never added |
+| `tag_cluster_cache` | 1 entry (3 files) | no | **no** — merely never added |
+| `embed_cache` | 2 files | no | yes (`.gitignore`:45) |
+
+Without `interp_cache` every model-interpreter question re-runs the `claude-haiku-4-5` interpreter —
+billable, and per the point above not bit-reproducible. Without `query_embed_cache` every question
+re-embeds against NIM. Without `tag_cluster_cache` no `HERB_STR_GUIDE > 0` run can start at all.
+So the same caveat this file already attaches to the vector arm's cache applies to the artefact
+arm three times over, and "minutes" becomes "a fresh billable rebuild".
+
 A folder with no `run_manifest.json` is derived: outputs copied for a re-judge
 (`__j-<judge>`). Its provenance is the parent named in `eval_manifest.json`.
 `JUDGE_artefactGlobal__gold100__20260723T170605Z__j-claude-haiku-4-5` carries no
 `eval_manifest.json`, so its judge is read from the folder name alone — UNVERIFIED.
 
 Sections below quote runs whose folders are not retained. The folder name identifies which
-run produced the number; re-running that configuration reproduces it.
+run produced the number. **It does not follow that re-running reproduces it, and for a large
+part of this file it demonstrably does not** — the later claim that "none of the configurations
+in this table is reproducible from the current code" is the accurate one, and it generalizes
+past the one table it sits under. Three separate reasons, each fatal on its own:
+
+- **The knobs are gone.** `HERB_TAG_FIRST` and `HERB_TAG_ADMIT` are in no `v3/*.py` file, so the
+  five tags-first rows cannot be re-run at all. In the other direction `HERB_DESC_HINT_M` is a live
+  scoring coefficient that no run on disk records — the code has moved on from every folder here.
+- **The configuration was never recorded.** The four `…__probe` runs that survive only as logs, and
+  the whole `detA`/`detE`/`detR`/`detf`/`detW`/`detW2`/`detK` family, have no manifest flags to
+  re-run from.
+- **Model-lane answers are not bit-reproducible.** Anything a `claude-*` model generated or judged
+  cannot be reproduced even with identical inputs: `nim.py`:165-166 states it outright — "No
+  temperature control exists on the CLI — claude answers are not bit-reproducible" — and
+  `_claude_chat`'s argv (`nim.py`:181-186) carries no temperature flag, so the caller's
+  `temperature: 0` is silently dropped. That covers Trio A, Trio B, every `__j-claude-*` re-judge,
+  and `artefact_v1__gold100__20260718T231758Z`'s `claude-sonnet-5` answers.
+
+Retrieval-only artefact runs are the reproducible part, and only under the two preconditions
+below (a loaded Neo4j, and the caches).
 
 ## Headline runs — cite these
 
-| dir | arm | set | k | generator | judge | date | completion |
-|---|---|---|---|---|---|---|---|
-| `artefact_v1_det__gold100__20260801T072455Z` | artefact_v1_det | gold100 | 50 | none (retrieval-only) | none | 2026-08-01 | 100/100 |
-| `artefact_v1__gold100__20260718T231758Z` | artefact_v1 | gold100 | 50 | claude-sonnet-5 | claude-haiku-4-5 | 2026-07-19 | 100/100 |
-| `lucene__gold100__20260627T003236Z` | lucene | gold100 | 50 | qwen3.5-397b (NIM) | qwen3.5-397b | 2026-06-27 | 100/100 |
-| `lucene__gold100__20260627T003236Z__j-claude-haiku-4-5` | lucene | gold100 | 50 | (same answers) | claude-haiku-4-5 | 2026-07-20 | 100/100 |
-| `vector__gold100__20260625T121031Z` | vector | gold100 | 50 | qwen3.5-397b (NIM) | qwen3.5-397b | 2026-06-25 | 100/100 |
-| `vector__gold100__20260625T121031Z__j-claude-haiku-4-5` | vector | gold100 | 50 | (same answers) | claude-haiku-4-5 | 2026-07-20 | 100/100 |
-| `hybrid__gold100__20260723T153637Z` | hybrid (α=0.5) | gold100 | 50 | none | none | 2026-07-23 | 100/100 |
-| `veck500__gold100__20260723T154421Z` | hybrid (α=1.0 = vector) | gold100 | 500 | none | none | 2026-07-23 | 100/100 |
-| `luck500__gold100__20260723T154401Z` | hybrid (α=0.0 = lucene) | gold100 | 500 | none | none | 2026-07-23 | 100/100 |
-| `hybk500__gold100__20260723T154340Z` | hybrid (α=0.5) | gold100 | 500 | none | none | 2026-07-23 | 100/100 |
-| `artefact_v1__heldout100__20260729T205930Z` | artefact_v1 | heldout100 | 50 | none | none | 2026-07-29 | 100/100 |
-| `vector__heldout100__20260729T224153Z` | vector | heldout100 | 50 | none | none | 2026-07-29 | 100/100 |
-| `lucene__heldout100__20260729T223312Z` | lucene | heldout100 | 50 | none | none | 2026-07-29 | 100/100 |
+| dir | arm | set | k | generator | judge | date | completion | in git |
+|---|---|---|---|---|---|---|---|---|
+| `artefact_v1_det__gold100__20260801T072455Z` | artefact_v1_det | gold100 | 50 | none (retrieval-only) | none | 2026-08-01 | 100/100 | **machine-local** |
+| `artefact_v1__gold100__20260718T231758Z` | artefact_v1 | gold100 | 50 | claude-sonnet-5 | claude-haiku-4-5 | 2026-07-19 | 100/100 | tracked |
+| `lucene__gold100__20260627T003236Z` | lucene | gold100 | 50 | qwen3.5-397b (NIM) | qwen3.5-397b | 2026-06-27 | 100/100 | tracked |
+| `lucene__gold100__20260627T003236Z__j-claude-haiku-4-5` | lucene | gold100 | 50 | (same answers) | claude-haiku-4-5 | 2026-07-20 | 100/100 | tracked |
+| `vector__gold100__20260625T121031Z` | vector | gold100 | 50 | qwen3.5-397b (NIM) | qwen3.5-397b | 2026-06-25 | 100/100 | tracked |
+| `vector__gold100__20260625T121031Z__j-claude-haiku-4-5` | vector | gold100 | 50 | (same answers) | claude-haiku-4-5 | 2026-07-20 | 100/100 | tracked |
+| `hybrid__gold100__20260723T153637Z` | hybrid (α=0.5) | gold100 | 50 | none | none | 2026-07-23 | 100/100 | **machine-local** |
+| `veck500__gold100__20260723T154421Z` | hybrid (α=1.0 = vector) | gold100 | 500 | none | none | 2026-07-23 | 100/100 | **machine-local** |
+| `luck500__gold100__20260723T154401Z` | hybrid (α=0.0 = lucene) | gold100 | 500 | none | none | 2026-07-23 | 100/100 | **machine-local** |
+| `hybk500__gold100__20260723T154340Z` | hybrid (α=0.5) | gold100 | 500 | none | none | 2026-07-23 | 100/100 | **machine-local** |
+| `artefact_v1__heldout100__20260729T205930Z` | artefact_v1 | heldout100 | 50 | none | none | 2026-07-29 | 100/100 | **machine-local** |
+| `vector__heldout100__20260729T224153Z` | vector | heldout100 | 50 | none | none | 2026-07-29 | 100/100 | **machine-local** |
+| `lucene__heldout100__20260729T223312Z` | lucene | heldout100 | 50 | none | none | 2026-07-29 | 100/100 | **machine-local** |
 
 `vector__gold100__20260625T121031Z/eval_manifest.json` carries `judge_model: null` — it
 predates judge-provenance recording; its judge was `qwen/qwen3.5-397b-a17b`, the same as
 the lucene June run. UNVERIFIED from that folder alone.
+
+## Graph builds — `graph_build/`
+
+One database has a build record: `graph_build/herb-eval-v2/` (`build_manifest.json` plus
+`step_copy.json`, `step_cleanup.json`, `step_entities.json`), tracked. It names its own
+authority as `docs/state/2026-08-12-entity-nodes-and-tag-cleanup-design.md`, a
+machine-local file; no number here comes from that doc.
+
+**`herb-eval-v2` is a copy of `herb-eval`, changed in two steps.**
+
+- **Copy** (`2026-08-12T20:36:02Z`, 1018.9 s): 24,619 nodes and 72,815 relationships
+  copied, 7 constraints and 17 indexes recreated. The post-copy census equals the source
+  census exactly — Chunk 4,869 · File 33 · Source 1 · Tag 19,716; CONTAINS 33 · HAS_CHUNK
+  4,869 · HAS_TAG 67,913 — including all ten recorded checksums.
+- **Removed** (`2026-08-12T20:36:45Z`, 9.1 s): **4,111 Tag nodes and 5,470 HAS_TAG edges**,
+  by a vocabulary-level predicate over PR titles, PR/URL/document links and
+  `github_pr_NNNN`-shaped names (bare `http_` excluded); by class, PR-shaped 2,370 tags,
+  URL-shaped 1,846, link slugs 1,200, title slugs 1,636. It touched 2,240 chunks,
+  **emptied 0**, and left **0 chunks without a tag**. After: Tag 15,605, HAS_TAG 62,443. The
+  removed list is stored in full under `removed_tags_sha256`
+  `6a279b3465f4ec55f440607d0239a4c56d1580ebd9582c43a4d31265b4426116`, which recomputes from
+  the stored list exactly.
+- **Added** (`2026-08-12T20:37:09Z`, 10.3 s): **Person 5,233** (`eid` 514, `emp` 4,590,
+  `cust` 120, malformed 9), **Product 30**, **Channel 294**, over **INVOLVES 32,281**
+  (speaker 13,690 · participant 9,964 · reviewer 4,349 · pr_author 3,492 · doc_author 786),
+  **MENTIONS 9,634**, **IN_PRODUCT 4,808**, **IN_CHANNEL 2,669**. Every one of those edge
+  types runs chunk-to-entity; the entity nodes carry no edges to each other.
+
+**`herb-eval` is untouched, as recorded.** The manifest carries `source_untouched: true`,
+and its `source_before` and `source_after` snapshots are equal field for field — Tag 19,716,
+HAS_TAG 67,913 and all ten checksums identical — with `removed_tags_still_present: 0` in the
+target. Those files describe the build window `20:36:02Z → 20:38:00Z` and can say nothing
+about the database outside it; a live census against `herb-eval` is what would confirm the
+current state, and that is not a file read. **Every artefact number in this file other than
+`artefact_v1_det__gold100__20260813T174353Z` predates this database**, and a figure from one
+database is never a figure about the other.
 
 ## Judge studies
 
@@ -356,15 +561,24 @@ run whose source lacks `meta.chunk_ids` cannot be truncated meaningfully at all:
 to exactly k discards the chunks' own ids and measures a truncated id list rather than the
 arm at depth k.
 
-**Depths produced on gold-100:** lucene and vector both at k = 5, 10, 15, 20, 25, 30, 40,
-50 — the full list named on 2026-06-27 plus the k=25 ordered on 07-20. `context_recall_id`
-runs 0.0217 → 0.0894 for lucene and 0.0284 → 0.1129 for vector across that range. These
-were produced by re-slicing the k=50 runs, not as fresh runs at each depth.
+**Depths produced on gold-100:** lucene and vector both at k = 5, 10, 15, 20, 30, 40,
+50 — seven depths, matching `truncate_k.py`'s `--ks` default (`truncate_k.py`:50,
+`default="5,10,15,20,30,40,50"`). `context_recall_id` runs 0.0217 → 0.0894 for lucene and
+0.0284 → 0.1129 for vector across that range. These were produced by re-slicing the k=50 runs,
+not as fresh runs at each depth.
+
+**k=25 is removed from that list as unsupported.** No `__k25` folder exists on disk, and none
+has ever existed in the repository: `git log --all --name-only --pretty=format: | grep __k25`
+is empty across every ref and change type, and `git ls-files | grep -E "__k[0-9]+"` is empty.
+The `__k*` folders that *were* committed are exactly the seven depths above for each of
+`lucene__gold100__20260627T003236Z` and `vector__gold100__20260625T121031Z` (plus three
+`artefact__gold100__20260628*__k10` dirs). Nothing corroborates a k=25 slice having been run.
 
 **The interpreting leg** has no valid gold-100 depth curve: `artefact_v1__gold100__20260718T231758Z`
 carries no `meta.chunk_ids` on any of its 100 rows, so truncating it discards the chunks' own ids and
-measures a truncated id list — the `__k25` slice read 0.1309 against the parent's 0.6363 for that
-reason alone. Its rows fail `truncate_k.truncate_record`'s own guard (`len(context_ids) !=
+measures a truncated id list. (A `__k25` slice reading 0.1309 against the parent's 0.6363 is quoted
+elsewhere as the illustration of this; **that figure is unsupported** — no `__k25` folder exists on
+disk or anywhere in git history. The mechanism below stands on its own without it.) Its rows fail `truncate_k.truncate_record`'s own guard (`len(context_ids) !=
 len(contexts)` on 100/100). A depth curve for that leg needs a fresh run per depth, or a k=50 run
 that records the field.
 
@@ -379,6 +593,16 @@ The 10smoke curve with ids rebuilt: 0.1804 / 0.3313 / 0.4453 / 0.7269 at k = 5 /
 
 ## Sweep families
 
+**Multiplicity — applies to every table in this section.** The sweep tables report **34 confidence
+intervals** (42 in the file as a whole) across **39 distinct measured configurations**, and **none
+of the intervals is corrected for multiple comparisons**: each is a raw 95% CI on that one paired
+delta. At 39 configurations, roughly two intervals are expected to exclude zero by chance alone
+even if every flag were inert, so an individual "CI excludes zero" row in this section is a
+screening result, not a finding. This is not a hypothetical objection to the tables — the bottom
+section of this file disqualifies the `clusterKglob` claim on exactly this ground, and the same
+correction has not been applied to anything here. Read the per-row CIs as descriptive; treat only
+the Holm-corrected results at the bottom as tested.
+
 All sweeps are gold-100, n=100, retrieval-only, `artefact_v1_det` unless noted. The
 shipped default is the code default of every `HERB_*` flag
 (`CURVE_WALK=0, WALK_GATE=0, AGG=sum, NORM=relative, NORM_SCOPE=per_path,
@@ -387,7 +611,9 @@ W_TAG=W_DESC=W_SCOPE=1.0, STR_FACET=0.0, STR_GUIDE=0.0`), realized by
 
 `TRACE__gold100`, `artefact_v1_WARMCACHE__gold100__20260723T134847Z`,
 `artefact_v1_detCUR__gold100__probe` and `artefact_v1_detMAX__gold100__probe` are
-per-question identical to it (100/100).
+per-question identical to it (100/100) — **all four unsupported**: none of the folders exists on
+disk or in any commit, and the two probes survive only as 249-byte logs that record no per-question
+data.
 
 ### WTAG — the tag-path weight `HERB_W_TAG`
 
@@ -454,9 +680,21 @@ the det leg whose CI excludes zero), `artefact_v1_detNONE` 0.7390 (+0.0051, CI [
 shipped per-path default on both legs**, by a lot on the model leg and by a little on the
 det leg.
 
-`artefact_v1_detMAX__gold100__probe` (`AGG=max`) is per-question identical to the default
-on all 100 questions — on the det leg the sum/max choice changes no retrieval at all. Why
-it is inert there while it moves the model leg is UNVERIFIED from the run folders.
+**Evidence status of those three, individually — only the first is checkable.**
+`artefact_v1_detGLOB__gold100__probe` is a real folder and its manifest confirms
+`HERB_NORM_SCOPE: "global"`, but it holds only `arm_outputs.jsonl`, `failures.jsonl` and
+`run_manifest.json` — **no `eval_results.jsonl`**, so 0.7394 is recomputed from
+`arm_outputs.jsonl` rather than read from a stored cell. Running the judge-free `evals` phase on
+it would store the cell. `artefact_v1_detNONE` and `artefact_v1_detABS` have **no folder at all**:
+each survives as a 251/249-byte `.log` recording `100/100 answered, 0 failed` and nothing else, so
+**0.7390 and 0.7321 are unsupported**, as is the "on both legs" half of the conclusion — the det
+leg's evidence for it is the one recomputable folder, not three.
+
+`artefact_v1_detMAX__gold100__probe` (`AGG=max`) is reported per-question identical to the default
+on all 100 questions — on the det leg the sum/max choice changes no retrieval at all. **That is
+unsupported too**: the folder does not exist, only its 249-byte log, so the per-question comparison
+cannot be re-run. Why the knob would be inert there while it moves the model leg is UNVERIFIED
+either way.
 
 ### cluster-K — `HERB_CURVE_WALK` (model interpreter leg, `NO_REVIEW=1`)
 
@@ -569,8 +807,12 @@ test.
 - **"Leads all valid metrics" is false as worded.** `answer_correctness` against vector is
   not significant (p=0.096), and it is generator-confounded besides.
 - **`clusterKglob` is not the best configuration.** Its +0.0154 over the det default is
-  p=0.36 — smaller than best-of-36 selection noise — and its nDCG ordering is *worse*. What
-  does hold: it beats its own leg's flat-global by +0.068 (p=4e-4).
+  p=0.36 — smaller than best-of-39 selection noise — and its nDCG ordering is *worse*. What
+  does hold: it beats its own leg's flat-global by +0.068 (p=4e-4). (39 is the count of distinct
+  measured configurations in the sweep tables above: 46 data rows less the one `(default)`
+  reference row and the six alias rows that re-describe runs already listed. The figure was
+  previously written as 36, which no counting rule over this document reproduces. 39 is itself a
+  floor on the real tried set — 33 of the 60 run folders named in this file no longer exist.)
 - **Scope-dominance is a property of this benchmark, not a retrieval law.** It reaches
   significance on the model leg only (+0.077 global, p=6e-4) and the det leg is insensitive
   after Holm. HERB questions name their product, and product is the gold set's partition
@@ -592,6 +834,24 @@ defect fix rather than a swept knob; and the det leg beats the model leg on gold
 
 State these as gaps, not as results either way.
 
+- **No artefact number in this file is reproducible without a local Neo4j holding the graph it
+  was run against.** The artefact configurations retrieve by querying a database (`DATABASE`,
+  defaulting to `herb-eval`, resolved from `NEO4J_DATABASE` at run time); they
+  read no corpus file at retrieval time. Which database a given run used is recorded in one
+  manifest only — see the arms section — and `artefact_v1_det__gold100__20260813T174353Z` needs
+  `herb-eval-v2`, which no dump ships. The database is not in the repo as data — it ships as a
+  single 770 MB git-LFS dump, `v3/artefact/data/herb-eval.dump`, which must be loaded into a
+  running Neo4j instance before any artefact run starts, with `NEO4J_PASSWORD` set (the arm raises
+  without it). So reproducing the headline det figure needs: git-LFS fetched, the dump loaded, the
+  server up, credentials set, and the three untracked caches present. **Nothing else in this file
+  states that** — before this line, "Neo4j" appeared once in 651 lines and "dump" never.
+- **`HERB_DESC_HINT_M` is recorded by the 2026-08-06 runs onward and by nothing earlier.** It is a
+  `RETRIEVAL_FLAGS` entry (`artefact_v1.py`, default 2.0), added 2026-08-05 by `bb95e4b`. **8 of
+  the 35 `run_manifest.json` files carry it, all at 2.0** — the six
+  `artefact_v1_det__gold100__2026080{6,7}T*` folders and both 2026-08-13 det runs. Every run
+  before that documents no value for it, and it has never been varied or measured. The shipped-default
+  manifest also still carries `HERB_TAG_FIRST` and `HERB_TAG_ADMIT`, which no longer exist in the
+  code — the flag schema of every quoted run differs from today's in at least three keys.
 - **No hybrid held-out run.** Held-out-100 covers `artefact_v1`, `vector`, `lucene` only.
 - **No `artefact_v1_det` held-out run.** The one attempt is dead at 1/100. Every held-out
   number for the system under test comes from the model-interpreter configuration, so the
@@ -662,8 +922,10 @@ State these as gaps, not as results either way.
 - **The haiku judge was never validated on artefact-style contexts.** Its agreement was
   measured against baseline-style contexts only, and the artefact's contexts are raw JSON
   records rather than prose.
-- **Cache dirs are not runs.** `embed_cache` (2 files), `interp_cache` (300),
-  `query_embed_cache` (804), `tag_cluster_cache` (1) and `tags` (4 tagger output files)
-  hold build artefacts. `ablation_boost_vs_facets` and `poolcut_forensic` hold analysis
+- **Cache dirs are not runs.** `embed_cache` (2 files), `interp_cache` (300 `.json`),
+  `query_embed_cache` (**805** `.npy`, counted on disk), `tag_cluster_cache` (1 entry, 3 files)
+  and `tags` (4 tagger output files) hold build artefacts. Only `embed_cache` is gitignored;
+  the other three are untracked-but-not-ignored, so a clone has none of them and a careless
+  `git add v3/output` would sweep in over a thousand cache files. `ablation_boost_vs_facets` and `poolcut_forensic` hold analysis
   side-output, not arm outputs. The loose `question_ids*.jsonl` files at the top of
   `v3/output/` are id manifests from 2026-06-28.

@@ -7,10 +7,12 @@
 > and is evidence of drift from intent, never justification for it.
 > `docs/canon/CANON_AUDIT.md` checks 117 prescriptive claims across the repo's instruction
 > surfaces against the record — 65 grounded in a user quote, 17 agent-origin, 11 contradicting
-> the record, 24 stale — of which 20 come from this file. That audit is interpretation too, and
-> unreviewed: one more opinion, not a ruling. Both files are listed `unreviewed` in
-> `docs/canon/REVIEW_REGISTER.md`, with the rest of the pile. Check a claim against intent
-> before acting on it.
+> the record, 22 stale, 2 since fixed — of which 20 come from this file. **Those figures are a
+> snapshot of 2026-08-03, not a live count**: they include claims already corrected, among them
+> eight of the audit's own ten worst. Read them as where to look, never as the state of the repo.
+> That audit is interpretation too, and unreviewed: one more opinion, not a ruling. Both files are
+> listed `unreviewed` in `docs/canon/REVIEW_REGISTER.md`, with the rest of the pile. Check a claim
+> against intent before acting on it.
 
 ## Repo layout
 
@@ -26,13 +28,17 @@
   built, and where the repo's own claims diverge from either. Regenerate the underlying
   corpus with `tools/canon_extract.py`.
 - **`CLAUDE.md`, `README.md`** — this repo's working instructions, written by agents.
-  The gitignored state/handoff docs under `docs/` hold the per-session detail.
+  The gitignored state docs under `docs/state/` hold the per-session detail.
 
 ## Session entry point — read this first
 
-1. **`docs/canon/raw/user_turns_all.md`** — the user's own 920 typed turns,
-   2026-05-14 → 2026-08-05. The only evidence of what he asked for. Any claim about
-   his intent cites a turn by line (`turns:L<n>`); no turn, no claim.
+1. **`docs/canon/raw/user_turns_all.md`** — the user's own 1,304 typed turns,
+   2026-05-14 → 2026-08-13, and the `.jsonl` twin holds the same 1,304. The only
+   evidence of what he asked for. Any claim about his intent cites a turn
+   (`turns:L<n>`); no turn, no claim. **Line numbers drift**: the `.md` is a
+   chronological rendering, so every union moves the lines after its earliest new
+   turn, and citations written against older renderings now sit tens of lines low.
+   Find a citation by its quoted words, not by its number.
 2. **`docs/canon/CONTRADICTION_MAP.md`** — where his rulings and the system disagree.
    Each collision is layered, cited, and carries what fixing it takes: an engine
    change, a graph rebuild, a doc correction, or a ruling only he can give.
@@ -41,8 +47,8 @@
    apparatus. Reference material, opened when a specific claim is in dispute. Not
    required reading.
 
-Working notes sit beside that: `docs/state/` (gitignored, machine-local, newest first)
-and `docs/handoff/` (frozen). Each is dated and describes its own moment.
+Working notes sit beside that: `docs/state/` (gitignored, machine-local, newest first).
+Each is dated and describes its own moment.
 
 **Trust ordering:** his words outrank every doc, memory entry and agent output. Where a
 doc conflicts with the record, the record wins and the conflict goes to him as a
@@ -53,7 +59,7 @@ question — never resolved silently.
 A graphify navigation graph for the codebase — a search tool.
 
 - **Graph — `graphify-out/graph.json`:** covers v3/ + the in-repo (gitignored)
-  state/handoff docs in `docs/state` + `docs/handoff` + the root instruction
+  state docs in `docs/state` + the root instruction
   files (CLAUDE.md, README.md), wired by bridge edges.
 
 How to use it:
@@ -66,7 +72,7 @@ How to use it:
   external-doc bridges). If it prints a worklist, a doc needs model extraction:
   process `graphify-out/.refresh_worklist.json` — extract each listed doc, bridging
   into the existing concepts in `graphify-out/.concept_index.txt`; write committed
-  repo docs to graphify's semantic cache and the gitignored state/handoff docs as
+  repo docs to graphify's semantic cache and the gitignored state docs as
   sidecar fragments in `graphify-out/.external_cache/`
   (`{source_file,hash,nodes,edges}`) — then re-run `python refresh_graph.py`.
 
@@ -127,7 +133,7 @@ Details: `graphify-out/REFRESH.md`.
   argue a current requirement away. Surface a genuine conflict as a question, not a
   correction.
 - **Docs track reality:** when a decision closes, update the design doc + memory in
-  the same pass, by removal of dead content, not banners. Dated state/handoff docs
+  the same pass, by removal of dead content, not banners. Dated state docs
   are frozen — they describe that moment.
 - **Every constant in `v3/` is a row in `v3/CONSTANTS.md`:** `check_constants.py`
   holds the table to the source, and `v3/test_constants_inventory.py` fails the
@@ -140,7 +146,7 @@ Details: `graphify-out/REFRESH.md`.
   comments feed the graph and memory, so scar tissue pollutes every future session.
 - **Refresh the navigation graph at commit time:** run `python refresh_graph.py`
   (repo root) once per commit, right before committing — one refresh covering every
-  edit to `v3/`, the root instruction files, or the external state/handoff docs
+  edit to `v3/`, the root instruction files, or the external state docs
   since the last one.
   Never per-edit; doc extraction is expensive, so all changed docs ride the same
   pass. It is the ONLY rebuild path (never `graphify --update`). If it prints a
@@ -183,9 +189,10 @@ the user runs. Definitions live in `.claude/agents/`. Route by task:
 `artefact_v1.py` and `artefact_v1_det.py` are two configurations of the system
 under test; neither is a baseline, and a measurement of either is never a
 pass-bar: *"until decided upon, there is no 'baseline' artefact, a comparable
-baseline are the vector and lucene arms"* (08-04). **Both legs are reported and
-neither is the artefact's single result** (08-05, `docs/canon/CONTRADICTION_MAP.md`
-T14). No surface may name one as *the* artefact number, and every figure quoted
+baseline are the vector and lucene arms, no?"* (08-05,
+`docs/canon/raw/user_turns_all.md`:4814). **Both legs are reported and neither is
+the artefact's single result** — his prompt-box answer, 08-05 11:35: *"Report both, decide
+nothing"* (recovered 08-09, in `docs/canon/raw/user_turns_all.md`). No surface may name one as *the* artefact number, and every figure quoted
 for one names its leg.
 
 The system under test is the modified v1 artefact: `v3/pipelines/artefact_v1.py` and

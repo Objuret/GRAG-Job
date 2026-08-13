@@ -236,7 +236,7 @@ def resolve(node, syms: dict, depth: int = 0):
             if len(args) >= 2:
                 return resolve(args[1], syms, depth + 1)
             return None
-        if name in ("_env_float", "_env_int", "_env_str") and len(args) >= 2:
+        if name in ("_env_float", "_env_int", "_env_bool", "_env_str") and len(args) >= 2:
             value = resolve(args[1], syms, depth + 1)
             if isinstance(value, Unknown):
                 return UNRESOLVED
@@ -244,6 +244,8 @@ def resolve(node, syms: dict, depth: int = 0):
                 return float(value)
             if name == "_env_int":
                 return int(value)
+            if name == "_env_bool":
+                return bool(value)
             return value
         if name in ("float", "int", "str", "list", "tuple", "set", "sorted", "len",
                     "Path", "max", "min") and args:

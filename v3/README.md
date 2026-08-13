@@ -53,7 +53,12 @@ share no retrieval code with each other, and nothing with the artefact.
 RAGAS emits raw per-question records (`EvalResult`, tidy long format) — nothing
 pre-aggregated — so paired tests, CIs, per-type splits and judge calibration are
 all possible downstream. Each run writes a `RunManifest` (arm, generator model,
-top-k, questions file, n, timestamp, build stats) and an `EvalManifest` (scorer,
+top-k, questions file, n, timestamp, build stats, and — for a Neo4j-querying
+arm — the graph identity: database name plus the graph build's
+`removed_tags_sha256`, timestamp and parent `source_database` when
+`output/graph_build/<db>/` records one; a resumed run whose answers span two
+builds of the database records them all under `mixed_builds`) and an
+`EvalManifest` (scorer,
 judge model, backend, reasoning effort, aggregate judge usage including
 reasoning tokens, source run, arm, timestamp) for reproducibility.
 GPT judge runs use the signed-in Codex CLI (the same subscription-authenticated
@@ -103,6 +108,12 @@ three modes is the pending step — see Still open.)
   ModelUsage, ArmOutput, BuildStats, EvalResult, RunManifest, EvalManifest).
 - `nim.py` — the one NVIDIA NIM REST transport (generator, embedder and judge all
   POST through it); shared harness plumbing, not retrieval code.
+- `char_budget.py` — fill-to-budget consumption of a ranked context stream
+  (`run.py --char-budget N`): whole retrieval units — a baseline's artifact, an
+  artefact leg's chunk — in rank order, the crossing unit cut mid-text so the
+  context text totals exactly N chars, the cut recorded per question in
+  `meta.char_budget` and the budget in the run manifest; shared harness
+  plumbing, not retrieval code. Budget runs' folders carry `cb<N>`.
 - `pipelines/` — `artefact_v1.py` and `artefact_v1_det.py` (the arm under test and its
   interpreter-free leg), `lucene.py`, `vector.py`, `hybrid.py`, and `artefact.py` (the
   native rebuild's arm entry).
