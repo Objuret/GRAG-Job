@@ -25,6 +25,13 @@ citation that record carries.
 | `docs/canon/raw/desktop_docs_record.md` | 2026-05-25 → 07-12. 20 desktop-only agent-written handoff/state docs, 6,719 lines, ~150 recovered user quotes | The decision *conversations* git cannot see — the fortnight git_record's own G-2 calls missing. Second-hand: an agent's report of a conversation. |
 | `docs/canon/USER_CANON.md` | 803 verbatim human turns, 05-14 → 08-03, plus 80 recovered rulings | What the user actually said, verbatim. `[CHAT]` is first-hand keystrokes; `[DOC]` is a quote that passed through an agent's transcription. |
 
+**The corpus has grown since this file was written, and the figures above are not wrong — they are
+dated.** 803 turns to 08-03 is exactly what `raw/user_turns_all.jsonl` held at `b0fcadc`
+(`git show b0fcadc:docs/canon/raw/user_turns_all.jsonl | wc -l` → 803; last timestamp
+`2026-08-03T12:51:53.729Z`), which is the snapshot this file was read against. At HEAD the corpus
+is **1,304 turns, 2026-05-14 → 2026-08-13T18:10:01Z**, and `USER_CANON.md` is **1,589 lines**, not
+1,577. Nothing below was re-read against the added turns.
+
 Both raw records stay on disk untouched as evidence. This file reorders them; it does not
 replace them.
 
@@ -58,6 +65,24 @@ agent-written state doc is the only attribution evidence for the two chat blacko
 (05-16 → 05-26 and 05-29 → 06-26) and is used as such — labelled second-hand, never
 upgraded silently. Where the records genuinely disagree, both readings appear and the
 better-evidenced one is named. The unsettled ones are collected at the end.
+
+**The blackouts are not the only gap: the extractor filters the whole record, end to end.**
+`tools/canon_extract.py:118-121` rejects any user record carrying a `toolUseResult` key or a
+`tool_result` content block before considering its text — so a `[CHAT]` absence is never by itself
+proof he said nothing, at any date, inside or outside a blackout. How much that costs is known for
+one half of the corpus and not the other:
+
+- **Desktop half — 127 turns, all of May and June plus 59 July and 1 August.**
+  `raw/EXTRACT_REPORT_desktop.md` enumerates the bucket in full: 620 `tool_result` rejects yielding
+  *zero* characters of human text (min 0, max 0), and **0** records across all 71 files carrying
+  both a `text` and a `tool_result` block — "provably empty of human prose." **The eras this file
+  covers most heavily are not weakened by the filter.**
+- **Laptop half — 793 turns, 2026-07-06 onward.** `raw/EXTRACT_REPORT.md` reports **2,530**
+  `tool_result` rejects and never enumerates them; its exhaustive false-negative check is scoped to
+  the text-matching rule. For July and August, absence has not been shown to mean silence.
+
+So a `[CHAT]` gap before 07-06 is a real gap in the conversation; a `[CHAT]` gap after it may be an
+artefact of extraction. Both blackout eras fall in the first case.
 
 ### The era map
 
@@ -2917,8 +2942,9 @@ in this window, and the full revert follows.
 
 ### The shipped artefact arm — [UNKNOWN]
 
-`git show 6730d13:v3/pipelines/artefact_v1.py` (docstring, lines 1–105). What
-`c1a68d1` began and HEAD carries:
+`git show 6730d13:v3/pipelines/artefact_v1.py` (docstring, **lines 1–90** — it closes at 90, not
+105). What `c1a68d1` began and `6730d13` carried (the docstring has since been rewritten; at HEAD
+it runs to line 97 and its opening sentence differs):
 
 > ```
 > """artefact_v1.py — the ARTEFACT-V1 arm: query-relative fuzzy cluster retrieval
@@ -3159,6 +3185,13 @@ rules on it and the ruling is binding on this document too: both are hedged by h
 `"i THINK"`, `"reflect on this with me"`), **neither is a ruling, and neither may be treated
 as settled.**
 
+**Closed 2026-08-05.** He ruled: *"yes, i do want the k, not the made up bullshit"* — **[CHAT]
+08-05**, `raw/user_turns_all.md`:5138. Landed the same day at **`62006ab`** ("K comes from the
+clustering"), which records the ruling as *per-query K derived from the clustering belongs on the
+load-bearing path, and the `K_LEVELS` staircase does not*, in `OPEN_DECISIONS.md` decision 23 and
+the contradiction map's arbitrary-constants entry. What stays open is named there, not here: the
+walk has to run, the stop rule has to be derived rather than picked, and R3 is unresolved.
+
 Also 07-31, pre-registered bars rejected:
 
 > *"what is this garbage? " . Bar fixed before running: paired recall gain over the 0.7339
@@ -3175,7 +3208,9 @@ number**. He rejects the bar, not the measurement.
 ### 2026-08-01 — tags-first ships, and is immediately rejected
 
 `6730d13` — `tags-first retrieval regime, per-facet tag cluster guidance, per-run --flag
-args` — is HEAD. It answers 07-30's *"informed by the tags first"* and 08-01's interface
+args` — was HEAD when this file was written and has not been since 2026-08-03: **fifteen commits
+have landed on top of it**, `b0fcadc` through `8c8c787`. It answers 07-30's *"informed by the tags
+first"* and 08-01's interface
 complaint (*"yeah why havent you just made them into -- commands ? wtf is this
 abomination?"* — **[CHAT] 08-01**, following *"wait a fucking minute, the env vars stick?
 that.. that sounds like a really bad idea"*).
@@ -3242,6 +3277,14 @@ widening levels ever open, `GUIDE_TAU = 0.0` makes every tag's guide value exact
 `HERB_TAG_FIRST` bundles a walk restructure with a gate. His answer: *"so, lets fix that and
 try it"* — **[CHAT] 08-02**. Whether it was fixed is not in any of the three records.
 
+**It was, on 2026-08-05.** He restated the design — *"well the design is to have the tags/weights
+to be PART of the routing to the final bag of chosen chunks, right?"* — **[CHAT] 08-05**,
+`raw/user_turns_all.md`:4902 — and **`bb95e4b`** ("tags route and weight, never exclude") deleted
+the gate that day: `HERB_TAG_FIRST` goes from 6 occurrences in `v3/pipelines/artefact_v1.py` at
+`11a6319` to **0**, leaving "one combine path: three weighted contributions summed over the union,
+no membership gate." `GUIDE_TAU` is no longer 0.0 — `v3/CONSTANTS.md` records it at `0.01` as a
+membership-cell floor, still marked `unknown` for derivation.
+
 His reaction to the tag corpus itself:
 
 > *"this literally all sounds like you constructed the whole tag-part like a fucking hobo"*
@@ -3298,11 +3341,11 @@ two chat blackouts.
 | Date | SHA | Author | What landed |
 |---|---|---|---|
 | 07-31 | `c33594d` | Joakim Wikman | `snapshot before tag-first retrieval build: heldout100 data, graph refresh, doc state` — tip of `origin/re-V1-k50` |
-| 08-01 | `6730d13` | Joakim Wikman | `tags-first retrieval regime, per-facet tag cluster guidance, per-run --flag args` — **HEAD**, tip of `origin/tag-first-cluster-guide` |
+| 08-01 | `6730d13` | Joakim Wikman | `tags-first retrieval regime, per-facet tag cluster guidance, per-run --flag args` — **HEAD as of 2026-08-03**, tip of `origin/tag-first-cluster-guide`; fifteen commits have landed since, HEAD is now `8c8c787` |
 
 Plus, off-git and inside this era, the three forensic records themselves:
 `docs/canon/raw/git_record.md`, `docs/canon/raw/desktop_docs_record.md`, and
-`docs/canon/USER_CANON.md` with its 803 verbatim turns — re-derivable via
+`docs/canon/USER_CANON.md` with its 803 verbatim turns (920 at HEAD) — re-derivable via
 `python tools/canon_extract.py`.
 
 ## What diverged
@@ -3332,6 +3375,14 @@ decide anything that ships.
 `USER_CANON.md` Part IV.C lists `POOL_FETCH`, the 64-chunk limit and `K_LEVELS` alongside
 α = 0.25, `MULTI_FACET_THRESHOLD = 0.50` and `CAP_TOKENS = 3000` — **not enumerated since**.
 The **C-15** family has grown, not shrunk, in eleven weeks.
+
+**Enumerated 2026-08-05.** `v3/CONSTANTS.md` now inventories **305 rows** — every module-level
+constant, env-var default and threshold literal in `v3/`, each with where its value came from, and
+`unknown` meaning no evidence for it was found anywhere. `K_LEVELS` carries this era's quote on its
+own row; `CAP_TOKENS = 3000` is there as "the best-documented constant in the tree and still
+underived". `check_constants.py` parses the table and re-reads each symbol out of the source with
+`ast`, and `v3/test_constants_inventory.py` fails the suite on drift. The prediction held — the
+family is large — but "not enumerated" no longer does.
 
 ### The graph question, asked seven times, never answered
 
@@ -3762,6 +3813,13 @@ survives. The first-hand version arrives only on **[CHAT] 07-15**: *"gate? wtf? 
 gate? why not ust that as promoted guidance?"* — and is violated again by `HERB_TAG_FIRST`
 on 08-01.
 
+**No longer violated: the flag is gone.** `bb95e4b` (2026-08-05) deleted `HERB_TAG_FIRST` —
+6 occurrences in `v3/pipelines/artefact_v1.py` at `11a6319`, **0** after — leaving one combine
+path with no membership gate, after he restated the rule a fourth time: *"well the design is to
+have the tags/weights to be PART of the routing to the final bag of chosen chunks, right?"* —
+**[CHAT] 08-05**, `raw/user_turns_all.md`:4902. **C-16 is closed at HEAD**, on the same stance
+recorded 05-31, 06-12, 07-15 and 08-01.
+
 ---
 
 ## C-17 — The leaderboard-comparable anchor metric was specced, stubbed, then deleted
@@ -3832,7 +3890,7 @@ repository's own history does not surface its most important changes.
 | **C-13** | **User decision misread as drift** — the no-numbers rule is the user's; the numeric-facet arm is kept *because* it violates it | **yes** |
 | **C-14** | **Genuine silent drop** — of the fix: canon went stale 2026-06-28, staleness logged the same day, repair never applied | **yes** |
 | **C-15** | **Not a contradiction** — confirmed and enlarged: α and 0.50 underived, the 3000-token sweep a deliberate deferral never executed | **yes** |
-| **C-16** | **Documented reversal** — a user stance recorded 05-31 (paraphrase), first-hand 07-15; violated again by `HERB_TAG_FIRST` on 08-01 | **yes** (again) |
+| **C-16** | **Documented reversal** — a user stance recorded 05-31 (paraphrase), first-hand 07-15; violated again by `HERB_TAG_FIRST` on 08-01 | **closed at HEAD** — the flag was deleted at `bb95e4b` (08-05), 6 occurrences → 0; live when this table was written |
 | **C-17** | **Documented reversal** — *"this is ONLY RAGAS"*, said twice; a user decision, not a silent drop. The unweighed consequence stands | **yes** (consequence) |
 | **C-18** | **Not a design contradiction** — record-keeping, mechanism explained by long uncommitted stretches | **yes** |
 
@@ -3844,6 +3902,11 @@ C-9, C-10). Total 18.
 **Live at HEAD:** C-2, C-5, C-9, C-10, C-13, C-14, C-15, C-16, C-17, C-18. `git_record.md`'s
 own live list was C-2, C-5, C-9, C-13, C-14; the desktop verdicts and the 08-01 `HERB_TAG_FIRST`
 regime extend it.
+
+**"HEAD" there means `6730d13`, 2026-08-03.** Two of the ten have closed since: **C-16**, when
+`bb95e4b` deleted `HERB_TAG_FIRST`, and **C-15**'s enumeration half, when `v3/CONSTANTS.md`
+inventoried 305 constants (the values themselves stay underived, so C-15 is narrowed, not closed).
+The other eight were not re-checked against `8c8c787`.
 
 ---
 
@@ -3967,7 +4030,8 @@ above, nothing decides.
   [USER-STATED]/[USER-STATED — paraphrase]/[AGENT-ASSERTED]/[UNCLEAR], ~150 recovered
   quotes, and a verdict on each of C-1…C-18.
 - `docs/canon/USER_CANON.md` — 1,577 lines, 803 verbatim human turns 05-14 → 08-03, read as
-  cross-reference only.
+  cross-reference only. Both figures are the `b0fcadc` snapshot and were correct for it; at HEAD
+  the file is 1,589 lines and the corpus is 1,304 turns to 2026-08-13.
 
 **Untouched.** Nothing under `docs/canon/raw/` was modified; `USER_CANON.md` was not
 modified. Both raw records remain on disk as evidence and remain the authority — where this

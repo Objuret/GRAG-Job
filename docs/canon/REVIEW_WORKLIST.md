@@ -88,7 +88,7 @@ it. Read the blackout rule below before converting any zero into a verdict.
 
 ## Two things that will bite whoever works this list
 
-**The corpus blackouts.** The corpus is 920 turns, 2026-05-14 → 2026-08-05; this list's rows were written against the 803 extant on 08-03. Nothing survives
+**The corpus blackouts.** The corpus is 1,304 turns, 2026-05-14 → 2026-08-13; this list's rows were written against the 803 extant on 08-03. Nothing survives
 before 05-14, and **05-16 → 05-26** and **05-29 → 06-26** hold zero turns. A claim whose only
 support would sit in those windows returns zero hits *by construction*. That is
 `cannot-determine`, never `unsupported`.

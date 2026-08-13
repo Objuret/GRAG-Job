@@ -17,7 +17,7 @@ had been accumulating as rules — an agent wrote a term or a number, a later ag
 
 Read this file before anything else in `docs/canon/`.
 
-**Two things carry the work.** `raw/user_turns_all.md` is the evidence — his 920 turns, the
+**Two things carry the work.** `raw/user_turns_all.md` is the evidence — his 1,304 turns, the
 only source of intent, cited by line. `CONTRADICTION_MAP.md` is the live list of where those
 rulings and the system disagree, each collision layered, cited, and carrying what fixing it
 takes: an engine change, a graph rebuild, a doc correction, or a ruling only he can give.
@@ -60,7 +60,11 @@ later pass would produce.
 `raw/user_turns_all.jsonl` · `.md`. Nothing else carries intent — not a document, not a commit,
 not a memory file. **Its one honest caveat: a machine decided what counted as a human turn** —
 across both machines 11,137 user-role records were seen and 10,244 were rejected by a named rule,
-leaving 803 turns (full arithmetic below); the corpus has since been extended by union to 920, through 2026-08-05. The corpus begins 2026-05-14, with
+leaving 803 turns (full arithmetic below); the corpus has since been extended by union to
+**1,304 turns, through 2026-08-13 18:10**, and the two files agree again — same rows, same
+count, the `.md` rendered from the `.jsonl`. **Two of those 1,304 exist only because the `.md`
+carried them**: turns whose session transcript Claude Code has since deleted, kept through the
+union and marked in the rendering as recovered from this record. The corpus begins 2026-05-14, with
 chat blackouts 05-16 → 05-26 and 05-29 → 06-26. The rules, tallies, false-negative audits and
 discard samples are in `raw/EXTRACT_REPORT*.md` and `raw/rejected_sample*.md`: audited, not
 infallible.
@@ -101,7 +105,7 @@ a `[CHAT]` quote is checkable in the corpus.
 
 | File | What it is | Standing |
 |---|---|---|
-| `raw/user_turns_all.jsonl` · `.md` | The corpus: 920 verbatim turns, both machines merged, chronological, no edits. | **Intent** — the only source of it (machine-filtered). |
+| `raw/user_turns_all.jsonl` · `.md` | The corpus, both machines merged, chronological, no edits: 1,304 verbatim turns to 2026-08-13, both files in agreement. | **Intent** — the only source of it (machine-filtered). |
 | `raw/user_turns.*` · `raw/user_turns_desktop.*` | The two halves before merge — laptop 793 (from 07-06), desktop 127 (from 05-14). | **Intent** (machine-filtered). |
 | `raw/EXTRACT_REPORT*.md` · `raw/rejected_sample*.md` | The filter's own accounting, **one pair per machine**: counts, per-rule rejects, byte-identity verification, false-negative audit, samples of what was thrown out. Every figure inside is for that machine alone; `_desktop` also carries the merge. | Tool output. Read it to judge how much intent the filter dropped. |
 | `CONTRADICTION_MAP.md` | Every statement of his that something contradicts, layered (V1-GRAPH / V1-ENGINE / V1-ORIGINAL / V2-DESIGN / V3-NATIVE / CROSS) so cross-layer false collisions cannot appear: 12 live collisions with the remedy each needs, 12 tensions awaiting his judgement, 14 near-collisions scoping dissolves, and the standing uncontradicted record. | **Interpretation**, unreviewed. The live list — every entry checkable against the corpus line it cites. |
@@ -168,14 +172,15 @@ or kept (`tools/canon_extract.py`, the pass-2 loop). There is no fourth outcome.
 **Verifying it yourself**, from the repo root:
 
 ```bash
-# corpus sizes: 803 / 676 / 127
+# corpus size: 1304 (the two split halves are the 2026-08-03 snapshot, 793 / 127)
 wc -l docs/canon/raw/user_turns_all.jsonl docs/canon/raw/user_turns.jsonl \
       docs/canon/raw/user_turns_desktop.jsonl
 
-# no residual duplicates: 803 rows, 803 uuids, 803 (timestamp, text) pairs
+# no residual duplicates: 1304 rows, 1304 (timestamp, text) pairs; uuids count 1303
+# because the two md-recovered turns carry none and collapse to one null
 python -c "import json;r=[json.loads(l) for l in open('docs/canon/raw/user_turns_all.jsonl',encoding='utf-8') if l.strip()];print(len(r), len({x['uuid'] for x in r}), len({(x['iso_timestamp'],x['text']) for x in r}))"
 
-# the halves partition the whole: {'laptop': 676, 'desktop': 127}
+# machine split: {'laptop': 1177, 'desktop': 127}
 python -c "import json,collections;r=[json.loads(l) for l in open('docs/canon/raw/user_turns_all.jsonl',encoding='utf-8') if l.strip()];print(collections.Counter(x['machine'] for x in r))"
 ```
 
@@ -188,8 +193,12 @@ table describe the 2026-08-03 snapshot that produced the corpus.
 
 ## Coverage, and where it stops
 
-- **920 turns, 2026-05-14 → 2026-08-03** — laptop 793 + desktop 127, concatenated. Nothing was
-  removed at merge time; the two halves do not overlap. See the arithmetic below.
+- **1,304 turns, 2026-05-14 → 2026-08-13** — laptop 1,177 + desktop 127, as both
+  `raw/user_turns_all.md` and its `.jsonl` twin stand after the 2026-08-13 union. Nothing has
+  ever been removed at merge time; the two halves do not overlap. See the arithmetic below. The
+  split halves (`user_turns.*` 793, `user_turns_desktop.*` 127) are the 2026-08-03 snapshot and
+  no longer sum to the merged corpus — 384 laptop turns have been unioned in since, and the
+  desktop half cannot be re-extracted from this machine at all.
 - **Nothing before 05-14 survives as chat.** The first commit is 2026-05-07. That first week — the
   52-file Neo4j pipeline, the 12-entry decision log, the original graph schema, the controlled
   canonical vocabulary — **survives only as state, in the git history**. Read it with
@@ -200,8 +209,8 @@ table describe the 2026-08-03 snapshot that produced the corpus.
   death of the chunk description, the build gate, the eval-harness design and the RAGAS-only purge.
   **No chat is not no record** — 20 dated design docs (`raw/desktop_docs_record.md`) and git cover
   both windows: interpretation and state, never intent. Second-hand, but never absent.
-- **Thin days are thin, not silent.** Seven of the 30 active days carry one to three turns:
-  05-27 (1), 05-28 (1), 07-01 (3), 07-02 (2), 07-12 (3), 07-27 (2), 08-03 (2). Absence of a
+- **Thin days are thin, not silent.** Six of the 33 active days carry one to three turns:
+  05-27 (1), 05-28 (1), 07-01 (3), 07-02 (2), 07-12 (3), 07-27 (2). Absence of a
   statement on a date proves nothing.
 - An earlier agent called **2026-07-15 "the first day"** of the project — the earliest date in one
   partial local extract, wrong by two months. Do not repeat it.

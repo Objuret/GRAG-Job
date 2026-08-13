@@ -3,7 +3,7 @@
 > **Interpretation, produced 2026-08-03, unreviewed by the user.** An agent built this in a few
 > hours. It holds no status above any other document in this repo. The quotes themselves are
 > verbatim intent, but which quotes were selected, how they were grouped and what the headings
-> call them are all agent judgement, and 115 entries are second-hand `[DOC]` recoveries rather
+> call them are all agent judgement, and 141 entries are second-hand `[DOC]` recoveries rather
 > than chat. Every claim holds only as far as the citation attached to it; intent itself is
 > `docs/canon/raw/user_turns_all.jsonl`, and every quote here is checkable against it. Listed
 > unreviewed in `docs/canon/REVIEW_REGISTER.md`.
@@ -27,7 +27,7 @@ All dates are 2026. Format: `MM-DD`.
 
 | | |
 |---|---|
-| Verbatim human turns | **803**, 2026-05-14 → 2026-08-03, desktop 127 + laptop 676, merged |
+| Verbatim human turns | The corpus is **1,304**, 2026-05-14T12:30:48Z → 2026-08-13T18:10:01Z, desktop 127 + laptop 1,177, merged. **This document's quote selection was made against the 803-turn snapshot that existed on 08-03** (desktop 127 + laptop 676). The 501 turns added since are in `docs/canon/raw/user_turns_all.jsonl` and have not been swept into these sections. |
 | Second-hand recovered rulings | **80 labelled rulings + ~150 verbatim quotes** from 20 agent-written design docs, 05-25 → 07-12 |
 | Git | **74 commits**, 2026-05-07 → 2026-08-01, 91 reproduce commands, 18 numbered contradictions |
 
@@ -38,6 +38,7 @@ All dates are 2026. Format: `MM-DD`.
 | **[CHAT]** | From `docs/canon/raw/user_turns_all.jsonl` — the user's own keystrokes, first-hand, timestamped | Highest. This is the primary source. |
 | **[DOC]** | Recovered from an agent-written design/state doc that quoted the user | Second-hand. The quote passed through an agent's transcription. Reliable to the extent that agent transcribed accurately; the 06-28 design-evolution doc is strongest because it cites `[tNN]` turn numbers. |
 | **[COMMIT]** | The user's own commit message | First-hand but terse. |
+| **[TOOL-RESULT — absent from the corpus]** | His answer to an AskUserQuestion prompt, quoted from the session transcript under `~/.claude/projects/C--Coding-exjobbet-GRAG-Job/` and cited by session file, record line and UTC timestamp | First-hand — his own keystrokes — but **not reachable through `user_turns_all.jsonl`**, because the extractor drops any record carrying a tool result. See the blind spot below. |
 
 ### What this canon **cannot** tell you
 
@@ -60,6 +61,20 @@ All dates are 2026. Format: `MM-DD`.
     doc record. Treat `[DOC]` as second-hand, not as absent.
 - **Thin days are thin, not silent.** 05-27 and 05-28 carry one turn each; 07-02 two;
   07-12 three; 07-27 two. Absence of a statement on a date proves nothing.
+- **Every answer he gave through an AskUserQuestion prompt is missing from the corpus.**
+  `tools/canon_extract.py` discards a user record the moment it carries a `tool_result`
+  block, before any text is extracted (`classify`, the `tool_result` rule at lines
+  118-121) — 2,530 records in the laptop pass. The harness delivers an
+  AskUserQuestion answer as a tool result, so the extractor never sees the text, however
+  forceful the ruling. **"There is no turn for it" therefore does not mean he never said
+  it.** Four such records exist in the project, and each is a decision:
+  2026-07-30T23:10:40.745Z (how tags inform the interpretation),
+  2026-08-02T09:32:26.648Z (chunk position in cluster space; **rank-aware metrics first**),
+  2026-08-05T11:39:56.193Z (no framing — report the statistics),
+  2026-08-05T13:48:50.008Z (flag-gated derivation — "strange question and i dont get it").
+  They live under `~/.claude/projects/C--Coding-exjobbet-GRAG-Job/`, cited by session
+  file, record line and UTC timestamp. Anything sourced that way is marked **[TOOL-RESULT
+  — absent from the corpus]** where it appears below.
 - **An earlier agent called 2026-07-15 "the first day" of the project.** The user's reply:
 
   > "This, this was the most fucking delusional piece of evidence i have ever seen.
@@ -584,7 +599,7 @@ Ten days apart, opposite positions, both hedged by him (`"..?"`, `"i THINK"`, `"
 
 ## 6. Retrieval shape — guidance, not filtering
 
-**Reading (attribution only, not a quote):** the 05-31 handoff records *"NO hard filters anywhere"* as a **strong user stance**, and the 05-25 handoffs record the agreed retrieval shape as recall → filter → rank → cap, with the cap doing the cutting. Both are recorded as user rulings but given without quoted wording, so they are not reproduced here as quotes.
+**Reading (attribution only — the words below are the doc's, not his):** the 05-31 handoff writes *"NO hard filters anywhere (strong user stance) — 'mandatory' = weight concentration; the cap does the cutting on rank. Resolves facets-as-filter-vs-ordering → always ordering."* (`docs/canon/raw/desktop_docs_record.md:182`), and the 05-25 handoffs record the agreed retrieval shape as recall → filter → rank → cap, with the cap doing the cutting. Both are attributed to him as rulings, but neither reproduces anything he typed — the phrasing is the agent's summary of a stance. That is why these lines carry no `[DOC]` tag: a `[DOC]` entry is a transcribed user quote, and this is not one. His own words on the same rule are the 07-15 four-point rejection below.
 
 > "a does seem to fit the best" — **[DOC] 06-12**, ruling that multiple literal hits produce boosts only, never removal
 
@@ -724,7 +739,7 @@ Ten days apart, opposite positions, both hedged by him (`"..?"`, `"i THINK"`, `"
 
 **Reading:** these two are one week apart and are a straight reversal. The consequence — every number this project reports is RAGAS-only, and none is comparable to HERB's published leaderboard — is accepted by him:
 
-> "we have never used the herb score and has no intention to" — **08-04**, ruling on the consequence directly. RAGAS-only is the reported basis; leaderboard comparability is not wanted.
+> "we have never used the herb score and has no intention to" — **[CHAT] 08-04** (18:40, turns:L4733), ruling on the consequence directly. RAGAS-only is the reported basis; leaderboard comparability is not wanted.
 
 ### Standing rulings
 
@@ -1544,12 +1559,20 @@ The research catalog is candid that none of this is settled science: *"No benchm
 
 ## C. Constants nobody based on anything
 
+**This table is a four-row sample, not the inventory.** The inventory is
+`v3/CONSTANTS.md`: **313 rows**, each with a `provenance` column, of which **161 are
+`unknown`** — no evidence for the value found in his turns, a design doc, a git message,
+a sweep, or the code's own comments. `check_constants.py` at the repo root parses that
+table, re-reads each named symbol out of the source with `ast`, and fails on a value
+mismatch, so it cannot silently go stale. Go there for the full picture; the four rows
+below are kept because each carries its own history.
+
 | Constant | Status |
 |---|---|
 | `α = 0.25` (coverage bonus) | Directional rationale only. Never swept. Load-bearing on 230k+ edges. Measured to work counterintuitively: mean `w_chunk` is *lower* on `w_facet=1.0` edges than on 0.7–0.8 edges. |
 | `MULTI_FACET_THRESHOLD = 0.50` | No rationale at all. Consequence: 85% of tags are multi-facet — which is also the evidence for the orthogonality risk that threatens the whole facet layer. |
 | `CAP_TOKENS = 3000` | The best-justified constant in the repo, explicitly *"a calibration seed, not a verdict"*, with a named sweep. **The sweep was never run**, including after the tagger and chunks existed. |
-| `POOL_FETCH`, the 64-chunk limit, `K_LEVELS` | "also, arbitrarily decided hard limits, like the 64 chunk limit, i bet there is way more than 1 of these dumb limits lying around not beeing seen" — **[CHAT] 08-02**. Not enumerated since. |
+| The 64-chunk limit, `K_LEVELS` | "also, arbitrarily decided hard limits, like the 64 chunk limit, i bet there is way more than 1 of these dumb limits lying around not beeing seen" — **[CHAT] 08-02**. The 64 is `K_LEVELS[-1]` (`v3/pipelines/artefact_v1.py` · `K_LEVELS`). His hunch was right and the enumeration exists now: `v3/CONSTANTS.md`, 313 rows, 161 of them with no evidence for the value at all. `POOL_FETCH` was named here as a third instance and **is not in the tree** — zero hits across `v3/**/*.py` and absent from `v3/CONSTANTS.md`; it belonged to the July `det*` thread he ordered fully reverted on 07-28. Likewise `MULTI_FACET_THRESHOLD` above: zero hits in `v3/`, it is a V1-ORIGINAL/V2-design-era constant, not a live one. |
 
 ## D. Adopted then silently un-adopted — no reversal recorded anywhere
 
@@ -1567,14 +1590,14 @@ The research catalog is candid that none of this is settled science: *"No benchm
 | "is there an architectural difference between them?" (det vs haiku legs) | **[CHAT] 07-29** | Asked while trying to settle which arm is the baseline — *"all agents keep fucking reverting to the \"det\" arm, is there something in some documents that says so? because this is starting to piss me off"*. Never settled in writing. |
 | Why `qt.scopeWeight` was introduced into the v1 scorer | shipped 05-15→05-28 | Named as a factor to remove; **no source in any of the three records explains why it exists**. |
 | Why the built tagger is `z-ai/glm-5.1` when the documented choice was Mistral Large | 06-28 | Undocumented. Three tagger-model decisions, each superseding the last; the final one has no rationale anywhere. |
-| Whether rank-aware metrics should replace set-based `recall_id`/`precision_id` | **[CHAT] 08-02** | He pasted the agent report saying the eval `set()`s the retrieved ids and therefore discards the ordering his changes were changing. He did not rule. |
+| Whether rank-aware metrics should replace set-based `recall_id`/`precision_id` | **[CHAT] 08-02**, then **[TOOL-RESULT — absent from the corpus] 08-02** | He pasted the agent report saying the eval `set()`s the retrieved ids and therefore discards the ordering his changes were changing. **He then ruled**, answering *"Rank-aware metrics before or after the build?"* with **"Metrics first (Recommended)"** — `ed7d2b13-50d7-46fe-993e-756dd0348a7c.jsonl` line 221, 2026-08-02T09:32:26.648Z. The answer is a tool-result record, so it is absent from `user_turns_all.jsonl` and no `turns:L` cite exists for it. Ordering: metrics before the build. **What he did not rule is which rank-aware metric, or whether it replaces the set-based pair or joins it.** |
 | The interpreter's "faceting" rename, so it stops colliding with tag-facets | 06-25 | Requested; never done; `facet_phrases` still uses the word. |
 | Judge calibration against a human-labelled subset | 06-18 | Recommended, never locked, never run. The `MetricScore` record carries a `human_label` slot that is always empty. **Every judged number this project reports is uncalibrated.** |
 | H1–H4 from 06-23, notably lucene/vector `documents.feedback` parity | 06-23 | Never resolved. The doc itself notes it "muddies 'sparse vs dense' on that kind". |
 
 ## F. Open at the moment this record ends (2026-08-03)
 
-- The 08-02 diagnosis of the current tag layer — tag path finds 3 chunks/question out of a ~418-chunk pool, zero widening levels ever open, `GUIDE_TAU = 0.0` makes every tag's guide value exactly 1, `HERB_TAG_FIRST` bundles a walk restructure with a gate — was pasted by him and answered with *"so, lets fix that and try it"* **[CHAT] 08-02**. Whether it was fixed is not in this record.
+- The 08-02 diagnosis of the current tag layer — tag path finds 3 chunks/question out of a ~418-chunk pool, zero widening levels ever open, `GUIDE_TAU = 0.0` makes every tag's guide value exactly 1, `HERB_TAG_FIRST` bundles a walk restructure with a gate — was pasted by him and answered with *"so, lets fix that and try it"* **[CHAT] 08-02**. **The gate half was fixed at `bb95e4b` (2026-08-05, "tags route and weight, never exclude"):** `HERB_TAG_FIRST`, `HERB_TAG_ADMIT` and the gated branch in `_retrieve` are deleted — zero hits across `v3/**/*.py` and absent from `v3/CONSTANTS.md`. `GUIDE_TAU` now defaults to `0.01`, not `0.0` (`v3/pipelines/artefact_v1.py` · `GUIDE_TAU`). The rest of that diagnosis — the tag path's reach and the never-opening widening levels — is untouched.
 - The evidence-cap / matched-token-budget work existed only inside the thread he ordered fully reverted on 07-28, and did not survive the revert.
 - Cluster-K itself — the mechanism defined on 07-21 and respecified on 07-31 — has never been on the load-bearing path in any shipped configuration.
 

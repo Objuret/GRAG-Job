@@ -14,8 +14,8 @@ All dates are 2026. `[CHAT]` = his own keystrokes; `[DOC]` = recovered from an a
 that quoted him. Trust ordering and coverage limits: `README.md`.
 
 **Counts.** §1 unresolved reversals **7** · §2 specified and never built **24** · §3 questions
-never answered **12** · §4 instructions recorded nowhere **17** · §5 audit findings awaiting a
-ruling **28**. **88 open items.**
+never answered **14** · §4 instructions recorded nowhere **17** · §5 audit findings awaiting a
+ruling **28**. **90 open items.**
 
 ---
 
@@ -60,8 +60,9 @@ Five weeks of him asking what the facets are actually doing (07-20 "how the fuck
 here then?", 07-21 "how did we get the facet-values now?", 07-25 "what is affecting the interpreter
 from the facets") are recorded with no answer he accepted.
 
-**A ruling decides:** what a facet measures, and therefore whether the facet layer is measured
-geometry, a graded dial produced at query time, or removed.
+**Ruled 08-07** — measured geometry. Asked which layer the per-facet clusterings are built from,
+the model-emitted one the graph holds or the one `build_facet_layer.py` derives from corpus facts:
+*"the derived ofc.."* — **[CHAT] 08-07**. What the five facets *are* stays open under **R4**.
 
 ### R3 — Clusters computed at build, or per query
 
@@ -81,8 +82,25 @@ me"`). Neither is a ruling. `USER_CANON.md` §5.
 decide the correct K for that solution") and respecified 07-31 — has never been on the
 load-bearing path in any shipped configuration.
 
-**A ruling decides:** where clustering runs, whether query facet-adjustment precedes or follows
-best-fit, and therefore whether cluster-K is buildable at all.
+**Partially ruled 08-07, siting still open.** Ruled: the ordering question is dissolved —
+*"there is no ordering in it. Facets do not inform selection, and selection does not follow
+weighting — one operation. Nothing selects; the weighting is the mechanism."* / *"isnt the 'best
+fit' automatically the cut?"* — **[CHAT] 08-07**. Not ruled: where the clustering runs. The two
+hedged turns above are all the record holds on build-vs-query, and no later turn closes it.
+`artefact_v1_relevance_weight.py` (08-08) clusters the query-activated region per query; that
+siting is the build's, not his. An earlier revision of this entry recorded "at build" as ruled —
+that was an agent's inference from a design since superseded, not his word.
+
+**Ruled 08-11, on cost rather than siting:** *"everything that doesnt need to be ran in querytime
+should be premade!"* — **[CHAT] 08-11**. It settles every part of the clustering that carries no
+query dependence, and in `artefact_v1_relevance_weight.py` that is the geometry: `_facet_distances`
+reads the tag-embedding cosine, the tags' facet marginals and the facet's corpus spread, all three
+build-time constants, so the five per-facet distance geometries over the whole vocabulary are fixed
+before any question arrives and are currently rebuilt per query. The query decides only which tags
+`_region` admits. What the ruling does not settle is the linkage: average-linkage heights depend on
+which points are present, so a globally-built dendrogram sliced to a region is not the region's own
+clustering, and choosing that approximation changes results rather than only cost. Build-vs-query
+for the linkage stays open.
 
 ### R4 — Entity-type and information-kind: out, in, out
 
@@ -126,11 +144,31 @@ mid-selectivity shared scalars while `v2-graph-spine.md` says "the minted hub-no
 **dead**" — and the pass-2 file names the tension itself and says it "needs an explicit sign-off,
 not silent resolution either way" (`CANON_AUDIT.md` 6.10).
 
-**Ships now:** hard fields are chunk attributes. The graph spine `Source → File → Chunk → Tag` is
-closed canon.
+**Ships now:** in `herb-eval`, hard fields are chunk attributes and the graph spine
+`Source → File → Chunk → Tag` is closed canon. That database is untouched, and every artefact
+number the project reports comes from it.
 
-**A ruling decides:** whether the relationships/hub-node layer (§2, item 2) gets built, and what
-distinguishes a useful hub node from SQL schema.
+**Ruled 08-12 — entity nodes, in a second database.** *"wouldnt it be way more reasonable to make
+those fields into nodes to get actual use of this beeing in a graph?"* — **[CHAT] 08-12**. His
+security boundary came with it, as a question he asked in the same exchange: *"yeah, what raw data
+would actually enter the graph tho? can we still claim to be 'secure' if so?"* — **[CHAT] 08-12** —
+answered ids-only: identifier strings, role labels and provenance pointers enter the graph, names
+resolve outside it from the raw directories. Then the build order: *"well then, if you feel this is
+the way, construct another db using this, aka use the current as template and 'fix it' and add these
+things, right?"* — **[CHAT] 08-12**. Built and verified the same day as `herb-eval-v2`: Person 5,233,
+Product 30, Channel 294, over INVOLVES 32,281 · MENTIONS 9,634 · IN_PRODUCT 4,808 · IN_CHANNEL 2,669
+(`v3/output/graph_build/herb-eval-v2/build_manifest.json`). All three turns are in
+`docs/canon/raw/user_turns*` at the 2026-08-13 union.
+
+**Both his rulings stand, dated.** 06-12 closed the spine; 08-12 opened entity nodes in a copy. They
+are two databases and two dates, and neither retires the other. No agent reads the second as deleting
+the first.
+
+**A ruling decides:** whether the entity shape is *the* shape — the 08-12 design doc records that the
+sign-off has not been given — and, still open from 06-30/07-01, whether the relationships/hub-node
+layer (§2, item 2) gets built, and what distinguishes a useful hub node from SQL schema. His 08-13
+question about the layer as built is the sharp form of it: the entity nodes touch chunks and nothing
+else (§3, question 14).
 
 ### R6 — Dataset-agnostic, or HERB-only
 
@@ -307,9 +345,11 @@ than k chunks.
 per chain level, `a` = mean distance inside the cluster, `b` = mean distance from it to the pool
 remainder, and the area's edge is the last level where `a < b` — an identity, not a threshold, and
 his 07-31 *"best fit as the fuzzy cutoff-point for the cluster's edges"* read literally. What blocks
-it is **V1-GRAPH, not mathematics** — the tag layer is polluted with the source's own field values,
+it is **V1-GRAPH, not mathematics** — the tag layer carries the source's own field values as tags,
 measured and layered as **`CONTRADICTION_MAP.md` T15**, the third baked problem beside the oracle
-residue and the facet set. The strongest mutual-distance structure available is the
+residue and the facet set. T15 also carries the 2026-08-11 verbatim inventory and his same-day
+reading that the vocabulary mirrors the corpus; the slug-bin geometry, and with it this blocker,
+is unchanged by that read. The strongest mutual-distance structure available is the
 contamination, so a boundary-finder finds that first — which is what the 07-22 panel saw when two
 different CoachForce questions produced an identical chain and identical K=5. The remedy is a
 **retag**; the only in-engine alternative is filtering slug tags from the pool, which is a hard
@@ -480,6 +520,31 @@ run. The `MetricScore` record carries a `human_label` slot that is always empty.
 number this project reports is uncalibrated.**
 **12.** H1–H4 from 06-23, notably lucene/vector `documents.feedback` parity. Never resolved; the doc
 itself notes it *"muddies 'sparse vs dense' on that kind"*.
+
+Two more, asked 2026-08-13 and unanswered when the day ended. Both are in
+`docs/canon/raw/user_turns*` at the 2026-08-13 union.
+
+**13. Is the retriever's architecture the architecture he intended?** Told the engine scores four
+paths, he said so directly:
+> "you say 4 paths, what is that even, how does it work? **this does absolutely not sound like the
+> architecture and thought i have had about this**, explaion" — **[CHAT] 08-13**
+
+The engine adds four independently-normalized bases per chunk — tag areas, description, stated scope,
+person — each with its own weight (`artefact_v1.py` · `_retrieve`). What he has described since 06-27
+is a relevance chain carried in steps, tag → chunk → file (turns:L285, L589-594). Nothing in the
+record chooses between them, and the sum was never put to him as a decision. Laid out with both sides
+cited at `CONTRADICTION_MAP.md` **T17**. **No proposal attaches to this entry** — what the
+architecture is supposed to be is his to say.
+
+**14. Why do the new entity nodes have no relationships except to chunks?**
+> "mhm.. just watched the db now, so, these nodes are only connected to chunks.. and nothing else?" /
+> "yeah, **WHY are there no relations? like, whats the point it they have no edges? like, not even to
+> eachother?**" — **[CHAT] 08-13**
+
+Accurate as a description of what was built: every edge type in `herb-eval-v2`'s entity layer runs
+chunk-to-entity (INVOLVES, MENTIONS, IN_PRODUCT, IN_CHANNEL). It is the same objection as his 06-30
+*"half the strength of of a graph is beeing able to route/search based on relationships instead of
+structures"* — **R5**, §2 item 2, and the two-hop shape the person design leaves unbuilt.
 
 ---
 
