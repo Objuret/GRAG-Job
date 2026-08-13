@@ -15,6 +15,14 @@ merged into one chronological record.
 Rejection rules are named and ordered; every rejected turn records the first
 rule that matched, so the filtering can be audited from the rejected sample.
 
+One class of tool_result is kept: the user's answers to AskUserQuestion prompt
+boxes. The answer arrives as a tool_result block paired to the assistant's
+tool_use, with the selected labels / typed text in the envelope's
+`toolUseResult.answers`. Those are the user's words, so they are extracted as
+turns, each answer preceded by its `[prompt-box question: ...]` marker (the
+question is agent text, kept only as context). Every other tool_result is
+still rejected.
+
 Subagent transcripts (`<session>/subagents/agent-*.jsonl`) carry orchestrator
 prompts in the `user` role, so they are dropped whole at discovery time and
 counted separately.
@@ -142,6 +150,60 @@ def classify(obj: dict, in_headless_dir: bool = False) -> tuple[str | None, str]
         return "headless_directory", text
 
     return None, text
+
+
+def note_prompt_box_questions(obj: dict, pending: dict[str, dict]) -> None:
+    """Record AskUserQuestion tool_use blocks so their answers can be paired."""
+    if obj.get("type") != "assistant":
+        return
+    content = (obj.get("message") or {}).get("content")
+    if not isinstance(content, list):
+        return
+    for block in content:
+        if (isinstance(block, dict) and block.get("type") == "tool_use"
+                and block.get("name") == "AskUserQuestion"):
+            pending[block.get("id")] = block.get("input") or {}
+
+
+def prompt_box_answer(obj: dict, pending: dict[str, dict]) -> str | None:
+    """The user's answer to an AskUserQuestion prompt box, or None.
+
+    A user message whose tool_result pairs with a tracked AskUserQuestion
+    carries the answers in the envelope's `toolUseResult.answers`: question
+    text -> the selected option label or the user's typed text, verbatim.
+    Each answer is emitted after a `[prompt-box question: ...]` marker; the
+    question is agent text and the marker says so. A pairing with no usable
+    answers (cancelled box) returns None and the turn stays rejected.
+    """
+    content = (obj.get("message") or {}).get("content")
+    if not isinstance(content, list):
+        return None
+    paired = None
+    for block in content:
+        if (isinstance(block, dict) and block.get("type") == "tool_result"
+                and block.get("tool_use_id") in pending):
+            paired = block.get("tool_use_id")
+            break
+    if paired is None:
+        return None
+    pending.pop(paired)
+    envelope = obj.get("toolUseResult")
+    answers = envelope.get("answers") if isinstance(envelope, dict) else None
+    if not isinstance(answers, dict):
+        return None
+    parts = []
+    for question, answer in answers.items():
+        if isinstance(answer, list):
+            answer = ", ".join(str(a) for a in answer)
+        elif not isinstance(answer, str):
+            answer = json.dumps(answer, ensure_ascii=False)
+        answer = answer.strip()
+        if not answer:
+            continue
+        parts.append(f"[prompt-box question: {question}]\n{answer}")
+    if not parts:
+        return None
+    return "\n\n".join(parts)
 
 
 def matches_harness_template(text: str) -> bool:
@@ -297,12 +359,22 @@ def extract(sources: list[Path], files_by_source: dict[Path, list[Path]],
             index += 1
             if index % 250 == 0 or index == len(files):
                 log(f"  pass 2/2  {index}/{len(files)} files  kept={len(kept)}")
+            pending: dict[str, dict] = {}
             for obj in iter_lines(path):
+                if obj.get("type") == "assistant":
+                    note_prompt_box_questions(obj, pending)
+                    continue
                 if obj.get("type") != "user":
                     continue
                 turns_seen += 1
                 session = obj.get("sessionId") or path.stem
                 rule, text = classify(obj, headless)
+
+                prompt_box = False
+                if rule == "tool_result" and not headless:
+                    answer = prompt_box_answer(obj, pending)
+                    if answer is not None:
+                        rule, text, prompt_box = None, answer, True
 
                 if rule:
                     rules[rule] += 1
@@ -350,6 +422,8 @@ def extract(sources: list[Path], files_by_source: dict[Path, list[Path]],
                     "is_paste": is_paste(text),
                     "text": text,
                 }
+                if prompt_box:
+                    row["prompt_box"] = True
                 if machine:
                     row["machine"] = machine
                 kept.append(row)
@@ -375,6 +449,8 @@ def write_corpus(out: Path, name: str, kept: list[dict]) -> tuple[Path, Path]:
             stamp = (row["iso_timestamp"] or "")[:16].replace("T", " ")
             origin = f" · {row['machine']}" if row.get("machine") else ""
             handle.write(f"## {stamp}{origin} · {row['session_file']}\n\n")
+            if row.get("prompt_box"):
+                handle.write("*prompt-box answer*\n\n")
             if row["is_paste"]:
                 handle.write(f"*paste / file drop · {row['char_len']} chars*\n\n")
             handle.write(row["text"].rstrip() + "\n\n")
@@ -479,6 +555,8 @@ def write_report(out: Path, suffix: str, kept, rules, dupes, dupe_detail, turns_
             f"(uuid {dupes['uuid']}, timestamp+text {dupes['timestamp_text']})\n"
         )
         handle.write(f"- Distinct sessions contributing kept turns: **{len(sessions)}**\n")
+        handle.write(f"- Prompt-box answers kept: "
+                     f"**{sum(1 for r in kept if r.get('prompt_box'))}**\n")
         handle.write(f"- Pastes / file drops flagged: **{pastes}**\n")
         handle.write(f"- Total kept characters: **{total_chars:,}**\n")
         if kept:
@@ -620,10 +698,14 @@ def verify(out: Path, name: str, sources: list[Path], count: int, floor: int) ->
         for path in conversation:
             if path.name not in wanted_names:
                 continue
+            pending: dict[str, dict] = {}
             for obj in iter_lines(path):
+                note_prompt_box_questions(obj, pending)
                 uuid = obj.get("uuid")
                 if uuid in by_uuid and uuid not in found:
-                    _, text = classify(obj, False)
+                    text = prompt_box_answer(obj, pending)
+                    if text is None:
+                        _, text = classify(obj, False)
                     found[uuid] = {"text": text, "timestamp": obj.get("timestamp")}
     ok = 0
     for row in picks:
