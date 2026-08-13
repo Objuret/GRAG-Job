@@ -234,6 +234,18 @@ shared scalars; two disciplines (reference-never-copy, weighted-and-steep); the 
 Listed as needing sign-off 07-01 §11.5; absent from the 07-12 built inventory.
 **Blocks:** the "use the graph as a graph" requirement he then asked for again on 07-20, 07-28,
 07-29 and 08-02 without either party recognising it had already been specified. Gated on **R5**.
+**Asked for a sixth time and half-built, 08-12/08-13 — still no relations.** He ordered entity
+nodes (*"wouldnt it be way more reasonable to make those fields into nodes to get actual use of
+this beeing in a graph?"*, 08-12) and a database was built to carry them: `herb-eval-v2` holds
+5,233 Person, 30 Product and 294 Channel nodes with 41,915 edges — **every one of them to a
+chunk**. Inspecting it he named the gap himself: *"yeah, WHY are there no relations? like, whats
+the point it they have no edges? like, not even to eachother?"* (08-13), and ordered them built
+(*"i do"*, assigning the work elsewhere). So the layer this entry describes is now two-thirds
+absent rather than wholly absent: the nodes exist, the relations between them do not. Four are
+deterministic from the corpus — person→person (org tree, team), person→company (120 customers
+over 10 companies, which the benchmark's two-hop company questions need), person→product/channel,
+product→channel. The design and the exclusion reasoning that kept the org tree out — and its
+supersession — are in `state:2026-08-12-entity-nodes-and-tag-cleanup-design.md` §2.3.
 
 **3. Pass 2 in its entirety — the exponential curve.** *"cant we just do the evaluation-curve for
 the ranking of those "exponential", we dont have to decide the actual angle now, but kinda meaning
