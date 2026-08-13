@@ -5,7 +5,7 @@
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1743 nodes · 3181 edges · 116 communities (83 shown, 33 thin omitted)
+- 1743 nodes · 3181 edges · 115 communities (82 shown, 33 thin omitted)
 - Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 225 edges (avg confidence: 0.62)
 - Token cost: 0 input · 0 output
 
@@ -45,6 +45,7 @@
 - [[_COMMUNITY_ragas.py|ragas.py]]
 - [[_COMMUNITY_vector.py|vector.py]]
 - [[_COMMUNITY__desc_row()|_desc_row()]]
+- [[_COMMUNITY__driver()|_driver()]]
 - [[_COMMUNITY_build_tag_clusters.py|build_tag_clusters.py]]
 - [[_COMMUNITY_DeterministicPlanTests|DeterministicPlanTests]]
 - [[_COMMUNITY__PatchSet|_PatchSet]]
@@ -60,16 +61,15 @@
 - [[_COMMUNITY_EntityDerivationTests|EntityDerivationTests]]
 - [[_COMMUNITY__gemini_verdict()|_gemini_verdict()]]
 - [[_COMMUNITY_score_outputs()|score_outputs()]]
-- [[_COMMUNITY__driver()|_driver()]]
 - [[_COMMUNITY_ModelUsage|ModelUsage]]
 - [[_COMMUNITY_CombineModeTests|CombineModeTests]]
 - [[_COMMUNITY_GapBreakTests|GapBreakTests]]
 - [[_COMMUNITY_FuseTests|FuseTests]]
 - [[_COMMUNITY__retrieve()|_retrieve()]]
+- [[_COMMUNITY__interpret()|_interpret()]]
 - [[_COMMUNITY_reembed_herb_eval.py|reembed_herb_eval.py]]
 - [[_COMMUNITY_.test_the_model_leg_returns_exactly_n_ch...|.test_the_model_leg_returns_exactly_n_ch...]]
 - [[_COMMUNITY_TimeReferenceTests|TimeReferenceTests]]
-- [[_COMMUNITY__chat_json()|_chat_json()]]
 - [[_COMMUNITY_read_chunks()|read_chunks()]]
 - [[_COMMUNITY_progress()|progress()]]
 - [[_COMMUNITY_main()|main()]]
@@ -101,7 +101,6 @@
 - [[_COMMUNITY_FlagTests|FlagTests]]
 - [[_COMMUNITY_LayerBuildTests|LayerBuildTests]]
 - [[_COMMUNITY_RequireStepTests|RequireStepTests]]
-- [[_COMMUNITY__interpret_cached()|_interpret_cached()]]
 - [[_COMMUNITY__unit()|_unit()]]
 - [[_COMMUNITY_abort.py|abort.py]]
 - [[_COMMUNITY_compare_arms.py|compare_arms.py]]
@@ -154,7 +153,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (116 total, 33 thin omitted)
+## Communities (115 total, 33 thin omitted)
 
 ### Community 0 - "chunk.py"
 Cohesion: 0.05
@@ -198,7 +197,7 @@ Nodes (29): _format_user(), interpret(), _load_gold100(), Stage query: interpret
 
 ### Community 10 - "artefact_v1.py"
 Cohesion: 0.09
-Nodes (28): _anchor_cluster(), answer_one_question(), _budget_contexts(), _env_bool(), _env_float(), _env_int(), _hint_match(), _is_initial() (+20 more)
+Nodes (29): _anchor_cluster(), answer_one_question(), _budget_contexts(), _chat_json(), _env_bool(), _env_float(), _env_int(), _extract_json() (+21 more)
 
 ### Community 11 - "nim.py"
 Cohesion: 0.09
@@ -292,65 +291,65 @@ Nodes (16): answer_one_question(), gather_unit_text(), Prepared, _qid_text(), ve
 Cohesion: 0.21
 Nodes (6): CurveWalkTests, _desc_row(), _levels(), The flat-regime widening gate counts only the chunks the tag areas     reached,, The curve walk (HERB_CURVE_WALK=1): one progressive frontier opens the     chea, WideningGateTests
 
-### Community 35 - "build_tag_clusters.py"
+### Community 35 - "_driver()"
+Cohesion: 0.14
+Nodes (15): _driver(), InterpreterError, _is_initial(), _load_person_directory(), _name_key(), prepare_over_corpus(), A failed interpreter turn. Carries the model usage spent across the     turn's, One directory name as its token key. (+7 more)
+
+### Community 36 - "build_tag_clusters.py"
 Cohesion: 0.21
 Nodes (15): facet_participation(), fetch_tags(), floor_participation(), kmeanspp_init(), main(), memberships(), ndarray, Build the artefact arm's cluster-guide cache: five per-facet fuzzy membership ma (+7 more)
 
-### Community 36 - "DeterministicPlanTests"
+### Community 37 - "DeterministicPlanTests"
 Cohesion: 0.16
 Nodes (3): DeterministicPlanTests, _S, _Vocab
 
-### Community 37 - "_PatchSet"
+### Community 38 - "_PatchSet"
 Cohesion: 0.16
 Nodes (6): _Driver, _off(), _PatchSet, PrepareTests, The person path at weight 0.0, with any other flag overridden., What prepare checks before a person-weighted run starts.
 
-### Community 38 - "test_artefact_v1_relevance_weight.py"
+### Community 39 - "test_artefact_v1_relevance_weight.py"
 Cohesion: 0.12
 Nodes (4): AffinityTests, ContractTests, Regression checks for the multi-step relevance weight arm., RegionTests
 
-### Community 39 - "_part_levels()"
+### Community 40 - "_part_levels()"
 Cohesion: 0.17
 Nodes (15): _desc_area(), _guidance(), _hint_terms(), _level_chain(), _multi_k_support(), _part_levels(), Fuzzy k-NN support aggregated over the doubling level sequence: every     level, The anchor leaf's containing-cluster chain through the dendrogram,     finest t (+7 more)
 
-### Community 40 - "cut_at_budget()"
+### Community 41 - "cut_at_budget()"
 Cohesion: 0.21
 Nodes (7): BudgetCut, cut_at_budget(), char_budget.py — fill-to-budget consumption of a ranked context stream.  Shared, One consumed ranking. `contexts` holds the whole units' texts plus, when     a u, Consume (unit_id, text) pairs in rank order up to `budget` characters.     Itera, _selfcheck(), CutMathTests
 
-### Community 41 - "test_build_entity_graph.py"
+### Community 42 - "test_build_entity_graph.py"
 Cohesion: 0.13
 Nodes (6): BacktickQuotingTests, ClassifyIdTests, NodeLabelKeyTests, Fixture checks for build_entity_graph: the removal predicate (design §3.1), the, RemovedShaGateTests, SlugTests
 
-### Community 42 - "AnswerContractTests"
+### Community 43 - "AnswerContractTests"
 Cohesion: 0.22
 Nodes (7): AnswerContractTests, _fake_lucene(), _fake_vector(), PrepareStatsTests, Regression checks for the hybrid arm — min-max late fusion of the lucene and vec, A vector stand-in: retrieve returns (ranked unit dicts, ModelUsage), the pair, A lucene stand-in: prepare hands back a Prepared-ish with a BuildStats;     retr
 
-### Community 43 - "derive_corpus()"
+### Community 44 - "derive_corpus()"
 Cohesion: 0.28
 Nodes (11): derive_corpus(), DeriveReport, _dump(), One-time prep: derive the corpus view a dataset's pipeline run scans.  The pub, _full_product(), _make_raw(), test_corpus_view_strips_rag_unsafe_keys_and_copies_rest_verbatim(), test_dataset_without_strip_keys_fails_loud() (+3 more)
 
-### Community 44 - "contract.py"
+### Community 45 - "contract.py"
 Cohesion: 0.18
 Nodes (12): generator_messages(), generator_output_text(), generator_usage_from_nim(), generator_user_content(), model_usage_from_telemetry(), contract.py — the shared shapes every arm and evaluator imports., Normalise a generator return into (answer, ModelUsage)., The exact system + user messages the shared generator sends to NIM. (+4 more)
 
-### Community 45 - "test_artefact_v1_five_questions.py"
+### Community 46 - "test_artefact_v1_five_questions.py"
 Cohesion: 0.15
 Nodes (3): ContractTests, EvidenceKindTests, Regression checks for the five-questions matching arm.
 
-### Community 46 - "TagGeometryTests"
+### Community 47 - "TagGeometryTests"
 Cohesion: 0.27
 Nodes (6): _computed(), Every write-mode open of an entry -> (the record, the recording),         which, A vocabulary of its own: the same names at its own vectors, so each test     dig, The tag-to-tag geometry the walk computed from the vectors themselves., TagGeometryTests, _vocabulary()
 
-### Community 48 - "_gemini_verdict()"
+### Community 49 - "_gemini_verdict()"
 Cohesion: 0.17
 Nodes (12): CompletedProcess, _gemini_quota_error_row(), _gemini_terminal_quota_error(), _gemini_usage(), _gemini_verdict(), Extract Gemini CLI's provider token counters from headless JSON stats.      `--o, Run one Gemini CLI session and reap its whole process tree on timeout.      Gemi, A terminal Gemini quota/entitlement rejection cannot improve with a retry. (+4 more)
 
-### Community 49 - "score_outputs()"
+### Community 50 - "score_outputs()"
 Cohesion: 0.17
 Nodes (11): _build_metrics(), corpus_gold_text(), _print_status_summary(), One line per metric that produced any non-ok cell, so failures are visible at, Instantiate each selected metric with the wrappers it needs, then init() it —, Every string leaf of an artifact record, joined — a faithful text rendering of, artifact id -> its text. The non-LLM context metrics score retrieved text     ag, ENTRY: per (output, question) score every metric in metrics_to_run() ->     list (+3 more)
-
-### Community 50 - "_driver()"
-Cohesion: 0.20
-Nodes (11): _driver(), InterpreterError, _load_person_directory(), _name_key(), prepare_over_corpus(), A failed interpreter turn. Carries the model usage spent across the     turn's, One directory name as its token key., The corpus's own person directories as the resolver's indexes:     `employee.js (+3 more)
 
 ### Community 51 - "ModelUsage"
 Cohesion: 0.17
@@ -360,17 +359,17 @@ Nodes (5): ModelUsage, One model's cost — calls / tokens_in / tokens_out / wal
 Cohesion: 0.18
 Nodes (11): _agg(), _gap_break(), _mod(), _n_levels(), The walk's stopping test, read from the walk's own gaps: the next     opening b, The number of doubling levels a stated-scope ranked set of size n spans —     t, Fold a path's per-part/source support dicts into one per-chunk base by     the, A priority modifier over the normalized base: strength 0 returns 1 (the     mod (+3 more)
 
-### Community 56 - "reembed_herb_eval.py"
+### Community 56 - "_interpret()"
+Cohesion: 0.18
+Nodes (11): _clean_tag(), _interp_key(), _interpret(), _interpret_cached(), _parse_gate(), Normalise the model's loose gate into strict scope hints: string-or-null     fi, interpret a question -> (plan, calls, tokens_in, tokens_out, time_s).     plan, Content address for one interpretation: (interpret model, interpreter     signa (+3 more)
+
+### Community 57 - "reembed_herb_eval.py"
 Cohesion: 0.31
 Nodes (10): drop_legacy(), embed_chunk_descriptions(), embed_tags(), main(), Embed the herb-eval graph's semantic layer with the v3 embedder (nemotron).  The, Drop + recreate one cosine vector index — a re-run after a dimension     change, Tag names, bare, one vector per tag reachable through the arm's tagging     run, Each chunk's description (text read from the backup, embedding input     only) - (+2 more)
 
-### Community 57 - ".test_the_model_leg_returns_exactly_n_ch..."
+### Community 58 - ".test_the_model_leg_returns_exactly_n_ch..."
 Cohesion: 0.22
 Nodes (4): BudgetAnswerTests, _Driver, answer_one_question under a char budget, on both artefact legs: exact-N     con, A Prepared as prepare_over_corpus builds one: the driver plus the         perso
-
-### Community 59 - "_chat_json()"
-Cohesion: 0.20
-Nodes (10): _chat_json(), _clean_tag(), _extract_json(), _interpret(), _parse_gate(), One JSON turn on the interpreter model -> (parsed_json, tokens_in,     tokens_o, Normalise the model's loose gate into strict scope hints: string-or-null     fi, interpret a question -> (plan, calls, tokens_in, tokens_out, time_s).     plan (+2 more)
 
 ### Community 60 - "read_chunks()"
 Cohesion: 0.20
@@ -436,55 +435,51 @@ Nodes (6): backfill_file(), main(), Path, backfill_token_split.py — add tokens
 Cohesion: 0.33
 Nodes (7): EvalResult, Strip the truth: hand the arm the question's id + text ONLY, as the (id,     te, Prepare the arm once, then answer the questions concurrently, writing each, Wiring check with fakes — no NIM, no bm25s, no disk questions. Verifies the, run_one_pipeline(), _selfcheck(), to_arm_question()
 
-### Community 91 - "_interpret_cached()"
-Cohesion: 0.33
-Nodes (6): _interp_key(), _interpret_cached(), Content address for one interpretation: (interpret model, interpreter     signa, Write one interpreted plan under its content address, published     atomically, interpret with a persistent plan cache keyed by (model, prompt     signature, q, _store_interp()
-
-### Community 92 - "_unit()"
+### Community 91 - "_unit()"
 Cohesion: 0.33
 Nodes (6): `a` scaled to unit length along its last axis; a zero vector has no     directi, _unit(), concept_axes(), fetch_matrix(), The entity and activity directions over the unit tag vectors -> (entity     axis, The embedding of every key, in key order, unit-normalised. A key the     graph h
 
-### Community 93 - "abort.py"
+### Community 92 - "abort.py"
 Cohesion: 0.33
 Nodes (5): Aborted, abort.py — press 'q' to stop a running gen/eval loop.  Ctrl+C can be swallowed, Raised from inside an in-flight call when q has been pressed, so a worker     p, Start a daemon thread that sets the abort flag when q/Q is pressed. No-op     w, watch()
 
-### Community 94 - "compare_arms.py"
+### Community 93 - "compare_arms.py"
 Cohesion: 0.47
 Nodes (5): main(), _print(), compare_arms.py — side-by-side RAGAS comparison across the gold-100 runs.  Wal, (arm, k) -> {metric: [values...]} over the ok cells in eval_results.jsonl., _scan()
 
-### Community 95 - "build_run_manifest()"
+### Community 94 - "build_run_manifest()"
 Cohesion: 0.33
 Nodes (6): Provenance for a `questions` run — answers generated by ONE arm., RunManifest, build_run_manifest(), graph_identity(), The manifest's graph block for the Neo4j database the arm queried: the     reso, Provenance for the generation side -> contract.RunManifest (timestamp now,
 
-### Community 105 - "export_raw.py"
+### Community 104 - "export_raw.py"
 Cohesion: 0.60
 Nodes (4): _collect_rows(), main(), Path, export_raw.py — dump all eval_results to a single long-format CSV.      python
 
-### Community 109 - "truncate_k.py"
+### Community 108 - "truncate_k.py"
 Cohesion: 0.50
 Nodes (4): main(), truncate_k.py — re-emit a run's arm_outputs at each eval depth k, no regeneratio, One arm_outputs record cut to its first k chunks, ids rebuilt from the     kept, truncate_record()
 
-### Community 110 - "_guide_tables()"
+### Community 109 - "_guide_tables()"
 Cohesion: 0.50
 Nodes (4): _guide_key(), _guide_tables(), The cache entry name for one build of the membership matrices: the     database, The cached membership matrices, loaded once per process: `U` stacked     (n_fac
 
-### Community 111 - "_read_corpus()"
+### Community 110 - "_read_corpus()"
 Cohesion: 0.50
 Nodes (4): _artifact_text(), The text the dense arm embeds for one artifact. Each artifact type stores     it, Read the corpus into one whole artifact per document: {id, text}.      Walks the, _read_corpus()
 
-### Community 112 - "declared_names()"
+### Community 111 - "declared_names()"
 Cohesion: 0.50
 Nodes (4): declared_names(), A name in tag form: lowercase, every run of non-alphanumerics an     underscore,, Every name the corpus declares about itself, slugged: the employee,     customer, _slug()
 
-### Community 113 - "build_questions.py"
+### Community 112 - "build_questions.py"
 Cohesion: 0.67
 Nodes (3): build(), mint_id(), build_questions.py — one-shot: build the HERB question set from raw.  HERB shi
 
-### Community 114 - "build_eval_manifest()"
+### Community 113 - "build_eval_manifest()"
 Cohesion: 0.50
 Nodes (4): EvalManifest, Provenance for an `evals` run — ONE scorer over one run file., build_eval_manifest(), Provenance for the eval side -> contract.EvalManifest (timestamp now, UTC).
 
-### Community 115 - "_rehydrate()"
+### Community 114 - "_rehydrate()"
 Cohesion: 0.50
 Nodes (4): model_usage_from_dict(), Rehydrate ModelUsage from a persisted dict (arm_outputs / run_manifest)., A persisted arm-output record (dict) -> contract.ArmOutput, so the scorer     r, _rehydrate()
 
@@ -496,9 +491,9 @@ Nodes (4): model_usage_from_dict(), Rehydrate ModelUsage from a persisted dict (
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `ModelUsage` connect `ModelUsage` to `chunk.py`, `artefact_v1_relevance_weight.py`, `artefact_v1_five_questions.py`, `artefact_v1.py`, `artefact.py`, `lucene.py`, `artefact_v1_det.py`, `BuildStats`, `hybrid.py`, `vector.py`, `_part_levels()`, `cut_at_budget()`, `AnswerContractTests`, `contract.py`, `_gemini_verdict()`, `score_outputs()`, `_driver()`, `FuseTests`, `main()`, `_JudgeLLM`, `_NimEmbedder`, `_score_all()`, `_rehydrate()`?**
+- **Why does `ModelUsage` connect `ModelUsage` to `chunk.py`, `artefact_v1_relevance_weight.py`, `artefact_v1_five_questions.py`, `artefact_v1.py`, `artefact.py`, `lucene.py`, `artefact_v1_det.py`, `BuildStats`, `hybrid.py`, `vector.py`, `_driver()`, `_part_levels()`, `cut_at_budget()`, `AnswerContractTests`, `contract.py`, `_gemini_verdict()`, `score_outputs()`, `FuseTests`, `main()`, `_JudgeLLM`, `_NimEmbedder`, `_score_all()`, `_rehydrate()`?**
   _High betweenness centrality (0.072) - this node is a cross-community bridge._
-- **Why does `BuildStats` connect `BuildStats` to `chunk.py`, `artefact_v1_relevance_weight.py`, `artefact_v1_five_questions.py`, `vector.py`, `build_dense_index()`, `_part_levels()`, `cut_at_budget()`, `artefact_v1.py`, `AnswerContractTests`, `contract.py`, `artefact.py`, `_driver()`, `lucene.py`, `_selfcheck()`, `ModelUsage`, `FuseTests`, `hybrid.py`, `main()`?**
+- **Why does `BuildStats` connect `BuildStats` to `chunk.py`, `artefact_v1_relevance_weight.py`, `artefact_v1_five_questions.py`, `_driver()`, `vector.py`, `build_dense_index()`, `_part_levels()`, `cut_at_budget()`, `artefact_v1.py`, `AnswerContractTests`, `contract.py`, `artefact.py`, `lucene.py`, `_selfcheck()`, `ModelUsage`, `FuseTests`, `hybrid.py`, `main()`?**
   _High betweenness centrality (0.070) - this node is a cross-community bridge._
 - **Why does `chunk_dataset()` connect `index.py` to `chunk.py`, `scan_dataset()`, `probe.py`, `graph_store.py`?**
   _High betweenness centrality (0.031) - this node is a cross-community bridge._
