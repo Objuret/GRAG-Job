@@ -64,6 +64,7 @@ from typing import Callable, Optional, Union
 import bm25s
 import Stemmer
 
+from char_budget import cut_at_budget
 from contract import ArmOutput, BuildStats, ModelUsage, unpack_generation
 
 # BM25 reference parameters (Kamalloo et al. 2023 / BEIR).
@@ -296,23 +297,45 @@ def _unpack_generation(result, elapsed_s: float) -> tuple:
 
 
 def answer_one_question(
-    question, prepared: Prepared, generate: Optional[Generator], k: int = DEFAULT_TOP_K
+    question, prepared: Prepared, generate: Optional[Generator], k: int = DEFAULT_TOP_K,
+    char_budget: Optional[int] = None,
 ) -> ArmOutput:
     """ENTRY: retrieve_top_k -> ids + text -> generate -> ArmOutput.
 
     `generate` is the SHARED generator injected by the orchestrator so generation
     is identical across arms. If None (retrieval-only smoke), the answer is left
     empty and model telemetry is zero.
+
+    With `char_budget` the ranking runs over the whole corpus, ends where the
+    BM25 scores stop being positive (a zero score expresses no preference), and
+    is consumed to exactly that many context characters
+    (char_budget.cut_at_budget): whole artifacts in rank order, the crossing
+    artifact cut mid-text as the final context. `context_ids` carries the whole
+    artifacts only; the cut is recorded in meta["char_budget"].
     linked to: orchestrator; shared `generate`; returns contract.ArmOutput
     """
     _, text = _qid_text(question)
 
     t0 = time.perf_counter()
-    units = retrieve_top_k_units(question, prepared, k)
+    depth = len(prepared.ids) if char_budget is not None else k
+    units = retrieve_top_k_units(question, prepared, depth)
     search_time_s = time.perf_counter() - t0
 
-    context_ids = [unit_to_artifact_id(u) for u in units]
-    contexts = gather_unit_text(units)
+    meta = None
+    if char_budget is None:
+        context_ids = [unit_to_artifact_id(u) for u in units]
+        contexts = gather_unit_text(units)
+    else:
+        # A zero BM25 score expresses no preference, so the consumable
+        # ranking ends there; a budget the scored ranking cannot fill is an
+        # exhaustion, recorded at its true total.
+        ranked = [u for u in units if u["score"] > 0.0]
+        cut = cut_at_budget(((u["id"], u["text"]) for u in ranked), char_budget)
+        contexts = cut.contexts
+        context_ids = [unit_to_artifact_id(u) for u in ranked[:cut.kept]]
+        meta = {"char_budget": {"budget": char_budget, "chars": cut.chars,
+                                "kept": cut.kept, "boundary": cut.boundary,
+                                "exhausted": cut.exhausted}}
 
     if generate is None:
         answer, gen_usage = "", ModelUsage()
@@ -328,4 +351,5 @@ def answer_one_question(
         search_time_s=search_time_s,
         generator=gen_usage,
         retrieval=ModelUsage(),  # sparse retrieval uses no model
+        meta=meta,
     )

@@ -10,7 +10,9 @@ working. Every setting is a flag — see `python run.py --help`.
     python run.py --set full --no-eval     # arm run: answers only, skip RAGAS
     python run.py --set my_ids.jsonl       # a custom id-set jsonl
     python run.py -n 20 -k 15 --workers 8  # subset size / top-k / parallelism
-    python run.py --flag HERB_WALK_GATE=1  # a HERB_* toggle for this run only
+    python run.py --char-budget 72000 --arm vector --set gold
+                                           # fill-to-budget: exactly N context chars
+    python run.py --flag HERB_DESC_CUT=0   # a HERB_* toggle for this run only
     python run.py --rejudge output/<run> --judge claude-haiku-4-5 -n 10
                                            # re-score a run's answers, other judge
     python run.py --help                   # every option + its default
@@ -35,7 +37,11 @@ from run_lock import RunLock
 _HERE = Path(__file__).parent
 DATA = _HERE / "data"
 OUTPUT = _HERE / "output"
-ARMS = ("lucene", "vector", "hybrid", "artefact", "artefact_v1", "artefact_v1_det")
+ARMS = ("lucene", "vector", "hybrid", "artefact", "artefact_v1", "artefact_v1_det",
+        "artefact_v1_relevance_weight", "artefact_v1_five_questions")
+# The arms whose answer_one_question consumes its own ranking to a character
+# budget (--char-budget).
+CHAR_BUDGET_ARMS = ("lucene", "vector", "artefact_v1", "artefact_v1_det")
 
 
 def _write_dev_ids(n, dest):
@@ -66,20 +72,21 @@ def _fixed_ids_file(qset):
     return Path(qset)
 
 
-def _resolve_set(qset, arm, n, ts):
+def _resolve_set(qset, arm, n, stamp):
     """--set -> (ids_file, out_dir). smoke = a fresh dev id-set under output/smoke/;
     10smoke = the fixed ten-question comparison set; gold = data/gold100.jsonl;
-    full = the whole set (ids_file None); else a path."""
+    full = the whole set (ids_file None); else a path. `stamp` is the run
+    timestamp, with the cb<N> tag riding ahead of it on a fill-to-budget run."""
     if qset == "smoke":
-        out = OUTPUT / "smoke" / f"{arm}__smoke__{ts}"
+        out = OUTPUT / "smoke" / f"{arm}__smoke__{stamp}"
         out.mkdir(parents=True, exist_ok=True)
         return _write_dev_ids(n, out / "question_ids.jsonl"), out
     if qset == "full":
-        return None, OUTPUT / f"{arm}__full__{ts}"
+        return None, OUTPUT / f"{arm}__full__{stamp}"
     ids = _fixed_ids_file(qset)
     if not ids.is_file():
         raise SystemExit(f"id-set file not found: {ids}")
-    return ids, OUTPUT / f"{arm}__{ids.stem}__{ts}"
+    return ids, OUTPUT / f"{arm}__{ids.stem}__{stamp}"
 
 
 def _print_table(rows, arm, n):
@@ -277,6 +284,15 @@ def main():
                         "with --rejudge, a type-stratified N of the answers")
     p.add_argument("-k", type=int, default=orchestrator.DEFAULT_TOP_K, metavar="K",
                    help="passages retrieved per question (top-k)")
+    p.add_argument("--char-budget", type=int, default=None, metavar="N",
+                   help="fill-to-budget retrieval: consume the arm's ranking until the "
+                        "context text totals exactly N characters — whole retrieval "
+                        "units (a baseline's artifact, an artefact leg's chunk) in "
+                        "rank order, the crossing unit cut mid-text as the final "
+                        "context, a ranking that runs out recorded at its true total. "
+                        "Replaces the k depth cut (arms: "
+                        + ", ".join(CHAR_BUDGET_ARMS) + "); the run folder carries "
+                        "cb<N> and the manifest records char_budget")
     p.add_argument("--workers", type=int, default=None, metavar="W",
                    help="parallelism: questions while answering, cells while re-judging "
                         "(default 1, safest under NIM's rate cap; a claude-*, gpt-*, or gemini-* --judge "
@@ -311,7 +327,7 @@ def main():
                         "the ids, --arm/-k are ignored)")
     p.add_argument("--flag", action="append", type=_flag, default=[], metavar="NAME=VALUE",
                    help="set an env var for THIS run only (repeatable), e.g. "
-                        "--flag HERB_WALK_GATE=1 — applied in this process before the "
+                        "--flag HERB_DESC_CUT=0 — applied in this process before the "
                         "pipeline module imports, so toggles read at import time see it; "
                         "overrides a session env var of the same name and never sticks "
                         "past the run. A blank value (--flag NAME=) removes the name, "
@@ -324,15 +340,24 @@ def main():
         p.error("-n must be >= 1")
     if args.workers is not None and args.workers < 1:
         p.error("--workers must be >= 1")
+    if args.char_budget is not None:
+        if args.char_budget < 1:
+            p.error("--char-budget must be >= 1")
+        if args.arm not in CHAR_BUDGET_ARMS:
+            p.error(f"--char-budget supports arms {', '.join(CHAR_BUDGET_ARMS)}; "
+                    f"got --arm {args.arm}")
+        if args.build:
+            p.error("--char-budget is a run option; --build only builds the index")
     _apply_flags(args.flag)
     if args.judge:
         os.environ["RAGAS_JUDGE_MODEL"] = args.judge  # read at eval import
     if args.rejudge:
         if not args.judge:
             p.error("--rejudge needs --judge (the judge to re-score with)")
-        if args.build or args.no_eval or args.retrieval_only or args.out:
+        if (args.build or args.no_eval or args.retrieval_only or args.out
+                or args.char_budget is not None):
             p.error("--rejudge is eval-only; it does not combine with "
-                    "--build/--no-eval/--retrieval-only/--out")
+                    "--build/--no-eval/--retrieval-only/--out/--char-budget")
         _rejudge(args)
         return
     if args.n is None:
@@ -341,6 +366,10 @@ def main():
         args.workers = 1
 
     pipeline = importlib.import_module(f"pipelines.{args.arm}")
+    if (args.char_budget is not None
+            and (getattr(pipeline, "RETRIEVAL_FLAGS", None) or {}).get("HERB_CURVE_WALK")):
+        raise SystemExit("--char-budget does not combine with HERB_CURVE_WALK — "
+                         "the curve walk's stop rule sets its own kept depth")
 
     if args.build:
         corpus = orchestrator.open_corpus(orchestrator.DEFAULT_CORPUS)
@@ -351,11 +380,13 @@ def main():
         return
 
     ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    ids_file, out_dir = _resolve_set(args.qset, args.arm, args.n, ts)
+    stamp = ts if args.char_budget is None else f"cb{args.char_budget}__{ts}"
+    ids_file, out_dir = _resolve_set(args.qset, args.arm, args.n, stamp)
     if args.out:
         out_dir = Path(args.out)
     config = {"top_k": args.k, "workers": args.workers, "out_dir": str(out_dir),
-              "retrieval_only": args.retrieval_only}
+              "retrieval_only": args.retrieval_only,
+              "char_budget": args.char_budget}
     if args.generator:
         config["generator_model"] = args.generator
 
@@ -365,7 +396,10 @@ def main():
     mode = ("retrieval only (no generation)" if args.retrieval_only
             else "answers only (no eval)" if args.no_eval
             else "answers + RAGAS eval")
-    print(f"{args.arm} | set={args.qset} | {n_q} questions | k={args.k} | {pace} | {mode}\n  ->  {out_dir}")
+    depth = (f"k={args.k}" if args.char_budget is None
+             else f"k={args.k} | char-budget={args.char_budget}")
+    print(f"{args.arm} | set={args.qset} | {n_q} questions | {depth} | {pace} | {mode}"
+          f"\n  ->  {out_dir}", flush=True)
     abort.watch()  # press q to stop the run gracefully (Ctrl+C can be swallowed)
     print("running - press q to abort\n")
     if args.no_eval:

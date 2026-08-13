@@ -10,6 +10,10 @@ valid only when ids align one per context; any other shape fails loud. Each
 depth writes an ordinary arm_outputs.jsonl in a sibling run folder
 `<run>__k{k}/`; the eval scores each folder unchanged.
 
+Fill-to-budget runs are refused (a non-null `char_budget` in run_manifest.json,
+or `meta.char_budget` on a record): their contexts are cut by characters, not
+by depth, so a budget record has no depth-k identity to truncate.
+
 Run from v3/:
   python truncate_k.py output/<run> --ks 5,10,15,20,30,40,50
 then score each folder with the normal eval, e.g.:
@@ -26,6 +30,10 @@ def truncate_record(rec: dict, k: int) -> dict:
     `context_ids` at full depth. Without `meta.chunk_ids` the flat id list is
     sliced, valid only when ids align one per context; a record where they do
     not fails loud."""
+    if (rec.get("meta") or {}).get("char_budget") is not None:
+        raise RuntimeError(
+            f"record {rec.get('id', '?')!r} carries meta.char_budget — a fill-to-budget "
+            f"record is cut by characters, not depth, so it has no k to truncate to")
     per_chunk = (rec.get("meta") or {}).get("chunk_ids")
     if per_chunk is None:
         if len(rec["context_ids"]) != len(rec["contexts"]):
@@ -52,6 +60,12 @@ def main():
     args = ap.parse_args()
 
     run = Path(args.run)
+    manifest = run / "run_manifest.json"
+    if manifest.is_file() and json.loads(
+            manifest.read_text(encoding="utf-8")).get("char_budget") is not None:
+        raise SystemExit(
+            f"{run.name} is a fill-to-budget run (char_budget in run_manifest.json) — "
+            f"its records are cut by characters, not depth, so there is no k to truncate to")
     base = [json.loads(x) for x in
             (run / "arm_outputs.jsonl").read_text(encoding="utf-8").splitlines() if x.strip()]
     ks = sorted({int(x) for x in args.ks.split(",") if x.strip()}, reverse=True)

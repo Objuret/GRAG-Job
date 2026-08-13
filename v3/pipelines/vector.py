@@ -78,6 +78,7 @@ import numpy as np
 from tqdm import tqdm
 
 import nim
+from char_budget import cut_at_budget
 from contract import ArmOutput, BuildStats, ModelUsage, generator_usage_from_nim, unpack_generation
 
 EMBED_MODEL = "nvidia/llama-nemotron-embed-1b-v2"
@@ -439,26 +440,43 @@ def _unpack_generation(result, elapsed_s: float) -> tuple:
 
 
 def answer_one_question(
-    question, prepared: Prepared, generate: Optional[Generator], k: int = DEFAULT_TOP_K
+    question, prepared: Prepared, generate: Optional[Generator], k: int = DEFAULT_TOP_K,
+    char_budget: Optional[int] = None,
 ) -> ArmOutput:
     """ENTRY: retrieve_top_k -> ids + text -> generate -> ArmOutput.
 
     `generate` is the SHARED generator injected by the orchestrator so generation
     is identical across arms. If None (retrieval-only smoke), the answer is left
     empty and model telemetry is zero.
+
+    With `char_budget` the ranking runs over the whole corpus and is consumed to
+    exactly that many context characters (char_budget.cut_at_budget): whole
+    artifacts in rank order, the crossing artifact cut mid-text as the final
+    context. `context_ids` carries the whole artifacts only; the cut is recorded
+    in meta["char_budget"].
     linked to: orchestrator; shared `generate`; returns contract.ArmOutput
     """
     _, text = _qid_text(question)
 
     t0 = time.perf_counter()
-    units, retrieval_usage = retrieve_top_k_units(question, prepared, k)
+    depth = len(prepared.ids) if char_budget is not None else k
+    units, retrieval_usage = retrieve_top_k_units(question, prepared, depth)
     # search_time_s = the cosine/rank only. The query-embed wall (network + rate-cap
     # wait) lives in `retrieval`, so subtracting it keeps this comparable to lucene's
     # pure in-process search time instead of being dominated by the model call.
     search_time_s = (time.perf_counter() - t0) - retrieval_usage.time_s
 
-    context_ids = [unit_to_artifact_id(u) for u in units]
-    contexts = gather_unit_text(units)
+    meta = None
+    if char_budget is None:
+        context_ids = [unit_to_artifact_id(u) for u in units]
+        contexts = gather_unit_text(units)
+    else:
+        cut = cut_at_budget(((u["id"], u["text"]) for u in units), char_budget)
+        contexts = cut.contexts
+        context_ids = [unit_to_artifact_id(u) for u in units[:cut.kept]]
+        meta = {"char_budget": {"budget": char_budget, "chars": cut.chars,
+                                "kept": cut.kept, "boundary": cut.boundary,
+                                "exhausted": cut.exhausted}}
 
     if generate is None:
         answer, gen_usage = "", ModelUsage()
@@ -474,4 +492,5 @@ def answer_one_question(
         search_time_s=search_time_s,
         generator=gen_usage,
         retrieval=retrieval_usage,  # the query-embed cost
+        meta=meta,
     )
