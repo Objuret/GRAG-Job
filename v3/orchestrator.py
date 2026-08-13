@@ -26,6 +26,7 @@ from contract import (
 _HERE = Path(__file__).parent
 DEFAULT_CORPUS = _HERE / "data" / "corpus" / "Salesforce__HERB"
 DEFAULT_OUTPUT = _HERE / "output"
+GRAPH_BUILD_DIR = DEFAULT_OUTPUT / "graph_build"
 DEFAULT_TOP_K = 50
 # Questions answer concurrently; generation is the slow leg, so overlapping calls
 # ride up to nim.py's shared rate cap (which is what actually bounds throughput).
@@ -202,12 +203,15 @@ def _rehydrate(rec):
 
 def run_one_pipeline(pipeline, chosen, corpus, generate, out_dir, k=DEFAULT_TOP_K,
                      workers=DEFAULT_WORKERS,
-                     max_consecutive_failures=MAX_CONSECUTIVE_FAILURES):
+                     max_consecutive_failures=MAX_CONSECUTIVE_FAILURES,
+                     char_budget=None):
     """Prepare the arm once, then answer the questions concurrently, writing each
     answer to out_dir/arm_outputs.jsonl AS IT LANDS (flushed) — so a crash or an
     abort never loses finished work. Resumes by skipping ids already in that file.
     The model rate cap lives in nim.py, so `workers` only sets how many calls
-    overlap.
+    overlap. `char_budget` (fill-to-budget retrieval) passes through to the arm's
+    answer_one_question only when set, so an arm without the mode fails loud on
+    the unknown keyword.
 
     A question whose answer raises is collected in `failures`, skipped, and written
     to out_dir/failures.jsonl the instant it lands (flushed) — so failures can be
@@ -234,8 +238,9 @@ def run_one_pipeline(pipeline, chosen, corpus, generate, out_dir, k=DEFAULT_TOP_
     with records_path.open("a", encoding="utf-8") as fh, \
             failures_path.open("w", encoding="utf-8") as ffh, \
             ThreadPoolExecutor(max_workers=max(1, workers)) as ex:
+        extra = {} if char_budget is None else {"char_budget": char_budget}
         futures = [ex.submit(pipeline.answer_one_question,
-                             to_arm_question(q), prepared, generate, k)
+                             to_arm_question(q), prepared, generate, k, **extra)
                    for q in todo]
         for q, fut in progress(list(zip(todo, futures)), desc="answering", unit="q"):
             if abort.aborted():
@@ -285,16 +290,70 @@ def run_one_evaluator(evaluator, outputs, chosen, arm="", corpus=None, results_p
                                    retrieval_only=retrieval_only)
 
 
+def graph_identity(database):
+    """The manifest's graph block for the Neo4j database the arm queried: the
+    resolved name plus the graph's build RECORD as read at manifest-write time —
+    when GRAPH_BUILD_DIR/<database>/build_manifest.json exists, its
+    removed_tags_sha256, build timestamp and source_database (the parent the
+    build copied from, so the run folder keeps its lineage even without
+    graph_build/). A database with no readable build record carries a null
+    identity — the lookup is a read-only file read and never fails a run.
+    `database=None` (an arm that queries no graph) -> None: no invented
+    provenance.
+    linked to: build_run_manifest; build_entity_graph.py writes the record
+    """
+    if database is None:
+        return None
+    sha = built = source = None
+    try:
+        record = json.loads((GRAPH_BUILD_DIR / database / "build_manifest.json")
+                            .read_text(encoding="utf-8"))
+        sha = record.get("removed_tags_sha256")
+        built = record.get("timestamp")
+        source = record.get("source_database")
+    except (OSError, ValueError, AttributeError):
+        pass
+    return {"database": database, "removed_tags_sha256": sha,
+            "build_timestamp": built, "source_database": source}
+
+
+def _merged_graph(prior, current):
+    """The graph block a manifest rewrite records. A matching prior passes
+    `current` through; a difference means the folder's answers span more than
+    one graph build, and the block becomes {"mixed_builds": [oldest, …,
+    newest]} so a mixed run is visibly mixed to every reader — a resume never
+    restamps earlier answers with a newer build's identity. An already-mixed
+    prior extends. A prior that carries no usable identity — `None` from a
+    manifest written before the field, or a malformed `mixed_builds` — is an
+    unknown build and records as the `None` head of the mix, because less
+    knowledge about the earlier answers can never print as more.
+    linked to: run() (the manifest rewrite on resume)"""
+    if prior == current:
+        return current
+    if isinstance(prior, dict) and "mixed_builds" in prior:
+        builds = prior["mixed_builds"]
+        if not isinstance(builds, list) or not builds:
+            builds = [None]
+    else:
+        builds = [prior]
+    if builds[-1] == current:
+        return {"mixed_builds": builds}
+    return {"mixed_builds": builds + [current]}
+
+
 def build_run_manifest(config, arm, build_stats, n_questions, n_ran, n_failed):
     """Provenance for the generation side -> contract.RunManifest (timestamp now,
     UTC). Records the run split (chosen / ran / failed) so the run folder is
-    self-documenting — no need to count jsonl lines to see what failed."""
+    self-documenting — no need to count jsonl lines to see what failed — and the
+    graph identity when the arm queries Neo4j (config['graph_database'], resolved
+    off the pipeline module in run())."""
     return RunManifest(
         arm=arm,
         generator_model=(None if config.get("retrieval_only")
                          else config.get("generator_model", GENERATOR_MODEL)),
         interpreter_model=config.get("interpreter_model"),
         top_k=config.get("top_k", DEFAULT_TOP_K),
+        char_budget=config.get("char_budget"),
         questions_file=str(config.get("questions_path") or questions.QUESTIONS),
         n_questions=n_questions,
         n_ran=n_ran,
@@ -302,6 +361,7 @@ def build_run_manifest(config, arm, build_stats, n_questions, n_ran, n_failed):
         timestamp=datetime.now(timezone.utc).isoformat(),
         build_stats=build_stats,
         retrieval_flags=config.get("retrieval_flags"),
+        graph=graph_identity(config.get("graph_database")),
     )
 
 
@@ -333,6 +393,7 @@ def run(pipeline, evaluator, ids_file, config=None):
     arm = _arm_name(pipeline)
     config.setdefault("interpreter_model", getattr(pipeline, "INTERPRET_MODEL", None))
     config.setdefault("retrieval_flags", getattr(pipeline, "RETRIEVAL_FLAGS", None))
+    config.setdefault("graph_database", getattr(pipeline, "DATABASE", None))
     evname = _arm_name(evaluator) if evaluator is not None else "gen"
 
     chosen = load_chosen_questions(ids_file, config.get("questions_path"))
@@ -342,7 +403,8 @@ def run(pipeline, evaluator, ids_file, config=None):
 
     ran, _, aborted, build_stats = run_one_pipeline(
         pipeline, chosen, corpus, generate, out,
-        config.get("top_k", DEFAULT_TOP_K), config.get("workers", DEFAULT_WORKERS))
+        config.get("top_k", DEFAULT_TOP_K), config.get("workers", DEFAULT_WORKERS),
+        char_budget=config.get("char_budget"))
 
     # run_one_pipeline wrote each answer to arm_outputs.jsonl and each failure to
     # failures.jsonl as they landed; here we only record provenance off the durable
@@ -355,10 +417,21 @@ def run(pipeline, evaluator, ids_file, config=None):
     n_failed = len(chosen) - len(done)
     manifest_path = out / "run_manifest.json"
     if ran or not manifest_path.is_file():
+        manifest = build_run_manifest(
+            config, arm, build_stats, len(chosen), len(done), n_failed)
+        if manifest_path.is_file():
+            # a resume rewrite: the answers already on disk may predate a rebuild
+            # of the same database, so a graph identity differing from the one
+            # recorded stays visible as a mix, never restamped with the new build
+            try:
+                prior = json.loads(
+                    manifest_path.read_text(encoding="utf-8")).get("graph")
+            except (OSError, ValueError, AttributeError):
+                prior = None  # unreadable prior: the earlier answers' build is unknown
+            manifest.graph = _merged_graph(prior, manifest.graph)
         manifest_path.write_text(
-            json.dumps(asdict(build_run_manifest(
-                config, arm, build_stats, len(chosen), len(done), n_failed)),
-                ensure_ascii=False, indent=2), encoding="utf-8")
+            json.dumps(asdict(manifest), ensure_ascii=False, indent=2),
+            encoding="utf-8")
 
     if aborted:  # loud — but every finished answer is already on disk; resume continues
         raise RuntimeError(f"aborted run at {out}: {aborted}")
@@ -498,11 +571,127 @@ def _selfcheck():
                   ModelUsage(calls=1, tokens_in=1, tokens_out=2, time_s=3.0), ModelUsage())
     assert _rehydrate({"id": "x", "question": "q", **asdict(o)}) == o
 
+    # fill-to-budget passthrough: the arm sees char_budget only when set
+    with tempfile.TemporaryDirectory() as d:
+        got = {}
+
+        def budget_arm(q, prep, generate, k, char_budget=None):
+            got["char_budget"] = char_budget
+            return ArmOutput("a", ["ctx"], ["cit1"], 0.0, ModelUsage(), ModelUsage())
+
+        bp = types.SimpleNamespace(__name__="pipelines.budget",
+                                   prepare_over_corpus=lambda c: prepared,
+                                   answer_one_question=budget_arm)
+        run_one_pipeline(bp, qs[:1], "c/", fake_generate, d, workers=1, char_budget=9)
+        assert got["char_budget"] == 9
+
     # manifests carry the run split + provenance
     rm = build_run_manifest({}, "fake", prepared.build_stats, 10, 7, 3)
     assert rm.arm == "fake" and rm.generator_model == GENERATOR_MODEL
     assert rm.interpreter_model is None
+    assert rm.char_budget is None
+    assert rm.graph is None  # no graph_database: an arm that queries no graph
     assert (rm.n_questions, rm.n_ran, rm.n_failed) == (10, 7, 3)
+    assert build_run_manifest({"char_budget": 72000}, "fake",
+                              prepared.build_stats, 1, 1, 0).char_budget == 72000
+
+    # graph identity: a Neo4j arm's manifest names the database it queried, and
+    # carries the build record when graph_build/<db>/build_manifest.json has one
+    with tempfile.TemporaryDirectory() as d:
+        global GRAPH_BUILD_DIR
+        saved, GRAPH_BUILD_DIR = GRAPH_BUILD_DIR, Path(d)
+        try:
+            def _graph_of(db):
+                return build_run_manifest({"graph_database": db}, "fake",
+                                          prepared.build_stats, 1, 1, 0).graph
+
+            built = Path(d) / "eval-v9"
+            built.mkdir()
+            (built / "build_manifest.json").write_text(json.dumps(
+                {"removed_tags_sha256": "ab12", "timestamp": "2026-08-12T20:38:00Z",
+                 "source_database": "eval-v8"}), encoding="utf-8")
+            assert _graph_of("eval-v9") == {
+                "database": "eval-v9", "removed_tags_sha256": "ab12",
+                "build_timestamp": "2026-08-12T20:38:00Z",
+                "source_database": "eval-v8"}
+            assert _graph_of("bare-db") == {  # no build record: name + null identity
+                "database": "bare-db", "removed_tags_sha256": None,
+                "build_timestamp": None, "source_database": None}
+            (built / "build_manifest.json").write_text("{broken", encoding="utf-8")
+            assert _graph_of("eval-v9") == {  # corrupt record: null identity, no crash
+                "database": "eval-v9", "removed_tags_sha256": None,
+                "build_timestamp": None, "source_database": None}
+        finally:
+            GRAPH_BUILD_DIR = saved
+
+    # a manifest rewrite never restamps another build's answers: a differing
+    # graph identity becomes a visible mix, and an already-mixed block extends
+    ga = {"database": "db", "removed_tags_sha256": "A",
+          "build_timestamp": "t1", "source_database": "src"}
+    gb = {**ga, "removed_tags_sha256": "B", "build_timestamp": "t2"}
+    assert _merged_graph(None, None) is None
+    assert _merged_graph(ga, ga) == ga
+    assert _merged_graph(ga, gb) == {"mixed_builds": [ga, gb]}
+    assert _merged_graph({"mixed_builds": [ga, gb]}, gb) == {"mixed_builds": [ga, gb]}
+    assert _merged_graph({"mixed_builds": [ga, gb]}, ga) == {"mixed_builds": [ga, gb, ga]}
+    assert _merged_graph(None, ga) == {"mixed_builds": [None, ga]}  # pre-field manifest
+    for malformed in ({"mixed_builds": []}, {"mixed_builds": "A"}, {"mixed_builds": 7}):
+        assert _merged_graph(malformed, ga) == {"mixed_builds": [None, ga]}
+
+    # run() end to end: the graph database resolves off the pipeline module's
+    # DATABASE, and a resume after a rebuild of that database records the mix
+    # in run_manifest.json on disk
+    with tempfile.TemporaryDirectory() as d:
+        droot = Path(d)
+        saved, GRAPH_BUILD_DIR = GRAPH_BUILD_DIR, droot / "graph_build"
+        try:
+            (droot / "corpus" / "products").mkdir(parents=True)
+            (droot / "q.jsonl").write_text("".join(
+                json.dumps({"id": f"g::a::{i}", "question": f"g{i}?",
+                            "type": "person", "ground_truth": [],
+                            "citations": []}) + "\n" for i in range(2)),
+                encoding="utf-8")
+            bdir = GRAPH_BUILD_DIR / "fake-db"
+            bdir.mkdir(parents=True)
+            gp = types.SimpleNamespace(
+                __name__="pipelines.graphfake", DATABASE="fake-db",
+                prepare_over_corpus=lambda c: prepared,
+                answer_one_question=lambda q, prep, generate, k:
+                    ArmOutput("", ["ctx"], ["cit1"], 0.0, ModelUsage(), ModelUsage()))
+
+            def _record(sha):
+                (bdir / "build_manifest.json").write_text(json.dumps(
+                    {"removed_tags_sha256": sha, "timestamp": f"t-{sha}",
+                     "source_database": "parent-db"}), encoding="utf-8")
+
+            def _leg(n_ids):
+                ids = droot / "ids.jsonl"
+                ids.write_text("".join(json.dumps({"id": f"g::a::{i}"}) + "\n"
+                                       for i in range(n_ids)), encoding="utf-8")
+                run(gp, None, ids, {"questions_path": droot / "q.jsonl",
+                                    "corpus_root": droot / "corpus",
+                                    "out_dir": str(droot / "run"),
+                                    "retrieval_only": True})
+                return json.loads((droot / "run" / "run_manifest.json")
+                                  .read_text(encoding="utf-8"))["graph"]
+
+            _record("A")
+            first = _leg(1)
+            assert first == {"database": "fake-db", "removed_tags_sha256": "A",
+                             "build_timestamp": "t-A", "source_database": "parent-db"}
+            _record("B")  # the same database name, rebuilt between the legs
+            second = {"database": "fake-db", "removed_tags_sha256": "B",
+                      "build_timestamp": "t-B", "source_database": "parent-db"}
+            assert _leg(2) == {"mixed_builds": [first, second]}
+
+            # a torn prior manifest is an unknown build, never the current one
+            (droot / "run" / "run_manifest.json").write_text("{torn",
+                                                             encoding="utf-8")
+            (droot / "run" / "arm_outputs.jsonl").unlink()
+            assert _leg(2) == {"mixed_builds": [None, second]}
+        finally:
+            GRAPH_BUILD_DIR = saved
+
     em = build_eval_manifest({}, "herb", "fake", "src")
     assert (em.scorer, em.arm, em.source_run) == ("herb", "fake", "src")
 

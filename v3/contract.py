@@ -191,6 +191,8 @@ class RunManifest:
     timestamp: str
     build_stats: BuildStats
     retrieval_flags: dict | None = None   # the arm's env-driven regime switches
+    char_budget: int | None = None        # fill-to-budget: exact context chars per question; None = the k depth cut
+    graph: dict | None = None             # the queried graph's build RECORD as read at manifest-write time: {database, removed_tags_sha256, build_timestamp, source_database}; {"mixed_builds": [...]} when a resumed run spans builds; None = the arm queries no graph
 
 
 @dataclass
