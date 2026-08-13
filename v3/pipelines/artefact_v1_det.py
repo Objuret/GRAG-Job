@@ -5,8 +5,10 @@ The question text is the single prompt part, embedded with underscores read as
 spaces; the need vector is the question verbatim. Stated scope comes from
 literal matches only: product names read from the graph's own chunk vocabulary,
 section names from the offered enum as literal words or their readable phrases,
-`eid_…` employee ids and 4-digit years by pattern. Facets are
-direction-neutral. The walk, the value system, and the hard k are
+`eid_…` employee ids and 4-digit years by pattern. A person the question names
+is read the same literal way, through artefact_v1's directory resolver, and
+weighs its chunks through the person support path.
+Facets are direction-neutral. The walk, the value system, and the hard k are
 artefact_v1's, unchanged; there is no sufficiency review. The only model
 calls are embeddings — the query, plus a once-per-process embed of the five
 facet anchors when a facet channel is on, both counted in the question's
@@ -28,6 +30,7 @@ from pipelines.vector import _embed
 
 Prepared = v1.Prepared
 prepare_over_corpus = v1.prepare_over_corpus
+DATABASE = v1.DATABASE
 
 INTERPRET_MODEL = "deterministic"
 
@@ -199,7 +202,8 @@ def _det_plan(text: str, session) -> dict:
     }
 
 
-def answer_one_question(question, prepared: Prepared, generate, k: int = 50) -> ArmOutput:
+def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
+                        char_budget: Optional[int] = None) -> ArmOutput:
     _, text = v1._qid_text(question)
 
     # the facet channels read the anchor embeddings: warm them before the
@@ -208,6 +212,8 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50) -> 
     if FACETS_ON or ROUTING_ON:
         _, anchor_usage = _anchors()
     t0 = time.perf_counter()
+    persons = (v1.resolve_persons(text, prepared.directory)
+               if v1.PERSON_ON else None)
     with prepared.driver.session(database=v1.DATABASE) as session:
         plan = _det_plan(text, session)
         if EDGES_ON:
@@ -218,24 +224,32 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50) -> 
             plan["_support_shaper"] = _facet_shaper(text)
         if ROUTING_ON:
             plan["_distance_shaper"] = _facet_router(text)
-        rows, ground_usage, meta = v1._retrieve(session, plan, k)
+        rows, ground_usage, meta = v1._retrieve(session, plan, k,
+                                                keep_all=char_budget is not None,
+                                                persons=persons)
     meta["interpreter"] = {"model": INTERPRET_MODEL, "backend": "none"}
     meta["facet_channel"] = _FACET_MODE or None
     retrieve_wall = time.perf_counter() - t0
 
     doc_cache: dict = {}
-    contexts: list[str] = []
-    context_ids: list[str] = []
-    chunk_id_lists: list[list[str]] = []
-    seen: set[str] = set()
-    for row in rows:
-        chunk_text, ids = v1._resolve_chunk(row, doc_cache)
-        contexts.append(chunk_text)
-        chunk_id_lists.append(ids)
-        for aid in ids:
-            if aid not in seen:
-                seen.add(aid)
-                context_ids.append(aid)
+    if char_budget is not None:
+        # Fill-to-budget: the ranking is consumed by characters, and the budget
+        # sets the returned depth.
+        contexts, chunk_id_lists, context_ids, meta["char_budget"] = v1._budget_contexts(
+            rows, char_budget, doc_cache)
+    else:
+        contexts: list[str] = []
+        context_ids: list[str] = []
+        chunk_id_lists: list[list[str]] = []
+        seen: set[str] = set()
+        for row in rows:
+            chunk_text, ids = v1._resolve_chunk(row, doc_cache)
+            contexts.append(chunk_text)
+            chunk_id_lists.append(ids)
+            for aid in ids:
+                if aid not in seen:
+                    seen.add(aid)
+                    context_ids.append(aid)
     meta["chunk_ids"] = chunk_id_lists
     meta["returned"] = len(contexts)
 

@@ -6,10 +6,15 @@ eval.
 The graph under test is `Source -[:CONTAINS]-> File -[:HAS_CHUNK]-> Chunk
 -[:HAS_TAG]-> Tag`, holding no content — structure, weights, and embeddings
 only. Each `HAS_TAG` edge carries `w_chunk`, `w_facets`, `facets`, and
-`run_id`. The semantic layer is the nemotron tag family written by
-`reembed_herb_eval.py` (run once before this arm): each `:Tag` name embedded
-bare as `t.emb` under the `tag_emb` cosine index. Query interpretation uses the
-signed-in Claude CLI; query embeddings use NIM.
+`run_id`. A graph carrying the entity layer also holds `Chunk
+-[:INVOLVES {role}]-> Person` and `Chunk -[:MENTIONS]-> Person`, the person
+node an id and an id-space kind and nothing else; the person support path reads
+those edges, and at any weight above 0 a graph without them stops the run at
+`prepare_over_corpus`. The semantic layer is the
+nemotron tag family written by `reembed_herb_eval.py` (run once before this
+arm): each `:Tag` name embedded bare as `t.emb` under the `tag_emb` cosine
+index. Query interpretation uses the signed-in Claude CLI; query embeddings use
+NIM.
 
 Retrieval is the user's query-relative area design. Areas are born and die with
 each query:
@@ -33,12 +38,15 @@ each query:
   3. walk — every part's anchor level opens unconditionally (each part
      searches through its own area), and every part also opens a description
      lookup: the same fuzzy multi-k mechanism over `chunk_desc_emb`,
-     chunk-level. Widening events across all parts open in ascending merge
+     chunk-level, clustered like a tag pool so the anchor chunk's containing
+     cluster is what the path admits and the neighborhood's own geometry sets
+     that width. Widening events across all parts open in ascending merge
      height (the globally tightest next level first). An opened level's tags
      pull their chunks, each chunk keeping its highest-support tag. Widen only
-     while the distinct-chunk pool is still short of the caller's k, then cut
-     the pooled chunks at k by value. Hard stop at k; no answer-sufficiency
-     oracle. With `HERB_CURVE_WALK=1` the clustering decides the K: the
+     while the chunks the tag areas reached are still short of the caller's k,
+     so description and stated-scope finds rank and compete at the cut without
+     stopping the walk, then cut the pooled chunks at k by value. Hard stop at
+     k; no answer-sufficiency oracle. With `HERB_CURVE_WALK=1` the clustering decides the K: the
      description neighborhoods are clustered like tag pools — anchor chunk plus
      a dendrogram chain — and one progressive frontier opens the cheapest next
      level anywhere, tag or description. The gaps between the openings walked
@@ -48,18 +56,24 @@ each query:
      the ceiling; stated scope corroborates value and competes for the K slots
      but never sets the count.
 
-     Value scores on one scale, identical in both regimes. Each of the three
-     paths — tag areas, description lookups, stated scope — gives a chunk a base
-     (the tag support, the description support, or the scope support, summed
+     Value scores on one scale, identical in both regimes. Each of the four
+     paths — tag areas, description lookups, stated scope, named persons —
+     gives a chunk a base (the tag support, the description support, the scope
+     support, or the person support, summed
      across the parts or sources that vouch for it) and min-max normalizes that
      base over its own candidate pool. Priority modifiers lift the normalized
      base by an exposed strength `s` as base × (1 + s·(m − 1)): the tag path's
-     facet agreement, `w_chunk` and `relevance_to_file`, the description path's
-     hint-match factor, the scope path's match fraction. Strength 0 leaves the
+     facet agreement, its edge magnitude and `relevance_to_file`, the
+     description path's hint-match factor, the scope path's match fraction, the
+     person path's named-person fraction. Strength 0 leaves the
      base untouched whatever `m` is; strength 1 makes the factor `m` itself, so
      there an `m` above 1 lifts, below 1 damps, and 0 removes that path's
-     contribution for the chunk. The three lifted scores combine as
-     a weighted sum (`W_TAG` / `W_DESC` / `W_SCOPE`) over the union, so evidence
+     contribution for the chunk. The person path carries one further factor
+     with no strength of its own: the weight of the chunk's best kind of person
+     link multiplies its normalized base beside `W_PERSON`, a per-chunk path
+     weight rather than a priority modifier. The four lifted scores combine as
+     a weighted sum (`W_TAG` / `W_DESC` / `W_SCOPE` / `W_PERSON`) over the
+     union, so evidence
      the whole plan touches outranks evidence a single broad tag grips. The
      aggregation and the normalization are selectable — `HERB_AGG` (sum / max),
      `HERB_NORM` (relative / absolute / none) and `HERB_NORM_SCOPE` (per-path /
@@ -77,12 +91,19 @@ each query:
   its own path whose pool is the matching chunk set — no clustering, nothing
   fuzzy about a stated fact. Its base is the fuzzy support over description
   distances to the need, extended across the whole matching set, and its match
-  fraction is the priority modifier over that normalized base. For the
+  fraction is the priority modifier over that normalized base. A person the
+  query names is the same kind of stated fact: the name is read off the query
+  text deterministically, the corpus's own directories turn it into person ids,
+  and the chunks the entity layer links to those ids are the person path's pool
+  — the same fuzzy support over description distances as its base, the fraction
+  of the query's named persons a chunk carries as its one priority modifier,
+  and the weight of its best kind of link as a per-chunk path weight over that
+  normalized base, beside `W_PERSON`. For the
   interpreted parts, structure raises, never filters: a tag's support scales by
   (1 + the fraction of its edges landing on hint-matching chunks) before the
   anchor is chosen, and anything with no structural touch keeps its full
   semantic weight; a description chunk that matches a stated hint carries the
-  hint modifier over its normalized base. Every coefficient — the three path
+  hint modifier over its normalized base. Every coefficient — the four path
   weights and the per-modifier strengths — is read from the environment
   (RETRIEVAL_FLAGS) so a run documents and sweeps its own value model.
 
@@ -114,6 +135,7 @@ from scipy.spatial.distance import squareform
 
 import abort
 import nim
+from char_budget import cut_at_budget
 from contract import (
     ArmOutput, BuildStats, ModelUsage, generator_usage_from_nim, unpack_generation,
 )
@@ -151,12 +173,6 @@ CURVE_WALK = os.environ.get("HERB_CURVE_WALK") == "1"
 # Heavy (whole pool per question); for diagnosis runs.
 DOOR_TRACE = os.environ.get("HERB_DOOR_TRACE") == "1"
 
-# Flat-regime widening gate: with HERB_WALK_GATE=1 the widening loop counts
-# only chunks the tag areas reached, so description and stated-scope finds rank
-# and compete at the cut without stopping the walk (the curve walk's frontier
-# carries its own stop).
-WALK_GATE = os.environ.get("HERB_WALK_GATE") == "1"
-
 # Fresh interpretation: with HERB_FRESH_INTERP=1 the haiku leg re-runs the
 # interpreter instead of reading a cached plan, then refreshes the cache. The
 # default reuses the cached interpretation, which both saves the call and
@@ -189,12 +205,35 @@ def _env_int(name: str, default: int) -> int:
     return int(raw)
 
 
-# Per-path combine weights: each of the three paths (tag areas / description
-# lookups / stated scope) contributes its normalized, modifier-adjusted base to
-# the cross-path sum scaled by its weight.
+def _env_bool(name: str, default: bool) -> bool:
+    """A run-tunable switch read from the environment, `default` when unset or
+    blank. Only "0" and "1" are values; anything else fails loud rather than
+    silently reverting, so a typo can never select the other regime."""
+    raw = os.environ.get(name)
+    if raw is None or not raw.strip():
+        return default
+    value = raw.strip()
+    if value not in ("0", "1"):
+        raise ValueError(f"{name} must be '0' or '1', got {raw!r}")
+    return value == "1"
+
+
+# Per-path combine weights: each of the four paths (tag areas / description
+# lookups / stated scope / named persons) contributes its normalized,
+# modifier-adjusted base to the cross-path sum scaled by its weight, and the
+# four start at the same weight. HERB_W_PERSON=0 is the person path switched
+# off: no directory read, no person query, no membership and no meta block, so
+# a run at that weight is the three-path run.
 W_TAG = _env_float("HERB_W_TAG", 1.0)
 W_DESC = _env_float("HERB_W_DESC", 1.0)
 W_SCOPE = _env_float("HERB_W_SCOPE", 1.0)
+W_PERSON = _env_float("HERB_W_PERSON", 1.0)
+if W_PERSON < 0.0:
+    raise ValueError(
+        f"HERB_W_PERSON must be >= 0.0, got {W_PERSON!r} — a path weights a "
+        f"chunk up or leaves it alone; a negative weight would push a chunk "
+        f"down for carrying evidence")
+PERSON_ON = W_PERSON > 0.0
 
 # Priority-modifier strengths: a modifier m applies over the normalized base as
 # base * (1 + strength * (m - 1)) — strength 0 leaves the base untouched,
@@ -207,10 +246,86 @@ STR_WCHUNK = _env_float("HERB_STR_WCHUNK", 1.0)
 STR_RELEVANCE = _env_float("HERB_STR_RELEVANCE", 1.0)
 STR_DESC_HINT = _env_float("HERB_STR_DESC_HINT", 1.0)
 STR_SCOPE_MATCH = _env_float("HERB_STR_SCOPE_MATCH", 1.0)
+STR_PERSON_MATCH = _env_float("HERB_STR_PERSON_MATCH", 1.0)
 
 # The description path's hint-match modifier: the factor a description chunk
 # matching a stated scope hint carries into the lerp STR_DESC_HINT grades.
 DESC_HINT_M = _env_float("HERB_DESC_HINT_M", 2.0)
+
+# The description path's admission cut: the kNN neighborhood clusters like a
+# tag pool and only the anchor chunk's containing cluster is admitted, so the
+# query's own geometry sets the width and the kNN trim is the ceiling on what
+# is considered. HERB_DESC_CUT=0 admits the whole neighborhood instead.
+DESC_CUT = _env_bool("HERB_DESC_CUT", True)
+
+# The person path's per-role weights: a chunk's link to a named person is
+# graded by the kind of link it is, and the chunk carries its best one. The
+# weight multiplies the normalized base, so 0 damps that chunk's person
+# contribution to nothing and a uniform value scales the whole path exactly as
+# W_PERSON does — only the ratios between roles say anything W_PERSON cannot.
+# The five structured roles are the entity layer's own `INVOLVES.role` values
+# and MENTIONS carries none, so a mention edge reads under MENTION_ROLE.
+W_ROLE_SPEAKER = _env_float("HERB_W_ROLE_SPEAKER", 1.0)
+W_ROLE_PARTICIPANT = _env_float("HERB_W_ROLE_PARTICIPANT", 1.0)
+W_ROLE_REVIEWER = _env_float("HERB_W_ROLE_REVIEWER", 1.0)
+W_ROLE_PR_AUTHOR = _env_float("HERB_W_ROLE_PR_AUTHOR", 1.0)
+W_ROLE_DOC_AUTHOR = _env_float("HERB_W_ROLE_DOC_AUTHOR", 1.0)
+W_ROLE_MENTIONS = _env_float("HERB_W_ROLE_MENTIONS", 1.0)
+MENTION_ROLE = "mentions"
+PERSON_ROLE_W = {
+    "speaker": W_ROLE_SPEAKER, "participant": W_ROLE_PARTICIPANT,
+    "reviewer": W_ROLE_REVIEWER, "pr_author": W_ROLE_PR_AUTHOR,
+    "doc_author": W_ROLE_DOC_AUTHOR, MENTION_ROLE: W_ROLE_MENTIONS,
+}
+_NEGATIVE_ROLES = sorted(f"HERB_W_ROLE_{role.upper()}"
+                         for role, w in PERSON_ROLE_W.items() if w < 0.0)
+if _NEGATIVE_ROLES:
+    raise ValueError(
+        f"{', '.join(_NEGATIVE_ROLES)} must be >= 0.0 — a role weight grades a "
+        f"link up or down to nothing; a negative weight would score a chunk for "
+        f"carrying the wrong kind of evidence")
+
+# What a name several directory entries carry resolves to: `all` their ids, or
+# `none` of them. HERB's employee directory spells 530 people with 98 distinct
+# names, so `none` retires the employee half of the path and `all` weights every
+# candidate the name admits.
+PERSON_AMBIGUOUS = os.environ.get("HERB_PERSON_AMBIGUOUS", "all")
+if PERSON_AMBIGUOUS not in ("all", "none"):
+    raise ValueError(
+        f"HERB_PERSON_AMBIGUOUS must be 'all' or 'none', got {PERSON_AMBIGUOUS!r}")
+
+# The resolver's near-match tier: with HERB_PERSON_NEAR=0 only a literal id and
+# a directory name matched as whole words resolve, and the two bounded forms —
+# the name's own tokens in the other order, an initial and the last token — do
+# not run.
+PERSON_NEAR = _env_bool("HERB_PERSON_NEAR", True)
+
+# The person directories, under the corpus root the arm is prepared over: the
+# oracle-stripped view, never data/raw. Names live here and reach the graph
+# never — the resolver turns a name into ids, and only ids are queried.
+EMPLOYEE_JSON = "metadata/employee.json"
+CUSTOMERS_JSON = "metadata/customers_data.json"
+
+# The three id-spaces a query can write literally, at the exact forms and
+# widths the entity layer minted its Person nodes from. Matching is
+# case-sensitive: an id is an exact-match thing.
+_EID_LITERAL = re.compile(r"\beid_[0-9a-f]{8}\b")
+_EMP_LITERAL = re.compile(r"\bEMP_\d{6,12}\b")
+_CUST_LITERAL = re.compile(r"\bCUST-\d+\b")
+
+# The same three forms read case-blind: a token in an id's shape that the
+# case-sensitive match did not claim resolves to nothing and is recorded as
+# such, so a miscased id leaves an audit trail instead of silence.
+_ID_SHAPE = re.compile(r"\b(?:eid_[0-9a-f]{8}|emp_\d{6,12}|cust-\d+)\b", re.I)
+
+# A name's tokens: maximal runs of letters and digits, underscore excluded, so
+# `eid_9b023657` reads as two tokens and no id can be read as a name.
+_NAME_TOKEN = re.compile(r"[^\W_]+", re.UNICODE)
+
+# The single-letter English words, which are not initials. `A Taylor` and
+# `I Brown` are an article and a pronoun before a surname; `A. Taylor` and
+# `I. Brown`, written with the initial's own full stop, are initials.
+_INITIAL_STOP = ("a", "i")
 
 # Cluster-guided tag weighting: five per-facet fuzzy membership matrices over
 # the tag pool, built once by `build_tag_clusters.py` and cached under
@@ -237,6 +352,11 @@ if GUIDE_M <= 1.0:
 if STR_GUIDE > 0:
     print(f"artefact_v1: cluster guide on (HERB_STR_GUIDE={STR_GUIDE}, "
           f"tau={GUIDE_TAU}, C={GUIDE_C}, m={GUIDE_M})", flush=True)
+
+if PERSON_ON:
+    print(f"artefact_v1: person support path on (HERB_W_PERSON={W_PERSON}, "
+          f"ambiguous={PERSON_AMBIGUOUS}, near={'on' if PERSON_NEAR else 'off'}, "
+          f"roles={PERSON_ROLE_W})", flush=True)
 
 # Combine-space mode switches — all additive over the default pipeline (AGG ->
 # normalize -> modifier lerp -> weighted sum), the defaults reproducing it.
@@ -275,7 +395,7 @@ _ABS_REF = len(K_LEVELS) * _ABS_UNIT
 # coefficients, recorded by the runner in run_manifest.json.
 RETRIEVAL_FLAGS = {
     "HERB_CURVE_WALK": CURVE_WALK, "HERB_DOOR_TRACE": DOOR_TRACE,
-    "HERB_WALK_GATE": WALK_GATE, "HERB_FRESH_INTERP": FRESH_INTERP,
+    "HERB_DESC_CUT": DESC_CUT, "HERB_FRESH_INTERP": FRESH_INTERP,
     "HERB_NO_REVIEW": NO_REVIEW,
     "HERB_AGG": AGG, "HERB_NORM": NORM, "HERB_NORM_SCOPE": NORM_SCOPE,
     "HERB_W_TAG": W_TAG, "HERB_W_DESC": W_DESC, "HERB_W_SCOPE": W_SCOPE,
@@ -285,6 +405,14 @@ RETRIEVAL_FLAGS = {
     "HERB_STR_GUIDE": STR_GUIDE, "HERB_GUIDE_TAU": GUIDE_TAU,
     "HERB_GUIDE_C": GUIDE_C, "HERB_GUIDE_M": GUIDE_M,
     "HERB_GUIDE_LAMBDA": GUIDE_LAMBDA, "HERB_GUIDE_SEED": GUIDE_SEED,
+    "HERB_W_PERSON": W_PERSON, "HERB_STR_PERSON_MATCH": STR_PERSON_MATCH,
+    "HERB_PERSON_AMBIGUOUS": PERSON_AMBIGUOUS, "HERB_PERSON_NEAR": PERSON_NEAR,
+    "HERB_W_ROLE_SPEAKER": W_ROLE_SPEAKER,
+    "HERB_W_ROLE_PARTICIPANT": W_ROLE_PARTICIPANT,
+    "HERB_W_ROLE_REVIEWER": W_ROLE_REVIEWER,
+    "HERB_W_ROLE_PR_AUTHOR": W_ROLE_PR_AUTHOR,
+    "HERB_W_ROLE_DOC_AUTHOR": W_ROLE_DOC_AUTHOR,
+    "HERB_W_ROLE_MENTIONS": W_ROLE_MENTIONS,
 }
 
 # Content-addressed on-disk caches under output/. The query-embed cache keys a
@@ -336,11 +464,11 @@ LIMIT $k
 
 # An opened area's tags pull their chunks; each chunk keeps its highest-support
 # tag and that edge's priority-modifier components. The base score is the tag
-# support (qt.weight); facetTerm is the part's facet values against the edge's
-# facet arrays, riding the same edge as w_chunk, while relevance_to_file is a
-# chunk property, one value for every edge into it. The components return raw —
-# the strength lerp and the per-path normalization apply in Python on the shared
-# scale.
+# support (qt.weight); facetTerm folds the part's facet values over the edge's
+# own `facets` / `w_facets` arrays, riding the same edge as the magnitude
+# `w_chunk`, while relevance_to_file is a chunk property, one value for every
+# edge into it. The components return raw — the strength lerp and the per-path
+# normalization apply in Python on the shared scale.
 _AREA_CHUNKS_CYPHER = """
 UNWIND $tags AS qt
 MATCH (t:Tag {name: qt.name})<-[r:HAS_TAG]-(c:Chunk)<-[:HAS_CHUNK]-(f:File)
@@ -392,6 +520,24 @@ _DESC_KNN_CYPHER = _DESC_KNN_TEMPLATE.format(emb="")
 _DESC_KNN_EMB_CYPHER = _DESC_KNN_TEMPLATE.format(
     emb="\n       c.desc_emb AS desc_emb,")
 
+# One named person's chunk set: every chunk the entity layer links to any of
+# the ids the name resolved to, each carrying the kinds of link it holds and
+# its description distance to the need. A MENTIONS edge carries no role, so it
+# reads under $mentionRole. Best-first by that distance, chunk id as the stable
+# tiebreaker — the same order the stated-scope pool ranks in.
+_PERSON_CHUNKS_CYPHER = """
+UNWIND $pids AS pid
+MATCH (p:Person {id: pid})<-[r:INVOLVES|MENTIONS]-(c:Chunk)<-[:HAS_CHUNK]-(f:File)
+WHERE coalesce(c.empty, false) = false
+  AND ($datasetId IS NULL OR f.dataset_id = $datasetId)
+  AND NOT (coalesce(c.section, "") IN $excludedSections)
+WITH c, f, collect(DISTINCT coalesce(r.role, $mentionRole)) AS roles
+WITH c, f, roles, vector.similarity.cosine(c.desc_emb, $descVec) AS sim
+RETURN c.chunk_id AS chunkId, c.locator_json AS locator,
+       f.rel_path AS relpath, f.sha256 AS sha256, roles, sim
+ORDER BY sim DESC, chunkId
+"""
+
 
 def _hint_terms(gate: dict) -> tuple:
     """Cypher boolean terms for the interpreted scope hints, over chunk
@@ -438,6 +584,199 @@ def _hint_match(row: dict, gate: dict) -> bool:
     if gate.get("years") and set(gate["years"]) & set(row.get("years") or []):
         return True
     return False
+
+
+# --- person support path: names in, ids out ----------------------------------
+
+def _name_key(name: str) -> tuple:
+    """One directory name as its token key."""
+    return tuple(m.group(0).lower() for m in _NAME_TOKEN.finditer(name))
+
+
+def _load_person_directory(corpus_root) -> dict:
+    """The corpus's own person directories as the resolver's indexes:
+    `employee.json`, one `eid_…` per entry, and `customers_data.json`, one
+    `CUST-…` per entry, read from the corpus view the arm is prepared over.
+    Returns the full-name index a query is matched against, the two near-match
+    indexes (a name's tokens as a set; its initial with its last token), the
+    directory's own spelling per name, the name token counts present, and the
+    census the prepare banner prints. A missing file fails loud — the path
+    resolves names against the directories or it does not run."""
+    root = Path(corpus_root)
+    employee_path = root / EMPLOYEE_JSON
+    customers_path = root / CUSTOMERS_JSON
+    for path in (employee_path, customers_path):
+        if not path.is_file():
+            raise RuntimeError(
+                f"person directory missing at {path} — the person support path "
+                f"(HERB_W_PERSON={W_PERSON}) resolves query names against the "
+                f"corpus view's own directories.")
+    employees = json.loads(employee_path.read_text(encoding="utf-8"))
+    customers = json.loads(customers_path.read_text(encoding="utf-8"))
+    entries = [((rec.get("name") or "").strip(), pid)
+               for pid, rec in employees.items()]
+    entries += [((rec.get("name") or "").strip(), rec.get("id"))
+                for rec in customers]
+
+    ids: dict = {}
+    surface: dict = {}
+    token_sets: dict = {}
+    initials: dict = {}
+
+    def add(index: dict, key, pid: str) -> None:
+        holders = index.setdefault(key, [])
+        if pid not in holders:
+            holders.append(pid)
+
+    for name, pid in entries:
+        key = _name_key(name)
+        if not key or not pid:
+            continue
+        add(ids, key, pid)
+        surface.setdefault(key, name)
+        if len(set(key)) == len(key):
+            add(token_sets, frozenset(key), pid)
+        add(initials, (key[0][0], key[-1]), pid)
+    return {
+        "ids": {k: tuple(sorted(v)) for k, v in ids.items()},
+        "surface": surface,
+        "token_sets": {k: tuple(sorted(v)) for k, v in token_sets.items()},
+        "initials": {k: tuple(sorted(v)) for k, v in initials.items()},
+        "lengths": tuple(sorted({len(k) for k in ids}, reverse=True)),
+        "counts": {"employees": len(employees), "customers": len(customers),
+                   "names": len(ids),
+                   "ids": len({pid for _, pid in entries if pid})},
+    }
+
+
+def _is_initial(text: str, token: tuple) -> bool:
+    """Whether one token is written as a person's initial: a single letter in
+    upper case, and either carrying its own full stop or not being one of the
+    single-letter English words. `H Taylor` and `A. Taylor` are initials;
+    `a Brown` and `A Taylor` are an article before a surname."""
+    word, start, end = token
+    if len(word) != 1 or not text[start].isupper():
+        return False
+    return text[end:end + 1] == "." or word not in _INITIAL_STOP
+
+
+def resolve_persons(text: str, directory: dict) -> list:
+    """The persons a query names -> [{name, rule, ids}] in query order, each
+    mention's span claimed once so one surface is one mention. The tiers, in
+    order:
+
+      `id_literal`   an id written out in the query in its own id-space's case
+                     and width (`eid_…`, `EMP_…`, `CUST-…`), taken as itself —
+                     an id is an exact-match thing.
+      `exact`        a directory name matched as whole words, spelled as the
+                     directory spells it.
+      `normalized`   the same match where only case or separators differ.
+      `reordered`    with HERB_PERSON_NEAR on: the name's own two tokens in the
+                     other order.
+      `initial`      with HERB_PERSON_NEAR on: an initial (a single upper-case
+                     letter, its own full stop or not one of the single-letter
+                     English words) and the name's last token, resolving to
+                     every entry with that initial.
+      `ambiguous`    a name several entries carry, under
+                     HERB_PERSON_AMBIGUOUS=none — recorded, resolving to no id.
+      `unresolved`   a token in an id's shape that is not that id (a miscased
+                     one), or two capitalized words the directory does not
+                     carry — recorded so a run says what it could not resolve.
+
+    A name several entries carry resolves to all their ids under the default
+    policy. Two mentions resolving to one id set are one mention. Nothing here
+    calls a model, embeds anything, or measures a fuzzy distance, and the only
+    thing that reaches the graph is an id."""
+    if directory is None:
+        raise RuntimeError(
+            "the person support path is on and no person directory is loaded — "
+            "`prepare_over_corpus` fills Prepared.directory when HERB_W_PERSON "
+            "> 0, and resolution needs it.")
+    tokens = [(m.group(0).lower(), m.start(), m.end())
+              for m in _NAME_TOKEN.finditer(text)]
+    claimed: set = set()
+    found = []                      # (first token index, surface, rule, ids)
+
+    def span_tokens(start: int, end: int) -> list:
+        return [i for i, (_, s, e) in enumerate(tokens) if s >= start and e <= end]
+
+    for pattern in (_EID_LITERAL, _EMP_LITERAL, _CUST_LITERAL):
+        for m in pattern.finditer(text):
+            at = span_tokens(m.start(), m.end())
+            if not at or claimed & set(at):
+                continue
+            claimed.update(at)
+            found.append((at[0], m.group(0), "id_literal", (m.group(0),)))
+
+    for m in _ID_SHAPE.finditer(text):
+        at = span_tokens(m.start(), m.end())
+        if not at or claimed & set(at):
+            continue
+        claimed.update(at)
+        found.append((at[0], m.group(0), "unresolved", ()))
+
+    for width in directory["lengths"]:
+        for i in range(len(tokens) - width + 1):
+            span_at = range(i, i + width)
+            if claimed & set(span_at):
+                continue
+            key = tuple(t for t, _, _ in tokens[i:i + width])
+            hit = directory["ids"].get(key)
+            if hit is None:
+                continue
+            claimed.update(span_at)
+            written = text[tokens[i][1]:tokens[i + width - 1][2]]
+            found.append((i, written,
+                          "exact" if written == directory["surface"][key] else "normalized",
+                          hit))
+
+    if PERSON_NEAR:
+        for i in range(len(tokens) - 1):
+            if i in claimed or i + 1 in claimed:
+                continue
+            pair = (tokens[i][0], tokens[i + 1][0])
+            hit, rule = None, ""
+            if len(set(pair)) == 2:
+                hit, rule = directory["token_sets"].get(frozenset(pair)), "reordered"
+            if hit is None and _is_initial(text, tokens[i]):
+                hit, rule = directory["initials"].get(pair), "initial"
+            if hit is None:
+                continue
+            claimed.update((i, i + 1))
+            found.append((i, text[tokens[i][1]:tokens[i + 1][2]], rule, hit))
+
+    for i in range(len(tokens) - 1):
+        if i in claimed or i + 1 in claimed:
+            continue
+        if text[tokens[i][1]].isupper() and text[tokens[i + 1][1]].isupper():
+            claimed.update((i, i + 1))
+            found.append((i, text[tokens[i][1]:tokens[i + 1][2]], "unresolved", ()))
+
+    mentions, seen = [], set()
+    for _, written, rule, hit in sorted(found, key=lambda f: f[0]):
+        ids = tuple(hit)
+        if len(ids) > 1 and PERSON_AMBIGUOUS == "none":
+            mentions.append({"name": written, "rule": "ambiguous", "ids": []})
+            continue
+        if ids:
+            if ids in seen:
+                continue
+            seen.add(ids)
+        mentions.append({"name": written, "rule": rule, "ids": list(ids)})
+    return mentions
+
+
+def _role_weight(roles: list) -> float:
+    """The weight of a chunk's best link to one named person. A role the weight
+    map does not carry fails loud rather than scoring at an invented weight."""
+    best = 0.0
+    for role in roles:
+        if role not in PERSON_ROLE_W:
+            raise RuntimeError(
+                f"person edge role {role!r} in {DATABASE!r} has no weight — "
+                f"the roles this arm grades are {sorted(PERSON_ROLE_W)}")
+        best = max(best, PERSON_ROLE_W[role])
+    return best
 
 
 # --- query-embed cache -------------------------------------------------------
@@ -517,6 +856,9 @@ def _embed_cached(texts: list, input_type: str) -> tuple:
 class Prepared:
     driver: object
     build_stats: Optional[BuildStats] = None
+    # the person directories' indexes, loaded once per run when the person
+    # support path is on and None when it is off
+    directory: Optional[dict] = None
 
 
 def _driver():
@@ -533,6 +875,7 @@ def _driver():
 
 def prepare_over_corpus(corpus) -> Prepared:
     t0 = time.perf_counter()
+    directory = _load_person_directory(corpus) if PERSON_ON else None
     drv = _driver()
     try:
         with drv.session(database=DATABASE) as s:
@@ -549,6 +892,8 @@ def prepare_over_corpus(corpus) -> Prepared:
             multi = s.run(
                 "MATCH (c:Chunk) WITH c, count { (:File)-[:HAS_CHUNK]->(c) } AS n "
                 "WHERE n <> 1 RETURN count(*) AS bad").single()["bad"]
+            person_nodes = s.run(
+                "MATCH (p:Person) RETURN count(p) AS n").single()["n"] if PERSON_ON else 0
         if multi:
             raise RuntimeError(
                 f"{multi} chunk(s) in {DATABASE!r} without exactly one File — "
@@ -558,6 +903,18 @@ def prepare_over_corpus(corpus) -> Prepared:
             raise RuntimeError(
                 f"semantic layer incomplete in {DATABASE!r} (missing indexes: {missing or 'none'}, "
                 f"non-empty chunks without desc_emb: {no_desc}) — run `python reembed_herb_eval.py` once.")
+        if PERSON_ON and not person_nodes:
+            raise RuntimeError(
+                f"HERB_W_PERSON={W_PERSON} asks for the person support path and "
+                f"{DATABASE!r} carries no Person nodes — the entity layer lives in the "
+                f"versioned copy `build_entity_graph.py` builds. Point NEO4J_DATABASE "
+                f"at that database, or leave HERB_W_PERSON at 0.")
+        if PERSON_ON:
+            counts = directory["counts"]
+            print(f"artefact_v1: person directory {counts['employees']} employees + "
+                  f"{counts['customers']} customers -> {counts['names']} distinct names "
+                  f"over {counts['ids']} ids; {DATABASE} carries {person_nodes} Person nodes",
+                  flush=True)
     except Exception:
         drv.close()
         raise
@@ -568,6 +925,7 @@ def prepare_over_corpus(corpus) -> Prepared:
             model=ModelUsage(),
             models=[EMBED_MODEL],
         ),
+        directory=directory,
     )
 
 
@@ -972,27 +1330,32 @@ def _agg(slots: list) -> dict:
 
 
 def _normalize(tag_base: dict, desc_base: dict, scope_base: dict,
-               scope_levels: int) -> tuple:
-    """Put the three paths' bases on a comparable scale by the HERB_NORM mode:
+               person_base: dict, scope_levels: int, person_levels: int) -> tuple:
+    """Put the four paths' bases on a comparable scale by the HERB_NORM mode:
     relative min-max (HERB_NORM_SCOPE per-path, or global over the union of all
-    three), absolute saturation against a per-path level-count-aware reference,
-    or none (raw). `scope_levels` is the stated-scope path's per-query level
-    multiplicity, so equal distance scores equal across paths under absolute.
-    Returns the three normalized base dicts."""
+    four), absolute saturation against a per-path level-count-aware reference,
+    or none (raw). `scope_levels` and `person_levels` are the stated-scope and
+    person paths' per-query level multiplicities — both extend across their
+    whole matching set — so equal distance scores equal across paths under
+    absolute. Returns the four normalized base dicts."""
     if NORM == "none":
-        return tag_base, desc_base, scope_base
+        return tag_base, desc_base, scope_base, person_base
     if NORM == "absolute":
         scope_ref = scope_levels * _ABS_UNIT
+        person_ref = person_levels * _ABS_UNIT
         return ({cid: _absolute(v, _ABS_REF) for cid, v in tag_base.items()},
                 {cid: _absolute(v, _ABS_REF) for cid, v in desc_base.items()},
-                {cid: _absolute(v, scope_ref) for cid, v in scope_base.items()})
+                {cid: _absolute(v, scope_ref) for cid, v in scope_base.items()},
+                {cid: _absolute(v, person_ref) for cid, v in person_base.items()})
     if NORM_SCOPE == "global":
-        allvals = [*tag_base.values(), *desc_base.values(), *scope_base.values()]
+        allvals = [*tag_base.values(), *desc_base.values(), *scope_base.values(),
+                   *person_base.values()]
         lo = min(allvals) if allvals else 0.0
         hi = max(allvals) if allvals else 0.0
         return (_norm_pool(tag_base, lo, hi), _norm_pool(desc_base, lo, hi),
-                _norm_pool(scope_base, lo, hi))
-    return _minmax(tag_base), _minmax(desc_base), _minmax(scope_base)
+                _norm_pool(scope_base, lo, hi), _norm_pool(person_base, lo, hi))
+    return (_minmax(tag_base), _minmax(desc_base), _minmax(scope_base),
+            _minmax(person_base))
 
 
 def _mod(m: float, strength: float) -> float:
@@ -1133,7 +1496,7 @@ def _part_levels(session, part: dict, vec: np.ndarray, gate: dict,
 
 def _open_area(session, area: dict, facets: dict) -> list:
     """Open one area: its tags pull their chunks; each chunk keeps its
-    highest-support tag, carrying that edge's facet agreement and w_chunk plus
+    highest-support tag, carrying that edge's facet agreement and magnitude plus
     the chunk's own relevance_to_file as the tag path's priority modifiers over
     the tag-support base."""
     cols = {f: float(facets.get(f, 0.0)) for f in ALL_FACETS}
@@ -1147,32 +1510,86 @@ def _open_area(session, area: dict, facets: dict) -> list:
     return [dict(rec) for rec in res]
 
 
-def _retrieve(session, plan: dict, k: int) -> tuple:
+def _desc_area(session, vec) -> tuple:
+    """One prompt vector's description neighborhood, clustered exactly like a
+    tag pool -> (rows best-first, each row's raw fuzzy support, the anchor's
+    containing-cluster chain finest to coarsest). The kNN is over-fetched and
+    the LIMIT trims it to the neighborhood width — the ceiling on what the
+    clustering may consider; the neighborhood anchors at its highest-support
+    chunk and the chain's heights are cosine distances, the one scale the tag
+    areas walk. ([], [], []) for an empty neighborhood."""
+    recs = list(session.run(
+        _DESC_KNN_EMB_CYPHER, idx=DESC_INDEX, k=K_LEVELS[-1],
+        fetch=KNN_OVERFETCH * K_LEVELS[-1],
+        vec=[float(x) for x in vec],
+        datasetId=DATASET_ID, excludedSections=_EXCLUDED_PARAM))
+    rows = [dict(r) for r in recs
+            if r["sim"] is not None and r["desc_emb"] is not None]
+    if not rows:
+        return [], [], []
+    dists = np.array([1.0 - float(r["sim"]) for r in rows])
+    vals = _multi_k_support(dists, normalize=False)
+    embs = _unit(np.asarray([r["desc_emb"] for r in rows], dtype=np.float64))
+    return rows, vals, _level_chain(embs, int(np.argmax(vals)))
+
+
+def _anchor_cluster(chain: list) -> list:
+    """The anchor's containing cluster as row indices: the chain walked from
+    its finest level until the cluster holds more than the anchor alone. Level
+    0 is the anchor by itself — too tight to be a path's admission set — so the
+    first merge is the cut, and a single-member neighborhood keeps the anchor."""
+    members: list = []
+    for _, added in chain:
+        members.extend(added)
+        if len(members) > 1:
+            break
+    return members
+
+
+def _retrieve(session, plan: dict, k: int, keep_all: bool = False,
+              persons: Optional[list] = None) -> tuple:
     """interpret-plan -> (pointer rows cut at k, query embed ModelUsage,
-    retrieval meta). Every part anchors at its tightest cluster (level 0) and
+    retrieval meta). `persons` is what `resolve_persons` read off the question
+    text; it opens the person path and is ignored when that path is off. With
+    `keep_all` the rows are the whole ranked union
+    instead of the k cut — the walk and the value scale are identical, and the
+    fill-to-budget caller consumes that ranking by characters. `keep_all` does
+    not combine with HERB_CURVE_WALK: the curve walk's stop rule sets its own
+    kept depth, and a character budget would override the decision it exists
+    to make.
+    Every part anchors at its tightest cluster (level 0) and
     widens up its own dendrogram; widening events across all parts open in
     ascending merge height (the globally tightest next level first) and only
-    while the distinct-chunk pool — with `HERB_WALK_GATE=1`, only the chunks
-    the tag areas reached — is short of k. With `HERB_CURVE_WALK=1` one
-    progressive frontier walks all semantic areas — tag areas and clustered
-    description neighborhoods — cheapest opening first on the shared
-    cosine-height scale, and stops when the next opening's gap jumps two
-    standard deviations above the gaps walked so far (`_gap_break`); K = the
-    distinct chunks the opened areas vouch for, capped by the caller's k.
+    while the chunks the tag areas reached are short of k, so description and
+    stated-scope finds rank and compete at the cut without stopping the walk.
+    With `HERB_CURVE_WALK=1` one progressive frontier walks all semantic areas
+    — tag areas and clustered description neighborhoods — cheapest opening
+    first on the shared cosine-height scale, and stops when the next opening's
+    gap jumps two standard deviations above the gaps walked so far
+    (`_gap_break`); K = the distinct chunks the opened areas vouch for, capped
+    by the caller's k.
 
-    Membership is the union of what the three paths — tag areas, description
-    lookups, stated scope — find; description and scope stay finders, never
-    trimmed to the tag chunks. Value is scored on one scale in both regimes:
-    each path's per-chunk base (tag support / description support / scope
-    support, summed across the parts or sources that vouch for a chunk) is
+    Membership is the union of what the four paths — tag areas, description
+    lookups, stated scope, named persons — find; description, scope and person
+    stay finders, never trimmed to the tag chunks. Value is scored on one scale
+    in both regimes: each path's per-chunk base (tag support / description
+    support / scope support / person support, summed across the parts or sources
+    that vouch for a chunk) is
     min-max normalized over that path's own pool, its priority modifiers (facet
-    agreement, w_chunk and relevance_to_file for tags; a hint match for
-    descriptions; the match fraction for scope) lift the normalized base by
-    their exposed strengths, and the three lifted scores combine as a weighted
-    sum (W_TAG / W_DESC / W_SCOPE). Stated scope corroborates value and competes
-    for the K slots but never sets the count."""
+    agreement, the edge magnitude and relevance_to_file for tags; a hint match
+    for descriptions; the match fraction for scope; the named-person fraction
+    for persons) lift the normalized base by
+    their exposed strengths, the person path's role weight multiplies its
+    normalized base beside W_PERSON, and the four lifted scores combine as a
+    weighted sum (W_TAG / W_DESC / W_SCOPE / W_PERSON). Stated scope and the named
+    persons corroborate value and compete for the K slots but never set the
+    count."""
     if k <= 0:
         raise ValueError("k must be positive")
+    if keep_all and CURVE_WALK:
+        raise ValueError(
+            "keep_all does not combine with HERB_CURVE_WALK — the curve walk's "
+            "stop rule sets its own kept depth")
 
     parts = plan["parts"]
     qmat, calls, tok_in, tok_out, secs = _embed_cached(
@@ -1225,12 +1642,16 @@ def _retrieve(session, plan: dict, k: int) -> tuple:
     # across the parts/sources that vouch for it; scope is a single source.
     tag_slots = [dict() for _ in parts]  # per part: chunkId -> best tag support
     tag_supp: dict = {}                  # chunkId -> its top tag support
-    tag_mods: dict = {}                  # chunkId -> (facetTerm, w_chunk, relevance) at that support
+    tag_mods: dict = {}                  # chunkId -> (facetTerm, magnitude, relevance) at that support
     desc_sources: list = []              # each a dict chunkId -> best description support
     desc_hint: dict = {}                 # chunkId -> description priority modifier (DESC_HINT_M on a hint match)
     scope_base: dict = {}                # chunkId -> scope support
     scope_match: dict = {}               # chunkId -> stated-scope match fraction
     scope_n = 0                          # stated-scope matching-set size — its level multiplicity
+    person_slots: list = []              # each a dict chunkId -> best support from one named person
+    person_role: dict = {}               # chunkId -> the weight of its best kind of person link
+    person_hits: dict = {}               # chunkId -> how many of the named persons it carries
+    person_log: list = []                # per mention: its resolution and what it reached
 
     def _pointer(row):
         return {f: row[f] for f in ("chunkId", "locator", "relpath", "sha256")}
@@ -1281,21 +1702,35 @@ def _retrieve(session, plan: dict, k: int) -> tuple:
 
     def open_desc(vec, label):
         """A part's description lookup: fuzzy multi-k support over
-        `chunk_desc_emb`, chunk-level, its own source in the description pool."""
-        recs = list(session.run(
-            _DESC_KNN_CYPHER, idx=DESC_INDEX, k=K_LEVELS[-1],
-            fetch=KNN_OVERFETCH * K_LEVELS[-1],
-            vec=[float(x) for x in vec],
-            datasetId=DATASET_ID, excludedSections=_EXCLUDED_PARAM))
-        rows = [dict(r) for r in recs if r["sim"] is not None]
-        if not rows:
-            return
-        dists = np.array([1.0 - float(r["sim"]) for r in rows])
-        vals = _multi_k_support(dists, normalize=False)
+        `chunk_desc_emb`, chunk-level, its own source in the description pool.
+        The neighborhood clusters and the path admits the anchor chunk's
+        containing cluster — a width the neighborhood's own geometry sets,
+        under the kNN trim as its ceiling. Chunks outside that cluster reach
+        neither the pool nor a description score. With HERB_DESC_CUT=0 the
+        whole neighborhood is admitted."""
+        if DESC_CUT:
+            rows, vals, chain = _desc_area(session, vec)
+            if not rows:
+                return
+            admitted = _anchor_cluster(chain)
+        else:
+            recs = list(session.run(
+                _DESC_KNN_CYPHER, idx=DESC_INDEX, k=K_LEVELS[-1],
+                fetch=KNN_OVERFETCH * K_LEVELS[-1],
+                vec=[float(x) for x in vec],
+                datasetId=DATASET_ID, excludedSections=_EXCLUDED_PARAM))
+            rows = [dict(r) for r in recs if r["sim"] is not None]
+            if not rows:
+                return
+            dists = np.array([1.0 - float(r["sim"]) for r in rows])
+            vals = _multi_k_support(dists, normalize=False)
+            admitted = list(range(len(rows)))
         slot: dict = {}
         desc_sources.append(slot)
-        fresh = _record_desc(slot, rows, vals)
-        walk.append({"part": label, "path": "desc", "chunks": len(rows), "new": fresh})
+        fresh = _record_desc(slot, [rows[j] for j in admitted],
+                             [vals[j] for j in admitted])
+        walk.append({"part": label, "path": "desc", "chunks": len(admitted),
+                     "new": fresh})
 
     def open_desc_area(vec, label):
         """A description area for the curve walk: the chunk-description
@@ -1305,19 +1740,9 @@ def _retrieve(session, plan: dict, k: int) -> tuple:
         dendrogram chain supplies widening events on the same cosine-height
         scale the tag areas walk. Opens the anchor level now and returns the
         widening events [(height, open_fn)] for the frontier."""
-        recs = list(session.run(
-            _DESC_KNN_EMB_CYPHER, idx=DESC_INDEX, k=K_LEVELS[-1],
-            fetch=KNN_OVERFETCH * K_LEVELS[-1],
-            vec=[float(x) for x in vec],
-            datasetId=DATASET_ID, excludedSections=_EXCLUDED_PARAM))
-        rows = [dict(r) for r in recs
-                if r["sim"] is not None and r["desc_emb"] is not None]
+        rows, vals, chain = _desc_area(session, vec)
         if not rows:
             return []
-        dists = np.array([1.0 - float(r["sim"]) for r in rows])
-        vals = _multi_k_support(dists, normalize=False)
-        embs = _unit(np.asarray([r["desc_emb"] for r in rows], dtype=np.float64))
-        chain = _level_chain(embs, int(np.argmax(vals)))
         slot: dict = {}
         desc_sources.append(slot)
 
@@ -1377,6 +1802,55 @@ ORDER BY sim DESC, chunkId
         walk.append({"part": "stated-scope", "path": "scope",
                      "chunks": len(rows), "new": fresh})
 
+    def open_person_areas():
+        """The person path: the query names a person, so the pool is the chunk
+        set the entity layer links to the ids that name resolved to — no
+        clustering, nothing fuzzy about a named person. Each mention is its own
+        source: its base is fuzzy support over description distances to the
+        need, extended across the whole linked set (a named person has no
+        horizon). The fraction of the query's named persons a chunk carries is
+        the path's priority modifier, and the weight of its best kind of link is
+        a per-chunk path weight; both apply over the normalized base, so a
+        weight damps toward no contribution instead of moving the chunk inside
+        the pool. A mention that resolved to no id, and a person no chunk links
+        to, reach nothing and cost nothing."""
+        for mention in persons or []:
+            entry = {"name": mention["name"], "rule": mention["rule"],
+                     "ids": list(mention["ids"]), "chunks": 0, "new": 0}
+            person_log.append(entry)
+            if not mention["ids"]:
+                continue
+            recs = list(session.run(
+                _PERSON_CHUNKS_CYPHER, pids=list(mention["ids"]),
+                descVec=[float(x) for x in need_vec], mentionRole=MENTION_ROLE,
+                datasetId=DATASET_ID, excludedSections=_EXCLUDED_PARAM))
+            rows = [dict(r) for r in recs if r["sim"] is not None]
+            if not rows:
+                continue
+            dists = np.array([1.0 - float(r["sim"]) for r in rows])
+            vals = _multi_k_support(dists, extend=True, normalize=False)
+            slot: dict = {}
+            person_slots.append(slot)
+            fresh = 0
+            for row, val in zip(rows, vals):
+                cid = row["chunkId"]
+                if cid not in pool:
+                    fresh += 1
+                    pool.add(cid)
+                sup = float(val)
+                if cid not in slot or sup > slot[cid]:
+                    slot[cid] = sup
+                weight = _role_weight(row["roles"])
+                if cid not in person_role or weight > person_role[cid]:
+                    person_role[cid] = weight
+                person_hits[cid] = person_hits.get(cid, 0) + 1
+                payload.setdefault(cid, _pointer(row))
+            entry["chunks"] = len(rows)
+            entry["new"] = fresh
+            walk.append({"part": mention["name"], "path": "person",
+                         "ids": len(mention["ids"]), "chunks": len(rows),
+                         "new": fresh})
+
     for pi, lv in anchors:
         open_level(0.0, pi, lv)
 
@@ -1396,6 +1870,8 @@ ORDER BY sim DESC, chunkId
             frontier += [(h, next(seq), fn) for h, fn in
                          open_desc_area(need_vec, "description")]
         open_stated_scope()
+        if PERSON_ON:
+            open_person_areas()
         # One frontier, cheapest opening anywhere first; the stop is the gap
         # that sits two standard deviations above the mean of the walked gaps.
         frontier.sort(key=lambda e: e[:2])
@@ -1413,29 +1889,34 @@ ORDER BY sim DESC, chunkId
         for pi in range(len(parts)):
             open_desc(part_vecs[pi], parts[pi]["t"])
         open_stated_scope()
+        if PERSON_ON:
+            open_person_areas()
         for height, pi, lv in widening:
-            # the widening gate: the whole pool, or with HERB_WALK_GATE=1
-            # only the chunks the tag areas themselves reached
-            walked = len(tag_reached) if WALK_GATE else len(pool)
-            if walked >= k:
+            # the widening gate counts the chunks the tag areas themselves
+            # reached, so a description or scope find never stops the walk
+            if len(tag_reached) >= k:
                 break
             open_level(height, pi, lv)
     if not pool:
         raise RuntimeError("opened areas produced no evidence chunks")
     if CURVE_WALK and not semantic:
         raise RuntimeError(
-            "semantic areas vouch for no chunks — stated scope alone filled the pool")
+            "semantic areas vouch for no chunks — the tag and description paths "
+            "found nothing, and stated scope or a named person filled the pool alone")
 
     # Each path folds a chunk's best support over the parts/sources that vouch
     # for it (HERB_AGG: sum lifts a corroborated chunk, max keeps its single
     # best), the bases reach a comparable scale (HERB_NORM / HERB_NORM_SCOPE),
-    # the strength-graded modifiers lift them, and the three combine as a
+    # the strength-graded modifiers lift them, and the four combine as a
     # weighted sum over the union.
     tag_base = _agg(tag_slots)
     desc_base = _agg(desc_sources)
-    tag_norm, desc_norm, scope_norm = _normalize(
-        tag_base, desc_base, scope_base, _n_levels(scope_n))
-    tag_score, desc_score, scope_score = {}, {}, {}
+    person_base = _agg(person_slots)
+    tag_norm, desc_norm, scope_norm, person_norm = _normalize(
+        tag_base, desc_base, scope_base, person_base,
+        _n_levels(scope_n), _n_levels(len(person_base)))
+    named = sum(1 for m in (persons or []) if m["ids"]) if PERSON_ON else 0
+    tag_score, desc_score, scope_score, person_score = {}, {}, {}, {}
     for cid, nb in tag_norm.items():
         ft, wc, rel = tag_mods[cid]
         tag_score[cid] = nb * _mod(ft, STR_FACET) * _mod(wc, STR_WCHUNK) * _mod(rel, STR_RELEVANCE)
@@ -1443,6 +1924,9 @@ ORDER BY sim DESC, chunkId
         desc_score[cid] = nb * _mod(desc_hint.get(cid, 1.0), STR_DESC_HINT)
     for cid, nb in scope_norm.items():
         scope_score[cid] = nb * _mod(scope_match.get(cid, 1.0), STR_SCOPE_MATCH)
+    for cid, nb in person_norm.items():
+        person_score[cid] = (nb * person_role[cid]
+                             * _mod(person_hits[cid] / named, STR_PERSON_MATCH))
 
     totals: dict = {}
     for cid, s in tag_score.items():
@@ -1451,10 +1935,13 @@ ORDER BY sim DESC, chunkId
         totals[cid] = totals.get(cid, 0.0) + W_DESC * s
     for cid, s in scope_score.items():
         totals[cid] = totals.get(cid, 0.0) + W_SCOPE * s
+    for cid, s in person_score.items():
+        totals[cid] = totals.get(cid, 0.0) + W_PERSON * s
 
     ranked = sorted(totals.items(), key=lambda kv: (-kv[1], kv[0]))
     kept_k = min(len(semantic), k) if CURVE_WALK else k
-    ranked = ranked[:kept_k]
+    if not keep_all:
+        ranked = ranked[:kept_k]
     selected = [{**payload[cid], "score": round(sc, 4)} for cid, sc in ranked]
 
     meta = {
@@ -1477,12 +1964,17 @@ ORDER BY sim DESC, chunkId
             "unmatched": guide_stats["unmatched"],
             "mean_g": round(guide_stats["g_sum"] / guide_stats["g_n"], 4)
                       if guide_stats["g_n"] else 0.0}
+    if PERSON_ON:
+        meta["person"] = {"w": W_PERSON, "named": named,
+                          "mentions": person_log, "chunks": len(person_base)}
     if DOOR_TRACE:
         meta["door_trace"] = [
             {**payload[cid],
              "tag": round(W_TAG * tag_score.get(cid, 0.0), 6),
              "desc": round(W_DESC * desc_score.get(cid, 0.0), 6),
              "scope": round(W_SCOPE * scope_score.get(cid, 0.0), 6),
+             **({"person": round(W_PERSON * person_score.get(cid, 0.0), 6)}
+                if PERSON_ON else {}),
              "total": round(totals[cid], 6)}
             for cid in sorted(totals, key=lambda c: (-totals[c], c))]
     return selected, usage, meta
@@ -1551,6 +2043,36 @@ def _resolve_chunk(row: dict, cache: dict) -> tuple:
 
 # --- answer ------------------------------------------------------------------
 
+def _budget_contexts(rows: list, budget: int, doc_cache: dict) -> tuple:
+    """Fill-to-budget consumption of the ranked pointer rows: each row resolves
+    from raw in rank order and the stream cuts at exactly `budget` context
+    characters (char_budget.cut_at_budget) — whole chunks while the cumulative
+    text fits, the crossing chunk cut mid-text as the final context, the rest of
+    the ranking dropped. Resolution stops at the cut, so only consumed chunks
+    are read. Returns (contexts, per-chunk artifact-id lists aligned with
+    contexts, context_ids — the whole chunks' artifact ids only, deduped in rank
+    order — and the meta["char_budget"] block)."""
+    id_lists: list[list[str]] = []
+
+    def stream():
+        for row in rows:
+            chunk_text, ids = _resolve_chunk(row, doc_cache)
+            id_lists.append(ids)
+            yield row["chunkId"], chunk_text
+
+    cut = cut_at_budget(stream(), budget)
+    context_ids: list[str] = []
+    seen: set[str] = set()
+    for ids in id_lists[:cut.kept]:
+        for aid in ids:
+            if aid not in seen:
+                seen.add(aid)
+                context_ids.append(aid)
+    block = {"budget": budget, "chars": cut.chars, "kept": cut.kept,
+             "boundary": cut.boundary, "exhausted": cut.exhausted}
+    return cut.contexts, id_lists, context_ids, block
+
+
 def _sufficient_cut(text: str, contexts: list) -> tuple:
     """The interpreter holds the conversation: evidence is shown cumulatively
     at the doubling level sequence (capped at what was retrieved) and at each
@@ -1593,51 +2115,62 @@ def _sufficient_cut(text: str, contexts: list) -> tuple:
 
 
 def answer_one_question(question, prepared: Prepared, generate: Optional[Generator],
-                        k: int = 50) -> ArmOutput:
+                        k: int = 50, char_budget: Optional[int] = None) -> ArmOutput:
     _, text = _qid_text(question)
 
     t0 = time.perf_counter()
     plan, interp_calls, interp_in, interp_out, interp_time = _interpret_cached(text, INTERPRET_MODEL)
+    # the persons come off the question text itself, deterministically, never
+    # off the interpreter's reading of it
+    persons = resolve_persons(text, prepared.directory) if PERSON_ON else None
     with prepared.driver.session(database=DATABASE) as session:
-        rows, ground_usage, meta = _retrieve(session, plan, k)
+        rows, ground_usage, meta = _retrieve(session, plan, k,
+                                             keep_all=char_budget is not None,
+                                             persons=persons)
     meta["interpreter"] = {"model": INTERPRET_MODEL, "backend": "claude-cli"}
     retrieve_wall = time.perf_counter() - t0
 
     doc_cache: dict = {}
-    contexts: list[str] = []
-    context_ids: list[str] = []
-    chunk_id_lists: list[list[str]] = []
-    seen: set[str] = set()
-    for row in rows:
-        chunk_text, ids = _resolve_chunk(row, doc_cache)
-        contexts.append(chunk_text)
-        chunk_id_lists.append(ids)
-        for aid in ids:
-            if aid not in seen:
-                seen.add(aid)
-                context_ids.append(aid)
-    # The interpreter decides when it has enough: evidence levels reviewed
-    # cumulatively; sufficient → keep exactly what was seen, hard k the cap.
-    # With HERB_NO_REVIEW=1 the review is off and the full retrieved set stands,
-    # so a retrieval sweep measures retrieval with no per-question content cut.
-    if NO_REVIEW:
-        kept, review_log = len(contexts), []
-        rev_calls = rev_in = rev_out = 0
-        rev_time = 0.0
+    rev_calls = rev_in = rev_out = 0
+    rev_time = 0.0
+    if char_budget is not None:
+        # Fill-to-budget: the ranking is consumed by characters, and the budget
+        # sets the returned depth — no sufficiency review runs.
+        contexts, chunk_id_lists, context_ids, meta["char_budget"] = _budget_contexts(
+            rows, char_budget, doc_cache)
     else:
-        kept, review_log, rev_calls, rev_in, rev_out, rev_time = _sufficient_cut(text, contexts)
-    contexts = contexts[:kept]
-    chunk_id_lists = chunk_id_lists[:kept]
-    seen = set()
-    context_ids = []
-    for ids in chunk_id_lists:
-        for aid in ids:
-            if aid not in seen:
-                seen.add(aid)
-                context_ids.append(aid)
-    meta["review"] = {"kept": kept, "rounds": review_log}
+        contexts: list[str] = []
+        context_ids: list[str] = []
+        chunk_id_lists: list[list[str]] = []
+        seen: set[str] = set()
+        for row in rows:
+            chunk_text, ids = _resolve_chunk(row, doc_cache)
+            contexts.append(chunk_text)
+            chunk_id_lists.append(ids)
+            for aid in ids:
+                if aid not in seen:
+                    seen.add(aid)
+                    context_ids.append(aid)
+        # The interpreter decides when it has enough: evidence levels reviewed
+        # cumulatively; sufficient → keep exactly what was seen, hard k the cap.
+        # With HERB_NO_REVIEW=1 the review is off and the full retrieved set stands,
+        # so a retrieval sweep measures retrieval with no per-question content cut.
+        if NO_REVIEW:
+            kept, review_log = len(contexts), []
+        else:
+            kept, review_log, rev_calls, rev_in, rev_out, rev_time = _sufficient_cut(text, contexts)
+        contexts = contexts[:kept]
+        chunk_id_lists = chunk_id_lists[:kept]
+        seen = set()
+        context_ids = []
+        for ids in chunk_id_lists:
+            for aid in ids:
+                if aid not in seen:
+                    seen.add(aid)
+                    context_ids.append(aid)
+        meta["review"] = {"kept": kept, "rounds": review_log}
     # meta["retrieved"] counts what retrieval selected; "returned" what the
-    # sufficiency cut let through
+    # sufficiency cut (or the character budget) let through
     meta["returned"] = len(contexts)
     # per-chunk artifact ids, aligned with contexts — depth studies truncate
     # chunks and rebuild the id list from what is kept
