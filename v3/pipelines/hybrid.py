@@ -101,6 +101,13 @@ def prepare_over_corpus(corpus) -> Prepared:
     """
     from pipelines import lucene, vector
 
+    if lucene.METADATA_ON or vector.METADATA_ON:
+        raise RuntimeError(
+            "HERB_BASELINE_METADATA is set: this arm fuses on the unit id and puts the "
+            "fused ids straight into context_ids, so a directory record would enter the "
+            "citation id space. The fusion's own handling of a directory unit is not "
+            "designed; run the lucene and vector arms directly.")
+
     print("hybrid: building lucene index", flush=True)
     lucene_prepared = lucene.prepare_over_corpus(corpus)
     print("hybrid: building vector index", flush=True)

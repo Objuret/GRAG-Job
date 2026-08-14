@@ -2118,6 +2118,11 @@ def answer_one_question(question, prepared: Prepared, generate: Optional[Generat
                         k: int = 50, char_budget: Optional[int] = None) -> ArmOutput:
     _, text = _qid_text(question)
 
+    # This arm's retrieval makes its own model calls — interpret, query embed, the
+    # sufficiency review. They run on this thread before the generator is touched,
+    # so the transport's per-thread accounting sums exactly this arm's retrieval
+    # cost and nothing else.
+    nim.reset_timing()
     t0 = time.perf_counter()
     plan, interp_calls, interp_in, interp_out, interp_time = _interpret_cached(text, INTERPRET_MODEL)
     # the persons come off the question text itself, deterministically, never
@@ -2181,7 +2186,8 @@ def answer_one_question(question, prepared: Prepared, generate: Optional[Generat
         calls=interp_calls + ground_usage.calls + rev_calls,
         tokens_in=interp_in + ground_usage.tokens_in + rev_in,
         tokens_out=interp_out + ground_usage.tokens_out + rev_out,
-        time_s=interp_time + ground_usage.time_s + rev_time)
+        time_s=interp_time + ground_usage.time_s + rev_time,
+        **nim.take_timing())  # taken before the generator runs, so it is retrieval only
 
     if generate is None:
         answer, gen = "", ModelUsage()

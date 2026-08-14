@@ -27,7 +27,7 @@ All dates are 2026. Format: `MM-DD`.
 
 | | |
 |---|---|
-| Verbatim human turns | The corpus is **1,304**, 2026-05-14T12:30:48Z → 2026-08-13T18:10:01Z, desktop 127 + laptop 1,177, merged. **This document's quote selection was made against the 803-turn snapshot that existed on 08-03** (desktop 127 + laptop 676). The 501 turns added since are in `docs/canon/raw/user_turns_all.jsonl` and have not been swept into these sections. |
+| Verbatim human turns | The corpus is **1,335**, 2026-05-14T12:30:48Z → 2026-08-14T12:27:10Z, laptop 1,205 + desktop 127 + 3 carried forward from the previous committed corpus, whose transcripts no longer exist. **This document's quote selection was made against the 803-turn snapshot that existed on 08-03** (desktop 127 + laptop 676). The 532 turns added since are in `docs/canon/raw/user_turns_all.jsonl` and have not been swept into these sections, beyond the rulings recorded here by date. |
 | Second-hand recovered rulings | **80 labelled rulings + ~150 verbatim quotes** from 20 agent-written design docs, 05-25 → 07-12 |
 | Git | **74 commits**, 2026-05-07 → 2026-08-01, 91 reproduce commands, 18 numbered contradictions |
 
@@ -809,6 +809,28 @@ Ten days apart, opposite positions, both hedged by him (`"..?"`, `"i THINK"`, `"
 > "yeah but no matter what we do, the issue is k=50 does not mean the same for all arms, and thats retarded.. how did the true v1 runs measure it?" — **[CHAT] 07-26**
 
 > "well you absolutely full of shit, since the entire first generations were on k=40, so, you havent actually fucking read any correct old code tho have you?" — **[CHAT] 07-26**
+
+**His ruling, 08-12 → 08-14: the depth is characters, and it is the default.**
+
+> "the b72k char smokeruns, you know what i am talking about?" — **[CHAT] 08-12** (turns:L7469)
+
+> "so, i want to do that run but reconstructed as 72k chars beeing the cap, not k, or you know, k reconstructed to mean number of chars instead of chunks as now" — **[CHAT] 08-12** (turns:L7473)
+
+> "allright, go on with the plan" — **[CHAT] 08-13** (turns:L7533)
+
+> "i mean, i'm pretty fucking sure it's better to do a smoke of the 10 gold with judge, or maybe just 5 tbh.. than just dumping the 100-no-judge over and over.." — **[CHAT] 08-13** (turns:L7581)
+
+> "i see..  you left chunks as the fucking default still, didnt you?" — **[CHAT] 08-14** (turns:L7711)
+
+> "WHY THE FUCK THEN!? i literally told you that this is how we will do the evals now" — **[CHAT] 08-14** (turns:L7715)
+
+**Reading:** k is reconstructed as a character budget — 72,000 context characters per question,
+the thesis eval's matched evidence budget `40×1800` (turns:L3252, :3051). Each arm consumes its
+own ranking until the context text reaches the budget, and the unit that crosses the line is cut
+mid-text, so every arm is compared at the same amount of evidence rather than the same number of
+retrieval units. The last two turns rule its status: it is the depth every eval runs at, not a
+mode a run opts into. He also names the measurement he wants alongside it — a judged smoke of
+five to ten gold questions in place of repeated unjudged gold-100 runs.
 
 ### The 90%-air problem
 
@@ -1598,7 +1620,7 @@ below are kept because each carries its own history.
 ## F. Open at the moment this record ends (2026-08-03)
 
 - The 08-02 diagnosis of the current tag layer — tag path finds 3 chunks/question out of a ~418-chunk pool, zero widening levels ever open, `GUIDE_TAU = 0.0` makes every tag's guide value exactly 1, `HERB_TAG_FIRST` bundles a walk restructure with a gate — was pasted by him and answered with *"so, lets fix that and try it"* **[CHAT] 08-02**. **The gate half was fixed at `bb95e4b` (2026-08-05, "tags route and weight, never exclude"):** `HERB_TAG_FIRST`, `HERB_TAG_ADMIT` and the gated branch in `_retrieve` are deleted — zero hits across `v3/**/*.py` and absent from `v3/CONSTANTS.md`. `GUIDE_TAU` now defaults to `0.01`, not `0.0` (`v3/pipelines/artefact_v1.py` · `GUIDE_TAU`). The rest of that diagnosis — the tag path's reach and the never-opening widening levels — is untouched.
-- The evidence-cap / matched-token-budget work existed only inside the thread he ordered fully reverted on 07-28, and did not survive the revert.
+- The evidence-cap / matched-budget work is back, in characters and as the default: **ruled 08-12 → 08-14** (turns:L7473, :L7711, :L7715), a run's depth is 72,000 context characters unless `-k` names one (`v3/run.py` · `DEFAULT_CHAR_BUDGET`).
 - Cluster-K itself — the mechanism defined on 07-21 and respecified on 07-31 — has never been on the load-bearing path in any shipped configuration.
 
 ---

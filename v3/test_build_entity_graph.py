@@ -1,7 +1,8 @@
-"""Fixture checks for build_entity_graph: the removal predicate (design §3.1),
-the count and set-identity gates, the entity derivation from record structure
-(§2.1–2.2), and the write guards. No database and no corpus file is touched —
-everything runs on in-memory fixtures and temp directories."""
+"""Fixture checks for build_entity_graph: the removal predicate, the count and
+set-identity gates, the directory reader, the entity derivation from record
+structure, the org-tree relations, and the write guards. No database and no
+corpus file is touched — everything runs on in-memory fixtures and temp
+directories."""
 import hashlib
 import json
 import tempfile
@@ -200,7 +201,7 @@ class RequireStepTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             directory = Path(tmp) / "scratch-db"
             directory.mkdir()
-            for step in ("copy", "cleanup", "entities"):
+            for step in ("copy", "cleanup", "entities", "relations"):
                 self._write(directory, step, "2026-08-12T20:36:02Z")
             (directory / "build_manifest.json").write_text("{}", encoding="utf-8")
             with patch.object(beg, "BUILD_DIR", Path(tmp)):
@@ -250,6 +251,80 @@ FIXTURE_PRODUCTS = {
 }
 
 
+FIXTURE_DIRECTORIES = {
+    "employees": {
+        "eid_aaaaaaaa": {"role": "Software Engineer", "location": "Austin",
+                         "org": "acme"},
+        "eid_bbbbbbbb": {"role": "QA Specialist", "location": "Berlin",
+                         "org": "acme"},
+        "eid_cccccccc": {"role": "Engineering Lead", "location": "Austin",
+                         "org": "beta"},
+        "eid_dddddddd": {"role": "Product Manager", "location": "Sydney",
+                         "org": "beta"},
+    },
+    "customers": {"CUST-7": {"role": "CTO", "company": "TechCorp"}},
+    "orgs": ["acme", "beta"],
+    "companies": ["TechCorp"],
+}
+
+
+class DirectoryReaderTests(unittest.TestCase):
+    EMPLOYEES = {
+        "eid_00000001": {"employee_id": "eid_00000001", "name": "A One",
+                         "role": "VP of Engineering", "org": "acme",
+                         "location": "Austin"},
+    }
+    CUSTOMERS = [{"id": "CUST-0001", "name": "C One", "role": "CTO",
+                  "company": "TechCorp"}]
+
+    def _read(self, employees, customers):
+        def fake(name):
+            return employees if name == beg.EMPLOYEE_FILE else customers
+        with patch.object(beg, "read_metadata", fake):
+            return beg.read_directories()
+
+    def test_the_nodes_carry_the_directory_fields_and_no_name(self):
+        out = self._read(self.EMPLOYEES, self.CUSTOMERS)
+        self.assertEqual(out["employees"], {
+            "eid_00000001": {"role": "VP of Engineering", "location": "Austin",
+                             "org": "acme"}})
+        self.assertEqual(out["customers"],
+                         {"CUST-0001": {"role": "CTO", "company": "TechCorp"}})
+        self.assertEqual(out["orgs"], ["acme"])
+        self.assertEqual(out["companies"], ["TechCorp"])
+
+    def test_a_missing_field_stops_the_build(self):
+        broken = {"eid_00000001": {"employee_id": "eid_00000001",
+                                   "role": "VP of Engineering", "org": "acme"}}
+        with self.assertRaises(SystemExit):
+            self._read(broken, self.CUSTOMERS)
+
+    def test_a_key_disagreeing_with_the_entry_id_stops_the_build(self):
+        broken = {"eid_00000002": dict(self.EMPLOYEES["eid_00000001"])}
+        with self.assertRaises(SystemExit):
+            self._read(broken, self.CUSTOMERS)
+
+    def test_a_customer_without_a_company_stops_the_build(self):
+        with self.assertRaises(SystemExit):
+            self._read(self.EMPLOYEES,
+                       self.CUSTOMERS + [{"id": "CUST-0002", "role": "CEO"}])
+
+    def test_a_duplicate_customer_id_stops_the_build(self):
+        with self.assertRaises(SystemExit):
+            self._read(self.EMPLOYEES, self.CUSTOMERS + self.CUSTOMERS)
+
+
+class MembershipEdgeTests(unittest.TestCase):
+    def test_every_entry_contributes_its_own_field_value(self):
+        self.assertEqual(
+            beg.membership_edges(FIXTURE_DIRECTORIES["employees"], "org"),
+            [("eid_aaaaaaaa", "acme"), ("eid_bbbbbbbb", "acme"),
+             ("eid_cccccccc", "beta"), ("eid_dddddddd", "beta")])
+        self.assertEqual(
+            beg.membership_edges(FIXTURE_DIRECTORIES["customers"], "company"),
+            [("CUST-7", "TechCorp")])
+
+
 class EntityDerivationTests(unittest.TestCase):
     def _rows(self):
         def loc(section, indices, channel=None):
@@ -283,51 +358,75 @@ class EntityDerivationTests(unittest.TestCase):
              "locator": json.dumps({"metadata": "employee", "indices": [0]})},
         ]
 
+    def _derive(self, rows=None):
+        return beg.derive_entities(rows if rows is not None else self._rows(),
+                                   FIXTURE_PRODUCTS, FIXTURE_DIRECTORIES)
+
     def test_roles_come_from_field_structure(self):
-        derived = beg.derive_entities(self._rows(), FIXTURE_PRODUCTS)
+        derived = self._derive()
         self.assertEqual(derived["census"]["involves"],
-                         {"speaker": 1, "pr_author": 1, "reviewer": 1,
-                          "doc_author": 1, "participant": 2})
+                         {"speaker": 1, "reviewer": 1, "doc_author": 1,
+                          "participant": 1})
         self.assertIn(("c_slack", "eid_aaaaaaaa", "speaker"), derived["involves"])
         self.assertIn(("c_doc", "eid_dddddddd", "doc_author"), derived["involves"])
-        self.assertIn(("c_meet", "'eid_eeeeeeee'", "participant"),
-                      derived["involves"])
+        self.assertIn(("c_pr", "eid_cccccccc", "reviewer"), derived["involves"])
 
     def test_speaker_dedupes_at_chunk_grain(self):
-        derived = beg.derive_entities(self._rows(), FIXTURE_PRODUCTS)
+        derived = self._derive()
         speakers = [e for e in derived["involves"] if e[2] == "speaker"]
         self.assertEqual(speakers, [("c_slack", "eid_aaaaaaaa", "speaker")])
 
+    def test_an_id_no_directory_carries_gets_no_edge_and_a_census_row(self):
+        derived = self._derive()
+        self.assertFalse(any(pid in ("EMP_111111", "'eid_eeeeeeee'")
+                             for _, pid, _ in derived["involves"]))
+        self.assertEqual(derived["census"]["unlinked_involves"],
+                         {"eid": 0, "emp": 1, "cust": 0, "malformed": 1})
+        self.assertEqual(derived["census"]["unlinked_involve_ids"],
+                         {"eid": 0, "emp": 1, "cust": 0, "malformed": 1})
+        self.assertEqual(derived["unlinked_ids"]["malformed"],
+                         ["'eid_eeeeeeee'"])
+
     def test_mentions_are_regex_over_content_leaves_deduped(self):
-        derived = beg.derive_entities(self._rows(), FIXTURE_PRODUCTS)
-        self.assertEqual(derived["mentions"]["eid"],
-                         {("c_slack", "eid_bbbbbbbb"),
-                          ("c_chat", "eid_ffffffff")})
-        self.assertEqual(derived["mentions"]["cust"], {("c_slack", "CUST-7")})
-        self.assertEqual(derived["mentions"]["emp"], {("c_pr", "EMP_222222")})
+        derived = self._derive()
+        self.assertEqual(derived["mentions"],
+                         [("c_slack", "CUST-7"), ("c_slack", "eid_bbbbbbbb")])
+        self.assertEqual(derived["census"]["mentions"],
+                         {"employee": 1, "customer": 1})
+        self.assertEqual(derived["census"]["mention_persons"],
+                         {"employee": 1, "customer": 1})
+
+    def test_a_mentioned_id_no_directory_carries_is_censused_apart(self):
+        derived = self._derive()
+        self.assertEqual(derived["census"]["unlinked_mentions"],
+                         {"eid": 1, "emp": 1, "cust": 0})
+        self.assertEqual(derived["unlinked_ids"]["mentions"],
+                         {"eid": ["eid_ffffffff"], "emp": ["EMP_222222"],
+                          "cust": []})
 
     def test_char_range_chunks_read_the_whole_carrier_record(self):
-        derived = beg.derive_entities(self._rows(), FIXTURE_PRODUCTS)
+        derived = self._derive()
         self.assertIn(("c_doc", "eid_dddddddd", "doc_author"), derived["involves"])
 
     def test_metadata_and_url_chunks_carry_no_person_facts(self):
-        derived = beg.derive_entities(self._rows(), FIXTURE_PRODUCTS)
+        derived = self._derive()
         for cid in ("c_meta", "c_url"):
             self.assertFalse(any(e[0] == cid for e in derived["involves"]))
-            for kind in ("eid", "emp", "cust"):
-                self.assertFalse(any(c == cid for c, _ in derived["mentions"][kind]))
+            self.assertFalse(any(c == cid for c, _ in derived["mentions"]))
 
     def test_product_and_channel_edges_come_from_chunk_attributes(self):
-        derived = beg.derive_entities(self._rows(), FIXTURE_PRODUCTS)
+        derived = self._derive()
         self.assertEqual(derived["census"]["product_edges"], 6)
         self.assertEqual(derived["census"]["channel_edges"], 1)
         self.assertEqual(derived["census"]["product_nodes"], 1)
         self.assertEqual(derived["census"]["channel_nodes"], 1)
 
-    def test_person_kinds_census_counts_the_structured_id_spaces(self):
-        derived = beg.derive_entities(self._rows(), FIXTURE_PRODUCTS)
-        self.assertEqual(derived["census"]["person_kinds"],
-                         {"eid": 3, "emp": 1, "malformed": 1})
+    def test_the_node_census_is_the_directories_own_population(self):
+        derived = self._derive()
+        self.assertEqual(derived["census"]["employee_nodes"], 4)
+        self.assertEqual(derived["census"]["customer_nodes"], 1)
+        self.assertEqual(derived["census"]["org_nodes"], 2)
+        self.assertEqual(derived["census"]["company_nodes"], 1)
 
     def test_slack_channel_mismatch_fails_loud(self):
         import json
@@ -337,7 +436,7 @@ class EntityDerivationTests(unittest.TestCase):
                                         "section": "slack", "indices": [0],
                                         "channel": "other-channel"})}]
         with self.assertRaises(SystemExit):
-            beg.derive_entities(rows, FIXTURE_PRODUCTS)
+            self._derive(rows)
 
     def test_out_of_bounds_locator_fails_loud(self):
         import json
@@ -346,7 +445,7 @@ class EntityDerivationTests(unittest.TestCase):
                  "locator": json.dumps({"product": "AcmeForce",
                                         "section": "prs", "indices": [99]})}]
         with self.assertRaises(SystemExit):
-            beg.derive_entities(rows, FIXTURE_PRODUCTS)
+            self._derive(rows)
 
     def test_a_locator_with_neither_indices_nor_index_fails_loud(self):
         with self.assertRaises(SystemExit):
@@ -357,6 +456,107 @@ class EntityDerivationTests(unittest.TestCase):
         with self.assertRaises(SystemExit):
             beg.resolve_records({"product": "AcmeForce", "section": "prs",
                                  "indices": []}, "prs", FIXTURE_PRODUCTS)
+
+
+FIXTURE_TEAM = [
+    {"employee_id": "eid_00000001", "role": "VP of Engineering", "org": "acme",
+     "name": "V One",
+     "engineering_leads": [
+         {"employee_id": "eid_00000002", "role": "Engineering Lead",
+          "org": "acme", "name": "L Two",
+          "engineers": [{"employee_id": "eid_00000004", "role": "Software Engineer",
+                         "org": "acme", "name": "E Four"},
+                        {"employee_id": "eid_00000005", "role": "Software Engineer",
+                         "org": "acme", "name": "E Five"}],
+          "qa_specialists": [{"employee_id": "eid_00000006", "role": "QA Specialist",
+                              "org": "acme", "name": "Q Six"}]},
+     ],
+     "product_managers": [
+         {"employee_id": "eid_00000003", "role": "Product Manager",
+          "org": "acme", "name": "P Three"},
+     ]},
+]
+
+class OrgTreeRelationTests(unittest.TestCase):
+    def test_report_lists_are_found_by_shape_not_by_name(self):
+        self.assertEqual(beg.report_lists(FIXTURE_TEAM[0]),
+                         ["engineering_leads", "product_managers"])
+        self.assertEqual(beg.report_lists(FIXTURE_TEAM[0]["engineering_leads"][0]),
+                         ["engineers", "qa_specialists"])
+
+    def test_manages_carries_the_source_list_field_at_every_depth(self):
+        org = beg.org_tree_relations(FIXTURE_TEAM)
+        self.assertEqual(org["manages"], {
+            ("eid_00000001", "eid_00000002", "engineering_leads"),
+            ("eid_00000001", "eid_00000003", "product_managers"),
+            ("eid_00000002", "eid_00000004", "engineers"),
+            ("eid_00000002", "eid_00000005", "engineers"),
+            ("eid_00000002", "eid_00000006", "qa_specialists"),
+        })
+
+    def test_colleagues_pair_everyone_reporting_to_one_entry_across_its_lists(self):
+        org = beg.org_tree_relations(FIXTURE_TEAM)
+        self.assertEqual(org["colleague"], {
+            ("eid_00000002", "eid_00000003", "eid_00000001"),
+            ("eid_00000004", "eid_00000005", "eid_00000002"),
+            ("eid_00000004", "eid_00000006", "eid_00000002"),
+            ("eid_00000005", "eid_00000006", "eid_00000002"),
+        })
+
+    def test_one_edge_per_unordered_pair_endpoints_in_sorted_order(self):
+        org = beg.org_tree_relations(FIXTURE_TEAM)
+        for a, b, _ in org["colleague"]:
+            self.assertLess(a, b)
+
+    def test_the_person_set_is_every_entry_in_the_tree(self):
+        org = beg.org_tree_relations(FIXTURE_TEAM)
+        self.assertEqual(org["persons"], {f"eid_0000000{i}" for i in range(1, 7)})
+
+    def test_a_tree_top_reports_to_nobody(self):
+        org = beg.org_tree_relations(FIXTURE_TEAM)
+        self.assertFalse(any(b == "eid_00000001" for _, b, _ in org["manages"]))
+
+
+class ArchiveManifestTests(unittest.TestCase):
+    def test_no_manifest_archives_to_nothing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            self.assertIsNone(beg.archive_manifest(Path(tmp) / "build_manifest.json"))
+
+    def test_the_prior_manifest_moves_aside_under_its_own_timestamp(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "build_manifest.json"
+            path.write_text(json.dumps({"timestamp": "2026-08-12T20:38:00Z",
+                                        "graph_version": "copy+entities",
+                                        "graph_census_sha256": "cd34"}),
+                            encoding="utf-8")
+            identity = beg.archive_manifest(path)
+            self.assertEqual(identity, {"file": "build_manifest_20260812T203800Z.json",
+                                        "timestamp": "2026-08-12T20:38:00Z",
+                                        "graph_version": "copy+entities",
+                                        "graph_census_sha256": "cd34"})
+            self.assertFalse(path.exists())
+            archived = json.loads((path.parent / identity["file"])
+                                  .read_text(encoding="utf-8"))
+            self.assertEqual(archived["graph_version"], "copy+entities")
+
+    def test_a_manifest_without_a_timestamp_stops_the_build(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "build_manifest.json"
+            path.write_text("{}", encoding="utf-8")
+            with self.assertRaises(SystemExit):
+                beg.archive_manifest(path)
+            self.assertTrue(path.is_file())
+
+    def test_an_archive_name_already_taken_stops_the_build(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "build_manifest.json"
+            path.write_text(json.dumps({"timestamp": "2026-08-12T20:38:00Z"}),
+                            encoding="utf-8")
+            (path.parent / "build_manifest_20260812T203800Z.json").write_text(
+                "{}", encoding="utf-8")
+            with self.assertRaises(SystemExit):
+                beg.archive_manifest(path)
+            self.assertTrue(path.is_file())
 
 
 if __name__ == "__main__":

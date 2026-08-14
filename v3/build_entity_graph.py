@@ -1,10 +1,12 @@
 """Build a versioned copy of a herb graph database: faithful copy, tag cleanup,
-entity layer. The authority for what gets built is the signed design
-`docs/state/2026-08-12-entity-nodes-and-tag-cleanup-design.md`; the execution
-defaults under the user's 08-12 build order are recorded in EXECUTION_DEFAULTS
-and written into the build manifest.
+entity layer, entity-to-entity relations. The authorities for what gets built
+are `docs/state/2026-08-12-entity-nodes-and-tag-cleanup-design.md` (the copy and
+the tag-removal predicate) and
+`docs/state/2026-08-14-directory-entity-layer.md` (the entity and relation
+shape); the executor's calls under the user's build orders are recorded in
+EXECUTION_DEFAULTS and written into the build manifest.
 
-Four subcommands, run in order against a target database that is never the
+Five subcommands, run in order against a target database that is never the
 source:
 
   copy      create the target as a faithful copy of the source — every node,
@@ -13,33 +15,51 @@ source:
             coverage, and numeric spot-checksums including the t.emb /
             c.desc_emb presence counts. The source is opened read-only and its
             before-snapshot is kept for the untouched proof.
-  cleanup   derive the tag-removal predicate (design §3.1) from the target's
-            own tag names against the oracle-stripped corpus — slugified
-            prs[].title / prs[].link / urls[].link / documents[].document_link
-            intersected with the tag names, plus the URL-prefix and PR-pointer
-            forms; bare `http_` protocol tags are excluded from removal, and
-            decision/date tags are not touched. The derived set must hit the
-            EXPECTED_REMOVAL gate exactly (4,111 tags / 5,470 edges / 2,240
-            chunks touched / 0 chunks losing all tags) and the removed-name
-            list's sha256 (EXPECTED_REMOVED_SHA256 — its set identity, not
-            just its size) or nothing is deleted. On a pass the Tag nodes are
-            DETACH DELETEd and the full removed-name list lands in the step
-            record for the manifest.
-  entities  derive the entity layer from the target's chunk locators resolved
-            against the corpus (design §2.1–2.2): Person nodes for every id
-            observed in structured fields, uniformly across id-spaces, carrying
-            the id string and an id-space kind only — no names anywhere;
-            Product and Channel nodes from the chunk attributes; chunk→Person
-            INVOLVES edges with a role from field structure; deterministic
-            regex id-in-text MENTIONS edges as their own relationship type;
-            chunk→Product / chunk→Channel edges. Every count is gated against
-            EXPECTED_ENTITIES before anything is written. No model calls, no
-            name resolver, no org-tree edges; the 61 metadata-mirror chunks
-            stay as they are.
+  cleanup   derive the tag-removal predicate (2026-08-12 design §3.1) from the
+            target's own tag names against the oracle-stripped corpus —
+            slugified prs[].title / prs[].link / urls[].link /
+            documents[].document_link intersected with the tag names, plus the
+            URL-prefix and PR-pointer forms; bare `http_` protocol tags are
+            excluded from removal, and decision/date tags are not touched. The
+            derived set must hit the EXPECTED_REMOVAL gate exactly (4,111 tags
+            / 5,470 edges / 2,240 chunks touched / 0 chunks losing all tags)
+            and the removed-name list's sha256 (EXPECTED_REMOVED_SHA256 — its
+            set identity, not just its size) or nothing is deleted. On a pass
+            the Tag nodes are DETACH DELETEd and the full removed-name list
+            lands in the step record for the manifest.
+  entities  write the node layer and the chunk-side edges (ENTITY_INCLUSION
+            carries the rule per type): an Employee node per `metadata/
+            employee.json` entry carrying `role` and `location`, a Customer
+            node per `metadata/customers_data.json` entry carrying `role`, the
+            Org and Company vocabularies those two directories name, and
+            Product and Channel from the chunk attributes. Employee and
+            Customer also carry the shared `Person` label, keyed on `id`. A
+            person id read out of a structured content field links to the node
+            its directory declares — chunk→Person INVOLVES with a role from
+            field structure, and deterministic regex id-in-text MENTIONS as
+            their own type; an id no directory carries gets no node, no edge,
+            and a census row. No name enters the graph. Every count is gated
+            against EXPECTED_ENTITIES before anything is written. `--rebuild`
+            drops the whole entity and relation layer first and proves the
+            Source/File/Chunk/Tag spine unchanged across the drop.
+  relations wire the entities to each other, every relation read off a
+            structured field the corpus declares and none selected by what a
+            question would need (RELATION_INCLUSION carries the rule per type):
+            Employee→Employee MANAGES and COLLEAGUE from the org tree,
+            Employee→Org IN_ORG and Customer→Company IN_COMPANY from the two
+            directories' own fields, person→Product / person→Channel
+            aggregated over the chunk→entity edges, Product→Channel from the
+            chunk attributes. Every endpoint is a node the directory already
+            declared. Gated against EXPECTED_RELATIONS before anything is
+            written.
   verify    re-check everything read-only — the source untouched against its
-            before-snapshot, the removed tags absent, every entity count — and
-            assemble the build manifest, written last as the completeness
-            marker.
+            before-snapshot, the removed tags absent, every entity and relation
+            count — and assemble the build manifest, written last as the
+            completeness marker. The manifest already on disk is archived under
+            its own build timestamp first, so every state the database has been
+            in stays readable, and the new one carries GRAPH_VERSION plus a
+            census hash that a run manifest records through
+            `orchestrator.graph_identity`.
 
 The corpus read is `data/corpus/` (the oracle-stripped view), never `data/raw`;
 no question file and no arm output is ever opened. Writes go only to the target
@@ -49,13 +69,14 @@ Run with Neo4j up and NEO4J_PASSWORD in v3/.env:
 
     python build_entity_graph.py copy
     python build_entity_graph.py cleanup
-    python build_entity_graph.py entities
+    python build_entity_graph.py entities [--rebuild]
+    python build_entity_graph.py relations
     python build_entity_graph.py verify
 """
 from __future__ import annotations
 
 if __name__ == "__main__":
-    print("build_entity_graph: copy / cleanup / entities / verify "
+    print("build_entity_graph: copy / cleanup / entities / relations / verify "
           "— loading neo4j …", flush=True)
 
 import argparse
@@ -75,27 +96,54 @@ from progress import progress
 SOURCE_DATABASE = "herb-eval"
 TARGET_DATABASE = "herb-eval-v2"
 
+# The build's content shape. One database name means one graph only while this
+# string holds: a build that changes what the graph carries carries a new value,
+# and every run manifest records it through `orchestrator.graph_identity`, so a
+# figure names the graph version it was measured on.
+GRAPH_VERSION = "copy+cleanup+directory-entities+relations"
+
 # Databases no write session may ever address: the oracle-contaminated pilot,
 # the benchmarked graph every standing number was measured on, and the DBMS's
 # own default and system databases. `herb` is refused as a source too.
 PROTECTED_DATABASES = ("herb", "herb-eval", "neo4j", "system")
 
 DESIGN_DOC = "docs/state/2026-08-12-entity-nodes-and-tag-cleanup-design.md"
+ENTITY_DESIGN_DOC = "docs/state/2026-08-14-directory-entity-layer.md"
 
 # The oracle-stripped corpus view; the raw store never enters this build.
 CORPUS = Path(__file__).resolve().parent / "data" / "corpus"
+
+# The corpus's own directories: HERB's sanctioned source for who-is-who, kept in
+# the corpus view by `artefact/derive_corpus.py` because the dataset card's RAG
+# Evaluation Note says membership "must be inferred from the artifacts or from
+# metadata/*". The employee and customer directories declare the entity nodes
+# and their fields; the org tree declares the management chain.
+EMPLOYEE_FILE = "employee.json"
+CUSTOMERS_FILE = "customers_data.json"
+ORG_TREE_FILE = "salesforce_team.json"
+
+# The directory fields each node type reads. `name` is in both files and is read
+# by nothing: ids only in the graph, names resolved outside it at answer time.
+EMPLOYEE_FIELDS = ("employee_id", "role", "org", "location")
+CUSTOMER_FIELDS = ("id", "role", "company")
 
 # One build directory per target database, holding the per-step records and the
 # manifest that marks the build complete.
 BUILD_DIR = Path(__file__).resolve().parent / "output" / "graph_build"
 
-# The executor's calls under the user's 08-12 delegation ("construct another db
-# using this, aka use the current as template and 'fix it' and add these
-# things"), per the design's §7 execution-defaults block. Each stays open as a
-# ruling; the manifest carries this record.
+# The executor's calls under the user's build orders — 08-12 ("construct another
+# db using this, aka use the current as template and 'fix it' and add these
+# things") and 08-14, which sets the node set: "shouldnt it be enough with
+# customer, employee, project, department or whatever they are, are nodes, and
+# from those, relationships to eachother and chunks, and some attributes can be
+# there". Each stays open as a ruling; the manifest carries this record.
 EXECUTION_DEFAULTS = {
-    "OPEN-1": "Person + Product + Channel nodes; years and section stay chunk attributes",
-    "OPEN-2": "all id-spaces in uniformly — EMP_ included, flagged low-value",
+    "OPEN-1": "Employee + Customer + Org + Company + Product + Channel nodes; "
+              "role and location are Employee attributes, role a Customer "
+              "attribute; years and section stay chunk attributes",
+    "OPEN-2": "an entity node exists where a corpus directory declares the "
+              "entry; a person id no directory carries gets no node — the "
+              "directory-less EMP_ logins are censused, never minted",
     "OPEN-3": "deterministic regex id-in-text mention edges in, as their own "
               "relationship type; name-resolver edges out",
     "OPEN-4": "the 61 existing metadata-mirror chunks kept unchanged",
@@ -104,6 +152,60 @@ EXECUTION_DEFAULTS = {
     "OPEN-6": "versioned copy, one combined new version",
     "OPEN-7": "new database herb-eval-v2; this manifest carries source, "
               "predicate + hash, counts, verification",
+}
+
+# The inclusion rule per node type and chunk-side edge type, uniform over each
+# id-space: an entity exists wherever a corpus directory declares an entry or a
+# chunk attribute names a value, and never because a benchmark question would
+# reach for it. The manifest carries this record beside the counts.
+ENTITY_INCLUSION = {
+    "Employee": "metadata/employee.json — one node per entry, keyed by the "
+                "directory's own eid_ string, carrying that entry's `role` and "
+                "`location`; the entry's `name` is read by nothing",
+    "Customer": "metadata/customers_data.json — one node per entry, keyed by "
+                "the directory's own CUST- string, carrying that entry's "
+                "`role`; the entry's `name` is read by nothing",
+    "Org": "metadata/employee.json — one node per distinct `org` value the "
+           "directory carries, keyed by the source's own string",
+    "Company": "metadata/customers_data.json — one node per distinct `company` "
+               "value the directory carries, keyed by the source's own string",
+    "Product": "one node per distinct `product` attribute on the chunks, "
+               "cross-checked against the corpus's own product files",
+    "Channel": "one node per distinct `channel` attribute on the chunks",
+    "INVOLVES": "every (chunk, person id, role) a structured content field "
+                "declares — slack userId, PR author and reviewer logins, "
+                "document author, meeting participants — for every id one of "
+                "the two directories carries; an id no directory carries gets "
+                "no edge and is censused as unlinked",
+    "MENTIONS": "every (chunk, person id) an exact id regex finds in the "
+                "chunk's own declared content leaves, for every id one of the "
+                "two directories carries",
+    "IN_PRODUCT": "every chunk's own `product` attribute",
+    "IN_CHANNEL": "every chunk's own `channel` attribute",
+}
+
+# The same rule for the entity-to-entity relations: read off a structured field
+# the corpus declares, for every entry the field covers.
+RELATION_INCLUSION = {
+    "MANAGES": "metadata/salesforce_team.json — every nesting of a person entry "
+               "inside another entry's report list, for every entry in the tree; "
+               "`role` is the source's own list-field name",
+    "COLLEAGUE": "metadata/salesforce_team.json — every unordered pair of person "
+                 "entries reporting to one entry, for every entry in the tree; "
+                 "one edge per pair, endpoints in sorted id order, `manager` the "
+                 "shared owner's id",
+    "IN_ORG": "metadata/employee.json — every entry's own `org` field; the "
+              "directory carries the field on every entry, so every entry gets "
+              "the relation",
+    "IN_COMPANY": "metadata/customers_data.json — every entry's own `company` "
+                  "field; the directory carries the field on every entry, so "
+                  "every entry gets the relation",
+    "APPEARS_IN_PRODUCT": "every (Person, Product) pair one chunk holds through "
+                          "an INVOLVES or MENTIONS edge and an IN_PRODUCT edge",
+    "APPEARS_IN_CHANNEL": "every (Person, Channel) pair one chunk holds through "
+                          "an INVOLVES or MENTIONS edge and an IN_CHANNEL edge",
+    "HAS_CHANNEL": "every (Product, Channel) pair one chunk's own product and "
+                   "channel attributes declare together",
 }
 
 # The tag-removal predicate, design §3.1: URL-prefix classes (https_/www_ and
@@ -122,6 +224,12 @@ _EID = re.compile(r"eid_[0-9a-f]{8}")
 _EMP = re.compile(r"EMP_\d{6,12}")
 _CUST = re.compile(r"CUST-\d+")
 
+# The id-space names the unlinked census counts under: the three exact forms
+# plus the class for anything outside them. The mention pass runs the three
+# regexes, so it has no malformed class.
+ID_SPACES = ("eid", "emp", "cust", "malformed")
+MENTION_SPACES = ("eid", "emp", "cust")
+
 # The hard gate on the derived removal set: the design's censused figures.
 # Any mismatch stops the build with nothing deleted.
 EXPECTED_REMOVAL = {"tags": 4111, "edges": 5470,
@@ -132,33 +240,75 @@ EXPECTED_REMOVAL = {"tags": 4111, "edges": 5470,
 # stop the cleanup.
 EXPECTED_REMOVED_SHA256 = "6a279b3465f4ec55f440607d0239a4c56d1580ebd9582c43a4d31265b4426116"
 
-# The entity-layer gates: the design's censused figures (§2.1–2.2). Structured
-# Person nodes by id-space kind; INVOLVES edges by role; MENTIONS edges and
-# their distinct targets by id-space; Product/Channel nodes and their chunk
-# edges from the existing chunk attributes.
+# The entity-layer gates: the census of the two directories and of what the
+# chunks' own structured fields declare, measured 2026-08-14 against this
+# target. `unlinked_involves` / `unlinked_involve_ids` are the person ids read
+# out of a content field that no directory carries — the size of what is
+# deliberately left out, gated so the exclusion is as auditable as the layer.
 EXPECTED_ENTITIES = {
-    "person_kinds": {"eid": 512, "emp": 4590, "malformed": 9},
-    "involves": {"speaker": 13690, "participant": 9964, "reviewer": 4349,
-                 "pr_author": 3492, "doc_author": 786},
-    "mentions": {"eid": 8591, "cust": 1043, "emp": 0},
-    "mention_persons": {"eid": 514, "cust": 120},
+    "employee_nodes": 530,
+    "customer_nodes": 120,
+    "org_nodes": 6,
+    "company_nodes": 10,
     "product_nodes": 30,
     "channel_nodes": 294,
+    "involves": {"speaker": 13006, "participant": 9964, "reviewer": 2053,
+                 "pr_author": 1197, "doc_author": 786},
+    "mentions": {"employee": 8589, "customer": 1043},
+    "mention_persons": {"employee": 512, "customer": 120},
     "product_edges": 4808,
     "channel_edges": 2669,
+    "unlinked_involves": {"eid": 0, "emp": 4590, "cust": 0, "malformed": 685},
+    "unlinked_involve_ids": {"eid": 0, "emp": 4590, "cust": 0, "malformed": 9},
+    "unlinked_mentions": {"eid": 2, "emp": 0, "cust": 0},
+    "unlinked_mention_ids": {"eid": 2, "emp": 0, "cust": 0},
 }
 
-# Node labels per the design's node set; relationship type names are the
-# executor's calls under the delegation (the design proposes INVOLVES and marks
-# the name open; the mention type is ordered as "their own relationship type"
-# without a name).
+# The relation-layer gates: the census of what the two directories and the org
+# tree declare, and what the entity layer's chunk edges aggregate to, measured
+# 2026-08-14 against this target.
+EXPECTED_RELATIONS = {
+    "manages": 512,
+    "colleague": 1891,
+    "in_org": 530,
+    "in_company": 120,
+    "appears_in_product": 2320,
+    "appears_in_channel": 4655,
+    "has_channel": 294,
+}
+
+# Node labels per the 08-14 node set. Employee and Customer carry PERSON_LABEL
+# beside their own, so `(p:Person {id: …})` addresses either. Relationship type
+# names are the executor's calls under the delegation.
 PERSON_LABEL = "Person"
+EMPLOYEE_LABEL = "Employee"
+CUSTOMER_LABEL = "Customer"
+ORG_LABEL = "Org"
+COMPANY_LABEL = "Company"
 PRODUCT_LABEL = "Product"
 CHANNEL_LABEL = "Channel"
 INVOLVES_TYPE = "INVOLVES"
 MENTIONS_TYPE = "MENTIONS"
 PRODUCT_TYPE = "IN_PRODUCT"
 CHANNEL_TYPE = "IN_CHANNEL"
+MANAGES_TYPE = "MANAGES"
+COLLEAGUE_TYPE = "COLLEAGUE"
+ORG_TYPE = "IN_ORG"
+COMPANY_TYPE = "IN_COMPANY"
+PERSON_PRODUCT_TYPE = "APPEARS_IN_PRODUCT"
+PERSON_CHANNEL_TYPE = "APPEARS_IN_CHANNEL"
+PRODUCT_CHANNEL_TYPE = "HAS_CHANNEL"
+
+# Everything the entity and relation layers own: `--rebuild` drops these nodes
+# and, with them, every edge either layer wrote. The spine carries no label and
+# no type in those lists, and is re-counted across the drop.
+ENTITY_LABELS = (PERSON_LABEL, EMPLOYEE_LABEL, CUSTOMER_LABEL, ORG_LABEL,
+                 COMPANY_LABEL, PRODUCT_LABEL, CHANNEL_LABEL)
+ENTITY_TYPES = (INVOLVES_TYPE, MENTIONS_TYPE, PRODUCT_TYPE, CHANNEL_TYPE,
+                MANAGES_TYPE, COLLEAGUE_TYPE, ORG_TYPE, COMPANY_TYPE,
+                PERSON_PRODUCT_TYPE, PERSON_CHANNEL_TYPE, PRODUCT_CHANNEL_TYPE)
+SPINE_LABELS = ("Source", "File", "Chunk", "Tag")
+SPINE_TYPES = ("CONTAINS", "HAS_CHUNK", "HAS_TAG")
 
 # Copy scaffolding: the source element id carried on every copied node while
 # relationships are wired, then stripped before verification.
@@ -262,7 +412,7 @@ def gate(name: str, actual: dict, expected: dict) -> None:
         raise SystemExit(f"gate {name} failed — stopping with nothing changed.")
 
 
-# --- the entity derivation (design §2.1–2.2) ------------------------------------
+# --- the entity derivation ------------------------------------------------------
 
 def classify_id(pid: str) -> str:
     """The id-space kind of one observed person id. Anything outside the three
@@ -274,6 +424,46 @@ def classify_id(pid: str) -> str:
     if _CUST.fullmatch(pid):
         return "cust"
     return "malformed"
+
+
+def read_metadata(name: str) -> list:
+    """One of the corpus's own metadata directories, parsed out of the
+    oracle-stripped view."""
+    return json.loads((CORPUS / DATASET_ID / "metadata" / name)
+                      .read_text(encoding="utf-8"))
+
+
+def read_directories() -> dict:
+    """The two entity directories, parsed into what the nodes carry: employees
+    keyed by their own eid with role / location / org, customers keyed by their
+    own CUST- id with role / company, and the org and company vocabularies those
+    fields name. An entry missing a field, or a key disagreeing with the entry's
+    own id, stops the build rather than writing a partial node."""
+    employees, customers = {}, {}
+    for eid, rec in read_metadata(EMPLOYEE_FILE).items():
+        missing = [f for f in EMPLOYEE_FIELDS if not rec.get(f)]
+        if missing:
+            raise SystemExit(f"employee entry {eid!r} carries no {missing}")
+        if rec["employee_id"] != eid:
+            raise SystemExit(f"employee entry keyed {eid!r} carries "
+                             f"employee_id {rec['employee_id']!r}")
+        employees[eid] = {"role": rec["role"], "location": rec["location"],
+                          "org": rec["org"]}
+    for rec in read_metadata(CUSTOMERS_FILE):
+        missing = [f for f in CUSTOMER_FIELDS if not rec.get(f)]
+        if missing:
+            raise SystemExit(f"customer entry {rec.get('id')!r} carries no {missing}")
+        if rec["id"] in customers:
+            raise SystemExit(f"customer id {rec['id']!r} appears twice")
+        customers[rec["id"]] = {"role": rec["role"], "company": rec["company"]}
+    collision = sorted(set(employees) & set(customers))
+    if collision:
+        raise SystemExit(f"id in both directories: {collision}")
+    return {
+        "employees": employees, "customers": customers,
+        "orgs": sorted({v["org"] for v in employees.values()}),
+        "companies": sorted({v["company"] for v in customers.values()}),
+    }
 
 
 def resolve_records(locator: dict, section: str, products: dict) -> list:
@@ -363,13 +553,20 @@ def chunk_entities(section: str, records: list) -> tuple:
     return roles, mentions
 
 
-def derive_entities(chunk_rows: list, products: dict) -> dict:
-    """The whole entity layer from the chunks' locators against the corpus:
-    INVOLVES triples, MENTIONS pairs by id-space, the structured person
-    population by kind, and the Product/Channel memberships off the chunk
-    attributes."""
+def derive_entities(chunk_rows: list, products: dict, directories: dict) -> dict:
+    """The whole entity layer from the chunks' locators against the corpus: the
+    chunk→person links whose id one of the two directories carries, the ids no
+    directory carries counted apart by id-space, and the Product/Channel
+    memberships off the chunk attributes."""
+    employees, customers = directories["employees"], directories["customers"]
     involves = set()                       # (chunk_id, person_id, role)
-    mentions = {"eid": set(), "emp": set(), "cust": set()}   # (chunk_id, id)
+    mentions = set()                       # (chunk_id, person_id)
+    # The ids no directory carries, counted by id-space with every space named
+    # so a zero is a stated zero rather than an absent key.
+    unlinked_involves = {k: 0 for k in ID_SPACES}
+    unlinked_involve_ids = {k: set() for k in ID_SPACES}
+    unlinked_mentions = {k: 0 for k in MENTION_SPACES}
+    unlinked_mention_ids = {k: set() for k in MENTION_SPACES}
     product_edges = set()                  # (chunk_id, product)
     channel_edges = set()                  # (chunk_id, channel)
     bar = progress(total=len(chunk_rows), desc="resolve chunks", unit="chunk")
@@ -378,10 +575,19 @@ def derive_entities(chunk_rows: list, products: dict) -> dict:
         records = resolve_records(locator, row["section"], products)
         roles, found = chunk_entities(row["section"], records)
         for role, pid in roles:
-            involves.add((row["chunkId"], pid, role))
+            if pid in employees or pid in customers:
+                involves.add((row["chunkId"], pid, role))
+            else:
+                kind = classify_id(pid)
+                unlinked_involves[kind] += 1
+                unlinked_involve_ids[kind].add(pid)
         for kind, ids in found.items():
             for pid in ids:
-                mentions[kind].add((row["chunkId"], pid))
+                if pid in employees or pid in customers:
+                    mentions.add((row["chunkId"], pid))
+                else:
+                    unlinked_mentions[kind] += 1
+                    unlinked_mention_ids[kind].add(pid)
         if row["product"]:
             product_edges.add((row["chunkId"], row["product"]))
         if row["channel"]:
@@ -389,27 +595,85 @@ def derive_entities(chunk_rows: list, products: dict) -> dict:
         bar.update(1)
     bar.close()
 
-    structured_persons = {pid: classify_id(pid) for _, pid, _ in involves}
-    kind_counts = collections.Counter(structured_persons.values())
-    role_counts = collections.Counter(role for _, _, role in involves)
+    def by_side(pairs: set) -> dict:
+        return {"employee": sum(1 for _, pid in pairs if pid in employees),
+                "customer": sum(1 for _, pid in pairs if pid in customers)}
+
+    persons = {pid for _, pid in mentions}
     return {
         "involves": involves,
-        "mentions": mentions,
-        "structured_persons": structured_persons,
+        "mentions": sorted(mentions),
+        "unlinked_ids": {
+            "involves": {k: len(v) for k, v in unlinked_involve_ids.items()},
+            "mentions": {k: sorted(v) for k, v in unlinked_mention_ids.items()},
+            "malformed": sorted(unlinked_involve_ids["malformed"]),
+        },
         "census": {
-            "person_kinds": dict(kind_counts),
-            "involves": dict(role_counts),
-            "mentions": {k: len(v) for k, v in mentions.items()},
-            "mention_persons": {k: len({pid for _, pid in mentions[k]})
-                                for k in ("eid", "cust")},
+            "employee_nodes": len(employees),
+            "customer_nodes": len(customers),
+            "org_nodes": len(directories["orgs"]),
+            "company_nodes": len(directories["companies"]),
             "product_nodes": len({p for _, p in product_edges}),
             "channel_nodes": len({c for _, c in channel_edges}),
+            "involves": dict(collections.Counter(role for _, _, role in involves)),
+            "mentions": by_side(mentions),
+            "mention_persons": {
+                "employee": len(persons & set(employees)),
+                "customer": len(persons & set(customers))},
             "product_edges": len(product_edges),
             "channel_edges": len(channel_edges),
+            "unlinked_involves": unlinked_involves,
+            "unlinked_involve_ids": {k: len(v) for k, v in unlinked_involve_ids.items()},
+            "unlinked_mentions": unlinked_mentions,
+            "unlinked_mention_ids": {k: len(v) for k, v in unlinked_mention_ids.items()},
         },
         "product_edges": product_edges,
         "channel_edges": channel_edges,
     }
+
+
+# --- the relation derivation ------------------------------------------------------
+
+def report_lists(entry: dict) -> list:
+    """The keys of one org-tree entry whose value is a list of person entries —
+    the source's own report lists, found by shape so no field name is hardcoded
+    and no list the tree carries is left out."""
+    return sorted(k for k, v in entry.items()
+                  if isinstance(v, list) and v
+                  and all(isinstance(x, dict) and "employee_id" in x for x in v))
+
+
+def org_tree_relations(team: list) -> dict:
+    """The person-to-person relations the org tree declares: manager -> report
+    per nesting, carrying the list field the report was found in, and one
+    colleague pair per two entries reporting to the same entry."""
+    manages, colleague, persons = set(), set(), set()
+
+    def walk(entry: dict, manager: str | None, field: str | None) -> None:
+        eid = entry["employee_id"]
+        persons.add(eid)
+        if manager is not None:
+            manages.add((manager, eid, field))
+        reports = set()
+        for key in report_lists(entry):
+            for child in entry[key]:
+                reports.add(child["employee_id"])
+                walk(child, eid, key)
+        group = sorted(reports)
+        for i in range(len(group)):
+            for j in range(i + 1, len(group)):
+                colleague.add((group[i], group[j], eid))
+
+    for top in team:
+        walk(top, None, None)
+    return {"manages": manages, "colleague": colleague, "persons": persons}
+
+
+def membership_edges(directory: dict, field: str) -> list:
+    """One directory's own membership field -> the (entry id, value) pairs it
+    declares, sorted. The field is present on every entry by `read_directories`,
+    so every entry gets its edge."""
+    return sorted((key, rec[field]) for key, rec in directory.items())
 
 
 # --- graph plumbing -------------------------------------------------------------
@@ -462,14 +726,40 @@ def _write_step(target: str, step: str, payload: dict) -> Path:
     return path
 
 
+def archive_manifest(manifest_path: Path) -> dict | None:
+    """The manifest already on disk, moved aside under its own build timestamp
+    so every state the database has been in stays readable -> the archive's
+    identity, recorded by the manifest that replaces it; None when there is
+    none. A manifest carrying no timestamp, or one whose archive name is taken,
+    stops the build with the record intact."""
+    if not manifest_path.is_file():
+        return None
+    prior = json.loads(manifest_path.read_text(encoding="utf-8"))
+    stamp = prior.get("timestamp")
+    if not stamp:
+        raise SystemExit(f"{manifest_path} carries no timestamp to archive it "
+                         f"under — move it aside before rebuilding.")
+    archive = manifest_path.with_name(
+        f"{manifest_path.stem}_{stamp.replace('-', '').replace(':', '')}.json")
+    if archive.exists():
+        raise SystemExit(f"{archive} already holds a manifest of that build "
+                         f"timestamp — move it aside before rebuilding.")
+    manifest_path.replace(archive)
+    print(f"  prior manifest archived: {archive.name} "
+          f"(graph_version {prior.get('graph_version')!r})", flush=True)
+    return {"file": archive.name, "timestamp": stamp,
+            "graph_version": prior.get("graph_version"),
+            "graph_census_sha256": prior.get("graph_census_sha256")}
+
+
 def _clear_build_records(target: str) -> None:
     """A fresh copy invalidates every record of this target's earlier builds:
     a step record or manifest describing a dropped database must not survive
     to satisfy a later step's precondition."""
     directory = BUILD_DIR / target
     if directory.is_dir():
-        for name in ("step_copy.json", "step_cleanup.json",
-                     "step_entities.json", "build_manifest.json"):
+        for name in ("step_copy.json", "step_cleanup.json", "step_entities.json",
+                     "step_relations.json", "build_manifest.json"):
             (directory / name).unlink(missing_ok=True)
 
 
@@ -540,6 +830,62 @@ def snapshot(s) -> dict:
             "node_prop_coverage": {k: dict(v) for k, v in node_props.items()},
             "rel_prop_coverage": {k: dict(v) for k, v in rel_props.items()},
             "checksums": checksums}
+
+
+def spine_census(s) -> dict:
+    """The counts the entity and relation layers never touch: the graph's own
+    Source → File → Chunk → Tag spine and its three relationship types."""
+    census = {label: _one(s, f"MATCH (n:{_bt(label)}) RETURN count(n)")
+              for label in SPINE_LABELS}
+    census.update({t: _one(s, f"MATCH ()-[r:{_bt(t)}]->() RETURN count(r)")
+                   for t in SPINE_TYPES})
+    return census
+
+
+def drop_entity_layer(drv, target: str) -> dict:
+    """Every entity node and, with it, every edge the entity and relation layers
+    wrote -> what the drop removed. The spine is proved unchanged across it: its
+    counts are read before and after and any difference stops the build."""
+    any_entity = " OR ".join(f"n:{_bt(label)}" for label in ENTITY_LABELS)
+    with drv.session(database=target, default_access_mode="READ") as s:
+        before = spine_census(s)
+        present = {label: _one(s, f"MATCH (n:{_bt(label)}) RETURN count(n)")
+                   for label in ENTITY_LABELS}
+        edges = {t: _one(s, f"MATCH ()-[r:{_bt(t)}]->() RETURN count(r)")
+                 for t in ENTITY_TYPES}
+        total = _one(s, f"MATCH (n) WHERE {any_entity} RETURN count(n)")
+    print(f"  spine before the drop: {before}", flush=True)
+    print(f"  entity nodes to drop: {total} "
+          f"({ {k: v for k, v in present.items() if v} })", flush=True)
+    print(f"  entity edges they carry: "
+          f"{ {k: v for k, v in edges.items() if v} }", flush=True)
+
+    deleted_nodes = deleted_rels = 0
+    with drv.session(database=target) as s:
+        bar = progress(total=total, desc="drop entity layer", unit="node")
+        for label in ENTITY_LABELS:
+            while True:
+                counters = s.run(
+                    f"MATCH (n:{_bt(label)}) WITH n LIMIT $lim DETACH DELETE n",
+                    lim=DELETE_BATCH).consume().counters
+                deleted_nodes += counters.nodes_deleted
+                deleted_rels += counters.relationships_deleted
+                bar.update(counters.nodes_deleted)
+                if counters.nodes_deleted == 0:
+                    break
+        bar.close()
+
+    with drv.session(database=target, default_access_mode="READ") as s:
+        after = spine_census(s)
+        left = {label: _one(s, f"MATCH (n:{_bt(label)}) RETURN count(n)")
+                for label in ENTITY_LABELS}
+    gate("spine-across-drop", after, before)
+    gate("entity-nodes-after-drop", left, {label: 0 for label in ENTITY_LABELS})
+    print(f"  dropped {deleted_nodes} entity nodes and {deleted_rels} edges; "
+          f"spine unchanged", flush=True)
+    return {"spine_before": before, "spine_after": after,
+            "nodes_present": present, "edges_present": edges,
+            "nodes_deleted": deleted_nodes, "rels_deleted": deleted_rels}
 
 
 def compare_snapshots(what: str, a: dict, b: dict) -> list:
@@ -873,29 +1219,43 @@ def step_cleanup(drv, source: str, target: str) -> None:
 
 # --- step: entities ---------------------------------------------------------------
 
-def step_entities(drv, source: str, target: str) -> None:
+def step_entities(drv, source: str, target: str, rebuild: bool) -> None:
     _guard_target(source, target)
     copy_rec = _require_step(target, "copy")
     _require_step(target, "cleanup", after=copy_rec)
     t0 = time.perf_counter()
 
+    dropped = None
+    if rebuild:
+        print(f"dropping the entity and relation layer of {target!r} …", flush=True)
+        dropped = drop_entity_layer(drv, target)
+
     with drv.session(database=target, default_access_mode="READ") as s:
-        for label in (PERSON_LABEL, PRODUCT_LABEL, CHANNEL_LABEL):
+        for label in ENTITY_LABELS:
             present = _one(s, f"MATCH (n:{_bt(label)}) RETURN count(n)")
             if present:
                 raise SystemExit(f"{target!r} already carries {present} "
                                  f"{label} node(s) — the entity layer is not "
-                                 f"re-runnable over itself.")
+                                 f"re-runnable over itself; pass --rebuild to "
+                                 f"drop the layer and build it again.")
         chunk_rows = _read(s, "MATCH (c:Chunk) RETURN c.chunk_id AS chunkId, "
                               "c.section AS section, c.product AS product, "
                               "c.channel AS channel, c.locator_json AS locator "
                               "ORDER BY chunkId")
+        spine_before = spine_census(s)
     print(f"  {len(chunk_rows)} chunks read from {target!r}", flush=True)
+
+    print("reading the corpus directories …", flush=True)
+    directories = read_directories()
+    employees, customers = directories["employees"], directories["customers"]
+    print(f"  {len(employees)} employees over {len(directories['orgs'])} orgs, "
+          f"{len(customers)} customers over {len(directories['companies'])} "
+          f"companies", flush=True)
 
     root = CORPUS / DATASET_ID
     products = {p.stem: json.loads(p.read_text(encoding="utf-8"))
                 for p in sorted((root / "products").glob("*.json"))}
-    derived = derive_entities(chunk_rows, products)
+    derived = derive_entities(chunk_rows, products, directories)
     gate("entities", derived["census"], EXPECTED_ENTITIES)
     corpus_products = set(products)
     graph_products = {p for _, p in derived["product_edges"]}
@@ -903,34 +1263,48 @@ def step_entities(drv, source: str, target: str) -> None:
         raise SystemExit(f"chunk products disagree with the corpus product "
                          f"files: {sorted(graph_products ^ corpus_products)}")
 
-    structured = derived["structured_persons"]
-    mention_only = {}
-    for kind in ("eid", "emp", "cust"):
-        for _, pid in derived["mentions"][kind]:
-            if pid not in structured and pid not in mention_only:
-                mention_only[pid] = classify_id(pid)
-    mention_only_kinds = collections.Counter(mention_only.values())
-    print(f"  persons: {len(structured)} structured + {len(mention_only)} "
-          f"mention-only ({dict(mention_only_kinds)})", flush=True)
+    unlinked = derived["census"]["unlinked_involves"]
+    print(f"  ids no directory carries, linked to nothing: "
+          f"{sum(unlinked.values())} field reads over "
+          f"{sum(derived['census']['unlinked_involve_ids'].values())} distinct "
+          f"ids {derived['census']['unlinked_involve_ids']}", flush=True)
+    print(f"  malformed ids among them: {derived['unlinked_ids']['malformed']}",
+          flush=True)
+    print(f"  eid-shaped ids in content text that no directory carries: "
+          f"{derived['unlinked_ids']['mentions']['eid']}", flush=True)
 
     with drv.session(database=target) as s:
         s.run(f"CREATE CONSTRAINT `person_id` IF NOT EXISTS "
               f"FOR (n:{_bt(PERSON_LABEL)}) REQUIRE n.id IS UNIQUE").consume()
+        s.run(f"CREATE CONSTRAINT `org_name` IF NOT EXISTS "
+              f"FOR (n:{_bt(ORG_LABEL)}) REQUIRE n.name IS UNIQUE").consume()
+        s.run(f"CREATE CONSTRAINT `company_name` IF NOT EXISTS "
+              f"FOR (n:{_bt(COMPANY_LABEL)}) REQUIRE n.name IS UNIQUE").consume()
         s.run(f"CREATE CONSTRAINT `product_name` IF NOT EXISTS "
               f"FOR (n:{_bt(PRODUCT_LABEL)}) REQUIRE n.name IS UNIQUE").consume()
         s.run(f"CREATE CONSTRAINT `channel_name` IF NOT EXISTS "
               f"FOR (n:{_bt(CHANNEL_LABEL)}) REQUIRE n.name IS UNIQUE").consume()
         await_indexes(s)
 
-        person_rows = ([{"id": pid, "kind": kind} for pid, kind in sorted(structured.items())]
-                       + [{"id": pid, "kind": kind} for pid, kind in sorted(mention_only.items())])
-        bar = progress(total=len(person_rows), desc="person nodes", unit="node")
-        for i in range(0, len(person_rows), WRITE_BATCH):
-            batch = person_rows[i:i + WRITE_BATCH]
-            s.run(f"UNWIND $rows AS row CREATE (p:{_bt(PERSON_LABEL)} "
-                  f"{{id: row.id, kind: row.kind}})", rows=batch).consume()
+        employee_rows = [{"id": eid, "role": rec["role"],
+                          "location": rec["location"]}
+                         for eid, rec in sorted(employees.items())]
+        bar = progress(total=len(employee_rows), desc="employee nodes", unit="node")
+        for i in range(0, len(employee_rows), WRITE_BATCH):
+            batch = employee_rows[i:i + WRITE_BATCH]
+            s.run(f"UNWIND $rows AS row CREATE (p:{_bt(EMPLOYEE_LABEL)}"
+                  f":{_bt(PERSON_LABEL)} {{id: row.id, role: row.role, "
+                  f"location: row.location}})", rows=batch).consume()
             bar.update(len(batch))
         bar.close()
+        s.run(f"UNWIND $rows AS row CREATE (p:{_bt(CUSTOMER_LABEL)}"
+              f":{_bt(PERSON_LABEL)} {{id: row.id, role: row.role}})",
+              rows=[{"id": cid, "role": rec["role"]}
+                    for cid, rec in sorted(customers.items())]).consume()
+        s.run(f"UNWIND $names AS name CREATE (o:{_bt(ORG_LABEL)} {{name: name}})",
+              names=directories["orgs"]).consume()
+        s.run(f"UNWIND $names AS name CREATE (c:{_bt(COMPANY_LABEL)} {{name: name}})",
+              names=directories["companies"]).consume()
         s.run(f"UNWIND $names AS name CREATE (p:{_bt(PRODUCT_LABEL)} {{name: name}})",
               names=sorted(graph_products)).consume()
         s.run(f"UNWIND $names AS name CREATE (p:{_bt(CHANNEL_LABEL)} {{name: name}})",
@@ -954,8 +1328,7 @@ def step_entities(drv, source: str, target: str) -> None:
             f"CREATE (c)-[r:{_bt(INVOLVES_TYPE)} {{role: row.role}}]->(p)"), "involves")
 
         mention_rows = [{"cid": cid, "pid": pid}
-                        for kind in ("eid", "emp", "cust")
-                        for cid, pid in sorted(derived["mentions"][kind])]
+                        for cid, pid in derived["mentions"]]
         n_mentions = write_edges(mention_rows, (
             f"UNWIND $rows AS row MATCH (c:Chunk {{chunk_id: row.cid}}) "
             f"MATCH (p:{_bt(PERSON_LABEL)} {{id: row.pid}}) "
@@ -985,43 +1358,263 @@ def step_entities(drv, source: str, target: str) -> None:
 
     with drv.session(database=target, default_access_mode="READ") as s:
         db_census = {
-            "person_kinds": {r["k"]: r["n"] for r in _read(
-                s, f"MATCH (p:{_bt(PERSON_LABEL)}) RETURN p.kind AS k, count(*) AS n")},
+            "employee_nodes": _one(s, f"MATCH (p:{_bt(EMPLOYEE_LABEL)}) RETURN count(p)"),
+            "customer_nodes": _one(s, f"MATCH (p:{_bt(CUSTOMER_LABEL)}) RETURN count(p)"),
+            "org_nodes": _one(s, f"MATCH (o:{_bt(ORG_LABEL)}) RETURN count(o)"),
+            "company_nodes": _one(s, f"MATCH (c:{_bt(COMPANY_LABEL)}) RETURN count(c)"),
+            "product_nodes": _one(s, f"MATCH (p:{_bt(PRODUCT_LABEL)}) RETURN count(p)"),
+            "channel_nodes": _one(s, f"MATCH (p:{_bt(CHANNEL_LABEL)}) RETURN count(p)"),
             "involves": {r["role"]: r["n"] for r in _read(
                 s, f"MATCH ()-[r:{_bt(INVOLVES_TYPE)}]->() "
                    f"RETURN r.role AS role, count(*) AS n")},
-            "mentions": {r["k"]: r["n"] for r in _read(
+            "mentions": {r["side"]: r["n"] for r in _read(
                 s, f"MATCH ()-[r:{_bt(MENTIONS_TYPE)}]->(p:{_bt(PERSON_LABEL)}) "
-                   f"RETURN p.kind AS k, count(*) AS n")},
-            "product_nodes": _one(s, f"MATCH (p:{_bt(PRODUCT_LABEL)}) RETURN count(p)"),
-            "channel_nodes": _one(s, f"MATCH (p:{_bt(CHANNEL_LABEL)}) RETURN count(p)"),
+                   f"RETURN CASE WHEN p:{_bt(EMPLOYEE_LABEL)} THEN 'employee' "
+                   f"ELSE 'customer' END AS side, count(*) AS n")},
+            "mention_persons": {r["side"]: r["n"] for r in _read(
+                s, f"MATCH ()-[r:{_bt(MENTIONS_TYPE)}]->(p:{_bt(PERSON_LABEL)}) "
+                   f"RETURN CASE WHEN p:{_bt(EMPLOYEE_LABEL)} THEN 'employee' "
+                   f"ELSE 'customer' END AS side, count(DISTINCT p) AS n")},
             "product_edges": _one(s, f"MATCH ()-[r:{_bt(PRODUCT_TYPE)}]->() RETURN count(r)"),
             "channel_edges": _one(s, f"MATCH ()-[r:{_bt(CHANNEL_TYPE)}]->() RETURN count(r)"),
-            "person_total": _one(s, f"MATCH (p:{_bt(PERSON_LABEL)}) RETURN count(p)"),
         }
-    for role, n in EXPECTED_ENTITIES["involves"].items():
-        if db_census["involves"].get(role) != n:
-            raise SystemExit(f"post-write INVOLVES {role}: "
-                             f"{db_census['involves'].get(role)} != {n}")
-    for kind, n in EXPECTED_ENTITIES["mentions"].items():
-        if db_census["mentions"].get(kind, 0) != n:
-            raise SystemExit(f"post-write MENTIONS {kind}: "
-                             f"{db_census['mentions'].get(kind, 0)} != {n}")
-    print(f"  entity layer written: {db_census['person_total']} Person, "
+        person_total = _one(s, f"MATCH (p:{_bt(PERSON_LABEL)}) RETURN count(p)")
+        spine_after = spine_census(s)
+    gate("entity-census", db_census,
+         {k: v for k, v in EXPECTED_ENTITIES.items()
+          if not k.startswith("unlinked")})
+    gate("spine-across-entities", spine_after, spine_before)
+    print(f"  entity layer written: {db_census['employee_nodes']} Employee + "
+          f"{db_census['customer_nodes']} Customer ({person_total} Person), "
+          f"{db_census['org_nodes']} Org, {db_census['company_nodes']} Company, "
           f"{db_census['product_nodes']} Product, "
           f"{db_census['channel_nodes']} Channel", flush=True)
 
     _write_step(target, "entities", {
         "timestamp": _utc_now(), "target_database": target,
+        "inclusion_rules": ENTITY_INCLUSION,
         "derived_census": derived["census"],
-        "structured_persons": len(structured),
-        "mention_only_persons": dict(mention_only_kinds),
-        "person_total": db_census["person_total"],
+        "unlinked_ids": derived["unlinked_ids"],
+        "person_total": person_total,
+        "dropped_before_rebuild": dropped,
+        "spine_before": spine_before, "spine_after": spine_after,
         "written": written, "db_census": db_census,
+        "node_labels": {"employee": [EMPLOYEE_LABEL, PERSON_LABEL],
+                        "customer": [CUSTOMER_LABEL, PERSON_LABEL],
+                        "org": ORG_LABEL, "company": COMPANY_LABEL,
+                        "product": PRODUCT_LABEL, "channel": CHANNEL_LABEL},
         "relationship_types": {"involves": INVOLVES_TYPE,
                                "mentions": MENTIONS_TYPE,
                                "product": PRODUCT_TYPE,
                                "channel": CHANNEL_TYPE},
+        "elapsed_s": round(time.perf_counter() - t0, 1),
+    })
+
+
+# --- step: relations ---------------------------------------------------------------
+
+def step_relations(drv, source: str, target: str) -> None:
+    _guard_target(source, target)
+    copy_rec = _require_step(target, "copy")
+    cleanup_rec = _require_step(target, "cleanup", after=copy_rec)
+    _require_step(target, "entities", after=cleanup_rec)
+    t0 = time.perf_counter()
+
+    new_types = (MANAGES_TYPE, COLLEAGUE_TYPE, ORG_TYPE, COMPANY_TYPE,
+                 PERSON_PRODUCT_TYPE, PERSON_CHANNEL_TYPE, PRODUCT_CHANNEL_TYPE)
+    with drv.session(database=target, default_access_mode="READ") as s:
+        for rel_type in new_types:
+            n = _one(s, f"MATCH ()-[r:{_bt(rel_type)}]->() RETURN count(r)")
+            if n:
+                raise SystemExit(f"{target!r} already carries {n} {rel_type} "
+                                 f"edge(s) — the relation layer is not "
+                                 f"re-runnable over itself.")
+        person_ids = {r["id"] for r in _read(
+            s, f"MATCH (p:{_bt(PERSON_LABEL)}) RETURN p.id AS id")}
+        org_names = {r["name"] for r in _read(
+            s, f"MATCH (o:{_bt(ORG_LABEL)}) RETURN o.name AS name")}
+        company_names = {r["name"] for r in _read(
+            s, f"MATCH (c:{_bt(COMPANY_LABEL)}) RETURN c.name AS name")}
+        print(f"  {len(person_ids)} Person, {len(org_names)} Org and "
+              f"{len(company_names)} Company nodes read from {target!r}", flush=True)
+        spine_before = spine_census(s)
+
+        print("aggregating person appearances off the chunk edges …", flush=True)
+        person_product = [(r["pid"], r["name"]) for r in _read(
+            s, f"MATCH (p:{_bt(PERSON_LABEL)})<-[:{_bt(INVOLVES_TYPE)}"
+               f"|{_bt(MENTIONS_TYPE)}]-(:Chunk)-[:{_bt(PRODUCT_TYPE)}]->"
+               f"(x:{_bt(PRODUCT_LABEL)}) "
+               f"RETURN DISTINCT p.id AS pid, x.name AS name ORDER BY pid, name")]
+        person_channel = [(r["pid"], r["name"]) for r in _read(
+            s, f"MATCH (p:{_bt(PERSON_LABEL)})<-[:{_bt(INVOLVES_TYPE)}"
+               f"|{_bt(MENTIONS_TYPE)}]-(:Chunk)-[:{_bt(CHANNEL_TYPE)}]->"
+               f"(x:{_bt(CHANNEL_LABEL)}) "
+               f"RETURN DISTINCT p.id AS pid, x.name AS name ORDER BY pid, name")]
+        product_channel = [(r["product"], r["channel"]) for r in _read(
+            s, f"MATCH (c:Chunk)-[:{_bt(PRODUCT_TYPE)}]->(p:{_bt(PRODUCT_LABEL)}) "
+               f"MATCH (c)-[:{_bt(CHANNEL_TYPE)}]->(x:{_bt(CHANNEL_LABEL)}) "
+               f"RETURN DISTINCT p.name AS product, x.name AS channel "
+               f"ORDER BY product, channel")]
+
+    print("reading the corpus directories …", flush=True)
+    directories = read_directories()
+    org = org_tree_relations(read_metadata(ORG_TREE_FILE))
+    manages = sorted(org["manages"])
+    colleague = sorted(org["colleague"])
+    in_org = membership_edges(directories["employees"], "org")
+    in_company = membership_edges(directories["customers"], "company")
+
+    # Every endpoint of a declared relation is a node the entity layer already
+    # wrote from the same directory, so nothing is minted here and nothing is
+    # dropped for want of a node.
+    endpoints = org["persons"] | {pid for pid, _ in in_org + in_company}
+    orphans = sorted(pid for pid in endpoints if pid not in person_ids)
+    if orphans:
+        raise SystemExit(f"{len(orphans)} relation endpoint(s) carry no Person "
+                         f"node: {orphans[:20]}")
+    values = {value for _, value in in_org} | {value for _, value in in_company}
+    unnamed = sorted(v for v in values if v not in org_names | company_names)
+    if unnamed:
+        raise SystemExit(f"membership value(s) carry no node: {unnamed}")
+    print(f"  org tree {len(org['persons'])} persons over {len(colleague)} "
+          f"same-manager pairs; every endpoint has a node", flush=True)
+
+    census = {
+        "manages": len(manages),
+        "colleague": len(colleague),
+        "in_org": len(in_org),
+        "in_company": len(in_company),
+        "appears_in_product": len(person_product),
+        "appears_in_channel": len(person_channel),
+        "has_channel": len(product_channel),
+    }
+    gate("relations", census, EXPECTED_RELATIONS)
+
+    with drv.session(database=target) as s:
+
+        def write_edges(rows: list, cypher: str, desc: str) -> int:
+            created = 0
+            bar = progress(total=len(rows), desc=desc, unit="edge")
+            for i in range(0, len(rows), WRITE_BATCH):
+                batch = rows[i:i + WRITE_BATCH]
+                created += s.run(cypher, rows=batch).consume().counters.relationships_created
+                bar.update(len(batch))
+            bar.close()
+            return created
+
+        written = {
+            "manages": write_edges(
+                [{"a": a, "b": b, "role": role} for a, b, role in manages],
+                f"UNWIND $rows AS row "
+                f"MATCH (a:{_bt(PERSON_LABEL)} {{id: row.a}}) "
+                f"MATCH (b:{_bt(PERSON_LABEL)} {{id: row.b}}) "
+                f"CREATE (a)-[r:{_bt(MANAGES_TYPE)} {{role: row.role}}]->(b)",
+                "manages"),
+            "colleague": write_edges(
+                [{"a": a, "b": b, "manager": m} for a, b, m in colleague],
+                f"UNWIND $rows AS row "
+                f"MATCH (a:{_bt(PERSON_LABEL)} {{id: row.a}}) "
+                f"MATCH (b:{_bt(PERSON_LABEL)} {{id: row.b}}) "
+                f"CREATE (a)-[r:{_bt(COLLEAGUE_TYPE)} {{manager: row.manager}}]->(b)",
+                "colleague"),
+            "in_org": write_edges(
+                [{"a": pid, "b": org_name} for pid, org_name in in_org],
+                f"UNWIND $rows AS row "
+                f"MATCH (a:{_bt(PERSON_LABEL)} {{id: row.a}}) "
+                f"MATCH (b:{_bt(ORG_LABEL)} {{name: row.b}}) "
+                f"CREATE (a)-[r:{_bt(ORG_TYPE)}]->(b)",
+                "in_org"),
+            "in_company": write_edges(
+                [{"a": pid, "b": company} for pid, company in in_company],
+                f"UNWIND $rows AS row "
+                f"MATCH (a:{_bt(PERSON_LABEL)} {{id: row.a}}) "
+                f"MATCH (b:{_bt(COMPANY_LABEL)} {{name: row.b}}) "
+                f"CREATE (a)-[r:{_bt(COMPANY_TYPE)}]->(b)",
+                "in_company"),
+            "appears_in_product": write_edges(
+                [{"a": pid, "b": name} for pid, name in person_product],
+                f"UNWIND $rows AS row "
+                f"MATCH (a:{_bt(PERSON_LABEL)} {{id: row.a}}) "
+                f"MATCH (b:{_bt(PRODUCT_LABEL)} {{name: row.b}}) "
+                f"CREATE (a)-[r:{_bt(PERSON_PRODUCT_TYPE)}]->(b)",
+                "appears_in_product"),
+            "appears_in_channel": write_edges(
+                [{"a": pid, "b": name} for pid, name in person_channel],
+                f"UNWIND $rows AS row "
+                f"MATCH (a:{_bt(PERSON_LABEL)} {{id: row.a}}) "
+                f"MATCH (b:{_bt(CHANNEL_LABEL)} {{name: row.b}}) "
+                f"CREATE (a)-[r:{_bt(PERSON_CHANNEL_TYPE)}]->(b)",
+                "appears_in_channel"),
+            "has_channel": write_edges(
+                [{"a": product, "b": channel} for product, channel in product_channel],
+                f"UNWIND $rows AS row "
+                f"MATCH (a:{_bt(PRODUCT_LABEL)} {{name: row.a}}) "
+                f"MATCH (b:{_bt(CHANNEL_LABEL)} {{name: row.b}}) "
+                f"CREATE (a)-[r:{_bt(PRODUCT_CHANNEL_TYPE)}]->(b)",
+                "has_channel"),
+        }
+
+    with drv.session(database=target, default_access_mode="READ") as s:
+        db_census = {
+            "manages": _one(s, f"MATCH ()-[r:{_bt(MANAGES_TYPE)}]->() RETURN count(r)"),
+            "colleague": _one(s, f"MATCH ()-[r:{_bt(COLLEAGUE_TYPE)}]->() RETURN count(r)"),
+            "in_org": _one(s, f"MATCH ()-[r:{_bt(ORG_TYPE)}]->() RETURN count(r)"),
+            "in_company": _one(s, f"MATCH ()-[r:{_bt(COMPANY_TYPE)}]->() RETURN count(r)"),
+            "appears_in_product": _one(
+                s, f"MATCH ()-[r:{_bt(PERSON_PRODUCT_TYPE)}]->() RETURN count(r)"),
+            "appears_in_channel": _one(
+                s, f"MATCH ()-[r:{_bt(PERSON_CHANNEL_TYPE)}]->() RETURN count(r)"),
+            "has_channel": _one(
+                s, f"MATCH ()-[r:{_bt(PRODUCT_CHANNEL_TYPE)}]->() RETURN count(r)"),
+        }
+        person_total = _one(s, f"MATCH (p:{_bt(PERSON_LABEL)}) RETURN count(p)")
+        spine_after = spine_census(s)
+        # Degree over the nodes that carry at least one edge of the type:
+        # `nodes` is how many do, `degree_sum` their total — the edge count on a
+        # directed pattern, twice it on the undirected colleague one.
+        def degree(pattern: str, alias: str) -> dict:
+            return _read(s, f"MATCH {pattern} WITH {alias}, count(*) AS n "
+                            f"RETURN min(n) AS min, max(n) AS max, "
+                            f"count({alias}) AS nodes, sum(n) AS degree_sum")[0]
+
+        degrees = {
+            "manages_out": degree(
+                f"(p:{_bt(PERSON_LABEL)})-[:{_bt(MANAGES_TYPE)}]->()", "p"),
+            "manages_in": degree(
+                f"(p:{_bt(PERSON_LABEL)})<-[:{_bt(MANAGES_TYPE)}]-()", "p"),
+            "colleague_undirected": degree(
+                f"(p:{_bt(PERSON_LABEL)})-[:{_bt(COLLEAGUE_TYPE)}]-()", "p"),
+            "appears_in_product_out": degree(
+                f"(p:{_bt(PERSON_LABEL)})-[:{_bt(PERSON_PRODUCT_TYPE)}]->()", "p"),
+            "appears_in_channel_out": degree(
+                f"(p:{_bt(PERSON_LABEL)})-[:{_bt(PERSON_CHANNEL_TYPE)}]->()", "p"),
+            "in_org_in": degree(
+                f"(o:{_bt(ORG_LABEL)})<-[:{_bt(ORG_TYPE)}]-()", "o"),
+            "in_company_in": degree(
+                f"(c:{_bt(COMPANY_LABEL)})<-[:{_bt(COMPANY_TYPE)}]-()", "c"),
+            "has_channel_out": degree(
+                f"(p:{_bt(PRODUCT_LABEL)})-[:{_bt(PRODUCT_CHANNEL_TYPE)}]->()", "p"),
+        }
+    gate("relation-writes", written, {k: census[k] for k in written})
+    gate("relation-census", {k: db_census[k] for k in census}, census)
+    gate("spine-across-relations", spine_after, spine_before)
+    print(f"  relation layer written: {person_total} Person, "
+          f"{sum(written.values())} entity-to-entity edges", flush=True)
+
+    _write_step(target, "relations", {
+        "timestamp": _utc_now(), "target_database": target,
+        "inclusion_rules": RELATION_INCLUSION,
+        "relationship_types": {"manages": MANAGES_TYPE,
+                               "colleague": COLLEAGUE_TYPE,
+                               "in_org": ORG_TYPE,
+                               "in_company": COMPANY_TYPE,
+                               "appears_in_product": PERSON_PRODUCT_TYPE,
+                               "appears_in_channel": PERSON_CHANNEL_TYPE,
+                               "has_channel": PRODUCT_CHANNEL_TYPE},
+        "person_total": person_total,
+        "spine_before": spine_before, "spine_after": spine_after,
+        "census": census, "written": written, "db_census": db_census,
+        "degrees": degrees,
         "elapsed_s": round(time.perf_counter() - t0, 1),
     })
 
@@ -1033,6 +1626,7 @@ def step_verify(drv, source: str, target: str) -> None:
     copy_rec = _require_step(target, "copy")
     cleanup_rec = _require_step(target, "cleanup", after=copy_rec)
     entities_rec = _require_step(target, "entities", after=cleanup_rec)
+    relations_rec = _require_step(target, "relations", after=entities_rec)
     t0 = time.perf_counter()
 
     print(f"re-snapshotting source {source!r} for the untouched proof …", flush=True)
@@ -1064,18 +1658,32 @@ def step_verify(drv, source: str, target: str) -> None:
     with drv.session(database="system") as s:
         databases = _read(s, "SHOW DATABASES YIELD name RETURN name")
 
+    # The label census keys on a node's whole label set, so Employee and
+    # Customer appear under the pair they carry with PERSON_LABEL.
+    employee_key = ":".join(sorted((EMPLOYEE_LABEL, PERSON_LABEL)))
+    customer_key = ":".join(sorted((CUSTOMER_LABEL, PERSON_LABEL)))
     before = copy_rec["source_before"]
     expected_labels = dict(before["labels"])
     expected_labels["Tag"] = cleanup_rec["post"]["tags"]
-    expected_labels[PERSON_LABEL] = entities_rec["person_total"]
-    expected_labels[PRODUCT_LABEL] = entities_rec["db_census"]["product_nodes"]
-    expected_labels[CHANNEL_LABEL] = entities_rec["db_census"]["channel_nodes"]
+    expected_labels[employee_key] = EXPECTED_ENTITIES["employee_nodes"]
+    expected_labels[customer_key] = EXPECTED_ENTITIES["customer_nodes"]
+    expected_labels[ORG_LABEL] = EXPECTED_ENTITIES["org_nodes"]
+    expected_labels[COMPANY_LABEL] = EXPECTED_ENTITIES["company_nodes"]
+    expected_labels[PRODUCT_LABEL] = EXPECTED_ENTITIES["product_nodes"]
+    expected_labels[CHANNEL_LABEL] = EXPECTED_ENTITIES["channel_nodes"]
     expected_rels = dict(before["rels"])
     expected_rels["HAS_TAG"] = cleanup_rec["post"]["has_tag_edges"]
     expected_rels[INVOLVES_TYPE] = sum(EXPECTED_ENTITIES["involves"].values())
     expected_rels[MENTIONS_TYPE] = sum(EXPECTED_ENTITIES["mentions"].values())
     expected_rels[PRODUCT_TYPE] = EXPECTED_ENTITIES["product_edges"]
     expected_rels[CHANNEL_TYPE] = EXPECTED_ENTITIES["channel_edges"]
+    expected_rels[MANAGES_TYPE] = EXPECTED_RELATIONS["manages"]
+    expected_rels[COLLEAGUE_TYPE] = EXPECTED_RELATIONS["colleague"]
+    expected_rels[ORG_TYPE] = EXPECTED_RELATIONS["in_org"]
+    expected_rels[COMPANY_TYPE] = EXPECTED_RELATIONS["in_company"]
+    expected_rels[PERSON_PRODUCT_TYPE] = EXPECTED_RELATIONS["appears_in_product"]
+    expected_rels[PERSON_CHANNEL_TYPE] = EXPECTED_RELATIONS["appears_in_channel"]
+    expected_rels[PRODUCT_CHANNEL_TYPE] = EXPECTED_RELATIONS["has_channel"]
     gate("final-labels", final["labels"], expected_labels)
     gate("final-rels", final["rels"], expected_rels)
     if (before["checksums"]["tag_emb_present"] != before["labels"].get("Tag", 0)
@@ -1088,19 +1696,30 @@ def step_verify(drv, source: str, target: str) -> None:
          {"tag_emb_present": expected_labels["Tag"],
           "desc_emb_present": expected_labels["Chunk"]})
 
+    census_sha = hashlib.sha256(json.dumps(
+        {"labels": final["labels"], "rels": final["rels"],
+         "removed_tags_sha256": cleanup_rec["removed_tags_sha256"]},
+        sort_keys=True).encode("utf-8")).hexdigest()
     manifest_path = BUILD_DIR / target / "build_manifest.json"
+    previous = archive_manifest(manifest_path)
     manifest_path.write_text(json.dumps({
         "target_database": target,
         "source_database": source,
         "timestamp": _utc_now(),
-        "authority": DESIGN_DOC,
+        "graph_version": GRAPH_VERSION,
+        "graph_census_sha256": census_sha,
+        "previous_manifest": previous,
+        "authority": [DESIGN_DOC, ENTITY_DESIGN_DOC],
         "execution_defaults": EXECUTION_DEFAULTS,
+        "entity_inclusion": ENTITY_INCLUSION,
+        "relation_inclusion": RELATION_INCLUSION,
         "databases_on_dbms": sorted(r["name"] for r in databases),
         "steps": {
             "copy": {k: v for k, v in copy_rec.items() if k != "source_before"},
             "cleanup": {k: v for k, v in cleanup_rec.items()
                         if k != "removed_tags"},
             "entities": entities_rec,
+            "relations": relations_rec,
         },
         "removal_predicate": cleanup_rec["predicate"],
         "removed_tags_sha256": cleanup_rec["removed_tags_sha256"],
@@ -1114,20 +1733,25 @@ def step_verify(drv, source: str, target: str) -> None:
         },
         "elapsed_s": round(time.perf_counter() - t0, 1),
     }, indent=1, sort_keys=True), encoding="utf-8")
-    print(f"build manifest written last: {manifest_path}", flush=True)
+    print(f"build manifest written last: {manifest_path} "
+          f"({GRAPH_VERSION}, census {census_sha[:12]})", flush=True)
 
 
 # --- CLI ---------------------------------------------------------------------------
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("step", choices=("copy", "cleanup", "entities", "verify"))
+    parser.add_argument("step", choices=("copy", "cleanup", "entities",
+                                         "relations", "verify"))
     parser.add_argument("--source-db", default=SOURCE_DATABASE,
                         help="database the copy reads (read-only throughout)")
     parser.add_argument("--target-db", default=TARGET_DATABASE,
                         help="database the build writes (never a protected name)")
     parser.add_argument("--recreate", action="store_true",
                         help="copy only: drop an existing target and rebuild it")
+    parser.add_argument("--rebuild", action="store_true",
+                        help="entities only: drop the existing entity and "
+                             "relation layer first, spine proved unchanged")
     args = parser.parse_args()
 
     drv = _driver()
@@ -1137,7 +1761,9 @@ def main() -> None:
         elif args.step == "cleanup":
             step_cleanup(drv, args.source_db, args.target_db)
         elif args.step == "entities":
-            step_entities(drv, args.source_db, args.target_db)
+            step_entities(drv, args.source_db, args.target_db, args.rebuild)
+        elif args.step == "relations":
+            step_relations(drv, args.source_db, args.target_db)
         else:
             step_verify(drv, args.source_db, args.target_db)
     finally:

@@ -2,73 +2,204 @@
  "db_census": {
   "channel_edges": 2669,
   "channel_nodes": 294,
+  "company_nodes": 10,
+  "customer_nodes": 120,
+  "employee_nodes": 530,
   "involves": {
    "doc_author": 786,
    "participant": 9964,
-   "pr_author": 3492,
-   "reviewer": 4349,
-   "speaker": 13690
+   "pr_author": 1197,
+   "reviewer": 2053,
+   "speaker": 13006
+  },
+  "mention_persons": {
+   "customer": 120,
+   "employee": 512
   },
   "mentions": {
-   "cust": 1043,
-   "eid": 8591
+   "customer": 1043,
+   "employee": 8589
   },
-  "person_kinds": {
-   "cust": 120,
-   "eid": 514,
-   "emp": 4590,
-   "malformed": 9
-  },
-  "person_total": 5233,
+  "org_nodes": 6,
   "product_edges": 4808,
   "product_nodes": 30
  },
  "derived_census": {
   "channel_edges": 2669,
   "channel_nodes": 294,
+  "company_nodes": 10,
+  "customer_nodes": 120,
+  "employee_nodes": 530,
   "involves": {
    "doc_author": 786,
    "participant": 9964,
-   "pr_author": 3492,
-   "reviewer": 4349,
-   "speaker": 13690
+   "pr_author": 1197,
+   "reviewer": 2053,
+   "speaker": 13006
   },
   "mention_persons": {
-   "cust": 120,
-   "eid": 514
+   "customer": 120,
+   "employee": 512
   },
   "mentions": {
-   "cust": 1043,
-   "eid": 8591,
-   "emp": 0
+   "customer": 1043,
+   "employee": 8589
   },
-  "person_kinds": {
-   "eid": 512,
+  "org_nodes": 6,
+  "product_edges": 4808,
+  "product_nodes": 30,
+  "unlinked_involve_ids": {
+   "cust": 0,
+   "eid": 0,
    "emp": 4590,
    "malformed": 9
   },
-  "product_edges": 4808,
-  "product_nodes": 30
+  "unlinked_involves": {
+   "cust": 0,
+   "eid": 0,
+   "emp": 4590,
+   "malformed": 685
+  },
+  "unlinked_mention_ids": {
+   "cust": 0,
+   "eid": 2,
+   "emp": 0
+  },
+  "unlinked_mentions": {
+   "cust": 0,
+   "eid": 2,
+   "emp": 0
+  }
  },
- "elapsed_s": 10.3,
- "mention_only_persons": {
-  "cust": 120,
-  "eid": 2
+ "dropped_before_rebuild": {
+  "edges_present": {
+   "APPEARS_IN_CHANNEL": 4960,
+   "APPEARS_IN_PRODUCT": 6951,
+   "COLLEAGUE": 1891,
+   "HAS_CHANNEL": 294,
+   "INVOLVES": 32281,
+   "IN_CHANNEL": 2669,
+   "IN_COMPANY": 120,
+   "IN_ORG": 0,
+   "IN_PRODUCT": 4808,
+   "MANAGES": 512,
+   "MENTIONS": 9634
+  },
+  "nodes_deleted": 5585,
+  "nodes_present": {
+   "Channel": 294,
+   "Company": 10,
+   "Customer": 0,
+   "Employee": 0,
+   "Org": 0,
+   "Person": 5251,
+   "Product": 30
+  },
+  "rels_deleted": 64120,
+  "spine_after": {
+   "CONTAINS": 33,
+   "Chunk": 4869,
+   "File": 33,
+   "HAS_CHUNK": 4869,
+   "HAS_TAG": 62443,
+   "Source": 1,
+   "Tag": 15605
+  },
+  "spine_before": {
+   "CONTAINS": 33,
+   "Chunk": 4869,
+   "File": 33,
+   "HAS_CHUNK": 4869,
+   "HAS_TAG": 62443,
+   "Source": 1,
+   "Tag": 15605
+  }
  },
- "person_total": 5233,
+ "elapsed_s": 17.4,
+ "inclusion_rules": {
+  "Channel": "one node per distinct `channel` attribute on the chunks",
+  "Company": "metadata/customers_data.json \u2014 one node per distinct `company` value the directory carries, keyed by the source's own string",
+  "Customer": "metadata/customers_data.json \u2014 one node per entry, keyed by the directory's own CUST- string, carrying that entry's `role`; the entry's `name` is read by nothing",
+  "Employee": "metadata/employee.json \u2014 one node per entry, keyed by the directory's own eid_ string, carrying that entry's `role` and `location`; the entry's `name` is read by nothing",
+  "INVOLVES": "every (chunk, person id, role) a structured content field declares \u2014 slack userId, PR author and reviewer logins, document author, meeting participants \u2014 for every id one of the two directories carries; an id no directory carries gets no edge and is censused as unlinked",
+  "IN_CHANNEL": "every chunk's own `channel` attribute",
+  "IN_PRODUCT": "every chunk's own `product` attribute",
+  "MENTIONS": "every (chunk, person id) an exact id regex finds in the chunk's own declared content leaves, for every id one of the two directories carries",
+  "Org": "metadata/employee.json \u2014 one node per distinct `org` value the directory carries, keyed by the source's own string",
+  "Product": "one node per distinct `product` attribute on the chunks, cross-checked against the corpus's own product files"
+ },
+ "node_labels": {
+  "channel": "Channel",
+  "company": "Company",
+  "customer": [
+   "Customer",
+   "Person"
+  ],
+  "employee": [
+   "Employee",
+   "Person"
+  ],
+  "org": "Org",
+  "product": "Product"
+ },
+ "person_total": 650,
  "relationship_types": {
   "channel": "IN_CHANNEL",
   "involves": "INVOLVES",
   "mentions": "MENTIONS",
   "product": "IN_PRODUCT"
  },
- "structured_persons": 5111,
+ "spine_after": {
+  "CONTAINS": 33,
+  "Chunk": 4869,
+  "File": 33,
+  "HAS_CHUNK": 4869,
+  "HAS_TAG": 62443,
+  "Source": 1,
+  "Tag": 15605
+ },
+ "spine_before": {
+  "CONTAINS": 33,
+  "Chunk": 4869,
+  "File": 33,
+  "HAS_CHUNK": 4869,
+  "HAS_TAG": 62443,
+  "Source": 1,
+  "Tag": 15605
+ },
  "target_database": "herb-eval-v2",
- "timestamp": "2026-08-12T20:37:09Z",
+ "timestamp": "2026-08-14T00:24:23Z",
+ "unlinked_ids": {
+  "involves": {
+   "cust": 0,
+   "eid": 0,
+   "emp": 4590,
+   "malformed": 9
+  },
+  "malformed": [
+   "'eid_3b36c220'",
+   "'eid_46e00bc4'",
+   "'eid_887367ca'",
+   "'eid_c0df5be6'",
+   "eid_4eec2a5",
+   "eid_8658e19",
+   "eid_a7ddc52",
+   "eid_e6d2ec9",
+   "slack_admin_bot"
+  ],
+  "mentions": {
+   "cust": [],
+   "eid": [
+    "eid_12345678",
+    "eid_87654321"
+   ],
+   "emp": []
+  }
+ },
  "written": {
   "channel_edges": 2669,
-  "involves": 32281,
-  "mentions": 9634,
+  "involves": 27006,
+  "mentions": 9632,
   "product_edges": 4808
  }
 }

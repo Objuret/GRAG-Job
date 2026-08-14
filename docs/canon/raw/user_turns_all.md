@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-1331 turns, chronological. Verbatim text; no edits.
+1335 turns, 2026-05-14 → 2026-08-14, chronological. Verbatim text; no edits.
 
 ---
 
@@ -7697,3 +7697,19 @@ oh, yeah, about the actual work now then, what do i tell the next agent?
 
 of oyu fucking write it down like i asked you to!
 
+
+## 2026-08-14 10:42 · laptop · live-session-2026-08-14
+
+pretty sure we agreed on sonnet 5.0 for the answering? and haiku for the eval?
+
+## 2026-08-14 10:42 · laptop · live-session-2026-08-14
+
+and yes, sonnet5
+
+## 2026-08-14 12:26 · laptop · d786269f-2373-4860-b76f-fe30e6024042.jsonl
+
+i see..  you left chunks as the fucking default still, didnt you?
+
+## 2026-08-14 12:27 · laptop · d786269f-2373-4860-b76f-fe30e6024042.jsonl
+
+WHY THE FUCK THEN!? i literally told you that this is how we will do the evals now

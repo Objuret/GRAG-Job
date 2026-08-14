@@ -1,20 +1,52 @@
 {
- "authority": "docs/state/2026-08-12-entity-nodes-and-tag-cleanup-design.md",
+ "authority": [
+  "docs/state/2026-08-12-entity-nodes-and-tag-cleanup-design.md",
+  "docs/state/2026-08-14-directory-entity-layer.md"
+ ],
  "databases_on_dbms": [
   "herb-eval",
   "herb-eval-v2",
   "neo4j",
   "system"
  ],
- "elapsed_s": 30.9,
+ "elapsed_s": 35.4,
+ "entity_inclusion": {
+  "Channel": "one node per distinct `channel` attribute on the chunks",
+  "Company": "metadata/customers_data.json \u2014 one node per distinct `company` value the directory carries, keyed by the source's own string",
+  "Customer": "metadata/customers_data.json \u2014 one node per entry, keyed by the directory's own CUST- string, carrying that entry's `role`; the entry's `name` is read by nothing",
+  "Employee": "metadata/employee.json \u2014 one node per entry, keyed by the directory's own eid_ string, carrying that entry's `role` and `location`; the entry's `name` is read by nothing",
+  "INVOLVES": "every (chunk, person id, role) a structured content field declares \u2014 slack userId, PR author and reviewer logins, document author, meeting participants \u2014 for every id one of the two directories carries; an id no directory carries gets no edge and is censused as unlinked",
+  "IN_CHANNEL": "every chunk's own `channel` attribute",
+  "IN_PRODUCT": "every chunk's own `product` attribute",
+  "MENTIONS": "every (chunk, person id) an exact id regex finds in the chunk's own declared content leaves, for every id one of the two directories carries",
+  "Org": "metadata/employee.json \u2014 one node per distinct `org` value the directory carries, keyed by the source's own string",
+  "Product": "one node per distinct `product` attribute on the chunks, cross-checked against the corpus's own product files"
+ },
  "execution_defaults": {
-  "OPEN-1": "Person + Product + Channel nodes; years and section stay chunk attributes",
-  "OPEN-2": "all id-spaces in uniformly \u2014 EMP_ included, flagged low-value",
+  "OPEN-1": "Employee + Customer + Org + Company + Product + Channel nodes; role and location are Employee attributes, role a Customer attribute; years and section stay chunk attributes",
+  "OPEN-2": "an entity node exists where a corpus directory declares the entry; a person id no directory carries gets no node \u2014 the directory-less EMP_ logins are censused, never minted",
   "OPEN-3": "deterministic regex id-in-text mention edges in, as their own relationship type; name-resolver edges out",
   "OPEN-4": "the 61 existing metadata-mirror chunks kept unchanged",
   "OPEN-5": "vocabulary-level predicate; bare http_ protocol tags excluded from removal; decision/date tags not touched",
   "OPEN-6": "versioned copy, one combined new version",
   "OPEN-7": "new database herb-eval-v2; this manifest carries source, predicate + hash, counts, verification"
+ },
+ "graph_census_sha256": "50f8f36ea39ea18d08513ea6f8c3944a61e8bbbe63c48dec137d3041b7cfb6ba",
+ "graph_version": "copy+cleanup+directory-entities+relations",
+ "previous_manifest": {
+  "file": "build_manifest_20260813T222107Z.json",
+  "graph_census_sha256": "3cc68e274e2bcbc265a9e56ebcc3b06af79de3cf5abe42caee7a7155bb004ae4",
+  "graph_version": "copy+cleanup+entities+relations",
+  "timestamp": "2026-08-13T22:21:07Z"
+ },
+ "relation_inclusion": {
+  "APPEARS_IN_CHANNEL": "every (Person, Channel) pair one chunk holds through an INVOLVES or MENTIONS edge and an IN_CHANNEL edge",
+  "APPEARS_IN_PRODUCT": "every (Person, Product) pair one chunk holds through an INVOLVES or MENTIONS edge and an IN_PRODUCT edge",
+  "COLLEAGUE": "metadata/salesforce_team.json \u2014 every unordered pair of person entries reporting to one entry, for every entry in the tree; one edge per pair, endpoints in sorted id order, `manager` the shared owner's id",
+  "HAS_CHANNEL": "every (Product, Channel) pair one chunk's own product and channel attributes declare together",
+  "IN_COMPANY": "metadata/customers_data.json \u2014 every entry's own `company` field; the directory carries the field on every entry, so every entry gets the relation",
+  "IN_ORG": "metadata/employee.json \u2014 every entry's own `org` field; the directory carries the field on every entry, so every entry gets the relation",
+  "MANAGES": "metadata/salesforce_team.json \u2014 every nesting of a person entry inside another entry's report list, for every entry in the tree; `role` is the source's own list-field name"
  },
  "removal_predicate": {
   "classes": {
@@ -4297,79 +4329,329 @@
    "db_census": {
     "channel_edges": 2669,
     "channel_nodes": 294,
+    "company_nodes": 10,
+    "customer_nodes": 120,
+    "employee_nodes": 530,
     "involves": {
      "doc_author": 786,
      "participant": 9964,
-     "pr_author": 3492,
-     "reviewer": 4349,
-     "speaker": 13690
+     "pr_author": 1197,
+     "reviewer": 2053,
+     "speaker": 13006
+    },
+    "mention_persons": {
+     "customer": 120,
+     "employee": 512
     },
     "mentions": {
-     "cust": 1043,
-     "eid": 8591
+     "customer": 1043,
+     "employee": 8589
     },
-    "person_kinds": {
-     "cust": 120,
-     "eid": 514,
-     "emp": 4590,
-     "malformed": 9
-    },
-    "person_total": 5233,
+    "org_nodes": 6,
     "product_edges": 4808,
     "product_nodes": 30
    },
    "derived_census": {
     "channel_edges": 2669,
     "channel_nodes": 294,
+    "company_nodes": 10,
+    "customer_nodes": 120,
+    "employee_nodes": 530,
     "involves": {
      "doc_author": 786,
      "participant": 9964,
-     "pr_author": 3492,
-     "reviewer": 4349,
-     "speaker": 13690
+     "pr_author": 1197,
+     "reviewer": 2053,
+     "speaker": 13006
     },
     "mention_persons": {
-     "cust": 120,
-     "eid": 514
+     "customer": 120,
+     "employee": 512
     },
     "mentions": {
-     "cust": 1043,
-     "eid": 8591,
-     "emp": 0
+     "customer": 1043,
+     "employee": 8589
     },
-    "person_kinds": {
-     "eid": 512,
+    "org_nodes": 6,
+    "product_edges": 4808,
+    "product_nodes": 30,
+    "unlinked_involve_ids": {
+     "cust": 0,
+     "eid": 0,
      "emp": 4590,
      "malformed": 9
     },
-    "product_edges": 4808,
-    "product_nodes": 30
+    "unlinked_involves": {
+     "cust": 0,
+     "eid": 0,
+     "emp": 4590,
+     "malformed": 685
+    },
+    "unlinked_mention_ids": {
+     "cust": 0,
+     "eid": 2,
+     "emp": 0
+    },
+    "unlinked_mentions": {
+     "cust": 0,
+     "eid": 2,
+     "emp": 0
+    }
    },
-   "elapsed_s": 10.3,
-   "mention_only_persons": {
-    "cust": 120,
-    "eid": 2
+   "dropped_before_rebuild": {
+    "edges_present": {
+     "APPEARS_IN_CHANNEL": 4960,
+     "APPEARS_IN_PRODUCT": 6951,
+     "COLLEAGUE": 1891,
+     "HAS_CHANNEL": 294,
+     "INVOLVES": 32281,
+     "IN_CHANNEL": 2669,
+     "IN_COMPANY": 120,
+     "IN_ORG": 0,
+     "IN_PRODUCT": 4808,
+     "MANAGES": 512,
+     "MENTIONS": 9634
+    },
+    "nodes_deleted": 5585,
+    "nodes_present": {
+     "Channel": 294,
+     "Company": 10,
+     "Customer": 0,
+     "Employee": 0,
+     "Org": 0,
+     "Person": 5251,
+     "Product": 30
+    },
+    "rels_deleted": 64120,
+    "spine_after": {
+     "CONTAINS": 33,
+     "Chunk": 4869,
+     "File": 33,
+     "HAS_CHUNK": 4869,
+     "HAS_TAG": 62443,
+     "Source": 1,
+     "Tag": 15605
+    },
+    "spine_before": {
+     "CONTAINS": 33,
+     "Chunk": 4869,
+     "File": 33,
+     "HAS_CHUNK": 4869,
+     "HAS_TAG": 62443,
+     "Source": 1,
+     "Tag": 15605
+    }
    },
-   "person_total": 5233,
+   "elapsed_s": 17.4,
+   "inclusion_rules": {
+    "Channel": "one node per distinct `channel` attribute on the chunks",
+    "Company": "metadata/customers_data.json \u2014 one node per distinct `company` value the directory carries, keyed by the source's own string",
+    "Customer": "metadata/customers_data.json \u2014 one node per entry, keyed by the directory's own CUST- string, carrying that entry's `role`; the entry's `name` is read by nothing",
+    "Employee": "metadata/employee.json \u2014 one node per entry, keyed by the directory's own eid_ string, carrying that entry's `role` and `location`; the entry's `name` is read by nothing",
+    "INVOLVES": "every (chunk, person id, role) a structured content field declares \u2014 slack userId, PR author and reviewer logins, document author, meeting participants \u2014 for every id one of the two directories carries; an id no directory carries gets no edge and is censused as unlinked",
+    "IN_CHANNEL": "every chunk's own `channel` attribute",
+    "IN_PRODUCT": "every chunk's own `product` attribute",
+    "MENTIONS": "every (chunk, person id) an exact id regex finds in the chunk's own declared content leaves, for every id one of the two directories carries",
+    "Org": "metadata/employee.json \u2014 one node per distinct `org` value the directory carries, keyed by the source's own string",
+    "Product": "one node per distinct `product` attribute on the chunks, cross-checked against the corpus's own product files"
+   },
+   "node_labels": {
+    "channel": "Channel",
+    "company": "Company",
+    "customer": [
+     "Customer",
+     "Person"
+    ],
+    "employee": [
+     "Employee",
+     "Person"
+    ],
+    "org": "Org",
+    "product": "Product"
+   },
+   "person_total": 650,
    "relationship_types": {
     "channel": "IN_CHANNEL",
     "involves": "INVOLVES",
     "mentions": "MENTIONS",
     "product": "IN_PRODUCT"
    },
-   "structured_persons": 5111,
+   "spine_after": {
+    "CONTAINS": 33,
+    "Chunk": 4869,
+    "File": 33,
+    "HAS_CHUNK": 4869,
+    "HAS_TAG": 62443,
+    "Source": 1,
+    "Tag": 15605
+   },
+   "spine_before": {
+    "CONTAINS": 33,
+    "Chunk": 4869,
+    "File": 33,
+    "HAS_CHUNK": 4869,
+    "HAS_TAG": 62443,
+    "Source": 1,
+    "Tag": 15605
+   },
    "target_database": "herb-eval-v2",
-   "timestamp": "2026-08-12T20:37:09Z",
+   "timestamp": "2026-08-14T00:24:23Z",
+   "unlinked_ids": {
+    "involves": {
+     "cust": 0,
+     "eid": 0,
+     "emp": 4590,
+     "malformed": 9
+    },
+    "malformed": [
+     "'eid_3b36c220'",
+     "'eid_46e00bc4'",
+     "'eid_887367ca'",
+     "'eid_c0df5be6'",
+     "eid_4eec2a5",
+     "eid_8658e19",
+     "eid_a7ddc52",
+     "eid_e6d2ec9",
+     "slack_admin_bot"
+    ],
+    "mentions": {
+     "cust": [],
+     "eid": [
+      "eid_12345678",
+      "eid_87654321"
+     ],
+     "emp": []
+    }
+   },
    "written": {
     "channel_edges": 2669,
-    "involves": 32281,
-    "mentions": 9634,
+    "involves": 27006,
+    "mentions": 9632,
     "product_edges": 4808
+   }
+  },
+  "relations": {
+   "census": {
+    "appears_in_channel": 4655,
+    "appears_in_product": 2320,
+    "colleague": 1891,
+    "has_channel": 294,
+    "in_company": 120,
+    "in_org": 530,
+    "manages": 512
+   },
+   "db_census": {
+    "appears_in_channel": 4655,
+    "appears_in_product": 2320,
+    "colleague": 1891,
+    "has_channel": 294,
+    "in_company": 120,
+    "in_org": 530,
+    "manages": 512
+   },
+   "degrees": {
+    "appears_in_channel_out": {
+     "degree_sum": 4655,
+     "max": 35,
+     "min": 2,
+     "nodes": 632
+    },
+    "appears_in_product_out": {
+     "degree_sum": 2320,
+     "max": 7,
+     "min": 1,
+     "nodes": 632
+    },
+    "colleague_undirected": {
+     "degree_sum": 3782,
+     "max": 12,
+     "min": 4,
+     "nodes": 512
+    },
+    "has_channel_out": {
+     "degree_sum": 294,
+     "max": 15,
+     "min": 6,
+     "nodes": 30
+    },
+    "in_company_in": {
+     "degree_sum": 120,
+     "max": 20,
+     "min": 6,
+     "nodes": 10
+    },
+    "in_org_in": {
+     "degree_sum": 530,
+     "max": 102,
+     "min": 80,
+     "nodes": 6
+    },
+    "manages_in": {
+     "degree_sum": 512,
+     "max": 1,
+     "min": 1,
+     "nodes": 512
+    },
+    "manages_out": {
+     "degree_sum": 512,
+     "max": 13,
+     "min": 5,
+     "nodes": 65
+    }
+   },
+   "elapsed_s": 6.9,
+   "inclusion_rules": {
+    "APPEARS_IN_CHANNEL": "every (Person, Channel) pair one chunk holds through an INVOLVES or MENTIONS edge and an IN_CHANNEL edge",
+    "APPEARS_IN_PRODUCT": "every (Person, Product) pair one chunk holds through an INVOLVES or MENTIONS edge and an IN_PRODUCT edge",
+    "COLLEAGUE": "metadata/salesforce_team.json \u2014 every unordered pair of person entries reporting to one entry, for every entry in the tree; one edge per pair, endpoints in sorted id order, `manager` the shared owner's id",
+    "HAS_CHANNEL": "every (Product, Channel) pair one chunk's own product and channel attributes declare together",
+    "IN_COMPANY": "metadata/customers_data.json \u2014 every entry's own `company` field; the directory carries the field on every entry, so every entry gets the relation",
+    "IN_ORG": "metadata/employee.json \u2014 every entry's own `org` field; the directory carries the field on every entry, so every entry gets the relation",
+    "MANAGES": "metadata/salesforce_team.json \u2014 every nesting of a person entry inside another entry's report list, for every entry in the tree; `role` is the source's own list-field name"
+   },
+   "person_total": 650,
+   "relationship_types": {
+    "appears_in_channel": "APPEARS_IN_CHANNEL",
+    "appears_in_product": "APPEARS_IN_PRODUCT",
+    "colleague": "COLLEAGUE",
+    "has_channel": "HAS_CHANNEL",
+    "in_company": "IN_COMPANY",
+    "in_org": "IN_ORG",
+    "manages": "MANAGES"
+   },
+   "spine_after": {
+    "CONTAINS": 33,
+    "Chunk": 4869,
+    "File": 33,
+    "HAS_CHUNK": 4869,
+    "HAS_TAG": 62443,
+    "Source": 1,
+    "Tag": 15605
+   },
+   "spine_before": {
+    "CONTAINS": 33,
+    "Chunk": 4869,
+    "File": 33,
+    "HAS_CHUNK": 4869,
+    "HAS_TAG": 62443,
+    "Source": 1,
+    "Tag": 15605
+   },
+   "target_database": "herb-eval-v2",
+   "timestamp": "2026-08-14T00:24:39Z",
+   "written": {
+    "appears_in_channel": 4655,
+    "appears_in_product": 2320,
+    "colleague": 1891,
+    "has_channel": 294,
+    "in_company": 120,
+    "in_org": 530,
+    "manages": 512
    }
   }
  },
  "target_database": "herb-eval-v2",
- "timestamp": "2026-08-12T20:38:00Z",
+ "timestamp": "2026-08-14T00:25:22Z",
  "verification": {
   "final_target_snapshot": {
    "checksums": {
@@ -4387,8 +4669,11 @@
    "labels": {
     "Channel": 294,
     "Chunk": 4869,
+    "Company": 10,
+    "Customer:Person": 120,
+    "Employee:Person": 530,
     "File": 33,
-    "Person": 5233,
+    "Org": 6,
     "Product": 30,
     "Source": 1,
     "Tag": 15605
@@ -4424,6 +4709,18 @@
      "token_estimate": 4869,
      "years": 3476
     },
+    "Company": {
+     "name": 10
+    },
+    "Customer": {
+     "id": 120,
+     "role": 120
+    },
+    "Employee": {
+     "id": 530,
+     "location": 530,
+     "role": 530
+    },
     "File": {
      "created_at": 33,
      "dataset_id": 33,
@@ -4435,9 +4732,13 @@
      "sha256": 33,
      "size_bytes": 33
     },
+    "Org": {
+     "name": 6
+    },
     "Person": {
-     "id": 5233,
-     "kind": 5233
+     "id": 650,
+     "location": 530,
+     "role": 650
     },
     "Product": {
      "name": 30
@@ -4453,6 +4754,9 @@
     }
    },
    "rel_prop_coverage": {
+    "COLLEAGUE": {
+     "manager": 1891
+    },
     "HAS_TAG": {
      "facets": 62443,
      "run_id": 62443,
@@ -4460,17 +4764,27 @@
      "w_facets": 62443
     },
     "INVOLVES": {
-     "role": 32281
+     "role": 27006
+    },
+    "MANAGES": {
+     "role": 512
     }
    },
    "rels": {
+    "APPEARS_IN_CHANNEL": 4655,
+    "APPEARS_IN_PRODUCT": 2320,
+    "COLLEAGUE": 1891,
     "CONTAINS": 33,
+    "HAS_CHANNEL": 294,
     "HAS_CHUNK": 4869,
     "HAS_TAG": 62443,
-    "INVOLVES": 32281,
+    "INVOLVES": 27006,
     "IN_CHANNEL": 2669,
+    "IN_COMPANY": 120,
+    "IN_ORG": 530,
     "IN_PRODUCT": 4808,
-    "MENTIONS": 9634
+    "MANAGES": 512,
+    "MENTIONS": 9632
    }
   },
   "removed_tags_still_present": 0,

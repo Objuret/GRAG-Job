@@ -1,6 +1,6 @@
 """compare_arms.py — side-by-side RAGAS comparison across the gold-100 runs.
 
-Walks `output/` for `<arm>__gold100__*__k<k>/eval_results.jsonl` files, groups by
+Walks `output/k=chunks/` for `<arm>__gold100__*__k<k>/eval_results.jsonl`, groups by
 (arm, k), and prints mean per metric. The three target metrics the artefact arm
 is scored against — faithfulness, answer_correctness, context_recall_llm — are
 printed first, then the full RAGAS set.
@@ -19,6 +19,8 @@ from statistics import mean
 
 HERE = Path(__file__).resolve().parent
 OUTPUT = HERE / "output"
+# Top-k runs — the family this comparison reads, since its grouping key is k.
+RUNS = OUTPUT / "k=chunks"
 
 TARGET_METRICS = ("faithfulness", "answer_correctness", "context_recall_llm")
 DIR_RE = re.compile(r"^(?P<arm>[a-z]+)__gold100__(?P<ts>\d{8}T\d{6}Z)(?:__k(?P<k>\d+))?$")
@@ -27,7 +29,7 @@ DIR_RE = re.compile(r"^(?P<arm>[a-z]+)__gold100__(?P<ts>\d{8}T\d{6}Z)(?:__k(?P<k
 def _scan() -> dict:
     """(arm, k) -> {metric: [values...]} over the ok cells in eval_results.jsonl."""
     runs: dict = defaultdict(lambda: defaultdict(list))
-    for d in sorted(OUTPUT.iterdir()):
+    for d in sorted(RUNS.iterdir()):
         m = DIR_RE.match(d.name)
         if not m:
             continue

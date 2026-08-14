@@ -101,6 +101,7 @@ def _fake_lucene(ranked):
     units = [{"id": i, "text": f"L:{i}", "score": s, "rank": r}
              for r, (i, s) in enumerate(ranked)]
     return types.SimpleNamespace(
+        METADATA_ON=False,
         prepare_over_corpus=lambda corpus: types.SimpleNamespace(
             build_stats=BuildStats(0.2, ModelUsage(time_s=0.1), [])),
         retrieve_top_k_units=lambda q, prep, k: units[:k])
@@ -113,6 +114,7 @@ def _fake_vector(ranked, usage=None):
              for r, (i, s) in enumerate(ranked)]
     used = usage or ModelUsage()
     return types.SimpleNamespace(
+        METADATA_ON=False,
         prepare_over_corpus=lambda corpus: types.SimpleNamespace(
             build_stats=BuildStats(0.3, ModelUsage(calls=1, tokens_in=5, tokens_out=2,
                                                    time_s=0.5), ["embed-model"])),

@@ -1,0 +1,119 @@
+{
+ "census": {
+  "appears_in_channel": 4655,
+  "appears_in_product": 2320,
+  "colleague": 1891,
+  "has_channel": 294,
+  "in_company": 120,
+  "in_org": 530,
+  "manages": 512
+ },
+ "db_census": {
+  "appears_in_channel": 4655,
+  "appears_in_product": 2320,
+  "colleague": 1891,
+  "has_channel": 294,
+  "in_company": 120,
+  "in_org": 530,
+  "manages": 512
+ },
+ "degrees": {
+  "appears_in_channel_out": {
+   "degree_sum": 4655,
+   "max": 35,
+   "min": 2,
+   "nodes": 632
+  },
+  "appears_in_product_out": {
+   "degree_sum": 2320,
+   "max": 7,
+   "min": 1,
+   "nodes": 632
+  },
+  "colleague_undirected": {
+   "degree_sum": 3782,
+   "max": 12,
+   "min": 4,
+   "nodes": 512
+  },
+  "has_channel_out": {
+   "degree_sum": 294,
+   "max": 15,
+   "min": 6,
+   "nodes": 30
+  },
+  "in_company_in": {
+   "degree_sum": 120,
+   "max": 20,
+   "min": 6,
+   "nodes": 10
+  },
+  "in_org_in": {
+   "degree_sum": 530,
+   "max": 102,
+   "min": 80,
+   "nodes": 6
+  },
+  "manages_in": {
+   "degree_sum": 512,
+   "max": 1,
+   "min": 1,
+   "nodes": 512
+  },
+  "manages_out": {
+   "degree_sum": 512,
+   "max": 13,
+   "min": 5,
+   "nodes": 65
+  }
+ },
+ "elapsed_s": 6.9,
+ "inclusion_rules": {
+  "APPEARS_IN_CHANNEL": "every (Person, Channel) pair one chunk holds through an INVOLVES or MENTIONS edge and an IN_CHANNEL edge",
+  "APPEARS_IN_PRODUCT": "every (Person, Product) pair one chunk holds through an INVOLVES or MENTIONS edge and an IN_PRODUCT edge",
+  "COLLEAGUE": "metadata/salesforce_team.json \u2014 every unordered pair of person entries reporting to one entry, for every entry in the tree; one edge per pair, endpoints in sorted id order, `manager` the shared owner's id",
+  "HAS_CHANNEL": "every (Product, Channel) pair one chunk's own product and channel attributes declare together",
+  "IN_COMPANY": "metadata/customers_data.json \u2014 every entry's own `company` field; the directory carries the field on every entry, so every entry gets the relation",
+  "IN_ORG": "metadata/employee.json \u2014 every entry's own `org` field; the directory carries the field on every entry, so every entry gets the relation",
+  "MANAGES": "metadata/salesforce_team.json \u2014 every nesting of a person entry inside another entry's report list, for every entry in the tree; `role` is the source's own list-field name"
+ },
+ "person_total": 650,
+ "relationship_types": {
+  "appears_in_channel": "APPEARS_IN_CHANNEL",
+  "appears_in_product": "APPEARS_IN_PRODUCT",
+  "colleague": "COLLEAGUE",
+  "has_channel": "HAS_CHANNEL",
+  "in_company": "IN_COMPANY",
+  "in_org": "IN_ORG",
+  "manages": "MANAGES"
+ },
+ "spine_after": {
+  "CONTAINS": 33,
+  "Chunk": 4869,
+  "File": 33,
+  "HAS_CHUNK": 4869,
+  "HAS_TAG": 62443,
+  "Source": 1,
+  "Tag": 15605
+ },
+ "spine_before": {
+  "CONTAINS": 33,
+  "Chunk": 4869,
+  "File": 33,
+  "HAS_CHUNK": 4869,
+  "HAS_TAG": 62443,
+  "Source": 1,
+  "Tag": 15605
+ },
+ "target_database": "herb-eval-v2",
+ "timestamp": "2026-08-14T00:24:39Z",
+ "written": {
+  "appears_in_channel": 4655,
+  "appears_in_product": 2320,
+  "colleague": 1891,
+  "has_channel": 294,
+  "in_company": 120,
+  "in_org": 530,
+  "manages": 512
+ }
+}

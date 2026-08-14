@@ -69,6 +69,47 @@ def completed_calls() -> int:
     return _completed[0]
 
 
+# Per-thread transport accounting. A call's wall time is three different things —
+# standing in the pacer queue, the request itself, and the cost of failures — and
+# only the middle one is the model's own latency. Collapsed into one number they
+# are unseparable, and the first is a function of --workers and lane congestion,
+# so it makes runs at different concurrency incomparable. A caller brackets its
+# work with reset_timing()/take_timing() and records the parts beside the total.
+_call_timing = threading.local()
+
+
+def reset_timing() -> None:
+    """Zero this thread's transport accounting."""
+    _call_timing.attempts = 0
+    _call_timing.request_s = 0.0
+    _call_timing.wait_s = 0.0
+    _call_timing.retry_s = 0.0
+
+
+def take_timing() -> dict:
+    """This thread's transport accounting since its last reset, and zero it.
+    `attempts` counts every try; `request_s` is time inside the request that
+    succeeded — the model's own latency; `wait_s` is pacer queueing before the
+    first try; `retry_s` is every failed try and the waiting its backoff caused."""
+    out = {
+        "attempts": getattr(_call_timing, "attempts", 0),
+        "request_s": getattr(_call_timing, "request_s", 0.0),
+        "wait_s": getattr(_call_timing, "wait_s", 0.0),
+        "retry_s": getattr(_call_timing, "retry_s", 0.0),
+    }
+    reset_timing()
+    return out
+
+
+def _record_timing(attempts: int, request_s: float, wait_s: float, retry_s: float) -> None:
+    """Add one call's parts to this thread's running totals — a caller that makes
+    several calls (an embedding batch, a multi-pass interpret) accumulates them."""
+    _call_timing.attempts = getattr(_call_timing, "attempts", 0) + attempts
+    _call_timing.request_s = getattr(_call_timing, "request_s", 0.0) + request_s
+    _call_timing.wait_s = getattr(_call_timing, "wait_s", 0.0) + wait_s
+    _call_timing.retry_s = getattr(_call_timing, "retry_s", 0.0) + retry_s
+
+
 def _wait_my_turn(model: str = "", key_idx: int = 0) -> None:
     """Block until this (key, model) lane's next call is allowed, leaving
     SECONDS_BETWEEN_CALLS between calls on THE SAME ACCOUNT TO THE SAME MODEL across
@@ -186,36 +227,62 @@ def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
         cmd += ["--json-schema", json.dumps(schema)]
 
     last = None
+    # This lane has no pacer — the CLI's own account limits govern — so wait_s is
+    # structurally zero here, and recording it says so rather than leaving the two
+    # backends silently different shapes.
+    request_s = retry_s = 0.0
+    attempts = 0
     for attempt in range(max_tries):
         if abort.aborted():
             raise abort.Aborted("claude call skipped — abort requested (pressed q)")
+        attempts += 1
+        r0 = time.perf_counter()
         try:
             r = subprocess.run(cmd, input=prompt, capture_output=True, text=True,
                                timeout=timeout, encoding="utf-8")
         except subprocess.TimeoutExpired as err:
+            retry_s += time.perf_counter() - r0
             last = err
         else:
+            spent = time.perf_counter() - r0
             if r.returncode != 0:
+                retry_s += spent
                 last = RuntimeError(
                     f"claude exit {r.returncode}: {(r.stderr or r.stdout)[:200]}")
             else:
                 try:
                     data = json.loads(r.stdout)
                 except ValueError as err:
+                    retry_s += spent
                     last = RuntimeError(f"claude envelope not JSON: {err} — {r.stdout[:200]}")
                 else:
                     result = _FENCE.sub("", (data.get("result") or "").strip())
                     usage = data.get("usage") or {}
+                    _record_timing(attempts, request_s + spent, 0.0, retry_s)
                     with _pace_lock:
                         _completed[0] += 1
+                    # The CLI splits input three ways — fresh, cache-write and
+                    # cache-read — and `input_tokens` alone is only the fresh part,
+                    # which for a prompt carrying retrieved contexts is a rounding
+                    # error against the whole. prompt_tokens is the sum, so a call
+                    # site reads the input it actually sent; the cache-read share
+                    # rides alongside, since that is the part billed differently.
+                    cached = int(usage.get("cache_read_input_tokens") or 0)
+                    prompt_tokens = (int(usage.get("input_tokens") or 0)
+                                     + int(usage.get("cache_creation_input_tokens") or 0)
+                                     + cached)
                     return {
                         "choices": [{"message": {"content": result},
                                      "finish_reason": "stop"}],
-                        "usage": {"prompt_tokens": int(usage.get("input_tokens") or 0),
-                                  "completion_tokens": int(usage.get("output_tokens") or 0)},
+                        "usage": {"prompt_tokens": prompt_tokens,
+                                  "completion_tokens": int(usage.get("output_tokens") or 0),
+                                  "cached_input_tokens": cached},
                     }
         if attempt < max_tries - 1:
+            s0 = time.perf_counter()
             time.sleep(2 ** attempt)
+            retry_s += time.perf_counter() - s0
+    _record_timing(attempts, request_s, 0.0, retry_s)  # a run that gave up still paid
     raise RuntimeError(f"claude {model} gave up after {max_tries} tries: {last!r}")
 
 
@@ -255,27 +322,46 @@ def post(path: str, payload: dict, timeout: float = 120.0, max_tries: int | None
     started = time.monotonic()
     last = None
     degraded_tries = 0
+    request_s = wait_s = retry_s = 0.0
+    attempts = 0
     max_tries = MAX_TRIES if max_tries is None else max(1, int(max_tries))
     give_up_after_s = GIVE_UP_AFTER_S if give_up_after_s is None else float(give_up_after_s)
     for attempt in range(max_tries):
+        w0 = time.perf_counter()
         _wait_my_turn(model, key_idx)
+        # queueing before the first try is this lane's own pacing; on a later try it
+        # is the backoff a previous failure pushed onto the lane, so it is retry cost
+        waited = time.perf_counter() - w0
+        if attempt == 0:
+            wait_s += waited
+        else:
+            retry_s += waited
+        attempts += 1
+        r0 = time.perf_counter()
         try:
             response = httpx.post(f"{BASE_URL}{path}", json=payload,
                                   headers=headers, timeout=timeout)
         except httpx.TransportError as err:  # connect/read/protocol blip — retry
+            retry_s += time.perf_counter() - r0
             last, delay = err, float(2 ** attempt)
         else:
+            spent = time.perf_counter() - r0
             if response.status_code < 400:
+                _record_timing(attempts, request_s + spent, wait_s, retry_s)
                 with _pace_lock:
                     _completed[0] += 1
                 return response.json()
+            retry_s += spent
             degraded = (response.status_code == 400
                         and "DEGRADED function cannot be invoked" in response.text)
             if degraded and degraded_tries < MAX_DEGRADED_RETRIES:
                 degraded_tries += 1
                 last, delay = response, 3.0  # transient model blip — a few quick retries
             elif response.status_code not in RETRYABLE_STATUS:
-                response.raise_for_status()  # real 4xx (or DEGRADED past its cap) — fail fast
+                # real 4xx (or DEGRADED past its cap) — fail fast, but the tries it
+                # already spent were billed and are recorded before the raise
+                _record_timing(attempts, request_s, wait_s, retry_s)
+                response.raise_for_status()
             else:
                 last, delay = response, _delay_after(response, attempt)
 
@@ -285,6 +371,7 @@ def post(path: str, payload: dict, timeout: float = 120.0, max_tries: int | None
         _back_off(delay, model, key_idx)  # this lane's next _wait_my_turn (every caller of it)
         #                                   waits; other keys and models are unaffected
 
+    _record_timing(attempts, request_s, wait_s, retry_s)  # a run that gave up still paid
     detail = (f"{last.status_code} {last.text[:200]}"
               if isinstance(last, httpx.Response) else repr(last))
     raise RuntimeError(f"NIM {path} gave up after {attempt + 1} tries / "

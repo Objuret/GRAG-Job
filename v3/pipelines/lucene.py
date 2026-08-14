@@ -29,6 +29,26 @@ verbatim, so context_ids land in the SAME id space the gold citations use
 (verified: 100% of gold citations resolve to an artifact id), which is what the
 citation-based context precision/recall compares against.
 
+Corpus scope. HERB's dataset card marks the `team` and `customers` FIELDS inside
+a product file as oracle-only and says those facts "should be inferred from
+either other artifacts (e.g. Slack messages) or from `metadata/*`"
+(`data/raw/Salesforce__HERB/README.md`:54) — `derive_corpus.RAG_UNSAFE_KEYS`
+strips the two fields, and the three `metadata/` directory files are a sanctioned
+RAG source. With `HERB_BASELINE_METADATA=1` this index carries them too. The
+document is one directory ENTRY, not one file: `employee.json` is 89,394 chars
+and `salesforce_team.json` 112,053 against a 293-char median artifact, so BM25's
+length normalisation (b=0.4) buries a whole-file document, and one entry is the
+granularity the id->name join lives at — a query naming a person or a company
+matches exactly one short record. Of `salesforce_team.json`'s 530 nodes only the
+65 carrying report rosters are emitted: the other 465 are byte-identical to their
+`employee.json` records, so emitting them would put 465 exact duplicates in the
+index competing for the same rank slots, and the reporting structure is the only
+thing that file adds. A directory record carries no artifact `id`, so it
+contributes NO context_ids — the same thing the artefact arm does with a
+directory chunk (`artefact_v1._resolve_chunk` returns an empty id list for a
+`metadata` locator). Its text reaches the generator and its rank slot is spent;
+the citation id space stays exactly the artifact id space.
+
 Contract fit: prepare returns a Prepared index carrying a contract.BuildStats;
 answer_one_question returns a contract.ArmOutput. The question is read for its
 `id` + `question` ONLY — `ground_truth` / `citations` are never touched, so the
@@ -56,6 +76,7 @@ target — every arm is scored solely by RAGAS):
 from __future__ import annotations
 
 import json
+import os
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -72,9 +93,8 @@ K1 = 0.9
 B = 0.4
 DEFAULT_TOP_K = 10
 
-# The six artifact arrays in each HERB product file. Metadata (employee /
-# customer / team) is deliberately NOT indexed: no gold citation ever points at
-# it, so it could only act as a never-relevant distractor.
+# The six artifact arrays a corpus-view HERB product file carries — its ten raw
+# top-level keys less the four `derive_corpus.STRIP_KEYS` removes.
 ARTIFACT_TYPES = (
     "slack",
     "documents",
@@ -83,6 +103,40 @@ ARTIFACT_TYPES = (
     "urls",
     "prs",
 )
+
+
+def _env_bool(name: str, default: bool) -> bool:
+    """A run switch read from the environment, `default` when unset or blank.
+    Only "0" and "1" are values; anything else fails loud rather than silently
+    reverting, so a typo can never select the other corpus."""
+    raw = os.environ.get(name)
+    if raw is None or not raw.strip():
+        return default
+    value = raw.strip()
+    if value not in ("0", "1"):
+        raise ValueError(f"{name} must be '0' or '1', got {raw!r}")
+    return value == "1"
+
+
+# Corpus scope: with HERB_BASELINE_METADATA=1 the index carries HERB's three
+# `metadata/` directory files beside the product artifacts, one document per
+# directory entry. Read once at import so a run documents its own corpus.
+METADATA_ON = _env_bool("HERB_BASELINE_METADATA", False)
+
+# HERB's directory files, under the corpus root, keyed by the section name each
+# one is read under.
+EMPLOYEE_JSON = "metadata/employee.json"
+CUSTOMERS_JSON = "metadata/customers_data.json"
+TEAM_JSON = "metadata/salesforce_team.json"
+
+# A directory unit id is namespaced, because one person is both an `employee`
+# entry and a `salesforce_team` entry under the same native id, and because a
+# directory record must never be mistaken for an artifact. `ingest_corpus`
+# checks the artifact ids against this prefix rather than assuming the split.
+DIRECTORY_ID_PREFIX = "metadata::"
+
+# Manifest provenance: the corpus scope, recorded by the runner in run_manifest.json.
+RETRIEVAL_FLAGS = {"HERB_BASELINE_METADATA": METADATA_ON}
 
 # The shared generator the orchestrator injects into every arm (fairness
 # control). It takes the question text + retrieved contexts and returns the
@@ -151,11 +205,52 @@ def _flatten_one(kind: str, rec: dict) -> Optional[tuple]:
     return aid, title, contents
 
 
+def _team_leaders(nodes: list) -> list:
+    """The `salesforce_team.json` nodes that carry a roster of direct reports,
+    depth first. A node with no list-valued field is a leaf, and a leaf repeats
+    its `employee.json` record field for field, so only the leaders are read."""
+    out: list = []
+    for node in nodes:
+        rosters = [v for v in node.values() if isinstance(v, list)]
+        if rosters:
+            out.append(node)
+        for roster in rosters:
+            out.extend(_team_leaders(roster))
+    return out
+
+
+def _directory_records(root: Path) -> list:
+    """HERB's directory files as (section, native id, record) triples. A record
+    with no id fails loud rather than entering the index unaddressable."""
+    employees = json.loads((root / EMPLOYEE_JSON).read_text(encoding="utf-8"))
+    customers = json.loads((root / CUSTOMERS_JSON).read_text(encoding="utf-8"))
+    team = json.loads((root / TEAM_JSON).read_text(encoding="utf-8"))
+    return (
+        [("employee", rec["employee_id"], rec) for rec in employees.values()]
+        + [("customers_data", rec["id"], rec) for rec in customers]
+        + [("salesforce_team", rec["employee_id"], rec) for rec in _team_leaders(team)]
+    )
+
+
+def _flatten_directory(section: str, rec: dict) -> tuple:
+    """One directory record -> (title, contents). Fields render as `name: value`
+    in the record's own key order; a roster renders as its members' names with
+    their ids, so a leader's reports are one searchable line."""
+    lines = []
+    for key, value in rec.items():
+        if isinstance(value, list):
+            value = ", ".join(f'{m["name"]} ({m["employee_id"]})' for m in value)
+        lines.append(f"{key}: {value}")
+    return f"{section} directory", "\n".join(lines)
+
+
 def ingest_corpus(corpus_root: Union[str, Path]) -> list:
     """Flatten HERB into one document per artifact: {id, title, contents, kind}.
 
-    Reads product files only. Ids are globally unique in HERB; on the rare
-    duplicate the first occurrence wins so the id->record map stays 1:1.
+    Reads product files, and under METADATA_ON HERB's three directory files as
+    one document per entry, namespaced by DIRECTORY_ID_PREFIX. Artifact ids are
+    globally unique in HERB; on the rare duplicate the first occurrence wins so
+    the id->record map stays 1:1.
     linked to: build_sparse_index (consumes these docs)
     """
     root = Path(corpus_root)
@@ -176,6 +271,25 @@ def ingest_corpus(corpus_root: Union[str, Path]) -> list:
                 docs.append(
                     {"id": aid, "title": title, "contents": contents, "kind": kind}
                 )
+
+    artifacts = len(docs)
+    if METADATA_ON:
+        clash = sorted(i for i in seen if str(i).startswith(DIRECTORY_ID_PREFIX))
+        if clash:
+            raise RuntimeError(
+                f"{len(clash)} artifact ids sit in the directory namespace "
+                f"{DIRECTORY_ID_PREFIX!r} (e.g. {clash[:3]}) — a directory record "
+                f"would be indistinguishable from an artifact")
+        for section, native, rec in _directory_records(root):
+            uid = f"{DIRECTORY_ID_PREFIX}{section}::{native}"
+            if uid in seen:
+                raise RuntimeError(f"duplicate directory unit id {uid!r}")
+            seen.add(uid)
+            title, contents = _flatten_directory(section, rec)
+            docs.append({"id": uid, "title": title, "contents": contents,
+                         "kind": section})
+    print(f"lucene: {artifacts} artifacts + {len(docs) - artifacts} directory records",
+          flush=True)
     return docs
 
 
@@ -278,10 +392,13 @@ def retrieve_top_k_units(question, prepared: Prepared, k: int = DEFAULT_TOP_K) -
     return units
 
 
-def unit_to_artifact_id(unit: dict) -> str:
-    """Read the native artifact id off the unit. Fills ArmOutput.context_ids
-    (same id space the artefact resolves to and the gold citations use)."""
-    return unit["id"]
+def unit_to_artifact_id(unit: dict) -> Optional[str]:
+    """The native artifact id off the unit, None for a directory record — a HERB
+    directory entry has no artifact id, so it enters no citation-space list.
+    Fills ArmOutput.context_ids (same id space the artefact resolves to and the
+    gold citations use)."""
+    uid = unit["id"]
+    return None if str(uid).startswith(DIRECTORY_ID_PREFIX) else uid
 
 
 def gather_unit_text(units: list) -> list:
@@ -312,6 +429,11 @@ def answer_one_question(
     (char_budget.cut_at_budget): whole artifacts in rank order, the crossing
     artifact cut mid-text as the final context. `context_ids` carries the whole
     artifacts only; the cut is recorded in meta["char_budget"].
+
+    Under METADATA_ON a retrieved directory record occupies a context and
+    contributes no id, so `context_ids` is shorter than `contexts` and the
+    per-context id lists ride in meta["chunk_ids"] — what `truncate_k` rebuilds
+    a shallower depth's ids from.
     linked to: orchestrator; shared `generate`; returns contract.ArmOutput
     """
     _, text = _qid_text(question)
@@ -323,8 +445,11 @@ def answer_one_question(
 
     meta = None
     if char_budget is None:
-        context_ids = [unit_to_artifact_id(u) for u in units]
+        per_unit = [unit_to_artifact_id(u) for u in units]
+        context_ids = [aid for aid in per_unit if aid is not None]
         contexts = gather_unit_text(units)
+        if METADATA_ON:
+            meta = {"chunk_ids": [[aid] if aid is not None else [] for aid in per_unit]}
     else:
         # A zero BM25 score expresses no preference, so the consumable
         # ranking ends there; a budget the scored ranking cannot fill is an
@@ -332,7 +457,8 @@ def answer_one_question(
         ranked = [u for u in units if u["score"] > 0.0]
         cut = cut_at_budget(((u["id"], u["text"]) for u in ranked), char_budget)
         contexts = cut.contexts
-        context_ids = [unit_to_artifact_id(u) for u in ranked[:cut.kept]]
+        context_ids = [aid for aid in (unit_to_artifact_id(u) for u in ranked[:cut.kept])
+                       if aid is not None]
         meta = {"char_budget": {"budget": char_budget, "chars": cut.chars,
                                 "kept": cut.kept, "boundary": cut.boundary,
                                 "exhausted": cut.exhausted}}

@@ -9,6 +9,7 @@ corpus -> pipeline and truth -> evaluator. No retrieval/scoring logic of its own
 from __future__ import annotations
 
 import json
+import os
 import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
@@ -16,6 +17,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import abort
+import jsonl
+import provenance
 from progress import progress
 import questions
 from contract import (
@@ -27,6 +30,11 @@ _HERE = Path(__file__).parent
 DEFAULT_CORPUS = _HERE / "data" / "corpus" / "Salesforce__HERB"
 DEFAULT_OUTPUT = _HERE / "output"
 GRAPH_BUILD_DIR = DEFAULT_OUTPUT / "graph_build"
+# A run is filed under what cuts its depth: a count of retrieval units (top-k) or
+# a character total (char_budget). One root per family, so the caches and the
+# id-set files keep output/ to themselves and neither family buries the other.
+CHUNKS_ROOT = DEFAULT_OUTPUT / "k=chunks"
+CHARS_ROOT = DEFAULT_OUTPUT / "k=chars"
 DEFAULT_TOP_K = 50
 # Questions answer concurrently; generation is the slow leg, so overlapping calls
 # ride up to nim.py's shared rate cap (which is what actually bounds throughput).
@@ -39,7 +47,7 @@ MAX_CONSECUTIVE_FAILURES = 10
 # The shared generator on NVIDIA NIM. ONE model, built once here and injected into
 # every arm, so the only variable across arms is retrieval, never the LLM. Transport
 # is nim.post (NIM speaks the OpenAI REST API).
-GENERATOR_MODEL = "qwen/qwen3.5-397b-a17b"
+GENERATOR_MODEL = "claude-sonnet-5"
 
 # OpenAI-format structured output: the model returns exactly {answer} under a strict
 # schema, not free text. The answer is the only thing the generator owns — retrieved
@@ -127,6 +135,7 @@ def build_shared_generator(config):
     model = config.get("generator_model", GENERATOR_MODEL)
 
     def generate(question, contexts):
+        nim.reset_timing()
         t0 = time.perf_counter()
         resp = nim.post("/chat/completions", {
             "model": model,
@@ -148,6 +157,7 @@ def build_shared_generator(config):
             },
         }, timeout=480.0)  # the hosted model queues under load; a try must outlast the queue
         elapsed = time.perf_counter() - t0
+        transport = nim.take_timing()
         choices = resp.get("choices") or []
         if not choices:
             raise RuntimeError("generator returned no choices")
@@ -167,7 +177,9 @@ def build_shared_generator(config):
                 f"(finish_reason={choices[0].get('finish_reason')}): {content!r}") from e
         tokens_in, tokens_out = generator_usage_from_nim(resp.get("usage"))
         return answer, {"calls": 1, "tokens_in": tokens_in, "tokens_out": tokens_out,
-                        "time": elapsed}
+                        "cached_input_tokens": int(
+                            (resp.get("usage") or {}).get("cached_input_tokens") or 0),
+                        "time": elapsed, **transport}
 
     return generate
 
@@ -185,12 +197,19 @@ def to_arm_question(question):
 
 def _done_ids(records_path):
     """Ids already answered — one per line in arm_outputs.jsonl. This is the resume
-    set: a re-run skips these, so finished work is never redone or lost."""
-    p = Path(records_path)
-    if not p.is_file():
-        return set()
-    return {json.loads(x)["id"]
-            for x in p.read_text(encoding="utf-8").splitlines() if x.strip()}
+    set: a re-run skips these, so finished work is never redone or lost. A killed
+    write can leave the last line torn; that answer never finished, so it is
+    dropped here and re-answered (jsonl.load)."""
+    return {rec["id"] for rec in jsonl.load(records_path)}
+
+
+def _n_exhausted(records_path):
+    """How many answered questions ran their ranking out before the character
+    budget — the arm records that case per answer as meta.char_budget.exhausted,
+    and a run whose arms could not fill the budget it names is only legible if
+    the count is carried where the totals are read."""
+    return sum(1 for rec in jsonl.load(records_path)
+               if ((rec.get("meta") or {}).get("char_budget") or {}).get("exhausted"))
 
 
 def _rehydrate(rec):
@@ -226,6 +245,10 @@ def run_one_pipeline(pipeline, chosen, corpus, generate, out_dir, k=DEFAULT_TOP_
     out.mkdir(parents=True, exist_ok=True)
     records_path = out / "arm_outputs.jsonl"
     failures_path = out / "failures.jsonl"
+    # A killed write can leave a fragment with no newline. Appending onto it would
+    # weld two records into one unparseable line and the folder could never resume
+    # again, so the fragment is cut before the append handle opens.
+    jsonl.heal(records_path)
     done = _done_ids(records_path)
     todo = [q for q in chosen if q.id not in done]
 
@@ -268,10 +291,16 @@ def run_one_pipeline(pipeline, chosen, corpus, generate, out_dir, k=DEFAULT_TOP_
                                f"(generation backend likely down) - last: {e!r}")
                     break
             else:
+                # answered_at makes a resumed folder legible: which answers came from
+                # which leg, and how much of the elapsed span was the machine idle
+                # between them rather than work.
                 fh.write(json.dumps(
-                    {"id": q.id, "question": q.question, **asdict(out_obj)},
+                    {"id": q.id, "question": q.question,
+                     "answered_at": datetime.now(timezone.utc).isoformat(),
+                     **asdict(out_obj)},
                     ensure_ascii=False) + "\n")
-                fh.flush()  # durable per answer — a kill keeps what finished
+                fh.flush()
+                os.fsync(fh.fileno())  # durable per answer — survives a power cut, not just a kill
                 ran.append(q)
                 consecutive = 0
     return ran, failures, aborted, getattr(prepared, "build_stats", None)
@@ -294,6 +323,8 @@ def graph_identity(database):
     """The manifest's graph block for the Neo4j database the arm queried: the
     resolved name plus the graph's build RECORD as read at manifest-write time —
     when GRAPH_BUILD_DIR/<database>/build_manifest.json exists, its
+    graph_version and graph_census_sha256 (what the graph holds, so one database
+    name rebuilt into a different shape reads as a different graph),
     removed_tags_sha256, build timestamp and source_database (the parent the
     build copied from, so the run folder keeps its lineage even without
     graph_build/). A database with no readable build record carries a null
@@ -304,16 +335,19 @@ def graph_identity(database):
     """
     if database is None:
         return None
-    sha = built = source = None
+    version = census = sha = built = source = None
     try:
         record = json.loads((GRAPH_BUILD_DIR / database / "build_manifest.json")
                             .read_text(encoding="utf-8"))
+        version = record.get("graph_version")
+        census = record.get("graph_census_sha256")
         sha = record.get("removed_tags_sha256")
         built = record.get("timestamp")
         source = record.get("source_database")
     except (OSError, ValueError, AttributeError):
         pass
-    return {"database": database, "removed_tags_sha256": sha,
+    return {"database": database, "graph_version": version,
+            "graph_census_sha256": census, "removed_tags_sha256": sha,
             "build_timestamp": built, "source_database": source}
 
 
@@ -341,12 +375,15 @@ def _merged_graph(prior, current):
     return {"mixed_builds": builds + [current]}
 
 
-def build_run_manifest(config, arm, build_stats, n_questions, n_ran, n_failed):
+def build_run_manifest(config, arm, build_stats, n_questions, n_ran, n_failed,
+                       n_exhausted=None):
     """Provenance for the generation side -> contract.RunManifest (timestamp now,
     UTC). Records the run split (chosen / ran / failed) so the run folder is
-    self-documenting — no need to count jsonl lines to see what failed — and the
-    graph identity when the arm queries Neo4j (config['graph_database'], resolved
-    off the pipeline module in run())."""
+    self-documenting — no need to count jsonl lines to see what failed — plus how
+    many answers ran their ranking out before the character budget
+    (`n_exhausted`, None on a depth run), and the graph identity when the arm
+    queries Neo4j (config['graph_database'], resolved off the pipeline module in
+    run())."""
     return RunManifest(
         arm=arm,
         generator_model=(None if config.get("retrieval_only")
@@ -358,21 +395,89 @@ def build_run_manifest(config, arm, build_stats, n_questions, n_ran, n_failed):
         n_questions=n_questions,
         n_ran=n_ran,
         n_failed=n_failed,
+        n_exhausted=n_exhausted,
         timestamp=datetime.now(timezone.utc).isoformat(),
         build_stats=build_stats,
         retrieval_flags=config.get("retrieval_flags"),
         graph=graph_identity(config.get("graph_database")),
+        code_version=provenance.code_version(),
+        environment=provenance.environment(),
+        inputs=provenance.inputs(
+            questions_file=config.get("questions_path") or questions.QUESTIONS,
+            ids_file=config.get("ids_file"),
+            corpus_root=config.get("corpus_root", DEFAULT_CORPUS)),
     )
 
 
+def _accumulated_judge(prior, manifest):
+    """The judge block a manifest rewrite records.
+
+    A resumed eval scores only the cells the previous leg left, so its usage is a
+    PART of what the folder cost, never a replacement for it. Each leg is kept in
+    `judge_legs` and the totals are the sum of that list, so a resumed folder
+    still states its true cost, the total stays decomposable, and a leg scored by
+    a different judge is visible rather than folded into one anonymous number. A
+    leg that made no judge call adds nothing — a re-run that finds every cell
+    already scored leaves the record as it was.
+    linked to: run() (the manifest rewrite on resume)
+    """
+    legs = list((prior or {}).get("judge_legs") or [])
+    if not legs and prior and (prior.get("judge_usage") or prior.get("judge_elapsed_s")):
+        # a manifest written before legs were kept still carries its own totals
+        legs.append({"timestamp": prior.get("timestamp"),
+                     "judge_model": prior.get("judge_model"),
+                     "judge_backend": prior.get("judge_backend"),
+                     "usage": prior.get("judge_usage"),
+                     "elapsed_s": prior.get("judge_elapsed_s")})
+
+    usage = manifest.judge_usage
+    if usage is not None and usage.calls:
+        legs.append({"timestamp": manifest.timestamp,
+                     "judge_model": manifest.judge_model,
+                     "judge_backend": manifest.judge_backend,
+                     "usage": asdict(usage),
+                     "elapsed_s": manifest.judge_elapsed_s})
+
+    if not legs:
+        return manifest
+
+    total = ModelUsage()
+    elapsed = 0.0
+    for leg in legs:
+        u = model_usage_from_dict(leg.get("usage") or {})
+        total.calls += u.calls
+        total.tokens_in += u.tokens_in
+        total.cached_input_tokens += u.cached_input_tokens
+        total.tokens_out += u.tokens_out
+        total.reasoning_tokens += u.reasoning_tokens
+        total.time_s += u.time_s
+        total.attempts += u.attempts
+        total.request_s += u.request_s
+        total.wait_s += u.wait_s
+        total.retry_s += u.retry_s
+        elapsed += float(leg.get("elapsed_s") or 0.0)
+    manifest.judge_usage = total
+    manifest.judge_elapsed_s = elapsed
+    manifest.judge_legs = legs
+    return manifest
+
+
 def build_eval_manifest(config, scorer, arm, source_run):
-    """Provenance for the eval side -> contract.EvalManifest (timestamp now, UTC)."""
+    """Provenance for the eval side -> contract.EvalManifest (timestamp now, UTC).
+    The judge block is what the scoring leg actually invoked — model, backend,
+    reasoning effort, aggregate usage and wall time — so a folder's scores can be
+    priced and compared against another judge's without rerunning anything."""
+    usage = config.get("judge_usage")
     return EvalManifest(
         scorer=scorer,
         judge_model=config.get("judge_model"),
         source_run=str(source_run),
         arm=arm,
         timestamp=datetime.now(timezone.utc).isoformat(),
+        judge_backend=config.get("judge_backend"),
+        judge_effort=config.get("judge_effort"),
+        judge_usage=model_usage_from_dict(asdict(usage)) if usage is not None else None,
+        judge_elapsed_s=config.get("judge_elapsed_s"),
     )
 
 
@@ -386,10 +491,11 @@ def run(pipeline, evaluator, ids_file, config=None):
     lands (resumable + crash-safe); then — unless the run aborts — the evaluator
     scores the FULL persisted set. Re-running with the same out_dir resumes: ids
     already on disk are skipped, the rest are answered and appended.
-    -> {out_dir, n_questions, n_ran, n_failed, n_results}.
+    -> {out_dir, n_questions, n_ran, n_failed, n_exhausted, n_results}.
     linked to: all of the above; run.py is the CLI over this.
     """
     config = dict(config or {})
+    config.setdefault("ids_file", ids_file)  # digested into the manifest's inputs block
     arm = _arm_name(pipeline)
     config.setdefault("interpreter_model", getattr(pipeline, "INTERPRET_MODEL", None))
     config.setdefault("retrieval_flags", getattr(pipeline, "RETRIEVAL_FLAGS", None))
@@ -399,7 +505,8 @@ def run(pipeline, evaluator, ids_file, config=None):
     chosen = load_chosen_questions(ids_file, config.get("questions_path"))
     corpus = open_corpus(config.get("corpus_root", DEFAULT_CORPUS))
     generate = build_shared_generator(config)
-    out = Path(config.get("out_dir") or DEFAULT_OUTPUT / f"{arm}__{evname}")
+    root = CHUNKS_ROOT if config.get("char_budget") is None else CHARS_ROOT
+    out = Path(config.get("out_dir") or root / f"{arm}__{evname}")
 
     ran, _, aborted, build_stats = run_one_pipeline(
         pipeline, chosen, corpus, generate, out,
@@ -415,10 +522,12 @@ def run(pipeline, evaluator, ids_file, config=None):
     # generator model) belongs to the leg that produced the answers.
     done = _done_ids(out / "arm_outputs.jsonl")
     n_failed = len(chosen) - len(done)
+    n_exhausted = (None if config.get("char_budget") is None
+                   else _n_exhausted(out / "arm_outputs.jsonl"))
     manifest_path = out / "run_manifest.json"
     if ran or not manifest_path.is_file():
         manifest = build_run_manifest(
-            config, arm, build_stats, len(chosen), len(done), n_failed)
+            config, arm, build_stats, len(chosen), len(done), n_failed, n_exhausted)
         if manifest_path.is_file():
             # a resume rewrite: the answers already on disk may predate a rebuild
             # of the same database, so a graph identity differing from the one
@@ -438,13 +547,13 @@ def run(pipeline, evaluator, ids_file, config=None):
 
     if evaluator is None:  # arm run — answers only, no scoring
         return {"out_dir": str(out), "n_questions": len(chosen),
-                "n_ran": len(done), "n_failed": n_failed}
+                "n_ran": len(done), "n_failed": n_failed,
+                "n_exhausted": n_exhausted}
 
     # eval scores the FULL persisted set, re-hydrating ArmOutput from the records
     # (so a resumed run scores everything, not just the last leg); truth joins by id.
     by_id = {q.id: q for q in chosen}
-    recs = [json.loads(x) for x in
-            (out / "arm_outputs.jsonl").read_text(encoding="utf-8").splitlines() if x.strip()]
+    recs = jsonl.load(out / "arm_outputs.jsonl")
     eval_path = out / "eval_results.jsonl"
     results = run_one_evaluator(
         evaluator, [_rehydrate(r) for r in recs], [by_id[r["id"]] for r in recs],
@@ -455,15 +564,25 @@ def run(pipeline, evaluator, ids_file, config=None):
     config["judge_effort"] = getattr(evaluator, "LAST_JUDGE_REASONING_EFFORT", None)
     config["judge_usage"] = getattr(evaluator, "LAST_JUDGE_USAGE", None)
     config["judge_elapsed_s"] = getattr(evaluator, "LAST_JUDGE_WALL_TIME_S", None)
-    (out / "eval_manifest.json").write_text(
-        json.dumps(asdict(build_eval_manifest(config, evname, arm, out)),
-                   ensure_ascii=False, indent=2), encoding="utf-8")
+    eval_manifest_path = out / "eval_manifest.json"
+    eval_manifest = build_eval_manifest(config, evname, arm, out)
+    if eval_manifest_path.is_file():
+        # this leg scored only what the last one left, so its cost adds to the
+        # folder's rather than replacing it
+        try:
+            prior = json.loads(eval_manifest_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            prior = None  # unreadable prior: this leg's cost is all that can be stated
+        eval_manifest = _accumulated_judge(prior, eval_manifest)
+    eval_manifest_path.write_text(
+        json.dumps(asdict(eval_manifest), ensure_ascii=False, indent=2),
+        encoding="utf-8")
     # the evaluator wrote each question's cells to eval_path as they finished (resumable),
     # so count from disk — a resumed run reports the full set, not just this leg.
     n_results = (sum(1 for x in eval_path.read_text(encoding="utf-8").splitlines() if x.strip())
                  if eval_path.is_file() else len(results or []))
     return {"out_dir": str(out), "n_questions": len(chosen), "n_ran": len(done),
-            "n_failed": n_failed, "n_results": n_results}
+            "n_failed": n_failed, "n_exhausted": n_exhausted, "n_results": n_results}
 
 
 # --- self-check --------------------------------------------------------------
@@ -608,27 +727,33 @@ def _selfcheck():
             built = Path(d) / "eval-v9"
             built.mkdir()
             (built / "build_manifest.json").write_text(json.dumps(
-                {"removed_tags_sha256": "ab12", "timestamp": "2026-08-12T20:38:00Z",
+                {"graph_version": "copy+entities", "graph_census_sha256": "cd34",
+                 "removed_tags_sha256": "ab12", "timestamp": "2026-08-12T20:38:00Z",
                  "source_database": "eval-v8"}), encoding="utf-8")
             assert _graph_of("eval-v9") == {
-                "database": "eval-v9", "removed_tags_sha256": "ab12",
+                "database": "eval-v9", "graph_version": "copy+entities",
+                "graph_census_sha256": "cd34", "removed_tags_sha256": "ab12",
                 "build_timestamp": "2026-08-12T20:38:00Z",
                 "source_database": "eval-v8"}
             assert _graph_of("bare-db") == {  # no build record: name + null identity
-                "database": "bare-db", "removed_tags_sha256": None,
+                "database": "bare-db", "graph_version": None,
+                "graph_census_sha256": None, "removed_tags_sha256": None,
                 "build_timestamp": None, "source_database": None}
             (built / "build_manifest.json").write_text("{broken", encoding="utf-8")
             assert _graph_of("eval-v9") == {  # corrupt record: null identity, no crash
-                "database": "eval-v9", "removed_tags_sha256": None,
+                "database": "eval-v9", "graph_version": None,
+                "graph_census_sha256": None, "removed_tags_sha256": None,
                 "build_timestamp": None, "source_database": None}
         finally:
             GRAPH_BUILD_DIR = saved
 
     # a manifest rewrite never restamps another build's answers: a differing
     # graph identity becomes a visible mix, and an already-mixed block extends
-    ga = {"database": "db", "removed_tags_sha256": "A",
-          "build_timestamp": "t1", "source_database": "src"}
-    gb = {**ga, "removed_tags_sha256": "B", "build_timestamp": "t2"}
+    ga = {"database": "db", "graph_version": "v1", "graph_census_sha256": "c1",
+          "removed_tags_sha256": "A", "build_timestamp": "t1",
+          "source_database": "src"}
+    gb = {**ga, "graph_version": "v2", "graph_census_sha256": "c2",
+          "removed_tags_sha256": "B", "build_timestamp": "t2"}
     assert _merged_graph(None, None) is None
     assert _merged_graph(ga, ga) == ga
     assert _merged_graph(ga, gb) == {"mixed_builds": [ga, gb]}
@@ -661,7 +786,9 @@ def _selfcheck():
 
             def _record(sha):
                 (bdir / "build_manifest.json").write_text(json.dumps(
-                    {"removed_tags_sha256": sha, "timestamp": f"t-{sha}",
+                    {"graph_version": f"shape-{sha}",
+                     "graph_census_sha256": f"census-{sha}",
+                     "removed_tags_sha256": sha, "timestamp": f"t-{sha}",
                      "source_database": "parent-db"}), encoding="utf-8")
 
             def _leg(n_ids):
@@ -677,11 +804,15 @@ def _selfcheck():
 
             _record("A")
             first = _leg(1)
-            assert first == {"database": "fake-db", "removed_tags_sha256": "A",
-                             "build_timestamp": "t-A", "source_database": "parent-db"}
+            assert first == {"database": "fake-db", "graph_version": "shape-A",
+                             "graph_census_sha256": "census-A",
+                             "removed_tags_sha256": "A", "build_timestamp": "t-A",
+                             "source_database": "parent-db"}
             _record("B")  # the same database name, rebuilt between the legs
-            second = {"database": "fake-db", "removed_tags_sha256": "B",
-                      "build_timestamp": "t-B", "source_database": "parent-db"}
+            second = {"database": "fake-db", "graph_version": "shape-B",
+                      "graph_census_sha256": "census-B",
+                      "removed_tags_sha256": "B", "build_timestamp": "t-B",
+                      "source_database": "parent-db"}
             assert _leg(2) == {"mixed_builds": [first, second]}
 
             # a torn prior manifest is an unknown build, never the current one

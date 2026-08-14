@@ -53,10 +53,12 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 import abort
+import jsonl
 import nim
 from progress import progress
 from contract import EvalResult, ModelUsage
 from eval.ragas_catalog import CATALOG, metrics_to_run
+from pipelines.vector import EMBED_BATCH, _embed_request
 
 # The decided eval model stack: haiku through the headless Claude CLI is the default
 # judge, llama-nemotron-embed on NIM is the dense embedder. RAGAS_JUDGE_MODEL swaps
@@ -198,7 +200,16 @@ def _estimate_tokens(model: str, text: str) -> int:
 
 
 def _record_judge_usage(tokens_in: int, tokens_out: int, reasoning_tokens: int,
-                        elapsed_s: float, cached_input_tokens: int = 0) -> None:
+                        elapsed_s: float, cached_input_tokens: int = 0,
+                        transport: dict | None = None) -> None:
+    """One judge cell's cost. `transport` is the caller's OWN call breakdown — it
+    must be captured around that call, never read off the thread here, or the
+    embedder's requests on the same thread land in the judge's account. A judge
+    that shells out directly has no transport layer beneath it: its whole elapsed
+    time is the request, with no queueing and no retry."""
+    if transport is None:
+        transport = {"attempts": 1, "request_s": float(elapsed_s or 0.0),
+                     "wait_s": 0.0, "retry_s": 0.0}
     with _JUDGE_USAGE_LOCK:
         LAST_JUDGE_USAGE.calls += 1
         LAST_JUDGE_USAGE.tokens_in += int(tokens_in or 0)
@@ -206,6 +217,10 @@ def _record_judge_usage(tokens_in: int, tokens_out: int, reasoning_tokens: int,
         LAST_JUDGE_USAGE.tokens_out += int(tokens_out or 0)
         LAST_JUDGE_USAGE.reasoning_tokens += int(reasoning_tokens or 0)
         LAST_JUDGE_USAGE.time_s += float(elapsed_s or 0.0)
+        LAST_JUDGE_USAGE.attempts += transport["attempts"]
+        LAST_JUDGE_USAGE.request_s += transport["request_s"]
+        LAST_JUDGE_USAGE.wait_s += transport["wait_s"]
+        LAST_JUDGE_USAGE.retry_s += transport["retry_s"]
 
 
 def _claude_verdict(text: str, model: str, timeout_s: float) -> str:
@@ -214,15 +229,19 @@ def _claude_verdict(text: str, model: str, timeout_s: float) -> str:
     owns retries. The lane already strips fences; CLI usage counters fill the
     judge accounting, token estimates cover an envelope without them."""
     started = time.perf_counter()
+    nim.reset_timing()  # scope the breakdown to THIS call, not to whatever else ran here
     resp = nim.post("/chat/completions",
                     {"model": model, "messages": [{"role": "user", "content": text}]},
                     timeout=timeout_s, max_tries=1)
+    transport = nim.take_timing()
     clean = ((resp.get("choices") or [{}])[0].get("message") or {}).get("content") or ""
     usage = resp.get("usage") or {}
     _record_judge_usage(
         int(usage.get("prompt_tokens") or 0) or _estimate_tokens(model, text),
         int(usage.get("completion_tokens") or 0) or _estimate_tokens(model, clean),
-        0, time.perf_counter() - started)
+        0, time.perf_counter() - started,
+        int(usage.get("cached_input_tokens") or 0),
+        transport)
     return clean
 
 
@@ -503,14 +522,24 @@ class _JudgeLLM(BaseRagasLLM):
 
 class _NimEmbedder(BaseRagasEmbeddings):
     """RAGAS embeddings driven by nim.post — llama-nemotron-embed, asymmetric: questions embed
-    as "query", contexts as "passage" (the side matters for retrieval-QA)."""
+    as "query", contexts as "passage" (the side matters for retrieval-QA).
+
+    RAGAS asks one text at a time: SemanticSimilarity awaits `embed_text(reference)` and
+    `embed_text(response)` separately, and AnswerCorrectness runs its own AnswerSimilarity
+    over the same pair for the semantic quarter of its score. `prime` embeds a leg's whole
+    text set first, in full-size NIM batches, and vectors are held by (input_type, text),
+    so those per-text asks are served from memory and a leg's embedding cost is one call
+    per 2048 texts instead of four per question. Vectors are the API's own, unnormalised
+    and identical either way — the batch only changes how many requests carry them."""
 
     def __init__(self, model: str = EMBED_MODEL, run_config: RunConfig = None):
         super().__init__()
         self.model = model
         self.run_config = run_config or RunConfig()
+        self._vectors = {}
+        self._vectors_lock = threading.Lock()
 
-    def _embed(self, texts, input_type):
+    def _request(self, texts, input_type):
         resp = nim.post("/embeddings", {
             "model": self.model,
             "input": [t or " " for t in texts],
@@ -522,6 +551,38 @@ class _NimEmbedder(BaseRagasEmbeddings):
         if not data:
             raise RuntimeError(f"NIM /embeddings returned no data (keys={list(resp)})")
         return [d["embedding"] for d in sorted(data, key=lambda d: d.get("index", 0))]
+
+    def _uncached(self, texts, input_type):
+        """The distinct texts with no vector yet, in first-seen order."""
+        with self._vectors_lock:
+            return [t for t in dict.fromkeys(texts) if (input_type, t) not in self._vectors]
+
+    def _store(self, texts, input_type, vectors) -> None:
+        with self._vectors_lock:
+            self._vectors.update(((input_type, t), v) for t, v in zip(texts, vectors))
+
+    def prime(self, texts, input_type) -> int:
+        """Embed every not-yet-held text in batches of up to `EMBED_BATCH` inputs ->
+        the NIM calls that took. `_embed_request` is the vector arm's batch caller: it
+        splits and retries on a too-large rejection, so the 300k-token cap and an
+        over-long single text resolve or fail loud rather than sink the pass."""
+        missing = self._uncached(texts, input_type)
+        calls = 0
+        for i in range(0, len(missing), EMBED_BATCH):
+            chunk = missing[i:i + EMBED_BATCH]
+            vectors, made, _tok_in, _tok_out, _secs = _embed_request(chunk, input_type)
+            self._store(chunk, input_type, vectors)
+            calls += made
+        return calls
+
+    def _embed(self, texts, input_type):
+        """Vectors for `texts` in input order. Anything `prime` already holds costs
+        nothing; the rest goes to NIM as one request."""
+        missing = self._uncached(texts, input_type)
+        if missing:
+            self._store(missing, input_type, self._request(missing, input_type))
+        with self._vectors_lock:
+            return [self._vectors[(input_type, t)] for t in texts]
 
     def embed_query(self, text):
         return self._embed([text], "query")[0]
@@ -722,7 +783,7 @@ def score_outputs(outputs, questions, arm="", corpus=None, results_path=None, wo
               f"timeout={JUDGE_TIMEOUT_S:g}s tries={JUDGE_MAX_TRIES}")
     gold_text = corpus_gold_text(corpus) if corpus else {}
     results = _score_all(outputs, questions, arm, metrics, gold_text,
-                         results_path, workers)
+                         results_path, workers, embedder)
     LAST_JUDGE_WALL_TIME_S = time.perf_counter() - started
     _print_status_summary(results)
     if LAST_JUDGE_USAGE.calls:
@@ -736,22 +797,10 @@ def score_outputs(outputs, questions, arm="", corpus=None, results_path=None, wo
 
 
 def _load_rows(results_path) -> list:
-    """Parsed rows already in results_path. A torn trailing line from a killed write
-    is dropped (that question re-scores on resume); a non-trailing parse error is real
-    corruption and raises loud."""
-    p = Path(results_path) if results_path else None
-    if not p or not p.is_file():
-        return []
-    lines = [x for x in p.read_text(encoding="utf-8").splitlines() if x.strip()]
-    rows = []
-    for i, x in enumerate(lines):
-        try:
-            rows.append(json.loads(x))
-        except json.JSONDecodeError:
-            if i == len(lines) - 1:
-                break  # torn last line from a killed write — drop it, re-score that q
-            raise
-    return rows
+    """Parsed rows already in results_path — the shared append-log reader, so a torn
+    trailing line from a killed write is dropped (that cell re-scores on resume) and
+    corruption anywhere else raises loud."""
+    return jsonl.load(results_path) if results_path else []
 
 
 def _check_judge_context_budget(outputs, questions, metrics) -> None:
@@ -785,8 +834,23 @@ def _check_judge_context_budget(outputs, questions, metrics) -> None:
     )
 
 
+def _prime_embed_cache(embedder, metrics, samples) -> None:
+    """Embed, in NIM-sized batches, every text the embed metrics are about to ask for
+    one at a time — the leg's answers and gold answers, both of which RAGAS embeds as
+    passages. Runs before the scoring pool starts, so the cells that follow read their
+    vectors from memory. Skipped when no selected metric needs the embedder."""
+    if not any(_EMB in _REGISTRY[n][1] for n in metrics):
+        return
+    texts = [t for _q, s in samples for t in (s.reference or "", s.response or "")]
+    distinct = len(dict.fromkeys(texts))
+    print(f"ragas embed: priming {distinct} text(s) in "
+          f"{-(-distinct // EMBED_BATCH)} batch(es) of up to {EMBED_BATCH}", flush=True)
+    calls = embedder.prime(texts, "passage")
+    print(f"ragas embed: primed in {calls} NIM call(s)", flush=True)
+
+
 def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
-               workers=1) -> list:
+               workers=1, embedder=None) -> list:
     """Score every (question, metric) cell -> list[EvalResult], in ordered passes: the
     deterministic metrics first (no model call — instant, the id-based retrieval scores are
     the headline signal), then the cheap NIM judge/embed metrics, then the per-context
@@ -841,6 +905,13 @@ def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
                  for out, q in zip(outputs, questions)
                  if selected - done_ok[q.id]}
 
+    if embedder is not None and sample_of:
+        _prime_embed_cache(embedder, metrics, sample_of.values())
+
+    if results_path:
+        # cut any fragment a killed write left, so this append lands on its own line
+        # instead of welding onto a half-record the reader could never parse again
+        jsonl.heal(results_path)
     fh = open(results_path, "a", encoding="utf-8") if results_path else None
     ffh = (open(Path(results_path).parent / "eval_failures.jsonl", "w", encoding="utf-8")
            if results_path else None)
@@ -930,7 +1001,8 @@ def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
                         ffh.flush()  # live — errored cells show up the moment they land
                     if fh:
                         fh.write(json.dumps(asdict(row), ensure_ascii=False) + "\n")
-                        fh.flush()  # per cell — durable + resumable at cell grain
+                        fh.flush()
+                        os.fsync(fh.fileno())  # per cell — a judged cell costs money; a power cut must not take it
                     results.append(row)
                     # circuit breaker: when a question's LAST cell lands, mostly-errored
                     # counts as failed; that many in a row means the backend is down.

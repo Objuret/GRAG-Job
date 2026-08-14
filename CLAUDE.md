@@ -1,18 +1,9 @@
 # CLAUDE.md
 
 > **Interpretation, not intent.** This file is agents' claims about how this project should
-> work, written over months; being written here is not the user's approval of it. Intent — what
-> was supposed to be built — lives only in the user's own typed turns
-> (`docs/canon/raw/user_turns*`). State — what exists — lives in the git history and the code,
-> and is evidence of drift from intent, never justification for it.
-> `docs/canon/CANON_AUDIT.md` checks 117 prescriptive claims across the repo's instruction
-> surfaces against the record — 65 grounded in a user quote, 17 agent-origin, 11 contradicting
-> the record, 22 stale, 2 since fixed — of which 20 come from this file. **Those figures are a
-> snapshot of 2026-08-03, not a live count**: they include claims already corrected, among them
-> eight of the audit's own ten worst. Read them as where to look, never as the state of the repo.
-> That audit is interpretation too, and unreviewed: one more opinion, not a ruling. Both files are
-> listed `unreviewed` in `docs/canon/REVIEW_REGISTER.md`, with the rest of the pile. Check a claim
-> against intent before acting on it.
+> work, not the user's approval of them. Intent lives only in his own typed turns
+> (`docs/canon/raw/user_turns*`), and his words outrank anything written here. Go check the
+> record when a rule here is actually in dispute — not before acting on every rule.
 
 ## Repo layout
 
@@ -30,22 +21,27 @@
 - **`CLAUDE.md`, `README.md`** — this repo's working instructions, written by agents.
   The gitignored state docs under `docs/state/` hold the per-session detail.
 
-## Session entry point — read this first
+## The canon record — open it when the question is about intent
+
+None of this is startup reading. A coding task starts by reading the code. Open a canon
+file when the job actually turns on what the user asked for — a design claim you need to
+attribute, a rule you suspect is wrong, a contradiction to settle — and then open only the
+file that answers it. `docs/canon/` is 900 KB; reading it to change two lines is the
+expense, not the diligence. Grep it for the words you need.
 
 1. **`docs/canon/raw/user_turns_all.md`** — the user's own 1,304 typed turns,
    2026-05-14 → 2026-08-13, and the `.jsonl` twin holds the same 1,304. The only
    evidence of what he asked for. Any claim about his intent cites a turn
-   (`turns:L<n>`); no turn, no claim. **Line numbers drift**: the `.md` is a
-   chronological rendering, so every union moves the lines after its earliest new
-   turn, and citations written against older renderings now sit tens of lines low.
-   Find a citation by its quoted words, not by its number.
+   (`turns:L<n>`); no turn, no claim. Grep it for the quote — never read it whole (390 KB).
+   **Line numbers drift**: the `.md` is a chronological rendering, so every union moves the
+   lines after its earliest new turn, and citations written against older renderings now sit
+   tens of lines low. Find a citation by its quoted words, not by its number.
 2. **`docs/canon/CONTRADICTION_MAP.md`** — where his rulings and the system disagree.
    Each collision is layered, cited, and carries what fixing it takes: an engine
    change, a graph rebuild, a doc correction, or a ruling only he can give.
 3. **The rest of `docs/canon/`** — `USER_CANON.md`, `DESIGN_HISTORY.md`,
    `CANON_AUDIT.md`, `OPEN_DECISIONS.md`, the git and desktop-doc records, the review
-   apparatus. Reference material, opened when a specific claim is in dispute. Not
-   required reading.
+   apparatus. Reference material, opened when a specific claim is in dispute.
 
 Working notes sit beside that: `docs/state/` (gitignored, machine-local, newest first).
 Each is dated and describes its own moment.

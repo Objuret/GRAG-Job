@@ -3,15 +3,20 @@ set, and the knobs, then generate answers and score them with RAGAS. A thin CLI 
 orchestrator.run (the engine); progress bars (generation, then scoring) show it's
 working. Every setting is a flag — see `python run.py --help`.
 
-    python run.py                          # smoke: lucene, dev-5 -> output/smoke/
+A run's retrieval depth is a character budget: DEFAULT_CHAR_BUDGET characters of
+context per question, filled from the arm's own ranking. `-k K` selects the depth
+mode instead — K retrieval units per question, the cut the archived k=50 runs were
+produced under.
+
+    python run.py                          # smoke: lucene, dev-5 -> k=chars/smoke/
     python run.py --arm vector             # smoke, vector arm
-    python run.py --set gold               # gold-100 -> output/
-    python run.py --set full --arm vector  # all questions, vector -> output/
+    python run.py --set gold               # gold-100 -> output/k=chars/
+    python run.py --set full --arm vector  # all questions, vector -> output/k=chars/
     python run.py --set full --no-eval     # arm run: answers only, skip RAGAS
     python run.py --set my_ids.jsonl       # a custom id-set jsonl
-    python run.py -n 20 -k 15 --workers 8  # subset size / top-k / parallelism
-    python run.py --char-budget 72000 --arm vector --set gold
-                                           # fill-to-budget: exactly N context chars
+    python run.py -n 20 -k 50 --workers 8  # subset size / depth mode at k / parallelism
+    python run.py --char-budget 36000 --arm vector --set gold
+                                           # another budget -> output/k=chars/
     python run.py --flag HERB_DESC_CUT=0   # a HERB_* toggle for this run only
     python run.py --rejudge output/<run> --judge claude-haiku-4-5 -n 10
                                            # re-score a run's answers, other judge
@@ -36,12 +41,18 @@ from run_lock import RunLock
 
 _HERE = Path(__file__).parent
 DATA = _HERE / "data"
-OUTPUT = _HERE / "output"
 ARMS = ("lucene", "vector", "hybrid", "artefact", "artefact_v1", "artefact_v1_det",
         "artefact_v1_relevance_weight", "artefact_v1_five_questions")
 # The arms whose answer_one_question consumes its own ranking to a character
-# budget (--char-budget).
+# budget; any other arm runs only under an explicit -k.
 CHAR_BUDGET_ARMS = ("lucene", "vector", "artefact_v1", "artefact_v1_det")
+# The context a run fills per question when -k names no depth: the thesis eval's
+# matched evidence budget, 40 chunks x 1800 characters.
+DEFAULT_CHAR_BUDGET = 72000
+# The two run roots, defined by the engine so a library caller and the CLI file a
+# run in the same place.
+CHUNKS_ROOT = orchestrator.CHUNKS_ROOT
+CHARS_ROOT = orchestrator.CHARS_ROOT
 
 
 def _write_dev_ids(n, dest):
@@ -72,21 +83,61 @@ def _fixed_ids_file(qset):
     return Path(qset)
 
 
-def _resolve_set(qset, arm, n, stamp):
-    """--set -> (ids_file, out_dir). smoke = a fresh dev id-set under output/smoke/;
-    10smoke = the fixed ten-question comparison set; gold = data/gold100.jsonl;
-    full = the whole set (ids_file None); else a path. `stamp` is the run
-    timestamp, with the cb<N> tag riding ahead of it on a fill-to-budget run."""
+def _run_root(char_budget):
+    """The root this run files under — CHARS_ROOT when a character budget sets
+    the depth, CHUNKS_ROOT when a count of retrieval units does."""
+    return CHUNKS_ROOT if char_budget is None else CHARS_ROOT
+
+
+def _checked_out(out, char_budget):
+    """--out as a directory, stopping loud when it names a place inside the other
+    depth family's root. Which root a folder sits under is what every reader
+    takes its depth from — `compare_arms.py` and `export_raw.py` group everything
+    under CHUNKS_ROOT by k — so a run filed across the families is read as a
+    depth it never ran. A directory outside both roots is the caller's own."""
+    out_dir = Path(out)
+    root = _run_root(char_budget)
+    other = CHARS_ROOT if char_budget is None else CHUNKS_ROOT
+    if out_dir.resolve().is_relative_to(other.resolve()):
+        mode = "depth" if char_budget is None else "fill-to-budget"
+        raise SystemExit(f"--out {out_dir} files a {mode} run under {other.name}/ "
+                         f"— a {mode} run's root is {root.name}/")
+    return out_dir
+
+
+def _resolve_depth(k, char_budget, arm):
+    """(top_k, char_budget) for one run, from the -k and --char-budget the CLI
+    was given. `k` None fills to a character budget — DEFAULT_CHAR_BUDGET, or
+    the --char-budget value when it names another; an explicit `k` runs the
+    depth cut and leaves the budget None. `top_k` travels either way, because
+    an artefact leg's walk gate reads it while the budget sets what the run
+    consumes. An arm with no fill-to-budget mode runs only under an explicit
+    -k, and says so rather than switching modes on its own."""
+    if k is None and char_budget is None:
+        char_budget = DEFAULT_CHAR_BUDGET
+    if char_budget is not None and arm not in CHAR_BUDGET_ARMS:
+        raise SystemExit(
+            f"--arm {arm} has no fill-to-budget mode (the arms that do: "
+            f"{', '.join(CHAR_BUDGET_ARMS)}) — pass -k K to run it at a depth cut")
+    return (orchestrator.DEFAULT_TOP_K if k is None else k), char_budget
+
+
+def _resolve_set(qset, arm, n, stamp, root):
+    """--set -> (ids_file, out_dir) under `root`. smoke = a fresh dev id-set in a
+    `smoke/` subfolder; 10smoke = the fixed ten-question comparison set;
+    gold = data/gold100.jsonl; full = the whole set (ids_file None); else a path.
+    `stamp` is the run timestamp, with the cb<N> tag riding ahead of it on a
+    fill-to-budget run."""
     if qset == "smoke":
-        out = OUTPUT / "smoke" / f"{arm}__smoke__{stamp}"
+        out = root / "smoke" / f"{arm}__smoke__{stamp}"
         out.mkdir(parents=True, exist_ok=True)
         return _write_dev_ids(n, out / "question_ids.jsonl"), out
     if qset == "full":
-        return None, OUTPUT / f"{arm}__full__{stamp}"
+        return None, root / f"{arm}__full__{stamp}"
     ids = _fixed_ids_file(qset)
     if not ids.is_file():
         raise SystemExit(f"id-set file not found: {ids}")
-    return ids, OUTPUT / f"{arm}__{ids.stem}__{stamp}"
+    return ids, root / f"{arm}__{ids.stem}__{stamp}"
 
 
 def _print_table(rows, arm, n):
@@ -229,10 +280,18 @@ def _rejudge(args):
                 "judge_usage": getattr(scorer, "LAST_JUDGE_USAGE", None),
                 "judge_elapsed_s": getattr(scorer, "LAST_JUDGE_WALL_TIME_S", None),
             }
-            (out_dir / "eval_manifest.json").write_text(
-                json.dumps(asdict(orchestrator.build_eval_manifest(
-                    judge_config, "ragas", arm, f)),
-                    ensure_ascii=False, indent=2), encoding="utf-8")
+            manifest_path = out_dir / "eval_manifest.json"
+            manifest = orchestrator.build_eval_manifest(judge_config, "ragas", arm, f)
+            if manifest_path.is_file():
+                # a re-judge that resumes adds its cost to the folder's, never replaces it
+                try:
+                    prior = json.loads(manifest_path.read_text(encoding="utf-8"))
+                except (OSError, ValueError):
+                    prior = None
+                manifest = orchestrator._accumulated_judge(prior, manifest)
+            manifest_path.write_text(
+                json.dumps(asdict(manifest), ensure_ascii=False, indent=2),
+                encoding="utf-8")
         cells = [json.loads(x) for x in (out_dir / "eval_results.jsonl")
                  .read_text(encoding="utf-8").splitlines() if x.strip()]
         _print_table(cells, f"{arm} | {args.judge}", len(chosen))
@@ -282,22 +341,31 @@ def main():
     p.add_argument("-n", type=int, default=None, metavar="N",
                    help="question subset size: dev subset for --set smoke (default 5); "
                         "with --rejudge, a type-stratified N of the answers")
-    p.add_argument("-k", type=int, default=orchestrator.DEFAULT_TOP_K, metavar="K",
-                   help="passages retrieved per question (top-k)")
+    p.add_argument("-k", type=int, default=None, metavar="K",
+                   help="depth mode: K passages retrieved per question (top-k) "
+                        "instead of the character budget — the cut the archived "
+                        "k=50 runs were produced under. The run files under "
+                        f"{CHUNKS_ROOT.name}/ and its manifest records a null "
+                        "char_budget. Does not combine with --char-budget")
     p.add_argument("--char-budget", type=int, default=None, metavar="N",
-                   help="fill-to-budget retrieval: consume the arm's ranking until the "
-                        "context text totals exactly N characters — whole retrieval "
-                        "units (a baseline's artifact, an artefact leg's chunk) in "
-                        "rank order, the crossing unit cut mid-text as the final "
-                        "context, a ranking that runs out recorded at its true total. "
-                        "Replaces the k depth cut (arms: "
+                   help=f"the run's character budget, {DEFAULT_CHAR_BUDGET} when "
+                        "neither -k nor this names a depth: consume the arm's "
+                        "ranking until the context text totals exactly N characters "
+                        "— whole retrieval units (a baseline's artifact, an artefact "
+                        "leg's chunk) in rank order, the crossing unit cut mid-text "
+                        "as the final context, a ranking that runs out recorded at "
+                        "its true total (arms: "
                         + ", ".join(CHAR_BUDGET_ARMS) + "); the run folder carries "
                         "cb<N> and the manifest records char_budget")
     p.add_argument("--workers", type=int, default=None, metavar="W",
                    help="parallelism: questions while answering, cells while re-judging "
                         "(default 1, safest under NIM's rate cap; a claude-*, gpt-*, or gemini-* --judge "
                         "auto-sizes to every cell at once)")
-    p.add_argument("--out", metavar="DIR", help="output dir (default: auto from --set)")
+    p.add_argument("--out", metavar="DIR",
+                   help="output dir (default: auto from --set). A run belongs to the "
+                        f"root its depth cut names — {CHARS_ROOT.name}/ filling to a "
+                        f"character budget, {CHUNKS_ROOT.name}/ at -k — and a DIR "
+                        "inside the other one is refused")
     p.add_argument("--build", action="store_true",
                    help="build and cache the arm's index over the corpus, then exit — "
                         "no questions, no scoring. The construction cost is saved beside "
@@ -340,12 +408,13 @@ def main():
         p.error("-n must be >= 1")
     if args.workers is not None and args.workers < 1:
         p.error("--workers must be >= 1")
+    if args.k is not None and args.char_budget is not None:
+        p.error("-k and --char-budget are the two depth cuts and a run takes one: "
+                "-k K consumes K retrieval units, --char-budget N fills the context "
+                "to N characters")
     if args.char_budget is not None:
         if args.char_budget < 1:
             p.error("--char-budget must be >= 1")
-        if args.arm not in CHAR_BUDGET_ARMS:
-            p.error(f"--char-budget supports arms {', '.join(CHAR_BUDGET_ARMS)}; "
-                    f"got --arm {args.arm}")
         if args.build:
             p.error("--char-budget is a run option; --build only builds the index")
     _apply_flags(args.flag)
@@ -366,12 +435,8 @@ def main():
         args.workers = 1
 
     pipeline = importlib.import_module(f"pipelines.{args.arm}")
-    if (args.char_budget is not None
-            and (getattr(pipeline, "RETRIEVAL_FLAGS", None) or {}).get("HERB_CURVE_WALK")):
-        raise SystemExit("--char-budget does not combine with HERB_CURVE_WALK — "
-                         "the curve walk's stop rule sets its own kept depth")
 
-    if args.build:
+    if args.build:  # an index build retrieves nothing, so it carries no depth
         corpus = orchestrator.open_corpus(orchestrator.DEFAULT_CORPUS)
         bs = pipeline.prepare_over_corpus(corpus).build_stats
         print(f"{args.arm} index built - {bs.model.calls} embed calls, "
@@ -379,12 +444,20 @@ def main():
               f"(model: {', '.join(bs.models) or 'none'})")
         return
 
+    top_k, args.char_budget = _resolve_depth(args.k, args.char_budget, args.arm)
+    if (args.char_budget is not None
+            and (getattr(pipeline, "RETRIEVAL_FLAGS", None) or {}).get("HERB_CURVE_WALK")):
+        raise SystemExit("HERB_CURVE_WALK's stop rule sets its own kept depth and "
+                         "does not combine with the character budget — pass an "
+                         "explicit -k K to run the curve walk at a depth cut")
+
     ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     stamp = ts if args.char_budget is None else f"cb{args.char_budget}__{ts}"
-    ids_file, out_dir = _resolve_set(args.qset, args.arm, args.n, stamp)
+    ids_file, out_dir = _resolve_set(args.qset, args.arm, args.n, stamp,
+                                     _run_root(args.char_budget))
     if args.out:
-        out_dir = Path(args.out)
-    config = {"top_k": args.k, "workers": args.workers, "out_dir": str(out_dir),
+        out_dir = _checked_out(args.out, args.char_budget)
+    config = {"top_k": top_k, "workers": args.workers, "out_dir": str(out_dir),
               "retrieval_only": args.retrieval_only,
               "char_budget": args.char_budget}
     if args.generator:
@@ -396,8 +469,8 @@ def main():
     mode = ("retrieval only (no generation)" if args.retrieval_only
             else "answers only (no eval)" if args.no_eval
             else "answers + RAGAS eval")
-    depth = (f"k={args.k}" if args.char_budget is None
-             else f"k={args.k} | char-budget={args.char_budget}")
+    depth = (f"k={top_k}" if args.char_budget is None
+             else f"char-budget={args.char_budget} | k={top_k}")
     print(f"{args.arm} | set={args.qset} | {n_q} questions | {depth} | {pace} | {mode}"
           f"\n  ->  {out_dir}", flush=True)
     abort.watch()  # press q to stop the run gracefully (Ctrl+C can be swallowed)
@@ -414,8 +487,11 @@ def main():
                 (Path(summary["out_dir"]) / "eval_results.jsonl").read_text(encoding="utf-8").splitlines()
                 if x.strip()]
         _print_table(rows, args.arm, summary["n_ran"])
+    short = ("" if summary["n_exhausted"] is None else
+             f", {summary['n_exhausted']} did not fill the "
+             f"{args.char_budget} char budget")
     print(f"\n{summary['n_ran']}/{summary['n_questions']} answered, "
-          f"{summary['n_failed']} failed  ->  {summary['out_dir']}")
+          f"{summary['n_failed']} failed{short}  ->  {summary['out_dir']}")
 
 
 if __name__ == "__main__":

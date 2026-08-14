@@ -1,0 +1,59 @@
+{
+  "arm": "lucene",
+  "generator_model": "claude-sonnet-5",
+  "interpreter_model": null,
+  "top_k": 50,
+  "questions_file": "C:\\Coding\\exjobbet\\GRAG-Job\\v3\\data\\questions.jsonl",
+  "n_questions": 100,
+  "n_ran": 100,
+  "n_failed": 0,
+  "timestamp": "2026-08-14T13:50:27.357821+00:00",
+  "build_stats": {
+    "build_time_s": 1.434378400008427,
+    "model": {
+      "calls": 0,
+      "tokens_in": 0,
+      "cached_input_tokens": 0,
+      "tokens_out": 0,
+      "reasoning_tokens": 0,
+      "time_s": 0.0,
+      "attempts": 0,
+      "request_s": 0.0,
+      "wait_s": 0.0,
+      "retry_s": 0.0
+    },
+    "models": []
+  },
+  "retrieval_flags": {
+    "HERB_BASELINE_METADATA": false
+  },
+  "char_budget": 72000,
+  "code_version": {
+    "commit": "4e79759e092d7b49f4c29c5bd8d06808eed893ea",
+    "branch": "user-canon-record",
+    "dirty": true
+  },
+  "environment": {
+    "host": "Wiktop",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.7",
+    "packages": {
+      "bm25s": "0.3.10",
+      "PyStemmer": "3.1.0",
+      "numpy": "2.4.6",
+      "httpx": "0.28.1",
+      "ragas": "0.4.3",
+      "neo4j": "6.2.0"
+    }
+  },
+  "inputs": {
+    "questions_sha256": "1dfb00e8773123eb66d2d5ae2828bdce976a5e7eb0637f7b3e6c0ca6f52f47ea",
+    "ids_sha256": "cddaca624c8513c618657ece0b357b1463282f7c4ef083d1a7058959d8ccbf3d",
+    "corpus": {
+      "sha256": "4eeb46d025c6187319e462e1a78de67631e1b1dbf7b6a18f966cd14ce1ac5a82",
+      "n_files": 33
+    }
+  },
+  "graph": null,
+  "n_exhausted": 0
+}

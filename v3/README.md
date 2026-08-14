@@ -53,7 +53,7 @@ share no retrieval code with each other, and nothing with the artefact.
 RAGAS emits raw per-question records (`EvalResult`, tidy long format) — nothing
 pre-aggregated — so paired tests, CIs, per-type splits and judge calibration are
 all possible downstream. Each run writes a `RunManifest` (arm, generator model,
-top-k, questions file, n, timestamp, build stats, and — for a Neo4j-querying
+top-k, character budget, questions file, n, timestamp, build stats, and — for a Neo4j-querying
 arm — the graph identity: database name plus the graph build's
 `removed_tags_sha256`, timestamp and parent `source_database` when
 `output/graph_build/<db>/` records one; a resumed run whose answers span two
@@ -108,12 +108,15 @@ three modes is the pending step — see Still open.)
   ModelUsage, ArmOutput, BuildStats, EvalResult, RunManifest, EvalManifest).
 - `nim.py` — the one NVIDIA NIM REST transport (generator, embedder and judge all
   POST through it); shared harness plumbing, not retrieval code.
-- `char_budget.py` — fill-to-budget consumption of a ranked context stream
-  (`run.py --char-budget N`): whole retrieval units — a baseline's artifact, an
-  artefact leg's chunk — in rank order, the crossing unit cut mid-text so the
-  context text totals exactly N chars, the cut recorded per question in
-  `meta.char_budget` and the budget in the run manifest; shared harness
-  plumbing, not retrieval code. Budget runs' folders carry `cb<N>`.
+- `char_budget.py` — fill-to-budget consumption of a ranked context stream, the
+  depth every run takes unless `-k` names another: whole retrieval units — a
+  baseline's artifact, an artefact leg's chunk — in rank order, the crossing
+  unit cut mid-text so the context text totals exactly the budget, the cut
+  recorded per question in `meta.char_budget`, and the budget in the run
+  manifest together with `n_exhausted` — how many answers ran their ranking out
+  before it, which the end-of-run summary prints beside the run's other totals;
+  shared harness plumbing, not retrieval code. Budget runs' folders
+  carry `cb<N>` under `output/k=chars/`.
 - `pipelines/` — `artefact_v1.py` and `artefact_v1_det.py` (the arm under test and its
   interpreter-free leg), `lucene.py`, `vector.py`, `hybrid.py`, and `artefact.py` (the
   native rebuild's arm entry).
@@ -144,8 +147,17 @@ three modes is the pending step — see Still open.)
 
 - RAGAS is the only scorer, and nothing it reports is leaderboard-comparable against
   HERB's published figures — accepted, not a gap to close.
-- One shared generator across every arm, and one k. **k is shared; the retrieval budget
-  it buys is not** — an artefact context is a graph chunk carrying ~10 artifact ids, a
+- One shared generator across every arm, and **a run's depth is a character budget**:
+  72000 characters of context per question (`run.py` · `DEFAULT_CHAR_BUDGET`, the thesis
+  eval's matched `40×1800`), filled from the arm's own ranking, folder tagged `cb<N>`
+  under `output/k=chars/`. `-k K` selects the other depth — K retrieval units per
+  question, `output/k=chunks/`, a null `char_budget` in the manifest — and is what
+  reproduces the archived k=50 runs. The `__b72000` family is neither: it clips
+  a k=50 ranking to 72,000 context chars, **a ceiling on a k=50 ranking, not a fill** — a
+  ceiling can only remove text a k=50 run already had, a fill goes deeper than k=50 to
+  reach the budget, and the two produce different context sets.
+  **Under `-k`, k is shared; the retrieval budget it
+  buys is not** — an artefact context is a graph chunk carrying ~10 artifact ids, a
   baseline context is one artifact carrying one, so at a common k the artefact arms hold
   ~10× the ids and the scoring ceiling differs too. `output/DATA_README.md` carries that
   rule and governs every cross-arm number under it.
@@ -180,9 +192,8 @@ three modes is the pending step — see Still open.)
 - **lucene arm built**: bm25s `method="lucene"` — the Lucene / Elasticsearch BM25
   variant (bm25s's default; k1=0.9 / b=0.4 are the BEIR reference values). It reproduces
   Lucene's *scoring* exactly; the analysis (EN stopwords + Snowball/Porter2 stem) is
-  Lucene-*like*, not Lucene's Java analyzer. One document per artifact; artifacts-only
-  index. Justified: all 17,087 gold citations resolve to an artifact `id`, so context_ids
-  share the citation id space and metadata would only add never-relevant distractors.
+  Lucene-*like*, not Lucene's Java analyzer. One document per artifact, under its native
+  `id`, so context_ids share the gold-citation id space.
   Returns `ArmOutput`; prepare attaches `BuildStats` (model = ModelUsage(), no model at build).
 - **vector arm built**: embedder `nvidia/llama-nemotron-embed-1b-v2` on NIM
   (multilingual incl. Swedish, English-strong, 8192-token context). It reads the corpus with its
@@ -195,6 +206,17 @@ three modes is the pending step — see Still open.)
   *capable multilingual dense baseline*, NOT the English-only, 256-token `all-MiniLM`
   "textbook naive-RAG" default. Returns `ArmOutput`; `BuildStats` records the
   embedder's build-time work.
+- **The comparison arms' corpus scope is a flag.** `lucene` and `vector` index
+  `data/corpus/Salesforce__HERB/products/` by default and, under
+  `HERB_BASELINE_METADATA=1`, HERB's three `metadata/` directory files as well — 715
+  further documents, one per directory entry. The dataset card names `metadata/*` a
+  permitted RAG source and bans only the `team`/`customers` fields inside a product file,
+  which `derive_corpus` already strips. A directory record carries no artifact `id`, so it
+  contributes no `context_ids` and each record then carries `meta.chunk_ids`; the artefact
+  arms do the same with a directory chunk. `hybrid` indexes `products/` only and refuses
+  the flag. The default is off and **which scope is reported is undecided** — both are
+  measured on gold-100 in `output/DATA_README.md` §"Corpus scope", and the design and the
+  history behind it are in `docs/state/2026-08-14-corpus-asymmetry-across-arms.md`.
 - **Question ids minted deterministically** (HERB ships no native id): `<product>::a|u::<index>`
   from (product file, array, position) — 815 answerable + 699 unanswerable = 1514, unique,
   the paired-test join key. `questions.load_questions` hydrates `QuestionWithTruth` from raw;
@@ -204,9 +226,6 @@ three modes is the pending step — see Still open.)
 
 - **Orchestrator split** into the three `questions` / `evals` / `full` modes, with a
   per-run-folder run identity (so a gold-100 run and a full run don't clobber).
-- **A matched-character-budget comparison at n=100.** The only one that exists is the
-  `__b72000` family on 10smoke (n=10), and it binds the artefact arm alone. The 500-id
-  runs match ids exactly and characters not at all.
 - **Which set to run** — gold-100 (built; seeded stratified draw) vs the full 815 + 699.
 - **Judge calibration** subset size (to validate the judged RAGAS metrics).
 

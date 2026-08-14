@@ -7,7 +7,7 @@ Interpretation is fixed to Claude Haiku; only the shared generator changes per l
     python model_test.py glm --judge z-ai/glm-5.2   # re-judge same answers, new dir
 
 Question ids live in model_test_ids.jsonl. Output lands in
-output/artefact_v1__modeltest3_<leg>__i-claude-haiku-4-5/ — re-running resumes
+output/k=chunks/artefact_v1__modeltest3_<leg>__i-claude-haiku-4-5/ — re-running resumes
 (answered ids are skipped; the eval scores the full persisted set).
 """
 import argparse
@@ -54,7 +54,7 @@ def main():
     model = MODELS[args.leg]
 
     ids_file = _HERE / "model_test_ids.jsonl"
-    base_dir = (_HERE / "output" /
+    base_dir = (_HERE / "output" / "k=chunks" /
                 f"artefact_v1__modeltest3_{args.leg}__i-claude-haiku-4-5")
     out_dir = base_dir
     if args.judge:

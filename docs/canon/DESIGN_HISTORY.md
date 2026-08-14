@@ -3352,12 +3352,19 @@ Plus, off-git and inside this era, the three forensic records themselves:
 
 ### The full revert took the matched-budget work with it
 
-`USER_CANON.md` Part IV.F: *"The evidence-cap / matched-token-budget work existed only inside
-the thread he ordered fully reverted on 07-28, and did not survive the revert."* The
-budget mismatch was measured on 07-12, rediscovered by the user on 07-26, confirmed by the
-07-28 audit panel — and the code that would have fixed it was reverted on the user's own
-instruction (*"either you absorb the knowledge or its gone"* — **[CHAT] 07-28**), because
-the same thread carried a regression.
+The evidence-cap / matched-token-budget work existed only inside the thread ordered fully
+reverted on 07-28, and did not survive it. The budget mismatch was measured on 07-12,
+rediscovered by the user on 07-26, confirmed by the 07-28 audit panel — and the code that
+would have fixed it was reverted on the user's own instruction (*"either you absorb the
+knowledge or its gone"* — **[CHAT] 07-28**), because the same thread carried a regression.
+
+**Closed 2026-08-12 → 08-14.** He ruled the budget back, in characters and as the default:
+*"so, i want to do that run but reconstructed as 72k chars beeing the cap, not k, or you
+know, k reconstructed to mean number of chars instead of chunks as now"* (08-12,
+`raw/user_turns_all.md`:7473), then on finding chunks still the default — *"WHY THE FUCK
+THEN!? i literally told you that this is how we will do the evals now"* (08-14, :7715).
+A run's depth is 72,000 context characters unless `-k` names one; `v3/CONSTANTS.md` carries
+the constant and `CONTRADICTION_MAP.md` Part 1 entry 3 the collision it closes.
 
 ### Cluster-K has never been on the load-bearing path
 

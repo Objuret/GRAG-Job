@@ -1,0 +1,60 @@
+{
+  "scorer": "ragas",
+  "judge_model": "claude-haiku-4-5",
+  "source_run": "output\\k=chars\\vector__gold100__cb72000__20260814T145615Z",
+  "arm": "vector",
+  "timestamp": "2026-08-14T19:57:19.461880+00:00",
+  "judge_backend": "claude-cli",
+  "judge_effort": null,
+  "judge_usage": {
+    "calls": 466,
+    "tokens_in": 20741636,
+    "cached_input_tokens": 13034170,
+    "tokens_out": 1462935,
+    "reasoning_tokens": 0,
+    "time_s": 13979.316364099708,
+    "attempts": 466,
+    "request_s": 13979.192274499976,
+    "wait_s": 0.0,
+    "retry_s": 0.0
+  },
+  "judge_elapsed_s": 8315.732072700019,
+  "judge_legs": [
+    {
+      "timestamp": "2026-08-14T19:48:54.229604+00:00",
+      "judge_model": "claude-haiku-4-5",
+      "judge_backend": "claude-cli",
+      "usage": {
+        "calls": 412,
+        "tokens_in": 18407020,
+        "cached_input_tokens": 11446923,
+        "tokens_out": 1268514,
+        "reasoning_tokens": 0,
+        "time_s": 12176.480614199885,
+        "attempts": 412,
+        "request_s": 12176.366872800107,
+        "wait_s": 0.0,
+        "retry_s": 0.0
+      },
+      "elapsed_s": 8139.598581900005
+    },
+    {
+      "timestamp": "2026-08-14T19:57:19.461880+00:00",
+      "judge_model": "claude-haiku-4-5",
+      "judge_backend": "claude-cli",
+      "usage": {
+        "calls": 54,
+        "tokens_in": 2334616,
+        "cached_input_tokens": 1587247,
+        "tokens_out": 194421,
+        "reasoning_tokens": 0,
+        "time_s": 1802.835749899823,
+        "attempts": 54,
+        "request_s": 1802.825401699869,
+        "wait_s": 0.0,
+        "retry_s": 0.0
+      },
+      "elapsed_s": 176.13349080001353
+    }
+  ]
+}

@@ -3,6 +3,24 @@
 The current record of every evaluation run in `v3/output/`: what each run is, what it
 scores, and what it may be used to claim.
 
+**What a run folder records, from 2026-08-14.** `run_manifest.json` carries three
+provenance blocks beside the existing ones: `code_version` (commit, branch, and a
+`dirty` flag — dirty means the commit does not describe what ran), `environment`
+(host, platform, python, and the versions of bm25s, PyStemmer, numpy, httpx, ragas,
+neo4j), and `inputs` (sha256 of the question bank and the id set, plus a content
+digest of the corpus). Every answer in `arm_outputs.jsonl` carries `answered_at`,
+so a resumed folder says which leg each answer came from. Every usage block —
+generator, retrieval, build, judge — carries `attempts`, `request_s`, `wait_s` and
+`retry_s` beside `time_s`: **`request_s` is the model's own latency and the only
+part comparable across runs**, since the other two move with `--workers`, lane
+congestion and how the backend behaved. Folders written before this date have none
+of it, and their absent fields read as unknown, never as zero waiting.
+
+**Where the runs live.** A run folder sits under the root for what cut its depth:
+`v3/output/k=chunks/` for a top-k run, `v3/output/k=chars/` for a `--char-budget` run.
+`v3/output/` itself holds only the caches, the id-set files and this record, so a
+folder name quoted below resolves under one of those two roots, not beside them.
+
 **Every number here that still has a folder** is recomputed from that folder — `run_manifest.json`,
 `eval_manifest.json`, `eval_results.jsonl`, `arm_outputs.jsonl`. `context_recall_id` is
 recomputed from `arm_outputs.jsonl` against
@@ -14,7 +32,7 @@ figures whose folder is no longer retained say so in place.
 
 **That qualifier covers most of this file.** Counting the distinct run-folder names quoted below
 (backticked tokens containing `__`, with elided `…` forms resolved by prefix): **60 names, of which
-27 resolve to a directory under `v3/output/` and 33 do not.** None of the 33 is in any commit on
+27 resolve to a directory under `v3/output/k=chunks/` and 33 do not.** None of the 33 is in any commit on
 any ref either — `git log --all --diff-filter=A` finds no add for them — so they cannot be
 restored from history. Their numbers are this document's own record and nothing corroborates them.
 The 33 include every folder behind the WTAG, WG, TAGINFORM and named-det-experiment tables.
@@ -22,7 +40,7 @@ The 33 include every folder behind the WTAG, WG, TAGINFORM and named-det-experim
 Four of the five `…__probe` folders are in that group and are worth naming, because the prose
 below reads as if they were folders: only `artefact_v1_detGLOB__gold100__probe` is a directory.
 `artefact_v1_detNONE`, `artefact_v1_detABS`, `artefact_v1_detMAX` and `artefact_v1_detCUR`
-survive **only** as 249–251-byte terminal logs (`v3/output/artefact_v1_det*__gold100__probe.log`,
+survive **only** as 249–251-byte terminal logs (`v3/output/k=chunks/artefact_v1_det*__gold100__probe.log`,
 gitignored by `*.log`). Each log holds five lines — a banner and `100/100 answered, 0 failed` —
 and records **no recall figure and no flag value**. So every det-probe number quoted below
 (`detNONE` 0.7390, `detABS` 0.7321, `detMAX` per-question-identical, `detCUR`
@@ -53,9 +71,13 @@ reported and neither is the artefact's single result** — his ruling of 2026-08
 | `artefact_v1_relevance_weight` | `pipelines/artefact_v1_relevance_weight.py` | one graph chunk | every artifact id the chunk carries |
 | `artefact_v1_five_questions` | `pipelines/artefact_v1_five_questions.py` | one graph chunk | every artifact id the chunk carries |
 
-`lucene`, `vector` and `hybrid` index `data/corpus/Salesforce__HERB/products/` only
-(`lucene.py:161`, `vector.py:175`); the artefact arms query a Neo4j graph, which also
-covers `metadata/`.
+`lucene` and `vector` index `data/corpus/Salesforce__HERB/products/` by default and, under
+`HERB_BASELINE_METADATA=1`, HERB's three `metadata/` directory files as well — 715 further
+documents, one per directory entry (`lucene.py` · `METADATA_ON`, `vector.py` ·
+`METADATA_ON`). `hybrid` indexes `products/` only and refuses the flag. The artefact arms
+query a Neo4j graph, which covers `metadata/` in 61 chunks. Every figure in this file
+except the four runs under "Corpus scope" below was produced with the flag off; a
+lucene/vector `run_manifest.json` records which scope it ran under in `retrieval_flags`.
 
 **Which graph an artefact run queried is recorded on exactly one run.** `DATABASE`
 resolves from `NEO4J_DATABASE` at run time (`artefact_v1.py` · `DATABASE`, defaulting to
@@ -169,9 +191,15 @@ run (180k vs 246k chars), luck500 more (559k). The id budget is matched exactly 
 0.0 / 1.0 — alpha 0.0 and 1.0 reproduce the lucene and vector arms exactly (`hybA0_lucene`
 = 0.0894 and `hybA1_vector` = 0.1129, byte-matching the standalone arms at k=50).
 
-## The only matched-character-budget experiment (n=10, anecdote scale)
+## The `__b72000` family — a 72,000-char ceiling over k=50 (n=10, anecdote scale)
 
-The `__b72000` family caps every arm at 72,000 context chars per question on `10smoke`:
+The `__b72000` family runs each arm at k=50 on `10smoke` and then clips the result to
+72,000 context chars per question. **That is a ceiling on a k=50 ranking, not the
+fill-to-budget cut** (`char_budget.cut_at_budget`, `--char-budget`), where an arm
+consumes its own ranking over the whole corpus until the context text reaches the budget
+exactly and the crossing unit is cut mid-text. A ceiling can only remove text a k=50 run
+already had; a fill can go deeper than k=50 to reach the budget. The two produce
+different context sets and their numbers are not interchangeable:
 
 | run | arm | contexts | ids | chars | recall_id |
 |---|---|---|---|---|---|
@@ -181,9 +209,79 @@ The `__b72000` family caps every arm at 72,000 context chars per question on `10
 
 Paired: det − vector +0.2773 (W/L 7/1), det − lucene +0.3156 (W/L 8/2). **n=10 — this is
 an anecdote, not a result.** The cap binds only the artefact arm; both baselines run out
-of contexts at k=50 well under 72,000 chars, so the budget is matched only from above.
+of contexts at k=50 well under 72,000 chars, so the budget is matched only from above —
+a fill to the same budget would have kept taking from their rankings.
 Unconstrained, the same det configuration scores 0.7751 on these ten questions
-(`artefact_v1_det__10smoke__20260721T111442Z`, 531 ids, 252,581 chars).
+(`artefact_v1_det__10smoke__20260721T111442Z`, 531 ids, 252,581 chars). No folder is
+retained for any of the three `__b72000` runs and none is in any commit: these rows are
+this document's own record, UNVERIFIED.
+
+## Corpus scope — the comparison arms over HERB's `metadata/` directories (2026-08-14)
+
+The two comparison arms indexed `products/` only from their first commit
+(`a45292f`, 2026-06-21, lucene; `0733a9d`, 2026-06-23, vector) while the artefact arms
+query a graph carrying HERB's directory files as 61 chunks. HERB's dataset card permits
+the directories to every arm: the `team` and `customers` FIELDS inside a product file are
+oracle-only, and those facts "should be inferred from either other artifacts (e.g. Slack
+messages) or from `metadata/*`" (`data/raw/Salesforce__HERB/README.md`:54).
+`HERB_BASELINE_METADATA=1` gives both arms the directories as 715 further documents, one
+per directory entry.
+
+Four runs, gold-100, n=100, k=50, retrieval-only, the flag the only variable. The
+products-only legs are **per-question identical to the standing June runs** on both id
+metrics (100/100 each), so the pair isolates the flag:
+
+| run | arm | scope | contexts/q | context_ids/q | recall_id | precision_id |
+|---|---|---|---|---|---|---|
+| `lucene__gold100__20260814T001210Z` | lucene | products only | 50.0 | 50.0 | 0.0894 | 0.0528 |
+| `luceneMD__gold100__20260814T001309Z` | lucene | + `metadata/` | 50.0 | 44.8 | 0.0814 | 0.0522 |
+| `vector__gold100__20260814T001408Z` | vector | products only | 50.0 | 50.0 | 0.1129 | 0.0768 |
+| `vectorMD__gold100__20260814T001457Z` | vector | + `metadata/` | 50.0 | 46.1 | 0.1081 | 0.0797 |
+
+Paired deltas, `+ metadata` minus `products only`:
+
+| arm | metric | delta | 95% CI | W/L/T |
+|---|---|---|---|---|
+| lucene | `context_recall_id` | −0.0080 | [−0.0146, −0.0013] | 3/14/83 |
+| lucene | `context_precision_id` | −0.0006 | [−0.0039, +0.0027] | 10/12/78 |
+| vector | `context_recall_id` | −0.0047 | [−0.0091, −0.0004] | 0/7/93 |
+| vector | `context_precision_id` | +0.0029 | [−0.0010, +0.0068] | 9/3/88 |
+
+**The condition these are read under.** A directory record carries no artifact `id`, so it
+contributes nothing to `context_ids` — the same thing the artefact arms do with a directory
+chunk (`artefact_v1.py` · `_resolve_chunk` returns an empty id list for a `metadata`
+locator). At a fixed k the directories therefore spend rank slots that carry no citable id:
+5.2 of 50 per question on lucene, 3.9 on vector. `context_recall_id`'s numerator counts gold
+ids retrieved, so under a fixed k it can only fall or hold when slots move to units that
+carry none. These four runs measure the corpus change at a fixed k; they do not measure it
+at a matched id budget, and no matched-budget run of this flag exists.
+
+Per HERB type, `context_recall_id` (gold-100's type cells: person 22, content 55, pr 17,
+company 5, url 1 — company and url are anecdotes, see "Question sets"):
+
+| type | n | lucene products | lucene + metadata | vector products | vector + metadata |
+|---|---|---|---|---|---|
+| person | 22 | 0.0557 | 0.0477 | 0.0872 | 0.0657 |
+| content | 55 | 0.0987 | 0.0899 | 0.1152 | 0.1152 |
+| pr | 17 | 0.1113 | 0.1113 | 0.1552 | 0.1552 |
+| company | 5 | 0.0722 | 0.0450 | 0.0699 | 0.0699 |
+| url | 1 | 0.0345 | 0.0345 | 0.0460 | 0.0460 |
+
+What the directories add to the text the arms can match at all, measured over the
+corpus view (no gold read): the 10 customer company names occur **0 times** in the
+38,540 indexed artifact documents and exist only in
+`metadata/customers_data.json`; 8 of 109 distinct customer names occur; 97 of 98 distinct
+employee names occur. 87.3% of artifact documents mention an `eid_` literal and 3.0% a
+`CUST-` literal, and 514 of 530 employee ids and 120 of 120 customer ids appear somewhere in
+that text.
+
+The dense arm's index is content-addressed, so the metadata scope caches under its own key:
+`vectorMD` built it in **20 NIM `/embeddings` calls, 2,751,262 input tokens, 204.2 s**
+(`output/embed_cache/llama-nemotron-embed-1b-v2_9e80f27eb198d402.cost.json`) against the
+products-only index's 19 calls / 2,719,968 tokens / 213.1 s. No generation and no judge ran
+in any of the four.
+
+All four folders are machine-local.
 
 ## held-out-100, `context_recall_id`, read at k=50 (UNMATCHED UNITS)
 
@@ -389,11 +487,15 @@ throughout — this study bounds judge disagreement, it does not measure any arm
 
 # Run inventory
 
-**This file is the record; the folders are the evidence kept for it.** 54 run folders
-remain under `v3/output/` — 35 of them carrying a `run_manifest.json` — plus 5 cache/asset
-dirs (`embed_cache`, `interp_cache`, `query_embed_cache`, `tag_cluster_cache`, `tags`) and
-4 auxiliary dirs (`ablation_boost_vs_facets`, `poolcut_forensic`, `smoke`, `graph_build`).
-`graph_build/` is not a run: it holds the build record of a database (below).
+**This file is the record; the folders are the evidence kept for it.** 58 run folders
+remain under `v3/output/k=chunks/` — 39 of them carrying a `run_manifest.json` — `smoke/`
+among them — beside 8 cache dirs (`embed_cache`, `interp_cache`, `query_embed_cache`,
+`tag_cluster_cache`, `tag_distance_cache`, `derived_facet_cache`, `five_questions_cache`,
+`tags`) and 4 auxiliary dirs (`ablation_boost_vs_facets`, `poolcut_forensic`,
+`facet_weight_backup`, `graph_build`) that stay at the `v3/output/` top level.
+`graph_build/` is not a run: it holds the build record of a database (below). Recounted
+2026-08-14: **21 of the 58 are tracked in git and 37 exist only on this laptop**, the four
+2026-08-14 corpus-scope runs among the machine-local ones.
 
 **Tracked vs machine-local — check this before citing a folder.** "On disk" is not "in the repo".
 Of the 54 run folders, **23 are tracked in git and 31 exist only on this laptop**
@@ -886,9 +988,12 @@ State these as gaps, not as results either way.
   judged cells did not complete.
 - **Company questions are two-hop joins.** Products files name customers only as `CUST-`
   ids; `data/corpus/Salesforce__HERB/metadata/customers_data.json` maps ids → company
-  names. `lucene` and `vector` index `products/` only (`lucene.py:161`, `vector.py:175`)
-  and structurally cannot resolve the join. The artefact arms do reach metadata — their
-  company-type `context_recall_id` is 0.775–0.864 on gold-100 (n=5) and 0.827 on
+  names, and the 10 company names occur nowhere in the 38,540 indexed artifact documents.
+  `lucene` and `vector` index `products/` by default and cannot resolve the join in that
+  scope; `HERB_BASELINE_METADATA=1` puts the mapping in their indexes (see "Corpus scope"),
+  and on gold-100's 5 company questions their `context_recall_id` moves 0.0722 → 0.0450
+  (lucene) and 0.0699 → 0.0699 (vector). The artefact arms reach metadata through the graph
+  — their company-type `context_recall_id` is 0.775–0.864 on gold-100 (n=5) and 0.827 on
   held-out-100 (n=20) — yet every arm scores 0.000 on company-type `context_recall_llm`.
   The failure is at answer construction, not at id retrieval.
 - **Headroom.** Against its own id budget, the shipped det default leaves +0.2661 on

@@ -1,0 +1,61 @@
+{
+  "scorer": "ragas",
+  "judge_model": "claude-haiku-4-5",
+  "source_run": "output\\k=chars\\lucene__gold100__cb72000__20260814T134547Z",
+  "arm": "lucene",
+  "timestamp": "2026-08-14T14:54:07.980760+00:00",
+  "judge_backend": "claude-cli",
+  "judge_effort": null,
+  "judge_usage": {
+    "calls": 616,
+    "tokens_in": 26855347,
+    "cached_input_tokens": 17356751,
+    "tokens_out": 1679486,
+    "reasoning_tokens": 0,
+    "time_s": 1247.574807900004,
+    "attempts": 616,
+    "request_s": 16806.565139500002,
+    "wait_s": 0,
+    "retry_s": 0
+  },
+  "judge_elapsed_s": 1477.1954185000068,
+  "judge_legs": [
+    {
+      "timestamp": null,
+      "judge_model": "claude-haiku-4-5",
+      "judge_backend": "claude-cli",
+      "usage": {
+        "calls": 576,
+        "tokens_in": 25216958,
+        "cached_input_tokens": 16072642,
+        "tokens_out": 1561770,
+        "reasoning_tokens": 0,
+        "time_s": 0.0,
+        "attempts": 576,
+        "request_s": 15559.0,
+        "wait_s": 0.0,
+        "retry_s": 0.0
+      },
+      "elapsed_s": 1332.0,
+      "recovered": "read from this file before the resume leg overwrote it; time_s was not observed"
+    },
+    {
+      "timestamp": "2026-08-14T14:54:07.980760+00:00",
+      "judge_model": "claude-haiku-4-5",
+      "judge_backend": "claude-cli",
+      "usage": {
+        "calls": 40,
+        "tokens_in": 1638389,
+        "cached_input_tokens": 1284109,
+        "tokens_out": 117716,
+        "reasoning_tokens": 0,
+        "time_s": 1247.574807900004,
+        "attempts": 40,
+        "request_s": 1247.5651395000023,
+        "wait_s": 0.0,
+        "retry_s": 0.0
+      },
+      "elapsed_s": 145.19541850000678
+    }
+  ]
+}

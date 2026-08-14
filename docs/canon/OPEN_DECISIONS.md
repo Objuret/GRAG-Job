@@ -13,9 +13,9 @@ states the evidence, its date, its source, and what a ruling from him would sett
 All dates are 2026. `[CHAT]` = his own keystrokes; `[DOC]` = recovered from an agent-written doc
 that quoted him. Trust ordering and coverage limits: `README.md`.
 
-**Counts.** §1 unresolved reversals **7** · §2 specified and never built **24** · §3 questions
-never answered **14** · §4 instructions recorded nowhere **17** · §5 audit findings awaiting a
-ruling **28**. **90 open items.**
+**Counts.** §1 unresolved reversals **7** · §2 specified and never built **23** · §3 questions
+never answered **14** · §4 instructions recorded nowhere **16** · §5 audit findings awaiting a
+ruling **28**. **88 open items.**
 
 ---
 
@@ -402,7 +402,7 @@ discussed in any doc, comment or commit (`git_record.md` C-4).
 until some other time."*), never resumed. It was the only planned test of whether the design
 generalizes beyond HERB — see **R6** — and the sole stated rationale for the Mistral tagger choice.
 
-### 2E — Open at the moment the record ends, 2026-08-03 (3)
+### 2E — Open at the moment the record ends, 2026-08-03 (2)
 
 `USER_CANON.md` Part IV F.
 
@@ -446,11 +446,6 @@ run, which `v3/output/DATA_README.md` records as absent.
 **Related.** The curve regime has no pool-size test at all, so the walk is live there; what stops a
 walk is the single question underneath both regimes, and his own *"i dont think the walk and the 'best
 fit' is helping eachother, you?"* (07-22) is the question form of it, recorded at **C11**.
-
-**22. The evidence-cap / matched-token-budget work.** Existed only inside the thread he ordered
-fully reverted on 07-28 (*"no, there is no semi-revert option here, either you absorb the knowledge
-or its gone"*) and did not survive the revert. It is the work that would answer his own 07-26
-diagnosis: *"k=50 does not mean the same for all arms, and thats retarded"*.
 
 **23. Cluster-K itself.** Defined 07-21, respecified 07-31, **never on the load-bearing path in any
 shipped configuration**. **Ruled 2026-08-05: it belongs there.** *"yes, i do want the k, not the made
@@ -562,7 +557,8 @@ structures"* — **R5**, §2 item 2, and the two-hop shape the person design lea
 
 ## 4. Instructions recorded in no surface any agent loads
 
-Verbatim, so they can be placed. All 17 from `CANON_AUDIT.md` §"User instructions recorded NOWHERE".
+Verbatim, so they can be placed. The 16 still unplaced of the 17 in `CANON_AUDIT.md` §"User
+instructions recorded NOWHERE", keeping that table's numbering.
 
 **The structural cause:** `USER_CANON.md` — the only surface holding his words verbatim — was
 referenced by nothing. Not CLAUDE.md's entry-point list, not any agent definition, not the memory
@@ -584,7 +580,6 @@ practice, still lost.
 | 11 | "yeah, dude, but **dont fucking bloat a new session with contaminated informatioj!**" / "exactly, so we bould and clean and then do a **clean session**" | 08-02 | **Nowhere.** The clean-session discipline he was actively enforcing in the final week. |
 | 12 | "**DO NOT fucking touch a part i have not asked you about**" | 07-30 | Only obliquely, inside the trust-revoked memory entry. |
 | 13 | "if the constrct is the same, you can just **test with and without the different weights and solutions … just make them toggleable** … but only do it if it matters, tight, clean, to the point" | 07-22 | USER_CANON only. The toggle flags exist in code; the rule that produced them does not. |
-| 14 | "**k=50 does not mean the same for all arms, and thats retarded**" / "perhaps K shouldnt be chunks, perhaps we should put a **max token budget** instead" | 07-26 | USER_CANON + partly the validity memo. He diagnosed the matched-budget problem **two days before** the audit panel "discovered" it as the 85%-unit-artifact finding; his own diagnosis is not recorded as canon. |
 | 15 | "**if we build the graph correctly, wont it emulate/do multihop natively purely by design?**" | 07-15 | USER_CANON only. |
 | 16 | "**is it a you reason? is it reasoning? is it context bloat? is it truncated context? seriously, i need an answer to why you are this shitty now because i need to be able to avoid this frustration**" | 07-22 | **Nowhere.** Its companion ("react to being yelled at") is recorded; this half — asking agents to diagnose their own degradation so he can work around it — is not. |
 | 17 | "**conversations and memories also count, just because it didnt leave a conversation doesnt mean it shouldnt be saved**" | 06-28 | **Nowhere** in current canon (desktop record only). It is the instruction that, followed, would have prevented this entire audit. |

@@ -18,13 +18,24 @@ class QuestionWithTruth:
 @dataclass
 class ModelUsage:
     """One model's cost — calls / tokens_in / tokens_out / wall-time. Reused wherever a
-    model is touched: the shared generator, an arm's own retrieval model, a build."""
+    model is touched: the shared generator, an arm's own retrieval model, a build.
+
+    `time_s` is the whole wall-clock the caller waited, which is three separate
+    things: queueing on the transport's rate lane, the request itself, and the cost
+    of failures. `request_s` is the model's own latency and the only part that
+    compares across runs — the others move with --workers, lane congestion and how
+    the backend behaved that day. They sum to `time_s` up to the caller's own
+    overhead, and are zero on a record written before the transport reported them."""
     calls: int = 0
     tokens_in: int = 0
     cached_input_tokens: int = 0
     tokens_out: int = 0
     reasoning_tokens: int = 0
     time_s: float = 0.0
+    attempts: int = 0
+    request_s: float = 0.0
+    wait_s: float = 0.0
+    retry_s: float = 0.0
 
     @property
     def tokens(self) -> int:
@@ -60,6 +71,18 @@ def generator_usage_from_nim(usage: dict | None) -> tuple[int, int]:
     return tot, 0
 
 
+def _transport_parts(d: dict) -> dict:
+    """The transport breakdown off a persisted usage block. Absent on a record
+    written before the transport reported it, which reads as zero — never as a
+    claim that no waiting happened."""
+    return {
+        "attempts": int(d.get("attempts", 0) or 0),
+        "request_s": float(d.get("request_s", 0.0) or 0.0),
+        "wait_s": float(d.get("wait_s", 0.0) or 0.0),
+        "retry_s": float(d.get("retry_s", 0.0) or 0.0),
+    }
+
+
 def model_usage_from_dict(d: dict) -> ModelUsage:
     """Rehydrate ModelUsage from a persisted dict (arm_outputs / run_manifest)."""
     if "tokens_in" in d or "tokens_out" in d:
@@ -70,6 +93,7 @@ def model_usage_from_dict(d: dict) -> ModelUsage:
             tokens_out=int(d.get("tokens_out", 0) or 0),
             reasoning_tokens=int(d.get("reasoning_tokens", 0) or 0),
             time_s=float(d.get("time_s", 0.0) or 0.0),
+            **_transport_parts(d),
         )
     tot = int(d.get("tokens", 0) or 0)
     return ModelUsage(
@@ -79,6 +103,7 @@ def model_usage_from_dict(d: dict) -> ModelUsage:
         tokens_out=0,
         reasoning_tokens=int(d.get("reasoning_tokens", 0) or 0),
         time_s=float(d.get("time_s", 0.0) or 0.0),
+        **_transport_parts(d),
     )
 
 
@@ -92,6 +117,7 @@ def model_usage_from_telemetry(tel: dict, time_s: float = 0.0) -> ModelUsage:
             tokens_out=int(tel.get("tokens_out", 0) or 0),
             reasoning_tokens=int(tel.get("reasoning_tokens", 0) or 0),
             time_s=float(tel.get("time", time_s)),
+            **_transport_parts(tel),
         )
     tok = int(tel.get("tokens", 0) or 0)
     return ModelUsage(
@@ -101,6 +127,7 @@ def model_usage_from_telemetry(tel: dict, time_s: float = 0.0) -> ModelUsage:
         tokens_out=0,
         reasoning_tokens=int(tel.get("reasoning_tokens", 0) or 0),
         time_s=float(tel.get("time", time_s)),
+        **_transport_parts(tel),
     )
 
 
@@ -192,7 +219,11 @@ class RunManifest:
     build_stats: BuildStats
     retrieval_flags: dict | None = None   # the arm's env-driven regime switches
     char_budget: int | None = None        # fill-to-budget: exact context chars per question; None = the k depth cut
-    graph: dict | None = None             # the queried graph's build RECORD as read at manifest-write time: {database, removed_tags_sha256, build_timestamp, source_database}; {"mixed_builds": [...]} when a resumed run spans builds; None = the arm queries no graph
+    code_version: dict | None = None      # {commit, branch, dirty} — which code produced these answers; dirty means the commit does not describe it
+    environment: dict | None = None       # {host, platform, python, packages} — the machine and library versions it ran against
+    inputs: dict | None = None            # {questions_sha256, ids_sha256, corpus} — the exact bytes read, so "same inputs" is checkable rather than assumed
+    graph: dict | None = None             # the queried graph's build RECORD as read at manifest-write time: {database, graph_version, graph_census_sha256, removed_tags_sha256, build_timestamp, source_database}; {"mixed_builds": [...]} when a resumed run spans builds; None = the arm queries no graph
+    n_exhausted: int | None = None        # fill-to-budget: answered questions whose ranking ran out before char_budget, so their context is short of it; None = the k depth cut, which has no budget to fall short of
 
 
 @dataclass
@@ -205,5 +236,6 @@ class EvalManifest:
     timestamp: str
     judge_backend: str | None = None
     judge_effort: str | None = None
-    judge_usage: ModelUsage | None = None
-    judge_elapsed_s: float | None = None
+    judge_usage: ModelUsage | None = None      # every leg's cost summed — what scoring this folder took in total
+    judge_elapsed_s: float | None = None       # likewise summed
+    judge_legs: list | None = None             # one entry per scoring leg, so the total stays decomposable and a leg scored by another judge is visible instead of summed into anonymity

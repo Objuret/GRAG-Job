@@ -108,7 +108,7 @@ settle them; they are collected in Part 5.
 | **Contradicted statements (Part 1)** | **4** |
 | — by layer of the user's statement | CROSS 2 · V1-ENGINE 2 |
 | — carrying a type-(a) self-reversal | 0 |
-| — carrying type-(b) built-state evidence | 4 (V1-ENGINE 3 · CROSS 1) |
+| — carrying type-(b) built-state evidence | 3 (V1-ENGINE 3) |
 | — carrying type-(c) agent-surface claims | 1 (CROSS — entry 3) |
 | Possible tension, judgement needed (Part 2) | 15 entries covering 16 numbered tensions (T1+T2 share an entry; T8 retired). By the layer named first: V1-ENGINE 6 · CROSS 4 · V1-GRAPH 4 · V2-DESIGN 1 |
 | Cross-layer near-collisions dissolved by scoping (Part 3) | 14 |
@@ -116,7 +116,7 @@ settle them; they are collected in Part 5.
 | Layer-ambiguous statements (Part 5) | 5 |
 
 **Surviving collisions by what fixing them requires:** engine change 3 (entries
-1, 2, 4) · doc correction 1 (entry 3) · **user ruling 1** (entry 1, on which
+1, 2, 4) · harness change 1, shipped (entry 3) · **user ruling 1** (entry 1, on which
 gold-100-swept values may stand) · **graph rebuild/retag 0**. No contradicted statement in Part 1 is
 trapped in the baked graph. The three problems that *are* baked — oracle residue,
 which facet set is real, and the slug-polluted tag vocabulary — sit in Part 2 as
@@ -129,7 +129,9 @@ canon-mining order came out of 80 minutes later.
 07-26 "k=50 does not mean the same for all arms, and thats retarded" headline the
 unmatched-unit cross-arm numbers as the lead. The memory headlines are corrected, and
 T10 closed 2026-08-05: the statistics are reported as measured, under the conditions
-they were measured under, and no agent chooses what they mean.
+they were measured under, and no agent chooses what they mean. The unit itself is
+settled by his 08-12 → 08-14 ruling — evals run to 72,000 context characters, the
+same quantity of evidence for every arm.
 
 ---
 
@@ -174,8 +176,8 @@ Same day, on the arm as found: "2. 10? fucking why just 10? … Honestly, no fuc
 Context, both directions: the unit mismatch was already measured 07-12 — artefact k=50 mean 167,785 retrieved chars / 309.7 context ids vs vector 23,233 / 50.0, with the agent doc itself concluding "A budget-matched rerun is required before using it comparatively" (DESIGN_HISTORY.md:2456-2469). And the identical-k design was originally his own: k = one global ceiling per arm, "the token-cost gap between arms is the experiment" (06-25, second-hand, desktop_docs_record.md:626). The 07-26 statement is him overruling that earlier frame after seeing what it does.
 
 - **(c) · MEMORY.md, written after the ruling — since corrected.** *(Memory files are outside git, so the correction date is unverifiable; the corrected state is verified on disk — no run number of any kind survives in the index.)* The auto-loading memory index headlined the unmatched-unit numbers as the finding: "artefact 0.594 vs vector 0.112 / lucene 0.074 on 100 untouched type-balanced questions … **the lead generalizes**" (entry dated 07-30 — four days after his ruling); "artefact leads **all valid metrics** (recall_id 0.64 vs 0.09/0.11)"; and, in a third entry that corrected neither, "headline 0.64-vs-0.09 is ~85% unit artifact (matched-budget ~1.8× is the real lead)". A surface that knew the number was ~85% unit artifact and still led with it was asserting what he ruled invalid. The three entries are deleted and the index carries no run number; the wording is kept as the audit's finding at `CANON_AUDIT.md` 4.6–4.7, and every number now sits in `v3/output/DATA_README.md` under the unmatched-unit rule. What the correction does not settle is which framing ships — T10.
-- **(b) · the fix died with the revert.** The evidence-cap / matched-token-budget harness work existed only inside the thread he ordered fully reverted on 07-28 and did not survive (turns:L3236-3240; DESIGN_HISTORY.md:3310-3317). That part is his own choice ("either you absorb the knowledge or its gone", turns:L3457) — recorded here as state, not charged as a violation.
-- **Layer & fix:** **doc correction**, done — no surface headlines the unmatched-unit numbers, and `v3/output/DATA_README.md` carries every cross-arm figure under the rule. There is no framing decision behind it: T10 closed 2026-08-05 on his ruling that the statistics are reported as measured and agents do not interpret them. The measurement side, if he wants it back, is a **CROSS harness change**, not an engine or graph one.
+- **His ruling (2026-08-12 → 08-14): the depth is a character budget, and it is the default.** *"so, i want to do that run but reconstructed as 72k chars beeing the cap, not k, or you know, k reconstructed to mean number of chars instead of chunks as now"* (08-12, turns:L7473), and on finding the harness still defaulting to chunks: *"i see..  you left chunks as the fucking default still, didnt you?"* / *"WHY THE FUCK THEN!? i literally told you that this is how we will do the evals now"* (08-14, turns:L7711, :L7715). The unit that made k=50 mean different things per arm is replaced by one every arm measures the same way — 72,000 context characters per question, the thesis eval's `40×1800` budget — each arm consuming its own ranking until the context text reaches it, cutting the crossing unit mid-text.
+- **Layer & fix:** **CROSS harness change, shipped.** `run.py` carries `DEFAULT_CHAR_BUDGET = 72000` and takes the budget when no `-k` names a depth; `-k` and `--char-budget` are the two depth cuts and a run takes one; `CHAR_BUDGET_ARMS` names the four arms that fill to it, and any other arm fails loud without an explicit `-k` (`v3/CONSTANTS.md`, the `run.py` section). The doc side is done with it — no surface headlines the unmatched-unit numbers, and `v3/output/DATA_README.md` carries every cross-arm figure under the rule. There is no framing decision behind it: T10 closed 2026-08-05 on his ruling that the statistics are reported as measured and agents do not interpret them.
 
 ### 4 · 2026-08-01 — [V1-ENGINE] — "tags are supposed to INFORM/weight the chunks"
 
