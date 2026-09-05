@@ -68,8 +68,7 @@ querying it. Any other sentence, this file included, is a claim until checked.
   `artefact_v1` / `artefact_v1_det` retire with the v1 graph.
 - **The repo, 09-05:** cut to code, his words and the machine recipes. `prod/` holds the
   two baselines and the harness; there is no finished artefact, every artefact arm is in
-  `test/`. Twelve artefact arms exist because ideas became files; which are redundant is his
-  call, not an agent's.
+  `test/`.
 
 ## Update
 
