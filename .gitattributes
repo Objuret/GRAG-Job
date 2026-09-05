@@ -1,4 +1,4 @@
 *.dump filter=lfs diff=lfs merge=lfs -text
 
 # Benchmark data is byte-exact (the graph hash-verifies raw files) - never eol-convert
-v3/data/** -text
+data/** -text

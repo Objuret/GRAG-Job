@@ -1,30 +1,14 @@
 #!/usr/bin/env python
-"""
-refresh_graph.py - rebuild the graphify navigation graph in one command.
-
-The graph covers the v3/ code: every source file under v3/, minus the benchmark
-dataset (v3/data) and the run outputs (v3/output). Structure comes from the AST -
-no model calls, a few seconds, one command.
-
-Usage (exposed as `regraph` in PowerShell + bash):
-  regraph          rebuild the graph
-  regraph --force  allow a >10% node drop (deliberate rescopes)
-
-This is the only rebuild path; it owns the scope. `graphify --update` rescopes to
-the whole repo and is never used here. See graphify-out/REFRESH.md.
-"""
 from __future__ import annotations
 import os, sys, json, re, subprocess, time
 from pathlib import Path
 
 print("refresh_graph: starting (loading graphify)...", flush=True)
 
-# ---- CONFIG ---------------------------------------------------------------
 REPO_ROOT = Path(__file__).resolve().parent
 OUT = REPO_ROOT / "graphify-out"
-V3_ROOT = REPO_ROOT / "v3"
-SKIP = [V3_ROOT / "data", V3_ROOT / "output"]
-# ---------------------------------------------------------------------------
+ROOTS = [REPO_ROOT / "prod", REPO_ROOT / "test"]
+SKIP = [REPO_ROOT / "data", REPO_ROOT / "output"]
 
 os.environ["GRAPHIFY_OUT"] = str(OUT)
 os.chdir(REPO_ROOT)
@@ -92,20 +76,24 @@ def rebuild(nodes, edges, detection, out_dir: Path, export_cwd: Path, label: str
 
 def main():
     t0 = time.time()
-    print("scanning v3 code...", flush=True)
-    det = detect(V3_ROOT)
+    print("scanning prod and test code...", flush=True)
+    det = {"files": {}, "all_files": None}
+    for root in ROOTS:
+        d = detect(root)
+        for kind, fl in d["files"].items():
+            det["files"].setdefault(kind, []).extend(fl)
     skip = [d.resolve() for d in SKIP]
     for kind in list(det["files"].keys()):
         det["files"][kind] = [f for f in det["files"][kind]
                               if not any(d == (rp := Path(f).resolve()) or d in rp.parents
                                          for d in skip)]
     code = collect_code(det["files"])
-    print(f"  v3 code: {len(code)} files", flush=True)
+    print(f"  prod+test code: {len(code)} files", flush=True)
 
     ast = extract(code, cache_root=REPO_ROOT) if code else {"nodes": [], "edges": []}
     detection = {"total_files": len(code), "total_words": words(code)}
     save_manifest(det.get("all_files") or det["files"])
-    rebuild(ast["nodes"], ast["edges"], detection, OUT, REPO_ROOT, "graph (v3 code)")
+    rebuild(ast["nodes"], ast["edges"], detection, OUT, REPO_ROOT, "graph (prod+test code)")
     print(f"  done in {time.time() - t0:.1f}s", flush=True)
 
 

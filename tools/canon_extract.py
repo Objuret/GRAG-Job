@@ -1,32 +1,3 @@
-"""Extract genuinely human-authored user turns from Claude Code transcripts.
-
-Streams the .jsonl session logs under one or more Claude Code project roots,
-keeps the turns the human actually typed, and writes them verbatim alongside an
-audit trail of what was rejected and why. Several machines' corpora can then be
-merged into one chronological record.
-
-    python tools/canon_extract.py
-    python tools/canon_extract.py --sources DIR [DIR ...] --machine desktop \
-        --name user_turns_desktop --no-sweep
-    python tools/canon_extract.py --verify 15 --verify-floor 5 --name user_turns_desktop
-    python tools/canon_extract.py --merge laptop=a.jsonl desktop=b.jsonl \
-        --name user_turns_all
-
-Rejection rules are named and ordered; every rejected turn records the first
-rule that matched, so the filtering can be audited from the rejected sample.
-
-One class of tool_result is kept: the user's answers to AskUserQuestion prompt
-boxes. The answer arrives as a tool_result block paired to the assistant's
-tool_use, with the selected labels / typed text in the envelope's
-`toolUseResult.answers`. Those are the user's words, so they are extracted as
-turns, each answer preceded by its `[prompt-box question: ...]` marker (the
-question is agent text, kept only as context). Every other tool_result is
-still rejected.
-
-Subagent transcripts (`<session>/subagents/agent-*.jsonl`) carry orchestrator
-prompts in the `user` role, so they are dropped whole at discovery time and
-counted separately.
-"""
 
 from __future__ import annotations
 
@@ -47,19 +18,15 @@ DEFAULT_SOURCES = [
 DEFAULT_OUT = Path(r"C:\Coding\exjobbet\GRAG-Job\docs\canon\raw")
 PROJECT_CWD_MARKERS = ("grag-job", "exjobbet")
 
-# Transcript files that are not a human conversation, dropped whole.
 SUBAGENT_DIR = "subagents"
 JOURNAL_NAME = "journal.jsonl"
 
-# Wrappers the client injects into an otherwise human turn. Stripped in place;
-# a turn that is nothing but wrappers is rejected.
 WRAPPER_RE = re.compile(
     r"<(ide_opened_file|ide_selection|system-reminder|local-command-caveat)>"
     r".*?</\1>\s*",
     re.DOTALL,
 )
 
-# Turns that are entirely a client/system artefact rather than typed input.
 PREFIX_RULES = [
     ("task_notification", "<task-notification>"),
     ("command_expansion", "<command-name>"),
@@ -74,9 +41,6 @@ PREFIX_RULES = [
     ("caveat_block", "Caveat: The messages below were generated"),
 ]
 
-# Prompts emitted by the evaluation harness (RAGAS metric prompts, the tagger,
-# the tag scorer, the query interpreter, the evidence walk) and by headless
-# model-availability probes. Matched as (prefix, required substring or None).
 HARNESS_TEMPLATES = [
     ("Given a question and an answer, analyze the complexity", None),
     ("Given a context, and an answer, analyze each sentence", None),
@@ -102,7 +66,6 @@ def log(msg: str) -> None:
 
 
 def message_text(obj: dict) -> tuple[str, bool]:
-    """Return (joined text of human-visible blocks, saw_tool_result_block)."""
     message = obj.get("message") or {}
     content = message.get("content")
     if isinstance(content, str):
@@ -121,8 +84,25 @@ def message_text(obj: dict) -> tuple[str, bool]:
     return "", False
 
 
+def queued_command_text(obj: dict) -> str | None:
+    if obj.get("type") != "attachment" or obj.get("isSidechain"):
+        return None
+    attachment = obj.get("attachment")
+    if not isinstance(attachment, dict) or attachment.get("type") != "queued_command":
+        return None
+    origin = attachment.get("origin")
+    if not isinstance(origin, dict) or origin.get("kind") != "human":
+        return None
+    prompt = attachment.get("prompt")
+    if isinstance(prompt, str):
+        return prompt
+    if isinstance(prompt, list):
+        return "\n".join(block.get("text", "") for block in prompt
+                         if isinstance(block, dict) and block.get("type") == "text")
+    return ""
+
+
 def classify(obj: dict, in_headless_dir: bool = False) -> tuple[str | None, str]:
-    """Return (rejection_rule or None, cleaned_text)."""
     raw, tool_result_block = message_text(obj)
 
     if "toolUseResult" in obj or tool_result_block:
@@ -134,6 +114,10 @@ def classify(obj: dict, in_headless_dir: bool = False) -> tuple[str | None, str]
     if obj.get("isMeta"):
         return "is_meta", raw
 
+    return classify_text(raw, in_headless_dir)
+
+
+def classify_text(raw: str, in_headless_dir: bool = False) -> tuple[str | None, str]:
     stripped = raw.lstrip()
     for rule, prefix in PREFIX_RULES:
         if stripped.startswith(prefix):
@@ -153,7 +137,6 @@ def classify(obj: dict, in_headless_dir: bool = False) -> tuple[str | None, str]
 
 
 def note_prompt_box_questions(obj: dict, pending: dict[str, dict]) -> None:
-    """Record AskUserQuestion tool_use blocks so their answers can be paired."""
     if obj.get("type") != "assistant":
         return
     content = (obj.get("message") or {}).get("content")
@@ -166,15 +149,6 @@ def note_prompt_box_questions(obj: dict, pending: dict[str, dict]) -> None:
 
 
 def prompt_box_answer(obj: dict, pending: dict[str, dict]) -> str | None:
-    """The user's answer to an AskUserQuestion prompt box, or None.
-
-    A user message whose tool_result pairs with a tracked AskUserQuestion
-    carries the answers in the envelope's `toolUseResult.answers`: question
-    text -> the selected option label or the user's typed text, verbatim.
-    Each answer is emitted after a `[prompt-box question: ...]` marker; the
-    question is agent text and the marker says so. A pairing with no usable
-    answers (cancelled box) returns None and the turn stays rejected.
-    """
     content = (obj.get("message") or {}).get("content")
     if not isinstance(content, list):
         return None
@@ -232,10 +206,6 @@ def iter_lines(path: Path):
 
 
 def collect_files(source: Path) -> tuple[list[Path], list[Path], Counter]:
-    """Split a source tree into conversation transcripts and dropped files.
-
-    Returns (conversation files, subagent files, drop counts by reason).
-    """
     conversation: list[Path] = []
     subagents: list[Path] = []
     dropped: Counter = Counter()
@@ -253,7 +223,6 @@ def collect_files(source: Path) -> tuple[list[Path], list[Path], Counter]:
 
 
 def measure_subagent_turns(files: list[Path]) -> dict:
-    """Count what dropping the subagent transcripts actually removed."""
     stats = {"files": len(files), "records": 0, "user_turns": 0,
              "sidechain_records": 0, "would_have_been_kept": 0}
     for path in files:
@@ -294,13 +263,6 @@ def discover_sources(sources: list[Path], sweep: bool) -> list[Path]:
 
 
 def profile_sources(sources: list[Path], files_by_source: dict[Path, list[Path]]):
-    """Pass 1 - measure each source directory's session shape.
-
-    A directory where no session ever reaches a second human turn, across many
-    sessions, holds one-shot programmatic calls rather than conversation. The
-    test is measured rather than assumed, and the numbers behind it are printed
-    and carried into the report.
-    """
     profiles: dict[Path, dict] = {}
     total = sum(len(v) for v in files_by_source.values())
     done = 0
@@ -364,17 +326,21 @@ def extract(sources: list[Path], files_by_source: dict[Path, list[Path]],
                 if obj.get("type") == "assistant":
                     note_prompt_box_questions(obj, pending)
                     continue
-                if obj.get("type") != "user":
+                queued = queued_command_text(obj)
+                if queued is None and obj.get("type") != "user":
                     continue
                 turns_seen += 1
                 session = obj.get("sessionId") or path.stem
-                rule, text = classify(obj, headless)
 
                 prompt_box = False
-                if rule == "tool_result" and not headless:
-                    answer = prompt_box_answer(obj, pending)
-                    if answer is not None:
-                        rule, text, prompt_box = None, answer, True
+                if queued is not None:
+                    rule, text = classify_text(queued, headless)
+                else:
+                    rule, text = classify(obj, headless)
+                    if rule == "tool_result" and not headless:
+                        answer = prompt_box_answer(obj, pending)
+                        if answer is not None:
+                            rule, text, prompt_box = None, answer, True
 
                 if rule:
                     rules[rule] += 1
@@ -424,6 +390,8 @@ def extract(sources: list[Path], files_by_source: dict[Path, list[Path]],
                 }
                 if prompt_box:
                     row["prompt_box"] = True
+                if queued is not None:
+                    row["queued_command"] = True
                 if machine:
                     row["machine"] = machine
                 kept.append(row)
@@ -451,6 +419,8 @@ def write_corpus(out: Path, name: str, kept: list[dict]) -> tuple[Path, Path]:
             handle.write(f"## {stamp}{origin} · {row['session_file']}\n\n")
             if row.get("prompt_box"):
                 handle.write("*prompt-box answer*\n\n")
+            if row.get("queued_command"):
+                handle.write("*queued while an agent was working*\n\n")
             if row["is_paste"]:
                 handle.write(f"*paste / file drop · {row['char_len']} chars*\n\n")
             handle.write(row["text"].rstrip() + "\n\n")
@@ -547,7 +517,7 @@ def write_report(out: Path, suffix: str, kept, rules, dupes, dupe_detail, turns_
         )
 
         handle.write("## Counts\n\n")
-        handle.write(f"- User-role turns seen: **{turns_seen}**\n")
+        handle.write(f"- User-role turns and queued commands seen: **{turns_seen}**\n")
         handle.write(f"- Kept as human-authored: **{len(kept)}**\n")
         handle.write(f"- Rejected: **{sum(rules.values())}**\n")
         handle.write(
@@ -557,6 +527,8 @@ def write_report(out: Path, suffix: str, kept, rules, dupes, dupe_detail, turns_
         handle.write(f"- Distinct sessions contributing kept turns: **{len(sessions)}**\n")
         handle.write(f"- Prompt-box answers kept: "
                      f"**{sum(1 for r in kept if r.get('prompt_box'))}**\n")
+        handle.write(f"- Queued commands kept: "
+                     f"**{sum(1 for r in kept if r.get('queued_command'))}**\n")
         handle.write(f"- Pastes / file drops flagged: **{pastes}**\n")
         handle.write(f"- Total kept characters: **{total_chars:,}**\n")
         if kept:
@@ -576,11 +548,6 @@ def write_report(out: Path, suffix: str, kept, rules, dupes, dupe_detail, turns_
 
 
 def merge(out: Path, name: str, corpora: list[str]):
-    """Merge extracted corpora into one strictly chronological record.
-
-    Each entry is `PATH` or `LABEL=PATH`; the label becomes the machine
-    provenance for corpora extracted before the field existed.
-    """
     rows: list[dict] = []
     per_source = Counter()
     for entry in corpora:
@@ -664,7 +631,6 @@ def append_merge_section(report: Path, kept, per_source, collapsed) -> None:
 
 
 def verify(out: Path, name: str, sources: list[Path], count: int, floor: int) -> int:
-    """Re-read random kept turns from their source file and compare byte-wise."""
     rows = [json.loads(l) for l in (out / f"{name}.jsonl").open(encoding="utf-8")]
     if not rows:
         log("nothing to verify")
@@ -703,9 +669,13 @@ def verify(out: Path, name: str, sources: list[Path], count: int, floor: int) ->
                 note_prompt_box_questions(obj, pending)
                 uuid = obj.get("uuid")
                 if uuid in by_uuid and uuid not in found:
-                    text = prompt_box_answer(obj, pending)
-                    if text is None:
-                        _, text = classify(obj, False)
+                    queued = queued_command_text(obj)
+                    if queued is not None:
+                        _, text = classify_text(queued, False)
+                    else:
+                        text = prompt_box_answer(obj, pending)
+                        if text is None:
+                            _, text = classify(obj, False)
                     found[uuid] = {"text": text, "timestamp": obj.get("timestamp")}
     ok = 0
     for row in picks:
