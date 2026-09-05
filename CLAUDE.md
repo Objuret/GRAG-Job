@@ -46,18 +46,6 @@ querying it. Any other sentence, this file included, is a claim until checked.
   ordering of the same candidates). Ordering inside the region is the work, on his chain
   query → tag → chunk → file, every link *"how strong/relevant is the connection for this
   specific query"*.
-- **The design on the table, his:** the v1 tagger's per-edge *choice* of facets (which
-  facets it named on each tag→chunk edge; backup `output/facet_weight_backup/
-  herb-eval-volmax__pilot_full_herb`, sha 109d27…) goes back on the edges as the structure.
-  Magnitudes come from the graph's own counts, never a model number: how rare that facet is
-  among the tag's edges, what share of the chunk's tags carry it; topic from the tag→description
-  cosine. The query gets one facet profile for the whole question: the interpreter judges which
-  facets and in what order, the math turns that into weights. An edge's value for a query is
-  that profile dotted with what the tag is to that chunk, so the same tag ranks its chunks
-  differently per query.
-- **First step before any build:** one measurement inside the region, whether any entity-side
-  or facet-choice quantity orders gold above non-gold there. results-analyst measures;
-  designers stay gold-blind.
 - **The graph `herb-eval-volmax`** carries the derived facet layer (sha 50cfd6…) since the
   09-04 revert. The 09-03 pair-record layer is backed up beside it. Its entity layer
   (Chunk→Product/Kind/Channel, Employee→Channel/Product/Org/Role/manages, Customer→Company,
