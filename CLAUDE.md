@@ -41,6 +41,9 @@ querying it. Any other sentence, this file included, is a claim until checked.
 
 ## Focus — 2026-09-05
 
+- **The current artefact edition is `artefact_v2`** (`test/arms/artefact_v2.py`,
+  `python prod/run.py --arm artefact_v2`). The other eleven artefact arms are earlier
+  editions or reductions of it and are not the one being worked on.
 - **The artefact finds the region and nothing orders inside it.** The nearest tags reach
   the gold inside ~150 on-product chunks (0.39 delivered, 0.95 reachable by a correct
   ordering of the same candidates). Ordering inside the region is the work, on his chain

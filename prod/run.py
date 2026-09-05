@@ -255,7 +255,7 @@ def main():
         prog="run.py",
         description="Run one retrieval arm over a question set and score it with RAGAS.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    p.add_argument("--arm", choices=ARMS, default="lucene", help="retrieval arm")
+    p.add_argument("--arm", choices=ARMS, default="lucene", help="retrieval arm; the current artefact edition is artefact_v2")
     p.add_argument("--set", dest="qset", default="smoke", metavar="smoke|10smoke|gold|full|FILE",
                    help="questions: smoke (dev subset), 10smoke (fixed comparison ten), "
                         "gold (gold-100), full (all), "
