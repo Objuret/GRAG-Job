@@ -39,12 +39,37 @@ querying it. Any other sentence, this file included, is a claim until checked.
 - Nothing built, run, or written to the database without his words naming it; a "yeah" is not a go (2026-09-03).
 - No agent writes a sentence about the system for a later reader (2026-09-04).
 
-## Focus — 2026-09-04
+## Focus — 2026-09-05
 
-The artefact finds the region; ordering inside it is the work, on his chain query → tag → chunk →
-file, every link how strong for this query. Open, his: product scope hard or soft; the activity
-facet with no relation for it; which facet layer the graph carries (derived since the 09-04 revert);
-whether `artefact_v1` / `artefact_v1_det` retire with the v1 graph.
+- **The artefact finds the region and nothing orders inside it.** The nearest tags reach
+  the gold inside ~150 on-product chunks (0.39 delivered, 0.95 reachable by a correct
+  ordering of the same candidates). Ordering inside the region is the work, on his chain
+  query → tag → chunk → file, every link *"how strong/relevant is the connection for this
+  specific query"*.
+- **The design on the table, his:** the v1 tagger's per-edge *choice* of facets (which
+  facets it named on each tag→chunk edge; backup `output/facet_weight_backup/
+  herb-eval-volmax__pilot_full_herb`, sha 109d27…) goes back on the edges as the structure.
+  Magnitudes come from the graph's own counts, never a model number: how rare that facet is
+  among the tag's edges, what share of the chunk's tags carry it; topic from the tag→description
+  cosine. The query gets one facet profile for the whole question: the interpreter judges which
+  facets and in what order, the math turns that into weights. An edge's value for a query is
+  that profile dotted with what the tag is to that chunk, so the same tag ranks its chunks
+  differently per query.
+- **First step before any build:** one measurement inside the region, whether any entity-side
+  or facet-choice quantity orders gold above non-gold there. results-analyst measures;
+  designers stay gold-blind.
+- **The graph `herb-eval-volmax`** carries the derived facet layer (sha 50cfd6…) since the
+  09-04 revert. The 09-03 pair-record layer is backed up beside it. Its entity layer
+  (Chunk→Product/Kind/Channel, Employee→Channel/Product/Org/Role/manages, Customer→Company,
+  File→everything) is read by artefact_v2 as stated-scope gates and concentration regions only.
+  `Chunk.created_at` is the build time, not a corpus date; `Chunk.years` is the only date.
+- **Open, his to rule:** product scope as hard cut or soft evidence; what the activity facet
+  is on a graph with no relation for it; which facet layer the graph carries; whether
+  `artefact_v1` / `artefact_v1_det` retire with the v1 graph.
+- **The repo, 09-05:** cut to code, his words and the machine recipes. `prod/` holds the
+  two baselines and the harness; there is no finished artefact, every artefact arm is in
+  `test/`. Twelve artefact arms exist because ideas became files; which are redundant is his
+  call, not an agent's.
 
 ## Update
 
