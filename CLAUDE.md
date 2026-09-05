@@ -12,7 +12,10 @@ querying it. Any other sentence, this file included, is a claim until checked.
   from the repo root loads arms from both. Runs and their manifests in `output/`; data in `data/`.
 - `docs/ENVIRONMENT.md` — the machines. `docs/canon/raw/user_turns_all.jsonl` — his typed
   messages since 2026-05-14 (`tools/canon_extract.py`); archive, nothing reads it.
-- `graphify-out/` — navigation graph over `v3/`; `python refresh_graph.py`, never `graphify --update`.
+- `graphify-out/` — the navigation graph over `prod/` and `test/`. Query it before grepping:
+  `python -m graphify query "<question>"`, `python -m graphify explain "<node>"`,
+  `python -m graphify path "A" "B"`. Rebuild with `python refresh_graph.py` (seconds, AST only),
+  never `graphify --update`.
 - `.claude/agents/` — the specialists, run in the background.
 
 ## Current state — print, never type

@@ -60,11 +60,6 @@ VS Code auto-activates the repo `.venv` in every terminal, so the user's `python
 that venv. It is healthy: Python 3.12.7, ragas 0.4.3, neo4j 6.2.0, and
 `.venv\Scripts\python.exe -m pytest` from the repo root runs every suite (`pytest.ini`).
 
-The one gap is graphify: it is not installed in `.venv`, only in miniconda. So
-`python refresh_graph.py` needs the miniconda interpreter
-(`C:\Users\jocke\miniconda3\python.exe refresh_graph.py`) while everything else
-runs on the repo venv.
-
 `.vscode/settings.json:2` pins `python.defaultInterpreterPath` to
 `A:/exjobbet/repo/.venv/Scripts/python.exe` — the **desktop** path. There is no `A:` drive
 on this machine, so that pin resolves to nothing here and VS Code falls back to whatever
@@ -119,8 +114,8 @@ single `HAS_TAG.run_id` `pilot_full_herb`, and the `tag_emb` + `chunk_desc_emb` 
 
 ### graphify
 
-graphify 0.8.39 is installed (miniconda Scripts); `python refresh_graph.py` runs on
-this machine with the miniconda interpreter.
+graphify 0.8.39 is installed in the repo `.venv` (and in miniconda), so `python -m graphify
+query "..."` and `python refresh_graph.py` run on the same interpreter as everything else.
 
 **The distribution is named `graphifyy`, not `graphify`** — the import package and the
 console script are `graphify`, the PyPI name has two y's. Consequences when checking the
