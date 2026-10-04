@@ -334,7 +334,7 @@ def test_stored_facet_positions_are_never_recomputed_or_written():
 def test_knobs_default_and_reject_an_unknown_value(monkeypatch):
     for name in V.KNOB_ENV.values():
         monkeypatch.delenv(name, raising=False)
-    assert V.knobs() == {'sort': 'strength', 'fiteq': 'noise', 'structat': 'after_facets',
+    assert V.knobs() == {'sort': 'multikey', 'fiteq': 'noise', 'structat': 'after_facets',
                          'qtopic': 'off', 'edgecomb': 'sum', 'descjoin': 'key', 'join': 'adjust',
                          'band': 'noise', 'probes': 'all', 'facets': 'on', 'area': 'off',
                          'tagside': 'all', 'offline': 'off'}

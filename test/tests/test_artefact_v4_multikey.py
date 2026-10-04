@@ -574,7 +574,7 @@ def test_the_run_knobs_go_into_the_retrieval_flags_the_manifest_carries(monkeypa
     V.record_run_knobs()
     recorded = V.RETRIEVAL_FLAGS['knobs_at_prepare']
     assert recorded['active']['HERB_V4_FITEQ'] == 'paraphrase'
-    assert recorded['active']['HERB_V4_SORT'] == 'strength'
+    assert recorded['active']['HERB_V4_SORT'] == 'multikey'
     assert 'record_run_knobs()' in inspect.getsource(V.prepare_over_corpus)
 
 

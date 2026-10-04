@@ -622,21 +622,22 @@ def arm(monkeypatch, env=None, kept=3, prep=None):
     monkeypatch.setattr(V, '_area_rank', no_landing)
     for name in V.KNOB_ENV.values():
         monkeypatch.delenv(name, raising=False)
-    for name, value in (env or {}).items():
+    for name, value in {'HERB_V4_SORT': 'strength', **(env or {})}.items():
         monkeypatch.setenv(name, value)
     seen['out'] = V.answer_one_question(('q', 'placeholder question'), prep or prepared(), None,
                                         50, 100)
     return seen
 
 
-def test_the_default_sort_is_strength(monkeypatch):
+def test_strength_is_chosen_by_name_and_is_not_the_default(monkeypatch):
     for name in V.KNOB_ENV.values():
         monkeypatch.delenv(name, raising=False)
-    assert V.knobs()['sort'] == 'strength'
+    assert V.knobs()['sort'] == 'multikey'
     assert V.SORT_MODES == ('strength', 'multikey', 'adjust_lower', 'multirank', 'concept',
                             'chain', 'sum')
-    assert V.RETRIEVAL_FLAGS['defaults']['HERB_V4_SORT'] == 'strength'
+    assert V.RETRIEVAL_FLAGS['defaults']['HERB_V4_SORT'] == 'multikey'
     assert 'strength' in V.RETRIEVAL_FLAGS and set(V.READ_BY) == set(V.SORT_MODES)
+    monkeypatch.setenv('HERB_V4_SORT', 'strength')
     record = V.knob_record(V.knobs())
     assert record['read_by_active_sort'] == ['HERB_V4_SORT', 'HERB_V4_OFFLINE']
     assert record['product_name_tags_excluded_by_the_sort'] is True

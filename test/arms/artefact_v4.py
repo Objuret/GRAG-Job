@@ -14,7 +14,8 @@ reads the querytagger answer from the cache only: a question without a good cach
 before any model call. off (the default): a miss asks the model, and a cached failure is asked
 again once.
 
-HERB_V4_SORT=strength (the default). One strength per chunk from the tags, the description and
+HERB_V4_SORT=strength (the 2026-10-04 build, chosen by name; the default from 2026-10-04 to
+2026-10-05). One strength per chunk from the tags, the description and
 the structure; the whole order goes to the harness, nothing is cut. The arithmetic is
 `v4_strength.strength_order`. N is the eligible graph tags - every graph tag except those whose
 name equals a product name casefolded - and E the edges whose tag is eligible. Every value is
@@ -69,7 +70,7 @@ his sentence or the orchestrator's:
   query tags to the earlier query tag in the list; D where D = Q; inside a level a chunk with no
   eligible edge follows the chunks that have a winning edge; a chunk counts once under a node.
 
-HERB_V4_SORT=multikey. His 2026-09-05 "i had a quick and easy thought, that the
+HERB_V4_SORT=multikey (the default). His 2026-09-05 "i had a quick and easy thought, that the
 queryfacets is the order of sorting-prio based on facets for tags, so, if facet 1 is most
 important for a tag from query, that is sorting order 1, and descending meaning that they are
 "sorted".. bah.. like.. multi-key sort or multi-level sorting."; 2026-09-06 "yeah, so, first
@@ -554,7 +555,7 @@ RETRIEVAL_FLAGS = {
               'HERB_V4_EDGECOMB', 'HERB_V4_DESCJOIN', 'HERB_V4_JOIN', 'HERB_V4_BAND',
               'HERB_V4_PROBES', 'HERB_V4_FACETS', 'HERB_V4_AREA', 'HERB_V4_TAGSIDE',
               'HERB_V4_OFFLINE'),
-    'defaults': {'HERB_V4_SORT': 'strength', 'HERB_V4_FITEQ': 'noise',
+    'defaults': {'HERB_V4_SORT': 'multikey', 'HERB_V4_FITEQ': 'noise',
                  'HERB_V4_STRUCT_AT': 'after_facets', 'HERB_V4_QTOPIC': 'off',
                  'HERB_V4_EDGECOMB': 'sum', 'HERB_V4_DESCJOIN': 'key', 'HERB_V4_JOIN': 'adjust', 'HERB_V4_BAND': 'noise',
                  'HERB_V4_PROBES': 'all',
@@ -595,7 +596,7 @@ def _choice(name, allowed, default):
 
 def knobs():
     """Read at call time, never at import, so a run's flags are the run's own."""
-    return {'sort': _choice('HERB_V4_SORT', SORT_MODES, 'strength'),
+    return {'sort': _choice('HERB_V4_SORT', SORT_MODES, 'multikey'),
             'fiteq': _choice('HERB_V4_FITEQ', tuple(BANDS), 'noise'),
             'structat': _choice('HERB_V4_STRUCT_AT', STRUCT_MODES, 'after_facets'),
             'qtopic': _choice('HERB_V4_QTOPIC', R4.QTOPIC_MODES, 'off'),
