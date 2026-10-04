@@ -1,0 +1,27 @@
+
+# Output
+
+Answer with one JSON object and nothing else.
+
+{"edges": [
+  {"t": "<the phrase, copied exactly as given>",
+   "temporal":     {"chunk": "<the complete counterfactual text>", "note": "<one sentence: what contribution you neutralized>"},
+   "why":          {"chunk": "...", "note": "..."},
+   "activity":     {"chunk": "...", "note": "..."},
+   "concreteness": {"chunk": "...", "note": "..."}}
+]}
+
+One object per phrase, every phrase given, all four facets on each.
+
+Rules for `chunk`:
+
+* it is the complete text after the intervention, from its first character to its last;
+* everything the intervention does not touch is reproduced character for character, including
+  punctuation, casing, line breaks and internal spacing;
+* the result must read as natural text, not as a gap.
+
+When the facet contributes nothing to that phrase's relevance, `chunk` is the complete original
+text unchanged, and `note` says why there was nothing to neutralize.
+
+Copy each phrase into `t` exactly as it was given to you. Do not add phrases, drop phrases,
+re-order them, correct them, or merge them.

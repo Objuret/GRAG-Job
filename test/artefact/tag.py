@@ -8,15 +8,14 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
 from pathlib import Path
 
-import httpx
 from tqdm import tqdm
 
 from harness import abort
-from harness import nim
+from harness import chat
 from artefact.chunk import Chunk, _get, chunk_dataset, load_key
 from harness.contract import BuildStats, ModelUsage
 
-TAGGER_MODEL = "z-ai/glm-5.1"
+TAGGER_MODEL = "claude-haiku-4-5"  # the chat lane; the NIM tagger models were purged 2026-09-07
 
 _TAGS_SCHEMA = {
     "type": "object",
@@ -48,7 +47,7 @@ def tagger_view(chunk: Chunk, data_root: Path) -> str:
 
 def tag_chunk(view: str, model: str = TAGGER_MODEL) -> tuple[list[str], dict]:
     t0 = time.perf_counter()
-    resp = nim.post("/chat/completions", {
+    resp = chat.post("/chat/completions", {
         "model": model,
         "temperature": 0,
         "max_tokens": 1024,
@@ -112,7 +111,6 @@ def smoke(n: int = 10, model: str = TAGGER_MODEL) -> None:
     key = load_key("artefact/keys/Salesforce__HERB.yaml")
     chunks = chunk_dataset(data_root / "Salesforce__HERB", data_root, key)
     sample = _sample(chunks, n)
-    nim.require_key()
 
     print(f"== tagger smoke: {len(sample)} chunks on {model} ==\n")
     usages, failed = [], 0
@@ -149,7 +147,7 @@ def smoke(n: int = 10, model: str = TAGGER_MODEL) -> None:
     print(f"  latency         {tot_time / n_done:.1f}s/chunk (wall {tot_time:.0f}s)")
     print(f"\n== full-run projection ({full} chunks) ==")
     print(f"  tokens          ~{tot_tok // n_done * full:,} ({tot_out // n_done * full:,} generated)")
-    print(f"  time @ 40 RPM   ~{full / 40:.0f} min   (NIM: free)")
+    print(f"  time            ~{tot_time / n_done * full / 60:.0f} min at this pace")
 
 
 def _checkpoint_done(out: Path) -> set:
@@ -183,7 +181,6 @@ def tag_corpus(models: list[str] | str, dataset: str = "Salesforce__HERB",
     if limit is not None:
         pending = pending[:limit]
 
-    nim.require_key()
     abort.watch()
     print(f"blast-tagging {len(pending)} chunks across {len(models)} models, concurrently "
           f"({len(done)} done / {len(chunks)} total) -> {out}")
@@ -206,10 +203,6 @@ def tag_corpus(models: list[str] | str, dataset: str = "Salesforce__HERB",
                     tags, u = tag_chunk(tagger_view(c, data_root), model)
                 except abort.Aborted:
                     with lock: pending.append(c)
-                    return tagged
-                except httpx.HTTPStatusError as e:
-                    with lock: pending.append(c)
-                    bar.write(f"  {short} HTTP {e.response.status_code} — out this round")
                     return tagged
                 except RuntimeError as e:
                     with lock: pending.append(c)

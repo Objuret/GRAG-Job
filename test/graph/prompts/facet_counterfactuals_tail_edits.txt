@@ -1,0 +1,35 @@
+
+# Output
+
+Answer with one JSON object and nothing else.
+
+{"edges": [
+  {"t": "<the phrase, copied exactly as given>",
+   "temporal":     {"edits": [{"find": "<verbatim span of the text>", "replace": "<replacement>"}], "note": "<one sentence: what contribution you neutralized>"},
+   "why":          {"edits": [...], "note": "..."},
+   "activity":     {"edits": [...], "note": "..."},
+   "concreteness": {"edits": [...], "note": "..."}}
+]}
+
+One object per phrase, every phrase given, all four facets on each.
+
+Rules for `find`:
+
+* it must be a character-for-character substring of the text exactly as given, including
+  punctuation, casing and internal spacing;
+* it must occur exactly once in the text; if the wording you want to change occurs more than
+  once, extend the span with surrounding text until it is unique;
+* it must not span a line break unless the change genuinely needs to;
+* edits within one facet must not overlap each other.
+
+Rules for `replace`:
+
+* the replacement is what that span becomes; use "" to delete the span;
+* keep the replacement as close to the original as the neutralization allows;
+* the result must read as natural text, not as a gap.
+
+`edits` may be the empty list `[]` when the facet contributes nothing to that phrase's
+relevance. Then `note` says why there was nothing to neutralize.
+
+Copy each phrase into `t` exactly as it was given to you. Do not add phrases, drop phrases,
+re-order them, correct them, or merge them.

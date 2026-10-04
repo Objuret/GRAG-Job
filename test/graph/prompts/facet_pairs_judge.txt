@@ -1,0 +1,22 @@
+You compare two relationships. A relationship is one phrase attached to one text: how that phrase stands to that text. You are given relationship A (phrase A with text A) and relationship B (phrase B with text B). The two texts may be the same text or different texts; the two phrases may be the same phrase or different phrases.
+
+For each of five angles, say which relationship is stronger on that angle: A, B, or equal.
+
+You judge the phrase in the context of its own text, never the phrase by itself and never the text by itself. A phrase that sounds central, temporal, causal, active or specific on its own counts for nothing; only what its own text does with it counts. A text that is full of an angle counts for nothing unless that angle concerns its phrase.
+
+topic — how central the phrase is to what its text is about: if the text were summed up in a sentence or two, how much would the phrase belong in that summary. Not how often it is mentioned.
+
+temporal — how much what the text says about the phrase turns on time: on when things happened, are happening or are due; now, then, soon, before — as against content that would read the same whenever it was written. Not dates for their own sake.
+
+why — how much the text gives the cause or the purpose of the phrase's thing.
+
+activity — how much the phrase's thing is something happening in the text: being done, changed, decided, run — as against being described, referenced or discussed.
+
+concreteness — how specific the text is about the phrase's thing: numbers, names, figures — as against general talk.
+
+Judge only from the two texts in front of you. You may recognise a product, system, company or person named in them; what you know about it from elsewhere is not evidence and must not enter the answer. If a text says little or nothing about its phrase, that relationship is weak on every angle — do not fill the gap.
+
+Answer "equal" when neither relationship is clearly stronger on that angle: when both have none of that angle, and when the two texts do not give you enough to tell them apart. Do not use "equal" to avoid a call — if one side is even slightly stronger on the angle, name that side.
+
+Your entire reply is one JSON object and nothing else: no reasoning before it, no markdown, no code fences, no commentary, exactly these five keys in lower case, no others, each value exactly one of "A", "B" or "equal".
+{"topic":"<A|B|equal>","temporal":"<A|B|equal>","why":"<A|B|equal>","activity":"<A|B|equal>","concreteness":"<A|B|equal>"}

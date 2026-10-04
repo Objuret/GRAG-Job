@@ -20,10 +20,10 @@ from scipy.cluster.hierarchy import linkage
 from scipy.spatial.distance import squareform
 
 from harness import abort
-from harness import nim
+from harness import chat
 from harness.char_budget import cut_at_budget
 from harness.contract import (
-    ArmOutput, BuildStats, ModelUsage, generator_usage_from_nim, unpack_generation,
+    ArmOutput, BuildStats, ModelUsage, generator_usage_from_chat, unpack_generation,
 )
 from harness.embed import EMBED_MODEL, _embed
 from harness.progress import progress
@@ -240,7 +240,7 @@ WITH c, f, qt, r,
                 ELSE 0.0
               END) * coalesce(r.w_facets[fi], 0.0)) AS facetTerm
 WITH c, f, qt.weight AS support, coalesce(facetTerm, 0.0) AS facetTerm,
-     coalesce(r.w_chunk, 0.0) AS w_chunk,
+     coalesce(r.w_chunk, 1.0) AS w_chunk,
      coalesce(c.relevance_to_file, 1.0) AS relevance
 ORDER BY support DESC, w_chunk DESC
 WITH c, f, collect({support: support, facetTerm: facetTerm,
@@ -614,7 +614,7 @@ class Prepared:
 
 def _driver():
     from neo4j import GraphDatabase
-    nim._load_dotenv()
+    chat._load_dotenv()
     pw = os.environ.get("NEO4J_PASSWORD")
     if not pw:
         raise RuntimeError("NEO4J_PASSWORD is not set — add it to .env at the repo root (like NVIDIA_API_KEY).")
@@ -789,10 +789,10 @@ def _chat_json(model: str, system: str, user: str, max_tokens: int,
 
     for attempt in (1, 2):
         t0 = time.perf_counter()
-        resp = nim.post("/chat/completions", payload, timeout=480.0)
+        resp = chat.post("/chat/completions", payload, timeout=480.0)
         elapsed += time.perf_counter() - t0
         calls += 1
-        ti, to = generator_usage_from_nim(resp.get("usage"))
+        ti, to = generator_usage_from_chat(resp.get("usage"))
         tok_in += ti
         tok_out += to
         choices = resp.get("choices") or []
@@ -1643,7 +1643,7 @@ def answer_one_question(question, prepared: Prepared, generate: Optional[Generat
                         k: int = 50, char_budget: Optional[int] = None) -> ArmOutput:
     _, text = _qid_text(question)
 
-    nim.reset_timing()
+    chat.reset_timing()
     t0 = time.perf_counter()
     plan, interp_calls, interp_in, interp_out, interp_time = _interpret_cached(text, INTERPRET_MODEL)
     persons = resolve_persons(text, prepared.directory) if PERSON_ON else None
@@ -1696,7 +1696,7 @@ def answer_one_question(question, prepared: Prepared, generate: Optional[Generat
         tokens_in=interp_in + ground_usage.tokens_in + rev_in,
         tokens_out=interp_out + ground_usage.tokens_out + rev_out,
         time_s=interp_time + ground_usage.time_s + rev_time,
-        **nim.take_timing())
+        **chat.take_timing())
 
     if generate is None:
         answer, gen = "", ModelUsage()

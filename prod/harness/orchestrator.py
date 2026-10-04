@@ -15,7 +15,7 @@ from harness.progress import progress
 from harness import questions
 from harness.contract import (
     ArmOutput, EvalManifest, ModelUsage, RunManifest, generator_messages,
-    generator_usage_from_nim, model_usage_from_dict, model_usage_from_telemetry,
+    generator_usage_from_chat, model_usage_from_dict, model_usage_from_telemetry,
 )
 
 _HERE = Path(__file__).parent.parent.parent
@@ -80,14 +80,13 @@ def build_shared_generator(config):
     if config.get("retrieval_only"):
         return None
 
-    from harness import nim
-    nim.require_key()
+    from harness import chat
     model = config.get("generator_model", GENERATOR_MODEL)
 
     def generate(question, contexts):
-        nim.reset_timing()
+        chat.reset_timing()
         t0 = time.perf_counter()
-        resp = nim.post("/chat/completions", {
+        resp = chat.post("/chat/completions", {
             "model": model,
             "temperature": 0,
             "chat_template_kwargs": {"enable_thinking": False},
@@ -100,7 +99,7 @@ def build_shared_generator(config):
             },
         }, timeout=480.0)
         elapsed = time.perf_counter() - t0
-        transport = nim.take_timing()
+        transport = chat.take_timing()
         choices = resp.get("choices") or []
         if not choices:
             raise RuntimeError("generator returned no choices")
@@ -118,7 +117,7 @@ def build_shared_generator(config):
             raise RuntimeError(
                 f"generator did not honour the answer schema "
                 f"(finish_reason={choices[0].get('finish_reason')}): {content!r}") from e
-        tokens_in, tokens_out = generator_usage_from_nim(resp.get("usage"))
+        tokens_in, tokens_out = generator_usage_from_chat(resp.get("usage"))
         return answer, {"calls": 1, "tokens_in": tokens_in, "tokens_out": tokens_out,
                         "cached_input_tokens": int(
                             (resp.get("usage") or {}).get("cached_input_tokens") or 0),
@@ -132,11 +131,11 @@ def to_arm_question(question):
 
 
 def _done_ids(records_path):
-    return {rec["id"] for rec in jsonl.load(records_path)}
+    return {rec["id"] for rec in jsonl.iter_records(records_path)}
 
 
 def _n_exhausted(records_path):
-    return sum(1 for rec in jsonl.load(records_path)
+    return sum(1 for rec in jsonl.iter_records(records_path)
                if ((rec.get("meta") or {}).get("char_budget") or {}).get("exhausted"))
 
 
@@ -262,6 +261,7 @@ def build_run_manifest(config, arm, build_stats, n_questions, n_ran, n_failed,
         timestamp=datetime.now(timezone.utc).isoformat(),
         build_stats=build_stats,
         retrieval_flags=config.get("retrieval_flags"),
+        flags=config.get("flags"),
         graph=graph_identity(config.get("graph_database")),
         code_version=provenance.code_version(),
         environment=provenance.environment(),
@@ -467,7 +467,7 @@ def _selfcheck():
 
     with tempfile.TemporaryDirectory() as d:
         def dead(q, prep, generate, k):
-            raise RuntimeError("nim down")
+            raise RuntimeError("lane down")
 
         dp = types.SimpleNamespace(__name__="arms.dead",
                                    prepare_over_corpus=lambda c: prepared, answer_one_question=dead)
@@ -477,7 +477,7 @@ def _selfcheck():
         assert aborted and "consecutive failures" in aborted
         assert not (Path(d) / "arm_outputs.jsonl").read_text(encoding="utf-8").strip()
         f = _rows(d, "failures.jsonl")
-        assert f and all("nim down" in x["error"] for x in f)
+        assert f and all("lane down" in x["error"] for x in f)
 
     with tempfile.TemporaryDirectory() as d:
         calls, clk = {"n": 0}, threading.Lock()
@@ -486,7 +486,7 @@ def _selfcheck():
             with clk:
                 calls["n"] += 1
             time.sleep(0.03)
-            raise RuntimeError("nim down")
+            raise RuntimeError("lane down")
 
         sdp = types.SimpleNamespace(__name__="arms.sdead",
                                     prepare_over_corpus=lambda c: prepared,

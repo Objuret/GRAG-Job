@@ -5,10 +5,10 @@ import time
 from datetime import date
 from pathlib import Path
 
-from harness import nim
+from harness import chat
 from artefact.prepass import MarkedSpan, prepass
 
-INTERPRETER_MODEL = "meta/llama-3.3-70b-instruct"
+INTERPRETER_MODEL = "claude-haiku-4-5"  # the chat lane; the NIM model was purged 2026-09-07
 
 SYSTEM = (
     "You read one query prompt and decompose it into the axes the retrieval "
@@ -155,7 +155,7 @@ def interpret(prompt: str, *, current_date: str | None = None,
     spans = _spans if _spans is not None else prepass(prompt)
     user = _format_user(prompt, cd, spans)
     t0 = time.perf_counter()
-    resp = nim.post("/chat/completions", {
+    resp = chat.post("/chat/completions", {
         "model": model,
         "temperature": 0,
         "max_tokens": 1024,
@@ -211,7 +211,6 @@ def _stratified(qs: list[dict], per_type: int = 2) -> list[dict]:
 
 
 def smoke(n_per_type: int = 2, current_date: str | None = None) -> None:
-    nim.require_key()
     qs = _stratified(_load_gold100(), per_type=n_per_type)
     cd = current_date or date.today().isoformat()
     print(f"== interpreter smoke: {len(qs)} gold-100 questions on {INTERPRETER_MODEL} ==")

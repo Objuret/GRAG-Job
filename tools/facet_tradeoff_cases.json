@@ -1,0 +1,69 @@
+{
+  "purpose": "Synthetic function screen: same tag, relevant alternatives, query-conditioned preference reversals. Written before model readings. No benchmark material.",
+  "domains": [
+    {
+      "id": "archive",
+      "tag": "digital archive migration",
+      "descriptions": [
+        "An account of the digital archive migration's dependencies, sequence, and state of completion.",
+        "An explanation of the reasons for undertaking the digital archive migration and the problems it is intended to address.",
+        "A record of the work actually performed in the digital archive migration, distinguishing executed operations from suggestions.",
+        "A factual specification of the digital archive migration, identifying the collections, storage quantities and configuration involved."
+      ],
+      "texts": [
+        "The digital archive migration is waiting for the catalogue freeze. Copying must follow that freeze; verification must finish before the old store is retired. The freeze is complete, copying is under way, and retirement remains pending. These dependencies determine when each stage can proceed.",
+        "The digital archive migration addresses the risk that obsolete storage will make records unreadable. Moving the records to a supported format preserves access, while consolidating the stores reduces the effort of maintaining incompatible systems. Those preservation and maintenance needs justify the project.",
+        "In the digital archive migration, operators copied the collections, ran integrity checks, repaired failed manifests and activated the replacement store. The review group approved the result and the administrators removed the old access route. These are recorded operations; no proposed tasks are included in this account.",
+        "The digital archive migration covers collections Cedar and Flint: 84,200 files occupying 6.4 terabytes. Its destination is storage pool AR-7. The manifest uses SHA-256 checksums and records a 12-character collection identifier. The transfer block size is 64 megabytes."
+      ]
+    },
+    {
+      "id": "tank",
+      "tag": "rainwater tank installation",
+      "descriptions": [
+        "The ordering of the rainwater tank installation stages, including prerequisites and which stages remain outstanding.",
+        "The rationale for the rainwater tank installation, connecting the chosen solution to its intended benefits.",
+        "A description of what the crew did during the rainwater tank installation, rather than a discussion of possible work.",
+        "Technical particulars of the rainwater tank installation, including dimensions, capacity and component identifiers."
+      ],
+      "texts": [
+        "For the rainwater tank installation, excavation has to precede the base pour, and the base must cure before the tank can be lowered. Pipe connection follows placement. Excavation and pouring are finished; curing is still in progress. The tank and the pipes therefore remain uninstalled.",
+        "The rainwater tank installation is intended to replace treated mains water used on garden beds. Storing roof runoff provides water during dry spells and reduces the burden on the storm drain. A buried tank was chosen to preserve the usable garden area rather than occupy the planting beds.",
+        "The rainwater tank installation crew excavated the pit, poured the base and lowered the tank into position. They connected the inlet and overflow pipes, fitted the inspection cover and tested the connections for leaks. The foreman signed off the completed physical work.",
+        "The rainwater tank installation uses a 5,000-litre T-500 tank, 2.4 metres long and 1.8 metres wide. The inlet is 110 millimetres in diameter; the overflow uses connector O-32. A 150-millimetre concrete base supports the tank, with a 600-millimetre inspection opening."
+      ]
+    },
+    {
+      "id": "freight",
+      "tag": "freight dispatch reorganisation",
+      "descriptions": [
+        "The transition schedule for freight dispatch reorganisation, showing what must happen before other steps and the current transition status.",
+        "An assessment of what motivated freight dispatch reorganisation and how the changes are supposed to solve the identified difficulties.",
+        "An operational account of the freight dispatch reorganisation: changes implemented, checks performed and decisions enacted.",
+        "The concrete configuration of the freight dispatch reorganisation, with named routes, dock assignments and measured quantities."
+      ],
+      "texts": [
+        "Freight dispatch reorganisation has reached the trial stage. Drivers must complete familiarisation before the new dispatch pattern can become permanent. The familiarisation sessions are finished, but trial acceptance is outstanding. Permanent operation will start only after acceptance; removal of the old rota comes last.",
+        "Freight dispatch reorganisation was prompted by congestion around the shared loading area. Separating the inbound and outbound flows should prevent vehicles from blocking one another. A common dispatch desk was selected to remove conflicting instructions from separate teams and make responsibility for departures clear.",
+        "As part of freight dispatch reorganisation, supervisors separated the loading queues, reassigned the drivers and opened the common dispatch desk. Dispatchers applied the new departure rules and checked vehicle movements. Management authorised the revised rota, and the old instruction sheets were withdrawn.",
+        "Freight dispatch reorganisation assigns routes Northline and Quaylink to docks D4 and D7. The dispatch desk has 3 terminals and handles 96 vehicle departures per shift. The marked holding area contains 18 bays, each 3.5 metres wide, with a 6-metre access lane."
+      ]
+    },
+    {
+      "id": "access",
+      "tag": "research repository access review",
+      "descriptions": [
+        "A progress and dependency account for the research repository access review, distinguishing completed checks from steps awaiting prerequisites.",
+        "The justification for the research repository access review and the objectives behind its chosen approach.",
+        "Evidence of actions taken in the research repository access review, including applied changes and decisions actually carried out.",
+        "Specific details of the research repository access review's scope, account groups and permission settings."
+      ],
+      "texts": [
+        "The research repository access review cannot close until group owners confirm the membership lists. The account inventory is complete and the lists have been circulated. Owner confirmation is pending. Permission changes follow confirmation, and the closing check must wait until those changes have been applied.",
+        "The research repository access review aims to remove permissions retained after staff change roles. Having group owners verify membership uses their knowledge of current responsibilities. That approach was chosen to prevent unnecessary exposure of research files without disrupting legitimate collaboration.",
+        "During the research repository access review, administrators inspected the membership lists, contacted group owners and removed obsolete accounts. They applied the approved permission changes and tested access using staff accounts. The repository manager accepted the review record and closed the action register.",
+        "The research repository access review covers 312 accounts in groups Atlas, Lumen and Sable. Atlas has read-only access to collections R1 through R8; Lumen can edit R3; Sable administers R9. The review record lists 27 exceptions and 14 service accounts under policy AR-12."
+      ]
+    }
+  ]
+}

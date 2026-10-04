@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Retrieval route lab</title><link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header><div><span class="eyebrow">FROZEN VOLMAX · 72K CONTEXT</span><h1>Retrieval route lab</h1><p>Swap the operators. Follow the source pointers through score order and delivery.</p></div><span id="connection" class="badge">Connecting…</span></header>
+<main>
+  <section class="panel leaderboard" aria-label="Observed policy rankings">
+    <div class="section-head"><div><span class="eyebrow">OBSERVED CONFIGURATION RESULTS</span><h2>Highest observed source-ID scores</h2><p>Structures and facet weights ranked across the completed cases. These are the best observed tested settings, not a mathematical optimum or answer-quality scores. Reference outcomes select the ranking; this is exploratory, not independent validation.</p></div><div class="leader-selects"><label class="leader-metric">Rank by<select id="leader-metric"><option value="recall_id">Source-ID recall</option><option value="precision_id">Source-ID precision</option><option value="f1_id">Source-ID F1</option></select></label><label class="leader-metric">Setting subset<select id="leader-subset"><option value="all">All tested settings</option><option value="topic_present">Topic present</option><option value="topic_largest">Topic largest</option></select></label></div></div>
+    <div class="leader-status"><strong id="leader-progress">Waiting for completed comparison cases</strong><span id="leader-detail" class="fine"></span></div>
+    <div id="leader-error" class="error" role="alert" hidden></div>
+    <div id="leader-baseline" class="fine">Canonical scores will use the same completed cases.</div>
+    <p id="leader-selection-note" class="fine">The combined selection space will be reported with the rankings.</p>
+    <div class="table-scroll leader-scroll"><table><thead><tr><th>#</th><th>Policy</th><th class="numeric">Source-ID recall</th><th class="numeric">Source-ID precision</th><th class="numeric">Source-ID F1</th><th>Recall vs canonical<br><small>better / worse / tied cases</small></th><th></th></tr></thead><tbody id="leader-rows"></tbody></table></div>
+    <p id="leader-empty" class="empty">The leaderboard appears after the first case completes all configurations.</p>
+    <div class="oracle-toggle"><label class="check"><input id="show-oracle" type="checkbox"> Show per-query best observed diagnostic</label></div>
+    <div id="oracle" class="oracle" hidden><strong>Per-query best observed</strong><p id="oracle-label">Uses reference outcomes to choose a different policy for each question; this is not a deployable selector.</p><div id="oracle-values"></div><p class="fine">Each question uses one policy chosen by the selected ranking metric. The other metrics are measured on that same policy.</p></div>
+  </section>
+  <section class="panel controls" aria-label="Replay controls">
+    <div class="case-line"><label class="case-label">Saved question ID<select id="case"></select></label><div class="case-meta"><strong id="case-count">Loading saved cases</strong><span id="cohort"></span></div><label class="check"><input id="live" type="checkbox" checked> Replay on change</label></div>
+    <div class="selected-best"><div><strong>Best observed for selected case</strong><p id="selected-best-description" class="fine">Waiting for a completed reference-selected setting.</p><p class="fine">Diagnostic: uses reference outcomes to choose this case's setting.</p></div><button id="load-selected-best" disabled>Load reference-selected setting</button></div>
+    <div id="operators" class="operators"></div>
+    <fieldset id="coefficient-controls" class="coefficient-controls">
+      <legend>Facet coefficients</legend>
+      <div class="coefficient-inputs">
+        <label>Topic<input id="coefficient-topic" type="number" min="0" step="any" value="1" required></label>
+        <label>Temporal<input id="coefficient-temporal" type="number" min="0" step="any" value="0.25" required></label>
+        <label>Why<input id="coefficient-why" type="number" min="0" step="any" value="0.25" required></label>
+        <label>Activity<input id="coefficient-activity" type="number" min="0" step="any" value="0.25" required></label>
+        <label>Concreteness<input id="coefficient-concreteness" type="number" min="0" step="any" value="0.25" required></label>
+      </div>
+      <p id="coefficient-state" class="fine">Applied only to separate facet sum. Use finite nonnegative values; coefficients are not normalized.</p>
+      <p class="fine">The leaderboard includes tested structures and coefficient settings. Live edits replay this case only; loading a ranked setting restores its displayed weights.</p>
+    </fieldset>
+    <div class="actions"><button id="replay" class="primary" disabled>Replay routes</button><button id="pin" disabled>Pin current as comparison</button><button id="reset">Reset canonical</button><button id="area-preset">Try area-first scope</button><span id="busy" role="status" aria-live="polite"></span></div>
+    <div class="policy-line"><span id="policy-kind" class="badge">Canonical policy</span><span>Comparison: <code id="comparison-label"></code></span></div>
+    <p class="fine">Local replay of cached numerical inputs. No new model calls. Variants are exploratory; changing an operator does not validate its semantics.</p>
+  </section>
+  <div id="error" class="error" role="alert" hidden></div>
+  <p id="displayed-case" class="fine">No replay displayed.</p>
+  <section id="metrics" class="metrics" aria-label="Source ID metrics"></section>
+  <section class="panel movement-panel">
+    <div class="section-head"><div><h2>Where chunks move</h2><p>Semantic position comes before scope and recovery; delivery position comes after. Green means earlier. Scores are diagnostic only: independent streams and lexical orders do not share one final scalar.</p></div><span id="timing" class="badge">No replay yet</span></div>
+    <div class="filters"><label class="search-label">Find a chunk ID<input id="search" type="search" placeholder="Type an ID fragment"></label><label class="check"><input id="include-gold" type="checkbox" checked> Include every gold-linked chunk</label><label class="check"><input id="gold-only" type="checkbox"> Gold-linked only</label><label class="check"><input id="changed-only" type="checkbox"> Changed only</label><label class="check"><input id="delivered-only" type="checkbox"> Delivered in either</label></div>
+    <figure id="gold-position-plot" class="gold-position-plot" hidden>
+      <figcaption id="gold-plot-caption">Gold-linked chunks in delivery order · the same logarithmic position scale on both sides. Green moves earlier; red moves later. Larger points link more reference IDs. Click a point to find its chunk below.</figcaption>
+      <div id="gold-plot"></div>
+      <p class="fine">Each line is one chunk, not one source ID; a reference can link several chunks. Dashed marks show the 72k full-unit boundary on each side. Unsupported chunks sit below the numbered scale. The plot always includes all gold-linked chunks.</p>
+    </figure>
+    <div class="table-caption"><span id="row-count">Waiting for a case</span><span>Top 100 by new semantic position, plus gold-linked chunks when enabled.</span></div>
+    <div class="table-scroll"><table><thead><tr><th>Chunk ID / gold pointers</th><th>Semantic position<br><small>comparison → current</small></th><th>Delivery position<br><small>comparison → current</small></th><th>Delivery change</th><th class="numeric">Diagnostic score<br><small>comparison → current</small></th></tr></thead><tbody id="rows"></tbody></table></div>
+    <p id="empty" class="empty">Choose a saved case to inspect its routes.</p>
+  </section>
+  <section class="panel"><div class="section-head"><div><h2>Gold-source pointers</h2><p>Reference IDs are joined after retrieval. They never choose a route.</p></div><label class="check"><input id="pointer-changes" type="checkbox"> Credit changes only</label></div><div id="pointer-count" class="fine"></div><div id="pointers" class="pointers"></div></section>
+  <aside id="inspect" class="panel" hidden><div class="section-head"><h2>Chunk route pointers</h2><button id="close-inspect">Close</button></div><code id="inspect-id"></code><pre id="inspect-paths"></pre></aside>
+  <footer>Only IDs, numerical traces and graph pointers are shown. Benchmark questions, reference answers and source text are not exposed. Source-ID recall and precision measure citation-ID membership, not answer quality or semantic validity. Partial boundary chunks receive no new source-ID credit under the serving contract.</footer>
+</main>
+<script src="/app.js"></script>
+</body></html>

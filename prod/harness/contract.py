@@ -48,7 +48,7 @@ def generator_output_text(answer: str) -> str:
     return json.dumps({"answer": answer}, ensure_ascii=False)
 
 
-def generator_usage_from_nim(usage: dict | None) -> tuple[int, int]:
+def generator_usage_from_chat(usage: dict | None) -> tuple[int, int]:
     u = usage or {}
     tin = int(u.get("prompt_tokens", 0) or 0)
     tout = int(u.get("completion_tokens", 0) or 0)
@@ -200,6 +200,7 @@ class RunManifest:
     inputs: dict | None = None
     graph: dict | None = None
     n_exhausted: int | None = None
+    flags: dict | None = None
 
 
 @dataclass

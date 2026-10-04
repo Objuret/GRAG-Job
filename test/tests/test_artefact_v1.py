@@ -90,7 +90,7 @@ class InterpreterBackendTests(unittest.TestCase):
                          "finish_reason": "stop"}],
             "usage": {"prompt_tokens": 2, "completion_tokens": 3},
         }
-        with patch.object(arm.nim, "_claude_chat", return_value=response) as claude:
+        with patch.object(arm.chat, "_claude_chat", return_value=response) as claude:
             parsed, tokens_in, tokens_out, _ = arm._chat_json(
                 arm.INTERPRET_MODEL, "system", "user", 32)
         self.assertEqual(parsed, {"ok": True})
@@ -115,7 +115,7 @@ class Pass2ValidationTests(unittest.TestCase):
     def test_a_malformed_scores_payload_retries_then_succeeds(self):
         bad = self._resp('{"scores": [{"t": "a", "facets": {"topic": "high"}}]}')
         good = self._resp('{"scores": [{"t": "a", "facets": {"topic": 0.9}}]}')
-        with patch.object(arm.nim, "post", side_effect=[bad, good]) as post:
+        with patch.object(arm.chat, "post", side_effect=[bad, good]) as post:
             parsed, tok_in, tok_out, _ = arm._chat_json(
                 "m", "sys", "user", 64, validate=arm._validate_scores)
         self.assertEqual(post.call_count, 2)
@@ -124,7 +124,7 @@ class Pass2ValidationTests(unittest.TestCase):
 
     def test_a_twice_malformed_payload_fails_loud_with_its_usage(self):
         bad = self._resp('{"scores": [{"t": "a", "facets": {"topic": null}}]}')
-        with patch.object(arm.nim, "post", side_effect=[bad, bad]):
+        with patch.object(arm.chat, "post", side_effect=[bad, bad]):
             with self.assertRaises(arm.InterpreterError) as ctx:
                 arm._chat_json("m", "sys", "user", 64, validate=arm._validate_scores)
         e = ctx.exception

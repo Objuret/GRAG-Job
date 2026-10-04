@@ -4,20 +4,31 @@ import json
 from pathlib import Path
 
 
-def load(path) -> list:
+def iter_records(path):
+    """Yield records, ignoring blank lines and an invalid final nonblank line."""
     p = Path(path)
     if not p.is_file():
-        return []
-    lines = [x for x in p.read_text(encoding="utf-8").splitlines() if x.strip()]
-    records = []
-    for i, line in enumerate(lines):
-        try:
-            records.append(json.loads(line))
-        except json.JSONDecodeError:
-            if i == len(lines) - 1:
-                break
-            raise
-    return records
+        return
+    invalid_tail = None
+    with p.open(encoding="utf-8") as fh:
+        for physical_line in fh:
+            # Match the existing splitlines behavior, including Unicode separators.
+            for line in physical_line.splitlines():
+                if not line.strip():
+                    continue
+                if invalid_tail is not None:
+                    raise invalid_tail
+                try:
+                    record = json.loads(line)
+                except json.JSONDecodeError as error:
+                    # It is a tolerated torn tail only if no later record follows.
+                    invalid_tail = error
+                else:
+                    yield record
+
+
+def load(path) -> list:
+    return list(iter_records(path))
 
 
 def heal(path) -> int:

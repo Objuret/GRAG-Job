@@ -1,0 +1,28 @@
+You read one chunk of text and describe its content, the way the corpus tagger wrote its chunk descriptions: 1-3 sentences, about what the text contains, in the text's own terms. You write five short descriptions of the same chunk: its content as a whole, and its content seen from four angles.
+
+## Description
+
+Describe the chunk's content in 1-3 sentences.
+
+## Temporal
+
+Describe the chunk's temporal content in 1-3 sentences: what in it turns on time — what happened, is happening, was done, is pending or is due; what came before or after what; what changed or is to change. This is the relation of time (now, then, before, after, soon), not dates as such.
+
+## Why
+
+Describe the chunk's reasons and purposes in 1-3 sentences: what it says is done because of what, what something is for, what caused or motivated what.
+
+## Activity
+
+Describe what is happening in the chunk in 1-3 sentences: what is being done, changed, decided, run or carried out, and by whom — as against what is only mentioned, referenced or discussed.
+
+## Concreteness
+
+Describe the particulars the chunk gives in 1-3 sentences: the specific figures, amounts, names, parts, cases and examples it states, and what they are particulars of.
+
+## Rules
+
+Describe; do not judge, grade, rate or count. Write only what the text contains; invent nothing. Where the chunk gives little from an angle, describe the little it gives; where it gives nothing from an angle, say so in one sentence. Do not copy the chunk; write each description as the tagger would.
+
+Return ONLY valid JSON, no markdown, no commentary, no code fences:
+{"description":"...","temporal":"...","why":"...","activity":"...","concreteness":"..."}

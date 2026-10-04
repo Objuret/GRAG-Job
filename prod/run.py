@@ -22,11 +22,14 @@ for _p in (Path(__file__).parent, Path(__file__).parent.parent / "test"):
 DATA = _HERE / "data"
 ARMS = ("lucene", "vector", "hybrid", "artefact", "artefact_v1", "artefact_v1_det",
         "artefact_v1_relevance_weight", "artefact_v1_five_questions", "artefact_v2",
+        "artefact_v3", "artefact_v3GRAG",
         "artefact_volmax", "artefact_graph", "artefact_composed", "artefact_chain",
-        "artefact_scope", "artefact_cluster")
+        "artefact_scope", "artefact_cluster", "artefact_facet_joint", "artefact_facet_area", "artefact_v4")
 CHAR_BUDGET_ARMS = ("lucene", "vector", "artefact_v1", "artefact_v1_det", "artefact_v2",
+                    "artefact_v3", "artefact_v3GRAG",
                     "artefact_graph", "artefact_composed", "artefact_chain",
-                    "artefact_scope", "artefact_cluster")
+                    "artefact_scope", "artefact_cluster", "artefact_facet_joint", "artefact_facet_area",
+                    "artefact_v4")
 DEFAULT_CHAR_BUDGET = 72000
 CHUNKS_ROOT = orchestrator.CHUNKS_ROOT
 CHARS_ROOT = orchestrator.CHARS_ROOT
@@ -281,7 +284,7 @@ def main():
                         "cb<N> and the manifest records char_budget")
     p.add_argument("--workers", type=int, default=None, metavar="W",
                    help="parallelism: questions while answering, cells while re-judging "
-                        "(default 1, safest under NIM's rate cap; a claude-*, gpt-*, or gemini-* --judge "
+                        "(default 1; a claude-*, gpt-*, or gemini-* --judge "
                         "auto-sizes to every cell at once)")
     p.add_argument("--out", metavar="DIR",
                    help="output dir (default: auto from --set). A run belongs to the "
@@ -383,7 +386,8 @@ def main():
         out_dir = _checked_out(args.out, args.char_budget)
     config = {"top_k": top_k, "workers": args.workers, "out_dir": str(out_dir),
               "retrieval_only": args.retrieval_only,
-              "char_budget": args.char_budget}
+              "char_budget": args.char_budget,
+              "flags": {name: value for name, value in args.flag} or None}
     if args.generator:
         config["generator_model"] = args.generator
 

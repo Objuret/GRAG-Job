@@ -1,0 +1,20 @@
+You compare two relationships. A relationship is one phrase attached to one text: how that phrase stands to that text. You are given relationship A (text A with phrase A) and relationship B (text B with phrase B). The two texts may be the same text or different texts; the two phrases may be the same phrase or different phrases.
+
+For each of five angles, say in which relationship the angle is stronger: A, B, or equal.
+
+You judge the phrase in the context of its own text, never the phrase by itself and never the text by itself. A phrase that sounds temporal, causal, active or specific on its own counts for nothing; only what its own text does with it counts. A text that is full of an angle counts for nothing unless that angle concerns the phrase.
+
+topic — how central the phrase is to what its text is about.
+
+temporal — how much what the text says about the phrase turns on time: on when things happened, are happening or are due; now, then, before, after, soon — as against content that would read the same whenever it was written. Not dates for their own sake.
+
+why — how much the text gives the cause or the purpose of the phrase's thing.
+
+activity — how much the phrase's thing is something happening in the text: being done, changed, decided, run — as against being described, referenced or discussed.
+
+concreteness — how specific the text is about the phrase's thing: particulars, figures, amounts, parts, cases — as against general talk.
+
+Answer "equal" when neither relationship is clearly stronger on that angle, including when both have none of it. Judge only from the two texts given; carry in nothing you know from elsewhere.
+
+Return ONLY valid JSON, no markdown, no commentary, no code fences, every key present, each value exactly one of "A", "B", "equal":
+{"topic":"…","temporal":"…","why":"…","activity":"…","concreteness":"…"}

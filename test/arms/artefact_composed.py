@@ -15,7 +15,7 @@ from typing import Optional
 
 import numpy as np
 
-from harness import nim
+from harness import chat
 from harness.contract import ArmOutput, BuildStats, ModelUsage, unpack_generation
 from arms.artefact_v2 import (
     ABS_REF_CACHE_DIR, ALL_FACETS, DATABASE, DATASET_ID, DESC_INDEX,
@@ -522,7 +522,7 @@ def answer_one_question(question, prepared: Prepared, generate=None,
                         k: int = 50, char_budget: Optional[int] = None) -> ArmOutput:
     _, text = _qid_text(question)
 
-    nim.reset_timing()
+    chat.reset_timing()
     t0 = time.perf_counter()
     plan, interp_calls, interp_in, interp_out, interp_time = _interpret_cached(
         text, INTERPRET_MODEL)
@@ -580,7 +580,7 @@ def answer_one_question(question, prepared: Prepared, generate=None,
         tokens_in=interp_in + ground_usage.tokens_in + rev_in,
         tokens_out=interp_out + ground_usage.tokens_out + rev_out,
         time_s=interp_time + ground_usage.time_s + rev_time,
-        **nim.take_timing())
+        **chat.take_timing())
 
     if generate is None:
         answer, gen = "", ModelUsage()

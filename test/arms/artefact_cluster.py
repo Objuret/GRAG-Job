@@ -17,7 +17,7 @@ import numpy as np
 from scipy.special import logsumexp, ndtri
 from scipy.stats import t as student_t
 
-from harness import nim
+from harness import chat
 from harness.contract import ArmOutput, BuildStats, ModelUsage, unpack_generation
 from arms.artefact_composed import (
     RANK_SCORE_DP, _PROBES, _parts, _pointer, _profile, _spread,
@@ -468,7 +468,7 @@ def answer_one_question(question, prepared: Prepared, generate=None,
                         k: int = 50, char_budget: Optional[int] = None) -> ArmOutput:
     _, text = _qid_text(question)
 
-    nim.reset_timing()
+    chat.reset_timing()
     t0 = time.perf_counter()
     plan, interp_calls, interp_in, interp_out, interp_time = _interpret_cached(
         text, INTERPRET_MODEL)
@@ -511,7 +511,7 @@ def answer_one_question(question, prepared: Prepared, generate=None,
         tokens_in=interp_in + embed_usage.tokens_in,
         tokens_out=interp_out + embed_usage.tokens_out,
         time_s=interp_time + embed_usage.time_s,
-        **nim.take_timing())
+        **chat.take_timing())
 
     if generate is None:
         answer, gen = "", ModelUsage()

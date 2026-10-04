@@ -4,7 +4,7 @@ import os
 
 import numpy as np
 
-from harness import nim
+from harness import chat
 
 DATABASE = os.environ.get("NEO4J_DATABASE", "herb-eval")
 
@@ -29,7 +29,7 @@ def _unit(a: np.ndarray) -> np.ndarray:
 
 def _driver():
     from neo4j import GraphDatabase
-    nim._load_dotenv()
+    chat._load_dotenv()
     pw = os.environ.get("NEO4J_PASSWORD")
     if not pw:
         raise RuntimeError("NEO4J_PASSWORD is not set — add it to .env at the repo root (like NVIDIA_API_KEY).")

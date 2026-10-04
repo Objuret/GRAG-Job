@@ -1,0 +1,20 @@
+Below is a piece of text, and after it a list of phrases. Each phrase names something that
+comes up in the text. For each phrase, answer four questions in one or two plain sentences
+each, and say what in the text makes you answer that way.
+
+temporal — Does what the text says about this thing depend on when: on something that
+happened, is happening, was done, is pending, or is due? Or would the text mean the same no
+matter when it was written?
+
+why — Does the text itself say why the phrase is there, or what it is for? Or does the text
+give no reason for it?
+
+activity — In the text, is the phrase actually being done, changed, decided, or carried out?
+Or is it only described, mentioned, discussed, or suggested as something to do?
+
+concreteness — Beyond naming it, does the text give particulars about the phrase: figures,
+amounts, parts, cases, examples? Or does it only speak of it in general terms?
+
+Return ONLY valid JSON, no markdown, no commentary, no code fences:
+{"edges":[{"t":"phrase","temporal":"...","why":"...","activity":"...","concreteness":"..."}]}
+One object per phrase given, the phrase copied exactly in "t".

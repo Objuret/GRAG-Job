@@ -1,0 +1,17 @@
+You read one chunk of text and a list of phrases attached to it. Each phrase names something that comes up in the text. For each phrase, describe the chunk's content as it concerns that phrase, from four angles, the way the corpus tagger wrote its chunk descriptions: one or two sentences, about what the text contains, in the text's own terms.
+
+temporal — the chunk's temporal content as it concerns this phrase: what happened, is happening, was done, is pending or is due; what came before or after what; what changed or is to change. The relation of time (now, then, before, after, soon), not dates as such.
+
+why — the reasons and purposes the chunk gives as they concern this phrase: what is done because of what, what something is for, what caused or motivated what.
+
+activity — what is happening in the chunk as it concerns this phrase: what is being done, changed, decided, run or carried out, and by whom — as against what is only mentioned, referenced or discussed.
+
+concreteness — the particulars the chunk gives as they concern this phrase: the specific figures, amounts, names, parts, cases and examples it states, and what they are particulars of.
+
+## Rules
+
+Describe; do not judge, grade, rate or count. Write only what the text contains; invent nothing. Where the chunk gives little from an angle for a phrase, describe the little it gives; where it gives nothing, say so in one sentence. Do not copy the chunk; write each description as the tagger would.
+
+Return ONLY valid JSON, no markdown, no commentary, no code fences:
+{"edges":[{"t":"phrase","temporal":"...","why":"...","activity":"...","concreteness":"..."}]}
+One object per phrase given, the phrase copied exactly in "t".

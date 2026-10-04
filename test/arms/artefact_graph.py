@@ -19,10 +19,10 @@ from typing import Callable, Optional
 
 import numpy as np
 
-from harness import nim
+from harness import chat
 from harness.char_budget import cut_at_budget
 from harness.contract import (
-    ArmOutput, BuildStats, ModelUsage, generator_usage_from_nim, unpack_generation,
+    ArmOutput, BuildStats, ModelUsage, generator_usage_from_chat, unpack_generation,
 )
 from harness.embed import EMBED_MODEL, _embed
 from harness.progress import progress
@@ -386,10 +386,10 @@ def _interpret(text: str) -> tuple:
     elapsed = 0.0
     for attempt in (1, 2):
         t0 = time.perf_counter()
-        resp = nim.post("/chat/completions", payload, timeout=480.0)
+        resp = chat.post("/chat/completions", payload, timeout=480.0)
         elapsed += time.perf_counter() - t0
         calls += 1
-        ti, to = generator_usage_from_nim(resp.get("usage"))
+        ti, to = generator_usage_from_chat(resp.get("usage"))
         tok_in += ti
         tok_out += to
         choices = resp.get("choices") or []
@@ -473,7 +473,7 @@ class Prepared:
 
 def _driver():
     from neo4j import GraphDatabase
-    nim._load_dotenv()
+    chat._load_dotenv()
     pw = os.environ.get("NEO4J_PASSWORD")
     if not pw:
         raise RuntimeError("NEO4J_PASSWORD is not set — add it to .env at the repo root (like NVIDIA_API_KEY).")
@@ -1091,7 +1091,7 @@ def answer_one_question(question, prepared: Prepared, generate: Optional[Generat
                         char_budget: Optional[int] = None) -> ArmOutput:
     qid, text = _qid_text(question)
 
-    nim.reset_timing()
+    chat.reset_timing()
     t0 = time.perf_counter()
     shape, interp_usage = _interpret_cached(text, qid)
     tag_texts = [text] if os.environ.get("HERB_GRAPH_RAW_TAG") == "1" else shape["phrases"]
@@ -1189,7 +1189,7 @@ def answer_one_question(question, prepared: Prepared, generate: Optional[Generat
         calls=sum(u.calls for u in spent),
         tokens_in=sum(u.tokens_in for u in spent),
         tokens_out=sum(u.tokens_out for u in spent), time_s=model_time_s,
-        **nim.take_timing())
+        **chat.take_timing())
 
     if generate is None:
         answer, gen = "", ModelUsage()

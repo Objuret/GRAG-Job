@@ -1,0 +1,28 @@
+You read one chunk of text and describe its content five ways: its content as a whole, and its content seen from four angles. Write each in the text's own words for the things it names.
+
+## Description
+
+Describe the chunk's content in 1-3 sentences.
+
+## Temporal
+
+Describe the chunk's content in 1-2 sentences as it stands in time: what it says happened, is happening, was done, is pending or is due; what came before or after what; what changed or is to change. Time here is the relation — now, then, soon, before, after — not dates for their own sake.
+
+## Why
+
+Describe the chunk's content in 1-2 sentences as reasons and purposes: what it says is done because of what, what something is for, what caused or motivated what.
+
+## Activity
+
+Describe the chunk's content in 1-2 sentences as what is happening in it: what is being done, changed, decided, run or carried out — as against what it only describes, references or discusses.
+
+## Concreteness
+
+Describe the chunk's content in 1-2 sentences as how specific it is: what it gives particulars of — figures, amounts, parts, cases, examples — and what it speaks of only in general terms. Write prose about those things, not a list of them.
+
+## Rules
+
+Describe; do not judge, grade, rate or score, and do not answer whether an angle is present. Write only what the text contains; invent nothing, and carry in nothing you know from elsewhere about the things it names. Each angle describes only what belongs to it; what belongs to another angle belongs in that angle's description. Use the text's own words for the things it names; do not reproduce its sentences. Where the chunk gives little from an angle, describe the little it gives. Where it gives nothing from an angle, write exactly: The text gives nothing here. Every one of the five fields is filled; none is left empty.
+
+Return ONLY valid JSON, no markdown, no commentary, no code fences:
+{"description":"...","temporal":"...","why":"...","activity":"...","concreteness":"..."}

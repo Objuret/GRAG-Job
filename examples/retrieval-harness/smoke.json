@@ -1,0 +1,13 @@
+{
+  "case_ids": ["case_001", "case_011"],
+  "policy_filters": {
+    "facet": ["separate_facet_sum"],
+    "match": ["maximum"],
+    "topology": ["none"],
+    "graph_join": ["union"],
+    "description": ["multiply"],
+    "scope": ["all", "area_first"],
+    "recovery": ["off"]
+  },
+  "coefficients": [[1, 0.25, 0.25, 0.25, 0.25], [0.75, 0.75, 0, 0, 0.5]]
+}

@@ -18,7 +18,7 @@ from pathlib import Path
 
 from harness import abort
 from harness import jsonl
-from harness import nim
+from harness import chat
 from harness.progress import progress
 from harness.contract import EvalResult, ModelUsage
 from eval.ragas_catalog import CATALOG, metrics_to_run
@@ -29,7 +29,11 @@ EMBED_MODEL = "nvidia/llama-nemotron-embed-1b-v2"
 _JUDGE_MODEL_LC = JUDGE_MODEL.lower()
 JUDGE_BACKEND = "gemini-cli" if "gemini" in _JUDGE_MODEL_LC else (
     "codex-cli" if "gpt-" in _JUDGE_MODEL_LC else (
-        "claude-cli" if "claude" in _JUDGE_MODEL_LC else "nim"))
+        "claude-cli" if "claude" in _JUDGE_MODEL_LC else None))
+if JUDGE_BACKEND is None:
+    raise ValueError(
+        f"RAGAS_JUDGE_MODEL={JUDGE_MODEL!r} names no judge lane — claude-*, gpt-* or gemini-*; "
+        f"the hosted NIM lane was purged on 2026-09-07")
 JUDGE_REASONING_EFFORT = (
     os.environ.get("RAGAS_JUDGE_REASONING_EFFORT", "high").strip().lower()
     if JUDGE_BACKEND == "codex-cli" else None)
@@ -151,11 +155,11 @@ def _record_judge_usage(tokens_in: int, tokens_out: int, reasoning_tokens: int,
 
 def _claude_verdict(text: str, model: str, timeout_s: float) -> str:
     started = time.perf_counter()
-    nim.reset_timing()
-    resp = nim.post("/chat/completions",
+    chat.reset_timing()
+    resp = chat.post("/chat/completions",
                     {"model": model, "messages": [{"role": "user", "content": text}]},
                     timeout=timeout_s, max_tries=1)
-    transport = nim.take_timing()
+    transport = chat.take_timing()
     clean = ((resp.get("choices") or [{}])[0].get("message") or {}).get("content") or ""
     usage = resp.get("usage") or {}
     _record_judge_usage(
@@ -348,21 +352,9 @@ class _JudgeLLM(BaseRagasLLM):
         if "gpt-" in model:
             LAST_JUDGE_BACKEND = "codex-cli"
             return {}, _codex_verdict(text, self.model, JUDGE_TIMEOUT_S), "stop"
-        LAST_JUDGE_BACKEND = "nim"
-        resp = nim.post("/chat/completions", {
-            "model": self.model,
-            "temperature": float(temperature),
-            "chat_template_kwargs": {"enable_thinking": False},
-            "max_tokens": 4096,
-            "min_tokens": 1,
-            "messages": [{"role": "user", "content": text}],
-            **({"stop": stop} if stop else {}),
-        }, timeout=JUDGE_TIMEOUT_S, max_tries=JUDGE_MAX_TRIES,
-            give_up_after_s=JUDGE_TIMEOUT_S * JUDGE_MAX_TRIES)
-        choices = resp.get("choices") or []
-        content = (choices[0].get("message") or {}).get("content") if choices else None
-        finish = choices[0].get("finish_reason") if choices else "no choices"
-        return resp, content, finish
+        raise RuntimeError(
+            f"judge model {self.model!r} names no lane — claude-*, gpt-* or gemini-*; the hosted "
+            f"NIM lane was purged on 2026-09-07")
 
     def _verdict(self, text, temperature, stop):
         for _ in range(3):
@@ -372,7 +364,7 @@ class _JudgeLLM(BaseRagasLLM):
         usage = resp.get("usage") or {}
         message = (resp.get("choices") or [{}])[0].get("message") or {}
         raise RuntimeError(
-            f"NIM judge returned empty content (finish_reason={finish}, "
+            f"judge returned empty content (finish_reason={finish}, "
             f"completion_tokens={usage.get('completion_tokens')}, message_keys={sorted(message)})")
 
     def _complete(self, text, n, temperature, stop):
@@ -701,17 +693,17 @@ def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
                 with bar_lock:
                     bar.update(1)
 
-        start_calls, stop = nim.completed_calls(), threading.Event()
+        start_calls, stop = chat.completed_calls(), threading.Event()
 
         def _heartbeat():
             while not stop.wait(1.0):
                 with bar_lock:
-                    done = nim.completed_calls() - start_calls
+                    done = chat.completed_calls() - start_calls
                     if per_context:
                         bar.n = min(bar.total, done)
                         bar.refresh()
                     else:
-                        bar.set_postfix_str(f"{done} nim calls", refresh=True)
+                        bar.set_postfix_str(f"{done} model calls", refresh=True)
 
         threading.Thread(target=_heartbeat, daemon=True).start()
         consecutive_failed, outcome = 0, None

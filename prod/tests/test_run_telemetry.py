@@ -9,10 +9,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
-import httpx
-
 from harness import jsonl
-from harness import nim
+from harness import chat
 from harness import orchestrator
 from harness import provenance
 from harness.contract import (
@@ -58,86 +56,30 @@ class TornAppendLogTests(unittest.TestCase):
 
 
 class TransportTimingTests(unittest.TestCase):
-
-    def setUp(self):
-        nim.reset_timing()
-
-    def test_a_clean_call_is_all_request_time(self):
-        with TemporaryDirectory():
-            with patch.object(nim, "_wait_my_turn", lambda *a, **k: None), \
-                 patch.object(httpx, "post", side_effect=self._ok):
-                nim.post("/chat/completions", {"model": "m"})
-            t = nim.take_timing()
-        self.assertEqual(t["attempts"], 1)
-        self.assertEqual(t["retry_s"], 0.0)
-        self.assertGreater(t["request_s"], 0.0)
-
-    def test_queueing_lands_in_wait_not_in_request(self):
-        def slow_turn(*a, **k):
-            time.sleep(0.05)
-
-        with patch.object(nim, "_wait_my_turn", slow_turn), \
-             patch.object(httpx, "post", side_effect=self._ok):
-            nim.post("/chat/completions", {"model": "m"})
-        t = nim.take_timing()
-        self.assertGreater(t["wait_s"], 0.02)
-        self.assertLess(t["request_s"], t["wait_s"])
-
-    def test_a_retried_call_separates_the_failure_cost(self):
-        calls = {"n": 0}
-
-        def flaky(url, json, headers, timeout):
-            calls["n"] += 1
-            if calls["n"] == 1:
-                return httpx.Response(503, text="busy", request=httpx.Request("POST", url))
-            return httpx.Response(200, json={"ok": True},
-                                  request=httpx.Request("POST", url))
-
-        with patch.object(nim, "_wait_my_turn", lambda *a, **k: None), \
-             patch.object(nim, "_back_off", lambda *a, **k: None), \
-             patch.object(httpx, "post", side_effect=flaky):
-            nim.post("/chat/completions", {"model": "m"})
-        t = nim.take_timing()
-        self.assertEqual(t["attempts"], 2)
-        self.assertGreater(t["retry_s"], 0.0)
-
-    def test_a_call_that_gave_up_still_reports_what_it_spent(self):
-        def dead(url, json, headers, timeout):
-            return httpx.Response(503, text="down", request=httpx.Request("POST", url))
-
-        with patch.object(nim, "_wait_my_turn", lambda *a, **k: None), \
-             patch.object(nim, "_back_off", lambda *a, **k: None), \
-             patch.object(httpx, "post", side_effect=dead):
-            with self.assertRaises(RuntimeError):
-                nim.post("/chat/completions", {"model": "m"}, max_tries=2)
-        t = nim.take_timing()
-        self.assertEqual(t["attempts"], 2)
-        self.assertGreater(t["retry_s"], 0.0)
+    """the per-thread timing every arm folds into its ModelUsage (the chat lane records it)"""
 
     def test_timing_is_per_thread(self):
         seen = {}
 
-        def worker():
-            nim.reset_timing()
-            nim._record_timing(3, 1.0, 2.0, 4.0)
-            seen[threading.current_thread().name] = nim.take_timing()
+        def work():
+            chat.reset_timing()
+            chat._record_timing(3, 1.0, 2.0, 4.0)
+            seen[threading.current_thread().name] = chat.take_timing()
 
-        nim._record_timing(1, 0.5, 0.0, 0.0)
-        threads = [threading.Thread(target=worker, name=f"w{i}") for i in range(3)]
-        for t in threads:
-            t.start()
-        for t in threads:
-            t.join()
+        chat.reset_timing()
+        chat._record_timing(1, 0.5, 0.0, 0.0)
+        t = threading.Thread(target=work, name="w")
+        t.start()
+        t.join()
+        self.assertEqual(seen["w"]["attempts"], 3)
+        self.assertEqual(seen["w"]["retry_s"], 4.0)
+        self.assertEqual(chat.take_timing()["attempts"], 1)
 
-        for got in seen.values():
-            self.assertEqual(got["attempts"], 3)
-            self.assertEqual(got["retry_s"], 4.0)
-        self.assertEqual(nim.take_timing()["attempts"], 1)
-
-    @staticmethod
-    def _ok(url, json, headers, timeout):
-        time.sleep(0.01)
-        return httpx.Response(200, json={"ok": True}, request=httpx.Request("POST", url))
+    def test_a_non_claude_model_is_refused_out_loud(self):
+        with self.assertRaises(RuntimeError):
+            chat.post("/chat/completions", {"model": "z-ai/glm-5.1"})
+        with self.assertRaises(RuntimeError):
+            chat.post("/chat/completions", {"model": "haiku"})
 
 
 class UsageRoundTripTests(unittest.TestCase):
@@ -182,6 +124,12 @@ class ProvenanceTests(unittest.TestCase):
         self.assertIn("packages", m.environment)
         self.assertIn("corpus", m.inputs)
         json.dumps(asdict(m))
+
+    def test_the_manifest_records_the_flags_the_run_was_given(self):
+        bs = BuildStats(0.0, ModelUsage(), [])
+        m = orchestrator.build_run_manifest({"flags": {"HERB_X": "on"}}, "vector", bs, 1, 1, 0)
+        self.assertEqual(m.flags, {"HERB_X": "on"})
+        self.assertIsNone(orchestrator.build_run_manifest({}, "vector", bs, 1, 1, 0).flags)
 
 
 class AnswerRecordTests(unittest.TestCase):

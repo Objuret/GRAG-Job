@@ -1,0 +1,77 @@
+{
+  "purpose": "Constructed two-facet tradeoff screen. Both facets are requested; their prominence is reversed. These are fictional examples, not corpus facts. Preferences are collected separately; no winning labels are supplied to readers.",
+  "domains": [
+    {
+      "id": "cooling", "tag": "laboratory cooling replacement",
+      "descriptions": [
+        "A timeline-centred account of the laboratory cooling replacement, detailing dependencies and current completion status, with the reasons for replacement as background context.",
+        "A rationale-centred account of the laboratory cooling replacement, explaining the problems and intended benefits, with the sequence and completion status as background context.",
+        "An account of the laboratory cooling replacement covering both its dependencies and completion status and the reasons and intended benefits."
+      ],
+      "texts": [
+        "The laboratory cooling replacement begins only after the reserve unit is online. Disconnection precedes removal, and the replacement must pass a pressure test before circulation resumes. The reserve unit is online and disconnection is complete. Removal is under way; testing and renewed circulation remain pending.",
+        "The laboratory cooling replacement addresses unstable temperatures that compromise experiment reproducibility. A closed-loop unit was chosen because it reduces temperature variation and avoids contamination from an open reservoir. Lower maintenance demands and improved reproducibility justify replacing the existing installation."
+      ]
+    },
+    {
+      "id": "museum", "tag": "museum display relocation",
+      "descriptions": [
+        "A sequence-centred account of the museum display relocation, detailing prerequisites and outstanding stages, with its reasons as supporting context.",
+        "A reasons-centred account of the museum display relocation, detailing the motivation and intended benefits, with its sequence and outstanding stages as supporting context.",
+        "An account of the museum display relocation covering both prerequisites and outstanding stages and its motivation and intended benefits."
+      ],
+      "texts": [
+        "For the museum display relocation, conservation clearance must precede packing. Packing must finish before transport can start, and placement follows the receiving-room inspection. Clearance and packing are complete. Inspection is under way; transport and placement have not started.",
+        "The museum display relocation protects delicate objects from direct sunlight and fluctuating humidity. An interior gallery offers a more stable environment, reducing deterioration and the need for repeated conservation treatment. The change also improves accessibility by moving the display away from a narrow staircase."
+      ]
+    },
+    {
+      "id": "rail", "tag": "rail signalling upgrade",
+      "descriptions": [
+        "A progress-and-dependencies account of the rail signalling upgrade, centred on completed and pending stages, with the upgrade's rationale as context.",
+        "An explanation of the rail signalling upgrade centred on why it was chosen and what it should improve, with completed and pending stages as context.",
+        "An account of the rail signalling upgrade covering both completed and pending stages and why the upgrade was chosen and what it should improve."
+      ],
+      "texts": [
+        "The rail signalling upgrade requires cable verification before controller installation. Installation must precede integration testing, and service handover follows acceptance. Cable verification is finished and installation is in progress. Integration testing and acceptance are still outstanding.",
+        "The rail signalling upgrade replaces equipment whose intermittent failures interrupt service. The new design provides continuous diagnostics so faults can be located quickly. Its modular components allow targeted repairs, reducing disruption and maintenance effort without replacing the whole control system."
+      ]
+    },
+    {
+      "id": "catalogue", "tag": "library catalogue correction",
+      "descriptions": [
+        "An account centred on the work actually performed during the library catalogue correction, with record identifiers and field specifications as supporting detail.",
+        "An account centred on the record identifiers and field specifications of the library catalogue correction, with the work performed as supporting context.",
+        "An account of the library catalogue correction covering both the work actually performed and the record identifiers and field specifications."
+      ],
+      "texts": [
+        "During the library catalogue correction, librarians inspected the affected records, corrected duplicate author entries, reconciled conflicting titles and checked the revised catalogue. The review team approved the corrected records and published the updated catalogue. These operations have been completed.",
+        "The library catalogue correction covers record sets LC-14 and LC-27, containing 860 and 425 entries. Author identifiers occupy field AU_ID, and titles occupy field TI_MAIN. Identifiers have twelve characters, while title fields allow 240 characters. The duplicate-matching key combines author identifier and publication year."
+      ]
+    },
+    {
+      "id": "brakes", "tag": "bicycle brake inspection",
+      "descriptions": [
+        "A record centred on the actions actually carried out in the bicycle brake inspection, with component identifiers and measurement specifications as supporting detail.",
+        "A record centred on component identifiers and measurement specifications for the bicycle brake inspection, with the actions carried out as supporting context.",
+        "A record of the bicycle brake inspection covering both actions actually carried out and component identifiers and measurement specifications."
+      ],
+      "texts": [
+        "In the bicycle brake inspection, the mechanics examined the pads, checked cable tension, tested the levers and inspected the wheel rims. They replaced worn pads, adjusted cable tension and repeated the stopping test. The supervisor reviewed the completed work and released the bicycles for use.",
+        "The bicycle brake inspection covers front caliper BC-8 and rear caliper BC-9. The specified pad thickness is 4 millimetres, with a minimum permitted thickness of 1 millimetre. Cable diameter is 1.6 millimetres and lever travel is specified at 18 to 22 millimetres. The inspection sheet identifies the left and right pads separately."
+      ]
+    },
+    {
+      "id": "freezer", "tag": "freezer seal replacement",
+      "descriptions": [
+        "A record centred on the maintenance actions actually performed in the freezer seal replacement, with component codes and dimensions as supporting detail.",
+        "A record centred on component codes and dimensions for the freezer seal replacement, with the maintenance actions performed as supporting context.",
+        "A record of the freezer seal replacement covering both maintenance actions actually performed and component codes and dimensions."
+      ],
+      "texts": [
+        "For the freezer seal replacement, the technician removed the old gasket, cleaned the mounting channel, fitted the new seal and checked the door alignment. The technician tested closure, verified the temperature recovery and signed off the maintenance work. The freezer was returned to service after these operations.",
+        "The freezer seal replacement uses gasket GS-44 for cabinet FZ-12. The gasket measures 720 by 1450 millimetres and has an 8-millimetre mounting bead. Its material is low-temperature EPDM rated to minus 40 degrees Celsius. The mounting channel is 9 millimetres wide and the corner radius is 12 millimetres."
+      ]
+    }
+  ]
+}

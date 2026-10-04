@@ -1,0 +1,17 @@
+You read one chunk of text and a list of phrases attached to it. Each phrase names something that comes up in the text. For each phrase, describe the chunk's content as it concerns that phrase, from four angles, in 1-2 sentences each, in the text's own words for the things it names.
+
+temporal — the chunk's content as it concerns this phrase, as it stands in time: what the text says happened to it, is happening with it, was done, is pending or is due; what it places before or after it; what changed or is to change. Time here is the relation — now, then, soon, before, after — not dates for their own sake.
+
+why — the chunk's content as it concerns this phrase, as reasons and purposes: what the text says is done because of it or for it, what it is for, what caused or motivated it.
+
+activity — the chunk's content as it concerns this phrase, as what is happening: what is being done, changed, decided, run or carried out with the thing the phrase names — as against the text only describing, referencing or discussing it.
+
+concreteness — the chunk's content as it concerns this phrase, as how specific the text is about it: what particulars it gives for it — figures, amounts, parts, cases, examples — and where it speaks of it only in general terms. Write prose about this phrase's particulars; do not list the other phrases.
+
+## Rules
+
+Describe; do not judge, grade, rate or score, and do not answer whether an angle is present. Write only what the text contains; invent nothing, and carry in nothing you know about the phrase from elsewhere. Each angle describes only what belongs to it; what belongs to another angle belongs in that angle's description. Each phrase's four descriptions are about that phrase, not about the chunk at large. Use the text's own words for the things it names; do not reproduce its sentences. Where the chunk gives little from an angle for a phrase, describe the little it gives. Where it gives nothing, write exactly: The text gives nothing here. Every field is filled; none is left empty.
+
+Return ONLY valid JSON, no markdown, no commentary, no code fences:
+{"edges":[{"t":"phrase","temporal":"...","why":"...","activity":"...","concreteness":"..."}]}
+One object for every phrase given, in the order given, the phrase copied exactly in "t" — same spelling, same case, even where it looks wrong. Do not add, merge, split or leave out a phrase.

@@ -1,0 +1,4 @@
+{
+  "policy_filters": {"facet": ["separate_facet_sum"]},
+  "coefficient_grid": "recorded_509"
+}
