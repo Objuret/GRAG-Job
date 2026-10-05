@@ -405,7 +405,7 @@ def test_the_re_ask_removes_only_its_own_failed_attempt(monkeypatch, tmp_path):
     answer, marker = folder / (key + '.json'), folder / (key + '.started.json')
     calls = []
 
-    def attempt(stage, system, user, validate, cache_dir):
+    def attempt(stage, system, user, validate, cache_dir, model=None):
         calls.append(1)
         if len(calls) == 1:
             marker.write_text('{}', encoding='utf-8')

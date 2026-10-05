@@ -224,9 +224,11 @@ def prepare_over_corpus(corpus, *, scope_scheduling='equal_depth') -> Prepared:
                     scope_scheduling=scope_scheduling)
 
 
-def _cached_stage(stage, system, user, validate, cache_dir):
-    """One transport attempt; failures and uncertain attempts cannot auto-retry."""
-    signature = {'cache_version': 1, 'stage': stage, 'model': INTERPRET_MODEL,
+def _cached_stage(stage, system, user, validate, cache_dir, model=None):
+    """One transport attempt; failures and uncertain attempts cannot auto-retry. The model is
+    this module's interpreter unless the caller names another; it is part of the cache key."""
+    model = model or INTERPRET_MODEL
+    signature = {'cache_version': 1, 'stage': stage, 'model': model,
                  'system': system, 'user': user, 'max_tries': 1}
     key = _sha(json.dumps(signature, sort_keys=True, ensure_ascii=False))
     path = cache_dir / stage / (key + '.json')
@@ -252,7 +254,7 @@ def _cached_stage(stage, system, user, validate, cache_dir):
         response = None
         try:
             response = chat.post('/chat/completions', {
-                'model': INTERPRET_MODEL, 'temperature': 0,
+                'model': model, 'temperature': 0,
                 'max_tokens': S.MAX_TOKENS_G if stage == 'generate' else S.MAX_TOKENS_S,
                 'messages': [{'role': 'system', 'content': system}, {'role': 'user', 'content': user}],
             }, timeout=480.0, max_tries=1)

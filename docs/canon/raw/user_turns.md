@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-1555 turns, chronological. Verbatim text; no edits.
+1564 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -14646,4 +14646,45 @@ and ALL DOCUMENTED? all fucking data!?
 ## 2026-10-05 22:05 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
 
 yup
+
+## 2026-10-05 22:12 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+is there a reason to do them before the 100?
+
+## 2026-10-05 22:13 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+wasnt it supposed to be sonnet for those questions, and haiku for the judges?
+
+## 2026-10-05 22:16 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+yes, sonnet on those, sonnet used the vector and lucene too, right?
+
+## 2026-10-05 22:17 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+*queued while an agent was working*
+
+no dont fucking rerun shit!
+
+## 2026-10-05 22:18 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+wtf does this mena?
+"
+nd the 100-run retrieval-only test
+"
+
+## 2026-10-05 22:21 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+what are you doing dude? is there a reason you are insisting on doing this pre-100gold?
+
+## 2026-10-05 22:23 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+and everything ehre is robus and resumable etc?
+
+## 2026-10-05 22:24 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+and this is the slim headless mode with no extra bullshit?
+
+## 2026-10-05 22:32 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+GO!
 

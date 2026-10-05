@@ -527,12 +527,16 @@ from artefact import v4_multikey as MK
 from artefact import v4_strength as ST
 from artefact import v4_walk as WK
 from artefact.query_content import FACETS
-from arms.artefact_facet_joint import INTERPRET_MODEL, _cached_stage, _query_cosines, _sha, _unit
+from arms.artefact_facet_joint import _cached_stage, _query_cosines, _sha, _unit
 from arms.artefact_v2 import _budget_contexts, _resolve_chunk
 from graph.db import _readable
 
 ROOT = Path(__file__).resolve().parents[2]
 DATABASE = 'herb-eval-volmax'
+# The querytagger's model: the one the answers are generated with, on his 2026-10-06 "yes,
+# sonnet on those". It was claude-haiku-4-5 from 2026-09-14 until then. The model is part of
+# the cache key, so the earlier answers stay on disk and are not read.
+INTERPRET_MODEL = 'claude-sonnet-5'
 RUN_ID = 'pilot_full_herb'
 LEARNED_DIR = ROOT / 'output/facet_pairs/rounds/round1'
 POS_COLUMNS = tuple(f + '_pos' for f in FACETS)
@@ -2083,7 +2087,7 @@ def _interpret(text, prepared):
         tries += 1
         try:
             value, used, cache = _cached_stage('querytag', system, user, validate,
-                                               prepared.cache_dir)
+                                               prepared.cache_dir, INTERPRET_MODEL)
             break
         except RuntimeError as failure:
             # The transport caches a failed answer (no JSON, a refusal) for good. One
