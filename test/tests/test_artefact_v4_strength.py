@@ -632,10 +632,10 @@ def arm(monkeypatch, env=None, kept=3, prep=None):
 def test_strength_is_chosen_by_name_and_is_not_the_default(monkeypatch):
     for name in V.KNOB_ENV.values():
         monkeypatch.delenv(name, raising=False)
-    assert V.knobs()['sort'] == 'multikey'
+    assert V.knobs()['sort'] == 'walk'
     assert V.SORT_MODES == ('strength', 'multikey', 'adjust_lower', 'multirank', 'concept',
-                            'chain', 'sum')
-    assert V.RETRIEVAL_FLAGS['defaults']['HERB_V4_SORT'] == 'multikey'
+                            'chain', 'sum', 'walk')
+    assert V.RETRIEVAL_FLAGS['defaults']['HERB_V4_SORT'] == 'walk'
     assert 'strength' in V.RETRIEVAL_FLAGS and set(V.READ_BY) == set(V.SORT_MODES)
     monkeypatch.setenv('HERB_V4_SORT', 'strength')
     record = V.knob_record(V.knobs())

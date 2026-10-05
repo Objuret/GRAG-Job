@@ -2,15 +2,16 @@
 
 40 turns spread across every rule that fired, so the filtering can be checked by hand.
 
-- `tool_result` - 5907 turns rejected
-- `task_notification` - 1061 turns rejected
-- `is_meta` - 265 turns rejected
-- `command_expansion` - 48 turns rejected
-- `interrupt_marker` - 11 turns rejected
+- `tool_result` - 6323 turns rejected
+- `task_notification` - 1087 turns rejected
+- `is_meta` - 287 turns rejected
+- `command_expansion` - 49 turns rejected
+- `interrupt_marker` - 12 turns rejected
+- `compact_summary` - 1 turns rejected
 
 ---
 
-## `tool_result` · 2026-09-11 18:48:20 · 0b9aab59-8821-4404-98f5-48170ab504fa.jsonl
+## `tool_result` · 2026-10-05 03:59:47 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
 
 ```
 
@@ -62,13 +63,26 @@ Standard goals (always include):
             <command-args>figure out why, why this isnt working better, and actually both aim to finally include all things in a build, and solve the underlying issue you uncover</command-args>
 ```
 
-## `interrupt_marker` · 2026-10-04 21:23:58 · 2311cb8a-730e-4bac-ae48-eb0744d04950.jsonl
+## `interrupt_marker` · 2026-10-05 04:13:23 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
 
 ```
 [Request interrupted by user]
 ```
 
-## `tool_result` · 2026-09-11 18:48:29 · 0b9aab59-8821-4404-98f5-48170ab504fa.jsonl
+## `compact_summary` · 2026-10-05 18:01:56 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+```
+This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+Summary:
+1. Primary Request and Intent:
+   The user (Joakim; master's thesis repo `C:\Coding\exjobbet\GRAG-Job`, a graph-RAG "artefact" compared against lucene/vector baselines on the HERB benchmark) opened the session with: *"so, how can i make you actually guild the fucking thing i want you to build instead of you building your own shit every time?"* — after the previous day's session built `HERB_V4_SORT=strength` on the assistant's own calculations. Through the session his intent evolved:
+   - He wants the CORRECT artefact built (not gates that stop wrong builds): *"well, my point was getting you to build the CORRECT thing.."*. He accepted "in essence" a method: before a build, a worked walk-through of the whole chain with real numbers, the assistant's own calculation steps marked, taken with him one at a time.
+   - He gave explicit gos for: the commit + v4 default set back + the walk-through with one Haiku call (*"go ahead, work your ass off"*); committing to a new branch (*"just fucking commit to a new branch already"*); fixin
+[... 27200 more chars]
+```
+
+## `tool_result` · 2026-10-05 03:59:59 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
 
 ```
 
@@ -100,13 +114,13 @@ A session-scoped Stop hook is now active with condition: "figure out why, why th
             <command-args>opus[1m]</command-args>
 ```
 
-## `interrupt_marker` · 2026-09-29 09:45:18 · 232eaa9a-71a9-4684-8388-e4d07653f737.jsonl
+## `interrupt_marker` · 2026-10-04 21:23:58 · 2311cb8a-730e-4bac-ae48-eb0744d04950.jsonl
 
 ```
-[Request interrupted by user for tool use]
+[Request interrupted by user]
 ```
 
-## `tool_result` · 2026-09-11 18:48:32 · 0b9aab59-8821-4404-98f5-48170ab504fa.jsonl
+## `tool_result` · 2026-10-05 03:59:59 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
 
 ```
 
@@ -136,13 +150,13 @@ Continue from where you left off.
 <local-command-stdout>Set model to `claude-opus-5[1m]`</local-command-stdout>
 ```
 
-## `interrupt_marker` · 2026-09-29 09:45:18 · 5a3191de-c2dd-431f-8f1c-0b0b059526c1.jsonl
+## `interrupt_marker` · 2026-09-29 09:45:18 · 232eaa9a-71a9-4684-8388-e4d07653f737.jsonl
 
 ```
 [Request interrupted by user for tool use]
 ```
 
-## `tool_result` · 2026-09-11 18:48:38 · 0b9aab59-8821-4404-98f5-48170ab504fa.jsonl
+## `tool_result` · 2026-10-05 04:00:02 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
 
 ```
 
@@ -174,13 +188,13 @@ Continue from where you left off.
             <command-args>claude-fable-5-1[1m]</command-args>
 ```
 
-## `interrupt_marker` · 2026-09-04 22:56:40 · 5f4299fb-2d4f-4d3f-8996-32d753c3900f.jsonl
+## `interrupt_marker` · 2026-09-29 09:45:18 · 5a3191de-c2dd-431f-8f1c-0b0b059526c1.jsonl
 
 ```
 [Request interrupted by user for tool use]
 ```
 
-## `tool_result` · 2026-09-11 18:48:41 · 0b9aab59-8821-4404-98f5-48170ab504fa.jsonl
+## `tool_result` · 2026-10-05 04:00:21 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
 
 ```
 
@@ -210,13 +224,13 @@ Continue from where you left off.
 <local-command-stdout>Set model to `claude-fable-5-1`</local-command-stdout>
 ```
 
-## `interrupt_marker` · 2026-09-29 09:45:18 · 6187d147-38dc-432f-8b70-f41e42ac78bc.jsonl
+## `interrupt_marker` · 2026-09-04 22:56:40 · 5f4299fb-2d4f-4d3f-8996-32d753c3900f.jsonl
 
 ```
 [Request interrupted by user for tool use]
 ```
 
-## `tool_result` · 2026-09-11 18:48:45 · 0b9aab59-8821-4404-98f5-48170ab504fa.jsonl
+## `tool_result` · 2026-10-05 04:00:22 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
 
 ```
 
@@ -248,13 +262,13 @@ Continue from where you left off.
             <command-args>opus[1m]</command-args>
 ```
 
-## `interrupt_marker` · 2026-09-14 08:29:30 · 6c806933-883b-46c5-aec7-22468ef6b7f2.jsonl
+## `interrupt_marker` · 2026-09-29 09:45:18 · 6187d147-38dc-432f-8b70-f41e42ac78bc.jsonl
 
 ```
-[Request interrupted by user]
+[Request interrupted by user for tool use]
 ```
 
-## `tool_result` · 2026-09-11 18:48:53 · 0b9aab59-8821-4404-98f5-48170ab504fa.jsonl
+## `tool_result` · 2026-10-05 04:00:22 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
 
 ```
 
@@ -286,13 +300,13 @@ A session-scoped Stop hook is now active with condition: "go ahead and complete 
 <local-command-stdout>Set model to `claude-opus-5[1m]`</local-command-stdout>
 ```
 
-## `interrupt_marker` · 2026-09-15 01:38:00 · 6c806933-883b-46c5-aec7-22468ef6b7f2.jsonl
+## `interrupt_marker` · 2026-09-14 08:29:30 · 6c806933-883b-46c5-aec7-22468ef6b7f2.jsonl
 
 ```
 [Request interrupted by user]
 ```
 
-## `tool_result` · 2026-09-11 18:48:54 · 0b9aab59-8821-4404-98f5-48170ab504fa.jsonl
+## `tool_result` · 2026-10-05 04:00:22 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
 
 ```
 
@@ -324,11 +338,5 @@ If this event is something the user would act on now, send a PushNotification. R
 <command-name>/goal</command-name>
             <command-message>goal</command-message>
             <command-args>go ahead and complete that task</command-args>
-```
-
-## `interrupt_marker` · 2026-09-05 17:01:36 · 9128f289-e0f8-407f-a4fe-b557827efcf5.jsonl
-
-```
-[Request interrupted by user]
 ```
 

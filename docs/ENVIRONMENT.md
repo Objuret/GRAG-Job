@@ -187,6 +187,14 @@ re-checked against the CLI, and nothing in the repo reads it.
 Two traps: `--bare` skips keychain reads and fails with "Not logged in"; and headless
 reads stdin, so redirect it (`< /dev/null`) to avoid a 3s stall.
 
+**Since 2026-10-05 the lane runs with `--safe-mode`** (CLI 2.1.212 help: all customizations —
+CLAUDE.md, skills, plugins, hooks, MCP servers, custom commands and agents — disabled; auth and
+model selection work normally) beside `--tools ""` and `--system-prompt`. Without it a headless
+call loads the user-level `~/.claude/CLAUDE.md`, the plugins and the MCP servers of this machine:
+a querytagger prompt of 3,981 characters counted 24,516 input tokens and came back as a request
+for `mempalace_search`; with the flag the same prompt counted 1,093 input tokens and returned
+its JSON. `MEMPALACE_HOOKS_AUTO_SAVE=false` is still set on the call.
+
 Measured throughput, 2026-07-17, haiku: **5.3 s per verdict serial, and 4 verdicts in
 6.6 s concurrently.** That is the only latency figure anyone has recorded for this lane,
 and it is what a judge-run cost estimate should be built on rather than a guess. Source:

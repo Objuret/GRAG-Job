@@ -6,8 +6,8 @@ Interpretation: ONE querytagger call (`query_content`; his 2026-09-26 "dont do 3
 calls"): the question in; the sought-content description and two tag lists out, each tag with
 its five readings - the description-side tags, and the question-side tags written from the
 question's own words (his 2026-09-29 "the tags the interpretor creates, perhaps it does some
-from the query also? not just the description?"). strength, multikey and adjust_lower read both
-lists as query tags, each embedded beside the description; the other sorts read the
+from the query also? not just the description?"). strength, multikey, adjust_lower and walk read
+both lists as query tags, each embedded beside the description; the other sorts read the
 description-side list only. Two texts are matched against the chunk descriptions: the question
 itself and the description (his 2026-09-25 "the same but from the prompt"). HERB_V4_OFFLINE=on
 reads the querytagger answer from the cache only: a question without a good cached answer raises
@@ -70,7 +70,7 @@ his sentence or the orchestrator's:
   query tags to the earlier query tag in the list; D where D = Q; inside a level a chunk with no
   eligible edge follows the chunks that have a winning edge; a chunk counts once under a node.
 
-HERB_V4_SORT=multikey (the default). His 2026-09-05 "i had a quick and easy thought, that the
+HERB_V4_SORT=multikey (chosen by name; the default from 2026-10-05 morning to that evening). His 2026-09-05 "i had a quick and easy thought, that the
 queryfacets is the order of sorting-prio based on facets for tags, so, if facet 1 is most
 important for a tag from query, that is sorting order 1, and descending meaning that they are
 "sorted".. bah.. like.. multi-key sort or multi-level sorting."; 2026-09-06 "yeah, so, first
@@ -311,6 +311,193 @@ one with nothing making them commensurate: the topic factor measured mean 0.226,
 while a text probe hands every chunk a whole query-to-description cosine. Under a budget
 the area boundary acts as a cut.
 
+HERB_V4_SORT=walk (the 2026-10-05 build; the arm's default since that evening, on his "it's
+time to also finish the build with the changes we discussed", with three knobs off the
+walked-through PROPOSAL by default: HERB_V4_WALK_SHARES=off, HERB_V4_WALK_RANK=percent,
+HERB_V4_WALK_STRUCT=trust1; the PROPOSAL is each knob's first value, `WALK_PROPOSAL`). The
+chain `tools/walkthrough.py` prints step by step: one strength per chunk from the tags, the description and the structure;
+the whole order goes to the harness, nothing is cut. The arithmetic is `v4_walk.chain`, the one
+implementation the walk-through prints from and this arm sorts by. N is the eligible graph tags
+- every graph tag except those whose name equals a product name casefolded - E the edges whose
+tag is eligible, n the chunks. Every calculation below is the orchestrator's. M1 to M7 are
+marked steps awaiting his word: this build settles none of them, each knob's default is the
+step's PROPOSAL and each other value the alternative of the walk-through it names (A1 to A7,
+`v4_walk.ALTERNATIVES`) or one of the two changes built after it (C3r, C4n,
+`v4_walk.CHANGES`). A phrase standing in both tag lists is two query tags: it enters
+twice, once with each list's readings.
+
+The embedder has two roles, and the graph's tag vectors and chunk description vectors are
+stored in its passage role (`test/graph/reembed_herb_eval.py` embeds both under `passage`).
+HERB_V4_WALK_TAGROLE sets the role the question's tags, both lists, are embedded in for their
+cosines to the graph tags, the cos(q, t) of M1: passage (the default) or query. His 2026-10-05
+"oh, fuck me, it's for, for example, the vector arm!" and "but duuuude.. OBVIOUSLY we should
+use the similarity way, that was what i thought we were doing all the goddamn time!" (relayed
+to this arm, not yet in the canon file): a tag against a tag is compared in the same role on
+both sides; the query role is for a question against a text. Under query the tags are embedded
+as every other sort embeds them. HERB_V4_WALK_DESCROLE sets the role the query description is
+embedded in for its cosines to the chunk descriptions, the D of M5, and HERB_V4_WALK_QUESTROLE
+the role of the raw question for its cosines to the chunk descriptions, the Qs of M5: passage
+or query. The description defaults to passage on his 2026-10-05 "great, so now everything has
+been embedded in the same way? i mean litterally everything that has been embedded for the
+artefact should use this, not only the tags" (relayed to this arm, not yet in the canon file);
+the raw question defaulted to passage on the same sentence for that evening and defaults to
+query since his "yes to the question" the same night, to the orchestrator's "put the raw
+question back in question mode. It is the one text that actually is a question, and that
+mode exists for a question against a text" (10smoke 0.502 against 0.449). The centrality of M4
+compares a tag with the query description in one role for both, the passage role when the
+tags' and the description's knobs both say passage and the query role in every other
+combination - the orchestrator's rule, unruled. Under the defaults the tags, the description
+and the centrality are in the passage role and the raw question in the query role, and each
+text is embedded once per call, the description beside each tag list (a
+repeat is read from the rows kept on the side); under HERB_V4_WALK_TAGROLE=passage with
+HERB_V4_WALK_DESCROLE=query the tags are embedded twice, alone in the passage role for the
+graph tags and beside the description in the query role for the centrality; under query with
+passage the description is embedded twice (`_walk_cosines`). All three at query reproduce the
+17 runs of 2026-10-05 08:28Z-09:51Z.
+
+Each link, with his sentence where this file quotes one for it:
+
+  M1. Closeness into a weight: his 2026-10-04 "if we order the tags accordingly, closeness by
+      embedding is the first order, then somehow we weightadjust them based on the facets? this
+      gives us a chunk-pool, correct?" and "well, you have to be aware of the different scales
+      of values between each thing". Per query tag q of either list, z_q(t) is the standing of
+      cos(q, t) over the N eligible graph tags, (cos - median) / (1.4826 * the median absolute
+      deviation from the median), and fit_q(t) = max(z_q(t), 0). A zero spread raises.
+      HERB_V4_WALK_FIT=standing (the default); raw (A1): fit_q(t) = cos(q, t). Under raw more
+      than the fit is exchanged: the tag term T is in raw cosines while the text side (M5)
+      stays in standings, the lifts (M6) are taken on the sum of the two, and the level step
+      (M7) stays COS_NOISE over the median s_q.
+  M2. The edge's five values on one scale, query-independent: his 2026-09-29 "topic is also a
+      fucking facet value..". His 2026-09-20 "ok, i am ready to use ranking instead of actual
+      weights, one can convert ranks to weights" stands in this file for the four stored
+      columns as ranks; ranking topic, a cosine, the same way is the orchestrator's. For each
+      of topic = cos(tag, chunk description), temporal, why, activity, concreteness - the four
+      are the values multikey reads - pos_k(e) is the edge's average rank in the column over E,
+      1 the smallest, ties sharing a rank, over |E|. The walk-through prints no alternative to
+      it; no knob.
+  M3. The query tag's five readings meet the edge's five values: his 2026-09-13 "we have the
+      interpretor put a value on its tags in relation to the query... So we can weight-adjust
+      the facets based on that".
+         share_q = q's five readings over their sum, five equal shares when that sum is 0
+         R_q(e) = sum over the five of share_q[k] * pos_k(e)
+         w_q(e) = fit_q(t) * R_q(e) / 0.5
+      0.5 stands for the middle position. Exactly, an edge at the middle rank of all five
+      columns has R = (|E| + 1) / (2 |E|) and the factor R / 0.5 = (|E| + 1) / |E|, not 1. For a
+      positive fit an edge whose factor is above 1 raises the closeness and one whose factor is
+      below 1 lowers it; a fit of 0 stays 0; under HERB_V4_WALK_FIT=raw a graph tag with a
+      negative cosine turns it round, the higher edge taking the lower w.
+      HERB_V4_WALK_SHARES=readings (the PROPOSAL); equal (A3): five equal shares; off (A3b, the
+      arm's default since 2026-10-05 evening, his "well, multiplying it might not really
+      actually represent their relationship tho"):
+      w_q(e) = fit_q(t). Under equal and under off the readings still give the facet order of
+      M7; under off the edge's positions leave the weight, and inside a level the order is
+      still the winning edge's four facet positions.
+      HERB_V4_WALK_RANK=off (the PROPOSAL); same (C3s, the arm's default since 2026-10-05
+      late night, on his "what matters is the fucking semantic relevance of that number for
+      the tag"): the picked graph tags of a query tag are those scoring at least what the
+      graph's own same-thing pairs score - tags equal once lower-cased or once a final s is
+      dropped; the level is the point 5% of those pairs' cosines lie under, measured at
+      prepare from the stored vectors (`v4_walk.same_thing_level`, 0.92 on this graph) - and
+      only their edges are ranked by the four facets as described below and placed between
+      that level and the closest tag; a query tag with no graph tag at that level is left as
+      it is. The pairs, the 5% point and the placement are the orchestrator's. percent (C3p,
+      the default for an hour before it): the ranking with the class a share of the closest tag's own
+      score - class 0 is every graph tag scoring at least 95% of the closest one - on his
+      "on the stopgap, why not just use a relative %?"; 95% is the share NVIDIA's hard-negative
+      recipe for this embedder calls "so close to the positive they may actually be relevant",
+      its transfer from passages to tags the orchestrator's (`v4_walk.EQUAL_SHARE`); any tag
+      role. picked (C3r, the default for an hour that evening; built 2026-10-05 after the
+      walk-through on his "perhaps we just use them as ranking (the 4, not topic) based on
+      the most important in order from the query, per tag?" and "rank the TAGS, no, i am not
+      supersure how we we that"; the form, the class and its width are the orchestrator's):
+      per query tag the graph tags stand in classes one self-difference
+      wide below its closest tag - the self-difference is how far a graph tag's own name,
+      embedded in the passage role, lands from its own stored vector, the largest over 100
+      seeded eligible graph tags, measured once at the first question that needs it, before
+      that question's clock starts (`_walk_width`); inside a class the
+      edges are ordered by the four facets in the query tag's facet order, each facet in
+      classes of its retrain gap, then topic, then the cosine; an edge's cosine becomes its
+      class's upper edge minus the self-difference times its place over the class's size, and
+      its fit the standing of that. It needs HERB_V4_WALK_TAGROLE=passage and is refused
+      with HERB_V4_WALK_TAGS=peredge. With HERB_V4_WALK_SHARES=off the four facets leave the
+      weight and act through that ranking and through the order inside a level (M7); topic
+      as the key after them is the orchestrator's, his sentence says "the 4, not topic".
+      Reviewed 2026-10-05: the self-difference is the gap between the serving that built the
+      stored tag vectors and the local one (docs/ENVIRONMENT.md), the largest of 100 probes
+      and set by one name, one width for every query tag - not his "fully relative to that
+      facets tags numberrange" - and an edge's placed cosine also depends on how many edges
+      share its class.
+  M4. What a chunk takes from its tags, and the query tags: his 2026-09-10 "a chunk beeing
+      supported by more parts, does not mean it's a better fit, thats different scales or things
+      to measure". v_q(c) is the largest w_q over c's eligible edges, 0 with none, with no
+      correction for n_c, the number of c's eligible edges. HERB_V4_WALK_TAGS=best (the
+      default); pooled (A4a): in place of v the k-th largest w_q over E, k = ceil(p * |E|),
+      p = 1 - (1 - K / |E|)^n_c, K the eligible edges with w_q >= v_q(c); peredge (A4e): in
+      place of v the k-th largest fit_q over N, k = ceil(p * |N|), p = 1 - the product over c's
+      edges i of (1 - K_i / |N|), K_i the eligible graph tags t with fit_q(t) * R_q(i) / 0.5 >=
+      v_q(c); sum (A4b): in place of v the sum of w_q over c's edges; off (C4n, added
+      2026-10-05 to measure the text and the structure without the tags): v = 0 for every
+      chunk.
+      centrality_q = cos(q, the query description), both vectors from the one embedding call
+      that embeds q beside the description, in the centrality's role
+      (`_query_cosines_and_centrality`), a negative one as 0, over the question's largest; no
+      positive cosine raises.
+         T(c) = max over q of centrality_q * v_q(c)
+      HERB_V4_WALK_QTAGS=central (the default); equal (A4c): centrality 1; sum (A4d): the sum
+      over q in place of the max.
+      The two sums stand against that sentence of his: HERB_V4_WALK_TAGS=sum adds up a chunk's
+      edges and HERB_V4_WALK_QTAGS=sum its query tags, so the tag term grows with the chunk's
+      number of eligible edges, or with the number of query tags (a phrase in both lists
+      counted twice), while the text side and the level step stay as they are. Both are kept as
+      alternatives the walk-through measured, not as readings of the sentence.
+  M5. The description joins: his 2026-08-11 "the chunk descriptions and the tags are supposed to
+      work TOGETHER to find gold.. it's a combo.." and 2026-09-25 "the same but from the prompt".
+      D(c) is the standing of cos(query description, chunk description) over the chunks, Qs(c)
+      the same for the raw question, neither clipped;
+         S(c) = T(c) + max(D(c), Qs(c))
+      HERB_V4_WALK_TEXT=better (the default); off (A5a): S = T; description (A5b): S = T + D;
+      clipped (A5c): S = T + max(D, Qs, 0).
+  M6. Structure, strengthening only: his 2026-09-14 "That's the point, letting the graph
+      structure tell which area the information can be found". Two groupings: the product; the
+      near group, a connected component of the file adjacency (artefact_v3's `file_adjacency`)
+      with at least two chunks. Product: x = S, against the mean of S over the chunks. Near:
+      x = S - the mean of S over the chunk's product, against the mean of x over the chunks of
+      the chunk's record kind that sit in a near group. For a chunk c in a group g of n_g
+      chunks:
+         raw(c, g) = the mean of x over g's members other than c - the reference of c
+         trust(g) = tau2 / (tau2 + sigma2 / (n_g - 1))
+         lift(c, g) = max(0, trust(g) * raw(c, g))
+      sigma2 is the pooled within-group variance and tau2 = max(0, (SSB - (G - 1) * sigma2) /
+      (M - the sum of n_g^2 / M)) the between-group variance, both on x less its reference;
+      SSB the sum over the groups of n_g * (the group's mean - the mean over the
+      memberships)^2, G the groups, M the memberships. S'(c) = S(c) + the two lifts. Nothing is
+      lowered and no chunk is removed. HERB_V4_WALK_STRUCT=near (the PROPOSAL); trust1 (A6b)
+      is the arm's default since 2026-10-05 evening, his "just as i dont think "amount of closely
+      related chunks" makes a chunk more important"; off (A6a):
+      S' = S; trust1 (A6b): trust 1; ref0 (A6c): the near group against 0; double (A6d): three
+      groupings, product, channel and record (the near group), channel and record on x against
+      0, a chunk in several channels taking its largest lift,
+      tau2 = max(0, SSB / M - G * sigma2 / M), S' = S + the three lifts.
+  M7. Near-equal is equal, and what breaks a tie: his 2026-09-06 "perhaps we should have the
+      order slightly fuzzy, meaning for a specific order, things can be called "equal" if within
+      a certain range of eachother" and 2026-09-05 "the queryfacets is the order of sorting-prio
+      based on facets for tags". level(c) = floor((max S' - S'(c)) / step), step = COS_NOISE
+      over the median of the question's query tags' s_q. Order: level; inside a level the chunks
+      with a winning edge first, by that edge's pos for temporal, why, activity, concreteness,
+      descending, in the order of the winning query tag's readings for those four, largest
+      first, equal readings in that order; then chunk id. HERB_V4_WALK_EQUAL=levels (the
+      default); off (A7): S' descending, then chunk id.
+  The winning query tag of a chunk is the one with the largest centrality_q * v_q(c), the
+  earlier query tag in the list on an exact tie; its winning edge is that query tag's edge of
+  the chunk with the largest w_q, the earlier edge on an exact tie. A chunk with T = 0 has no
+  pair above 0: the same two rules give it the first query tag and that tag's edge for the
+  order inside its level, and the meta records no winning query tag for it (-1), as for a
+  chunk with no eligible edge.
+  The meta records what the run read: a part a knob leaves unread is None or absent there and
+  named under `not_read` - no text term and no Qs or D under HERB_V4_WALK_TEXT=off, no Qs
+  under description, no lift under HERB_V4_WALK_STRUCT=off, the levels under `unused_` names
+  under HERB_V4_WALK_EQUAL=off.
+
 Every sort returns the full order. His 2026-09-13 "72 is the cut for what gets fed to the
 agent to generate the output" and "make sure the artefact also follows that rule": the
 72,000-character cut is the harness's, applied by `_budget_contexts` after the order;
@@ -320,9 +507,10 @@ count the credited rows only.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import json
 import os
+import threading
 from pathlib import Path
 import time
 
@@ -337,9 +525,11 @@ from artefact import learned_relations as L
 from artefact import v4_rank as R4
 from artefact import v4_multikey as MK
 from artefact import v4_strength as ST
+from artefact import v4_walk as WK
 from artefact.query_content import FACETS
 from arms.artefact_facet_joint import INTERPRET_MODEL, _cached_stage, _query_cosines, _sha, _unit
 from arms.artefact_v2 import _budget_contexts, _resolve_chunk
+from graph.db import _readable
 
 ROOT = Path(__file__).resolve().parents[2]
 DATABASE = 'herb-eval-volmax'
@@ -350,7 +540,8 @@ BANDS_FILE = LEARNED_DIR / 'bootstrap/BANDS.md'
 REFITS_FILE = LEARNED_DIR / 'bootstrap/scores_b24.npz'
 COS_NOISE = 0.002
 BANDS = {'noise': COS_NOISE, 'paraphrase': 0.028}
-SORT_MODES = ('strength', 'multikey', 'adjust_lower', 'multirank', 'concept', 'chain', 'sum')
+SORT_MODES = ('strength', 'multikey', 'adjust_lower', 'multirank', 'concept', 'chain', 'sum',
+              'walk')
 DECIDER_WINDOW = 50
 JOIN_MODES = ('adjust', 'mul', 'add')
 ADJUST_FACETS = ('temporal', 'why', 'activity', 'concreteness')
@@ -361,6 +552,45 @@ AREA_MODES = ('off', 'first')
 TAGSIDE_MODES = ('all', 'nonscope')
 OFFLINE_MODES = ('off', 'on')
 STRUCT_MODES = MK.STRUCT_PLACES + ('off',)
+# The walk knobs: per knob its environment name, the marked step it switches, and per value the
+# alternative of `v4_walk.ALTERNATIVES` or the later change of `v4_walk.CHANGES` it selects.
+# None is the step's PROPOSAL, the knob's default.
+WALK_KNOBS = {
+    'walkfit': ('HERB_V4_WALK_FIT', 'M1', {'standing': None, 'raw': 'A1'}),
+    'walkshares': ('HERB_V4_WALK_SHARES', 'M3', {'readings': None, 'equal': 'A3', 'off': 'A3b'}),
+    'walkrank': ('HERB_V4_WALK_RANK', 'M3',
+                 {'off': None, 'picked': 'C3r', 'percent': 'C3p', 'same': 'C3s'}),
+    'walktags': ('HERB_V4_WALK_TAGS', 'M4, within a query tag',
+                 {'best': None, 'pooled': 'A4a', 'peredge': 'A4e', 'sum': 'A4b',
+                  'off': 'C4n'}),
+    'walkqtags': ('HERB_V4_WALK_QTAGS', 'M4, across the query tags',
+                  {'central': None, 'equal': 'A4c', 'sum': 'A4d'}),
+    'walktext': ('HERB_V4_WALK_TEXT', 'M5',
+                 {'better': None, 'off': 'A5a', 'description': 'A5b', 'clipped': 'A5c'}),
+    'walkstruct': ('HERB_V4_WALK_STRUCT', 'M6',
+                   {'near': None, 'off': 'A6a', 'trust1': 'A6b', 'ref0': 'A6c', 'double': 'A6d'}),
+    'walkequal': ('HERB_V4_WALK_EQUAL', 'M7', {'levels': None, 'off': 'A7'}),
+}
+WALK_DEFAULTS = {knob: next(value for value, alternative in values.items() if alternative is None)
+                 for knob, (_, _, values) in WALK_KNOBS.items()}
+# The arm's defaults since 2026-10-05 evening, on his "it's time to also finish the build with
+# the changes we discussed": the facets rank the picked tags and no longer multiply (SHARES off,
+# RANK percent, the class a share of the closest tag's own score on his "why not just use a
+# relative %?" the same night) and the structure step does not read the size of the group
+# (STRUCT trust1). The walked-through PROPOSAL stays `v4_walk.chain`'s own default: each knob's
+# None value.
+WALK_PROPOSAL = dict(WALK_DEFAULTS)
+# RANK same since later that night: the pick is the graph tags that are the same thing as the
+# question tag, his "what matters is the fucking semantic relevance of that number for the tag".
+WALK_DEFAULTS.update({'walkshares': 'off', 'walkrank': 'same', 'walkstruct': 'trust1'})
+# The walk sort's three role knobs: per knob its environment name, its values and its default. A
+# role is one of the embedder's two, `passage` the one the graph's tag vectors and chunk
+# description vectors are stored in.
+WALK_ROLE_KNOBS = {
+    'walktagrole': ('HERB_V4_WALK_TAGROLE', ('passage', 'query'), 'passage'),
+    'walkdescrole': ('HERB_V4_WALK_DESCROLE', ('passage', 'query'), 'passage'),
+    'walkquestrole': ('HERB_V4_WALK_QUESTROLE', ('passage', 'query'), 'query'),
+}
 
 TAG_CYPHER = '''
 MATCH (t:Tag) WHERE t.emb IS NOT NULL AND EXISTS {
@@ -385,10 +615,11 @@ RETRIEVAL_FLAGS = {
                       'the description-side tags and the question-side tags, five readings '
                       'each, out.',
     'interpreter_model': INTERPRET_MODEL,
-    'query_tags': 'strength, multikey and adjust_lower: both tag lists, each embedded beside the '
-                  'description; the other sorts: the description-side list only. The question '
-                  'text and the description are the two texts matched against the chunk '
-                  'descriptions.',
+    'query_tags': 'strength, multikey, adjust_lower and walk: both tag lists, each embedded '
+                  'beside the description; the other sorts: the description-side list only. The '
+                  'question text and the description are the two texts matched against the chunk '
+                  'descriptions. Every sort but walk embeds the query side in the embedder\'s '
+                  'query role; walk embeds each comparison in the role its three role knobs name.',
     'cos_noise': COS_NOISE,
     'strength': {
         'unit': 'standing(x) = (x - median) / (1.4826 * the median absolute deviation from the '
@@ -537,9 +768,149 @@ RETRIEVAL_FLAGS = {
                 'budget.',
         'order': 'area key (when on) -> score desc -> chunk id.',
     },
+    'walk': {
+        'chain': 'v4_walk.chain, the one implementation tools/walkthrough.py prints from and '
+                 'this arm sorts by. N: every graph tag except the product-name tags '
+                 '(casefolded); E: the edges whose tag is among them. Every step is the '
+                 'orchestrator\'s calculation. M1 to M7 are marked steps awaiting his word: each '
+                 'knob\'s default is the step\'s PROPOSAL, each other value the alternative of '
+                 'the walk-through it names or one of the two changes built after it (C3r: '
+                 'HERB_V4_WALK_RANK=picked, the four facets ranking the edges inside one class '
+                 'of closeness, the class one self-difference wide; C4n: HERB_V4_WALK_TAGS=off, '
+                 'no tag term), and the build settles none of them. A phrase '
+                 'standing in both tag lists is two query tags: it enters twice, once with each '
+                 'list\'s readings.',
+        'roles': 'each comparison is embedded in one of the embedder\'s two roles; the graph\'s '
+                 'tag vectors and chunk description vectors are stored in the passage role '
+                 '(test/graph/reembed_herb_eval.py). HERB_V4_WALK_TAGROLE: the role of the '
+                 'question\'s tags, both lists, for their cosines to the graph tags (M1) - '
+                 'passage (the default, on his 2026-10-05 ruling: a tag against a tag is '
+                 'compared in the same role on both sides) or query, the role every other sort '
+                 'embeds them in. HERB_V4_WALK_DESCROLE: the role of the query description for '
+                 'its cosines to the chunk descriptions (M5); HERB_V4_WALK_QUESTROLE: the role '
+                 'of the raw question for its cosines to the chunk descriptions (M5) - each '
+                 'passage or query; the description defaults to passage (his 2026-10-05 ruling '
+                 'that everything embedded for the artefact is embedded the same way), the raw '
+                 'question to query (his "yes to the question" the same night: it is the one '
+                 'text that is a question). The centrality (M4) compares '
+                 'a tag with the query description in one role for both: the passage role when '
+                 'the tags\' and the description\'s knobs both say passage, the query role in '
+                 'every other combination - the orchestrator\'s rule, unruled. Under the '
+                 'defaults the tags, the description and the centrality are in the passage '
+                 'role and the raw question in the query role; each text is embedded once '
+                 'per call, the description beside each tag list (a repeat is read from the '
+                 'rows kept on the side); all three knobs at query reproduce the 17 runs of '
+                 '2026-10-05 08:28Z-09:51Z.',
+        'M1_fit': 'per query tag q of either list, z_q(t) = the standing of cos(q,t) over the N '
+                  'eligible graph tags, (cos - median) / (1.4826 * the median absolute deviation '
+                  'from the median); fit_q(t) = max(z_q(t), 0); a zero spread raises. '
+                  'HERB_V4_WALK_FIT=raw (A1): fit_q(t) = cos(q,t); under raw more than the fit '
+                  'is exchanged: the tag term T is in raw cosines while the text side stays in '
+                  'standings, the lifts are taken on the sum of the two, and the level step '
+                  'stays COS_NOISE over the median s_q.',
+        'M2_positions': 'per eligible edge, query-independent: pos_k(e) = the edge\'s average '
+                        'rank in column k over E (1 the smallest, ties sharing a rank) / |E|; '
+                        'the columns topic = cos(tag, chunk description) and temporal, why, '
+                        'activity, concreteness, the values multikey reads. Ranking topic, a '
+                        'cosine, like the four stored columns is the orchestrator\'s. No '
+                        'alternative, no knob.',
+        'M3_weight': 'share_q = q\'s five readings over their sum, five equal shares when that '
+                     'sum is 0; R_q(e) = sum_k share_q[k] * pos_k(e); w_q(e) = fit_q(t) * R_q(e) '
+                     '/ 0.5. 0.5 stands for the middle position: an edge at the middle rank of '
+                     'all five columns has R = (|E| + 1) / (2 |E|) and the factor (|E| + 1) / '
+                     '|E|, not 1. For a positive fit a factor above 1 raises the closeness and '
+                     'one below 1 lowers it; a fit of 0 stays 0; under HERB_V4_WALK_FIT=raw a '
+                     'graph tag with a negative cosine turns it round. '
+                     'HERB_V4_WALK_SHARES=equal (A3): five equal shares; off (A3b): w_q(e) = '
+                     'fit_q(t). Under equal and under off the readings still give the facet '
+                     'order inside a level; under off the edge\'s positions leave the weight '
+                     'and the order inside a level is still the winning edge\'s four facet '
+                     'positions.',
+        'M4_tags': 'v_q(c) = the largest w_q over c\'s eligible edges, 0 with none; no '
+                   'correction for n_c, the number of c\'s eligible edges. '
+                   'HERB_V4_WALK_TAGS=pooled (A4a): in place of v the k-th largest w_q over E, '
+                   'k = ceil(p * |E|), p = 1 - (1 - K / |E|)^n_c, K the eligible edges with w_q '
+                   '>= v; peredge (A4e): in place of v the k-th largest fit_q over N, '
+                   'k = ceil(p * |N|), p = 1 - the product over c\'s edges i of (1 - K_i / |N|), '
+                   'K_i the eligible graph tags t with fit_q(t) * R_q(i) / 0.5 >= v; sum (A4b): '
+                   'in place of v the sum of w_q over c\'s edges. The sum stands against his '
+                   '2026-09-10 sentence on parts and is kept as an alternative the walk-through '
+                   'measured: under it the tag term grows with the chunk\'s number of eligible '
+                   'edges while the text side and the level step stay as they are.',
+        'M4_query_tags': 'centrality_q = cos(q, query description), both vectors from the one '
+                         'embedding call that embeds q beside the description, in the '
+                         'centrality\'s role (roles), a negative one as 0, over '
+                         'the question\'s largest; no positive cosine raises; T(c) = max over q '
+                         'of centrality_q * v_q(c). HERB_V4_WALK_QTAGS=equal (A4c): centrality '
+                         '1; sum (A4d): the sum over q in place of the max. The sum stands '
+                         'against his 2026-09-10 sentence on parts and is kept as an '
+                         'alternative the walk-through measured: under it the tag term grows '
+                         'with the number of query tags, a phrase in both lists counted twice, '
+                         'while the text side and the level step stay as they are.',
+        'M5_text': 'D(c), Qs(c) = the standing over the chunks of cos(query description, chunk '
+                   'description) and of cos(raw question, chunk description), not clipped; '
+                   'S(c) = T(c) + max(D(c), Qs(c)). HERB_V4_WALK_TEXT=off (A5a): S = T; '
+                   'description (A5b): S = T + D; clipped (A5c): S = T + max(D, Qs, 0).',
+        'M6_structure': 'two groupings: product; near group, a connected component of the file '
+                        'adjacency (artefact_v3.file_adjacency) with at least two chunks. '
+                        'Product: x = S, reference the mean of S over the chunks. Near: x = S - '
+                        'the mean of S over the chunk\'s product, reference(c) the mean of x '
+                        'over the chunks of c\'s record kind that sit in a near group. '
+                        'raw(c,g) = the mean of x over g\'s members other than c - reference(c); '
+                        'on x - reference: sigma2 the pooled within-group variance, tau2 = '
+                        'max(0, (SSB - (G - 1) * sigma2) / (M - sum n_g^2 / M)), SSB = sum_g '
+                        'n_g * (mean_g - the mean over the memberships)^2, G the groups, M the '
+                        'memberships; trust(g) = tau2 / (tau2 + sigma2 / (n_g - 1)); lift(c,g) '
+                        '= max(0, trust(g) * raw(c,g)); S\'(c) = S(c) + the two lifts; nothing '
+                        'is lowered, no chunk is removed. HERB_V4_WALK_STRUCT=off (A6a): S\' = '
+                        'S; trust1 (A6b): trust 1; ref0 (A6c): near with reference 0; double '
+                        '(A6d): three groupings, product, channel and record (= near group), '
+                        'channel and record on x with reference 0, the largest lift over a '
+                        'chunk\'s channels, tau2 = max(0, SSB / M - G * sigma2 / M), S\' = S + '
+                        'the three lifts.',
+        'M7_order': 'step = COS_NOISE over the median of the question\'s query tags\' s_q; '
+                    'level(c) = floor((max S\' - S\'(c)) / step); order: level -> chunks with a '
+                    'winning edge before chunks with no eligible edge -> the winning edge\'s pos '
+                    'for temporal, why, activity, concreteness, descending, in the order of the '
+                    'winning query tag\'s readings for those four, largest first, equal '
+                    'readings in that order -> chunk id; full order returned, harness cuts. '
+                    'HERB_V4_WALK_EQUAL=off (A7): S\' descending -> chunk id.',
+        'ties': 'the winning query tag of a chunk: the largest centrality_q * v_q(c), the '
+                'earlier query tag in the list on an exact tie; its winning edge: that query '
+                'tag\'s edge of the chunk with the largest w_q, the earlier edge on an exact '
+                'tie. A chunk with T = 0 has no pair above 0: the same two rules give it the '
+                'first query tag and that tag\'s edge for the order inside its level.',
+        'knobs': {env: {'step': step,
+                        'values': {value: alternative or 'PROPOSAL'
+                                   for value, alternative in values.items()}}
+                  for env, step, values in WALK_KNOBS.values()},
+        'role_knobs': {env: {'values': list(values), 'default': default}
+                       for env, values, default in WALK_ROLE_KNOBS.values()},
+        'diagnostic': 'embedding_roles: the role of the tags, the description, the question '
+                      'and the centrality, and per tag list the vector sha256 of each '
+                      'embedding call by role. '
+                      'For the credited rows: per row T, the side, each grouping\'s lift, S\', '
+                      'the level and the winning query tag, -1 for a chunk with no eligible '
+                      'edge or with T = 0; each term\'s sum and its share of their total '
+                      'strength, the rows whose Qs stands above their D, the levels; over all '
+                      'chunks per grouping the groups, memberships, sigma2, tau2, the chunks '
+                      'with a lift above 0 and the largest lift; the phrases standing in both '
+                      'tag lists; the switches of v4_walk.chain the knobs set and the '
+                      'alternatives they name. A part a knob leaves unread is None or absent '
+                      'and named under not_read: no text term, no text bulk or spread and no '
+                      'Qs-above-D count under HERB_V4_WALK_TEXT=off, the description\'s alone '
+                      'and no count under description; no lift and no grouping under '
+                      'HERB_V4_WALK_STRUCT=off; no description cosines of the query tags under '
+                      'HERB_V4_WALK_QTAGS=equal; the query tags with equal shares are all of '
+                      'them under HERB_V4_WALK_SHARES=equal and None under off; under '
+                      'HERB_V4_WALK_EQUAL=off levels_order_the_rows is false and the level '
+                      'numbers the chain still computes stand under unused_ names.',
+    },
     'facet_values': 'round1 stored scores and _pos columns, query-independent. strength reads '
                     'each edge\'s mean over the 24 bootstrap refits as the normal score of its '
-                    'rank in the column over the eligible edges; multikey reads '
+                    'rank in the column over the eligible edges; walk reads the same means as '
+                    'the edge\'s average rank in the column over the eligible edges, over their '
+                    'number; multikey reads '
                     'each edge\'s mean over the 24 bootstrap refits, levelled below the '
                     'question\'s best at each column\'s own gap; adjust_lower and multirank '
                     'read the stored scores through the rank layer '
@@ -554,13 +925,16 @@ RETRIEVAL_FLAGS = {
     'knobs': ('HERB_V4_SORT', 'HERB_V4_FITEQ', 'HERB_V4_STRUCT_AT', 'HERB_V4_QTOPIC',
               'HERB_V4_EDGECOMB', 'HERB_V4_DESCJOIN', 'HERB_V4_JOIN', 'HERB_V4_BAND',
               'HERB_V4_PROBES', 'HERB_V4_FACETS', 'HERB_V4_AREA', 'HERB_V4_TAGSIDE',
-              'HERB_V4_OFFLINE'),
-    'defaults': {'HERB_V4_SORT': 'multikey', 'HERB_V4_FITEQ': 'noise',
+              'HERB_V4_OFFLINE', *(env for env, _, _ in WALK_KNOBS.values()),
+              *(env for env, _, _ in WALK_ROLE_KNOBS.values())),
+    'defaults': {'HERB_V4_SORT': 'walk', 'HERB_V4_FITEQ': 'noise',
                  'HERB_V4_STRUCT_AT': 'after_facets', 'HERB_V4_QTOPIC': 'off',
                  'HERB_V4_EDGECOMB': 'sum', 'HERB_V4_DESCJOIN': 'key', 'HERB_V4_JOIN': 'adjust', 'HERB_V4_BAND': 'noise',
                  'HERB_V4_PROBES': 'all',
                  'HERB_V4_FACETS': 'on', 'HERB_V4_AREA': 'off', 'HERB_V4_TAGSIDE': 'all',
-                 'HERB_V4_OFFLINE': 'off'},
+                 'HERB_V4_OFFLINE': 'off',
+                 **{env: WALK_DEFAULTS[knob] for knob, (env, _, _) in WALK_KNOBS.items()},
+                 **{env: default for env, _, default in WALK_ROLE_KNOBS.values()}},
     'status': 'Constructed arm; under strength the spread unit, the rank-to-normal step, the '
               'weighted mean of the five edge values, the plus of fit and weight, the relative '
               'centrality and the positive part, max(D, Q) and its plus, the leave-one-out '
@@ -582,8 +956,24 @@ RETRIEVAL_FLAGS = {
               '(against his 2026-09-10 sentence on parts), the four-facet mean, the clipping at 0 '
               'and the three joins are the arm\'s; the fit grid (COS_NOISE steps anchored at the question\'s best fit, '
               'one level scale for every query tag), the relevance form and its levelling are '
-              'not his rulings. Nothing '
-              'written to the graph.',
+              'not his rulings; under walk every step M1 to M7 is the orchestrator\'s '
+              'calculation, marked and not settled - the standing clipped at 0 as the fit, the '
+              'average rank over |E| as an edge value\'s position, topic ranked like the four '
+              'stored columns, the shares over the five '
+              'positions and the division by 0.5, the chunk\'s best w with no correction for '
+              'its tag count, the relative centrality and the max over the query tags, '
+              'max(D, Qs) and its plus, the product and near-group lifts with their '
+              'references, variances and trust, and the level step, each with its alternative '
+              'behind a HERB_V4_WALK_* knob (M2 has none), the two sums among the alternatives '
+              '(against his 2026-09-10 sentence on parts), a phrase in both tag lists entering '
+              'twice, and the tie rules; the passage role of the tags and the description is '
+              'his 2026-10-05 ruling (everything embedded for the artefact the same way), the '
+              'query role of the raw question his "yes to the question" the same night, the '
+              'one-role rule of the centrality the orchestrator\'s, unruled; '
+              'HERB_V4_WALK_RANK=picked (C3r) and HERB_V4_WALK_TAGS=off (C4n) were built after '
+              'the walk-through, the first on his 2026-10-05 words on the facets as a ranking '
+              'in the orchestrator\'s form, the second for a measurement. Nothing written to '
+              'the graph.',
 }
 
 
@@ -596,7 +986,7 @@ def _choice(name, allowed, default):
 
 def knobs():
     """Read at call time, never at import, so a run's flags are the run's own."""
-    return {'sort': _choice('HERB_V4_SORT', SORT_MODES, 'multikey'),
+    return {'sort': _choice('HERB_V4_SORT', SORT_MODES, 'walk'),
             'fiteq': _choice('HERB_V4_FITEQ', tuple(BANDS), 'noise'),
             'structat': _choice('HERB_V4_STRUCT_AT', STRUCT_MODES, 'after_facets'),
             'qtopic': _choice('HERB_V4_QTOPIC', R4.QTOPIC_MODES, 'off'),
@@ -608,7 +998,11 @@ def knobs():
             'facets': _choice('HERB_V4_FACETS', FACET_MODES, 'on'),
             'area': _choice('HERB_V4_AREA', AREA_MODES, 'off'),
             'tagside': _choice('HERB_V4_TAGSIDE', TAGSIDE_MODES, 'all'),
-            'offline': _choice('HERB_V4_OFFLINE', OFFLINE_MODES, 'off')}
+            'offline': _choice('HERB_V4_OFFLINE', OFFLINE_MODES, 'off'),
+            **{knob: _choice(env, tuple(values), WALK_DEFAULTS[knob])
+               for knob, (env, _, values) in WALK_KNOBS.items()},
+            **{knob: _choice(env, values, default)
+               for knob, (env, values, default) in WALK_ROLE_KNOBS.items()}}
 
 
 KNOB_ENV = {'sort': 'HERB_V4_SORT', 'fiteq': 'HERB_V4_FITEQ', 'structat': 'HERB_V4_STRUCT_AT',
@@ -617,14 +1011,17 @@ KNOB_ENV = {'sort': 'HERB_V4_SORT', 'fiteq': 'HERB_V4_FITEQ', 'structat': 'HERB_
             'descjoin': 'HERB_V4_DESCJOIN', 'join': 'HERB_V4_JOIN', 'band': 'HERB_V4_BAND',
             'probes': 'HERB_V4_PROBES',
             'facets': 'HERB_V4_FACETS', 'area': 'HERB_V4_AREA', 'tagside': 'HERB_V4_TAGSIDE',
-            'offline': 'HERB_V4_OFFLINE'}
+            'offline': 'HERB_V4_OFFLINE',
+            **{knob: env for knob, (env, _, _) in WALK_KNOBS.items()},
+            **{knob: env for knob, (env, _, _) in WALK_ROLE_KNOBS.items()}}
 READ_BY = {'strength': ('sort', 'offline'),
            'multikey': ('sort', 'fiteq', 'structat', 'offline'),
            'adjust_lower': ('sort', 'qtopic', 'edgecomb', 'descjoin', 'facets', 'offline'),
            'multirank': ('sort', 'offline'),
            'concept': ('sort', 'join', 'facets', 'offline'),
            'chain': ('sort', 'facets', 'tagside', 'offline'),
-           'sum': ('sort', 'band', 'probes', 'facets', 'area', 'tagside', 'offline')}
+           'sum': ('sort', 'band', 'probes', 'facets', 'area', 'tagside', 'offline'),
+           'walk': ('sort', *WALK_KNOBS, *WALK_ROLE_KNOBS, 'offline')}
 
 
 def knob_record(flags):
@@ -633,9 +1030,33 @@ def knob_record(flags):
     record = {'active': {KNOB_ENV[k]: v for k, v in flags.items()},
               'read_by_active_sort': [KNOB_ENV[k] for k in read],
               'ignored_by_active_sort': [KNOB_ENV[k] for k in flags if k not in read]}
-    if flags['sort'] in ('strength', 'multikey', 'adjust_lower', 'multirank', 'concept'):
+    if flags['sort'] in ('strength', 'multikey', 'adjust_lower', 'multirank', 'concept', 'walk'):
         record['product_name_tags_excluded_by_the_sort'] = True
     return record
+
+
+def walk_switches(flags):
+    """The switches of `v4_walk.chain` the walk knobs set, and per knob that is off its PROPOSAL
+    the alternative of the walk-through (`v4_walk.ALTERNATIVES`) or the later change
+    (`v4_walk.CHANGES`) it names, by environment name."""
+    selected = {env: values[flags[knob]] for knob, (env, _, values) in WALK_KNOBS.items()
+                if values[flags[knob]] is not None}
+    named = {**WK.ALTERNATIVES, **WK.CHANGES}
+    switches = {}
+    for alternative in selected.values():
+        switches.update(named[alternative])
+    return switches, selected
+
+
+def walk_roles(flags):
+    """The embedder role of each comparison of the walk sort: the question's tags against the
+    graph tags, the query description against the chunk descriptions and the raw question
+    against the chunk descriptions as their three knobs say; a tag against the query
+    description (the centrality) in one role for both, the passage role when the tags' and the
+    description's knobs both say passage and the query role in every other combination."""
+    tags, description = flags['walktagrole'], flags['walkdescrole']
+    return {'tags': tags, 'description': description, 'question': flags['walkquestrole'],
+            'centrality': 'passage' if tags == description == 'passage' else 'query'}
 
 
 def record_run_knobs():
@@ -674,6 +1095,7 @@ class Prepared:
     structure: MK.Structure | None = None
     corpus_words: frozenset | None = None
     strength_layer: ST.StrengthLayer | None = None
+    walk_layer: dict | None = None
 
     def close(self):
         """Release the graph driver the areas read from."""
@@ -722,6 +1144,82 @@ def _strength_layer(chunk_rows, edge_tag, edge_chunk, edge_topic, facet_values, 
     return ST.build_layer(edge_tag, edge_chunk, edge_topic, facet_values, eligible,
                           structure.product, structure.channel_ptr, structure.channels,
                           np.array([at[path] for path in paths], dtype=np.int64))
+
+
+def _self_difference(graph_tags, eligible, tag_vectors, chunk_vectors):
+    """How far a graph tag's own name, embedded in the passage role, lands from its own stored
+    vector, over `v4_walk.draw_probes`' eligible graph tags (`v4_walk.self_difference`): the
+    width of "equally close" under HERB_V4_WALK_RANK=picked. The names are embedded as the
+    graph embedded them (`graph.db._readable`) through `_query_cosines`, so each is kept on
+    the side after its first time."""
+    probes = WK.draw_probes(eligible)
+    names = [_readable(graph_tags[i]) for i in probes.tolist()]
+    matrices, used, recipe = _query_cosines(
+        names[0], names, _QueryAxes(tag_vectors, chunk_vectors), 'passage')
+    return {**WK.self_difference(matrices['query_tag_cosines'], probes), 'role': 'passage',
+            'seed': WK.PROBE_SEED, 'embedding': recipe['vector_sha256'],
+            'embedded_now': int(used.calls), 'embedding_seconds': float(used.time_s)}
+
+
+_WIDTH_LOCK = threading.Lock()
+
+
+def _walk_width(prepared):
+    """The walk layer's self-difference, measured once per prepared graph at the first
+    question that needs it and kept in the layer (`_self_difference`; the largest over the
+    probes is the width). Query-independent: the caller measures it before the question's
+    clock starts."""
+    layer = prepared.walk_layer
+    if layer is None:
+        raise ValueError('walk needs the prepared walk layer')
+    with _WIDTH_LOCK:
+        if layer.get('self_difference') is None:
+            measured = _self_difference(prepared.graph_tags, layer['eligible'],
+                                        prepared.tag_vectors, prepared.chunk_vectors)
+            say(f'artefact_v4: a graph tag\'s own name lands {measured["median"]:.4f} from its '
+                f'own vector at the median, {measured["largest"]:.4f} at the largest, over '
+                f'{measured["probes"]} names in the passage role; its own tag the closest on '
+                f'{measured["own_tag_closest"]}; embedded now {measured["embedded_now"]}')
+            layer['self_difference_measured'] = measured
+            layer['self_difference'] = measured['largest']
+    return layer.get('self_difference_measured') or {'largest': layer['self_difference'],
+                                                     'given_to_the_layer': True}
+
+
+def _walk_layer(chunk_ids, chunk_kinds, edge_tag, edge_chunk, edge_topic, facet_values, eligible,
+                structure, facet_gaps=None, self_difference=None, same_level=None):
+    """The walk sort's query-independent layer, `v4_walk.build_layer` on the arm's arrays: the
+    eligible edges' five positions, each chunk's record kind and product, the channels, and the
+    near groups from the file adjacency; with the four facet gaps and the self-difference also
+    each edge's four facet classes, for HERB_V4_WALK_RANK=picked. Its arrays are read-only."""
+    layer = WK.build_layer({
+        'chunk_ids': chunk_ids, 'chunk_kinds': chunk_kinds, 'eligible': eligible,
+        'edge_tag': edge_tag, 'edge_chunk': edge_chunk, 'edge_topic': edge_topic,
+        'edge_facets': facet_values, 'product': structure.product,
+        'channel_ptr': structure.channel_ptr, 'channels': structure.channels,
+        'adjacency_ptr': structure.adjacency_ptr, 'adjacency': structure.adjacency,
+        'facet_gaps': facet_gaps, 'self_difference': self_difference,
+        'same_level': same_level})
+    for value in (*layer.values(), *(a for pair in layer['groups'].values() for a in pair)):
+        if isinstance(value, np.ndarray):
+            value.setflags(write=False)
+    return layer
+
+
+def _walk_counts(layer):
+    """The walk layer in counts."""
+    near = layer['near']
+    return {'eligible_graph_tags': int(layer['eligible'].sum()),
+            'eligible_edges': int(layer['edges'].size),
+            'chunks': int(layer['chunks']),
+            'chunks_with_an_eligible_edge': int((layer['n_c'] > 0).sum()),
+            'position_columns': list(R4.ALL_FACETS),
+            'record_kinds': {name: int((layer['kind'] == code).sum())
+                             for code, name in enumerate(layer['kind_names'])},
+            'products': int(np.unique(layer['product']).size),
+            'chunks_with_a_channel': int(np.unique(layer['groups']['channel'][0]).size),
+            'near_groups': int(near.max()) + 1,
+            'chunks_in_a_near_group': int((near >= 0).sum())}
 
 
 def prepare_over_corpus(corpus) -> Prepared:
@@ -839,6 +1337,23 @@ def prepare_over_corpus(corpus) -> Prepared:
             f'{strength_counts["topic_bulk"]:.4f}, spread {strength_counts["topic_spread"]:.4f}; '
             'nodes ' + ', '.join(f'{kind} {strength_counts["nodes"][kind]}'
                                  for kind in ST.STRUCTURE_TYPES))
+        say('artefact_v4: building the walk layer over the eligible edges')
+        same_thing = WK.same_thing_level([_readable(t) for t in graph_tags], tag_vectors,
+                                         casefold_eligible)
+        if same_thing is not None:
+            say(f'artefact_v4: the graph\'s same-thing tag pairs ({same_thing["pairs"]}) score '
+                f'{same_thing["median"]:.3f} at the median; {same_thing["point"]}% lie under '
+                f'{same_thing["level"]:.4f}')
+        walk_layer = _walk_layer(chunk_ids, chunk_kinds, edge_tag, edge_chunk, edge_topic,
+                                 multikey_layer.values, casefold_eligible, structure,
+                                 facet_gaps,
+                                 same_level=None if same_thing is None else same_thing['level'])
+        walk_counts = _walk_counts(walk_layer)
+        say(f'artefact_v4: walk layer: {walk_counts["eligible_edges"]} eligible edges on '
+            f'{walk_counts["eligible_graph_tags"]} eligible graph tags, five positions each; '
+            f'{walk_counts["near_groups"]} near groups over '
+            f'{walk_counts["chunks_in_a_near_group"]} chunks; {walk_counts["products"]} '
+            f'products; {len(walk_counts["record_kinds"])} record kinds')
         paths = [Path(__file__), ROOT / 'test/arms/artefact_facet_joint.py',
                  ROOT / 'test/arms/artefact_v2.py', ROOT / 'test/artefact/query_content.py',
                  ROOT / 'test/artefact/querytagger.py',
@@ -846,6 +1361,7 @@ def prepare_over_corpus(corpus) -> Prepared:
                  ROOT / 'prod/harness/chat.py', ROOT / 'prod/harness/embed.py',
                  ROOT / 'prod/harness/char_budget.py', ROOT / 'test/artefact/v4_rank.py',
                  ROOT / 'test/artefact/v4_multikey.py', ROOT / 'test/artefact/v4_strength.py',
+                 ROOT / 'test/artefact/v4_walk.py',
                  ROOT / 'test/arms/artefact_v3.py', BANDS_FILE]
         provenance = {
             'database': DATABASE, 'run_id': RUN_ID, 'corpus_argument': str(corpus),
@@ -878,6 +1394,17 @@ def prepare_over_corpus(corpus) -> Prepared:
                                                'over the refits, read as ranks over the '
                                                'eligible edges',
                                'file': 'the chunk\'s relpath'},
+            'walk_layer': {**walk_counts, 'same_thing_pairs': same_thing,
+                           'self_difference': 'measured at the first question under '
+                                              'HERB_V4_WALK_RANK=picked (_walk_width), in '
+                                              'that row\'s meta',
+                           'eligible': 'every graph tag except the product-name tags, casefolded',
+                           'facet_values': 'the multikey layer\'s values, each edge\'s mean over '
+                                           'the refits, read as average ranks over the eligible '
+                                           'edges',
+                           'record_kind': 'the kind stored with the chunk in scores.jsonl',
+                           'near_group': 'a connected component of the file adjacency with at '
+                                         'least two chunks'},
             'structure': structure.source,
             'landing_corpus_words': {
                 'words': len(corpus_words),
@@ -893,11 +1420,13 @@ def prepare_over_corpus(corpus) -> Prepared:
     say(f'artefact_v4: prepared {len(chunk_ids)} chunks, {len(graph_tags)} tags, '
         f'{len(learned.endpoints)} edges, {len(product_tags)} product-named tags '
         f'in {elapsed:.1f}s')
-    return Prepared(tuple(dict(r) for r in chunk_rows), chunk_ids, chunk_kinds, graph_tags,
-                    product_tags, nonscope_eligible, tag_vectors, chunk_vectors,
-                    edge_tag, edge_chunk, edge_topic, edge_pos, landings, driver, cache,
-                    provenance, BuildStats(elapsed, ModelUsage(), [INTERPRET_MODEL]), rank_layer,
-                    casefold_eligible, multikey_layer, structure, corpus_words, strength_layer)
+    prepared = Prepared(tuple(dict(r) for r in chunk_rows), chunk_ids, chunk_kinds, graph_tags,
+                        product_tags, nonscope_eligible, tag_vectors, chunk_vectors,
+                        edge_tag, edge_chunk, edge_topic, edge_pos, landings, driver, cache,
+                        provenance, BuildStats(elapsed, ModelUsage(), [INTERPRET_MODEL]),
+                        rank_layer, casefold_eligible, multikey_layer, structure,
+                        corpus_words, strength_layer)
+    return replace(prepared, walk_layer=walk_layer)
 
 
 def pick(fit, band, eligible=None):
@@ -1309,6 +1838,120 @@ def multikey_meta(multi, delivered):
     return meta
 
 
+# Per text switch of `v4_walk.chain` the texts whose standing enters the strength.
+WALK_TEXTS = {'max': ('description', 'question'), 'clipped': ('description', 'question'),
+              'description': ('description',), 'none': ()}
+# Per switch value of `v4_walk.chain` what the run leaves unread.
+WALK_NOT_READ = {
+    ('share', 'equal'): 'the query tag\'s readings as shares: every query tag takes five equal '
+                        'shares; the readings still give the facet order inside a level',
+    ('share', 'none'): 'the shares and the edge\'s positions in the weight: w = fit; inside a '
+                       'level the winning edge\'s four facet positions still order',
+    ('central', 'equal'): 'the query tags\' cosines to the query description: every query tag '
+                          'weighs 1',
+    ('chunk', 'none'): 'the tags: T = 0 for every chunk; the query tags\' bulk, spread, '
+                       'centrality and shares are computed and not read; the level step '
+                       'reads the spreads of the texts in the side',
+    ('side', 'none'): 'the description and the raw question: S = T',
+    ('side', 'description'): 'the raw question: the side is D alone',
+    ('structure', 'none'): 'the structure: S\' = S',
+    ('order', 'plain'): 'the levels: the rows are ordered by S\' descending, then chunk id; the '
+                        'level numbers under the unused_ names did not order them',
+}
+
+
+def walk_terms(walked, switches):
+    """The terms that add up to a chunk's strength under the walk sort: T, the side unless the
+    run reads no text, and each grouping's lift."""
+    terms = {'tags': walked['T']}
+    if WALK_TEXTS[switches.get('side', 'max')]:
+        terms['description'] = walked['side']
+    return {**terms, **walked['lift']}
+
+
+def walk_winners(walked, rows):
+    """Per row the winning query tag; -1 for a chunk with no eligible edge and for a chunk
+    whose T is 0, where no pair gave a value above 0."""
+    return [int(walked['winner'][i]) if walked['has_edge'][i] and walked['T'][i] != 0. else -1
+            for i in rows]
+
+
+def walk_meta(layer, walked, delivered, switches):
+    """What the walk sort did up to the cut, with no text: the counts, each query tag's bulk,
+    spread and centrality, per grouping the groups, the two variances and the lifts, and over
+    the credited rows each term's sum and its share of their total strength, the rows whose Qs
+    stands above their D, and the levels. switches: the switches of `v4_walk.chain` the run
+    set. What they leave unread is None or absent and named under `not_read`: the text bulk,
+    spread and Qs-above-D count follow the texts that enter the strength; the query tags with
+    equal shares are those whose readings summed to 0, all of them under equal shares, None
+    with the shares off; with no levels ordering the rows the level numbers the chain still
+    computes stand under `unused_` names."""
+    delivered = [int(i) for i in delivered]
+    count = int(walked['bulk'].size)
+    texts = WALK_TEXTS[switches.get('side', 'max')]
+    by_levels = switches.get('order', 'levels') == 'levels'
+    terms = walk_terms(walked, switches)
+    sums = {name: float(values[delivered].sum()) for name, values in terms.items()}
+    total = float(walked['S_prime'][delivered].sum())
+    levels = walked['level'][delivered]
+    level_numbers = {
+        'level_step': float(walked['step']),
+        'levels_among_delivered_rows': int(np.unique(levels).size),
+        'adjacent_delivered_pairs_in_one_level': int((levels[1:] == levels[:-1]).sum())}
+    return {
+        'chunks': int(layer['chunks']),
+        'eligible_graph_tags': int(layer['eligible'].sum()),
+        'eligible_edges': int(layer['edges'].size),
+        'chunks_with_an_eligible_edge': int((layer['n_c'] > 0).sum()),
+        'chunks_with_a_positive_tag_strength': int((walked['T'] > 0).sum()),
+        'query_tags': count,
+        'query_tags_with_equal_shares': {
+            'readings': int(walked['equal_shares'].sum()), 'equal': count,
+            'none': None}[switches.get('share', 'readings')],
+        'query_tag_bulk': walked['bulk'].tolist(),
+        'query_tag_spread': walked['spread'].tolist(),
+        'query_tag_centrality': walked['centrality'].tolist(),
+        'rank': (None if walked.get('edge_class') is None else {
+            'equal_width_per_query_tag': walked['rank_width'].tolist(),
+            'equal_share_of_the_closest': (WK.EQUAL_SHARE
+                                           if switches.get('rank') == 'percent' else None),
+            'same_thing_level': (layer.get('same_level')
+                                 if switches.get('rank') == 'same' else None),
+            'self_difference': (layer.get('self_difference_measured')
+                                if switches.get('rank') == 'picked' else None),
+            'picked_edges_per_query_tag': (walked['edge_class'] == 0).sum(axis=1).tolist(),
+            'delivered_winning_edge_class': [
+                (int(walked['edge_class'][walked['winner'][c], walked['win_edge'][c]])
+                 if walked['win_edge'][c] >= 0 and walked['T'][c] > 0 else None)
+                for c in delivered],
+            'delivered_winning_edge_place': [
+                (int(walked['edge_place'][walked['winner'][c], walked['win_edge'][c]])
+                 if walked['win_edge'][c] >= 0 and walked['T'][c] > 0 else None)
+                for c in delivered]}),
+        'texts_in_the_strength': list(texts),
+        'text_bulk': {name: walked['text_bulk'][name] for name in texts} or None,
+        'text_spread': {name: walked['text_spread'][name] for name in texts} or None,
+        'groupings': {kind: {'groups': int(part['groups']),
+                             'memberships': int(part['memberships']),
+                             'sigma2': part['sigma2'], 'tau2': part['tau2'],
+                             'chunks_with_a_lift_above_0': int((part['lift'] > 0).sum()),
+                             'largest_lift': float(part['lift'].max())}
+                      for kind, part in walked['groups'].items()},
+        'delivered_term_sums': sums,
+        'delivered_strength_total': total,
+        'delivered_term_shares': {name: (sums[name] / total if total != 0. else None)
+                                  for name in sums},
+        'delivered_rows_with_Qs_above_D': (
+            int((walked['Qs'][delivered] > walked['D'][delivered]).sum())
+            if len(texts) == 2 else None),
+        'adjacent_delivered_pairs': max(len(delivered) - 1, 0),
+        'levels_order_the_rows': by_levels,
+        **(level_numbers if by_levels
+           else {'unused_' + name: value for name, value in level_numbers.items()}),
+        'not_read': [text for item, text in WALK_NOT_READ.items() if item in switches.items()],
+    }
+
+
 def order_keys(chunk_ids, total, area_rank):
     return sorted(range(len(chunk_ids)),
                   key=lambda i: (area_rank[i], -total[i], chunk_ids[i]))
@@ -1477,15 +2120,16 @@ class _QueryAxes:
     chunk_vectors: np.ndarray
 
 
-def _query_cosines_and_centrality(description, tags, prepared):
-    """`_query_cosines`' fits and description cosines and, from the same query-role embedding
-    call, each tag's cosine to the description. `_query_cosines` multiplies its unit query
-    vectors with the chunk matrix it is handed; handed the identity it returns the vectors
-    themselves, and the cosines to the chunk descriptions and to the description are taken
-    from them here."""
+def _query_cosines_and_centrality(description, tags, prepared, role='query'):
+    """`_query_cosines`' fits and description cosines and, from the same embedding call, each
+    tag's cosine to the description; the call is in the query role unless another is named.
+    `_query_cosines` multiplies its unit query vectors with the chunk matrix it is handed;
+    handed the identity it returns the vectors themselves, and the cosines to the chunk
+    descriptions and to the description are taken from them here."""
     dim = prepared.chunk_vectors.shape[1]
     matrices, used, recipe = _query_cosines(
-        description, tags, _QueryAxes(prepared.tag_vectors, np.eye(dim)))
+        description, tags, _QueryAxes(prepared.tag_vectors, np.eye(dim)),
+        *(() if role == 'query' else (role,)))
     tag_vectors = np.asarray(matrices['query_chunk_cosines'], dtype=np.float64)
     description_vector = np.asarray(matrices['query_description_cosines'], dtype=np.float64)
     if tag_vectors.shape != (len(tags), dim) or description_vector.shape != (dim,):
@@ -1493,6 +2137,35 @@ def _query_cosines_and_centrality(description, tags, prepared):
     return ({'query_tag_cosines': matrices['query_tag_cosines'],
              'query_description_cosines': description_vector @ prepared.chunk_vectors.T,
              'query_tag_description_cosines': tag_vectors @ description_vector}, used, recipe)
+
+
+def _walk_cosines(description, tags, prepared, roles):
+    """One tag list's cosines for the walk sort, each comparison embedded in its role
+    (`walk_roles`). The tags and the description are embedded together in the centrality's
+    role: each tag's cosine to the description comes from that call. Where the tags' role is
+    another, the tags are embedded once more, alone and in their role, for their cosines to the
+    graph tags; where the description's role is another, the description is embedded once more,
+    alone and in its role, for its cosines to the chunk descriptions. Returns the three
+    matrices of `_query_cosines_and_centrality`, the usage of every call, and the vector sha256
+    of the call the tags' cosines to the graph tags come from, with every call's by role."""
+    central = roles['centrality']
+    matrices, used, recipe = _query_cosines_and_centrality(description, tags, prepared, central)
+    matrices = dict(matrices)
+    by_role = {central: recipe['vector_sha256']}
+    if roles['tags'] != central and tags:
+        alone, more, recipe = _query_cosines(tags[0], tags, prepared, roles['tags'])
+        matrices['query_tag_cosines'] = alone['query_tag_cosines']
+        by_role[roles['tags']] = recipe['vector_sha256']
+        used = ModelUsage(**{name: getattr(used, name) + getattr(more, name)
+                             for name in ModelUsage.__dataclass_fields__})
+    if roles['description'] != central:
+        alone, more, recipe = _query_cosines(description, [], prepared, roles['description'])
+        matrices['query_description_cosines'] = alone['query_description_cosines']
+        by_role[roles['description']] = recipe['vector_sha256']
+        used = ModelUsage(**{name: getattr(used, name) + getattr(more, name)
+                             for name in ModelUsage.__dataclass_fields__})
+    return matrices, used, {'vector_sha256': by_role[roles['tags'] if tags else central],
+                            'vector_sha256_by_role': by_role}
 
 
 def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
@@ -1506,9 +2179,14 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
         raise ValueError('k must be a positive integer')
     if char_budget is not None and (type(char_budget) is not int or char_budget < 1):
         raise ValueError('char_budget must be a positive integer or None')
+    flags = knobs()
+    if flags['sort'] == 'walk' and flags['walkrank'] == 'picked':  # percent measures nothing
+        if flags['walktagrole'] != 'passage':
+            raise ValueError('HERB_V4_WALK_RANK=picked needs HERB_V4_WALK_TAGROLE=passage: the '
+                             'self-difference is measured in the passage role')
+        _walk_width(prepared)
     started = time.perf_counter()
     chat.reset_timing()
-    flags = knobs()
     band = BANDS[flags['band']]
     facets_on = flags['facets'] == 'on'
     query, interp_usage, stages = _interpret(text, prepared)
@@ -1519,11 +2197,20 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
     query_tags, text_cosines, branch_meta = [], {}, {}
     tags = [t.text for t in query.tags]
     # The description is embedded with the description-side tags (their fits and the
-    # description's cosines to the chunk descriptions); the question text alone after; under
-    # strength, multikey and adjust_lower the question-side tags last, embedded beside the
-    # description. Under strength each tag call also hands each tag's cosine to the description.
+    # description's cosines to the chunk descriptions); the question text alone after (under
+    # walk in the role its knob says); under strength, multikey, adjust_lower and walk the question-side tags
+    # last, embedded beside the description. Under strength and walk each tag call also hands
+    # each tag's cosine to the description. Under walk each comparison is embedded in its role
+    # (`_walk_cosines`); every other sort embeds in the query role.
     by_strength = flags['sort'] == 'strength'
-    tag_cosines = _query_cosines_and_centrality if by_strength else _query_cosines
+    by_walk = flags['sort'] == 'walk'
+    with_centrality = by_strength or by_walk
+    roles = walk_roles(flags) if by_walk else None
+    if by_walk:
+        def tag_cosines(description, listed, prepared_):
+            return _walk_cosines(description, listed, prepared_, roles)
+    else:
+        tag_cosines = _query_cosines_and_centrality if with_centrality else _query_cosines
     centrality_cosines = []
     matrices, used, recipe = tag_cosines(query.description, tags, prepared)
     for name in ModelUsage.__dataclass_fields__:
@@ -1531,14 +2218,19 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
     fits = np.asarray(matrices['query_tag_cosines'], dtype=np.float64)
     for i, tag in enumerate(query.tags):
         query_tags.append((fits[i], tag.readings))
-    if by_strength:
+    if with_centrality:
         centrality_cosines.extend(np.asarray(matrices['query_tag_description_cosines'],
                                              dtype=np.float64).tolist())
     text_cosines['description'] = np.asarray(matrices['query_description_cosines'],
                                              dtype=np.float64)
     branch_meta['description'] = {'tags': len(tags), 'text_chars': len(query.description),
                                   'embedding': recipe['vector_sha256']}
-    matrices, used, recipe = _query_cosines(query.question, [], prepared)
+    if by_walk:
+        branch_meta['description']['embedding_by_role'] = recipe['vector_sha256_by_role']
+    if by_walk and roles['question'] != 'query':
+        matrices, used, recipe = _query_cosines(query.question, [], prepared, roles['question'])
+    else:
+        matrices, used, recipe = _query_cosines(query.question, [], prepared)
     for name in ModelUsage.__dataclass_fields__:
         setattr(embed_usage, name, getattr(embed_usage, name) + getattr(used, name))
     text_cosines['question'] = np.asarray(matrices['query_description_cosines'],
@@ -1546,7 +2238,7 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
     branch_meta['question'] = {'tags': 0, 'text_chars': len(query.question),
                                'embedding': recipe['vector_sha256']}
     question_side = ([t.text for t in query.query_tags]
-                     if flags['sort'] in ('strength', 'multikey', 'adjust_lower') else [])
+                     if flags['sort'] in ('strength', 'multikey', 'adjust_lower', 'walk') else [])
     if question_side:
         matrices, used, recipe = tag_cosines(query.description, question_side, prepared)
         for name in ModelUsage.__dataclass_fields__:
@@ -1554,11 +2246,14 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
         fits = np.asarray(matrices['query_tag_cosines'], dtype=np.float64)
         for i, tag in enumerate(query.query_tags):
             query_tags.append((fits[i], tag.readings))
-        if by_strength:
+        if with_centrality:
             centrality_cosines.extend(np.asarray(matrices['query_tag_description_cosines'],
                                                  dtype=np.float64).tolist())
         branch_meta['question_side_tags'] = {'tags': len(question_side),
                                              'embedding': recipe['vector_sha256']}
+        if by_walk:
+            branch_meta['question_side_tags']['embedding_by_role'] = recipe[
+                'vector_sha256_by_role']
     eligible = (prepared.casefold_eligible if prepared.casefold_eligible is not None
                 else prepared.nonscope_eligible)
     if by_strength:
@@ -1569,6 +2264,22 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
                                    centrality_cosines, text_cosines['description'],
                                    text_cosines['question'])
         order = strong['order']
+    elif by_walk:
+        if prepared.walk_layer is None:
+            raise ValueError('walk needs the prepared walk layer')
+        if list(prepared.chunk_ids) != prepared.walk_layer['chunk_ids']:
+            raise ValueError('Expected the walk layer over the same chunks')
+        eligible = prepared.walk_layer['eligible']
+        switches, selected = walk_switches(flags)
+        walked = WK.chain(
+            prepared.walk_layer,
+            {'cosines': np.array([row for row, _ in query_tags], dtype=np.float64),
+             'readings': np.array([readings for _, readings in query_tags], dtype=np.float64),
+             'description_cosines': np.array(centrality_cosines, dtype=np.float64),
+             'd_description': text_cosines['description'],
+             'd_question': text_cosines['question']},
+            COS_NOISE, **switches)
+        order = walked['order']
     elif flags['sort'] == 'multikey':
         if prepared.multikey_layer is None:
             raise ValueError('multikey needs the prepared multikey layer')
@@ -1678,6 +2389,60 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
                    'delivered_query_tags': [int(strong['best_query_tag'][i])
                                             for i in delivered]}
         area_meta = {'mode': 'not read by the strength sort'}
+        picked = None
+    elif by_walk:
+        diagnostics.update(walk_meta(prepared.walk_layer, walked, delivered, switches))
+        diagnostics['query_tag_description_cosine'] = (
+            [float(v) for v in centrality_cosines]
+            if switches.get('central', 'description') == 'description' else None)
+        diagnostics['phrases_standing_in_both_tag_lists'] = len(
+            {t.strip().casefold() for t in tags}
+            & {t.strip().casefold() for t in question_side})
+        diagnostics['product_named_tags_excluded_casefold'] = int((~eligible).sum())
+        diagnostics['chain_switches'] = dict(switches)
+        diagnostics['alternatives_selected'] = dict(selected)
+        diagnostics['embedding_roles'] = dict(roles)
+        by_levels = diagnostics['levels_order_the_rows']
+        qs_above = diagnostics['delivered_rows_with_Qs_above_D']
+        equal_shares = diagnostics['query_tags_with_equal_shares']
+        say(f'artefact_v4 walk {qid}: {len(delivered)} credited rows, strength total '
+            f'{diagnostics["delivered_strength_total"]:.3f}; shares '
+            + ', '.join(f'{name} ' + ('none' if share is None else f'{share:.3f}')
+                        for name, share in diagnostics['delivered_term_shares'].items())
+            + '; texts in the strength '
+            + (', '.join(diagnostics['texts_in_the_strength']) or 'none')
+            + ('' if qs_above is None else f', rows with Qs above D {qs_above}')
+            + (f'; levels {diagnostics["levels_among_delivered_rows"]}, adjacent pairs in one '
+               f'level {diagnostics["adjacent_delivered_pairs_in_one_level"]} of '
+               f'{diagnostics["adjacent_delivered_pairs"]}, step '
+               f'{diagnostics["level_step"]:.4f}' if by_levels
+               else '; no levels order the rows: S\' descending, then chunk id'))
+        say(f'artefact_v4 walk {qid}: '
+            + (''.join(f'{kind}: {group["groups"]} groups, tau2 '
+                       + ('none' if group['tau2'] is None else f'{group["tau2"]:.4f}')
+                       + f', chunks lifted {group["chunks_with_a_lift_above_0"]}, largest lift '
+                       f'{group["largest_lift"]:.3f}; '
+                       for kind, group in diagnostics['groupings'].items())
+               or 'no structure read; ')
+            + f'query tags {diagnostics["query_tags"]}, '
+            + ('shares not read' if equal_shares is None
+               else f'equal shares on {equal_shares}')
+            + f', phrases in both lists {diagnostics["phrases_standing_in_both_tag_lists"]}; '
+            'alternatives '
+            + (', '.join(f'{env} {alternative}' for env, alternative in selected.items())
+               or 'none, the PROPOSAL')
+            + '; embedding roles '
+            + ', '.join(f'{name} {role}' for name, role in roles.items()))
+        terms = walk_terms(walked, switches)
+        ranking = {'ordered_chunk_ids': [prepared.chunk_ids[i] for i in order],
+                   'delivered_chunk_ids': [prepared.chunk_ids[i] for i in delivered],
+                   'delivered_strength': [float(walked['S_prime'][i]) for i in delivered],
+                   ('delivered_levels' if by_levels else 'delivered_unused_levels'): [
+                       int(walked['level'][i]) for i in delivered],
+                   'delivered_terms': {name: [float(values[i]) for i in delivered]
+                                       for name, values in terms.items()},
+                   'delivered_query_tags': walk_winners(walked, delivered)}
+        area_meta = {'mode': 'not read by the walk sort'}
         picked = None
     elif flags['sort'] == 'multikey':
         diagnostics.update(multikey_meta(multi, delivered))
@@ -1799,7 +2564,7 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
                               for name in ModelUsage.__dataclass_fields__})
     for name, value in chat.take_timing().items():
         setattr(retrieval, name, value)
-    if flags['sort'] in ('strength', 'multikey', 'adjust_lower', 'multirank'):
+    if flags['sort'] in ('strength', 'multikey', 'adjust_lower', 'multirank', 'walk'):
         excluded = int((~np.asarray(eligible, dtype=bool)).sum())
     elif flags['sort'] == 'concept' or flags['tagside'] == 'nonscope':
         excluded = int((~np.asarray(prepared.nonscope_eligible, dtype=bool)).sum())
@@ -1827,8 +2592,11 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
                             'description_side_tags': len(tags),
                             'question_side_tags_in_answer': len(query.query_tags),
                             'question_side_tags_read': len(question_side),
-                            'text_probes': (len(text_cosines) if flags['sort'] == 'sum'
-                                            and flags['probes'] in ('all', 'text') else 0),
+                            'text_probes': (
+                                len(text_cosines) if flags['sort'] == 'sum'
+                                and flags['probes'] in ('all', 'text')
+                                else len(diagnostics['texts_in_the_strength']) if by_walk
+                                else 0),
                             'picked_graph_tags_per_probe': (picked if flags['probes']
                                                             in ('all', 'tags') else None)},
             'area': area_meta, 'ranking': ranking,

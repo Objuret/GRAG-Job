@@ -139,7 +139,9 @@ def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
     join_parts = bool(payload.get("join_parts"))
     cmd = [_CLAUDE_EXE, "-p", "--model", model, "--output-format",
            "stream-json" if join_parts else "json",
-           "--tools", ""]                        # no tools: the model answers, it does not act (2026-09-29)
+           "--tools", "",                        # no tools: the model answers, it does not act (2026-09-29)
+           "--safe-mode"]                        # nothing but the constructed input: no user CLAUDE.md,
+                                                 # skills, plugins, hooks or MCP servers (2026-10-05)
     if join_parts:
         cmd += ["--verbose"]                      # stream-json is refused headless without it
     effort = payload.get("effort")

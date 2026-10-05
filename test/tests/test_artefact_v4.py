@@ -334,10 +334,15 @@ def test_stored_facet_positions_are_never_recomputed_or_written():
 def test_knobs_default_and_reject_an_unknown_value(monkeypatch):
     for name in V.KNOB_ENV.values():
         monkeypatch.delenv(name, raising=False)
-    assert V.knobs() == {'sort': 'multikey', 'fiteq': 'noise', 'structat': 'after_facets',
+    assert V.knobs() == {'sort': 'walk', 'fiteq': 'noise', 'structat': 'after_facets',
                          'qtopic': 'off', 'edgecomb': 'sum', 'descjoin': 'key', 'join': 'adjust',
                          'band': 'noise', 'probes': 'all', 'facets': 'on', 'area': 'off',
-                         'tagside': 'all', 'offline': 'off'}
+                         'tagside': 'all', 'offline': 'off', 'walkfit': 'standing',
+                         'walkshares': 'off', 'walkrank': 'same', 'walktags': 'best',
+                         'walkqtags': 'central',
+                         'walktext': 'better', 'walkstruct': 'trust1', 'walkequal': 'levels',
+                         'walktagrole': 'passage', 'walkdescrole': 'passage',
+                         'walkquestrole': 'query'}
     monkeypatch.setenv('HERB_V4_FITEQ', 'wide')
     with pytest.raises(ValueError):
         V.knobs()
@@ -596,12 +601,29 @@ def test_answer_one_question_runs_the_chain_when_asked_and_records_the_knobs(mon
                                   'HERB_V4_TAGSIDE': 'all', 'HERB_V4_QTOPIC': 'off',
                                   'HERB_V4_EDGECOMB': 'sum', 'HERB_V4_DESCJOIN': 'key',
                                   'HERB_V4_FITEQ': 'noise', 'HERB_V4_OFFLINE': 'off',
-                                  'HERB_V4_STRUCT_AT': 'after_facets'}
+                                  'HERB_V4_STRUCT_AT': 'after_facets',
+                                  'HERB_V4_WALK_FIT': 'standing', 'HERB_V4_WALK_RANK': 'same',
+                                  'HERB_V4_WALK_SHARES': 'off', 'HERB_V4_WALK_TAGS': 'best',
+                                  'HERB_V4_WALK_QTAGS': 'central', 'HERB_V4_WALK_TEXT': 'better',
+                                  'HERB_V4_WALK_STRUCT': 'trust1', 'HERB_V4_WALK_EQUAL': 'levels',
+                                  'HERB_V4_WALK_TAGROLE': 'passage',
+                                  'HERB_V4_WALK_DESCROLE': 'passage',
+                                  'HERB_V4_WALK_QUESTROLE': 'query'}
     assert set(recorded['ignored_by_active_sort']) == {'HERB_V4_JOIN', 'HERB_V4_BAND',
                                                         'HERB_V4_PROBES', 'HERB_V4_AREA',
                                                         'HERB_V4_QTOPIC', 'HERB_V4_EDGECOMB',
                                                         'HERB_V4_DESCJOIN', 'HERB_V4_FITEQ',
-                                                        'HERB_V4_STRUCT_AT'}
+                                                        'HERB_V4_STRUCT_AT', 'HERB_V4_WALK_FIT',
+                                                        'HERB_V4_WALK_SHARES',
+                                                        'HERB_V4_WALK_RANK',
+                                                        'HERB_V4_WALK_TAGS',
+                                                        'HERB_V4_WALK_QTAGS',
+                                                        'HERB_V4_WALK_TEXT',
+                                                        'HERB_V4_WALK_STRUCT',
+                                                        'HERB_V4_WALK_EQUAL',
+                                                        'HERB_V4_WALK_TAGROLE',
+                                                        'HERB_V4_WALK_DESCROLE',
+                                                        'HERB_V4_WALK_QUESTROLE'}
     assert m['policy']['band_value'] is None
     assert m['policy']['fit_equal_width'] is None
     monkeypatch.setenv('HERB_V4_SORT', 'sum')
@@ -610,7 +632,14 @@ def test_answer_one_question_runs_the_chain_when_asked_and_records_the_knobs(mon
     assert recorded['active']['HERB_V4_SORT'] == 'sum'
     assert recorded['ignored_by_active_sort'] == ['HERB_V4_FITEQ', 'HERB_V4_STRUCT_AT',
                                                   'HERB_V4_QTOPIC', 'HERB_V4_EDGECOMB',
-                                                  'HERB_V4_DESCJOIN', 'HERB_V4_JOIN']
+                                                  'HERB_V4_DESCJOIN', 'HERB_V4_JOIN',
+                                                  'HERB_V4_WALK_FIT', 'HERB_V4_WALK_SHARES',
+                                                  'HERB_V4_WALK_RANK',
+                                                  'HERB_V4_WALK_TAGS', 'HERB_V4_WALK_QTAGS',
+                                                  'HERB_V4_WALK_TEXT', 'HERB_V4_WALK_STRUCT',
+                                                  'HERB_V4_WALK_EQUAL', 'HERB_V4_WALK_TAGROLE',
+                                                  'HERB_V4_WALK_DESCROLE',
+                                                  'HERB_V4_WALK_QUESTROLE']
 
 
 def test_duplicate_tags_from_the_querytagger_are_collapsed_not_fatal():
@@ -743,7 +772,17 @@ def test_answer_one_question_runs_the_concept_sort_when_asked(monkeypatch):
                                                         'HERB_V4_AREA', 'HERB_V4_TAGSIDE',
                                                         'HERB_V4_QTOPIC', 'HERB_V4_EDGECOMB',
                                                         'HERB_V4_DESCJOIN', 'HERB_V4_FITEQ',
-                                                        'HERB_V4_STRUCT_AT'}
+                                                        'HERB_V4_STRUCT_AT', 'HERB_V4_WALK_FIT',
+                                                        'HERB_V4_WALK_SHARES',
+                                                        'HERB_V4_WALK_RANK',
+                                                        'HERB_V4_WALK_TAGS',
+                                                        'HERB_V4_WALK_QTAGS',
+                                                        'HERB_V4_WALK_TEXT',
+                                                        'HERB_V4_WALK_STRUCT',
+                                                        'HERB_V4_WALK_EQUAL',
+                                                        'HERB_V4_WALK_TAGROLE',
+                                                        'HERB_V4_WALK_DESCROLE',
+                                                        'HERB_V4_WALK_QUESTROLE'}
     assert m['policy']['product_named_tags_excluded'] == 1
 
 

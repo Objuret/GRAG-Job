@@ -80,6 +80,7 @@ RETRIEVAL_FLAGS = {
     'transport': 'One GENERATE and one SCORE, separate private caches; chat.post max_tries=1.',
     'status': 'Frozen snapshot experimental policy; no live graph or broad validation claim.',
 }
+EMBED_KEEP = ROOT / 'output/query_embed_cache'
 _NUMERIC_LOCK = threading.RLock()
 _CACHE_LOCK = threading.Lock()
 _KEY_LOCKS = {}
@@ -285,8 +286,66 @@ def _interpret(text, prepared):
                                        'description': generation['description'], 'tags': scores['tags']}
 
 
-def _query_cosines(description, tags, prepared):
-    """Serial pinned query-role embedding; normalize frozen float32 inputs in float64."""
+def _kept_row(path):
+    try:
+        row = np.load(path, allow_pickle=False)
+    except (OSError, ValueError, EOFError):
+        return None
+    if (row.ndim != 1 or row.dtype != np.float32 or not row.size or not np.isfinite(row).all()
+            or abs(float(np.linalg.norm(row.astype(np.float64))) - 1.) > 1e-4):
+        return None
+    return row
+
+
+def _keep_row(path, row):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, name = tempfile.mkstemp(dir=path.parent, suffix='.tmp')
+    try:
+        with os.fdopen(fd, 'wb') as stream:
+            np.save(stream, row, allow_pickle=False)
+        try:
+            os.replace(name, path)
+        except OSError:
+            # the row is in hand either way: one that cannot be put in place (another process
+            # holds the file) is embedded again the next time
+            pass
+    finally:
+        if os.path.exists(name):
+            os.unlink(name)
+
+
+def _embed_kept(embed, texts, role):
+    """`embed._embed(texts, role)` with every row kept on the side and read from there the
+    next time (his 2026-10-05 "just run the fucking correct embedder on the correct things,
+    save that on the side and then fucking use THAT instead"): one float32 row a file under
+    EMBED_KEEP/<model>@<revision>__<dtype>__<device>/, named by the sha256 of the role's prefix
+    and the text, no text in it. The harness embeds one text a batch, so a text's row does not
+    depend on what it is embedded beside. Only the harness's own `_embed` is kept; a stand-in
+    is called as it is, nothing read and nothing written. Returns `_embed`'s five values, the
+    usage counting the texts embedded now, and how many rows were served and embedded (None
+    where nothing is kept)."""
+    if (getattr(embed._embed, '__module__', None) != 'harness.embed' or embed.EMBED_BATCH != 1
+            or role not in embed.EMBED_PREFIX):
+        return (*embed._embed(texts, role, bar=False), None)
+    folder = EMBED_KEEP / (f'{embed.EMBED_MODEL.replace("/", "__")}@{embed.EMBED_REVISION[:12]}'
+                           f'__{embed.EMBED_DTYPE}__{embed.EMBED_DEVICE}')
+    paths = [folder / (_sha(embed.EMBED_PREFIX[role] + (text or ' ')) + '.npy') for text in texts]
+    rows = [_kept_row(path) for path in paths]
+    misses = [i for i, row in enumerate(rows) if row is None]
+    calls, ti, to, seconds = 0, 0, 0, 0.
+    if misses:
+        fresh, calls, ti, to, seconds = embed._embed([texts[i] for i in misses], role, bar=False)
+        for i, row in zip(misses, np.asarray(fresh, dtype=np.float32)):
+            rows[i] = row
+            _keep_row(paths[i], row)
+    return (np.array(rows, dtype=np.float32), calls, ti, to, seconds,
+            {'served': len(texts) - len(misses), 'embedded': len(misses)})
+
+
+def _query_cosines(description, tags, prepared, role='query'):
+    """Serial pinned embedding in the role given, the query role unless another is named;
+    normalize frozen float32 inputs in float64. Each text's row is kept on the side
+    (`_embed_kept`)."""
     with _NUMERIC_LOCK, threadpool_limits(limits=4):
         os.environ['HF_HUB_OFFLINE'] = '1'
         os.environ['TRANSFORMERS_OFFLINE'] = '1'
@@ -301,15 +360,16 @@ def _query_cosines(description, tags, prepared):
                 or embed.EMBED_PREFIX != {'query': 'query: ', 'passage': 'passage: '}):
             raise ValueError('Pinned embedding recipe differs')
         texts = _query_embedding_texts(description, tags)
-        vectors, calls, ti, to, seconds = embed._embed(texts, 'query', bar=False)
+        vectors, calls, ti, to, seconds, kept = _embed_kept(embed, texts, role)
         vectors = _unit(vectors)
         at = {text: i for i, text in enumerate(texts)}
         tag_vectors = vectors[[at[tag.strip()] for tag in tags]]
         description_vector = vectors[at[description]]
         recipe = {'model': embed.EMBED_MODEL, 'revision': embed.EMBED_REVISION,
-                  'dtype': embed.EMBED_DTYPE, 'device': embed.EMBED_DEVICE, 'input_type': 'query',
-                  'prefix': embed.EMBED_PREFIX['query'], 'cpu_threads': 4,
+                  'dtype': embed.EMBED_DTYPE, 'device': embed.EMBED_DEVICE, 'input_type': role,
+                  'prefix': embed.EMBED_PREFIX[role], 'cpu_threads': 4,
                   'unique_texts': len(texts), 'vector_sha256': _sha(vectors.tobytes()),
+                  'kept_on_the_side': kept,
                   'query_vector_normalization': 'float64 unit norm after serving float32 normalization'}
         matrices = {'query_tag_cosines': tag_vectors @ prepared.tag_vectors.T,
                     'query_chunk_cosines': tag_vectors @ prepared.chunk_vectors.T,
