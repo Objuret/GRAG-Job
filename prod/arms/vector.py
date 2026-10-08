@@ -64,7 +64,8 @@ class Prepared:
     ids: list = field(default_factory=list)
     texts: list = field(default_factory=list)
     build_stats: Optional[BuildStats] = None
-    query_vecs: dict = field(default_factory=dict)
+    cache_file: Optional[str] = None
+    warm_s: Optional[float] = None
 
 
 def _artifact_text(kind: str, rec: dict) -> str:
@@ -191,6 +192,7 @@ def build_dense_index(corpus, batch: int = EMBED_BATCH) -> Prepared:
                 model=ModelUsage(calls=calls, tokens_in=tokens_in, tokens_out=tokens_out,
                                  time_s=model_s),
                 models=[EMBED_MODEL]),
+            cache_file=str(cache),
         )
 
     matrix, calls, tokens_in, tokens_out, model_s = _embed(texts, "passage", batch)
@@ -223,13 +225,43 @@ def build_dense_index(corpus, batch: int = EMBED_BATCH) -> Prepared:
                     "tokens_in": tokens_in, "tokens_out": tokens_out,
                     "build_time_s": build_stats.build_time_s}, indent=2),
         encoding="utf-8")
-    return Prepared(matrix=matrix, ids=ids, texts=texts, build_stats=build_stats)
+    return Prepared(matrix=matrix, ids=ids, texts=texts, build_stats=build_stats,
+                    cache_file=str(cache))
 
 
 def prepare_over_corpus(corpus) -> Prepared:
     prepared = build_dense_index(corpus)
-    prepared.query_vecs = load_query_vecs()
+    # the question is embedded when it is asked, so the embedder is loaded and run once here:
+    # the first question then pays for its own embedding only
+    t0 = time.perf_counter()
+    _embed([" "], "query", bar=False)
+    prepared.warm_s = time.perf_counter() - t0
     return prepared
+
+
+def index_info(prepared: Prepared) -> dict:
+    """What the dense index is, for the run manifest."""
+    cache = Path(prepared.cache_file) if prepared.cache_file else None
+    cost = cache.with_suffix(".cost.json") if cache else None
+    digest = None
+    if cache and cache.is_file():
+        h = hashlib.sha256()
+        with cache.open("rb") as fh:
+            for block in iter(lambda: fh.read(1 << 20), b""):
+                h.update(block)
+        digest = h.hexdigest()
+    try:
+        cost_note = json.loads(cost.read_text(encoding="utf-8")) if cost and cost.is_file() else None
+    except (OSError, ValueError):
+        cost_note = None
+    return {"units": len(prepared.ids), "text_chars": sum(len(t) for t in prepared.texts),
+            "matrix_shape": list(prepared.matrix.shape), "matrix_dtype": str(prepared.matrix.dtype),
+            "matrix_bytes": int(prepared.matrix.nbytes),
+            "cache_file": None if cache is None else str(cache),
+            "cache_file_bytes": cache.stat().st_size if cache and cache.is_file() else None,
+            "cache_file_sha256": digest, "cache_cost_note": cost_note,
+            "embedder_warm_s": prepared.warm_s,
+            "question_embedding": "at query time, local embedder, query mode"}
 
 
 def _qid_text(question) -> tuple:
@@ -242,25 +274,17 @@ def _qid_text(question) -> tuple:
     return "", str(question)
 
 
-def load_query_vecs() -> dict:
-    if not QUERY_VECS_PATH.is_file():
-        raise FileNotFoundError(
-            f"no precomputed question vectors at {QUERY_VECS_PATH}; "
-            f"run `python embed_questions.py` (from the repo root) before the vector arm")
-    z = np.load(QUERY_VECS_PATH, allow_pickle=True)
-    return {qid: vec for qid, vec in zip(z["ids"], z["matrix"])}
-
-
 def retrieve_top_k_units(question, prepared: Prepared, k: int = DEFAULT_TOP_K) -> tuple:
     qid, text = _qid_text(question)
     if k <= 0 or not prepared.ids or not text.strip():
         return [], ModelUsage()
     k = min(k, len(prepared.ids))
-    qvec = prepared.query_vecs.get(qid)
-    if qvec is None:
-        raise KeyError(
-            f"no precomputed query vector for question id {qid!r}; "
-            f"re-run embed_questions.py over the current question set")
+    # the question's vector is made here, timed and counted: it is part of what this run costs
+    # (2026-10-08, "times, tokens, runtime, build cost ... ALL FUCKING DATAMETRICS")
+    mat, calls, tokens_in, tokens_out, secs = _embed([text], "query", bar=False)
+    usage = ModelUsage(calls=calls, tokens_in=tokens_in, tokens_out=tokens_out, time_s=secs,
+                       attempts=calls, request_s=secs)
+    qvec = mat[0]
     scores = prepared.matrix @ qvec
     top = np.argsort(-scores)[:k]
     units = [
@@ -272,7 +296,7 @@ def retrieve_top_k_units(question, prepared: Prepared, k: int = DEFAULT_TOP_K) -
         }
         for rank, i in enumerate(int(j) for j in top)
     ]
-    return units, ModelUsage()
+    return units, usage
 
 
 def unit_to_artifact_id(unit: dict) -> Optional[str]:
@@ -313,7 +337,13 @@ def answer_one_question(
                        if aid is not None]
         meta = {"char_budget": {"budget": char_budget, "chars": cut.chars,
                                 "kept": cut.kept, "boundary": cut.boundary,
-                                "exhausted": cut.exhausted}}
+                                "exhausted": cut.exhausted},
+                # the cosine of every delivered context, in delivered order, and of the first
+                # unit left out; every unit of the index is ranked
+                "ranking": {"n_units": len(prepared.ids), "n_ranked": len(units),
+                            "scores": [u["score"] for u in units[:len(contexts)]],
+                            "next_score": (units[len(contexts)]["score"]
+                                           if len(units) > len(contexts) else None)}}
 
     if generate is None:
         answer, gen_usage = "", ModelUsage()

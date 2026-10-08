@@ -2,13 +2,16 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 import time
+import traceback
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 
 from harness import abort
+from harness import capture
 from harness import jsonl
 from harness import provenance
 from harness.progress import progress
@@ -76,6 +79,17 @@ def open_corpus(corpus_root):
     return root
 
 
+# What the answer call asks of the model. The lane applies what the CLI and the model let it and
+# records the rest as not applied (chat.call_settings): thinking off and the 8,192 cap go through;
+# claude-sonnet-5 refuses any temperature; min_tokens has no counterpart in this lane.
+_GENERATOR_SETTINGS = {
+    "temperature": 0,
+    "chat_template_kwargs": {"enable_thinking": False},
+    "max_tokens": 8192,
+    "min_tokens": 1,
+}
+
+
 def build_shared_generator(config):
     if config.get("retrieval_only"):
         return None
@@ -88,10 +102,7 @@ def build_shared_generator(config):
         t0 = time.perf_counter()
         resp = chat.post("/chat/completions", {
             "model": model,
-            "temperature": 0,
-            "chat_template_kwargs": {"enable_thinking": False},
-            "max_tokens": 8192,
-            "min_tokens": 1,
+            **_GENERATOR_SETTINGS,
             "messages": generator_messages(question, contexts),
             "response_format": {
                 "type": "json_schema",
@@ -126,6 +137,25 @@ def build_shared_generator(config):
     return generate
 
 
+def generator_info(config):
+    """What every answer call of a run is given, once, for its manifest."""
+    if config.get("retrieval_only"):
+        return None
+    from harness import chat
+    model = config.get("generator_model", GENERATOR_MODEL)
+    call = chat.call_settings({"model": model, **_GENERATOR_SETTINGS})
+    return {"model": model,
+            "system": generator_messages("", [])[0]["content"],
+            "user_template": "Documents:\\n<the contexts, a blank line between them>"
+                             "\\n\\nQuestion: <the question>",
+            "schema": _ANSWER_SCHEMA,
+            # asked is what the harness asks for; applied and not_applied say what the call carries
+            "payload": dict(_GENERATOR_SETTINGS),
+            "applied": call["applied"], "not_applied": call["not_applied"],
+            "env_set": call["env_set"], "env_unset": call["env_unset"],
+            "timeout_s": 480.0}
+
+
 def to_arm_question(question):
     return question.id, question.question
 
@@ -148,24 +178,43 @@ def _rehydrate(rec):
 def run_one_pipeline(pipeline, chosen, corpus, generate, out_dir, k=DEFAULT_TOP_K,
                      workers=DEFAULT_WORKERS,
                      max_consecutive_failures=MAX_CONSECUTIVE_FAILURES,
-                     char_budget=None):
+                     char_budget=None, leg=None, telemetry=None):
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     records_path = out / "arm_outputs.jsonl"
     failures_path = out / "failures.jsonl"
     jsonl.heal(records_path)
+    jsonl.heal(failures_path)
     done = _done_ids(records_path)
     todo = [q for q in chosen if q.id not in done]
 
+    p0 = time.perf_counter()
     prepared = pipeline.prepare_over_corpus(corpus)
+    if telemetry is not None:
+        telemetry.update(prepare_s=time.perf_counter() - p0, n_todo=len(todo),
+                         prepared=prepared)
+    extra = {} if char_budget is None else {"char_budget": char_budget}
+
+    def _one(q):
+        # one question = one run: everything it calls while this capture is open is kept
+        cap, token = capture.start()
+        try:
+            out_obj = pipeline.answer_one_question(
+                to_arm_question(q), prepared, generate, k, **extra)
+        except BaseException as e:
+            e.herb_capture = cap.close()
+            raise
+        finally:
+            capture.stop(token)
+        return out_obj, cap.close()
+
     ran, failures, aborted, consecutive = [], [], None, 0
+    # failures.jsonl is appended, never wiped: a failed try and what it spent stay on record
+    # across resumes; whether a question is still unanswered is the manifest's n_failed
     with records_path.open("a", encoding="utf-8") as fh, \
-            failures_path.open("w", encoding="utf-8") as ffh, \
+            failures_path.open("a", encoding="utf-8") as ffh, \
             ThreadPoolExecutor(max_workers=max(1, workers)) as ex:
-        extra = {} if char_budget is None else {"char_budget": char_budget}
-        futures = [ex.submit(pipeline.answer_one_question,
-                             to_arm_question(q), prepared, generate, k, **extra)
-                   for q in todo]
+        futures = [ex.submit(_one, q) for q in todo]
         for q, fut in progress(list(zip(todo, futures)), desc="answering", unit="q"):
             if abort.aborted():
                 for f in futures:
@@ -173,7 +222,7 @@ def run_one_pipeline(pipeline, chosen, corpus, generate, out_dir, k=DEFAULT_TOP_
                 aborted = "user aborted (pressed q)"
                 break
             try:
-                out_obj = fut.result()
+                out_obj, kept = fut.result()
             except abort.Aborted:
                 for f in futures:
                     f.cancel()
@@ -181,9 +230,14 @@ def run_one_pipeline(pipeline, chosen, corpus, generate, out_dir, k=DEFAULT_TOP_
                 break
             except Exception as e:
                 failures.append((q, repr(e)))
-                ffh.write(json.dumps({"id": q.id, "error": repr(e)},
-                                     ensure_ascii=False) + "\n")
+                ffh.write(json.dumps(
+                    {"id": q.id, "error": repr(e),
+                     "failed_at": datetime.now(timezone.utc).isoformat(), "leg": leg,
+                     "traceback": "".join(traceback.format_exception(type(e), e, e.__traceback__)),
+                     **(getattr(e, "herb_capture", None) or {})},
+                    ensure_ascii=False, default=repr) + "\n")
                 ffh.flush()
+                os.fsync(ffh.fileno())
                 consecutive += 1
                 if consecutive >= max_consecutive_failures:
                     for f in futures:
@@ -195,8 +249,8 @@ def run_one_pipeline(pipeline, chosen, corpus, generate, out_dir, k=DEFAULT_TOP_
                 fh.write(json.dumps(
                     {"id": q.id, "question": q.question,
                      "answered_at": datetime.now(timezone.utc).isoformat(),
-                     **asdict(out_obj)},
-                    ensure_ascii=False) + "\n")
+                     **asdict(out_obj), "leg": leg, **kept},
+                    ensure_ascii=False, default=repr) + "\n")
                 fh.flush()
                 os.fsync(fh.fileno())
                 ran.append(q)
@@ -263,12 +317,19 @@ def build_run_manifest(config, arm, build_stats, n_questions, n_ran, n_failed,
         retrieval_flags=config.get("retrieval_flags"),
         flags=config.get("flags"),
         graph=graph_identity(config.get("graph_database")),
-        code_version=provenance.code_version(),
+        code_version=config.get("code_version") or provenance.code_version(),
         environment=provenance.environment(),
         inputs=provenance.inputs(
             questions_file=config.get("questions_path") or questions.QUESTIONS,
             ids_file=config.get("ids_file"),
             corpus_root=config.get("corpus_root", DEFAULT_CORPUS)),
+        legs=config.get("legs"),
+        workers=config.get("workers"),
+        lane=config.get("lane"),
+        generator=config.get("generator_info"),
+        index=config.get("index"),
+        code_state=config.get("code_state"),
+        env=provenance.settings_env(),
     )
 
 
@@ -279,15 +340,25 @@ def _accumulated_judge(prior, manifest):
                      "judge_model": prior.get("judge_model"),
                      "judge_backend": prior.get("judge_backend"),
                      "usage": prior.get("judge_usage"),
-                     "elapsed_s": prior.get("judge_elapsed_s")})
+                     "elapsed_s": prior.get("judge_elapsed_s"),
+                     "settings": prior.get("judge_settings")})
 
     usage = manifest.judge_usage
-    if usage is not None and usage.calls:
+    # every scoring leg is kept, a leg without a judge call too: its stamps, settings and
+    # embedding work are part of what the evaluation cost
+    if usage is not None and (usage.calls or manifest.judge_settings):
         legs.append({"timestamp": manifest.timestamp,
                      "judge_model": manifest.judge_model,
                      "judge_backend": manifest.judge_backend,
                      "usage": asdict(usage),
-                     "elapsed_s": manifest.judge_elapsed_s})
+                     "elapsed_s": manifest.judge_elapsed_s,
+                     "settings": manifest.judge_settings})
+
+    if manifest.judge_model is None:
+        # a start that made no judge call names no model: the one the kept scores were judged
+        # by stands
+        named = [leg.get("judge_model") for leg in legs if leg.get("judge_model")]
+        manifest.judge_model = named[-1] if named else (prior or {}).get("judge_model")
 
     if not legs:
         return manifest
@@ -325,6 +396,7 @@ def build_eval_manifest(config, scorer, arm, source_run):
         judge_effort=config.get("judge_effort"),
         judge_usage=model_usage_from_dict(asdict(usage)) if usage is not None else None,
         judge_elapsed_s=config.get("judge_elapsed_s"),
+        judge_settings=config.get("judge_settings"),
     )
 
 
@@ -347,28 +419,83 @@ def run(pipeline, evaluator, ids_file, config=None):
     root = CHUNKS_ROOT if config.get("char_budget") is None else CHARS_ROOT
     out = Path(config.get("out_dir") or root / f"{arm}__{evname}")
 
+    # one leg per start or resume of this folder, so its time can be joined or discounted
+    manifest_path = out / "run_manifest.json"
+    try:
+        prior_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        prior_manifest = None
+    prior_legs = list((prior_manifest or {}).get("legs") or []) \
+        if isinstance(prior_manifest, dict) else []
+    leg_no = len(prior_legs) + 1
+    leg_started, leg_t0, leg_cpu0 = capture.now(), time.perf_counter(), time.process_time()
+    workers = config.get("workers", DEFAULT_WORKERS)
+    config["workers"] = workers
+
+    # the code this start runs on is read before it answers anything: read afterwards, an edit
+    # made in the repo during the run would be recorded as the code that ran
+    code_version = provenance.code_version()
+    state = provenance.code_state()
+    diff = state.pop("diff", None)
+    if diff:
+        # named by its hash: legs run on the same uncommitted code share one file. Written as
+        # bytes, so the file's own sha256 is diff_sha256 and `git apply` takes it
+        state["diff_file"] = f"code.{state['diff_sha256'][:16]}.diff"
+        out.mkdir(parents=True, exist_ok=True)
+        if not (out / state["diff_file"]).is_file():
+            (out / state["diff_file"]).write_bytes(diff)
+
+    telemetry = {}
     ran, _, aborted, build_stats = run_one_pipeline(
         pipeline, chosen, corpus, generate, out,
-        config.get("top_k", DEFAULT_TOP_K), config.get("workers", DEFAULT_WORKERS),
-        char_budget=config.get("char_budget"))
+        config.get("top_k", DEFAULT_TOP_K), workers,
+        char_budget=config.get("char_budget"), leg=leg_no, telemetry=telemetry)
 
     done = _done_ids(out / "arm_outputs.jsonl")
     n_failed = len(chosen) - len(done)
     n_exhausted = (None if config.get("char_budget") is None
                    else _n_exhausted(out / "arm_outputs.jsonl"))
-    manifest_path = out / "run_manifest.json"
+    info = getattr(pipeline, "index_info", None)
+    try:
+        index = info(telemetry.get("prepared")) if callable(info) else None
+    except Exception as e:
+        index = {"error": repr(e)}
+    if generate is not None or evaluator is not None:
+        from harness import chat
+        lane = chat.lane_info()
+    else:
+        lane = None
+    from harness import embed
+    leg = {"leg": leg_no, "started_at": leg_started, "finished_at": capture.now(),
+           "wall_s": time.perf_counter() - leg_t0,
+           "process_cpu_s": time.process_time() - leg_cpu0, "workers": workers,
+           "argv": list(sys.argv), "pid": os.getpid(), "python_executable": sys.executable,
+           "ids_file": None if ids_file is None else str(ids_file),
+           "n_chosen": len(chosen), "n_todo": telemetry.get("n_todo"),
+           "n_answered": len(ran), "n_unanswered_after": n_failed, "aborted": aborted,
+           "prepare_s": telemetry.get("prepare_s"), "embedder_load_s": embed.LOAD_S,
+           "retrieval_only": bool(config.get("retrieval_only")), "evaluator": evname,
+           "peak_memory_bytes": provenance.peak_memory_bytes(),
+           "code_version": code_version, "code_state": state,
+           "flags": config.get("flags"), "lane": lane, "index": index}
+    config.update(legs=prior_legs + [leg], lane=lane, index=index, code_state=state,
+                  code_version=code_version, generator_info=generator_info(config))
+
     if ran or not manifest_path.is_file():
         manifest = build_run_manifest(
             config, arm, build_stats, len(chosen), len(done), n_failed, n_exhausted)
-        if manifest_path.is_file():
-            try:
-                prior = json.loads(
-                    manifest_path.read_text(encoding="utf-8")).get("graph")
-            except (OSError, ValueError, AttributeError):
-                prior = None
-            manifest.graph = _merged_graph(prior, manifest.graph)
+        if isinstance(prior_manifest, dict):
+            manifest.graph = _merged_graph(prior_manifest.get("graph"), manifest.graph)
+        elif manifest_path.is_file():
+            manifest.graph = _merged_graph(None, manifest.graph)
         manifest_path.write_text(
-            json.dumps(asdict(manifest), ensure_ascii=False, indent=2),
+            json.dumps(asdict(manifest), ensure_ascii=False, indent=2, default=repr),
+            encoding="utf-8")
+    elif isinstance(prior_manifest, dict):
+        # nothing was answered in this leg: the manifest of the answers stands, the leg is added
+        prior_manifest["legs"] = config["legs"]
+        manifest_path.write_text(
+            json.dumps(prior_manifest, ensure_ascii=False, indent=2, default=repr),
             encoding="utf-8")
 
     if aborted:
@@ -382,26 +509,37 @@ def run(pipeline, evaluator, ids_file, config=None):
     by_id = {q.id: q for q in chosen}
     recs = jsonl.load(out / "arm_outputs.jsonl")
     eval_path = out / "eval_results.jsonl"
-    results = run_one_evaluator(
-        evaluator, [_rehydrate(r) for r in recs], [by_id[r["id"]] for r in recs],
-        arm, corpus, eval_path, config.get("workers", DEFAULT_WORKERS),
-        config.get("retrieval_only", False))
+    # a scoring leg that is cut short still writes its manifest: what it spent is not dropped
+    results, cut_short = None, None
+    try:
+        results = run_one_evaluator(
+            evaluator, [_rehydrate(r) for r in recs], [by_id[r["id"]] for r in recs],
+            arm, corpus, eval_path, config.get("workers", DEFAULT_WORKERS),
+            config.get("retrieval_only", False))
+    except BaseException as e:
+        cut_short = e
     config["judge_model"] = getattr(evaluator, "LAST_JUDGE_MODEL", None)
     config["judge_backend"] = getattr(evaluator, "LAST_JUDGE_BACKEND", None)
     config["judge_effort"] = getattr(evaluator, "LAST_JUDGE_REASONING_EFFORT", None)
     config["judge_usage"] = getattr(evaluator, "LAST_JUDGE_USAGE", None)
     config["judge_elapsed_s"] = getattr(evaluator, "LAST_JUDGE_WALL_TIME_S", None)
+    config["judge_settings"] = getattr(evaluator, "LAST_JUDGE_SETTINGS", None)
     eval_manifest_path = out / "eval_manifest.json"
     eval_manifest = build_eval_manifest(config, evname, arm, out)
+    prior = None
     if eval_manifest_path.is_file():
         try:
             prior = json.loads(eval_manifest_path.read_text(encoding="utf-8"))
         except (OSError, ValueError):
             prior = None
-        eval_manifest = _accumulated_judge(prior, eval_manifest)
+    # from the first scoring leg on: each leg is written with its own settings, so a later leg
+    # never replaces what an earlier one ran under
+    eval_manifest = _accumulated_judge(prior, eval_manifest)
     eval_manifest_path.write_text(
-        json.dumps(asdict(eval_manifest), ensure_ascii=False, indent=2),
+        json.dumps(asdict(eval_manifest), ensure_ascii=False, indent=2, default=repr),
         encoding="utf-8")
+    if cut_short is not None:
+        raise cut_short
     n_results = (sum(1 for x in eval_path.read_text(encoding="utf-8").splitlines() if x.strip())
                  if eval_path.is_file() else len(results or []))
     return {"out_dir": str(out), "n_questions": len(chosen), "n_ran": len(done),

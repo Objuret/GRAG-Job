@@ -17,14 +17,21 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 from harness import abort
+from harness import capture
 from harness import jsonl
 from harness import chat
+from harness import embed as embed_lane
 from harness.progress import progress
 from harness.contract import EvalResult, ModelUsage
 from eval.ragas_catalog import CATALOG, metrics_to_run
 from harness.embed import EMBED_BATCH, _embed_request
 
-JUDGE_MODEL = os.environ.get("RAGAS_JUDGE_MODEL", "claude-haiku-4-5")
+# RAGAS posts a usage event to its makers for every score it computes unless this is set; the
+# evaluation sends nothing anywhere but to the judge
+os.environ.setdefault("RAGAS_DO_NOT_TRACK", "true")
+
+# the dated id, not the alias that can be moved to another snapshot (RAGAS's own advice for a judge)
+JUDGE_MODEL = os.environ.get("RAGAS_JUDGE_MODEL", "claude-haiku-4-5-20251001")
 EMBED_MODEL = "nvidia/llama-nemotron-embed-1b-v2"
 _JUDGE_MODEL_LC = JUDGE_MODEL.lower()
 JUDGE_BACKEND = "gemini-cli" if "gemini" in _JUDGE_MODEL_LC else (
@@ -45,7 +52,8 @@ if JUDGE_BACKEND == "codex-cli" and JUDGE_REASONING_EFFORT not in {"low", "mediu
 def _judge_profile(model: str) -> dict:
     model = model.lower()
     if "claude" in model:
-        return {"inflight": 64, "timeout_s": 120.0, "tries": 2}
+        # one try: a second try of a failed judge call is a whole call again
+        return {"inflight": 64, "timeout_s": 120.0, "tries": 1}
     if "gpt-" in model:
         return {"inflight": 64, "timeout_s": 180.0, "tries": 2}
     if "gemini" in model:
@@ -67,8 +75,11 @@ LAST_JUDGE_BACKEND = JUDGE_BACKEND
 LAST_JUDGE_MODEL = None
 LAST_JUDGE_REASONING_EFFORT = JUDGE_REASONING_EFFORT
 LAST_JUDGE_WALL_TIME_S = 0.0
+LAST_JUDGE_SETTINGS = None
 
 MAX_CONSECUTIVE_FAILED_QUESTIONS = 10
+# a reply with no text in it is asked for again, this many times in all
+EMPTY_REPLY_TRIES = 3
 
 warnings.filterwarnings(
     "ignore", message=r"Importing .* from 'ragas\.metrics' is deprecated",
@@ -153,12 +164,15 @@ def _record_judge_usage(tokens_in: int, tokens_out: int, reasoning_tokens: int,
         LAST_JUDGE_USAGE.retry_s += transport["retry_s"]
 
 
-def _claude_verdict(text: str, model: str, timeout_s: float) -> str:
+def _claude_verdict(text: str, model: str, timeout_s: float, temperature: float) -> str:
     started = time.perf_counter()
     chat.reset_timing()
+    # RAGAS's prompt and nothing of ours: no system text, no thinking, and the temperature RAGAS
+    # hands its judge for this call. What the lane could apply is in the kept call.
     resp = chat.post("/chat/completions",
-                    {"model": model, "messages": [{"role": "user", "content": text}]},
-                    timeout=timeout_s, max_tries=1)
+                    {"model": model, "messages": [{"role": "user", "content": text}],
+                     "temperature": temperature, "thinking": False},
+                    timeout=timeout_s, max_tries=JUDGE_MAX_TRIES)
     transport = chat.take_timing()
     clean = ((resp.get("choices") or [{}])[0].get("message") or {}).get("content") or ""
     usage = resp.get("usage") or {}
@@ -345,7 +359,7 @@ class _JudgeLLM(BaseRagasLLM):
         model = self.model.lower()
         if "claude" in model:
             LAST_JUDGE_BACKEND = "claude-cli"
-            return {}, _claude_verdict(text, self.model, JUDGE_TIMEOUT_S), "stop"
+            return {}, _claude_verdict(text, self.model, JUDGE_TIMEOUT_S, temperature), "stop"
         if "gemini" in model:
             LAST_JUDGE_BACKEND = "gemini-cli"
             return {}, _gemini_verdict(text, self.model, JUDGE_TIMEOUT_S), "stop"
@@ -357,8 +371,8 @@ class _JudgeLLM(BaseRagasLLM):
             f"NIM lane was purged on 2026-09-07")
 
     def _verdict(self, text, temperature, stop):
-        for _ in range(3):
-            resp, content, finish = self._post(text, float(temperature or 0), stop)
+        for _ in range(EMPTY_REPLY_TRIES):
+            resp, content, finish = self._post(text, temperature, stop)
             if content and content.strip():
                 return content
         usage = resp.get("usage") or {}
@@ -368,15 +382,19 @@ class _JudgeLLM(BaseRagasLLM):
             f"completion_tokens={usage.get('completion_tokens')}, message_keys={sorted(message)})")
 
     def _complete(self, text, n, temperature, stop):
+        if temperature is None:
+            temperature = self.get_temperature(n)     # RAGAS's own: 0.01 for one reply
         return LLMResult(generations=[[
             Generation(text=self._verdict(text, temperature, stop)) for _ in range(max(1, n))]])
 
-    def generate_text(self, prompt, n=1, temperature=1e-8, stop=None, callbacks=None):
+    def generate_text(self, prompt, n=1, temperature=None, stop=None, callbacks=None):
         return self._complete(prompt.to_string(), n, temperature, stop)
 
-    async def agenerate_text(self, prompt, n=1, temperature=1e-8, stop=None, callbacks=None):
+    async def agenerate_text(self, prompt, n=1, temperature=None, stop=None, callbacks=None):
+        # the call runs on a pool thread; `carry` takes the cell's capture along, so the call
+        # is kept with the question and score it was made for
         return await asyncio.get_running_loop().run_in_executor(
-            _CALL_POOL, lambda: self._complete(prompt.to_string(), n, temperature, stop))
+            _CALL_POOL, capture.carry(self._complete, prompt.to_string(), n, temperature, stop))
 
     def is_finished(self, response) -> bool:
         return True
@@ -428,11 +446,11 @@ class _SharedEmbedder(BaseRagasEmbeddings):
 
     async def aembed_query(self, text):
         return await asyncio.get_running_loop().run_in_executor(
-            _CALL_POOL, self.embed_query, text)
+            _CALL_POOL, capture.carry(self.embed_query, text))
 
     async def aembed_documents(self, texts):
         return await asyncio.get_running_loop().run_in_executor(
-            _CALL_POOL, self.embed_documents, texts)
+            _CALL_POOL, capture.carry(self.embed_documents, texts))
 
 
 _LLM, _EMB = "llm", "emb"
@@ -527,6 +545,19 @@ def corpus_gold_text(corpus_root) -> dict:
     return out
 
 
+def judge_call_info(judge) -> dict | None:
+    """What a judge call is given, once, for the evaluation's manifest: RAGAS's prompt as the only
+    message, and the temperature RAGAS hands its judge for a score that asks for one reply. Each
+    kept call in eval_calls.jsonl carries its own."""
+    if JUDGE_BACKEND != "claude-cli":
+        return None
+    asked = {"temperature": judge.get_temperature(1), "thinking": False}
+    call = chat.call_settings({"model": judge.model, **asked})
+    return {"model": judge.model, "system": call["system"], "payload": asked,
+            "applied": call["applied"], "not_applied": call["not_applied"],
+            "env_set": call["env_set"], "env_unset": call["env_unset"]}
+
+
 def _to_sample(out, q, gold_text) -> SingleTurnSample:
     gold = [str(g) for g in (q.ground_truth or [])]
     cites = [str(c) for c in (q.citations or [])]
@@ -546,18 +577,21 @@ def score_outputs(outputs, questions, arm="", corpus=None, results_path=None, wo
                   retrieval_only=False):
     run_config = RunConfig(max_retries=1)
     global LAST_JUDGE_USAGE, LAST_JUDGE_BACKEND, LAST_JUDGE_MODEL
-    global LAST_JUDGE_REASONING_EFFORT, LAST_JUDGE_WALL_TIME_S
+    global LAST_JUDGE_REASONING_EFFORT, LAST_JUDGE_WALL_TIME_S, LAST_JUDGE_SETTINGS
     LAST_JUDGE_USAGE = ModelUsage()
     LAST_JUDGE_BACKEND = JUDGE_BACKEND
     LAST_JUDGE_MODEL = None
     LAST_JUDGE_REASONING_EFFORT = JUDGE_REASONING_EFFORT
     LAST_JUDGE_WALL_TIME_S = 0.0
+    LAST_JUDGE_SETTINGS = None
     if JUDGE_BACKEND == "codex-cli" and not _CODEX_EXE:
         raise RuntimeError("RAGAS_JUDGE_MODEL starts with gpt- but `codex` is not on PATH")
     if JUDGE_BACKEND == "gemini-cli" and not _GEMINI_EXE:
         raise RuntimeError("RAGAS_JUDGE_MODEL starts with gemini- but `gemini` is not on PATH")
 
     started = time.perf_counter()
+    leg_stamp = capture.now()
+    embed_lane.take_totals()
     judge, embedder = _JudgeLLM(run_config=run_config), _SharedEmbedder(run_config=run_config)
     selected = metrics_to_run()
     if retrieval_only:
@@ -568,9 +602,39 @@ def score_outputs(outputs, questions, arm="", corpus=None, results_path=None, wo
         print(f"ragas judge: {JUDGE_MODEL} backend={JUDGE_BACKEND}{effort} "
               f"timeout={JUDGE_TIMEOUT_S:g}s tries={JUDGE_MAX_TRIES}")
     gold_text = corpus_gold_text(corpus) if corpus else {}
-    results = _score_all(outputs, questions, arm, metrics, gold_text,
-                         results_path, workers, embedder)
-    LAST_JUDGE_WALL_TIME_S = time.perf_counter() - started
+    # what this scoring leg ran under, kept with it in the eval manifest; filled in a `finally`
+    # so a leg that is cut short still says what it was and what it had spent
+    import sys
+    from importlib.metadata import version as _version
+    settings = {"started_at": leg_stamp, "finished_at": None, "interrupted": None,
+                "workers": workers, "retrieval_only": bool(retrieval_only),
+                "scores": list(selected), "judge_model": JUDGE_MODEL,
+                "judge_backend": JUDGE_BACKEND, "judge_timeout_s": JUDGE_TIMEOUT_S,
+                "judge_max_tries": JUDGE_MAX_TRIES, "judge_inflight": JUDGE_INFLIGHT,
+                "judge_empty_reply_tries": EMPTY_REPLY_TRIES,
+                "judge_call": None if retrieval_only else judge_call_info(judge),
+                "max_judge_context_chars": MAX_JUDGE_CONTEXT_CHARS,
+                "max_consecutive_failed_questions": MAX_CONSECUTIVE_FAILED_QUESTIONS,
+                "ragas": _version("ragas"), "embed_model": EMBED_MODEL,
+                "ragas_run_config": {"max_retries": run_config.max_retries,
+                                     "timeout": run_config.timeout,
+                                     "max_wait": run_config.max_wait, "seed": run_config.seed},
+                "ragas_do_not_track": os.environ.get("RAGAS_DO_NOT_TRACK"),
+                "lane": None if retrieval_only else chat.lane_info(),
+                "calls_file": "eval_calls.jsonl" if results_path else None,
+                "argv": list(sys.argv), "pid": os.getpid(), "python_executable": sys.executable}
+    LAST_JUDGE_SETTINGS = settings
+    try:
+        results = _score_all(outputs, questions, arm, metrics, gold_text,
+                             results_path, workers, embedder, leg_stamp)
+    except BaseException as e:
+        settings["interrupted"] = repr(e)
+        raise
+    finally:
+        LAST_JUDGE_WALL_TIME_S = time.perf_counter() - started
+        settings.update(finished_at=capture.now(), wall_s=LAST_JUDGE_WALL_TIME_S,
+                        embedding=embed_lane.take_totals())
+    settings["cells"] = dict(Counter(r.status for r in results))
     _print_status_summary(results)
     if LAST_JUDGE_USAGE.calls:
         print(
@@ -628,7 +692,7 @@ def _prime_embed_cache(embedder, metrics, samples) -> None:
 
 
 def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
-               workers=1, embedder=None) -> list:
+               workers=1, embedder=None, leg_stamp=None) -> list:
     passes = [(lbl, m) for lbl, m in (
         ("scoring - offline (free)",
          {n: m for n, m in metrics.items() if _REGISTRY[n][1] == ()}),
@@ -642,8 +706,12 @@ def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
     done_ok = defaultdict(set)
     kept = []
     for r in prior:
-        if (r["status"] != "ok" or r["metric"] not in selected
-                or r["metric"] in done_ok[r["question_id"]]):
+        if r["metric"] not in selected:
+            # a score this start does not compute is not this start's to drop: a
+            # --retrieval-only start on a judged folder leaves every judged row where it is
+            kept.append(r)
+            continue
+        if r["status"] != "ok" or r["metric"] in done_ok[r["question_id"]]:
             continue
         done_ok[r["question_id"]].add(r["metric"])
         kept.append(r)
@@ -659,13 +727,36 @@ def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
                  for out, q in zip(outputs, questions)
                  if selected - done_ok[q.id]}
 
+    # eval_calls.jsonl: every judge call and embed request of the evaluation, whole, one line
+    # each, written as its cell finishes. It holds the prompts, so it holds gold answers.
+    calls_path = Path(results_path).parent / "eval_calls.jsonl" if results_path else None
+    if calls_path:
+        jsonl.heal(calls_path)
+    cfh = open(calls_path, "a", encoding="utf-8") if calls_path else None
+    cfh_lock = threading.Lock()
+
+    def _keep_calls(kept, **where):
+        if cfh is None or not kept["calls"]:
+            return
+        with cfh_lock:
+            for call in kept["calls"]:
+                cfh.write(json.dumps({"eval_leg": leg_stamp, "arm": arm, **where, **call},
+                                     ensure_ascii=False, default=repr) + "\n")
+            cfh.flush()
+            os.fsync(cfh.fileno())
+
     if embedder is not None and sample_of:
-        _prime_embed_cache(embedder, metrics, sample_of.values())
+        cap, token = capture.start()
+        try:
+            _prime_embed_cache(embedder, metrics, sample_of.values())
+        finally:
+            capture.stop(token)
+            _keep_calls(cap.close(), question_id=None, score=None, phase="prime")
 
     if results_path:
         jsonl.heal(results_path)
     fh = open(results_path, "a", encoding="utf-8") if results_path else None
-    ffh = (open(Path(results_path).parent / "eval_failures.jsonl", "w", encoding="utf-8")
+    ffh = (open(Path(results_path).parent / "eval_failures.jsonl", "a", encoding="utf-8")
            if results_path else None)
     results = []
 
@@ -673,7 +764,17 @@ def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
         async def _go():
             value, status, comp = await _score_one(metric, sample)
             return EvalResult(q.id, q.type, arm, name, value, status, comp, None)
-        row = asyncio.run(_go())
+        # one cell = one question under one score: its calls are kept with it
+        cap, token = capture.start()
+        try:
+            row = asyncio.run(_go())
+        finally:
+            capture.stop(token)
+            kept = cap.close()
+            _keep_calls(kept, question_id=q.id, type=q.type, score=name, phase="cell")
+        row.components = {**(row.components or {}),
+                          "usage": {"eval_leg": leg_stamp, **kept["timing"],
+                                    **capture.totals(kept["calls"])}}
         on_cell()
         return row
 
@@ -733,11 +834,14 @@ def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
                     if ffh and row.status == "error":
                         ffh.write(json.dumps(
                             {"question_id": row.question_id, "metric": row.metric,
-                             "error": (row.components or {}).get("error", "")},
-                            ensure_ascii=False) + "\n")
+                             "error": (row.components or {}).get("error", ""),
+                             "eval_leg": leg_stamp, "failed_at": capture.now(),
+                             "usage": (row.components or {}).get("usage")},
+                            ensure_ascii=False, default=repr) + "\n")
                         ffh.flush()
                     if fh:
-                        fh.write(json.dumps(asdict(row), ensure_ascii=False) + "\n")
+                        fh.write(json.dumps(asdict(row), ensure_ascii=False,
+                                            default=repr) + "\n")
                         fh.flush()
                         os.fsync(fh.fileno())
                     results.append(row)
@@ -790,6 +894,8 @@ def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
             fh.close()
         if ffh:
             ffh.close()
+        if cfh:
+            cfh.close()
     if status == "user_abort":
         raise RuntimeError("eval aborted (pressed q) - finished questions saved; resume to continue")
     if status == "gemini_quota_exhausted":

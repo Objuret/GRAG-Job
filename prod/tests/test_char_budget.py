@@ -72,13 +72,25 @@ class CutMathTests(unittest.TestCase):
 
 
 class VectorBudgetTests(unittest.TestCase):
+    def setUp(self):
+        # the arm embeds the question when it is asked; the embedder is stood in for here
+        qvec = np.array([[1.0, 0.6, 0.3]], dtype=np.float32)
+        patcher = patch.object(vector, "_embed", lambda texts, mode, bar=True: (qvec, 1, 4, 0, 0.5))
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
     @staticmethod
     def _prepared():
         return vector.Prepared(
             matrix=np.eye(3, dtype=np.float32),
             ids=["d0", "d1", "d2"],
-            texts=["x" * 10, "y" * 7, "z" * 5],
-            query_vecs={"q::a::0": np.array([1.0, 0.6, 0.3], dtype=np.float32)})
+            texts=["x" * 10, "y" * 7, "z" * 5])
+
+    def test_the_question_embedding_is_counted_in_the_run(self):
+        out = vector.answer_one_question(("q::a::0", "q?"), self._prepared(),
+                                         None, k=1, char_budget=13)
+        self.assertEqual((out.retrieval.calls, out.retrieval.tokens_in, out.retrieval.time_s),
+                         (1, 4, 0.5))
 
     def test_budget_mode_returns_exactly_n_chars_and_whole_ids_only(self):
         out = vector.answer_one_question(("q::a::0", "q?"), self._prepared(),

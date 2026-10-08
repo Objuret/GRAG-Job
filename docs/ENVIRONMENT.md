@@ -163,26 +163,28 @@ entirely in `chat.py` — it is the only model lane since the hosted NIM lane wa
 subscription CLIs — codex (`:170`) and gemini (`:176`, falling back to the npm shim at
 `%APPDATA%\npm\gemini.cmd`).
 
-Invocation: `claude.exe -p "<prompt>" --model <full-slug> --output-format json` —
-subscription-billed, the RAGAS `claude-*` judge path. Pass the full slug, not an alias; see
-below.
+Invocation: `claude.exe -p --model <full-slug> --output-format json --tools "" --safe-mode
+--system-prompt <text, or empty>`, the prompt on stdin as UTF-8 bytes — subscription-billed,
+the RAGAS `claude-*` judge path too. Pass the full slug, not an alias; see below.
 
-`--json-schema '<schema>'` enforces a JSON Schema on the response, so the generator's
-`{"answer": str}` contract and the judge verdict can both be schema-enforced. No
-temperature flag exists; reproducibility is this path's one real gap.
+`--json-schema '<schema>'` enforces a JSON Schema on the response (the generator's
+`{"answer": str}` contract). No temperature flag exists; a temperature reaches the request
+only through `CLAUDE_CODE_EXTRA_BODY`, and only `claude-haiku-4-5` with thinking off takes one
+(`claude-sonnet-5` answers 400 to any).
 
 **Aliases are for typing at the CLI by hand — never pass one through the repo.**
 `prod/harness/chat.py` accepts a chat call only when the model string
 `startswith("claude")`, and every call site passes a full slug
-(`claude-haiku-4-5` is the default of both `eval/ragas.py` · `JUDGE_MODEL` and
-`pipelines/artefact_v1.py` · `INTERPRET_MODEL`). A bare `haiku` fails that test and is
-refused out loud by `chat.post`. The same applies to anything handed to `--judge` or
-`--generator`.
+(`claude-haiku-4-5-20251001` is the default of `eval/ragas.py` · `JUDGE_MODEL` since
+2026-10-08). A bare `haiku` fails that test and is refused out loud by `chat.post`. The same
+applies to anything handed to `--judge` or `--generator`.
 
 The alias→slug mapping the CLI itself uses: `haiku` → claude-haiku-4-5-20251001 (200k ctx
 / 32k out) · `sonnet` → claude-sonnet-5 · `opus` → claude-opus-4-8 · `fable` →
 claude-fable-5 (1M ctx / 64k out each). UNVERIFIED — recorded from a past session, not
-re-checked against the CLI, and nothing in the repo reads it.
+re-checked against the CLI, and nothing in the repo reads it. Checked 2026-10-08 for one of
+them: in the CLI's own transcripts of the lane every call made as `claude-haiku-4-5`, on every
+day since 2026-09-08, was answered by `claude-haiku-4-5-20251001`.
 
 Two traps: `--bare` skips keychain reads and fails with "Not logged in"; and headless
 reads stdin, so redirect it (`< /dev/null`) to avoid a 3s stall.
@@ -194,6 +196,28 @@ call loads the user-level `~/.claude/CLAUDE.md`, the plugins and the MCP servers
 a querytagger prompt of 3,981 characters counted 24,516 input tokens and came back as a request
 for `mempalace_search`; with the flag the same prompt counted 1,093 input tokens and returned
 its JSON. `MEMPALACE_HOOKS_AUTO_SAVE=false` is still set on the call.
+
+**Since 2026-10-08 the lane also sets, per call** (`chat.call_settings`; each was seen in a
+request the CLI logged, `docs/2026-10-08-model-calls-found-and-fixed.md`):
+`CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1` (without it the whole prompt goes a second time, to
+Haiku, for a session title) · `CLAUDE_CODE_ATTRIBUTION_HEADER=0` (no billing line in the system
+prompt) · `--system-prompt` always, empty when the call has none (without the flag Claude Code's
+own system prompt goes along, about 15,400 characters) · `--effort <level>` when the caller
+names one, else `CLAUDE_CODE_EFFORT_LEVEL=auto` so none is sent (`--safe-mode` does not skip
+`~/.claude/settings.json`, and its `effortLevel` went along on the answer calls until then) ·
+`MAX_THINKING_TOKENS=0`, `CLAUDE_CODE_MAX_OUTPUT_TOKENS` and, for Haiku, a temperature through
+`CLAUDE_CODE_EXTRA_BODY` on a call that asks for thinking off. What the CLI still adds by
+itself: the line "You are a Claude agent, built on Anthropic's Claude Agent SDK." first in the
+system prompt, and a `<system-reminder>` block in front of the prompt with the e-mail address
+of the login stored in `~/.claude.json` and the day's date. The date has no switch; the e-mail
+line is absent when the CLI runs with its own `CLAUDE_CONFIG_DIR` and `CLAUDE_CODE_OAUTH_TOKEN`
+(tried, not used by the lane).
+
+**Seeing what the CLI really sends:** `CLAUDE_CODE_ENABLE_TELEMETRY=1 OTEL_LOGS_EXPORTER=console
+OTEL_METRICS_EXPORTER=none OTEL_TRACES_EXPORTER=none OTEL_LOG_RAW_API_BODIES=file:<dir>` writes
+one `<uuid>.request.json` per request into `<dir>`. The files hold the account's ids and e-mail
+address. The CLI also keeps its own transcript of every lane call under
+`~/.claude/projects/C--Users-jocke-AppData-Local-Temp-herb-claude-lane/`; those hold gold.
 
 Measured throughput, 2026-07-17, haiku: **5.3 s per verdict serial, and 4 verdicts in
 6.6 s concurrently.** That is the only latency figure anyone has recorded for this lane,

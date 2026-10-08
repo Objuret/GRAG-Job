@@ -201,6 +201,13 @@ class RunManifest:
     graph: dict | None = None
     n_exhausted: int | None = None
     flags: dict | None = None
+    legs: list | None = None
+    workers: int | None = None
+    lane: dict | None = None
+    generator: dict | None = None
+    index: dict | None = None
+    code_state: dict | None = None
+    env: dict | None = None
 
 
 @dataclass
@@ -215,3 +222,4 @@ class EvalManifest:
     judge_usage: ModelUsage | None = None
     judge_elapsed_s: float | None = None
     judge_legs: list | None = None
+    judge_settings: dict | None = None

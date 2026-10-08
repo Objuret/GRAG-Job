@@ -19,6 +19,7 @@ import time
 from pathlib import Path
 
 from harness import abort
+from harness import capture
 
 MAX_TRIES = 6
 
@@ -105,6 +106,136 @@ def _claude_cwd() -> str:
     return str(_CLAUDE_CWD)
 
 
+_cli_version: list = []
+
+
+def cli_version() -> str | None:
+    """What `claude --version` prints, asked once per process."""
+    if not _cli_version:
+        try:
+            r = subprocess.run([_CLAUDE_EXE, "--version"], capture_output=True, text=True,
+                               timeout=30, encoding="utf-8", cwd=_claude_cwd())
+            _cli_version.append((r.stdout or r.stderr or "").strip() or None)
+        except (OSError, subprocess.SubprocessError):
+            _cli_version.append(None)
+    return _cli_version[0]
+
+
+# Set for the CLI on every call. Each switch was seen to do its work in a logged request
+# (2026-10-08, docs/2026-10-08-model-calls-found-and-fixed.md).
+_ENV_FIXED = {
+    # the MemPalace plugin's user-wide hooks fire on headless calls too; this is its own
+    # documented switch: pass through, save nothing. Judge and tagger calls carry gold (2026-10-04).
+    "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+    "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",  # no second request, to Haiku, for a session title
+    "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",      # no billing line in front of the system prompt
+}
+# The switches a call sets when it asks for them. One the call does not set is taken out of the
+# CLI's environment, so a value left in the shell that starts the run never reaches a call.
+_ENV_PER_CALL = ("CLAUDE_CODE_EFFORT_LEVEL", "MAX_THINKING_TOKENS",
+                 "CLAUDE_CODE_MAX_OUTPUT_TOKENS", "CLAUDE_CODE_EXTRA_BODY")
+# A temperature is sent only to a model on which it was tried and accepted, with thinking off.
+# claude-sonnet-5 answers 400 to any temperature, with thinking on or off.
+_TEMPERATURE_ACCEPTED = ("claude-haiku-4-5",)
+_PAYLOAD_KEYS = ("model", "messages", "response_format", "effort", "join_parts", "thinking",
+                 "chat_template_kwargs", "max_tokens", "temperature")
+# What the CLI puts into a call by itself, with no switch in this lane: seen in logged requests
+# of the version named here. The date makes a call's input differ from one day to the next.
+_CLI_ADDS = {
+    "seen_with": "2.1.212 (Claude Code)",
+    "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+    "in_front_of_the_prompt": "a <system-reminder> block with the logged-in account's e-mail "
+                              "address and the day's date",
+}
+
+
+def lane_info() -> dict:
+    """The lane a run's calls went through, for its manifest."""
+    return {"exe": _CLAUDE_EXE, "cli_version": cli_version(), "cwd": str(_CLAUDE_CWD),
+            "fixed_flags": ["-p", "--tools", "", "--safe-mode"],
+            "system_prompt": "always passed, empty when the call has no system text",
+            "stdin": "the prompt as UTF-8 bytes",
+            "env_set": dict(_ENV_FIXED),
+            "env_per_call": list(_ENV_PER_CALL),
+            "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+            "cli_adds": dict(_CLI_ADDS),
+            "max_tries_default": MAX_TRIES}
+
+
+def call_settings(payload: dict) -> dict:
+    """The argv and the environment variables of one call, and which of the caller's settings they
+    carry (`applied`) or cannot carry (`not_applied`, with the reason)."""
+    model = payload["model"]
+    msgs = payload.get("messages") or []
+    system = "\n\n".join(m.get("content", "") for m in msgs if m.get("role") == "system")
+    prompt = "\n\n".join(m.get("content", "") for m in msgs if m.get("role") != "system")
+    join_parts = bool(payload.get("join_parts"))
+    cmd = [_CLAUDE_EXE, "-p", "--model", model, "--output-format",
+           "stream-json" if join_parts else "json",
+           "--tools", "",                        # no tools: the model answers, it does not act (2026-09-29)
+           "--safe-mode"]                        # no user CLAUDE.md, skills, plugins, hooks or MCP
+                                                 # servers (2026-10-05); it does not skip settings.json
+    if join_parts:
+        cmd += ["--verbose"]                      # stream-json is refused headless without it
+    env_set = dict(_ENV_FIXED)
+    applied, not_applied = {}, {}
+
+    effort = payload.get("effort")
+    if effort:
+        if effort not in _EFFORT_LEVELS:
+            raise RuntimeError(
+                f"chat.post: effort {effort!r} is not one of {sorted(_EFFORT_LEVELS)}")
+        cmd += ["--effort", str(effort)]
+    else:
+        # the caller names none, so none is sent: without this the CLI takes `effortLevel` from
+        # the user's own settings.json (it was `medium` on every answer call of 2026-10-07)
+        env_set["CLAUDE_CODE_EFFORT_LEVEL"] = "auto"
+    applied["effort"] = effort or "none sent (the model's own default)"
+    flags = cmd[1:]
+
+    # an empty system text is passed too: without the flag the CLI sends its own system prompt
+    cmd += ["--system-prompt", system]
+    schema = ((payload.get("response_format") or {}).get("json_schema") or {}).get("schema")
+    if schema:
+        cmd += ["--json-schema", json.dumps(schema)]
+
+    thinking_off = (payload.get("thinking") is False
+                    or (payload.get("chat_template_kwargs") or {}).get("enable_thinking") is False)
+    if thinking_off:
+        env_set["MAX_THINKING_TOKENS"] = "0"
+        applied["thinking"] = "off"
+        if payload.get("max_tokens"):
+            env_set["CLAUDE_CODE_MAX_OUTPUT_TOKENS"] = str(int(payload["max_tokens"]))
+            applied["max_output_tokens"] = int(payload["max_tokens"])
+        if payload.get("temperature") is not None:
+            if model.startswith(_TEMPERATURE_ACCEPTED):
+                env_set["CLAUDE_CODE_EXTRA_BODY"] = json.dumps({"temperature": payload["temperature"]})
+                applied["temperature"] = payload["temperature"]
+            else:
+                not_applied["temperature"] = (f"{model} refuses a temperature; it is sent only to "
+                                              f"{', '.join(_TEMPERATURE_ACCEPTED)}")
+    else:
+        applied["thinking"] = "the model decides"
+        # with thinking on the API takes no temperature but 1, and a cap would count the thinking
+        for key in ("max_tokens", "temperature"):
+            if payload.get(key) is not None:
+                not_applied[key] = "sent only on a call that asks for thinking off"
+    for key in payload:
+        if key not in _PAYLOAD_KEYS:
+            not_applied[key] = "no such setting in this lane"
+    return {"cmd": cmd, "flags": flags, "system": system, "prompt": prompt, "schema": schema,
+            "join_parts": join_parts, "effort": effort, "env_set": env_set,
+            "env_unset": [k for k in _ENV_PER_CALL if k not in env_set],
+            "applied": applied, "not_applied": not_applied}
+
+
+def _call_env(call: dict) -> dict:
+    """The environment the CLI is started in for one call."""
+    env = {k: v for k, v in os.environ.items() if k.upper() not in call["env_unset"]}
+    env.update(call["env_set"])
+    return env
+
+
 def join_stream(stdout: str) -> tuple:
     """(joined assistant text, the result event) from `--output-format stream-json`.
 
@@ -133,66 +264,71 @@ def join_stream(stdout: str) -> tuple:
 
 def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
     model = payload["model"]
-    msgs = payload.get("messages") or []
-    system = "\n\n".join(m.get("content", "") for m in msgs if m.get("role") == "system")
-    prompt = "\n\n".join(m.get("content", "") for m in msgs if m.get("role") != "system")
-    join_parts = bool(payload.get("join_parts"))
-    cmd = [_CLAUDE_EXE, "-p", "--model", model, "--output-format",
-           "stream-json" if join_parts else "json",
-           "--tools", "",                        # no tools: the model answers, it does not act (2026-09-29)
-           "--safe-mode"]                        # nothing but the constructed input: no user CLAUDE.md,
-                                                 # skills, plugins, hooks or MCP servers (2026-10-05)
-    if join_parts:
-        cmd += ["--verbose"]                      # stream-json is refused headless without it
-    effort = payload.get("effort")
-    if effort:
-        if effort not in _EFFORT_LEVELS:
-            raise RuntimeError(
-                f"chat.post: effort {effort!r} is not one of {sorted(_EFFORT_LEVELS)}")
-        cmd += ["--effort", str(effort)]
-    if system:
-        cmd += ["--system-prompt", system]
-    schema = ((payload.get("response_format") or {}).get("json_schema") or {}).get("schema")
-    if schema:
-        cmd += ["--json-schema", json.dumps(schema)]
+    call = call_settings(payload)
+    cmd, flags, system, prompt = call["cmd"], call["flags"], call["system"], call["prompt"]
+    schema, join_parts, effort = call["schema"], call["join_parts"], call["effort"]
+
+    # The whole call is kept: what was sent, every try, and all the CLI reported back. It goes
+    # to the open capture of the question or evaluation cell and rides back under "call"
+    # (2026-10-08: "i NEVER want to run this again").
+    rec = {"kind": "chat", "model": model, "exe": _CLAUDE_EXE, "flags": flags,
+           "system": system, "schema": schema, "prompt": prompt, "effort": effort,
+           "join_parts": join_parts, "cwd": _claude_cwd(), "timeout_s": timeout,
+           "max_tries": max_tries,
+           "env_set": call["env_set"], "env_unset": call["env_unset"],
+           "applied": call["applied"], "not_applied": call["not_applied"],
+           "payload_dropped": sorted(call["not_applied"]),
+           "started_at": capture.now(), "finished_at": None, "attempts": [], "ok": False,
+           "text": None, "usage": None, "envelope": None, "stream": None,
+           "stderr": None, "error": None}
 
     last = None
     request_s = retry_s = 0.0
     attempts = 0
     for attempt in range(max_tries):
         if abort.aborted():
+            rec.update(finished_at=capture.now(), error="aborted before the try")
+            capture.record(rec)
             raise abort.Aborted("claude call skipped — abort requested (pressed q)")
         attempts += 1
+        tried = {"n": attempts, "started_at": capture.now(), "seconds": None, "outcome": None,
+                 "returncode": None, "error": None, "stdout": None, "stderr": None}
+        rec["attempts"].append(tried)
         r0 = time.perf_counter()
         try:
-            r = subprocess.run(cmd, input=prompt, capture_output=True, text=True,
-                               timeout=timeout, encoding="utf-8", cwd=_claude_cwd(),
-                               # the MemPalace plugin's user-wide hooks fire on headless calls
-                               # too; this is its own documented switch: pass through, save
-                               # nothing. Judge and tagger calls carry gold (2026-10-04).
-                               env={**os.environ, "MEMPALACE_HOOKS_AUTO_SAVE": "false"})
+            # the prompt goes over as bytes: in text mode Windows turns every line end into
+            # CR LF on the way, and the prompt kept in the record is then not what was sent
+            r = subprocess.run(cmd, input=prompt.encode("utf-8"), capture_output=True,
+                               timeout=timeout, cwd=_claude_cwd(), env=_call_env(call))
         except subprocess.TimeoutExpired as err:
             retry_s += time.perf_counter() - r0
             last = err
+            tried.update(seconds=time.perf_counter() - r0, outcome="timeout", error=repr(err),
+                         stdout=_text(err.stdout), stderr=_text(err.stderr))
         else:
             spent = time.perf_counter() - r0
+            out, errtext = _text(r.stdout) or "", _text(r.stderr) or ""
+            tried.update(seconds=spent, returncode=r.returncode)
             if r.returncode != 0:
                 retry_s += spent
                 last = RuntimeError(
-                    f"claude exit {r.returncode}: {(r.stderr or r.stdout)[:200]}")
+                    f"claude exit {r.returncode}: {(errtext or out)[:200]}")
+                tried.update(outcome="exit", error=repr(last), stdout=out, stderr=errtext)
             else:
                 try:
                     if join_parts:
-                        joined, data = join_stream(r.stdout)
+                        joined, data = join_stream(out)
                         if not data:
                             raise ValueError("no result event in the stream")
                         data = dict(data)
                         data["result"] = joined
                     else:
-                        data = json.loads(r.stdout)
+                        data = json.loads(out)
                 except ValueError as err:
                     retry_s += spent
-                    last = RuntimeError(f"claude envelope not JSON: {err} — {r.stdout[:200]}")
+                    last = RuntimeError(f"claude envelope not JSON: {err} — {out[:200]}")
+                    tried.update(outcome="bad_envelope", error=repr(last), stdout=out,
+                                 stderr=errtext)
                 else:
                     result = _FENCE.sub("", (data.get("result") or "").strip())
                     usage = data.get("usage") or {}
@@ -203,21 +339,37 @@ def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
                     prompt_tokens = (int(usage.get("input_tokens") or 0)
                                      + int(usage.get("cache_creation_input_tokens") or 0)
                                      + cached)
+                    kept = {"prompt_tokens": prompt_tokens,
+                            "completion_tokens": int(usage.get("output_tokens") or 0),
+                            "cached_input_tokens": cached}
+                    tried.update(outcome="ok")
+                    rec.update(finished_at=capture.now(), ok=True, text=result, usage=kept,
+                               envelope=data,
+                               stream=out if join_parts else None, stderr=errtext)
+                    capture.record(rec)
                     return {
                         "choices": [{"message": {"content": result},
                                      "finish_reason": "stop"}],
-                        "usage": {"prompt_tokens": prompt_tokens,
-                                  "completion_tokens": int(usage.get("output_tokens") or 0),
-                                  "cached_input_tokens": cached},
+                        "usage": kept,
                         "num_turns": data.get("num_turns"),
                         "stop_reason": data.get("stop_reason"),
+                        "call": rec,
                     }
         if attempt < max_tries - 1:
             s0 = time.perf_counter()
             time.sleep(2 ** attempt)
             retry_s += time.perf_counter() - s0
+            tried["backoff_s"] = time.perf_counter() - s0
     _record_timing(attempts, request_s, 0.0, retry_s)
+    rec.update(finished_at=capture.now(), error=repr(last))
+    capture.record(rec)
     raise RuntimeError(f"claude {model} gave up after {max_tries} tries: {last!r}")
+
+
+def _text(raw) -> str | None:
+    if raw is None:
+        return None
+    return raw if isinstance(raw, str) else raw.decode("utf-8", "replace")
 
 
 def post(path: str, payload: dict, timeout: float = 120.0, max_tries: int | None = None,

@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-1564 turns, chronological. Verbatim text; no edits.
+1826 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -14687,4 +14687,1209 @@ and this is the slim headless mode with no extra bullshit?
 ## 2026-10-05 22:32 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
 
 GO!
+
+## 2026-10-05 22:37 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+and since you havent updated the graph at all with any of the new things, will it use them also?
+
+## 2026-10-05 22:37 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+wait, you put 0.92 hardcoded?
+
+## 2026-10-05 22:38 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+see, thats an arbitrary fucking number
+
+## 2026-10-05 22:39 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+fuck it, if there is no actual difference, who gives a shit
+
+## 2026-10-05 22:40 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+*queued while an agent was working*
+
+but yeah, 95% sounds way better
+
+## 2026-10-06 04:17 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+ffs
+
+## 2026-10-06 06:43 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+ok, so, be more clear about the exact issues with this run/concept
+
+## 2026-10-06 07:19 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+so the actual issue this run was only the order of the scope? it's better as a limiter to start with?
+
+## 2026-10-06 07:20 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+*queued while an agent was working*
+
+so, perhaps update the DB with the actual new information so the db is the only thing beeing used?
+
+## 2026-10-06 08:28 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+yeah make the db current before anything else
+
+## 2026-10-06 09:15 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+this is also taking forever, what ARE you doing?
+
+## 2026-10-06 09:17 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+99 saved? what?
+
+## 2026-10-06 09:19 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+.. do the fucking 100th also.. stop beeing satisfied with an incomplete run
+
+## 2026-10-06 15:22 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+did you backup or create a new db?
+
+## 2026-10-06 15:23 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+widths? and wasnt topic already in?
+
+## 2026-10-06 15:32 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+ok, when going by this width, how IS the actual spread of gold along this scale? say in a perfect world, what is the max potential to float?
+
+## 2026-10-06 15:49 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+wait, products chunks first?ok, so, you neeed to actually tell me exactly the order and functions that are beeing used now in the current
+
+## 2026-10-06 16:22 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+" It returns a description of the content that would answer" is this really what we decided? wasnt this supposed to be a description of the question?
+
+## 2026-10-06 16:24 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+thats.. not what i just said..
+
+## 2026-10-06 16:25 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+instead of "finding or naming" scope like how you are trying to do it, i think it's better to show the model the topology of the graph? i mean, the filetree-ish.. ffs, do you understand what i even mean here
+
+## 2026-10-06 17:06 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+is this reasonable? logical? good? viable? in scope of the artefact based on the academic abstract
+
+## 2026-10-06 17:12 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+are you done? if so, fucking SHOW me what you figured out..
+
+## 2026-10-06 17:15 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+i mean product isnt the only fucking scope?
+
+## 2026-10-06 17:16 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+*queued while an agent was working*
+
+but yeah, the point is inferring scope from query based on tree?
+
+## 2026-10-06 17:19 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+*queued while an agent was working*
+
+and float those chunks, if they dont match what the tags float etc, that just gives us width, and if they reinforce, thats is good too so, generally a good idea, or am i wrong about this?
+also, about query desc, i think the actual thought would be "describe the content the query is looking for" as in, not trying to guess the exact content, but describe it, instead to make sure nothing is made up for forced so to speak, but also to keep it in the fitting dimension? thoughts?
+
+## 2026-10-06 17:20 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+*queued while an agent was working*
+
+if any of these thoughts are good and/or valid, give them a test please, even 10smoke if you can'
+
+## 2026-10-06 17:56 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+this part makes no fucking sense"
+your description wording	0.617	up 6, down 0
+tree shown, only the product floated	0.636	up 6, down 2
+description wording and product floated	0.561	up 4, down 2"
+
+## 2026-10-06 17:58 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+dont focus so fucking hard on the numbers, the reason behind the numbers is the important part, or more, the difference etc
+
+## 2026-10-06 18:00 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+i mean, the original description wording + "tree shown, only the product floated" =  0.636.. how can changing the desc-wording slightly make it worse, thats fucking dumb, i just cant believe you did that shit correctly
+
+## 2026-10-06 18:58 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+wtf just happened here?
+
+## 2026-10-06 20:23 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+"Took the two rows you doubted apart. The drop from 0.636 to 0.561 came from the tag phrases Sonnet wrote in that call, not from your description wording.
+" so it made worse tags? or what do you mean?
+
+## 2026-10-06 20:24 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+btw, when doing it headless like this, does it actually cost more to do 2 separate calls instead of a large one?
+
+## 2026-10-06 20:25 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+do we think the quality will be better if each task gets a call=
+
+## 2026-10-06 20:26 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+*queued while an agent was working*
+
+?
+
+## 2026-10-06 20:29 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+shesus the fuck you are babbling alot and saying very little
+
+## 2026-10-06 20:31 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+not what i asked for and not your fucking call, how about youmake a list of the things we actually do at the query-side
+
+## 2026-10-06 21:03 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+hm.. sidethought, what if we allow names of people, products and channels to be tags frmo the query, but we add scopes as if they were tags for the comparison?
+
+## 2026-10-06 21:13 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+no, you are not getting my fucking point at all.. a match on one of those does NOT pick/boost a chunk, it picks/boosts a scope, atleast for the conversation we are having about it now
+
+## 2026-10-06 21:40 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+when you made the model do scope, how did you do that?
+
+## 2026-10-06 22:41 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+i see, i would rather it did exactly as i wanted with the desc and tags, and then perhaps another call used that info + tree/scope
+
+## 2026-10-06 22:44 · a2b0b82e-7942-44b3-8de7-78fb5212afc0.jsonl
+
+ok, the other chat grew too fucking dumb so i need to continue here
+
+## 2026-10-06 22:58 · a59f1666-4b40-457a-9ae5-0f5f3a863786.jsonl
+
+what are you even saying? what are the different calls here?
+
+## 2026-10-06 22:58 · a2b0b82e-7942-44b3-8de7-78fb5212afc0.jsonl
+
+yup, like this:"
+"First call: description and tags only, in your wording, with no tree in it. This already exists for the hundred from yesterday's run.
+Second call: gets that description and those tags plus the tree, and returns the scope. This is not built.
+"
+is that with my u"new description" also?
+
+## 2026-10-06 23:09 · a2b0b82e-7942-44b3-8de7-78fb5212afc0.jsonl
+
+*queued while an agent was working*
+
+just dont do the "infinity-review" after, ok
+
+## 2026-10-06 23:23 · a2b0b82e-7942-44b3-8de7-78fb5212afc0.jsonl
+
+dude, what is this insane testsuite you have set up?
+answer my fucking questions
+
+## 2026-10-06 23:28 · a2b0b82e-7942-44b3-8de7-78fb5212afc0.jsonl
+
+seriously, that fucking toolnoise, what IS that shit?
+
+## 2026-10-06 23:45 · a2b0b82e-7942-44b3-8de7-78fb5212afc0.jsonl
+
+the challenger after? i am pretty sure that the partner was supposed to be the challenger also at the same time, i mean, that the function of the partner wat to be challenging etc.. no?
+
+## 2026-10-06 23:47 · a2b0b82e-7942-44b3-8de7-78fb5212afc0.jsonl
+
+but you see, i am running you in "fast mode", and still this takes actually for fucking ever so something is seriously wrong here.. perhaps we should start running you in headless no-tools, only tools accessed when actually needed etc and make sure you are truly light because, dude why carry alot for no reason?
+
+## 2026-10-06 23:49 · a2b0b82e-7942-44b3-8de7-78fb5212afc0.jsonl
+
+i mean, how much of claude.md actualyl needs to be there if we have mempalace now?
+
+## 2026-10-06 23:51 · a2b0b82e-7942-44b3-8de7-78fb5212afc0.jsonl
+
+and, yeah, dude "Switch off the plugins this project does not use, for this project only." just fucking turn them all off, i dont know what the actual best solution is, hooks for getting them or something, or another agent checking the prompt and tagging tools that probably should be used, or decide tools for the project beforehand, i dont know dude, suggestions?
+
+## 2026-10-06 23:55 · a2b0b82e-7942-44b3-8de7-78fb5212afc0.jsonl
+
+wtf, day by day record in the claude.md? wtf?
+
+## 2026-10-07 00:11 · a2b0b82e-7942-44b3-8de7-78fb5212afc0.jsonl
+
+yeah, clean that shit up
+
+## 2026-10-07 00:32 · a2b0b82e-7942-44b3-8de7-78fb5212afc0.jsonl
+
+ok, now, all the "bullshit" you are doing when building now
+
+## 2026-10-07 00:39 · a2b0b82e-7942-44b3-8de7-78fb5212afc0.jsonl
+
+what in the unholy actual goddamn fuck? why on earth would you build that?
+yeah, dude, holy shit, only make a switch when i specifically have asked for a "run both and see" or something like that.. and yes to the "A comment says what the code does. Your sentence goes in only where it is the reason, as one line."
+and what fucking "second model" are you even talking about?
+
+## 2026-10-07 00:42 · a2b0b82e-7942-44b3-8de7-78fb5212afc0.jsonl
+
+what?
+
+## 2026-10-07 00:43 · a2b0b82e-7942-44b3-8de7-78fb5212afc0.jsonl
+
+nr 1, clean it..
+we are not running shit until we are done cleaning etc
+
+## 2026-10-07 01:18 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+*paste / file drop · 1553 chars*
+
+ok, so, the actual build now"´: "
+
+<pasted_content id="2ee1">
+ok, the other chat grew too fucking dumb so i need to continue here
+I have the last conversation in front of me. Your last words there:
+
+"i see, i would rather it did exactly as i wanted with the desc and tags, and then perhaps another call used that info + tree/scope"
+
+So the step on the table is two calls instead of one:
+
+First call: description and tags only, in your wording, with no tree in it. This already exists for the hundred from yesterday's run.
+Second call: gets that description and those tags plus the tree, and returns the scope. This is not built.
+Two things were left hanging there:
+
+The default is the opposite of what you said. The arm still shows the tree inside the one call, because I switched that on myself yesterday.
+The second call can't see the product name. Names are kept out of the tags and the description rarely carries one. It would need the question passed along too, or names allowed in the tags as in your side thought about matching them against scopes.
+Nothing is running, and nothing has been committed since a140636.
+
+Do I build the second call with the question passed along, and take the tree out of the first?
+
+
+yup, like this:"
+"First call: description and tags only, in your wording, with no tree in it. This already exists for the hundred from yesterday's run.
+Second call: gets that description and those tags plus the tree, and returns the scope. This is not built.
+"
+is that with my u"new description" also?
+</pasted_content id="2ee1">
+
+"'
+
+## 2026-10-07 04:16 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+can you run it so it keeps going when i close this laptop?
+
+## 2026-10-07 11:00 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+wait, this was worse
+
+## 2026-10-07 11:36 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+ok, compared to this:"
+
+<pasted_content id="2ee1">
+1	old description wording, no tree	the full judged run, 0.531 on these ten
+2	your wording, no tree	0.617
+3	old wording, tree shown	0.636 (product floated) and 0.412 (picked places first)
+4	your wording, tree shown	0.561 (product floated) and 0.327 (picked places first)
+</pasted_content id="2ee1">
+
+"
+
+## 2026-10-07 12:40 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+refusal?
+
+## 2026-10-07 12:41 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+beeing specific about product is very "fitted" and unagnostic concept
+
+## 2026-10-07 12:43 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+*queued while an agent was working*
+
+wait, what!? "Yesterday, when the tree first went into the one call, Sonnet did not do the task on some questions. It answered as a chat, for example "I don't have access to a corpus or database…", and returned no JSON. The harness counts that as a failed question: 11 of the 100 failed in that run, which is why ask 3 has only 89.
+
+The instruction was then reworded: the tree first, the task after it, and one line after the question saying not to answer it. Since then it has not happened: 200 calls yesterday and the 100 today all came back as JSON."
+
+that absolutely sounds like you have fucked up the wording or constructed fucking prompt dude
+
+## 2026-10-07 12:44 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+answeer you fucker
+
+## 2026-10-07 12:47 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+Obviously both the fucking in AND output needs to be constructed! Why the fuck else do you think we are running headless!?
+
+## 2026-10-07 12:58 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+Retry
+
+## 2026-10-07 13:31 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+Tree tags? What the fuck? What is happening now?
+
+## 2026-10-07 13:37 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+I see.. Is it truly built correctly if 'tree' is actually giving us something positive here?
+
+## 2026-10-07 13:39 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+*queued while an agent was working*
+
+Now you are overfitting
+
+## 2026-10-07 13:44 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+Well, what happened to making tags out of the topology? If tags from the query match one of those, something else happens.
+
+## 2026-10-07 13:45 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+*queued while an agent was working*
+
+Do you see anything in this graph or structure or artifact (or whatever that is) that is actually using the graph shape, actually using the relationships in some way that could not be as easily done using absolutely normal SQL or whatever database?
+
+## 2026-10-07 14:08 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+ok, but that arrays-thing, is that really how we should do it now that the db is actually updated?
+
+## 2026-10-07 14:18 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+dude, it MUST be asked of the DB, what the fuck is the point of this is its not actually using the db..
+
+## 2026-10-07 14:19 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+*queued while an agent was working*
+
+channel names? wtf are you talking abou tnow?
+
+## 2026-10-07 14:36 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+"whole chain is in the database" ? what? what more do you think should be in the db?
+
+## 2026-10-07 14:39 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+is the artefact actually doing that today? tell me EXACTLY what the whole artefact is doing today, all of it, in detail
+
+## 2026-10-07 15:07 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+ok, dude, compare this critically against the new academic abstract
+
+## 2026-10-07 15:07 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+i need you to gather and check the actuall full lucene and vector 72k runs
+
+## 2026-10-07 16:12 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+Aren't faithfulness and answer correctness, part of the vast RAG's judges?
+
+## 2026-10-07 16:12 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+Ragas*
+
+## 2026-10-07 16:13 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+So when I say ten smoke. What the fuck do you think I actually mean?
+
+## 2026-10-07 16:18 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+We have a 10 gold smoke that has been used a bunch of times..
+
+## 2026-10-07 16:20 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+And obviously I want you to run this on my laptop, desktop and fucking ng mobile phone and ipad if possible, ANYTHING to increase can be n currency.. Is that possible? Both ipad pro m4 and my Google pixel Pro 10cl have the app installed
+
+## 2026-10-07 16:21 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+*queued while an agent was working*
+
+Before anything tho, the abstract said "structural filtering".. That is fucking great tho!?
+
+## 2026-10-07 16:22 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+The usage window has fucking loathing to do with it, it's ram..
+
+## 2026-10-07 16:23 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+Not loathing, nothing I meant*
+
+## 2026-10-07 16:23 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+Fix that for the desktop
+
+## 2026-10-07 16:29 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+*queued while an agent was working*
+
+It's neo 4j is not that, it means you have to start it..
+
+## 2026-10-07 16:29 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+*queued while an agent was working*
+
+But whatever
+
+## 2026-10-07 16:41 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+ok, did you run 10smoke here at the same time?
+
+## 2026-10-07 16:44 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+what IS answer correctness then?
+
+## 2026-10-07 16:48 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+*queued while an agent was working*
+
+back to this tho: the abstract said "structural filtering".. that means we are fucking OK with doing pretty much whatever we want with scope beside absurd overfitting, you understand what i am saying here? i have been trying to skirt the thing to not be too heavy handed with it and had forgotten we fucing already said it like this!
+
+## 2026-10-07 16:53 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+BUT I really want explore my scope as extra tags idea
+
+## 2026-10-07 16:57 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+NO, stop. NOT "names" ok.. So stop
+Fucking stop
+
+## 2026-10-07 16:59 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+No literally meant the scope/topology, not the content of it, and if a query rag match one of these, it's not routing to a chunk, it's strength to GRAPH-RELATED SCOPE. You understand? Tell me exactly what this would mean.
+
+## 2026-10-07 16:59 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+*queued while an agent was working*
+
+Query-tag*
+
+## 2026-10-07 17:05 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+perhaps this is overkill now, lets focus on the "structural filtering" instead.. have we explored this before?
+
+## 2026-10-07 17:10 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+dude, if shit are going to take this long for a fucking answer, despite you having the entire fucking mempalace at your fingertips, you NEED to use more fucking agents to work faster
+
+## 2026-10-07 17:12 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+dude, dont use the other agent as a fucking draftchecker.. use it to converse with DURING
+
+## 2026-10-07 17:16 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+i mean, the partner can still be somewhat challenging etc..
+
+## 2026-10-07 17:17 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+back to the scope/structure
+
+## 2026-10-07 17:18 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+*queued while an agent was working*
+
+i THINK its a viable idea to use the structure last, as a "vertical cut" making the pool more narrow?
+
+## 2026-10-07 17:39 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+no i think i actually mean as it was said, as a filter
+
+## 2026-10-07 17:40 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+that way we can gauge where the truth seems to be, and can thus cut "the others", i do not know if this will actually cut any chunks that would have been accepted else thi
+
+## 2026-10-07 17:42 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+yeah, but i dont think we use the second call if we do this, right?
+
+## 2026-10-07 17:48 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+What are you even saying dude
+
+## 2026-10-07 17:53 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+Well, we can just cluster by scope and see if that gathers the correct scopes?
+
+## 2026-10-07 17:56 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+And perhaps keep minorities if same parents or something..? Are these bad ideas?
+
+## 2026-10-07 17:59 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+You speak with a language that makes me think you don't understand this shit at all
+
+## 2026-10-07 17:59 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+WHAT FUCKING CHAIN?
+
+## 2026-10-07 18:00 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+Do absolutely fucking NOT never goddamn fucking EVER make up your own language, terms and explanations for shit I have already defined.
+
+## 2026-10-07 18:01 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+Start over from a few rounds ago but correct your language and thinking
+
+## 2026-10-07 18:06 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+Have you cleaned up your faulty thinking now then?
+
+## 2026-10-07 18:07 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+Dude, we literally have ALL THE FUCKING DATA possibly available! From tokens in/out, times, stamps, DATAPOINTERS and so on and on and on.. YOU just have to make fucking sure that is KEPT every run.. It is so goddamn important
+
+## 2026-10-07 18:10 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+*queued while an agent was working*
+
+Ok, so, built it correctly, then run the 10goldsmoke using it, but this time you need to fucking make sure ALL data is available, tell me what data you will gather. Perhaps the fucking mempalacr can quick help you there..
+
+## 2026-10-07 18:18 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+THIS dude.. THIS is fucking NOT how we work here..: "Three things in the build are mine, because your words do not settle them. 
+
+<pasted_content id="2ee1">
+Stop me if any is wrong:
+
+What counts as hit: the chunks on the links of the tags that the query's tags pick. The chunk descriptions have no pick today, so they do not vote.
+Where the truth seems to be: the scope with the most hit chunks. A tie keeps all the tied.
+Scope and parent, as the graph has them: a chunk's scope is its channel, or its kind of record when it has no channel. The parent is what that hangs under in the graph.
+</pasted_content id="2ee1">
+
+"
+Unless i litterally tell you its ok or i want to do this, you do NEVER just "run ahead" if you have something unsettled
+
+## 2026-10-07 18:20 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+is that the same embedder then?
+
+## 2026-10-07 18:23 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+the first: wasnt that what we were supposed to use the fucking clustering for? if you do NOT understand the concept.. SAY so, dont just nod and say "mm clustering, totally bro, very clustering.. bet.."
+
+## 2026-10-07 18:26 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+what are you even saying dude
+
+## 2026-10-07 18:27 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+YOU HAVE TO SAY WHICH FUCKING EMBEDDER IT IS THEN SO I KNOW YOU KNOW
+
+## 2026-10-07 18:28 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+and which one do we have locally gotten from hugging-fae?
+
+## 2026-10-07 18:33 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+the clustering here is just a gauge of where the most relevance seems to lie
+
+## 2026-10-07 18:33 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+and we DO have scope on all chunks, correct?
+
+## 2026-10-07 18:34 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+thats why i said clustering tbh, to get the "largest clouds" of relevancy
+
+## 2026-10-07 18:36 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+carries what value?
+
+## 2026-10-07 18:36 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+*queued while an agent was working*
+
+the embedding nearness value you mean?
+
+## 2026-10-07 18:36 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+yeah we are never using nvidia NIM again
+
+## 2026-10-07 18:38 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+well, bring out your big brain and reason about this, use some actual math, classifyer, clustering statistical math, data science and fucking THINK about this
+
+## 2026-10-07 18:40 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+wait.. 5-6h!? despite beeing batchable? fucking WHAT?
+
+## 2026-10-07 18:41 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+*queued while an agent was working*
+
+well we sure as fuck are not going to reembed then
+
+## 2026-10-07 18:41 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+*queued while an agent was working*
+
+remember the desktop exist also
+
+## 2026-10-07 18:51 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+dude, just fucking tell me what is the correct way, academically
+
+## 2026-10-07 18:51 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+*queued while an agent was working*
+
+also, remember that this time it's all in serious, this is not a test, we are building the "final run" here, so including litterally all fucking metrics possible from the runs also
+
+## 2026-10-07 19:08 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+now you are just making shit up
+
+## 2026-10-07 19:08 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+*queued while an agent was working*
+
+touch back dude, what are you doing?
+
+## 2026-10-07 19:36 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+well, no matter what, you can reembed right away, correct?
+
+## 2026-10-07 19:41 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+i mean, should they be normalized to 0-1 shape?'
+
+## 2026-10-07 19:52 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+i have no idea what you are saying now
+
+## 2026-10-07 20:04 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+98?
+
+## 2026-10-07 20:06 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+do more correct math on this and tell me WHY you are doing it this or that way, explain upside or result
+
+## 2026-10-07 20:17 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+status?
+
+## 2026-10-07 20:28 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+how  about modern data science or statistics etc..?
+
+## 2026-10-07 20:46 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+1gb!?
+
+## 2026-10-07 20:50 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+what the fuck are you even talking about and wtf did you even think i asked you for!?
+
+i was litterally only talking about normalization ..
+
+## 2026-10-07 20:52 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+*queued while an agent was working*
+
+nope, stop, need a new session for this, you are borked
+
+## 2026-10-07 20:53 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+what is left for lucene and vector?
+
+## 2026-10-07 20:54 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+...
+
+## 2026-10-07 20:56 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+ts keep talking about the normalization
+
+## 2026-10-07 21:00 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+old call?
+
+## 2026-10-07 21:03 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+oh, yeah, well, so, do the runs and make sure we get all fucking metrics from them too? or anything else in the way?
+
+## 2026-10-07 21:06 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+well, what would be the data-science and academically correct way to use these numbers together then? (i mean the raw ones we have, not the shitty bastardization)
+
+## 2026-10-07 21:26 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+what the fuck are you on about? was there any fucking unclear instructions here? WE ARE DOING THE FUCKING CORRECT HEADLESS CONSTRUCTED FUCKING.. duuuude.. WHY are you opening a random fucking door to ambiguity for no fucking reason, do NOT build anything now, tell me WHY you thought this was unclear
+
+## 2026-10-07 21:27 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+dude, do you even know what we are doing'+
+
+## 2026-10-07 21:28 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+we know what each stage and their numbers mean, i am pretty sure we do not NEED they to "work together" because they fucking do not work together in the artefact, correct? the only reason we were talking about the normalization at all, was the range of numbers and a different spread would make it easier to find relationships/cluster them by scope, right?
+
+## 2026-10-07 21:35 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+wtf do the judges have to do with this? they are RAGAS, we cant do shit about those
+
+## 2026-10-07 21:37 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+they dont have to be "kept apart", you just save their numbers in 2 different places , which i am pretty fucking sure they kinda have to be anyway, place1 + place2 = joined.. ? so.. just check each "place" for that part, or am i wrong?
+
+## 2026-10-07 21:38 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+well, are you GATHERING ALL FUCKING METRICS i keep nagging you about? ALL of them, i will sure as fuck not have to do this again because the academics say i have missed a mrétric they want for the academic rigor and analysis
+
+## 2026-10-07 21:39 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+that brings us 0% closer to a solutioin
+
+## 2026-10-07 21:47 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+what the actual fuck are you talking about here?
+"
+The reason is what the number is: every chunk takes the best of its tags, so every chunk has a value, and the ordinary chunks drown the few that were really hit.
+"
+
+## 2026-10-07 21:47 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+best of its tags? what?
+what fucking number
+
+## 2026-10-07 22:01 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+facets etc?
+
+## 2026-10-07 22:01 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+you are beeing opaque and lazy
+
+## 2026-10-07 22:02 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+did you make your own fucking new things?
+
+## 2026-10-07 22:04 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+well, have you even tried to understand what the actual ragasmetrics we have chosen really do?
+
+## 2026-10-07 22:11 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+what you dont seem to understand is that i have to defend the choices made academically
+
+## 2026-10-07 22:14 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+*queued while an agent was working*
+
+YOU dont have to help me defend it, the fucking point was that it has to be A REAL, TRUE and CORRECT technique and/or number etc
+
+## 2026-10-07 22:21 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+you do NOT add any to the list you fucked, you really think they are needed?
+
+## 2026-10-07 22:28 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+so, these DO cover what we aim for, correct?
+
+## 2026-10-07 22:31 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+i feel like you are making this really fucking complicated for no reason
+
+## 2026-10-07 22:31 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+thats the fucking pointers to the real data...
+
+## 2026-10-07 22:31 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+*queued while an agent was working*
+
+and you know... SAVING THAT
+
+## 2026-10-07 22:32 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+*queued while an agent was working*
+
+wtf do you think i mean when i say "all metrics" all the time?
+
+## 2026-10-07 22:33 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+ok you seem to be fucking broken AND retarded.. lets do some quick smokes then with different versions because you are fucking murdering me with incompetence now
+
+## 2026-10-07 22:42 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+what i am talking about are "times, tokens, runtime, build cost" etc etc etc, ALL FUCKING DATAMETRICS
+
+## 2026-10-07 22:43 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+*queued while an agent was working*
+
+ragas are not goddamn metrics you fucking hobo, thats the evaluation system
+
+## 2026-10-07 22:44 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+*queued while an agent was working*
+
+NO, holy shit you are rageinducing
+
+## 2026-10-07 22:44 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+i mentioned a FEW of the metrics.. they are a fuckton of data you can make sure to collect or derive from a run and thats why i say ALL THE FUCKING metrics, dont goddamn force me to name them all AGAIN, stop beeing a lazy cunt
+you have memepalace
+
+## 2026-10-07 22:45 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+*queued while an agent was working*
+
+a "run" is a question you shitter
+
+## 2026-10-07 22:45 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+*queued while an agent was working*
+
+you NEED to check the history AND the previous runs data collected etc.. you are annoying me now
+
+## 2026-10-07 22:46 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+just RUN
+
+## 2026-10-07 23:15 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+im not saying you are useless, but what do the numbers tell you?
+
+## 2026-10-07 23:20 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+have you tried anything of these even? you are beeing fuzzy again, stop beeing a lazy bad cunt
+
+## 2026-10-07 23:32 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+its almost like a fucking KNEW you would fail with that and keep trying to fucking make you do it..
+
+## 2026-10-07 23:37 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+wait.. you lost even fucking MORE data!?
+
+## 2026-10-07 23:37 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+DUDE.. you are litterally forcing me to fucking run it again by doing that you actual piece of shit
+
+## 2026-10-07 23:39 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+NO YOU RETARDED SACK OF FUCKSTICKS!
+MAKE GODDAMN FUCKING SURE, ABSOLUTELY SURE, That you have included, built all the ways to get all the information of the runs, even if we dont need that information just this instant, i NEVER want to run this again
+
+## 2026-10-07 23:41 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+have you tried with scope based on chunks from chunk_desc? or topic, or tags etc?
+
+## 2026-10-08 00:15 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+*queued while an agent was working*
+
+status?
+
+## 2026-10-08 00:16 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+did you just forget what the fuck we are doing here?
+
+## 2026-10-08 00:23 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+well, do it correctly then please
+
+## 2026-10-08 00:23 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+pending
+?
+
+## 2026-10-08 00:59 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+no skips allowed
+
+## 2026-10-08 01:00 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+ok, but, have you literally just forgotten everything I have said today? we had quite a long conversation about this so perhaps fucking stop beeing lazey and build some of MY ideas'
+
+## 2026-10-08 01:57 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+dude, we are only supposed to do the goddamn fucking scopefiltering and you have literally dragged this out for 8 goddamn hours
+
+## 2026-10-08 01:58 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+yet again, if you DO NOT UNDERSTAND, fucking get the information you need, ask me after you define the exact detail you dont get
+
+## 2026-10-08 01:59 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+show me a couple of rows of the data then
+
+## 2026-10-08 01:59 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+*queued while an agent was working*
+
+dude, always do an internet search for the same concept also
+
+## 2026-10-08 02:08 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+indeed, try them
+
+## 2026-10-08 09:41 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+waiting on my word?
+
+## 2026-10-08 09:55 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+yes
+
+## 2026-10-08 09:56 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+i am still honestly confused as to how all tags can be so near eachother, something is wrong here
+
+## 2026-10-08 11:38 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+wait, wtf.. why is passage part of it!?
+
+## 2026-10-08 13:53 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+thats not the fucking issue, the similarity is the issue, is it % based? tokenbased? how the fuck does that similarity actually count? try it with (same seed) "same random letters" or sha256 hashes etc of different lengths to compare the relevance of that specific weight, then normalize it away.. but, ffs, what if the relationship between the actual word and "passage" is higher than just the plain word passage? what the fuck is this?
+
+## 2026-10-08 14:05 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+what is the actual diagnosis here then?
+
+## 2026-10-08 14:07 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+Ok, do, do we have ANY option? Or do we need to find a different embedder?
+
+## 2026-10-08 15:09 · d003bf4b-6e4a-457e-952a-3da9e020a474.jsonl
+
+is vector and lucene still done correctly then?
+
+## 2026-10-08 15:10 · c66705a4-8ddb-4361-957f-988608601107.jsonl
+
+we do NOT care about monetary cost, cost only means compute or tokens or time here, thats all we can actually compare
+
+## 2026-10-08 15:14 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+so, the actual issue might be the embeddings using "passage" instead of "query".. i dont know why query do not "add noise" like passage does, but i guess we need query on both query and retrieval, so, opinions or shall we just try that?
+
+## 2026-10-08 15:22 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+.. we are not using nvidia.. wtf are you on about?
+
+## 2026-10-08 15:23 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+is there a reason you are not running the embeddings?
+
+## 2026-10-08 15:28 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+do a critical review of the full lucene and vector runs now, extra careful with academic rigor, compare to the historically required data (metrics like times, tokens in and out, build and more) in the git history, mempalace etc, the new abstract
+
+## 2026-10-08 15:34 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+isnt this a gpu thing? aka, use the desktop?
+
+## 2026-10-08 15:40 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+oh, sorry, now we are on the correct network
+
+## 2026-10-08 16:01 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+ok, ideas or opinions? or should we just do a smoke instantly with the fullartefact?
+
+## 2026-10-08 16:10 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+*queued while an agent was working*
+
+what are you doing? this is taking quite alot of time?
+
+## 2026-10-08 16:18 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+wtf is this? "Querytags with no graph tag at the line: 3 of 9 today, 5 of 9 in query mode. For those, no edges are put in facet order.
+"
+
+## 2026-10-08 16:21 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+"today" "query mode" fucking what?
+
+## 2026-10-08 16:23 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+ok, you seem to really be missing the fucking point tho, since there maybe is an actual range to the numbers now, we can actually pick or cluster or do something actually smart and it might fucking work this time
+
+## 2026-10-08 16:39 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+yeah. obviously new picking rules, but if there is an obvious main cluster, that is the one, i dont know what the science of docs say but it's not a retarded idea "i think" to have like "nothing alike", "somewhat", "middle", "quite alike" "super alike", but thats not uncommon, just do a fucking exploration and see how many clusters it discovers
+
+## 2026-10-08 16:44 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+*queued while an agent was working*
+
+It can't take forever.. How is it going?
+
+## 2026-10-08 17:30 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+What is happening here?  Am I beeing unclear? What do you need?
+
+## 2026-10-08 17:34 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+Ok, yes to all of that. Bjt while the first is running, we will discuss nr 2, there is no fucking chance that the clustering did NOT find what I said, that's not how classifyers/clustering works..
+
+## 2026-10-08 17:54 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+Ok, but, what if we do all facets and only rake the top cluster for each?
+
+## 2026-10-08 17:54 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+*queued while an agent was working*
+
+Take*
+
+## 2026-10-08 18:07 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+I told you to fucking write to the graph, and you think you can build and use "Clustering each facet over only the picked tags' edges, instead of over all edges,"? Is it viable?
+
+## 2026-10-08 18:10 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+*queued while an agent was working*
+
+Dude, give me a fucking "ask" so I can say yes..
+
+## 2026-10-08 18:10 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+Go
+
+## 2026-10-08 18:17 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+Hm, perhaps all query tags should be clustered at the same time? One facet at a time.. Reflect upon that
+
+## 2026-10-08 18:23 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+You may make model calls.
+
+## 2026-10-08 18:37 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+You are giving me shit I don't know what to do with, these things mean nothing to me, enterpret the for me
+
+## 2026-10-08 18:43 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+Dude, just tell me if it is fucking correctly done..
+
+## 2026-10-08 18:55 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+You are judging the results based on no results.. What the fuck are you even doing now?
+
+## 2026-10-08 19:05 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+Yes
+
+## 2026-10-08 19:08 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+Eh.. Wait.. What the fuck di you just say?
+"Extra text on every call: your e-mail address, the day's date and an agent identity line go along, none of it written by the harness.
+Judge calls: each one runs under Claude Code's own software-engineering system prompt, about 15,400 characters of it.
+Effort and the manifest: how hard the generator thinks comes from your personal settings file (medium), and the run's manifest says "temperature 0, thinking off", which is false. "
+Holy shit that is retarded.. Why!?
+We agreed to use the headless lode, constructed, all of that garbage off and so on.. Holy crap.. Is that really true!?
+
+## 2026-10-08 19:10 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+No, we have no control over the judges, stop fucking trying to affect the judges, dude, we don't get shit from them, or, we'll, some things, and they might share stats after?
+
+## 2026-10-08 19:15 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+Dude, how about you fucking LOOK yourself at the ragas site, docs, paper and info..
+
+## 2026-10-08 19:32 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+See you have the fucking answer then, obviously we need to make sure that shit is also done correctly then
+
+## 2026-10-08 19:33 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+I don't know man, are you doing the same fucking thing every time or something? How on earth can we get the same fucking  score every goddamn time?
+
+## 2026-10-08 19:36 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+Wait, are you letting it just find N clusters? Instead of commanding it to classify based on 4 or something?
+
+## 2026-10-08 19:36 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+Ah, dogöeg decides? That is fine I think, no?
+
+## 2026-10-08 19:37 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+Dogleg*
+
+## 2026-10-08 19:38 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+Anyway, back to what I was asking you about
+
+## 2026-10-08 19:39 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+Well, what IS RAGAS recommended settings!?
+
+## 2026-10-08 19:41 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+Second call? Cached? What the fuck are you on about, stop doing such a shit job! Are you trying to save pretend money or something? What the fuck is this?
+
+## 2026-10-08 19:42 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+So you are just grabbing random shit now with no regards to what happened since?
+
+## 2026-10-08 19:45 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+Why are you vomiting that here? YOU were supposed to read it..
+
+## 2026-10-08 19:47 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+Dude we changed quite a fucking lot almost the entire system of retrieval... And almost no change...
+
+## 2026-10-08 19:48 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+.. What
+
+## 2026-10-08 19:49 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+I mean, we changed the fucking ordering.. Does different order not mean different floated gold here?
+
+## 2026-10-08 19:53 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+What do you even think you are measuring now? Seriously stop putting up numbers you don't even know what they mean... what ARE those numbers!?
+
+## 2026-10-08 19:54 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+So.. You see the reason why that was in there then..?
+
+## 2026-10-08 19:56 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+So what HAVE you built now then? What is the actual solution we just tested?
+
+## 2026-10-08 20:29 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+wait.. you STILL have something behind fucking passage anyway!?
+
+## 2026-10-08 20:30 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+the descriptions are "long text"!?
+
+## 2026-10-08 20:31 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+run the queryembed on them also and see what the diff is
+
+## 2026-10-08 20:47 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+doit, if you see no quality downside of it, do query
+
+## 2026-10-08 20:48 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+so, say exactly what we had to fix, how it was fixed and if its actually done
+
+## 2026-10-08 21:16 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+well, document, fix what can be fixed, document, push
+
+## 2026-10-08 21:20 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+you are just spamming now, wtf are you even saying at this point?
+
+## 2026-10-08 21:24 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+what was the other clustering thing we were going to test then?
+
+## 2026-10-08 21:44 · 2c136d38-abd7-4de4-985d-a6da2f0dbbb4.jsonl
+
+do we have scope in current?
+
+## 2026-10-08 21:55 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+lets build nr 1
 

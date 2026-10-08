@@ -212,6 +212,15 @@ def prepare_over_corpus(corpus: Union[str, Path, list]) -> Prepared:
     return build_sparse_index(corpus)
 
 
+def index_info(prepared: Prepared) -> dict:
+    """What the sparse index is, for the run manifest."""
+    from importlib.metadata import version
+    return {"units": len(prepared.ids), "text_chars": sum(len(t) for t in prepared.texts),
+            "method": "lucene", "k1": K1, "b": B, "stopwords": "en", "stemmer": "english",
+            "bm25s": version("bm25s"), "PyStemmer": version("PyStemmer"),
+            "kept": "in memory, built at the start of every leg"}
+
+
 def _qid_text(question) -> tuple:
     if hasattr(question, "question") and hasattr(question, "id"):
         return question.id, question.question
@@ -289,7 +298,13 @@ def answer_one_question(
                        if aid is not None]
         meta = {"char_budget": {"budget": char_budget, "chars": cut.chars,
                                 "kept": cut.kept, "boundary": cut.boundary,
-                                "exhausted": cut.exhausted}}
+                                "exhausted": cut.exhausted},
+                # the BM25 score of every delivered context, in delivered order, and of the
+                # first unit left out; how many units there are and how many scored above zero
+                "ranking": {"n_units": len(prepared.ids), "n_ranked": len(ranked),
+                            "scores": [u["score"] for u in ranked[:len(contexts)]],
+                            "next_score": (ranked[len(contexts)]["score"]
+                                           if len(ranked) > len(contexts) else None)}}
 
     if generate is None:
         answer, gen_usage = "", ModelUsage()

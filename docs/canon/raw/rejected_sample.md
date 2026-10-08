@@ -2,12 +2,12 @@
 
 40 turns spread across every rule that fired, so the filtering can be checked by hand.
 
-- `tool_result` - 6343 turns rejected
-- `task_notification` - 1087 turns rejected
-- `is_meta` - 287 turns rejected
-- `command_expansion` - 49 turns rejected
-- `interrupt_marker` - 12 turns rejected
-- `compact_summary` - 1 turns rejected
+- `tool_result` - 9240 turns rejected
+- `task_notification` - 1217 turns rejected
+- `is_meta` - 354 turns rejected
+- `command_expansion` - 50 turns rejected
+- `interrupt_marker` - 17 turns rejected
+- `compact_summary` - 8 turns rejected
 
 ---
 
@@ -69,17 +69,17 @@ Standard goals (always include):
 [Request interrupted by user]
 ```
 
-## `compact_summary` · 2026-10-05 18:01:56 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+## `compact_summary` · 2026-10-08 21:27:34 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
 
 ```
 This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
 
 Summary:
 1. Primary Request and Intent:
-   The user (Joakim; master's thesis repo `C:\Coding\exjobbet\GRAG-Job`, a graph-RAG "artefact" compared against lucene/vector baselines on the HERB benchmark) opened the session with: *"so, how can i make you actually guild the fucking thing i want you to build instead of you building your own shit every time?"* — after the previous day's session built `HERB_V4_SORT=strength` on the assistant's own calculations. Through the session his intent evolved:
-   - He wants the CORRECT artefact built (not gates that stop wrong builds): *"well, my point was getting you to build the CORRECT thing.."*. He accepted "in essence" a method: before a build, a worked walk-through of the whole chain with real numbers, the assistant's own calculation steps marked, taken with him one at a time.
-   - He gave explicit gos for: the commit + v4 default set back + the walk-through with one Haiku call (*"go ahead, work your ass off"*); committing to a new branch (*"just fucking commit to a new branch already"*); fixin
-[... 27200 more chars]
+   - **Original request (2026-10-08 15:28Z):** "do a critical review of the full lucene and vector runs now, extra careful with academic rigor, compare to the historically required data (metrics like times, tokens in and out, build and more) in the git history, mempalace etc, the new abstract". Delivered (long review; see section 5).
+   - **Then:** "You may make model calls." → I made probe calls and a one-question proof on the made-up question only.
+   - **Then a chain of corrections** in which he (a) wanted a plain yes/no on whether the runs are correctly done (answer: retrieval yes, model calls no), (b) was shocked that the CLI adds text to every call, (c) first ruled the judges are not ours, (d) told me to read RAGAS's own material myself, (e) then reversed: the judge calls must also be done correctly, per RAGAS's own settings, which I was to read and USE, not recite, (f) pointed out that the harness's "temperature 0, thinking off, max_tokens 8192" was in there for a reason (it is the int
+[... 28004 more chars]
 ```
 
 ## `tool_result` · 2026-10-05 03:59:59 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
@@ -120,6 +120,22 @@ A session-scoped Stop hook is now active with condition: "figure out why, why th
 [Request interrupted by user]
 ```
 
+## `compact_summary` · 2026-10-07 18:44:18 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+
+```
+This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+Summary:
+1. Primary Request and Intent:
+   The user (Joakim, master's thesis repo `C:\Coding\exjobbet\GRAG-Job`, branch `artefact-v4`, last commit `a140636`, everything since uncommitted) is building a graph-enriched retrieval artefact (`artefact_v4`) evaluated against lucene/vector baselines. In this session his requests, in order:
+   - "ok, so, the actual build now": confirm/do the two-call query side (first call: description + tags, no tree, with his "new description"; second call: tree → scope).
+   - Run the hundred so it survives closing the laptop; then compare results ("wait, this was worse", compare with the ten-question table).
+   - Explain the "refusal"; he concluded the prompt construction was wrong: **both the input AND the output of every headless model call must be constructed**.
+   - Concept statements: product-specific scope is "fitted"/unagnostic; "it MUST be asked of the DB"; the abstract's "structural filtering" means scope may be used freely short of "absurd overfitting".
+   - "tell me EXACTLY what the whole art
+[... 26660 more chars]
+```
+
 ## `tool_result` · 2026-10-05 03:59:59 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
 
 ```
@@ -154,6 +170,19 @@ Continue from where you left off.
 
 ```
 [Request interrupted by user for tool use]
+```
+
+## `compact_summary` · 2026-10-05 18:01:56 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+```
+This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+Summary:
+1. Primary Request and Intent:
+   The user (Joakim; master's thesis repo `C:\Coding\exjobbet\GRAG-Job`, a graph-RAG "artefact" compared against lucene/vector baselines on the HERB benchmark) opened the session with: *"so, how can i make you actually guild the fucking thing i want you to build instead of you building your own shit every time?"* — after the previous day's session built `HERB_V4_SORT=strength` on the assistant's own calculations. Through the session his intent evolved:
+   - He wants the CORRECT artefact built (not gates that stop wrong builds): *"well, my point was getting you to build the CORRECT thing.."*. He accepted "in essence" a method: before a build, a worked walk-through of the whole chain with real numbers, the assistant's own calculation steps marked, taken with him one at a time.
+   - He gave explicit gos for: the commit + v4 default set back + the walk-through with one Haiku call (*"go ahead, work your ass off"*); committing to a new branch (*"just fucking commit to a new branch already"*); fixin
+[... 27200 more chars]
 ```
 
 ## `tool_result` · 2026-10-05 04:00:02 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
@@ -194,6 +223,19 @@ Continue from where you left off.
 [Request interrupted by user for tool use]
 ```
 
+## `compact_summary` · 2026-10-05 23:01:40 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+```
+This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+Summary:
+1. Primary Request and Intent:
+   The user (Joakim; master's thesis repo `C:\Coding\exjobbet\GRAG-Job`, a graph-RAG "artefact" compared with lucene/vector baselines on the HERB benchmark) wants the CORRECT artefact built to his own concepts, with plain, fast, continuous communication. Session-level intents, in order:
+   - Earlier in the session (before this continuation): a walk-through-before-build method; the `walk` sort built into `test/arms/artefact_v4.py`; headless model calls must carry NOTHING but the constructed input (`--safe-mode`); no counts ("amount of tags", "amount of closely related chunks") may make a chunk more important; the four facets (not topic) used as a RANKING in the query tag's order, not a multiplier; "equally close" relative to the tag's own numbers; everything embedded for the artefact in the same mode; save embeddings on the side.
+   - This continuation began on: *"and after you have fixed the embeddings, it's time to also finish the build with the changes we discussed, talk about this with me 
+[... 25191 more chars]
+```
+
 ## `tool_result` · 2026-10-05 04:00:21 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
 
 ```
@@ -228,6 +270,21 @@ Continue from where you left off.
 
 ```
 [Request interrupted by user for tool use]
+```
+
+## `compact_summary` · 2026-10-06 18:09:42 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+
+```
+This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+Summary:
+1. Primary Request and Intent:
+   The user (Joakim; master's thesis repo `C:\Coding\exjobbet\GRAG-Job`, graph-RAG "artefact" vs lucene/vector baselines on the HERB benchmark) wants the CORRECT artefact built to his own concepts, with plain, fast, continuous communication, reasons rather than bare numbers, and no "waiting for him". In this continuation, in order:
+   - Report of the full gold100 run (his earlier "GO!"); then his reaction "ffs"; then "be more clear about the exact issues with this run/concept".
+   - "so the actual issue this run was only the order of the scope? it's better as a limiter to start with?" and "so, perhaps update the DB with the actual new information so the db is the only thing beeing used?" → then the go: **"yeah make the db current before anything else"** (done).
+   - **".. do the fucking 100th also.. stop beeing satisfied with an incomplete run"** (done: 100/100).
+   - Questions answered: backup vs new DB; "widths? and wasnt topic already in?"; "how IS the actual spread of gold along this scal
+[... 24021 more chars]
 ```
 
 ## `tool_result` · 2026-10-05 04:00:22 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
@@ -268,6 +325,19 @@ Continue from where you left off.
 [Request interrupted by user for tool use]
 ```
 
+## `compact_summary` · 2026-10-05 18:01:56 · a59f1666-4b40-457a-9ae5-0f5f3a863786.jsonl
+
+```
+This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+Summary:
+1. Primary Request and Intent:
+   The user (Joakim; master's thesis repo `C:\Coding\exjobbet\GRAG-Job`, a graph-RAG "artefact" compared against lucene/vector baselines on the HERB benchmark) opened the session with: *"so, how can i make you actually guild the fucking thing i want you to build instead of you building your own shit every time?"* — after the previous day's session built `HERB_V4_SORT=strength` on the assistant's own calculations. Through the session his intent evolved:
+   - He wants the CORRECT artefact built (not gates that stop wrong builds): *"well, my point was getting you to build the CORRECT thing.."*. He accepted "in essence" a method: before a build, a worked walk-through of the whole chain with real numbers, the assistant's own calculation steps marked, taken with him one at a time.
+   - He gave explicit gos for: the commit + v4 default set back + the walk-through with one Haiku call (*"go ahead, work your ass off"*); committing to a new branch (*"just fucking commit to a new branch already"*); fixin
+[... 27200 more chars]
+```
+
 ## `tool_result` · 2026-10-05 04:00:22 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
 
 ```
@@ -298,45 +368,5 @@ A session-scoped Stop hook is now active with condition: "go ahead and complete 
 
 ```
 <local-command-stdout>Set model to `claude-opus-5[1m]`</local-command-stdout>
-```
-
-## `interrupt_marker` · 2026-09-14 08:29:30 · 6c806933-883b-46c5-aec7-22468ef6b7f2.jsonl
-
-```
-[Request interrupted by user]
-```
-
-## `tool_result` · 2026-10-05 04:00:22 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
-
-```
-
-```
-
-## `task_notification` · 2026-09-09 15:06:57 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
-
-```
-<task-notification>
-<task-id>bs13o48n0</task-id>
-<summary>Monitor event: "artefact_v3GRAG sweep results per run"</summary>
-<event>context_precision_id       0.09
-context_recall_id          0.26
-10/10 answered, 0 failed, 0 did not fill the 72000 char budget  -&gt;  C:\Coding\exjobbet\GRAG-Job\output\k=chars\artefact_v3GRAG__10smoke__cb72000__20260909T150432Z
-=== KEYS=entity,file,facets</event>
-If this event is something the user would act on now, send a PushNotification. Routine or benign output doesn't need one.
-</task-notification>
-```
-
-## `is_meta` · 2026-09-11 16:32:21 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
-
-```
-<local-command-caveat>Caveat: The messages below were generated by the user while running local commands. DO NOT respond to these messages or otherwise consider them in your response unless the user explicitly asks you to.</local-command-caveat>
-```
-
-## `command_expansion` · 2026-09-11 16:20:36 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
-
-```
-<command-name>/goal</command-name>
-            <command-message>goal</command-message>
-            <command-args>go ahead and complete that task</command-args>
 ```
 
