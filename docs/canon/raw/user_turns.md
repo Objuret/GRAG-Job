@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-1826 turns, chronological. Verbatim text; no edits.
+1840 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -15892,4 +15892,60 @@ do we have scope in current?
 ## 2026-10-08 21:55 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
 
 lets build nr 1
+
+## 2026-10-08 22:43 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+ok, i am pretty fucking sure that what i expected was not built now.. you DO understand that you just cannot fucking keep using the exact same shit in the build and then be "aaw man, told you its worse"
+
+## 2026-10-08 22:44 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+dude what? were you not here for entire fucking conversation? you DO have the transcript here right?
+
+## 2026-10-08 22:53 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+k=50? you better fucking not have run that now
+
+## 2026-10-08 22:53 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+made up question? what=
+
+## 2026-10-08 22:54 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+are you saying you have actually built it all correctly now, but not ran it?
+
+## 2026-10-08 23:00 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+yeah, thats fine, go ahead then, i you feel that this is finally academic-worthy and we also get all analytics , go ahead and run them
+
+## 2026-10-08 23:06 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+so, whats the best recall we have had so far?
+
+## 2026-10-08 23:10 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+how about this then, first tags, then clustering on them, THEN check the scope on all tags (becase then we only have "relevant tags" meaning we only have relevant scope, so we can take the scopes of the greatest cluster(s)? and then after that, we do the facets sorting
+
+## 2026-10-08 23:10 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+i just came up with a new idea, ofc its fucking "not the same as we ran.."
+
+## 2026-10-08 23:12 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+are you actually retarded now? if you cant handle clean answers, stop asking such fucking messy questions..
+
+## 2026-10-08 23:13 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+yes, they get those fields!
+
+## 2026-10-08 23:16 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+so, what did you NOT use this turn?
+
+## 2026-10-08 23:27 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+...soo
+
+## 2026-10-08 23:35 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+what is recall?
 

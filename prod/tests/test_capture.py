@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import subprocess
 import threading
 import types
@@ -38,6 +39,16 @@ def _proc(returncode=0, stdout="", stderr=""):
 
 
 class ChatCallRecordTests(unittest.TestCase):
+    def setUp(self):
+        # the lane logs in with a token under its own config folder: both are the test's here
+        tmp = TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        for p in (patch.dict(os.environ, {chat._LOGIN_TOKEN: "test-token"}),
+                  patch.object(chat, "_CONFIG_DIR", Path(tmp.name) / "config"),
+                  patch.object(chat, "_dotenv_loaded", True)):
+            p.start()
+            self.addCleanup(p.stop)
+
     def _post(self, **kw):
         return chat.post("/chat/completions", {
             "model": "claude-haiku-4-5", "temperature": 0,
@@ -274,7 +285,7 @@ class DeliveredScoreTests(unittest.TestCase):
 
     def test_lucene_keeps_the_score_of_each_delivered_context(self):
         from arms import lucene
-        docs = [{"id": f"d{i}", "title": "", "contents": text} for i, text in enumerate(
+        docs = [{"id": f"d{i}", "text": text} for i, text in enumerate(
             ["alpha rocket launch " * 3, "alpha notes", "nothing here", "rocket rocket alpha"])]
         prepared = lucene.build_sparse_index(docs)
         out = lucene.answer_one_question(("q", "alpha rocket?"), prepared, None, k=1,

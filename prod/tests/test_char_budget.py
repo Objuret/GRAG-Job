@@ -126,9 +126,9 @@ class LuceneBudgetTests(unittest.TestCase):
     @staticmethod
     def _prepared():
         docs = [
-            {"id": "a1", "title": "alpha", "contents": "alpha alpha rocket engine"},
-            {"id": "a2", "title": "alpha", "contents": "alpha rocket"},
-            {"id": "a3", "title": "beta", "contents": "unrelated filler words"},
+            {"id": "a1", "text": "alpha alpha alpha rocket engine"},
+            {"id": "a2", "text": "alpha alpha rocket"},
+            {"id": "a3", "text": "beta unrelated filler words"},
         ]
         return lucene.build_sparse_index(docs)
 

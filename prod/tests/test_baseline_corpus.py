@@ -27,8 +27,12 @@ _TEAM = [
 _PRODUCT = {
     "slack": [{"id": "20260101-0-aaaaa",
                "Channel": {"name": "general"},
-               "Message": {"User": {"userId": "eid_00000001", "text": "kickoff"}}}],
-    "documents": [{"id": "spec_doc", "type": "Spec", "content": "the spec body"}],
+               "Message": {"User": {"userId": "eid_00000001", "text": "kickoff",
+                                    "timestamp": "2026-01-01T09:00:00",
+                                    "utterranceID": "20260101-0-aaaaa"}}}],
+    "documents": [{"id": "spec_doc", "type": "Spec", "content": "the spec body",
+                   "author": "eid_00000002", "date": "2026-01-02T10:00:00",
+                   "document_link": "https://sf-internal.slack.com/archives/docs/spec_doc"}],
 }
 
 
@@ -107,8 +111,7 @@ class DirectoryIngestTests(_CorpusCase):
             self.assertEqual(len(ids), len(set(ids)), module.__name__)
 
     def test_the_company_name_reaches_the_lucene_index(self):
-        text = {d["id"]: f'{d["title"]}\n{d["contents"]}'
-                for d in self.read(lucene, True)}
+        text = {d["id"]: d["text"] for d in self.read(lucene, True)}
         self.assertIn("BlueWave", text["metadata::customers_data::CUST-9001"])
         self.assertIn("CUST-9001", text["metadata::customers_data::CUST-9001"])
 

@@ -121,6 +121,15 @@ def cli_version() -> str | None:
     return _cli_version[0]
 
 
+# The CLI runs under a config folder of its own and logs in with the token of the environment
+# (.env). It then has no stored login to read the account's e-mail address from, which it
+# otherwise writes in front of every prompt, and no settings file of the user's. Its own
+# transcripts of the calls land under this folder; they hold gold.
+_CONFIG_DIR = Path.home() / ".claude-herb-lane"
+_LOGIN_TOKEN = "CLAUDE_CODE_OAUTH_TOKEN"
+# without it the CLI deletes its transcripts after 30 days
+_CONFIG_SETTINGS = {"cleanupPeriodDays": 36500}
+
 # Set for the CLI on every call. Each switch was seen to do its work in a logged request
 # (2026-10-08, docs/2026-10-08-model-calls-found-and-fixed.md).
 _ENV_FIXED = {
@@ -129,6 +138,7 @@ _ENV_FIXED = {
     "MEMPALACE_HOOKS_AUTO_SAVE": "false",
     "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",  # no second request, to Haiku, for a session title
     "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",      # no billing line in front of the system prompt
+    "CLAUDE_CONFIG_DIR": str(_CONFIG_DIR),
 }
 # The switches a call sets when it asks for them. One the call does not set is taken out of the
 # CLI's environment, so a value left in the shell that starts the run never reaches a call.
@@ -144,8 +154,7 @@ _PAYLOAD_KEYS = ("model", "messages", "response_format", "effort", "join_parts",
 _CLI_ADDS = {
     "seen_with": "2.1.212 (Claude Code)",
     "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
-    "in_front_of_the_prompt": "a <system-reminder> block with the logged-in account's e-mail "
-                              "address and the day's date",
+    "in_front_of_the_prompt": "a <system-reminder> block with the day's date",
 }
 
 
@@ -156,6 +165,8 @@ def lane_info() -> dict:
             "system_prompt": "always passed, empty when the call has no system text",
             "stdin": "the prompt as UTF-8 bytes",
             "env_set": dict(_ENV_FIXED),
+            "login": f"{_LOGIN_TOKEN} of the environment (.env); a call is refused without it",
+            "config_settings": dict(_CONFIG_SETTINGS),
             "env_per_call": list(_ENV_PER_CALL),
             "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
             "cli_adds": dict(_CLI_ADDS),
@@ -236,6 +247,19 @@ def _call_env(call: dict) -> dict:
     return env
 
 
+def _login() -> None:
+    """The token is there and the CLI's own config folder is made, or the call is refused."""
+    _load_dotenv()
+    if not os.environ.get(_LOGIN_TOKEN):
+        raise RuntimeError(
+            f"chat.post: no {_LOGIN_TOKEN} in the environment or in .env. The lane logs in with "
+            f"it under its own config folder ({_CONFIG_DIR}); `claude setup-token` makes one")
+    _CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+    settings = _CONFIG_DIR / "settings.json"
+    if not settings.is_file():
+        settings.write_text(json.dumps(_CONFIG_SETTINGS, indent=2), encoding="utf-8")
+
+
 def join_stream(stdout: str) -> tuple:
     """(joined assistant text, the result event) from `--output-format stream-json`.
 
@@ -264,6 +288,7 @@ def join_stream(stdout: str) -> tuple:
 
 def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
     model = payload["model"]
+    _login()
     call = call_settings(payload)
     cmd, flags, system, prompt = call["cmd"], call["flags"], call["system"], call["prompt"]
     schema, join_parts, effort = call["schema"], call["join_parts"], call["effort"]

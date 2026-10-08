@@ -18,20 +18,11 @@ from harness.progress import progress, say
 from harness.embed import (EMBED_MODEL, EMBED_REVISION, EMBED_DEVICE, EMBED_DTYPE,
                            EMBED_PREFIX, EMBED_BATCH, QUERY_VECS_PATH, _embedder,
                            _embed_request, _embed)
+from harness.record_text import ARTIFACT_TYPES, FORM, record_text, units_digest
 
 DEFAULT_TOP_K = 10
 
 CACHE_DIR = Path(__file__).resolve().parent.parent.parent / "output" / "embed_cache"
-
-
-ARTIFACT_TYPES = (
-    "slack",
-    "documents",
-    "meeting_transcripts",
-    "meeting_chats",
-    "urls",
-    "prs",
-)
 
 
 def _env_bool(name: str, default: bool) -> bool:
@@ -66,32 +57,6 @@ class Prepared:
     build_stats: Optional[BuildStats] = None
     cache_file: Optional[str] = None
     warm_s: Optional[float] = None
-
-
-def _artifact_text(kind: str, rec: dict) -> str:
-    if kind == "slack":
-        msg = (rec.get("Message") or {}).get("User") or {}
-        channel = (rec.get("Channel") or {}).get("name", "")
-        return f"Slack #{channel} {msg.get('userId', '')}: {msg.get('text', '')}".strip()
-    if kind == "documents":
-        return "\n".join(
-            s for s in (rec.get("type", ""), rec.get("content", ""), rec.get("feedback", ""))
-            if s
-        ).strip()
-    if kind == "meeting_transcripts":
-        return f"{rec.get('document_type', '')}\n{rec.get('transcript', '')}".strip()
-    if kind == "meeting_chats":
-        return rec.get("text", "")
-    if kind == "urls":
-        return f"{rec.get('description', '')} {rec.get('link', '')}".strip()
-    if kind == "prs":
-        reviews = " ".join(
-            (r.get("comment") or "")
-            for r in (rec.get("reviews") or [])
-            if isinstance(r, dict)
-        )
-        return f"{rec.get('title', '')}\n{rec.get('summary', '')} {reviews}".strip()
-    return ""
 
 
 def _team_leaders(nodes: list) -> list:
@@ -136,7 +101,7 @@ def _read_corpus(corpus_root) -> list:
                 if aid is None or aid in seen:
                     continue
                 seen.add(aid)
-                docs.append({"id": aid, "text": _artifact_text(kind, rec)})
+                docs.append({"id": aid, "text": record_text(kind, rec)})
 
     artifacts = len(docs)
     if METADATA_ON:
@@ -255,6 +220,7 @@ def index_info(prepared: Prepared) -> dict:
     except (OSError, ValueError):
         cost_note = None
     return {"units": len(prepared.ids), "text_chars": sum(len(t) for t in prepared.texts),
+            "unit_text": FORM, "units_sha256": units_digest(prepared.ids, prepared.texts),
             "matrix_shape": list(prepared.matrix.shape), "matrix_dtype": str(prepared.matrix.dtype),
             "matrix_bytes": int(prepared.matrix.nbytes),
             "cache_file": None if cache is None else str(cache),

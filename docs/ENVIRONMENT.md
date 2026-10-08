@@ -209,9 +209,16 @@ names one, else `CLAUDE_CODE_EFFORT_LEVEL=auto` so none is sent (`--safe-mode` d
 `CLAUDE_CODE_EXTRA_BODY` on a call that asks for thinking off. What the CLI still adds by
 itself: the line "You are a Claude agent, built on Anthropic's Claude Agent SDK." first in the
 system prompt, and a `<system-reminder>` block in front of the prompt with the e-mail address
-of the login stored in `~/.claude.json` and the day's date. The date has no switch; the e-mail
-line is absent when the CLI runs with its own `CLAUDE_CONFIG_DIR` and `CLAUDE_CODE_OAUTH_TOKEN`
-(tried, not used by the lane).
+of the login stored in `~/.claude.json` and the day's date. The date has no switch.
+
+**Since 2026-10-09 the lane logs in by itself:** every call runs with `CLAUDE_CONFIG_DIR` set to
+`~/.claude-herb-lane` and the `CLAUDE_CODE_OAUTH_TOKEN` of the environment (`.env` supplies it;
+`claude setup-token` makes one). The CLI then has no stored login to read an e-mail address
+from and reads no settings file of the user's, so the block in front of the prompt holds the
+date alone. A call without the token is refused, so **a machine that is to make model calls
+needs the token in its `.env`**. The CLI's own transcripts of the lane's calls land under
+`~/.claude-herb-lane/projects/` from then on (the earlier ones stay under `~/.claude/projects/`);
+`settings.json` in that folder keeps them (`cleanupPeriodDays` 36500).
 
 **Seeing what the CLI really sends:** `CLAUDE_CODE_ENABLE_TELEMETRY=1 OTEL_LOGS_EXPORTER=console
 OTEL_METRICS_EXPORTER=none OTEL_TRACES_EXPORTER=none OTEL_LOG_RAW_API_BODIES=file:<dir>` writes

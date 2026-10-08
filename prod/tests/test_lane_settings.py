@@ -109,6 +109,17 @@ class CallSettingsTests(unittest.TestCase):
 
 
 class CallAsSentTests(unittest.TestCase):
+    def setUp(self):
+        # the lane logs in with a token under its own config folder: both are the test's here
+        tmp = TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.config = Path(tmp.name) / "config"
+        for p in (patch.dict(os.environ, {chat._LOGIN_TOKEN: "test-token"}),
+                  patch.object(chat, "_CONFIG_DIR", self.config),
+                  patch.object(chat, "_dotenv_loaded", True)):
+            p.start()
+            self.addCleanup(p.stop)
+
     def _sent(self, payload, shell):
         seen = {}
 
@@ -123,6 +134,31 @@ class CallAsSentTests(unittest.TestCase):
         finally:
             capture.stop(token)
         return seen, cap.close()["calls"][0]
+
+    def test_the_cli_runs_under_its_own_config_folder_and_the_token_is_never_kept(self):
+        seen, rec = self._sent({"model": HAIKU, "messages": _user()}, {})
+        self.assertEqual(seen["env"]["CLAUDE_CONFIG_DIR"], chat._ENV_FIXED["CLAUDE_CONFIG_DIR"])
+        self.assertEqual(chat._ENV_FIXED["CLAUDE_CONFIG_DIR"],
+                         str(Path.home() / ".claude-herb-lane"))
+        self.assertEqual(seen["env"][chat._LOGIN_TOKEN], "test-token")
+        self.assertNotIn("test-token", json.dumps(rec))
+        self.assertNotIn("test-token", json.dumps(chat.lane_info()))
+        # the CLI's transcripts of the calls stay: the folder gets the retention setting once
+        settings = self.config / "settings.json"
+        self.assertEqual(json.loads(settings.read_text(encoding="utf-8")),
+                         {"cleanupPeriodDays": 36500})
+        settings.write_text('{"cleanupPeriodDays": 36500, "kept": true}', encoding="utf-8")
+        self._sent({"model": HAIKU, "messages": _user()}, {})
+        self.assertTrue(json.loads(settings.read_text(encoding="utf-8"))["kept"])
+
+    def test_a_call_is_refused_when_no_login_token_is_there(self):
+        called = []
+        with patch.dict(os.environ),                 patch.object(chat.subprocess, "run", lambda *a, **k: called.append(a)):
+            os.environ.pop(chat._LOGIN_TOKEN)
+            with self.assertRaises(RuntimeError) as caught:
+                chat.post("/chat/completions", {"model": HAIKU, "messages": _user()})
+        self.assertIn(chat._LOGIN_TOKEN, str(caught.exception))
+        self.assertEqual(called, [])
 
     def test_the_prompt_reaches_the_cli_as_the_bytes_that_are_kept(self):
         prompt = "first line\nsecond line\n\nÅngström"

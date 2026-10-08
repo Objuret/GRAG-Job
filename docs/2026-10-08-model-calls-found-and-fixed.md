@@ -59,7 +59,7 @@ run, in the manifest (`generator`, and `judge_call` in the evaluation's settings
 | 2 | `CLAUDE_CODE_ATTRIBUTION_HEADER=0` on every call. | The system prompt holds the identity line and the harness's text, nothing else. |
 | 3 | The prompt is handed to the CLI as UTF-8 bytes. | The prompt in the request equals the prompt kept in the record, byte for byte, no CR. |
 | 4 | Not fixed. The CLI has no switch for it. | Still first in the system prompt. |
-| 5 | Not fixed in the lane. See "The block in front of the prompt" below. | Still there: 365 characters. |
+| 5 | The e-mail line is gone since 2026-10-09; the date line cannot be removed. See "The block in front of the prompt" below. | The block holds the date alone: 306 characters (was 365). |
 | 6 | `MAX_THINKING_TOKENS=0` on a call that asks for thinking off. | `thinking: disabled` in the request; the CLI's transcript of the call holds the answer block and no thinking block. |
 | 7 | `CLAUDE_CODE_MAX_OUTPUT_TOKENS=<the cap>` on a call that asks for thinking off. | `max_tokens: 8192` in the request. |
 | 8 | `--effort <level>` when the caller names one; otherwise `CLAUDE_CODE_EFFORT_LEVEL=auto`, so none is sent and the user's settings file is not read for it. | `output_config: null` in the request. |
@@ -101,11 +101,21 @@ Read in the CLI's own code (2.1.212): the block is built from the user's CLAUDE.
 The date is added without condition, so no switch removes the block. The e-mail address is left
 out when the CLI has no stored login to read: tried with the CLI given its own empty config
 folder (`CLAUDE_CONFIG_DIR`) and the login token that `.env` holds (`CLAUDE_CODE_OAUTH_TOKEN`);
-the request was the same apart from the missing e-mail section. Not built into the lane: it
-changes which login every model call uses and where the CLI keeps its transcripts of the calls.
+the request was the same apart from the missing e-mail section.
 
-`lane_info()` (in every manifest) names the two things the CLI adds by itself, with the CLI
-version they were seen with. The date makes a call's input differ from one day to the next.
+Built into the lane on 2026-10-09 (his *"yeah, thats fine, go ahead then"*, on the login change):
+every call runs with `CLAUDE_CONFIG_DIR` set to `~/.claude-herb-lane` and logs in with the
+`CLAUDE_CODE_OAUTH_TOKEN` of the environment, which `.env` supplies. A call without the token is
+refused; there is no second way in. The token's value is never written anywhere by the harness:
+the manifest's `env` shows it as `<set>`. The folder gets a `settings.json` with
+`cleanupPeriodDays` 36500, so the CLI keeps its own transcripts of the calls; those now land
+under `~/.claude-herb-lane/projects/` and hold gold like the earlier ones. No settings file of
+the user's is read any more. Seen in a logged request made through the lane: the block in front
+of the prompt holds the date alone.
+
+`lane_info()` (in every manifest) names the two things the CLI still adds by itself, the
+identity line and the date, with the CLI version they were seen with. The date makes a call's
+input differ from one day to the next.
 
 ### The run's record
 
@@ -149,7 +159,6 @@ Fourteen model calls, all on the made-up question, 2026-10-08 21:41–21:48Z: fi
 ### Left
 
 - The identity line (4), the date line (5), the generator's temperature (9).
-- The e-mail line (5): the way that worked needs his word.
 - `top_k` in the manifest is the k handed to the arm. Under a character budget lucene and vector
   rank every unit and do not read it; whether each older artefact arm reads it was not checked.
 - Answers are written in question order: a finished answer waits for the ones before it and is
@@ -159,6 +168,5 @@ Fourteen model calls, all on the made-up question, 2026-10-08 21:41–21:48Z: fi
   themselves, not through the lane, and get none of the above. No run path uses them.
 - Nothing stops a start under another Python; the manifest now names the interpreter and every
   package.
-- What a baseline unit's text holds, the order among equal BM25 scores, the basis of the BM25
-  parameters and the URL description written twice are the baselines' construction, not the
-  model calls.
+- The order among equal BM25 scores is the library's own. What a baseline unit's text holds
+  was settled on 2026-10-09: `docs/2026-10-09-baseline-unit-text.md`.

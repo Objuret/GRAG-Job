@@ -12,19 +12,12 @@ import Stemmer
 
 from harness.char_budget import cut_at_budget
 from harness.contract import ArmOutput, BuildStats, ModelUsage, unpack_generation
+from harness.record_text import ARTIFACT_TYPES, FORM, record_text, units_digest
 
+# Anserini's defaults (Lucene's own are 1.2 / 0.75, bm25s's 1.5 / 0.75)
 K1 = 0.9
 B = 0.4
 DEFAULT_TOP_K = 10
-
-ARTIFACT_TYPES = (
-    "slack",
-    "documents",
-    "meeting_transcripts",
-    "meeting_chats",
-    "urls",
-    "prs",
-)
 
 
 def _env_bool(name: str, default: bool) -> bool:
@@ -56,51 +49,8 @@ class Prepared:
     retriever: "bm25s.BM25"
     stemmer: object
     ids: list = field(default_factory=list)
-    titles: list = field(default_factory=list)
     texts: list = field(default_factory=list)
     build_stats: Optional[BuildStats] = None
-
-
-def _flatten_one(kind: str, rec: dict) -> Optional[tuple]:
-    aid = rec.get("id")
-    if aid is None:
-        return None
-
-    if kind == "slack":
-        channel = (rec.get("Channel") or {}).get("name", "")
-        user_blob = (rec.get("Message") or {}).get("User") or {}
-        user = user_blob.get("userId", "")
-        text = user_blob.get("text", "")
-        title = f"Slack #{channel} — {user}".strip(" —")
-        contents = text
-    elif kind == "documents":
-        title = rec.get("type", "Document")
-        contents = "\n".join(
-            s for s in (rec.get("content", ""), rec.get("feedback", "")) if s
-        )
-    elif kind == "meeting_transcripts":
-        title = rec.get("document_type", "Meeting transcript")
-        contents = rec.get("transcript", "")
-    elif kind == "meeting_chats":
-        title = "Meeting chat"
-        contents = rec.get("text", "")
-    elif kind == "urls":
-        desc = rec.get("description", "")
-        link = rec.get("link", "")
-        title = desc or link
-        contents = f"{desc} {link}".strip()
-    elif kind == "prs":
-        title = rec.get("title", "")
-        summary = rec.get("summary", "")
-        reviews = rec.get("reviews") or []
-        review_text = " ".join(
-            (r.get("comment") or "") for r in reviews if isinstance(r, dict)
-        )
-        contents = f"{summary} {review_text}".strip()
-    else:
-        return None
-
-    return aid, title, contents
 
 
 def _team_leaders(nodes: list) -> list:
@@ -143,16 +93,11 @@ def ingest_corpus(corpus_root: Union[str, Path]) -> list:
         data = json.loads(pf.read_text(encoding="utf-8"))
         for kind in ARTIFACT_TYPES:
             for rec in data.get(kind, []) or []:
-                flat = _flatten_one(kind, rec)
-                if flat is None:
-                    continue
-                aid, title, contents = flat
-                if aid in seen:
+                aid = rec.get("id")
+                if aid is None or aid in seen:
                     continue
                 seen.add(aid)
-                docs.append(
-                    {"id": aid, "title": title, "contents": contents, "kind": kind}
-                )
+                docs.append({"id": aid, "text": record_text(kind, rec), "kind": kind})
 
     artifacts = len(docs)
     if METADATA_ON:
@@ -168,8 +113,7 @@ def ingest_corpus(corpus_root: Union[str, Path]) -> list:
                 raise RuntimeError(f"duplicate directory unit id {uid!r}")
             seen.add(uid)
             title, contents = _flatten_directory(section, rec)
-            docs.append({"id": uid, "title": title, "contents": contents,
-                         "kind": section})
+            docs.append({"id": uid, "text": title + "\n" + contents, "kind": section})
     print(f"lucene: {artifacts} artifacts + {len(docs) - artifacts} directory records",
           flush=True)
     return docs
@@ -181,8 +125,7 @@ def build_sparse_index(
     t0 = time.perf_counter()
     docs = corpus if isinstance(corpus, list) else ingest_corpus(corpus)
     ids = [d["id"] for d in docs]
-    titles = [d["title"] for d in docs]
-    texts = [f'{d["title"]}\n{d["contents"]}'.strip() for d in docs]
+    texts = [d["text"] for d in docs]
     if not texts:
         raise RuntimeError(f"sparse index: corpus is empty (corpus={corpus!r})")
 
@@ -202,7 +145,6 @@ def build_sparse_index(
         retriever=retriever,
         stemmer=stemmer,
         ids=ids,
-        titles=titles,
         texts=texts,
         build_stats=build_stats,
     )
@@ -216,7 +158,9 @@ def index_info(prepared: Prepared) -> dict:
     """What the sparse index is, for the run manifest."""
     from importlib.metadata import version
     return {"units": len(prepared.ids), "text_chars": sum(len(t) for t in prepared.texts),
-            "method": "lucene", "k1": K1, "b": B, "stopwords": "en", "stemmer": "english",
+            "unit_text": FORM, "units_sha256": units_digest(prepared.ids, prepared.texts),
+            "method": "lucene", "k1": K1, "b": B, "bm25_parameters": "Anserini's defaults",
+            "stopwords": "en", "stemmer": "english",
             "bm25s": version("bm25s"), "PyStemmer": version("PyStemmer"),
             "kept": "in memory, built at the start of every leg"}
 

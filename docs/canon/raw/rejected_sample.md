@@ -2,11 +2,11 @@
 
 40 turns spread across every rule that fired, so the filtering can be checked by hand.
 
-- `tool_result` - 9240 turns rejected
-- `task_notification` - 1217 turns rejected
+- `tool_result` - 9356 turns rejected
+- `task_notification` - 1222 turns rejected
 - `is_meta` - 354 turns rejected
 - `command_expansion` - 50 turns rejected
-- `interrupt_marker` - 17 turns rejected
+- `interrupt_marker` - 18 turns rejected
 - `compact_summary` - 8 turns rejected
 
 ---
@@ -217,10 +217,10 @@ Summary:
             <command-args>claude-fable-5-1[1m]</command-args>
 ```
 
-## `interrupt_marker` · 2026-09-29 09:45:18 · 5a3191de-c2dd-431f-8f1c-0b0b059526c1.jsonl
+## `interrupt_marker` · 2026-10-08 23:13:10 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
 
 ```
-[Request interrupted by user for tool use]
+[Request interrupted by user]
 ```
 
 ## `compact_summary` · 2026-10-05 23:01:40 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
@@ -266,7 +266,7 @@ Summary:
 <local-command-stdout>Set model to `claude-fable-5-1`</local-command-stdout>
 ```
 
-## `interrupt_marker` · 2026-09-04 22:56:40 · 5f4299fb-2d4f-4d3f-8996-32d753c3900f.jsonl
+## `interrupt_marker` · 2026-09-29 09:45:18 · 5a3191de-c2dd-431f-8f1c-0b0b059526c1.jsonl
 
 ```
 [Request interrupted by user for tool use]
@@ -319,7 +319,7 @@ Summary:
             <command-args>opus[1m]</command-args>
 ```
 
-## `interrupt_marker` · 2026-09-29 09:45:18 · 6187d147-38dc-432f-8b70-f41e42ac78bc.jsonl
+## `interrupt_marker` · 2026-09-04 22:56:40 · 5f4299fb-2d4f-4d3f-8996-32d753c3900f.jsonl
 
 ```
 [Request interrupted by user for tool use]
