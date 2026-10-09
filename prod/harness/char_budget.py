@@ -1,6 +1,22 @@
 from dataclasses import dataclass
 from typing import Iterable, Optional
 
+from harness.fields import sub
+
+# what an arm writes into a row's meta about the cut (the words of FIELDS.md)
+FIELDS = sub("How the character budget was filled.", {
+    "budget": "The character budget.",
+    "chars": "How many characters were handed over.",
+    "kept": "How many units were handed over whole.",
+    "boundary": sub("The unit that was cut where the budget ended. Empty when the budget ended "
+                    "exactly at a unit's end, or when the ranking ran out first.", {
+                        "id": "The id of its record.",
+                        "chars_kept": "How many of its characters were handed over.",
+                        "chars_full": "How many characters it has.",
+                    }),
+    "exhausted": "Whether the ranking ran out before the budget was full.",
+})
+
 
 @dataclass
 class BudgetCut:

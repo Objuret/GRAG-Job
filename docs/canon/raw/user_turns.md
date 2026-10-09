@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-1840 turns, chronological. Verbatim text; no edits.
+1875 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -15948,4 +15948,156 @@ so, what did you NOT use this turn?
 ## 2026-10-08 23:35 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
 
 what is recall?
+
+## 2026-10-08 23:50 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+completed and corrrect?
+
+## 2026-10-09 06:56 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+done
+
+## 2026-10-09 06:57 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+so where are we at now then?
+
+## 2026-10-09 08:11 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+i mean, so, how DO the facet-ordering actually work now?
+
+## 2026-10-09 09:43 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+ok, feels like something is off here
+
+## 2026-10-09 09:46 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+why did you add sleep to the metrics.. ffs
+
+## 2026-10-09 09:47 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+i thought you were done so i slapped the laptop lid down and fell asleep yesterday, thats why it fucking "broke connection"
+
+## 2026-10-09 09:56 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+no, i meant, while you still have the stats and information since YOU are the conversation.. you can correct the data based on that
+
+## 2026-10-09 10:07 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+isnt the concept supposed to be closeness modified by facets = chosen cluster? and then you fiddle with the internal ranking of that or different stuff like scope?
+
+## 2026-10-09 10:15 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+ok, is the tags faceted from the query then? what is happening with that? how are the facets working? and how much are you making them matter?
+
+## 2026-10-09 10:21 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+.. really? 5 readings 0-1? you are using the method that CLEARLY DID NOT FUCKING WORK, and the reason we had to remake all the fucking tagweights, facetweights and the whole goddamn shebang that has caused this to take 4 months extra.. THAT ISSUE!?.. you used TAHT!?
+
+## 2026-10-09 10:30 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+you have any other actually viable solution for that? perhaps ask the model to, instead of that, give the prio ranking of facets for the entire query, not related to any of its tags, since the tags comes from the query anyway?
+
+## 2026-10-09 10:33 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+build and test this concept also then
+
+## 2026-10-09 10:33 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+wait.. what? "the head was fitted" wtf does that mean=
+
+## 2026-10-09 10:34 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+you know, we DID build that neural net for judding the facets, why the fuck is the model doing that work then?
+
+## 2026-10-09 10:35 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+*queued while an agent was working*
+
+well, maybe we need to very carefully phrase the actual question then
+
+## 2026-10-09 10:41 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+what, it only gets a pair and.. what? based on what.. i ranks them based on WHAT? "a random facet"? "all facets" ? there must be extra words?
+
+## 2026-10-09 10:41 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
++it has a command, no
+
+## 2026-10-09 10:41 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+*queued while an agent was working*
+
+aaaah, cool!
+
+## 2026-10-09 10:42 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+so what we need to carefully make, is the "chunk text" equivalent from the query
+are the made up description good enough?
+
+## 2026-10-09 10:43 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+all 100 not there?
+
+## 2026-10-09 11:01 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+honestly mate, this:"
+What I would do, and it is my choice: the text is the question followed by the description, as one text, the same two things the second call gets. Before any run, the made-up question's nine querytags scored three ways, against the description, the question, and both, printed beside the model's numbers, so the instrument's readings on these pairs can be seen before anything uses them.
+"
+Say this in a more sensible understandable way
+
+## 2026-10-09 11:10 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+lets try it
+
+## 2026-10-09 11:10 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+no, stop
+
+## 2026-10-09 11:11 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+i meant, lets build it and "try it for real" not "build a bunch of fucking drawn out different tests" just fucking build it and we do a run and check
+
+## 2026-10-09 11:11 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+*queued while an agent was working*
+
+build and 10goldsmoke
+
+## 2026-10-09 11:22 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+well thats atrocious
+
+## 2026-10-09 11:31 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+"as on random letters" ? fucking what?
+
+## 2026-10-09 11:36 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+ok, so, perhaps the "clustering" is choice of tag-sphere, not a cutoff, and then just use scope etc as vertical borders and then only the 72k is the horizontal cut in the end? etc
+
+## 2026-10-09 11:42 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+why is it so fucking dogshit then, why have you nont actually diagnosed why the best score we have gotten is how it is, and why, compared to that, this is shit
+
+## 2026-10-09 11:42 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+*queued while an agent was working*
+
+do that now, seriously
+
+## 2026-10-09 11:42 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+and the dataset created by this? is it clean, correct, reasonable, actually fucking meaningful to the guy analyzing this project?
+
+## 2026-10-09 16:08 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+Yeah you are focusing on the wrong things, the times etc however, I mean, you can't just have fucking smashed fields with no word or explanation to what they mean..
+
+## 2026-10-09 16:11 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+Wait, what arithmetic that wasn't changed?
+
+## 2026-10-09 16:20 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+Yeah, we hace not decided how to use desc and topic at all now, have we? Desc got reembedded too, right?
 

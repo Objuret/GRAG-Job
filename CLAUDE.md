@@ -110,6 +110,7 @@ The harness and the data:
 - *"we do NOT care about monetary cost, cost only means compute or tokens or time here, thats all we can actually compare"* (2026-10-08, on dollar figures reported per call)
 - *"what i am talking about are "times, tokens, runtime, build cost" etc etc etc, ALL FUCKING DATAMETRICS"* · *"ragas are not goddamn metrics you fucking hobo, thats the evaluation system"* (2026-10-08) — "metrics" is the measured data of a run; RAGAS is the evaluation.
 - *"we literally have ALL THE FUCKING DATA possibly available! From tokens in/out, times, stamps, DATAPOINTERS and so on and on and on.. YOU just have to make fucking sure that is KEPT every run.. It is so goddamn important"* (2026-10-07) — every run keeps all of it in its own folder, per question and per model call.
+- *"you can't just have fucking smashed fields with no word or explanation to what they mean.."* (2026-10-09, on a run folder that explained none of its fields) — every run folder holds `FIELDS.md`, written by the harness from `prod/harness/fields.py`; an arm gives the words for what only it writes (`FIELDS` in its own file).
 
 How to work with him:
 

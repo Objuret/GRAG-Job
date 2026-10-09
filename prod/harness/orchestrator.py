@@ -12,6 +12,7 @@ from pathlib import Path
 
 from harness import abort
 from harness import capture
+from harness import fields
 from harness import jsonl
 from harness import provenance
 from harness.progress import progress
@@ -404,6 +405,16 @@ def _arm_name(module):
     return module.__name__.rsplit(".", 1)[-1]
 
 
+def _rewrite_fields(out):
+    """FIELDS.md again, now that the folder holds its manifest. The one written at the start
+    stands if this fails: the run's data is on disk and is not put at risk for it."""
+    try:
+        fields.write(out)
+    except Exception as e:
+        print(f"FIELDS.md was not rewritten ({e!r}); the one written at the start stands",
+              flush=True)
+
+
 def run(pipeline, evaluator, ids_file, config=None):
     config = dict(config or {})
     config.setdefault("ids_file", ids_file)
@@ -418,6 +429,11 @@ def run(pipeline, evaluator, ids_file, config=None):
     generate = build_shared_generator(config)
     root = CHUNKS_ROOT if config.get("char_budget") is None else CHARS_ROOT
     out = Path(config.get("out_dir") or root / f"{arm}__{evname}")
+
+    # what the folder's files and fields mean, in the folder itself; written first, so a
+    # start that cannot write it stops before it asks a model anything
+    out.mkdir(parents=True, exist_ok=True)
+    fields.write(out)
 
     # one leg per start or resume of this folder, so its time can be joined or discounted
     manifest_path = out / "run_manifest.json"
@@ -498,6 +514,7 @@ def run(pipeline, evaluator, ids_file, config=None):
             json.dumps(prior_manifest, ensure_ascii=False, indent=2, default=repr),
             encoding="utf-8")
 
+    _rewrite_fields(out)
     if aborted:
         raise RuntimeError(f"aborted run at {out}: {aborted}")
 
@@ -538,6 +555,7 @@ def run(pipeline, evaluator, ids_file, config=None):
     eval_manifest_path.write_text(
         json.dumps(asdict(eval_manifest), ensure_ascii=False, indent=2, default=repr),
         encoding="utf-8")
+    _rewrite_fields(out)
     if cut_short is not None:
         raise cut_short
     n_results = (sum(1 for x in eval_path.read_text(encoding="utf-8").splitlines() if x.strip())

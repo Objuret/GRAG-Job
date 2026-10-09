@@ -12,8 +12,10 @@ from typing import Callable, Optional
 
 import numpy as np
 
+from harness import char_budget
 from harness.char_budget import cut_at_budget
 from harness.contract import ArmOutput, BuildStats, ModelUsage, unpack_generation
+from harness.fields import sub, whole
 from harness.progress import progress, say
 from harness.embed import (EMBED_MODEL, EMBED_REVISION, EMBED_DEVICE, EMBED_DTYPE,
                            EMBED_PREFIX, EMBED_BATCH, QUERY_VECS_PATH, _embedder,
@@ -46,6 +48,53 @@ DIRECTORY_ID_PREFIX = "metadata::"
 RETRIEVAL_FLAGS = {"HERB_BASELINE_METADATA": METADATA_ON}
 
 Generator = Callable[[str, list], object]
+
+# a delivered text is one record: contexts and context_ids go one to one, but for the text
+# cut at the budget
+UNIT_IS_ONE_RECORD = True
+
+# the words for what only this arm writes into a run folder (harness.fields, FIELDS.md)
+FIELDS = {
+    "meta": sub("What the arm recorded about this question's ranking.", {
+        "char_budget": char_budget.FIELDS,
+        "ranking": sub("The ranking the delivered texts were taken from.", {
+            "n_units": "How many units the index holds.",
+            "n_ranked": "How many of them were ranked: all of them.",
+            "scores": "The cosine between the question's vector and each delivered text's "
+                      "vector, in delivered order.",
+            "next_score": "The cosine of the first unit that was not delivered; empty when none "
+                          "was left.",
+        }),
+        "chunk_ids": "Only in a run cut at a depth with the directory files indexed: the record "
+                     "ids behind each delivered text.",
+    }),
+    "index": sub("What the arm's index is.", {
+        "units": "How many units the index holds. A unit is one record of the corpus.",
+        "text_chars": "The characters of all unit texts together.",
+        "unit_text": "The form a record is written in to make its unit's text, and where that "
+                     "form is from.",
+        "units_sha256": "One sha256 over all units in index order: per unit the id and then the "
+                        "text, each as UTF-8 behind its byte length written as 8 bytes, big end "
+                        "first. Two runs with the same value ran on the same units.",
+        "matrix_shape": "The vectors: how many, and how many numbers each has.",
+        "matrix_dtype": "The number type of the vectors.",
+        "matrix_bytes": "Their size in memory.",
+        "cache_file": "The stored file the vectors were read from, as a path on the machine "
+                      "that ran it.",
+        "cache_file_bytes": "Its size.",
+        "cache_file_sha256": "Its sha256, which identifies the vectors.",
+        "cache_cost_note": whole("What making those vectors cost and on which machine, as noted "
+                                 "beside the stored file when it was made."),
+        "embedder_warm_s": "Seconds the embedder took for one empty request before the first "
+                           "question, so that no question pays for its loading.",
+        "question_embedding": "When and how a question is embedded.",
+    }),
+    "retrieval_flags": sub("The arm's own switches.", {
+        "HERB_BASELINE_METADATA": "Whether the corpus's three directory files (people, teams, "
+                                  "customers) are taken in beside the records. Off: the records "
+                                  "only.",
+    }),
+}
 
 
 @dataclass

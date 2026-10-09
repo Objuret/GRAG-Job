@@ -10,8 +10,10 @@ from typing import Callable, Optional, Union
 import bm25s
 import Stemmer
 
+from harness import char_budget
 from harness.char_budget import cut_at_budget
 from harness.contract import ArmOutput, BuildStats, ModelUsage, unpack_generation
+from harness.fields import sub
 from harness.record_text import ARTIFACT_TYPES, FORM, record_text, units_digest
 
 # Anserini's defaults (Lucene's own are 1.2 / 0.75, bm25s's 1.5 / 0.75)
@@ -41,6 +43,50 @@ DIRECTORY_ID_PREFIX = "metadata::"
 RETRIEVAL_FLAGS = {"HERB_BASELINE_METADATA": METADATA_ON}
 
 Generator = Callable[[str, list], object]
+
+# a delivered text is one record: contexts and context_ids go one to one, but for the text
+# cut at the budget
+UNIT_IS_ONE_RECORD = True
+
+# the words for what only this arm writes into a run folder (harness.fields, FIELDS.md)
+FIELDS = {
+    "meta": sub("What the arm recorded about this question's ranking.", {
+        "char_budget": char_budget.FIELDS,
+        "ranking": sub("The ranking the delivered texts were taken from.", {
+            "n_units": "How many units the index holds.",
+            "n_ranked": "How many of them scored above zero for this question. Only those are "
+                        "ranked; a unit that shares no word with the question is never delivered.",
+            "scores": "The BM25 score of each delivered text, in delivered order.",
+            "next_score": "The BM25 score of the first unit that was not delivered; empty when "
+                          "none was left.",
+        }),
+        "chunk_ids": "Only in a run cut at a depth with the directory files indexed: the record "
+                     "ids behind each delivered text.",
+    }),
+    "index": sub("What the arm's index is.", {
+        "units": "How many units the index holds. A unit is one record of the corpus.",
+        "text_chars": "The characters of all unit texts together.",
+        "unit_text": "The form a record is written in to make its unit's text, and where that "
+                     "form is from.",
+        "units_sha256": "One sha256 over all units in index order: per unit the id and then the "
+                        "text, each as UTF-8 behind its byte length written as 8 bytes, big end "
+                        "first. Two runs with the same value ran on the same units.",
+        "method": "The BM25 variant.",
+        "k1": "BM25's k1.",
+        "b": "BM25's b.",
+        "bm25_parameters": "Where k1 and b are from.",
+        "stopwords": "The stop word list.",
+        "stemmer": "The stemmer.",
+        "bm25s": "The version of the BM25 library.",
+        "PyStemmer": "The version of the stemmer.",
+        "kept": "Where the index lives.",
+    }),
+    "retrieval_flags": sub("The arm's own switches.", {
+        "HERB_BASELINE_METADATA": "Whether the corpus's three directory files (people, teams, "
+                                  "customers) are taken in beside the records. Off: the records "
+                                  "only.",
+    }),
+}
 
 
 @dataclass
