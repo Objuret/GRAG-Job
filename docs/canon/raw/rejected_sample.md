@@ -2,12 +2,12 @@
 
 40 turns spread across every rule that fired, so the filtering can be checked by hand.
 
-- `tool_result` - 9458 turns rejected
-- `task_notification` - 1228 turns rejected
-- `is_meta` - 354 turns rejected
-- `command_expansion` - 50 turns rejected
-- `interrupt_marker` - 21 turns rejected
-- `compact_summary` - 8 turns rejected
+- `tool_result` - 16921 turns rejected
+- `task_notification` - 1497 turns rejected
+- `is_meta` - 629 turns rejected
+- `command_expansion` - 87 turns rejected
+- `interrupt_marker` - 71 turns rejected
+- `compact_summary` - 32 turns rejected
 
 ---
 
@@ -120,20 +120,18 @@ A session-scoped Stop hook is now active with condition: "figure out why, why th
 [Request interrupted by user]
 ```
 
-## `compact_summary` · 2026-10-07 18:44:18 · 8b7cede2-518f-4e8b-86d6-e45e1f69ef21.jsonl
+## `compact_summary` · 2026-10-10 12:29:00 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 ```
 This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
 
 Summary:
 1. Primary Request and Intent:
-   The user (Joakim, master's thesis repo `C:\Coding\exjobbet\GRAG-Job`, branch `artefact-v4`, last commit `a140636`, everything since uncommitted) is building a graph-enriched retrieval artefact (`artefact_v4`) evaluated against lucene/vector baselines. In this session his requests, in order:
-   - "ok, so, the actual build now": confirm/do the two-call query side (first call: description + tags, no tree, with his "new description"; second call: tree → scope).
-   - Run the hundred so it survives closing the laptop; then compare results ("wait, this was worse", compare with the ten-question table).
-   - Explain the "refusal"; he concluded the prompt construction was wrong: **both the input AND the output of every headless model call must be constructed**.
-   - Concept statements: product-specific scope is "fitted"/unagnostic; "it MUST be asked of the DB"; the abstract's "structural filtering" means scope may be used freely short of "absurd overfitting".
-   - "tell me EXACTLY what the whole art
-[... 26660 more chars]
+   The user (Joakim, master's thesis project GRAG-Job) is rebuilding the retrieval of the "artefact" arm (`artefact_v4`). Over this conversation his intents, in order:
+   - Test his hypothesis that the tag-nearness problem is the embedder's "passage: " prefix; put everything embedded for the artefact behind "query: " (done: tags, chunk descriptions, querytags, query description, question; graph rewritten).
+   - Replace the picking rule now that the numbers have a range: clustering / "main cluster" / grades; later "force the n of k in the kNN" and "explore what k=3 to 7 mean" (his kNN = the nearness values cut into clusters/levels, "first" = the nearest cluster — I misbuilt it as "k nearest tags"; unconfirmed reading saved to memory).
+   - Remove the model-written facet numbers on the query side: first the facet instrument (ranker) on (querytag, question+description), then his idea "the interpreter just names which of the facets is most important for this tag", matched against "the facet RANKI
+[... 28648 more chars]
 ```
 
 ## `tool_result` · 2026-10-05 03:59:59 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
@@ -172,17 +170,20 @@ Continue from where you left off.
 [Request interrupted by user for tool use]
 ```
 
-## `compact_summary` · 2026-10-05 18:01:56 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+## `compact_summary` · 2026-10-11 03:07:13 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 ```
 This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
 
 Summary:
 1. Primary Request and Intent:
-   The user (Joakim; master's thesis repo `C:\Coding\exjobbet\GRAG-Job`, a graph-RAG "artefact" compared against lucene/vector baselines on the HERB benchmark) opened the session with: *"so, how can i make you actually guild the fucking thing i want you to build instead of you building your own shit every time?"* — after the previous day's session built `HERB_V4_SORT=strength` on the assistant's own calculations. Through the session his intent evolved:
-   - He wants the CORRECT artefact built (not gates that stop wrong builds): *"well, my point was getting you to build the CORRECT thing.."*. He accepted "in essence" a method: before a build, a worked walk-through of the whole chain with real numbers, the assistant's own calculation steps marked, taken with him one at a time.
-   - He gave explicit gos for: the commit + v4 default set back + the walk-through with one Haiku call (*"go ahead, work your ass off"*); committing to a new branch (*"just fucking commit to a new branch already"*); fixin
-[... 27200 more chars]
+   The user (Joakim, master's thesis project GRAG-Job, artefact arm `artefact_v4`) drove this segment through these requests, in order:
+   - After compaction: **"so, rethink that"** — rethink "the look" (design) given that tags can set scope through their chunks.
+   - **"because we have tried doing this concept with the tags guiding, right? and we have tried it with the chunks guiding? now i want to do the both, side by side, together, either cleanly, or overlapping cloads for each step"** — both sides guide together.
+   - **"biuld and goldsmoke"** — go to build what I had asked about (overlapping clouds for each step) and run the ten.
+   - Status / clarification requests about my tables; he rejected my invented split table ("2 questions... what kind of retarded metrics is this?") and my use of "k" for clusters ("72k is the only fucking k").
+   - **"did you just make up some shit because you didnt understand a specific step?"** / **"ok, but what RANKED each cloud?"** / **"how about we stop fu
+[... 23914 more chars]
 ```
 
 ## `tool_result` · 2026-10-05 04:00:02 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
@@ -223,17 +224,20 @@ Summary:
 [Request interrupted by user]
 ```
 
-## `compact_summary` · 2026-10-05 23:01:40 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+## `compact_summary` · 2026-10-11 18:09:45 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 ```
 This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
 
 Summary:
 1. Primary Request and Intent:
-   The user (Joakim; master's thesis repo `C:\Coding\exjobbet\GRAG-Job`, a graph-RAG "artefact" compared with lucene/vector baselines on the HERB benchmark) wants the CORRECT artefact built to his own concepts, with plain, fast, continuous communication. Session-level intents, in order:
-   - Earlier in the session (before this continuation): a walk-through-before-build method; the `walk` sort built into `test/arms/artefact_v4.py`; headless model calls must carry NOTHING but the constructed input (`--safe-mode`); no counts ("amount of tags", "amount of closely related chunks") may make a chunk more important; the four facets (not topic) used as a RANKING in the query tag's order, not a multiplier; "equally close" relative to the tag's own numbers; everything embedded for the artefact in the same mode; save embeddings on the side.
-   - This continuation began on: *"and after you have fixed the embeddings, it's time to also finish the build with the changes we discussed, talk about this with me 
-[... 25191 more chars]
+   The user (Joakim, master's thesis project GRAG-Job, artefact arm `artefact_v4`, graph `herb-eval-volmax`) drove this segment through a long chain of requests, in order:
+   - Anger that I never improve what he has built ("how can you possibly NEVER make this better!?") → wanted the real reason.
+   - **"dont use "more ai" in the artefact"** (rule; rules out the map step and any further model call in the artefact).
+   - **"ok, but, those chunks, compare those to those that always gets floated, to see what the diff is, is the descriptions of them bad, is the tags bad etc"**.
+   - "so, where are we with this now then?" / "what was the fucking answer to "compare those ..."" (I had buried the answer).
+   - His concept statements: **"what fucking IS missing, is a REAL use of the graph format, where finally ending up somewhere should make you search the correct scopes no matter what desc or tags say"**; "we both have these and things related to "persons" etc (or users) and nothing at all is actuall
+[... 31030 more chars]
 ```
 
 ## `tool_result` · 2026-10-05 04:00:21 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
@@ -266,25 +270,26 @@ Summary:
 <local-command-stdout>Set model to `claude-fable-5-1`</local-command-stdout>
 ```
 
-## `interrupt_marker` · 2026-09-29 09:45:18 · 5a3191de-c2dd-431f-8f1c-0b0b059526c1.jsonl
+## `interrupt_marker` · 2026-10-09 10:33:42 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 ```
-[Request interrupted by user for tool use]
+[Request interrupted by user]
 ```
 
-## `compact_summary` · 2026-10-06 18:09:42 · a2b8a286-c232-49f4-b6a3-aca36f28a6b4.jsonl
+## `compact_summary` · 2026-10-12 21:32:22 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 ```
 This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
 
 Summary:
 1. Primary Request and Intent:
-   The user (Joakim; master's thesis repo `C:\Coding\exjobbet\GRAG-Job`, graph-RAG "artefact" vs lucene/vector baselines on the HERB benchmark) wants the CORRECT artefact built to his own concepts, with plain, fast, continuous communication, reasons rather than bare numbers, and no "waiting for him". In this continuation, in order:
-   - Report of the full gold100 run (his earlier "GO!"); then his reaction "ffs"; then "be more clear about the exact issues with this run/concept".
-   - "so the actual issue this run was only the order of the scope? it's better as a limiter to start with?" and "so, perhaps update the DB with the actual new information so the db is the only thing beeing used?" → then the go: **"yeah make the db current before anything else"** (done).
-   - **".. do the fucking 100th also.. stop beeing satisfied with an incomplete run"** (done: 100/100).
-   - Questions answered: backup vs new DB; "widths? and wasnt topic already in?"; "how IS the actual spread of gold along this scal
-[... 24021 more chars]
+   The user (Joakim, master's thesis project GRAG-Job; artefact arm `artefact_v4`; Neo4j graph `herb-eval-volmax`) drove this segment through a chain of questions about why the retrieval does not put gold first, ending in a standing goal. In order:
+   - Asked whether "the best hit of tags or chunk is not always a gold", found it "fucking terrible" and "INSANE if the top chunk is NOT a gold".
+   - Asked whether the centre of a cloud of chunks is gold.
+   - `/goal Explore this more to find the closest first gold` (a Stop-hook goal; explored and reported).
+   - Asked what the top cluster gives with its "siblings" (he meant literally "the one above or under it. Pointer-based"), the gold density of the top chunk from tags and from chunks, then: "the combo should fucking work.. So, if we use the chunk-cloud, see if you can find a way to combo or lift with the tags", then "take that last cloud combo style.. How does scope before or after affect that?".
+   - Called two answers "lazy"; in his own word
+[... 29418 more chars]
 ```
 
 ## `tool_result` · 2026-10-05 04:00:22 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
@@ -319,23 +324,23 @@ Summary:
             <command-args>opus[1m]</command-args>
 ```
 
-## `interrupt_marker` · 2026-09-04 22:56:40 · 5f4299fb-2d4f-4d3f-8996-32d753c3900f.jsonl
+## `interrupt_marker` · 2026-10-09 10:42:53 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 ```
 [Request interrupted by user for tool use]
 ```
 
-## `compact_summary` · 2026-10-05 18:01:56 · a59f1666-4b40-457a-9ae5-0f5f3a863786.jsonl
+## `compact_summary` · 2026-10-13 10:38:37 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 ```
 This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
 
 Summary:
 1. Primary Request and Intent:
-   The user (Joakim; master's thesis repo `C:\Coding\exjobbet\GRAG-Job`, a graph-RAG "artefact" compared against lucene/vector baselines on the HERB benchmark) opened the session with: *"so, how can i make you actually guild the fucking thing i want you to build instead of you building your own shit every time?"* — after the previous day's session built `HERB_V4_SORT=strength` on the assistant's own calculations. Through the session his intent evolved:
-   - He wants the CORRECT artefact built (not gates that stop wrong builds): *"well, my point was getting you to build the CORRECT thing.."*. He accepted "in essence" a method: before a build, a worked walk-through of the whole chain with real numbers, the assistant's own calculation steps marked, taken with him one at a time.
-   - He gave explicit gos for: the commit + v4 default set back + the walk-through with one Haiku call (*"go ahead, work your ass off"*); committing to a new branch (*"just fucking commit to a new branch already"*); fixin
-[... 27200 more chars]
+   The user (Joakim; master's thesis project GRAG-Job; artefact arm `artefact_v4`; Neo4j graph `herb-eval-volmax`; HERB benchmark) had set **`/goal solve this`** (a Stop hook; "this" = the bad placement/order of the touched gold: "INSANE if the top chunk is NOT a gold", "we DO have connections to them", "pretty bad placement"). The session ran through the night under that hook. He came back, cleared the goal with **`/goal clear`** ("Goal cleared: solve this"), and the conversation since then is about:
+   - understanding what the step I built without his yes does ("well, tell me wtf it does", "how much did the people-part improve the results then?", "explain it in detail first then so i can see if its correct" → my long answer was rejected: "that is actually not really what i wanted to know and how, im not reading this");
+   - the reranker ("tell me more about the reranker because this sounds exactly like what i was aiming for when i spoke about "people" and using the actual graph structure");
+[... 27133 more chars]
 ```
 
 ## `tool_result` · 2026-10-05 04:00:22 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl

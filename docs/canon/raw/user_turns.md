@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-1875 turns, chronological. Verbatim text; no edits.
+2158 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -15889,15 +15889,15 @@ what was the other clustering thing we were going to test then?
 
 do we have scope in current?
 
-## 2026-10-08 21:55 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-08 21:55 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 lets build nr 1
 
-## 2026-10-08 22:43 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-08 22:43 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 ok, i am pretty fucking sure that what i expected was not built now.. you DO understand that you just cannot fucking keep using the exact same shit in the build and then be "aaw man, told you its worse"
 
-## 2026-10-08 22:44 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-08 22:44 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 dude what? were you not here for entire fucking conversation? you DO have the transcript here right?
 
@@ -15917,15 +15917,15 @@ are you saying you have actually built it all correctly now, but not ran it?
 
 yeah, thats fine, go ahead then, i you feel that this is finally academic-worthy and we also get all analytics , go ahead and run them
 
-## 2026-10-08 23:06 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-08 23:06 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 so, whats the best recall we have had so far?
 
-## 2026-10-08 23:10 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-08 23:10 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 how about this then, first tags, then clustering on them, THEN check the scope on all tags (becase then we only have "relevant tags" meaning we only have relevant scope, so we can take the scopes of the greatest cluster(s)? and then after that, we do the facets sorting
 
-## 2026-10-08 23:10 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-08 23:10 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 i just came up with a new idea, ofc its fucking "not the same as we ran.."
 
@@ -15937,15 +15937,15 @@ are you actually retarded now? if you cant handle clean answers, stop asking suc
 
 yes, they get those fields!
 
-## 2026-10-08 23:16 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-08 23:16 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 so, what did you NOT use this turn?
 
-## 2026-10-08 23:27 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-08 23:27 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 ...soo
 
-## 2026-10-08 23:35 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-08 23:35 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 what is recall?
 
@@ -15957,15 +15957,15 @@ completed and corrrect?
 
 done
 
-## 2026-10-09 06:57 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 06:57 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 so where are we at now then?
 
-## 2026-10-09 08:11 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 08:11 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 i mean, so, how DO the facet-ordering actually work now?
 
-## 2026-10-09 09:43 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 09:43 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 ok, feels like something is off here
 
@@ -15981,55 +15981,55 @@ i thought you were done so i slapped the laptop lid down and fell asleep yesterd
 
 no, i meant, while you still have the stats and information since YOU are the conversation.. you can correct the data based on that
 
-## 2026-10-09 10:07 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 10:07 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 isnt the concept supposed to be closeness modified by facets = chosen cluster? and then you fiddle with the internal ranking of that or different stuff like scope?
 
-## 2026-10-09 10:15 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 10:15 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 ok, is the tags faceted from the query then? what is happening with that? how are the facets working? and how much are you making them matter?
 
-## 2026-10-09 10:21 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 10:21 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 .. really? 5 readings 0-1? you are using the method that CLEARLY DID NOT FUCKING WORK, and the reason we had to remake all the fucking tagweights, facetweights and the whole goddamn shebang that has caused this to take 4 months extra.. THAT ISSUE!?.. you used TAHT!?
 
-## 2026-10-09 10:30 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 10:30 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 you have any other actually viable solution for that? perhaps ask the model to, instead of that, give the prio ranking of facets for the entire query, not related to any of its tags, since the tags comes from the query anyway?
 
-## 2026-10-09 10:33 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 10:33 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 build and test this concept also then
 
-## 2026-10-09 10:33 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 10:33 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 wait.. what? "the head was fitted" wtf does that mean=
 
-## 2026-10-09 10:34 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 10:34 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 you know, we DID build that neural net for judding the facets, why the fuck is the model doing that work then?
 
-## 2026-10-09 10:35 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 10:35 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 *queued while an agent was working*
 
 well, maybe we need to very carefully phrase the actual question then
 
-## 2026-10-09 10:41 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 10:41 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 what, it only gets a pair and.. what? based on what.. i ranks them based on WHAT? "a random facet"? "all facets" ? there must be extra words?
 
-## 2026-10-09 10:41 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 10:41 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 +it has a command, no
 
-## 2026-10-09 10:41 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 10:41 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 *queued while an agent was working*
 
 aaaah, cool!
 
-## 2026-10-09 10:42 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 10:42 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 so what we need to carefully make, is the "chunk text" equivalent from the query
 are the made up description good enough?
@@ -16038,48 +16038,48 @@ are the made up description good enough?
 
 all 100 not there?
 
-## 2026-10-09 11:01 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 11:01 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 honestly mate, this:"
 What I would do, and it is my choice: the text is the question followed by the description, as one text, the same two things the second call gets. Before any run, the made-up question's nine querytags scored three ways, against the description, the question, and both, printed beside the model's numbers, so the instrument's readings on these pairs can be seen before anything uses them.
 "
 Say this in a more sensible understandable way
 
-## 2026-10-09 11:10 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 11:10 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 lets try it
 
-## 2026-10-09 11:10 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 11:10 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 no, stop
 
-## 2026-10-09 11:11 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 11:11 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 i meant, lets build it and "try it for real" not "build a bunch of fucking drawn out different tests" just fucking build it and we do a run and check
 
-## 2026-10-09 11:11 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 11:11 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 *queued while an agent was working*
 
 build and 10goldsmoke
 
-## 2026-10-09 11:22 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 11:22 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 well thats atrocious
 
-## 2026-10-09 11:31 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 11:31 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 "as on random letters" ? fucking what?
 
-## 2026-10-09 11:36 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 11:36 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 ok, so, perhaps the "clustering" is choice of tag-sphere, not a cutoff, and then just use scope etc as vertical borders and then only the 72k is the horizontal cut in the end? etc
 
-## 2026-10-09 11:42 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 11:42 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 why is it so fucking dogshit then, why have you nont actually diagnosed why the best score we have gotten is how it is, and why, compared to that, this is shit
 
-## 2026-10-09 11:42 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 11:42 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 *queued while an agent was working*
 
@@ -16093,11 +16093,1322 @@ and the dataset created by this? is it clean, correct, reasonable, actually fuck
 
 Yeah you are focusing on the wrong things, the times etc however, I mean, you can't just have fucking smashed fields with no word or explanation to what they mean..
 
-## 2026-10-09 16:11 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 16:11 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 Wait, what arithmetic that wasn't changed?
 
-## 2026-10-09 16:20 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+## 2026-10-09 16:20 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 Yeah, we hace not decided how to use desc and topic at all now, have we? Desc got reembedded too, right?
+
+## 2026-10-09 16:32 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+So, how do we fix this then?
+
+## 2026-10-09 16:39 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Ok, but, what if we force the n of k in the kNN instead?
+
+## 2026-10-09 16:39 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+You have been doglwgging it, but isn't kNN better? Or random forrest?
+
+## 2026-10-09 16:43 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Well, remove your dogleg and clustering package then for kNN first if all
+
+## 2026-10-09 16:50 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+No the dogleg and the main cluster code are commented out. No?
+
+## 2026-10-09 16:51 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+I can't say a k before we know how it clusters, but 5 for the total amount of k? Or let it explore? I mean, fucking build it and explore what k=3 to 7 mean and give..
+
+## 2026-10-09 17:11 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Do the same, but also do them with  scope first so we can compare each step
+
+## 2026-10-09 17:21 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Don't rerun the other five you fucker..
+
+## 2026-10-09 17:21 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Dude, don't do 5 with no scope.. I'll die from time with this fucking plan of yours
+
+## 2026-10-09 17:23 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Eh.. Is this correct? Wtf did you actually do now?
+
+## 2026-10-09 17:24 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+What?
+
+## 2026-10-09 17:24 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+What the fuck ARE you doing? I am asking you questions..
+
+## 2026-10-09 17:25 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+First of all, HOW do you pick scope first now?
+
+## 2026-10-09 17:26 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+What fucking runs going?
+
+## 2026-10-09 17:26 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Finish
+
+## 2026-10-09 17:27 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Are you cocurrent-running them? Remember that the desktop exist..
+
+## 2026-10-09 17:27 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Dude, stop beeing retsrded and fucking do it better
+
+## 2026-10-09 17:28 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Even the laptop could do that side by side, just fucking RUN
+
+## 2026-10-09 17:28 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+8 minutes!?
+
+## 2026-10-09 17:31 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Just show me the stats dude
+
+## 2026-10-09 17:35 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+I have no idea wtf you say and show me now
+
+## 2026-10-09 17:39 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Nope, still don't fucking understand, what fucking second call, what is even happening Now
+
+## 2026-10-09 18:24 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Yeah I am pretty fucking sure we don't that second call at all based on the concept I suggested..
+
+## 2026-10-09 18:24 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Don't need*
+
+## 2026-10-09 18:55 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+So, what IS the actual solution then?
+
+## 2026-10-09 19:08 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Distill the thoughts
+
+## 2026-10-09 19:30 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+I mean, if closeness, majority = scope, cut, the rank etc..?
+
+## 2026-10-09 19:32 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+No.
+1. We do the tag embedding check, etc.
+2. We check on those and show them what the majority has on their scope stats.
+3. We pick that scope.
+4. We cut everything that isn't fit into that scope.
+5. We actually check the tags, clusters, facets, and all that shit.
+
+## 2026-10-09 19:34 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+I did sure as fuck not mean that a single scope is chosen. If majority of something, BRANCH is chosen,
+
+## 2026-10-09 19:39 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Well, I think the definition maybe should be "parent" or soemthing to make it less fitted for this specific dataset but honestly, I kinda don't give a shit.. A size track tho:Hm, you know what, what if we only ranked the tags by 1 out of the 4 facets? The interpreter doesn't have to rank their tags, it doesn't have to give numbers, it just have to say (which of the facets is most important to this tag for this question) or however we formulate it.. And then matches tags against tags based on that facet, you underhand whag I mean?
+
+## 2026-10-09 19:40 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+Is my idea viable tho? The new one I mean
+
+## 2026-10-09 19:41 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+What fucking facet values?
+
+## 2026-10-09 19:46 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Eh.. What
+
+## 2026-10-09 19:46 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+That is fucking not how it is
+
+## 2026-10-09 19:46 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Have you even read the db?
+
+## 2026-10-09 20:37 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Dude, you have all the fucking information and records at your fingertips.. Don't force me to fucking repeat this shit over and over. But I am talking about the facet RANKINGS on the chunk to tag edges
+
+## 2026-10-09 20:41 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Doit
+
+## 2026-10-10 07:03 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Moved the branch? How?
+
+## 2026-10-10 07:04 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Ok, use the same thing, but for the scope, use the old 2call-combo, or, we'll, how did the "best run" do scope?
+
+## 2026-10-10 07:14 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Why is this worse? Run the good one then..
+
+## 2026-10-10 07:16 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+What are you even talking about now, why and how is there a diff between them, what decides how many is chosen from tags or chunks? It sounds like you have made some thing arbitrary and made up here..
+
+## 2026-10-10 07:17 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+That does super-not sound like what I wanted..
+
+## 2026-10-10 07:18 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+What if chunk desc and their scope sets the first border? Then tags do their thing?
+
+## 2026-10-10 07:22 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Stop, no, I did not mean it like that
+
+## 2026-10-10 07:23 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+It feels like you aggressively misunderstood everything I said
+
+## 2026-10-10 07:26 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+50 was random.. Why not take the first or first 2 kNN clusters or something? Aka making 2 clouds, one based on embedding nearness, and the other, of the same, based on scope, and we take cloudintersection as main scope(s)? Reflect on that
+
+## 2026-10-10 07:26 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+And reason
+
+## 2026-10-10 09:09 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+ah, yes, maybe it IS a mistake in limiting scope..
+
+## 2026-10-10 09:15 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+reason about it
+
+## 2026-10-10 09:17 · 875071ae-3ea3-40bb-8c54-d1ac7cb147ec.jsonl
+
+apparently we need to create a "reflect and reason" skill..  is there one? or have anyone else made one?
+
+## 2026-10-10 10:47 · 875071ae-3ea3-40bb-8c54-d1ac7cb147ec.jsonl
+
+pal mcp sounds intriguing, i have made something similar here, the issue i have had is that when 2 llm argue with eachother, they have a VERY strong tendency to steer way off scope, because none of them are created to actually solve for a solution in some way, they are optimised for engagement..
+
+## 2026-10-10 10:52 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+you reasoned against row on disk...
+
+## 2026-10-10 10:53 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+*queued while an agent was working*
+
+and you literally said "do what you are doing".. ? dude, you just DID that and it was way worse, how the fuck is that a reasonable conclusion to your reasoning then
+
+## 2026-10-10 11:03 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+ok, so, how about this madness then, do as now, but also the opposite.. aka, one side, the tags, are as done, but we ALSO do another side, the desc, then we can both see their separateresults, but also do a run when those two are combined
+
+## 2026-10-10 11:07 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+no, it superfuckingduper does not seem like you understood what i meant at fucking all now when you said that
+
+## 2026-10-10 11:11 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+now you have excluded chunks or tags from both sides.. see, i fucking knew you didnt understand shit
+
+## 2026-10-10 11:19 · d62786c2-e172-4b4f-a488-a5ec14e0346c.jsonl
+
+my whole point was, what was the build we last ran? the last real run
+
+## 2026-10-10 11:29 · 875071ae-3ea3-40bb-8c54-d1ac7cb147ec.jsonl
+
+soo..
+
+## 2026-10-10 11:59 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+so, based on that, how should it look?
+
+## 2026-10-10 12:15 · 875071ae-3ea3-40bb-8c54-d1ac7cb147ec.jsonl
+
+and based on the both intellectual content about this, the actual functions of the llm and more importantly, MY NEED for this function, what is your actual solution then?
+
+## 2026-10-10 12:17 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+"the tags cannot set scope".. oh, cant they? are they not connected to chunks?
+
+## 2026-10-10 12:28 · 875071ae-3ea3-40bb-8c54-d1ac7cb147ec.jsonl
+
+nope, i want it as a skill so i can finish a sentence, statement, whole thing, with /rar meaning 'reflect and reason upon this'.. i was quite certain this was obvious, but that makes it kinda ovbious that both scope and CONTEXTUAL INTELLECT/AWARENESS is highly relevant here
+
+## 2026-10-10 12:30 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+so, rethink that
+
+## 2026-10-10 12:44 · 875071ae-3ea3-40bb-8c54-d1ac7cb147ec.jsonl
+
+apparently is writing skills not something you are actually good at. i shouldnt be surprised by it, because its what you are, but you not understanding how agents/llms work is always hilarious and utterly frustrating to me
+
+## 2026-10-10 12:49 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+because we have tried doing this concept with the tags guiding, right? and we have tried it with the chunks guiding? now i want to do the both, side by side, together, either cleanly, or overlapping cloads for each step
+
+## 2026-10-10 12:53 · 875071ae-3ea3-40bb-8c54-d1ac7cb147ec.jsonl
+
+so, this is the solution? a supermassive textblock will totally make agents do shit correctly, diluted context is the powerplay here?
+
+## 2026-10-10 12:57 · 875071ae-3ea3-40bb-8c54-d1ac7cb147ec.jsonl
+
+and you think this will work?
+
+## 2026-10-10 13:34 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+biuld and goldsmoke
+
+## 2026-10-10 13:37 · 875071ae-3ea3-40bb-8c54-d1ac7cb147ec.jsonl
+
+https://atlan.com/know/llm-reasoning/
+
+## 2026-10-10 14:02 · 875071ae-3ea3-40bb-8c54-d1ac7cb147ec.jsonl
+
+soo
+
+## 2026-10-10 14:02 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+status?
+
+## 2026-10-10 14:25 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+what is this table?
+"
+
+<pasted_content id="823c">
+Mean recall by where the product stood:
+
+k	Alone	With others	Not in the border	Nothing cut
+3	–	0.038	0.000	–
+4	–	0.145	0.000	–
+5	0.598	0.248	0.000	–
+6	0.647	0.285	0.000	0.049
+7	0.505	0.282	0.000	0.024
+</pasted_content id="823c">
+
+"
+
+## 2026-10-10 14:55 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+recall of WHAT? you have numbers there and utterly fucking unclear heading
+
+## 2026-10-10 15:26 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+2 questions... what kind of retarded metrics is this?
+
+## 2026-10-10 16:15 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+so.-- even worse? are you even doing this correct by now? or did you just make up some shit because you didnt understand a specific step?
+
+## 2026-10-10 16:32 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+ok, but what RANKED each cloud?
+
+## 2026-10-10 16:41 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+how about we stop fucking around and fucking aim for the actual finishline here
+
+## 2026-10-10 19:08 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+what are the best runs we have had so far?
+
+## 2026-10-10 20:15 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+This.. Does not look correct, you have missed quite alot of higher scores here..
+
+## 2026-10-10 20:42 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+are you reading that correctly? 72k was supposed to be a pretty much 1 to 1 for them
+
+## 2026-10-10 20:54 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+is it ven possible to get higher score with the artefact then at 72k?
+
+## 2026-10-10 21:12 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+well that, thats as i recall too, thats why i have been hammering so fucking hard on this.. do an independent test and see if you can see a relationship between goldchunks and tags and desc
+
+## 2026-10-10 21:12 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+and scope ofc
+
+## 2026-10-10 21:29 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+yes, but do chunk and tag get the SAME chunks?
+
+## 2026-10-10 21:29 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+k? 72k is the only fucking k
+
+## 2026-10-10 21:29 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+ah, you mean clustering. see.. you made that really fucking confusing'
+
+## 2026-10-10 21:57 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+do the 100 gold, but without the 72k cap
+
+## 2026-10-10 21:58 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+nvm doesnt matter
+
+## 2026-10-10 21:59 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+wait a fucking minute, desc and tags deliver different chunks!? thats fucking amazing
+
+## 2026-10-10 22:00 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+what?
+
+## 2026-10-10 22:10 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+)so, do scope help or an fix any of this? lets pretend that the current baseline is just 50% tags and 50% desc.. first off, is that desc from both quety question and it's desciption? same for tags? is it with facets? also, can our structure or scope help fix this somehow? /goal reason and research until you find an actual viable solution for this (not just shitty comparisons locally), so if you actually find something, implement that, run the 10goldsmoke, if that actually looks better, du the full 100
+
+## 2026-10-11 03:04 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+the fact that you fucking NEVER can improve the shit i have already done seems to be a majestic fucking fault of yours, how can you possibly NEVER make this better!?
+
+## 2026-10-11 03:13 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+dont use "more ai" in the artefact
+
+## 2026-10-11 05:24 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+ok, but, those chunks, compare those to those that always gets floated, to see what the diff is, is the descriptions of them bad, is the tags bad etc
+
+## 2026-10-11 08:32 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+so, where are we with this now then?
+
+## 2026-10-11 08:58 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+what was the fucking answer to "compare those to those that always gets floated … is the descriptions of them bad, is the tags bad"" then!?
+
+## 2026-10-11 09:00 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+so, actually, what fucking IS missing, is a REAL use of the graph format, where finally ending up somewhere should make you search the correct scopes no matter what desc or tags say etc.. ffs
+
+## 2026-10-11 09:14 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+but back  to this: "PR batches: yes, both are bad. A PR batch holds four pull requests, but its description and its tags are written from the last one only (756 of 909 batches). The other three have no description and no tags, so nothing can find them. That is where 122 of the 136 gold PR batches are lost."
+how small are those batches? i mean, dont all "posts" have a pointer in the dataset to the db?
+
+## 2026-10-11 09:26 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+ok, but those you say we cant find.. they ARE found, they are just not FLOATED.. meaning we actually fucking DO find them with the tags etc?
+
+## 2026-10-11 09:43 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+because we both have these and things related to "persons" etc (or users) and nothing at all is actually using the graph
+
+## 2026-10-11 09:54 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+well, what i am thinking is that a "nearest" chunk etc could be used for search-start or search-range for that specific person or whatever pointer etc
+
+## 2026-10-11 10:03 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+how large is a chunk vs pr vs my chunk desc?
+
+## 2026-10-11 10:14 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
++so, what would a clean solution be for this
+
+## 2026-10-11 10:42 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+so, what is most reasonable, making chunks out of them and the whole shebang, or just creating tags for them?
+
+## 2026-10-11 10:42 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+or just see it as a loss? i am thinking perhaps my nearness idea with graphsearch is a play, i mean, we should use the fucking graph somehow..
+
+## 2026-10-11 11:22 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+well, i think we want an agnostic search that, if it's correct chunk, stops there, but if not, actually does a search and semi-deterministically actually find.. wait.. 1 step puts almost all back!?
+
+## 2026-10-11 12:24 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+but is it 1 step from "all" or a specific range of "shitty hits".. like, how close are they
+
+## 2026-10-11 12:41 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+well..
+
+## 2026-10-11 13:11 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+so, no brilliant solutions?
+
+## 2026-10-11 13:49 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+how about you fucking FIGURE OUT a brilliant way then..
+
+## 2026-10-11 14:17 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+i mean, you are getting nowhere, tell me WHY you are getting nowhere, it's like you dont even know where to start and only use the already done shit in the project.. why are you using methods and ideas that are apparently not working? dony you even understand what sphere of thinking this should be?
+
+## 2026-10-11 15:09 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+ah yes, fuck, TIME, we dont have time in the graph!?
+
+## 2026-10-11 15:13 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+should we not check time-nearness both to eachother and to "now" unless time is mentioned in query, then nearness to that? and by that i mean using it as a ranking-weight
+
+## 2026-10-11 15:26 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+status?
+
+## 2026-10-11 15:34 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+so, we are just gonna call this a failure? give up and shoot ourselves?
+
+## 2026-10-11 15:41 · 27294402-a291-45e5-9c4d-c143c995d585.jsonl
+
+ge mig en lista på all containerteknik
+
+## 2026-10-11 15:42 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+which is best?
+
+## 2026-10-11 16:31 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+i mran, sure, whatever, if we take our latest best run, and do that part for scope instead, where does that levave us? do gold smoke
+
+## 2026-10-11 16:42 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Dude, if there are no model call.. Just fucking run it..
+
+## 2026-10-11 16:42 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+Map step, 10-10.. Tell me about this one.
+
+## 2026-10-11 16:46 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+Okay perhaps we can make the scope clouds better. Perhaps we take several clouds. For example if there's a relevance cloud at the top for a specific scope, the combination is scope, and high value is supposed to be a sort of cloud, right? Perhaps we just take several such scope clouds? Or bad?
+
+## 2026-10-11 16:54 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+What was that about the 5 nearest and fewer tags? And doing the cluster clouds could be a combination thing. We could first use both the clouds and then after, still limited by the chosen scope. Or perhaps you do the scope first and then you scope the cloud, meaning the clouds give extra weight to specific areas of the scope while perhaps still in the same branch.
+
+## 2026-10-11 17:16 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+what?
+
+## 2026-10-11 17:16 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+wtf are you talking about?
+
+## 2026-10-11 17:16 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+have we ever done passage-query, pass-pass?
+
+## 2026-10-11 17:17 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+sounds like you are 100% full of bs and litterally forgetting half of what we have done
+
+## 2026-10-11 17:37 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Dude, the microgains you keep nagging about is litterally the fluctuations of ai generation and beside that.. Any change under 0.05 is utterly uninteresting
+
+## 2026-10-11 17:38 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+But you are just trying MY shit over and over..
+
+## 2026-10-11 19:08 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+So the best hit of tags or chunk is not always a gold?
+
+## 2026-10-11 19:11 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+Waiy
+. That's fucking terrible..  Even after all sorting and scope and the whole fucking shit..?
+
+## 2026-10-11 19:20 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Dude, it is INSANE if the top chunk is NOT a gold!
+
+## 2026-10-11 19:24 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+If vi cloud the chunks for example, is the most center of them gold?
+
+## 2026-10-11 21:33 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+what?
+
+## 2026-10-11 21:36 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+and no matter how we cloud, cluster, kNN, rank, order.. the fucking gold is never the median, average, middle, top, best chunk etc?
+
+## 2026-10-12 13:35 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+"Gold chunk in the cloud." It's the most retarded metric I have fucking ever heard.
+
+## 2026-10-12 13:37 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+That's like saying if we pull all hits from the query, one of them will have a gold. No fucking shit, guy.
+
+## 2026-10-12 13:38 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Hm, do, for the top k cluster, what do we get if we take its siblings also?
+
+## 2026-10-12 13:39 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+No I literally meant the one above or under it. Pointer-based
+
+## 2026-10-12 13:49 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+ok, but how is the gold density of the top chunk from the tags and chunks?
+
+## 2026-10-12 14:16 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+But dude, the combo should fucking work.. So, if we use the chunk-cloud, see if you can find a way to combo or lift with the tags
+
+## 2026-10-12 14:27 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Ok, take that last cloud combo style.. How does scope before or after affect that?
+
+## 2026-10-12 14:57 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+You are really beeing as fucking lazy as possible now
+
+## 2026-10-12 16:23 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Yet again:weak ass lazy fucking effort
+
+## 2026-10-12 16:59 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+what are you on about?
+
+## 2026-10-12 17:02 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+no, i wanted a better explanation
+
+## 2026-10-12 19:40 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+well, the fucking reason i keep hammering you, is the fact that you say we actually get about 96% gold in max/total.. that MEANS, the actual chunks ARE touched, just not as well as the other chosen ones, but they ARE still chosen..which fucking means that we DO have connections to them
+
+## 2026-10-12 19:49 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+wait. thats pretty bad placement
+
+## 2026-10-12 19:52 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+you are extremely unkotivated and unhelpful now..
+
+## 2026-10-12 20:04 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+soo..
+
+## 2026-10-13 04:37 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+whats happening?
+
+## 2026-10-13 04:38 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+well, tell me wtf it does
+
+## 2026-10-13 04:40 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+stop this now
+
+## 2026-10-13 04:42 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+stop stop stop stop
+
+## 2026-10-13 04:43 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Nice, ok, so, tell me more about the reranker because this sounds exactly like what i was aiming for when i spoke about "people" and using the actual graph structure
+
+## 2026-10-13 04:45 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+ok, how much did the people-part improve the results then?
+
+## 2026-10-13 04:46 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+ok, explain it in detail first then so i can see if its correct
+
+## 2026-10-13 10:15 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Well, that is actually not really what i wanted to know and how, im not reading this
+
+## 2026-10-13 10:19 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+ok, but, if you add nearness by time and posts the same author is part of, limited by scope, how does it look then?
+
+## 2026-10-13 10:24 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+no, near in tame from the SAME conversation if you understand
+
+## 2026-10-13 10:25 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+its the fucking COMBO of those thing
+at the same time
+
+## 2026-10-13 10:29 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Well, this sounds like you beeing a lazy cunt i all dimensions
+
+## 2026-10-13 10:37 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+300 unused? wtf are you talking about?
+
+## 2026-10-13 10:46 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+how about not 300.. thats alot..
+
+## 2026-10-13 11:09 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+but for example, if a chunk gets a good hit, are the related in time and person chunks better based on timenearness AFTER the first chunk, or "nearness around" or "before" ?
+
+## 2026-10-13 11:19 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+also, does tthis perhaps apply to the "next /previous chunk" situation?
+
+## 2026-10-13 11:45 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+ok, so, now it's just fucking getting messy again..
+
+## 2026-10-13 12:57 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Soo..
+
+## 2026-10-13 20:21 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+So, go back to the latest actual working version I MADE, which one is that, how does it look, what does it do?
+
+## 2026-10-13 20:38 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+oh yeah, how is it going with that concept, the rank/value/whatever from the queryfacets, how are they used?
+
+## 2026-10-13 22:25 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+how do we make them work then?
+
+## 2026-10-14 07:17 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+What fucking values, we did a ranking on them, check if the RANKING is meaningful
+
+## 2026-10-14 08:09 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+What the fuck does this mean? "it says nothing once the kind of record is the same"?
+
+## 2026-10-14 08:12 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+And what is coming from the query to match it against then?
+
+## 2026-10-14 08:49 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Wtf are you even saying dude, and what did you even test?
+
+## 2026-10-14 15:28 · 27294402-a291-45e5-9c4d-c143c995d585.jsonl
+
+ajo, men container som man är ute efter till den här frågan:
+"
+
+<pasted_content id="a109">
+Har du aktuell erfarenhet av att arbeta med containerteknik? exempelvis genom studier eller egna projektObligatorisk!
+Ja
+Nej
+
+Om ja, beskriv kort vilken/vilka tekniker du arbetat med och på vilket sätt du inhämtat din erfarenhet. (Om nej, ange X).Obligatorisk!
+</pasted_content id="a109">
+
+"
+
+## 2026-10-14 17:45 · 27294402-a291-45e5-9c4d-c143c995d585.jsonl
+
+retry
+
+## 2026-10-14 18:11 · 27294402-a291-45e5-9c4d-c143c995d585.jsonl
+
+"utforskat det i ett par projekt där vi deployat till google cloud och aws via kubernetes och helm"
+
+## 2026-10-14 18:11 · 27294402-a291-45e5-9c4d-c143c995d585.jsonl
+
+nä det var buckets osv för computer science "big data" var kursen
+
+## 2026-10-14 18:12 · 27294402-a291-45e5-9c4d-c143c995d585.jsonl
+
+hade också distributed computing där vi gjorde lite sådant
+
+## 2026-10-14 18:13 · 27294402-a291-45e5-9c4d-c143c995d585.jsonl
+
+ok, inget microsoft?
+
+## 2026-10-14 18:13 · 27294402-a291-45e5-9c4d-c143c995d585.jsonl
+
+vad är aks?
+
+## 2026-10-14 18:14 · 27294402-a291-45e5-9c4d-c143c995d585.jsonl
+
+så om man kör k8 och helm från windows, så använder man aks?
+
+## 2026-10-14 18:15 · 27294402-a291-45e5-9c4d-c143c995d585.jsonl
+
+okay men hyper-v och vmware räknas inte alls?
+
+## 2026-10-14 18:22 · 27294402-a291-45e5-9c4d-c143c995d585.jsonl
+
+wsl2, är det emulator bara?
+
+## 2026-10-14 22:06 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+ok, but can it instead actually be a good scope-deteministic instead then?
+
+## 2026-10-14 22:38 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+i mean, the facets were never supposed to carry the whole weight themselves, they are supposed to influence the already existing relationship for chunks and tags so to speak, you understand?
+
+## 2026-10-14 22:40 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+do they really have to influence the top chunk?
+
+## 2026-10-14 23:50 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+how about, instead of beeing a slow stubborn fucking cunt about it, you find a creative clever way of actually using those facets in a meaningful way
+
+## 2026-10-15 00:09 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+well, that sounds like fucking bullshit.. ". They tell whether a tag link between two chunks is real, meaning the tag has the same function in both. Same-function links lead to cited chunks twice as often, and that holds inside one kind of record.".. how the fuck can this not be relevant, and how do you mean it already holds it.. are those chunks always floated up you mean?
+
+## 2026-10-15 15:51 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+you have made up a term here and not told me the fucking description of it.. "Same-function links"
+
+## 2026-10-15 15:55 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+ok, but you keep giving them fucking values all the time, its a RANKING system.. so, jsut fucking try using the actual rank relationships?
+such as.. when that happens, compare to other chunks that tag has etc, is there a correlation to the rank of the facet and the good chunks vs bad ETC
+
+## 2026-10-15 15:59 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+eh, did you understand that correctly? it kinda sounds like you did not say what i meant at all..
+
+## 2026-10-15 16:36 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+how about you read wtf i said instead
+
+## 2026-10-15 16:37 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+wait.. are you saying the ranks does not matter AT ALL? wtf?
+
+## 2026-10-15 17:56 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+ok, so, if we first rank all chunks from the chosen tags via the facets, THEN we chose chunks or cloudoverlap with that from desc.. what do we get?
+
+## 2026-10-15 17:56 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+dont be lazy.. actually do it
+
+## 2026-10-15 18:11 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+honestly, i cant read anything you write anymore, everything is too much, stop fucking spamming me with unimportant information
+
+## 2026-10-15 18:20 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+back to the fucking idea i was talking to you about
+
+## 2026-10-15 18:26 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*paste / file drop · 1592 chars*
+
+no, this part: "
+
+<pasted_content id="823c">
+You are right. I made that up and never defined it. Here is exactly what it was.
+
+Every edge from a tag to a chunk has a place in each of the four facet rankings (temporal, why, activity, concreteness), from 0 at the bottom to 1 at the top. For each edge I took the facet in which that edge stands highest of its four. I called that facet the tag's "role" on that edge, and topic was left out.
+
+A "same-function link" was then two chunks that carry the same tag, where that highest facet is the same on both edges. Say the tag "login bug" on chunk A stands highest in temporal. If it also stands highest in temporal on chunk B, the link counts as same-function. If on B it stands highest in why, the link counts as different.
+
+That is the only thing behind the numbers:
+
+From what the arm delivers, chunks reached through a tag whose highest facet matches on both edges hold a cited record 5.7% of the time.
+Chunks reached only through tags whose highest facet differs hold one 2.8% of the time.
+The word "function" comes from your thesis sentence that the same tag name can have a different analytic function depending on context. Reading that function as "the facet the edge stands highest in" is my own choice, not yours.
+
+
+
+ok, but you keep giving them fucking values all the time, its a RANKING system.. so, jsut fucking try using the actual rank relationships?
+such as.. when that happens, compare to other chunks that tag has etc, is there a correlation to the rank of the facet and the good chunks vs bad ETC
+</pasted_content id="823c">
+
+"
+
+## 2026-10-15 18:37 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+dude, find the fucking actual use for the facets..
+
+## 2026-10-15 18:38 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+can you cluster their ranknearness? a combo of clusters? anything, do an actual real fucking check for it
+
+## 2026-10-15 18:44 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+fuck it, then , you are obviously not giving a single fuck about this
+
+## 2026-10-15 19:51 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+no, you are to find the most realistic and best adaptation/solution that kinda matches the newest abstract
+
+## 2026-10-15 19:58 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+well, build and explore the effect
+
+## 2026-10-15 21:26 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+you litterally just did the same shit as you did before. .again.. wtf
+
+## 2026-10-15 21:27 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+there is no goddamn fucking way you would get the EXACT same result else
+
+## 2026-10-15 21:33 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+but dude, are you only building this against non-model call interpretation? there is a fucking point in the fact that there are models judging this
+
+## 2026-10-15 21:35 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+or, you know.. take 10.. with and without facets.. but that doesnt matter if you keep doing a retarded implementation of the facets
+
+## 2026-10-15 21:39 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+"The query side: your net reads each query tag against the question and the description. That gives each query tag its own order of the four facets, and no model writes a number." i dont think this is a good idea, this will overweight these tags..
+
+## 2026-10-15 22:36 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+i mean, the net can "rank them" but something should also say "how important the facet conecpt is for the question/tag" etc.. ish.. like, a "yeah, pretty important" to, nope, not at all.. so the ranking amongst them can have some sort of pointers. i am not sayoing it should happen exactly like that, but do you understand what i mean when i say it like that?, we somehow need to put the relative relation there too, not just "yeah, its the most important facet of all the tags here" but what if it's still quite fucking unimportant, just so happens thats its even less important for the others..
+
+## 2026-10-15 22:40 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+"My 5 levels" ? what fucking levels..
+
+## 2026-10-15 22:50 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+go on
+
+## 2026-10-15 23:08 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+dude, what the fuck is wrong with you, YOU CANNOT FORCE THEM TO TRY AND CHANGE THE FUCKING ORDERS.. why are you trying to force them to do that fucking job all the goddamn time!?
+
+## 2026-10-15 23:20 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+not my fucking point at all dude
+
+## 2026-10-15 23:20 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+'
+
+## 2026-10-15 23:22 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+no and now you are just fucking making me angry instead, back to the goddamn fucking conversation we have had several times already
+
+## 2026-10-16 00:00 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+talk about missing my point herer, that A D you did a fucking "job" instead..
+
+## 2026-10-16 00:32 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*paste / file drop · 4630 chars*
+
+i mean this part:
+"
+
+<pasted_content id="823c">
+well, that sounds like fucking bullshit.. ". They tell whether a tag link between two chunks is real, meaning the tag has the same function in both. Same-function links lead to cited chunks twice as often, and that holds inside one kind of record.".. how the fuck can this not be relevant, and how do you mean it already holds it.. are those chunks always floated up you mean?
+2:10 AM
+No, they are not always floated up. "Already holds it" was wrong of me. Two things are true, and they explain why twice as often does not move the score.
+
+Twice as often is twice a small number. Outside what the arm delivers, the same-role links reach about 69 chunks a question, and 5.7% of them hold a cited record. That is about 4 a question. Those are the right chunks to want, but they are 4 among 69, and the link alone does not say which 4. To bring them into the 72,000, the arm would have to drop chunks it already delivers, which hold a cited record about one time in five, for chunks that hold one about one time in eighteen.
+
+And my test inside the arm could not bring them in anyway. It only reordered chunks inside a step, so a tied chunk in a low step stayed low. It changed the order on four questions.
+
+So the links point to where the missed records are, but not sharply enough on their own. What could make them useful is something that picks inside them: the chunks a link reaches, ordered by the descriptions and the tags. I am counting now where the reached cited chunks sit in the arm's order, and whether that order picks them out. No model call.
+
+
+
+2:19 AM
+Here is where it lands, plainly.
+
+The facets do something meaningful. They tell a real tag link from an incidental one. Same-function links lead to cited chunks twice as often, also inside one kind of record. Inside the arm, keeping the role is what decides whether the structure helps or hurts: with the people pointer it breaks even (−0.001) where ignoring the role loses (−0.013).
+
+The structure knows where the missing records are. From what the arm delivers, the same-function tag links reach 4 of the 5.7 cited chunks a question that the arm misses. The tag links and the people's line together reach 2.2 of them within 18 chunks.
+
+It does not yet pick them out. Put into the order after the hits, the reached chunks swap with chunks the arm would have delivered that are cited about as often. 13 questions go up and 12 go down, so the total stays at 0.645 against 0.646.
+
+My test of when to search failed. The rule was: trust the start if the first chunk is tied to another hit, search if not. At chunk level almost every first chunk is tied (90 of 100), so it searched only 10 questions, and those went 1 up and 4 down.
+
+So the open piece is not the facets. It is a rule, with no gold in it, that tells which questions need the search. On the 25 questions that move, the swings are large in both directions, so a rule that told them apart would show.
+
+
+
+you have made up a term here and not told me the fucking description of it.. "Same-function links"
+5:51 PM
+You are right. I made that up and never defined it. Here is exactly what it was.
+
+Every edge from a tag to a chunk has a place in each of the four facet rankings (temporal, why, activity, concreteness), from 0 at the bottom to 1 at the top. For each edge I took the facet in which that edge stands highest of its four. I called that facet the tag's "role" on that edge, and topic was left out.
+
+A "same-function link" was then two chunks that carry the same tag, where that highest facet is the same on both edges. Say the tag "login bug" on chunk A stands highest in temporal. If it also stands highest in temporal on chunk B, the link counts as same-function. If on B it stands highest in why, the link counts as different.
+
+That is the only thing behind the numbers:
+
+From what the arm delivers, chunks reached through a tag whose highest facet matches on both edges hold a cited record 5.7% of the time.
+Chunks reached only through tags whose highest facet differs hold one 2.8% of the time.
+The word "function" comes from your thesis sentence that the same tag name can have a different analytic function depending on context. Reading that function as "the facet the edge stands highest in" is my own choice, not yours.
+
+
+
+ok, but you keep giving them fucking values all the time, its a RANKING system.. so, jsut fucking try using the actual rank relationships?
+such as.. when that happens, compare to other chunks that tag has etc, is there a correlation to the rank of the facet and the good chunks vs bad ETC
+</pasted_content id="823c">
+
+"
+
+## 2026-10-16 00:49 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+ok, but isnt this relevant for the edgecases? the less targeted ones?
+
+## 2026-10-16 01:10 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+soo..?
+
+## 2026-10-16 01:21 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+it still sounds like this could be used for a better scope..
+
+## 2026-10-16 01:21 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+how is people etc used now then?
+
+## 2026-10-16 01:30 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+so tags + facets and desc + scope do give the same shit?
+
+## 2026-10-16 01:33 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+ok, fuck it, how can we use them according to the abstract and not be lying cunts?
+
+## 2026-10-16 04:26 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Really.. Nothing..?
+
+## 2026-10-16 11:03 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+thats not really true tho, the relationship should still be able to find related chunks through graph, like via scope, time, people/users, project/query etc
+
+## 2026-10-16 12:16 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+why are you starting on a "wrong hit" ?
+
+## 2026-10-16 12:27 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+wait a minute.. you say this also "The new test shows the graph's people-and-time relation working inside the arm's own delivery, on both hundreds. Take the delivered texts that the same people's timeline ties to another delivered text. They hold a cited record clearly more often than the rest, about one and a half to two times as often." this is worth digging into way more
+
+## 2026-10-16 12:29 · ceefc0bd-d55c-4721-b8ce-b6b9a0f6e8b3.jsonl
+
+so, i want to try and see what result we would get from the artefact if we used the vector instead.. meaning, same shit more or less, aka vector + scope + query-concepts.. do you understand what i mean by saying that? explain
+
+## 2026-10-16 12:29 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+i wanted a conversation...
+
+## 2026-10-16 12:36 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+Yes! The answer to a question, is always a type of storyline, ALL evidence for a single retrieval/query, is always a storyline, they are ALWAYS connected somehow, and that is based on the query, so the artefact's (and all querytools ever i assume..) job, is desciphering that exact relationship shape, correct?
+
+## 2026-10-16 12:37 · ceefc0bd-d55c-4721-b8ce-b6b9a0f6e8b3.jsonl
+
+*queued while an agent was working*
+
+what, no answer?
+
+## 2026-10-16 12:52 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+i mean, a chain, a tree, a graph.. whatever dude, the point is, that its connected
+
+## 2026-10-16 12:52 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+*queued while an agent was working*
+
+so, can we deterministically determine that shape from the query based on all we have in the arm and graph? or do we need the agents help wirth it?
+
+## 2026-10-16 12:53 · ceefc0bd-d55c-4721-b8ce-b6b9a0f6e8b3.jsonl
+
+fuck it, drop the artefact, i thought it would help you understand but i am an idiot..
+
+## 2026-10-16 12:55 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+wait a fucking minute.. the tags are taken from the whole chunk-text correctly? but the description is only taken from one part of the chosen text?
+
+## 2026-10-16 13:00 · 8ac1c5a8-7323-45cd-82a5-77c5360c4e6a.jsonl
+
+dude, the format of the outputs you think you have given me, when its broken up by "work you do" it fucking atrocious.. we need a better solution to that, sure, write it out as it comes i guess, but you really need to write it all together when you have "finished", including your reasoning for the steps you took
+
+## 2026-10-16 13:01 · 9442df78-79a1-4043-bcb3-5c6ba4c0bcb7.jsonl
+
+dude, the format of the outputs you think you have given me, when its broken up by "work you do" it garbage.. we need a better solution to that, sure, write it out as it comes i guess, but you really need to write it all together when you have "finished", including your reasoning for the steps you took
+
+## 2026-10-16 13:01 · 9442df78-79a1-4043-bcb3-5c6ba4c0bcb7.jsonl
+
+so.. i cant ask about your reasoning? thats the issue?
+
+## 2026-10-16 13:01 · 812abc06-ccf9-4614-83b5-e691adf71405.jsonl
+
+dude, the format of the outputs you think you have given me, when its broken up by "work you do" it fucking atrocious.. we need a better solution to that, sure, write it out as it comes i guess, but you really need to write it all together when you have "finished", also explain the steps you took
+
+## 2026-10-16 13:12 · 812abc06-ccf9-4614-83b5-e691adf71405.jsonl
+
+did you jsut give me the entire fucking conversation? i mean after my fucking prompt to your "final answer".. cant you see the actual output you have in this chat?
+
+## 2026-10-16 13:13 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+
+dude, the format of the outputs you think you have given me, when its broken up by "work you do" it fucking atrocious.. we need a better solution to that, sure, write it out as it comes i guess, but you really need to write it all together when you have "finished", also explain the steps you took.. and byt this i mean after my latest prompt to your "final answer"
+
+## 2026-10-16 13:14 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+but you did some digging into it and found that the descriptions only actually cover some parts of the "posts" in the chunk, no?
+
+## 2026-10-16 13:14 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+*queued while an agent was working*
+
+wait a fucking minute.. the tags are only from the last one!?
+
+## 2026-10-16 13:23 · 812abc06-ccf9-4614-83b5-e691adf71405.jsonl
+
+this was my last actual prompt "so, can we deterministically determine that shape from the query based on all we have in the arm and graph? or do we need the agents help wirth it?"
+
+## 2026-10-16 13:25 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+well this seems like a truly critical flaw
+
+## 2026-10-16 13:36 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+i get the feeling you are not diagnosing now but discussing from memory.. if i am to act on this, i near real actual hard data and you need to actually diagnose the exact issue, what needs to be done, how, on exactly what etc
+
+## 2026-10-16 14:10 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+*queued while an agent was working*
+
+status..?
+
+## 2026-10-16 14:13 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+you cannot focus on specific small details in the dataset because you are turbo-overfitting with your thought here
+
+## 2026-10-16 14:14 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+*queued while an agent was working*
+
+what matters is the concept of "each post" and if that makes this a bloated pile of shit or viable
+
+## 2026-10-16 20:59 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+yeah, but making a description and tags from each post can litterally be more content than the actual posts..
+
+## 2026-10-16 21:00 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+*queued while an agent was working*
+
+ok, but fuck it.. how about we keep it slim and clean instead and just let this iteration be what it is, the important part now is getting actual data tp my people, so, what do i need to match the abstract?
+
+## 2026-10-16 21:07 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+wait, you havent ran the vector arm!?
+
+## 2026-10-16 22:16 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+wait. is the vector work done on the desktop?
+
+## 2026-10-16 22:17 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+be more clear with what you actually want from me
+
+## 2026-10-16 23:41 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+2 and 3 i dont even understand wtf you are asking..
+1, how does this work now? is it actually used?
+
+## 2026-10-17 00:02 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+the pointer or hash for a user/person is on the chunks?
+
+## 2026-10-17 00:06 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+wait.. we have the entire scope in the graph.. but.. nothing connected to it..?
+
+## 2026-10-17 00:08 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+wait.. the only thing missing is the edges?
+
+## 2026-10-17 00:12 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+wait..  wtf, you are contradicting and misinforming all the time.. so now the fucking chunks DO have.. what.. "and the records behind each chunk's pointer already name who is involved, by id, in their own fields (author, sender, participant, reviewer or mention" the records behind.. is that the fucking actual dataset yo are talking about now? did you just inform me about the data existing in the dataset? for real?
+
+## 2026-10-17 00:16 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+hm, shouldnt there be a crossover between where users pointer are referencing and the chunks?
+
+## 2026-10-17 00:19 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+so, perhaps persons edges shouldnt go to scope directly, but to chunks instead?
+
+## 2026-10-17 00:23 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+dont overengineer this now for this iteration, i still want to fit the abstract near enough
+
+## 2026-10-17 00:27 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+thats NOT what i said
+
+## 2026-10-17 00:29 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+stop forcing this somewhere ffs. you will fucking notice when i am done discussing it..
+
+## 2026-10-17 00:30 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+"The simple version would be one edge type from an employee to each chunk whose posts name them. It's read from the dataset through each chunk's pointer, with no model call, and comes to about 29,400 edges. Each edge carries the ids of the posts that name that person. That way the hand-over can still keep only a batch's own pull requests." lets discuss this
+
+## 2026-10-17 02:00 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+no, stop fucking around dude
+
+## 2026-10-17 02:20 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+my point just is, stop adding shit beside node -> chunk
+
+## 2026-10-17 02:20 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+*queued while an agent was working*
+
+can THAT be useful still?
+
+## 2026-10-17 02:20 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+*queued while an agent was working*
+
+AND fit the abstract?
+
+## 2026-10-17 02:25 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+well then, rebuild it
+
+## 2026-10-17 02:40 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+ok, so, how do we USE these now then
+
+## 2026-10-17 02:44 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+well i mean, perhaps check all pointers at certain scope based on entities at chosen chunk?
+
+## 2026-10-17 02:52 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+did you interpret that as "full scope" for some fucked up reason now?
+
+## 2026-10-17 02:56 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+parents above product? wtf?
+
+## 2026-10-17 02:57 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+do you not understand the fucking concept of a parent?
+
+## 2026-10-17 02:59 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+well, not even sure if that, at first i think we should use it to find the rest of the conversation frmo the chosen chunk
+
+## 2026-10-17 03:06 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+dude, clean your fucking shit up, how many goddamn things is the fucking artefact actually doing now?
+
+## 2026-10-17 03:25 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+can you fucking focus and stop beeing a messy cunt then?
+
+## 2026-10-17 03:27 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+yes wwe are creating the final clean artefact now
+
+## 2026-10-17 05:44 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+
+home now, check
+
+## 2026-10-17 05:45 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+so, everytime i have an actually new idea, all you say is "the arm already does that"..
+
+## 2026-10-17 06:25 · 535ac183-deec-4fb7-b15a-d78d73d05924.jsonl
+
+time, scope, entities, chunknearness?
 
