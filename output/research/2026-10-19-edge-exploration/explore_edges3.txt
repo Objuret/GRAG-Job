@@ -1,0 +1,65 @@
+1. CHUNK / TAG / PAIR inside each kind (chunk 2+ edges, tag 2+ chunks of that kind; shuffled in brackets)
+  slack_thread_batch: 25331 edges, 2669 chunks, 4003 tags
+    topic         chunk 0.10 (0.13)  tag 0.65 (0.18)  pair 0.30 (0.74)
+    temporal      chunk 0.34 (0.13)  tag 0.48 (0.18)  pair 0.21 (0.74)
+    why           chunk 0.41 (0.13)  tag 0.44 (0.18)  pair 0.14 (0.74)
+    activity      chunk 0.34 (0.13)  tag 0.51 (0.18)  pair 0.19 (0.74)
+    concreteness  chunk 0.45 (0.13)  tag 0.40 (0.19)  pair 0.17 (0.73)
+  document_part: 7322 edges, 530 chunks, 1114 tags
+    topic         chunk 0.07 (0.09)  tag 0.71 (0.17)  pair 0.26 (0.78)
+    temporal      chunk 0.45 (0.09)  tag 0.28 (0.16)  pair 0.24 (0.78)
+    why           chunk 0.13 (0.09)  tag 0.65 (0.18)  pair 0.23 (0.77)
+    activity      chunk 0.25 (0.10)  tag 0.51 (0.18)  pair 0.20 (0.77)
+    concreteness  chunk 0.19 (0.09)  tag 0.65 (0.17)  pair 0.20 (0.78)
+  document: 5222 edges, 256 chunks, 718 tags
+    topic         chunk 0.07 (0.06)  tag 0.77 (0.14)  pair 0.21 (0.81)
+    temporal      chunk 0.19 (0.06)  tag 0.61 (0.15)  pair 0.22 (0.82)
+    why           chunk 0.13 (0.06)  tag 0.73 (0.14)  pair 0.16 (0.82)
+    activity      chunk 0.16 (0.06)  tag 0.73 (0.16)  pair 0.13 (0.80)
+    concreteness  chunk 0.15 (0.06)  tag 0.68 (0.14)  pair 0.13 (0.82)
+  pr_batch: 3844 edges, 918 chunks, 733 tags
+    topic         chunk 0.26 (0.33)  tag 0.57 (0.27)  pair 0.26 (0.58)
+    temporal      chunk 0.51 (0.31)  tag 0.37 (0.27)  pair 0.19 (0.57)
+    why           chunk 0.52 (0.32)  tag 0.37 (0.26)  pair 0.11 (0.58)
+    activity      chunk 0.41 (0.32)  tag 0.41 (0.26)  pair 0.18 (0.57)
+    concreteness  chunk 0.56 (0.33)  tag 0.32 (0.29)  pair 0.14 (0.57)
+  meeting_transcript: 3399 edges, 308 chunks, 705 tags
+    topic         chunk 0.09 (0.10)  tag 0.72 (0.25)  pair 0.22 (0.70)
+    temporal      chunk 0.31 (0.12)  tag 0.50 (0.26)  pair 0.20 (0.70)
+    why           chunk 0.10 (0.11)  tag 0.80 (0.25)  pair 0.12 (0.70)
+    activity      chunk 0.21 (0.12)  tag 0.61 (0.24)  pair 0.13 (0.70)
+    concreteness  chunk 0.12 (0.12)  tag 0.73 (0.25)  pair 0.14 (0.70)
+
+2. TIES BETWEEN THE FACETS inside each kind (Spearman)
+  slack_thread_batch   topi-temp +0.23, topi-why +0.16, topi-acti +0.19, topi-conc +0.31, temp-why +0.22, temp-acti +0.69, temp-conc +0.34, why-acti +0.55, why-conc +0.76, acti-conc +0.57
+  document_part        topi-temp +0.03, topi-why +0.18, topi-acti +0.16, topi-conc +0.38, temp-why -0.04, temp-acti +0.54, temp-conc -0.04, why-acti +0.39, why-conc +0.68, acti-conc +0.51
+  pr_batch             topi-temp +0.09, topi-why +0.23, topi-acti +0.20, topi-conc +0.30, temp-why +0.18, temp-acti +0.67, temp-conc +0.35, why-acti +0.63, why-conc +0.86, acti-conc +0.76
+  document             topi-temp +0.31, topi-why +0.13, topi-acti +0.28, topi-conc +0.34, temp-why +0.28, temp-acti +0.74, temp-conc +0.55, why-acti +0.63, why-conc +0.68, acti-conc +0.81
+  meeting_transcript   topi-temp +0.45, topi-why +0.05, topi-acti +0.39, topi-conc +0.28, temp-why +0.03, temp-acti +0.69, temp-conc +0.23, why-acti +0.38, why-conc +0.72, acti-conc +0.53
+
+3. WHAT GOES WITH EACH FACET inside a kind (Spearman): records in the chunk | chunks the tag sits on | share of the facet the parent (channel, meeting, file) holds, shuffled in brackets
+  slack_thread_batch: topic -0.03 | -0.03 | 0.03 (0.01);  tempo +0.35 | -0.01 | 0.09 (0.01);  why +0.13 | -0.30 | 0.29 (0.01);  activ +0.30 | -0.15 | 0.13 (0.01);  concr +0.06 | -0.20 | 0.31 (0.01)
+  pr_batch: topic -0.11 | -0.20 | 0.02 (0.00);  tempo -0.13 | -0.09 | 0.02 (0.01);  why -0.55 | -0.24 | 0.02 (0.00);  activ -0.35 | -0.16 | 0.02 (0.00);  concr -0.54 | -0.24 | 0.02 (0.00)
+  document_part: topic +nan | +0.03 | 0.03 (0.02);  tempo +nan | -0.09 | 0.08 (0.01);  why +nan | -0.22 | 0.06 (0.01);  activ +nan | -0.21 | 0.11 (0.02);  concr +nan | -0.18 | 0.09 (0.02)
+  meeting_transcript: topic +nan | +0.11 | 0.03 (0.01);  tempo +nan | +0.10 | 0.09 (0.01);  why +nan | -0.34 | 0.05 (0.01);  activ +nan | -0.04 | 0.13 (0.01);  concr +nan | -0.29 | 0.07 (0.01)
+
+4. CLUSTERS inside Slack batches on the within-kind ranks, against a shuffled control
+  BIC fall from one cluster, real | shuffled: 1:0.0k|0.0k 2:3.4k|-0.4k 3:4.4k|-0.6k 4:5.1k|-0.8k 5:5.3k|-1.1k 6:5.7k|-1.3k 7:5.5k|-1.5k 8:5.9k|-1.6k
+
+  3 clusters, agreement between seeds: [0.95, 0.36]
+   0: 18617 edges; middle topi 0.51, temp 0.45, why 0.53, acti 0.48, conc 0.52; records 13; tag on 8 chunks
+      Apache Kafka (236), TensorFlow (139), GitHub (94), PostgreSQL (89), CollaborateForce (89), VizForce (86), Grafana (85), WordPress (78)
+   2: 8633 edges; middle topi 0.69, temp 0.84, why 0.75, acti 0.87, conc 0.78; records 14; tag on 4 chunks
+      bug resolution (177), code review (143), PR approval (98), PR review (74), Technical Specifications Document (74), Product Vision Document (68), pull request (66), Product Requirements Document (63)
+   1: 6894 edges; middle topi 0.22, temp 0.18, why 0.21, acti 0.12, conc 0.14; records 12; tag on 15 chunks
+      Salesforce (216), TensorFlow (126), Kubernetes (81), scalability (61), Django (59), unit tests (58), user experience (53), User Interface (46)
+
+  4 clusters, agreement between seeds: [0.96, 0.98]
+   2: 12878 edges; middle topi 0.47, temp 0.34, why 0.65, acti 0.46, conc 0.60; records 12; tag on 6 chunks
+      Apache Kafka (177), TensorFlow (100), Grafana (80), Kubernetes (70), performance optimization (66), unauthorized access (51), unit tests (50), Elasticsearch (49)
+   0: 8000 edges; middle topi 0.61, temp 0.75, why 0.29, acti 0.59, conc 0.38; records 13; tag on 21 chunks
+      code review (139), pull request (88), documentation (85), CollaborateForce (85), GitHub (73), VizForce (72), KnowledgeForce (65), Product Vision Document (63)
+   1: 6851 edges; middle topi 0.23, temp 0.19, why 0.17, acti 0.12, conc 0.12; records 12; tag on 16 chunks
+      Salesforce (186), TensorFlow (134), Kubernetes (79), unit tests (66), GitHub (62), scalability (61), Django (56), user experience (55)
+   3: 6415 edges; middle topi 0.70, temp 0.82, why 0.85, acti 0.88, conc 0.86; records 14; tag on 3 chunks
+      bug resolution (173), PR approval (95), Technical Specifications Document (62), PR review (55), product direction change (41), bug fix (38), code review approval (34), ExplainabilityForce (34)
