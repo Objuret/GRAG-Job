@@ -54,6 +54,7 @@ for p in (ROOT / 'prod', ROOT / 'test'):
 from artefact import v4_walk as WK  # noqa: E402
 
 FACETS_ON = os.environ.get('FACETS', 'on') == 'on'
+DUMP = os.environ.get('DUMP', 'off') == 'on'   # every edge of a query tag with a facet, for a check outside
 _LOCAL = threading.local()
 _LOCK = threading.Lock()
 _OUT = None
@@ -137,6 +138,10 @@ def adaptive_places(layer, cosines, facet_of, inside):
     q_of = np.full(n, -1, dtype=np.int64)
     edge_of = np.full(n, -1, dtype=np.int64)
     groups = in_groups = moved = 0
+    _LOCAL.dump = [] if not DUMP else [
+        (int(q), int(tag_e[e]), int(kind[chunk_e[e]]), layer['chunk_ids'][int(chunk_e[e])], int(facet_of[q]),
+         [float(x) for x in raw[e, 1:]], int(cl), int(tl))
+        for q, e, cl, tl, _c in items if facet_of[q] >= 0]
     level_chunks = []
     if items:
         arr = np.array([(cl, tl, -c) for _, _, cl, tl, c in items], dtype=np.float64)
@@ -253,6 +258,9 @@ def answer_one_question(question, *a, **k):
     with _LOCK:
         with open(_OUT, 'a', encoding='utf-8') as fh:
             fh.write(json.dumps({'id': question[0], 'facets': FACETS_ON, **_LOCAL.record}) + '\n')
+        if DUMP:
+            with open(Path(_OUT).with_name('dump.jsonl'), 'a', encoding='utf-8') as fh:
+                fh.write(json.dumps({'id': question[0], 'rows': _LOCAL.dump}) + '\n')
     return out
 
 
