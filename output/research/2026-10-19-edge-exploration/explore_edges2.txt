@@ -1,0 +1,45 @@
+  print(f'  {k}: ' + '; '.join(f'{n}: records {spearmanr(R[mk, j], recs[mk]).correlation:+.2f}, '
+A. SHAPE of each facet (raw values)
+  topic         distinct  56302  q01..q99   0.04   0.17   0.24   0.31   0.51   histogram | :*%@#=.    |
+  temporal      distinct  60602  q01..q99  -3.80  -1.85   0.50   1.29   3.06   histogram |  .=-:-@*.  |
+  why           distinct  60559  q01..q99  -2.97  -0.92  -0.02   0.95   3.40   histogram |   :*@%+:.  |
+  activity      distinct  60554  q01..q99  -3.47  -1.06   0.16   0.96   2.50   histogram |  .:=+#@+.  |
+  concreteness  distinct  60543  q01..q99  -3.14  -0.76   0.06   0.86   3.08   histogram |   .=#@+:   |
+
+B. CHUNK / TAG / PAIR, edges whose chunk has 2+ edges and whose tag sits on 2+ chunks
+  50533 edges, 4806 chunks, 6169 tags
+                        chunk           tag   pair (rest)    (shuffled inside kind in brackets)
+  topic          0.12 (0.13)   0.60 (0.14)   0.32 (0.77)
+  temporal       0.75 (0.75)   0.11 (0.04)   0.08 (0.22)
+  why            0.46 (0.33)   0.35 (0.11)   0.15 (0.59)
+  activity       0.59 (0.62)   0.21 (0.07)   0.11 (0.34)
+  concreteness   0.43 (0.17)   0.40 (0.13)   0.22 (0.73)
+  the pair part of one facet against the pair part of another (Spearman):
+   topic          1.00   0.08   0.16   0.15   0.21
+   temporal       0.08   1.00   0.21   0.61   0.31
+   why            0.16   0.21   1.00   0.47   0.71
+   activity       0.15   0.61   0.47   1.00   0.55
+   concreteness   0.21   0.31   0.71   0.55   1.00
+
+C. WHAT ELSE GOES WITH EACH FACET (Spearman inside Slack batches / inside document parts)
+  slack_thread_batch: topic: records -0.03, tag on n chunks -0.03; temporal: records +0.35, tag on n chunks -0.01; why: records +0.13, tag on n chunks -0.30; activity: records +0.30, tag on n chunks -0.15; concreteness: records +0.06, tag on n chunks -0.20
+  document_part: topic: records +nan, tag on n chunks +0.03; temporal: records +nan, tag on n chunks -0.09; why: records +nan, tag on n chunks -0.22; activity: records +nan, tag on n chunks -0.21; concreteness: records +nan, tag on n chunks -0.18
+
+D. CLUSTERS AGAINST A SHUFFLED CONTROL (Gaussian mixture, BIC; the control keeps each facet's spread inside each kind, breaks the ties between facets)
+  all edges: BIC fall from one cluster, real | shuffled:
+   1:0.0k|0.0k 2:12.8k|10.0k 3:23.2k|13.8k 4:24.7k|14.2k 5:27.5k|15.7k 6:31.7k|16.3k 7:32.0k|16.6k 8:33.0k|16.2k 9:35.7k|16.5k 10:35.8k|16.6k
+   bend real 3, bend shuffled 3
+  kind taken out (each ranking less its kind's middle): BIC fall from one cluster, real | shuffled:
+   1:0.0k|0.0k 2:9.6k|6.6k 3:11.4k|10.6k 4:15.8k|10.9k 5:22.1k|12.9k 6:23.6k|13.9k 7:24.7k|13.9k 8:26.2k|14.8k 9:29.8k|15.7k 10:30.2k|15.5k
+   bend real 5, bend shuffled 3
+
+E. THE FOUR CLUSTERS OF ALL EDGES, most frequent tags and seed stability
+  agreement between seeds (AMI): [0.77, 0.94]
+  cluster 3 (26754 edges; middle topi 0.46, temp 0.55, why 0.39, acti 0.54, conc 0.44):
+     TensorFlow (277), Apache Kafka (277), Salesforce (216), unit tests (174), Kubernetes (165), GitHub (134), performance optimization (119), Grafana (115)
+  cluster 0 (14481 edges; middle topi 0.67, temp 0.87, why 0.55, acti 0.88, conc 0.65):
+     sprint review (237), bug resolution (181), code review (158), PR approval (98), Technical Specifications Document (88), Product Vision Document (86), pull request (86), Product Requirements Document (86)
+  cluster 1 (12431 edges; middle topi 0.44, temp 0.13, why 0.82, acti 0.17, conc 0.71):
+     machine learning (174), GDPR (161), data privacy (142), predictive analytics (139), natural language processing (138), finance sector (128), healthcare sector (115), strategic partnerships (102)
+  cluster 2 (7352 edges; middle topi 0.39, temp 0.24, why 0.21, acti 0.15, conc 0.10):
+     Salesforce (202), TensorFlow (87), CCPA (82), GDPR (62), Slack (56), ActionGenie (54), SentimentForce (54), EdgeForce (52)

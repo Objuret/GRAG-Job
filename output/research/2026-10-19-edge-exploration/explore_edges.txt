@@ -1,0 +1,66 @@
+edges 61018 chunks 4808 tags 16654 products 30
+edges per chunk: middle 13.0 edges per tag: middle 1.0 tags on one chunk only 10485
+
+1. SPEARMAN between the five, all edges
+                topic  tempor     why  activi  concre
+  topic          1.00    0.17    0.10    0.19    0.28
+  temporal       0.17    1.00   -0.19    0.83    0.08
+  why            0.10   -0.19    1.00    0.08    0.74
+  activity       0.19    0.83    0.08    1.00    0.32
+  concreteness   0.28    0.08    0.74    0.32    1.00
+  inside slack_thread_batch (34144 edges): topi-temp 0.23, topi-why 0.16, topi-acti 0.19, topi-conc 0.31, temp-why 0.22, temp-acti 0.69, temp-conc 0.34, why-acti 0.55, why-conc 0.76, acti-conc 0.57
+  inside document_part (8646 edges): topi-temp 0.03, topi-why 0.18, topi-acti 0.16, topi-conc 0.38, temp-why -0.04, temp-acti 0.54, temp-conc -0.04, why-acti 0.39, why-conc 0.68, acti-conc 0.51
+  inside meeting_transcript (4422 edges): topi-temp 0.45, topi-why 0.05, topi-acti 0.39, topi-conc 0.28, temp-why 0.03, temp-acti 0.69, temp-conc 0.23, why-acti 0.38, why-conc 0.72, acti-conc 0.53
+
+2. WHAT DECIDES AN EDGE'S PLACE: share of each ranking between groups (shuffled inside kind in brackets)
+                  kind  product       parent        chunk          tag
+  topic           0.02     0.00  0.05 (0.03)  0.14 (0.09)  0.66 (0.27)
+  temporal        0.70     0.01  0.73 (0.71)  0.81 (0.73)  0.61 (0.47)
+  why             0.20     0.01  0.36 (0.21)  0.53 (0.26)  0.63 (0.34)
+  activity        0.54     0.01  0.59 (0.54)  0.71 (0.57)  0.67 (0.43)
+  concreteness    0.04     0.01  0.23 (0.05)  0.42 (0.12)  0.58 (0.29)
+
+3. INSIDE ONE CHUNK (chunks with 5+ edges): middle spread of the ranking among its own tags, against the same for random edges of the same kind
+  topic         inside a chunk 0.263   random of same kind 0.273
+  temporal      inside a chunk 0.116   random of same kind 0.158
+  why           inside a chunk 0.194   random of same kind 0.248
+  activity      inside a chunk 0.149   random of same kind 0.195
+  concreteness  inside a chunk 0.211   random of same kind 0.269
+
+4. PCA on the five rankings
+  share of spread per direction [0.42  0.337 0.175 0.042 0.025]
+  direction 1: topic +0.33, temporal +0.46, why +0.32, activity +0.57, concreteness +0.50
+  direction 2: topic +0.05, temporal -0.53, why +0.62, activity -0.35, concreteness +0.46
+  direction 3: topic +0.93, temporal -0.12, why -0.24, activity -0.22, concreteness -0.10
+
+5. CLUSTERS (all edges, five rankings): BIC by number 1:716.8k 2:704.0k 3:693.6k 4:688.9k 5:689.3k 6:685.2k 7:684.4k 8:683.8k 9:681.1k 10:681.0k 11:680.7k 12:680.1k -> lowest at 12
+  bend of the BIC curve at 4
+
+  4 clusters: AMI with kind 0.39, with product 0.00
+   cl  edges   topic tempor    why activi concre   kinds (share of the cluster)
+    1  27507    0.43   0.49   0.35   0.48   0.35   slack_thread_batch 72%, pr_batch 17%, meeting_transcript 4% | tags on few chunks 10, edges/chunk 14
+    3  17877    0.65   0.85   0.49   0.85   0.61   slack_thread_batch 79%, meeting_transcript 18%, pr_batch 2% | tags on few chunks 9, edges/chunk 13
+    0  12449    0.34   0.13   0.72   0.13   0.52   document_part 48%, document 40%, pr_batch 10% | tags on few chunks 25, edges/chunk 19
+    2   3185    0.87   0.15   0.93   0.21   0.92   document_part 67%, document 25%, slack_thread_batch 4% | tags on few chunks 13, edges/chunk 18
+
+  12 clusters: AMI with kind 0.30, with product 0.00
+   cl  edges   topic tempor    why activi concre   kinds (share of the cluster)
+    8   8194    0.52   0.44   0.39   0.44   0.41   slack_thread_batch 69%, pr_batch 21%, document_part 3% | tags on few chunks 12, edges/chunk 13
+    5   7758    0.38   0.18   0.85   0.22   0.72   document_part 58%, document 31%, pr_batch 8% | tags on few chunks 17, edges/chunk 18
+   11   7275    0.67   0.63   0.73   0.73   0.75   slack_thread_batch 77%, pr_batch 16%, meeting_transcript 4% | tags on few chunks 4, edges/chunk 13
+    3   5588    0.16   0.44   0.18   0.39   0.12   slack_thread_batch 75%, pr_batch 13%, meeting_transcript 7% | tags on few chunks 13, edges/chunk 16
+    4   5350    0.38   0.76   0.19   0.70   0.22   slack_thread_batch 81%, meeting_transcript 16%, pr_batch 2% | tags on few chunks 17, edges/chunk 14
+    1   5345    0.32   0.06   0.54   0.05   0.34   document 52%, document_part 41%, pr_batch 6% | tags on few chunks 42, edges/chunk 20
+   10   4603    0.68   0.90   0.44   0.94   0.63   slack_thread_batch 60%, meeting_transcript 39%, pr_batch 1% | tags on few chunks 14, edges/chunk 13
+    2   4261    0.18   0.65   0.60   0.75   0.58   slack_thread_batch 77%, meeting_transcript 13%, pr_batch 8% | tags on few chunks 6, edges/chunk 14
+    0   4143    0.79   0.79   0.27   0.58   0.56   slack_thread_batch 95%, url_batch 2%, pr_batch 2% | tags on few chunks 42, edges/chunk 13
+    7   3524    0.81   0.91   0.85   0.90   0.88   slack_thread_batch 91%, meeting_transcript 7%, pr_batch 1% | tags on few chunks 2, edges/chunk 13
+    9   2943    0.56   0.29   0.05   0.14   0.05   pr_batch 37%, slack_thread_batch 36%, url_batch 19% | tags on few chunks 33, edges/chunk 14
+    6   2034    0.92   0.09   0.90   0.19   0.95   document_part 66%, document 30%, slack_thread_batch 2% | tags on few chunks 17, edges/chunk 19
+
+5. CLUSTERS (Slack batches only): BIC by number 1:347.8k 2:336.6k 3:334.0k 4:333.6k 5:332.4k 6:332.2k 7:331.3k 8:331.5k 9:331.0k 10:331.2k 11:331.0k 12:330.9k -> lowest at 12
+  bend of the BIC curve at 3
+  3 clusters inside Slack batches: AMI with product 0.00
+    0  13634    0.54   0.68   0.49   0.62   0.56 | records in chunk 13, tag on 7 chunks
+    1  10435    0.68   0.90   0.49   0.85   0.63 | records in chunk 14, tag on 7 chunks
+    2  10075    0.34   0.47   0.27   0.43   0.24 | records in chunk 12, tag on 10 chunks
