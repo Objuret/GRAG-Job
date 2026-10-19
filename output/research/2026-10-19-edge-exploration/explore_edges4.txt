@@ -1,0 +1,10 @@
+equal ranges {'temporal': 1.01, 'why': 1.38, 'activity': 1.06, 'concreteness': 1.3}
+edges whose graph tag is on another chunk of the same product and kind: 33280 of 61018 (55%)
+  chunks per (tag, product, kind) group, middle 2 | groups of 2: 4992 of 9390
+
+share of pairs that the facet ranks apart (difference beyond its equal range):
+                same tag+kind, other chunk  same chunk, other tag  random, same product+kind
+  temporal                         26%                    24%                        33%     (163624 and 429142 pairs)
+  why                              25%                    31%                        41%     (163624 and 429142 pairs)
+  activity                         27%                    32%                        40%     (163624 and 429142 pairs)
+  concreteness                     27%                    35%                        44%     (163624 and 429142 pairs)
