@@ -1,0 +1,6 @@
+slot: facets on against off: order differs on 100 questions; delivered set the same on 59; 52 chunks swapped across the cut
+   chunks whose place the facets changed: 13518 of 13664; middle spread over a border: log-likeliness 0.172, facet log-odds 1.761
+   context_recall_id: facets on 0.6321, off 0.6293
+above: facets on against off: order differs on 100 questions; delivered set the same on 15; 260 chunks swapped across the cut
+   chunks whose place the facets changed: 13518 of 13664; middle spread over a border: log-likeliness 0.172, facet log-odds 1.761
+   context_recall_id: facets on 0.5904, off 0.5891
