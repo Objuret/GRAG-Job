@@ -12,23 +12,30 @@ are its items. The base order of an item: its tag's closeness level, then the ed
 (the topic values of the query tag's items cut where they bend), then the closeness; the same base
 as the Elo test.
 
-Where the first call names a facet that matters for the query tag, the items of ONE graph tag on
-chunks of ONE kind of record form a group: the facet is read only against the same tag's other edges
-(the tag's own level and the kind, which the structure gives, stay out). Inside a group every pair
-plays two games: topic (the higher topic level wins, the same level is a half) and the named facet
-(the higher value wins when it is higher by more than the facet's range stored on the FacetLayer
-node, the net's 24 refits; within it a half). An item's score is its wins over both games, every
-pair counted at once (in a round robin played to the end the order is the order of the scores,
-Zermelo 1929 / Bradley-Terry). The group's items take the places the group already holds in the
-base, ordered by score, ties by the base: closeness still picks the tags and nothing of another
-graph tag moves. A chunk's place on the tags side is its best item's place; the tag cloud is the
-first chunks of that order, as many as the bend of the tags side's closeness gives; it meets the
-description cloud as now.
+Where the first call names a facet that matters for the query tag:
+1. Each item's standing in the facet is read only against the same graph tag's other edges on chunks
+   of the same kind inside the border (the tag's own level and the kind, which the structure gives,
+   stay out): above them when it beats more of them than it loses to, below when it loses more, the
+   same otherwise (one edge beats another when its value is higher by more than the facet's range
+   stored on the FacetLayer node, the net's 24 refits; within it a half). A tag with no other chunk
+   of that kind in the border: the same. Only above / same / below counts, so how many chunks a tag
+   is on does not.
+2. The items of one closeness level (the clustering's equal range: equally close to the query tag)
+   play every pair twice: topic (the higher topic level wins, the same level a half) and the facet
+   (the higher standing wins, the same a half). An item's score is its wins over both games, every
+   pair counted at once (in a round robin played to the end the order is the order of the scores,
+   Zermelo 1929 / Bradley-Terry). The level's items take the places the level already holds in the
+   base, ordered by score, ties by the base: a nearer level stays ahead of a farther one, and no
+   other query tag's items move.
+A chunk's place on the tags side is its best item's place; the tag cloud is the first chunks of that
+order, as many as the bend of the tags side's closeness gives; it meets the description cloud as now.
+(First built with the facet only between the edges of one graph tag; the arm reads the tags side
+only through who is in the tag cloud, and that cut falls between tags, so it could not act.)
 
-FACETS=off  the control: the same base, only the topic game (that is the base order).
+FACETS=off  the control: the same base, no game played.
 
-Writes per question to <out>/adaptive.jsonl: items, groups of two or more items where the facet
-plays, items in them, items moved, tag-cloud chunks changed against the base, chosen chunks.
+Writes per question to <out>/adaptive.jsonl: items, closeness levels where the facet plays, items in
+them, items moved, tag-cloud chunks changed against the base, chosen chunks.
 """
 import json
 import os
@@ -77,14 +84,25 @@ def _levels(x):
     return np.where(lv >= 1, lv, count + 1)
 
 
-def group_scores(t_level, value, gap):
-    """Per item of one group its wins over the others in two games: topic (the smaller level wins,
-    the same level a half) and the facet (higher by more than the range wins, within it a half)."""
-    t = t_level[:, None] - t_level[None, :]
-    topic = (t < 0).sum(1) + .5 * ((t == 0).sum(1) - 1)
-    d = value[:, None] - value[None, :]
-    facet = (d > gap).sum(1) + .5 * ((np.abs(d) <= gap).sum(1) - 1)
-    return topic + facet
+def wins(value, gap=0.):
+    """Per item its wins over the others: the higher value wins when higher by more than gap, within
+    it a half. Counted by sorting, not by pairs."""
+    v = np.sort(value)
+    below = np.searchsorted(v, value - gap, side='left')
+    within = np.searchsorted(v, value + gap, side='right') - below
+    return below + .5 * (within - 1)
+
+
+def standings(values, groups, gap):
+    """Per item +1 when it beats more of the other items of its group than it loses to, -1 when it
+    loses more, 0 otherwise or alone."""
+    out = np.zeros(values.size)
+    order = np.argsort(groups, kind='stable')
+    cuts = np.flatnonzero(np.diff(groups[order])) + 1
+    for members in np.split(order, cuts):
+        if members.size > 1:
+            out[members] = np.sign(wins(values[members], gap) - (members.size - 1) / 2.)
+    return out
 
 
 def adaptive_places(layer, cosines, facet_of, inside):
@@ -119,6 +137,7 @@ def adaptive_places(layer, cosines, facet_of, inside):
     q_of = np.full(n, -1, dtype=np.int64)
     edge_of = np.full(n, -1, dtype=np.int64)
     groups = in_groups = moved = 0
+    level_chunks = []
     if items:
         arr = np.array([(cl, tl, -c) for _, _, cl, tl, c in items], dtype=np.float64)
         base = np.lexsort((arr[:, 2], arr[:, 1], arr[:, 0]))       # the base list
@@ -127,19 +146,26 @@ def adaptive_places(layer, cosines, facet_of, inside):
         new = pos.copy()
         q_item = np.array([it[0] for it in items])
         e_item = np.array([it[1] for it in items])
-        t_item = np.array([it[3] for it in items])
-        key = {}
-        for k, (q, e, *_rest) in enumerate(items):
-            if facet_of[q] >= 0:
-                key.setdefault((q, int(tag_e[e]), int(kind[chunk_e[e]])), []).append(k)
-        for (q, _tag, _kind), members in key.items():
-            if len(members) < 2:
+        c_item = np.array([it[2] for it in items])
+        t_item = np.array([it[3] for it in items], dtype=np.float64)
+        for q in np.unique(q_item):
+            if facet_of[q] < 0:
                 continue
-            m = np.array(members)
-            score = group_scores(t_item[m], raw[e_item[m], 1 + facet_of[q]], gaps[facet_of[q]])
-            new[m[np.lexsort((pos[m], -score))]] = np.sort(pos[m])
-            groups += 1
-            in_groups += m.size
+            mine = np.flatnonzero(q_item == q)
+            e = e_item[mine]
+            # the standing against the same graph tag's other edges on chunks of the same kind
+            tag_kind = tag_e[e].astype(np.int64) * (int(kind.max()) + 1) + kind[chunk_e[e]]
+            stand = standings(raw[e, 1 + facet_of[q]], tag_kind, gaps[facet_of[q]])
+            for lv in np.unique(c_item[mine]):
+                at = np.flatnonzero(c_item[mine] == lv)
+                if at.size < 2:
+                    continue
+                m = mine[at]
+                score = wins(-t_item[m]) + wins(stand[at])
+                new[m[np.lexsort((pos[m], -score))]] = np.sort(pos[m])
+                groups += 1
+                in_groups += m.size
+                level_chunks.append(chunk_e[e_item[m]])
         moved = int((new != pos).sum())
         for k, (q, e, *_rest) in enumerate(items):
             c = int(chunk_e[e])
@@ -156,7 +182,7 @@ def adaptive_places(layer, cosines, facet_of, inside):
         place[order] = top + np.arange(1, far.size + 1)
         plain[order] = top_plain + np.arange(1, far.size + 1)
         edge_of[far] = edge[far]
-    _LOCAL.place, _LOCAL.plain = place, plain
+    _LOCAL.place, _LOCAL.plain, _LOCAL.level_chunks = place, plain, level_chunks
     _LOCAL.record = {'items': len(items), 'groups': groups, 'items_in_groups': in_groups,
                      'items_moved': moved}
     return {'place': place, 'query_tag': q_of, 'edge': edge_of,
@@ -199,7 +225,10 @@ def cloud_combo_moved(layer, cosines, d_near, inside, scope_of, tags_place=None)
     by = np.lexsort((layer['id_rank'][inside], middle[inside], ~in_scope[inside], step[inside]))
     steps, counts = np.unique(step[inside], return_counts=True)
     cloud = set(inside[level['tags'][inside] == 1].tolist())
-    _LOCAL.record.update({'tag_cloud': k, 'tag_cloud_changed': len(cloud - base_cloud),
+    # the closeness levels where the facet plays whose chunks the base cloud's edge cuts through
+    split = sum(1 for g in _LOCAL.level_chunks if 0 < len(set(g.tolist()) & base_cloud) < len(set(g.tolist())))
+    _LOCAL.record.update({'levels_cut_by_the_cloud_edge': split,
+                          'tag_cloud': k, 'tag_cloud_changed': len(cloud - base_cloud),
                           'chosen': int((step[inside] == lowest).sum())})
     record = {'chunks': int(inside.size),
               'clouds': {name: int((level[name][inside] == 1).sum()) for name in level},
