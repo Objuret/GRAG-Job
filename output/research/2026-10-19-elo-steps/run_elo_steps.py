@@ -25,6 +25,8 @@ is its best item's place. The tag cloud is the first chunks of that order, as ma
 the tags side's closeness gives; it meets the description cloud as now.
 
 FACETS=off  the control: the same base, no pair played.
+SLOTS=own   each query tag's items move only among the places its own items hold in the base
+            list, so no item of another query tag is moved by them (default: one list for all).
 
 Writes per question to <out>/elo.jsonl: items, items moved, the largest move, tag-cloud chunks
 changed against the base, chosen chunks.
@@ -46,6 +48,7 @@ for p in (ROOT / 'prod', ROOT / 'test'):
 from artefact import v4_walk as WK  # noqa: E402
 
 FACETS_ON = os.environ.get('FACETS', 'on') == 'on'
+OWN_SLOTS = os.environ.get('SLOTS', 'all') == 'own'
 _LOCAL = threading.local()
 _LOCK = threading.Lock()
 _OUT = None
@@ -138,9 +141,17 @@ def elo_places(layer, cosines, facet_of, inside):
         pos = np.empty(len(items))
         pos[base] = np.arange(1, len(items) + 1)
         step = np.array([it[5] for it in items])
-        final = np.lexsort((pos, pos - step))                      # moved by the surprises, all at once
-        new = np.empty(len(items))
-        new[final] = np.arange(1, len(items) + 1)
+        if OWN_SLOTS:
+            # a query tag's items moved by their surprises among the places they hold in the base
+            new = pos.copy()
+            q_item = np.array([it[0] for it in items])
+            for q in np.unique(q_item):
+                mine = np.flatnonzero(q_item == q)
+                new[mine[np.lexsort((pos[mine], pos[mine] - step[mine]))]] = np.sort(pos[mine])
+        else:
+            final = np.lexsort((pos, pos - step))                  # moved by the surprises, all at once
+            new = np.empty(len(items))
+            new[final] = np.arange(1, len(items) + 1)
         for k, (q, e, *_rest) in enumerate(items):
             c = int(chunk_e[e])
             if new[k] < place[c]:
