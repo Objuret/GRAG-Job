@@ -1,0 +1,178 @@
+{
+  "scorer": "ragas",
+  "judge_model": null,
+  "source_run": "output\\k=chars\\artefact_v4__gold100__cb72000__20261019T075629Z_moved_cloud_odds",
+  "arm": "artefact_v4",
+  "timestamp": "2026-10-19T15:47:16.954543+00:00",
+  "judge_backend": "claude-cli",
+  "judge_effort": null,
+  "judge_usage": {
+    "calls": 0,
+    "tokens_in": 0,
+    "cached_input_tokens": 0,
+    "tokens_out": 0,
+    "reasoning_tokens": 0,
+    "time_s": 0.0,
+    "attempts": 0,
+    "request_s": 0.0,
+    "wait_s": 0.0,
+    "retry_s": 0.0
+  },
+  "judge_elapsed_s": 55.03979259962216,
+  "judge_legs": [
+    {
+      "timestamp": "2026-10-19T15:47:16.954543+00:00",
+      "judge_model": null,
+      "judge_backend": "claude-cli",
+      "usage": {
+        "calls": 0,
+        "tokens_in": 0,
+        "cached_input_tokens": 0,
+        "tokens_out": 0,
+        "reasoning_tokens": 0,
+        "time_s": 0.0,
+        "attempts": 0,
+        "request_s": 0.0,
+        "wait_s": 0.0,
+        "retry_s": 0.0
+      },
+      "elapsed_s": 55.03979259962216,
+      "settings": {
+        "started_at": "2026-10-19T15:46:21.914351+00:00",
+        "finished_at": "2026-10-19T15:47:16.954543+00:00",
+        "interrupted": null,
+        "workers": 6,
+        "retrieval_only": true,
+        "scores": [
+          "context_precision_id",
+          "context_recall_id",
+          "context_precision_nonllm",
+          "context_recall_nonllm",
+          "string_similarity",
+          "bleu",
+          "rouge",
+          "chrf",
+          "exact_match",
+          "string_presence"
+        ],
+        "judge_model": "claude-haiku-4-5-20251001",
+        "judge_backend": "claude-cli",
+        "judge_timeout_s": 120.0,
+        "judge_max_tries": 1,
+        "judge_inflight": 64,
+        "judge_empty_reply_tries": 3,
+        "judge_call": null,
+        "max_judge_context_chars": 60000,
+        "max_consecutive_failed_questions": 10,
+        "ragas": "0.4.3",
+        "embed_model": "nvidia/llama-nemotron-embed-1b-v2",
+        "ragas_run_config": {
+          "max_retries": 1,
+          "timeout": 180,
+          "max_wait": 60,
+          "seed": 42
+        },
+        "ragas_do_not_track": "true",
+        "lane": null,
+        "calls_file": "eval_calls.jsonl",
+        "argv": [
+          "output/research/2026-10-19-moved-tag-cloud/run_moved_cloud.py",
+          "--arm",
+          "artefact_v4",
+          "--set",
+          "gold",
+          "--char-budget",
+          "72000",
+          "--workers",
+          "6",
+          "--retrieval-only",
+          "--flag",
+          "HERB_V4_OFFLINE=on",
+          "--out",
+          "output/k=chars/artefact_v4__gold100__cb72000__20261019T075629Z_moved_cloud_odds"
+        ],
+        "pid": 24212,
+        "python_executable": "C:\\Coding\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+        "wall_s": 55.03979259962216,
+        "embedding": {
+          "requests": 0,
+          "texts": 0,
+          "tokens_in": 0,
+          "lock_wait_s": 0.0,
+          "encode_s": 0.0
+        },
+        "cells": {
+          "ok": 1000
+        }
+      }
+    }
+  ],
+  "judge_settings": {
+    "started_at": "2026-10-19T15:46:21.914351+00:00",
+    "finished_at": "2026-10-19T15:47:16.954543+00:00",
+    "interrupted": null,
+    "workers": 6,
+    "retrieval_only": true,
+    "scores": [
+      "context_precision_id",
+      "context_recall_id",
+      "context_precision_nonllm",
+      "context_recall_nonllm",
+      "string_similarity",
+      "bleu",
+      "rouge",
+      "chrf",
+      "exact_match",
+      "string_presence"
+    ],
+    "judge_model": "claude-haiku-4-5-20251001",
+    "judge_backend": "claude-cli",
+    "judge_timeout_s": 120.0,
+    "judge_max_tries": 1,
+    "judge_inflight": 64,
+    "judge_empty_reply_tries": 3,
+    "judge_call": null,
+    "max_judge_context_chars": 60000,
+    "max_consecutive_failed_questions": 10,
+    "ragas": "0.4.3",
+    "embed_model": "nvidia/llama-nemotron-embed-1b-v2",
+    "ragas_run_config": {
+      "max_retries": 1,
+      "timeout": 180,
+      "max_wait": 60,
+      "seed": 42
+    },
+    "ragas_do_not_track": "true",
+    "lane": null,
+    "calls_file": "eval_calls.jsonl",
+    "argv": [
+      "output/research/2026-10-19-moved-tag-cloud/run_moved_cloud.py",
+      "--arm",
+      "artefact_v4",
+      "--set",
+      "gold",
+      "--char-budget",
+      "72000",
+      "--workers",
+      "6",
+      "--retrieval-only",
+      "--flag",
+      "HERB_V4_OFFLINE=on",
+      "--out",
+      "output/k=chars/artefact_v4__gold100__cb72000__20261019T075629Z_moved_cloud_odds"
+    ],
+    "pid": 24212,
+    "python_executable": "C:\\Coding\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+    "wall_s": 55.03979259962216,
+    "embedding": {
+      "requests": 0,
+      "texts": 0,
+      "tokens_in": 0,
+      "lock_wait_s": 0.0,
+      "encode_s": 0.0
+    },
+    "cells": {
+      "ok": 1000
+    }
+  }
+}

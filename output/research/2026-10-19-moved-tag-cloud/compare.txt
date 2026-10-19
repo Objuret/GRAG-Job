@@ -1,0 +1,3 @@
+control (facets off): context_recall_id 0.6293
+odds: tag cloud chunks the facets swapped 1452 of 2041; questions whose chosen chunks differ 91; delivered set the same on 6; 587 chunks swapped across the cut; context_recall_id 0.5036
+step: tag cloud chunks the facets swapped 27 of 2041; questions whose chosen chunks differ 8; delivered set the same on 80; 18 chunks swapped across the cut; context_recall_id 0.6201
