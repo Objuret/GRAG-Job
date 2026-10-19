@@ -1,0 +1,9 @@
+query tags 1050; with a facet that weighs 1017; questions with one 100
+named facet and whether it matters: {'activity False': 11, 'activity True': 378, 'concreteness False': 16, 'concreteness True': 368, 'temporal True': 197, 'why False': 6, 'why True': 74}
+chunks whose nearness the facets changed 12971, on 100 questions
+in the control, chunks whose nearness changed: 0
+with against without the facets: order differs on 93 questions, what is handed over on 91
+without the facets against before the first call changed: order differs on 99, what is handed over on 94
+context_recall_id before: 0.6330 over 100
+context_recall_id with the facets: 0.6367 over 100
+context_recall_id without the facets: 0.6355 over 100

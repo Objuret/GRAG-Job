@@ -1,0 +1,7 @@
+artefact_v2: concentration modifier on (HERB_STR_CONCENTRATION=1.0)
+artefact_v2: agreement modifier on (HERB_STR_AGREEMENT=1.0)
+artefact_v2: the raw question probes beside the interpreted plan (HERB_RAW_QUESTION=1)
+lucene: 38540 artifacts + 0 directory records
+artefact pool: 4808 chunks ({'document': 256, 'pr_batch': 935, 'slack_thread_batch': 2669, 'meeting_transcript': 308, 'document_part': 530, 'url_batch': 61, 'meeting_transcript_part': 39, 'meeting_chat_batch': 10}) | distinct record ids they resolve to: 38540 | records per chunk: median 10, max 20
+baseline units: 38540 | in both: 38540 | in the baselines only: 0 | in the artefact pool only: 0
+baseline units no pool chunk resolves to, by kind: {}

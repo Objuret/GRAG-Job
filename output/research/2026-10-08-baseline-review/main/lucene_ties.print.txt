@@ -1,0 +1,29 @@
+resource module not available on Windows
+lucene: 38540 artifacts + 0 directory records
+bm25s 0.2.14 numpy 2.4.6 scipy 1.18.0 python 3.12.7 | build 7.69s | search, one at a time: first 0.138s then 0.103, 0.074, 0.081, 0.085, 0.067, 0.075 | ranked 15202 of 38540 | whole units inside 72,000: 175 | query tokens 15
+resource module not available on Windows
+lucene: 38540 artifacts + 0 directory records
+bm25s 0.2.14 numpy 2.4.6 scipy 1.18.0 python 3.12.7 | build 6.76s | search, one at a time: first 0.148s then 0.143, 0.141, 0.139, 0.139, 0.102, 0.075 | ranked 15202 of 38540 | whole units inside 72,000: 175 | query tokens 15
+lucene: 38540 artifacts + 0 directory records
+bm25s 0.3.10 numpy 2.5.3 scipy 1.16.3 python 3.12.7 | build 5.32s | search, one at a time: first 0.369s then 0.122, 0.119, 0.121, 0.146, 0.083, 0.107 | ranked 15202 of 38540 | whole units inside 72,000: 175 | query tokens 15
+lucene_rank_venv_a: bm25s 0.2.14 | ranked 15202 | units sharing their score with another: 13204 (86.9%) | inside the cut: 175 whole units, 44 of them in a tie | last whole unit's score 5.257125377655029, the cut unit's score 5.253853797912598, same score on both sides of the cut: False | units with exactly the last whole unit's score, anywhere: 1
+lucene_rank_venv_b: bm25s 0.2.14 | ranked 15202 | units sharing their score with another: 13204 (86.9%) | inside the cut: 175 whole units, 44 of them in a tie | last whole unit's score 5.257125377655029, the cut unit's score 5.253853797912598, same score on both sides of the cut: False | units with exactly the last whole unit's score, anywhere: 1
+lucene_rank_miniconda: bm25s 0.3.10 | ranked 15202 | units sharing their score with another: 13204 (86.9%) | inside the cut: 175 whole units, 44 of them in a tie | last whole unit's score 5.257125377655029, the cut unit's score 5.253853797912598, same score on both sides of the cut: False | units with exactly the last whole unit's score, anywhere: 1
+
+lucene_rank_venv_a against lucene_rank_venv_b:
+  whole ranking in the same order: True | same units ranked: True | ranks holding a different unit: 0 of 15202 | first such rank: None
+  of those ranks, the two units have exactly equal scores in the first file: 0
+  score of the same unit in both: largest difference 0.0, units whose score differs at all: 0 of 15202
+  whole units inside 72,000: 175 and 175 | same units inside the cut: True | same order inside the cut: True | units inside one cut and not the other: 0 | the cut unit: True
+
+lucene_rank_venv_a against lucene_rank_miniconda:
+  whole ranking in the same order: False | same units ranked: True | ranks holding a different unit: 12156 of 15202 | first such rank: 40
+  of those ranks, the two units have exactly equal scores in the first file: 12156
+  score of the same unit in both: largest difference 0.0, units whose score differs at all: 0 of 15202
+  whole units inside 72,000: 175 and 175 | same units inside the cut: True | same order inside the cut: False | units inside one cut and not the other: 0 | the cut unit: True
+
+lucene_rank_venv_b against lucene_rank_miniconda:
+  whole ranking in the same order: False | same units ranked: True | ranks holding a different unit: 12156 of 15202 | first such rank: 40
+  of those ranks, the two units have exactly equal scores in the first file: 12156
+  score of the same unit in both: largest difference 0.0, units whose score differs at all: 0 of 15202
+  whole units inside 72,000: 175 and 175 | same units inside the cut: True | same order inside the cut: False | units inside one cut and not the other: 0 | the cut unit: True

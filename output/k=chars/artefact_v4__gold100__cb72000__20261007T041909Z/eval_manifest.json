@@ -1,0 +1,23 @@
+{
+  "scorer": "ragas",
+  "judge_model": null,
+  "source_run": "output\\k=chars\\artefact_v4__gold100__cb72000__20261007T041909Z",
+  "arm": "artefact_v4",
+  "timestamp": "2026-10-07T04:24:06.395221+00:00",
+  "judge_backend": "claude-cli",
+  "judge_effort": null,
+  "judge_usage": {
+    "calls": 0,
+    "tokens_in": 0,
+    "cached_input_tokens": 0,
+    "tokens_out": 0,
+    "reasoning_tokens": 0,
+    "time_s": 0.0,
+    "attempts": 0,
+    "request_s": 0.0,
+    "wait_s": 0.0,
+    "retry_s": 0.0
+  },
+  "judge_elapsed_s": 30.09706910001114,
+  "judge_legs": null
+}

@@ -1,0 +1,625 @@
+lucene: 38540 artifacts + 0 directory records
+vector: 38540 artifacts + 0 directory records
+embedder: loading nvidia/llama-nemotron-embed-1b-v2 @ 113abe4acafa on cpu (float32) — first use
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+embedder: ready in 15s (2048 dim, 8192-token context)
+ragas judge: claude-haiku-4-5 backend=claude-cli timeout=120s tries=2
+ragas embed: priming 2 text(s) in 2 batch(es) of up to 1
+ragas embed: primed in 2 forward pass(es)
+ragas: all 14 cells ok
+ragas judge usage: 6 call(s), in=67176 cached=0 out=20288 reasoning=0 tokens, request-time=179.0s wall=186.3s
+vector: 38540 artifacts + 0 directory records
+ragas judge: claude-haiku-4-5 backend=claude-cli timeout=120s tries=2
+ragas: all 0 cells ok
+================ folder output\research\2026-10-08-keep-everything-proof\vector__answer__eval
+  arm_outputs.jsonl                161,860 bytes
+  code.be2d0944ae0197a7.diff       916,352 bytes
+  eval_calls.jsonl                 216,100 bytes
+  eval_failures.jsonl                    0 bytes
+  eval_manifest.json                 5,646 bytes
+  eval_results.jsonl                 8,623 bytes
+  failures.jsonl                         0 bytes
+  run_manifest.json                 18,892 bytes
+================ the row (one question = one run)
+{
+ "id": "madeup::walkthrough::0",
+ "question": "str[127]",
+ "answered_at": "2026-10-08T09:56:19.631196+00:00",
+ "answer": "str[1081]",
+ "contexts": [
+  "list[279] of",
+  "str[222]"
+ ],
+ "context_ids": [
+  "list[278] of",
+  "20270401-0-fe24c"
+ ],
+ "search_time_s": 0.311484299832955,
+ "generator": {
+  "calls": 1,
+  "tokens_in": 28368,
+  "cached_input_tokens": 0,
+  "tokens_out": 733,
+  "reasoning_tokens": 0,
+  "time_s": 12.139140200102702,
+  "attempts": 1,
+  "request_s": 12.132300999946892,
+  "wait_s": 0.0,
+  "retry_s": 0.0,
+  "cost_usd": 0.201628
+ },
+ "retrieval": {
+  "calls": 1,
+  "tokens_in": 28,
+  "cached_input_tokens": 0,
+  "tokens_out": 0,
+  "reasoning_tokens": 0,
+  "time_s": 0.6140098001342267,
+  "attempts": 1,
+  "request_s": 0.6140098001342267,
+  "wait_s": 0.0,
+  "retry_s": 0.0,
+  "cost_usd": 0.0
+ },
+ "meta": {
+  "char_budget": {
+   "budget": 72000,
+   "chars": 72000,
+   "kept": 278,
+   "boundary": {
+    "id": "20261229-6-38810",
+    "chars_kept": 104,
+    "chars_full": 209
+   },
+   "exhausted": false
+  }
+ },
+ "leg": 1,
+ "timing": {
+  "started_at": "2026-10-08T09:56:06.560156+00:00",
+  "finished_at": "2026-10-08T09:56:19.631196+00:00",
+  "wall_s": 13.074947499902919,
+  "thread": "ThreadPoolExecutor-3_0"
+ },
+ "calls": [
+  "list[2] of",
+  {
+   "seq": 0,
+   "kind": "embed",
+   "model": "nvidia/llama-nemotron-embed-1b-v2",
+   "revision": "113abe4acafa848e77ead9c0623205e511932348",
+   "device": "cpu",
+   "dtype": "float32",
+   "input_type": "query",
+   "prefix": "query: ",
+   "batch": 1,
+   "n_texts": 1,
+   "texts": [
+    "list[1] of",
+    "str[127]"
+   ],
+   "tokens": [
+    "list[1] of",
+    28
+   ],
+   "tokens_in": 28,
+   "started_at": "2026-10-08T09:56:06.562162+00:00",
+   "finished_at": "2026-10-08T09:56:07.175189+00:00",
+   "lock_wait_s": 1.100124791264534e-06,
+   "encode_s": 0.6138045999687165
+  }
+ ]
+}
+================ run_manifest.json
+{
+ "arm": "vector",
+ "generator_model": "claude-sonnet-5",
+ "interpreter_model": null,
+ "top_k": 50,
+ "questions_file": "str[98]",
+ "n_questions": 1,
+ "n_ran": 1,
+ "n_failed": 0,
+ "timestamp": "2026-10-08T09:56:20.809549+00:00",
+ "build_stats": {
+  "build_time_s": 1708.9,
+  "model": {
+   "calls": 38540,
+   "tokens_in": 2719968,
+   "cached_input_tokens": 0,
+   "tokens_out": 0,
+   "reasoning_tokens": 0,
+   "time_s": 1708.9,
+   "attempts": 0,
+   "request_s": 0.0,
+   "wait_s": 0.0,
+   "retry_s": 0.0,
+   "cost_usd": 0.0
+  },
+  "models": [
+   "list[1] of",
+   "nvidia/llama-nemotron-embed-1b-v2"
+  ]
+ },
+ "retrieval_flags": {
+  "HERB_BASELINE_METADATA": false
+ },
+ "char_budget": 72000,
+ "code_version": {
+  "commit": "a140636a35b9ddba479df317e81ee66044b62a2b",
+  "branch": "artefact-v4",
+  "dirty": true
+ },
+ "environment": {
+  "host": "Wiktop",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.7",
+  "python_executable": "str[52]",
+  "cpu": "str[51]",
+  "cpu_count": 16,
+  "ram_bytes": 16907755520,
+  "packages": {
+   "bm25s": "0.2.14",
+   "PyStemmer": "3.1.0",
+   "numpy": "2.4.6",
+   "sentence-transformers": "6.0.1",
+   "torch": "2.14.0+cpu",
+   "transformers": "5.12.1",
+   "httpx": "0.28.1",
+   "ragas": "0.4.3",
+   "neo4j": "6.2.0"
+  },
+  "embedder": {
+   "model": "nvidia/llama-nemotron-embed-1b-v2",
+   "revision": "113abe4acafa848e77ead9c0623205e511932348",
+   "device": "cpu",
+   "dtype": "float32"
+  }
+ },
+ "inputs": {
+  "questions_sha256": "str[64]",
+  "ids_sha256": "str[64]",
+  "corpus": {
+   "sha256": "str[64]",
+   "n_files": 33
+  }
+ },
+ "graph": null,
+ "n_exhausted": 0,
+ "flags": null,
+ "legs": [
+  "list[2] of",
+  {
+   "leg": 1,
+   "started_at": "2026-10-08T09:55:49.354265+00:00",
+   "finished_at": "2026-10-08T09:56:20.311584+00:00",
+   "wall_s": 30.955026699928567,
+   "workers": 1,
+   "argv": [
+    "list[4] of",
+    "str[57]"
+   ],
+   "pid": 60552,
+   "python_executable": "str[52]",
+   "ids_file": "str[93]",
+   "n_chosen": 1,
+   "n_todo": 1,
+   "n_answered": 1,
+   "n_unanswered_after": 0,
+   "aborted": null,
+   "prepare_s": 17.123505600029603,
+   "embedder_load_s": 14.874355900101364,
+   "retrieval_only": false,
+   "evaluator": "ragas",
+   "peak_memory_bytes": 4379009024,
+   "code_version": {
+    "commit": "a140636a35b9ddba479df317e81ee66044b62a2b",
+    "branch": "artefact-v4",
+    "dirty": true
+   },
+   "code_state": {
+    "status": [
+     "list[40] of",
+     " M data/question_query_vecs.npz"
+    ],
+    "diff_sha256": "str[64]",
+    "untracked_sha256": {
+     "prod/harness/capture.py": "str[64]",
+     "prod/tests/test_capture.py": "str[64]",
+     "test/artefact/graph_layer.py": "str[64]",
+     "test/artefact/scope_filter.py": "str[64]",
+     "test/artefact/v4_db.py": "str[64]",
+     "test/graph/write_facet_layer.py": "str[64]",
+     "test/tests/test_artefact_v4_clouds.py": "str[64]",
+     "test/tests/test_graph_layer.py": "str[64]",
+     "test/tests/test_v4_walk.py": "str[64]"
+    },
+    "diff_file": "code.be2d0944ae0197a7.diff"
+   },
+   "flags": null,
+   "lane": {
+    "exe": "C:\\Users\\jocke\\.local\\bin\\claude.exe",
+    "cli_version": "2.1.212 (Claude Code)",
+    "cwd": "str[50]",
+    "fixed_flags": [
+     "list[4] of",
+     "-p"
+    ],
+    "env_set": {
+     "MEMPALACE_HOOKS_AUTO_SAVE": "false"
+    },
+    "max_tries_default": 6
+   },
+   "index": {
+    "units": 38540,
+    "text_chars": 11237921,
+    "matrix_shape": [
+     "list[2] of",
+     38540
+    ],
+    "matrix_dtype": "float32",
+    "matrix_bytes": 315719680,
+    "cache_file": "str[94]",
+    "cache_file_bytes": 328012061,
+    "cache_file_sha256": "str[64]",
+    "cache_cost_note": {
+     "model": "nvidia/llama-nemotron-embed-1b-v2",
+     "revision": "113abe4acafa848e77ead9c0623205e511932348",
+     "calls": 38540,
+     "tokens_in": 2719968,
+     "tokens_out": 0,
+     "build_time_s": 1708.9,
+     "device": "NVIDIA GeForce GTX 1080 Ti",
+     "dtype": "float32",
+     "source": "str[65]",
+     "replaces": "str[77]"
+    },
+    "embedder_warm_s": 16.471924599958584,
+    "question_embedding": "str[41]"
+   }
+  }
+ ],
+ "workers": 1,
+ "lane": {
+  "exe": "C:\\Users\\jocke\\.local\\bin\\claude.exe",
+  "cli_version": "2.1.212 (Claude Code)",
+  "cwd": "str[50]",
+  "fixed_flags": [
+   "list[4] of",
+   "-p"
+  ],
+  "env_set": {
+   "MEMPALACE_HOOKS_AUTO_SAVE": "false"
+  },
+  "max_tries_default": 6
+ },
+ "generator": {
+  "model": "claude-sonnet-5",
+  "system": "str[66]",
+  "user_template": "str[81]",
+  "schema": {
+   "type": "object",
+   "properties": {
+    "answer": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "list[1] of",
+    "answer"
+   ],
+   "additionalProperties": false
+  },
+  "payload": {
+   "temperature": 0,
+   "max_tokens": 8192,
+   "min_tokens": 1,
+   "chat_template_kwargs": {
+    "enable_thinking": false
+   }
+  },
+  "timeout_s": 480.0
+ },
+ "index": {
+  "units": 38540,
+  "text_chars": 11237921,
+  "matrix_shape": [
+   "list[2] of",
+   38540
+  ],
+  "matrix_dtype": "float32",
+  "matrix_bytes": 315719680,
+  "cache_file": "str[94]",
+  "cache_file_bytes": 328012061,
+  "cache_file_sha256": "str[64]",
+  "cache_cost_note": {
+   "model": "nvidia/llama-nemotron-embed-1b-v2",
+   "revision": "113abe4acafa848e77ead9c0623205e511932348",
+   "calls": 38540,
+   "tokens_in": 2719968,
+   "tokens_out": 0,
+   "build_time_s": 1708.9,
+   "device": "NVIDIA GeForce GTX 1080 Ti",
+   "dtype": "float32",
+   "source": "str[65]",
+   "replaces": "str[77]"
+  },
+  "embedder_warm_s": 16.471924599958584,
+  "question_embedding": "str[41]"
+ },
+ "code_state": {
+  "status": [
+   "list[40] of",
+   " M data/question_query_vecs.npz"
+  ],
+  "diff_sha256": "str[64]",
+  "untracked_sha256": {
+   "prod/harness/capture.py": "str[64]",
+   "prod/tests/test_capture.py": "str[64]",
+   "test/artefact/graph_layer.py": "str[64]",
+   "test/artefact/scope_filter.py": "str[64]",
+   "test/artefact/v4_db.py": "str[64]",
+   "test/graph/write_facet_layer.py": "str[64]",
+   "test/tests/test_artefact_v4_clouds.py": "str[64]",
+   "test/tests/test_graph_layer.py": "str[64]",
+   "test/tests/test_v4_walk.py": "str[64]"
+  },
+  "diff_file": "code.be2d0944ae0197a7.diff"
+ },
+ "env": {}
+}
+================ eval_manifest.json
+{
+ "scorer": "ragas",
+ "judge_model": null,
+ "source_run": "str[97]",
+ "arm": "vector",
+ "timestamp": "2026-10-08T09:59:32.535042+00:00",
+ "judge_backend": "claude-cli",
+ "judge_effort": null,
+ "judge_usage": {
+  "calls": 6,
+  "tokens_in": 67176,
+  "cached_input_tokens": 0,
+  "tokens_out": 20288,
+  "reasoning_tokens": 0,
+  "time_s": 178.9780061999336,
+  "attempts": 6,
+  "request_s": 178.97258159983903,
+  "wait_s": 0.0,
+  "retry_s": 0.0,
+  "cost_usd": 0.28063099999999996
+ },
+ "judge_elapsed_s": 187.97403600020334,
+ "judge_legs": [
+  "list[2] of",
+  {
+   "timestamp": "2026-10-08T09:59:27.443139+00:00",
+   "judge_model": "claude-haiku-4-5",
+   "judge_backend": "claude-cli",
+   "usage": {
+    "calls": 6,
+    "tokens_in": 67176,
+    "cached_input_tokens": 0,
+    "tokens_out": 20288,
+    "reasoning_tokens": 0,
+    "time_s": 178.9780061999336,
+    "attempts": 6,
+    "request_s": 178.97258159983903,
+    "wait_s": 0.0,
+    "retry_s": 0.0,
+    "cost_usd": 0.28063099999999996
+   },
+   "elapsed_s": 186.2859914000146
+  }
+ ],
+ "judge_settings": {
+  "started_at": "2026-10-08T09:59:30.837357+00:00",
+  "finished_at": "2026-10-08T09:59:32.526864+00:00",
+  "interrupted": null,
+  "workers": 1,
+  "retrieval_only": false,
+  "scores": [
+   "list[14] of",
+   "context_precision_id"
+  ],
+  "judge_model": "claude-haiku-4-5",
+  "judge_backend": "claude-cli",
+  "judge_timeout_s": 120.0,
+  "judge_max_tries": 2,
+  "judge_inflight": 64,
+  "max_judge_context_chars": 60000,
+  "max_consecutive_failed_questions": 10,
+  "ragas": "0.4.3",
+  "embed_model": "nvidia/llama-nemotron-embed-1b-v2",
+  "lane": {
+   "exe": "C:\\Users\\jocke\\.local\\bin\\claude.exe",
+   "cli_version": "2.1.212 (Claude Code)",
+   "cwd": "str[50]",
+   "fixed_flags": [
+    "list[4] of",
+    "-p"
+   ],
+   "env_set": {
+    "MEMPALACE_HOOKS_AUTO_SAVE": "false"
+   },
+   "max_tries_default": 6
+  },
+  "calls_file": "eval_calls.jsonl",
+  "argv": [
+   "list[4] of",
+   "str[57]"
+  ],
+  "pid": 60552,
+  "python_executable": "str[52]",
+  "wall_s": 1.6880446001887321,
+  "embedding": {
+   "requests": 0,
+   "texts": 0,
+   "tokens_in": 0,
+   "lock_wait_s": 0.0,
+   "encode_s": 0.0
+  },
+  "cells": {}
+ }
+}
+================ eval_results.jsonl: 14 rows; one judged row:
+{
+ "question_id": "madeup::walkthrough::0",
+ "type": "content",
+ "arm": "vector",
+ "metric": "faithfulness",
+ "value": 0.8823529411764706,
+ "status": "ok",
+ "components": {
+  "usage": {
+   "eval_leg": "2026-10-08T09:56:21.147752+00:00",
+   "started_at": "2026-10-08T09:56:25.063324+00:00",
+   "finished_at": "2026-10-08T09:57:51.339983+00:00",
+   "wall_s": 86.28091690014116,
+   "thread": "ThreadPoolExecutor-5_0",
+   "chat_calls": 2,
+   "chat_attempts": 2,
+   "tokens_in": 29056,
+   "cached_input_tokens": 0,
+   "tokens_out": 9174,
+   "cost_usd": 0.126939,
+   "chat_s": 85.27584480005316,
+   "embed_calls": 0,
+   "embed_texts": 0,
+   "embed_tokens": 0,
+   "embed_s": 0.0
+  }
+ },
+ "human_label": null
+}
+================ eval_calls.jsonl: 8 lines; by kind and score:
+   ('chat', 'cell', 'answer_correctness') 3
+   ('chat', 'cell', 'context_recall_llm') 1
+   ('chat', 'cell', 'faithfulness') 2
+   ('embed', 'prime', None) 2
+one judge call line:
+{
+ "eval_leg": "2026-10-08T09:56:21.147752+00:00",
+ "arm": "vector",
+ "question_id": "madeup::walkthrough::0",
+ "type": "content",
+ "score": "faithfulness",
+ "phase": "cell",
+ "seq": 0,
+ "kind": "chat",
+ "model": "claude-haiku-4-5",
+ "exe": "C:\\Users\\jocke\\.local\\bin\\claude.exe",
+ "flags": [
+  "list[8] of",
+  "-p"
+ ],
+ "system": "",
+ "schema": null,
+ "prompt": "str[2862]",
+ "effort": null,
+ "join_parts": false,
+ "cwd": "str[50]",
+ "timeout_s": 120.0,
+ "max_tries": 1,
+ "payload_dropped": "list[0]",
+ "started_at": "2026-10-08T09:56:25.067330+00:00",
+ "finished_at": "2026-10-08T09:57:14.251458+00:00",
+ "attempts": [
+  "list[1] of",
+  {
+   "n": 1,
+   "started_at": "2026-10-08T09:56:25.067330+00:00",
+   "seconds": 49.182724999962375,
+   "outcome": "ok",
+   "returncode": 0,
+   "error": null,
+   "stdout": null,
+   "stderr": null
+  }
+ ],
+ "ok": true,
+ "text": "str[1496]",
+ "usage": {
+  "prompt_tokens": 4259,
+  "completion_tokens": 5509,
+  "cached_input_tokens": 0
+ },
+ "cost_usd": 0.037269000000000004,
+ "envelope": {
+  "type": "result",
+  "subtype": "success",
+  "is_error": false,
+  "api_error_status": null,
+  "duration_ms": 47386,
+  "duration_api_ms": 48248,
+  "ttft_ms": 45168,
+  "ttft_stream_ms": 658,
+  "time_to_request_ms": 32,
+  "num_turns": 1,
+  "result": "str[1508]",
+  "stop_reason": "end_turn",
+  "session_id": "f8884908-ee9a-4bc7-a0bf-a6080c502485",
+  "total_cost_usd": 0.037269000000000004,
+  "usage": {
+   "input_tokens": 10,
+   "cache_creation_input_tokens": 4249,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 5509,
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 4249,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "not_available",
+   "iterations": [
+    "list[1] of",
+    {
+     "input_tokens": 10,
+     "output_tokens": 5509,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 4249,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 4249
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard"
+  },
+  "modelUsage": {
+   "claude-haiku-4-5-20251001": {
+    "inputTokens": 1136,
+    "outputTokens": 16,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "webSearchRequests": 0,
+    "costUSD": 0.001216,
+    "contextWindow": 200000,
+    "maxOutputTokens": 32000
+   },
+   "claude-haiku-4-5": {
+    "inputTokens": 10,
+    "outputTokens": 5509,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 4249,
+    "webSearchRequests": 0,
+    "costUSD": 0.036053,
+    "contextWindow": 200000,
+    "maxOutputTokens": 32000
+   }
+  },
+  "permission_denials": "list[0]",
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "uuid": "aba5c2ff-d53c-418e-af76-5303fcfff40a"
+ },
+ "stream": null,
+ "stderr": "",
+ "error": null
+}

@@ -1,0 +1,11 @@
+question tag            best  bulk | at least 97% of the best: floor, tags (chunks) | at least 95% of the best: floor, tags (chunks) | at least 90% of the best: floor, tags (chunks)
+rollback procedure     0.978  0.74 |                             0.949, 2 (8) |                            0.929, 4 (10) |                           0.880, 27 (34)
+       rollback process 0.978; rollback procedures 0.974; Rollback process 0.940; Rollback Procedures 0.933
+model updates          0.993  0.77 |                            0.963, 2 (15) |                            0.943, 3 (16) |                          0.894, 39 (123)
+       model updates 0.993; model update 0.977; model improvements 0.944
+rollback failures      0.923  0.72 |                           0.895, 11 (17) |                           0.877, 20 (36) |                         0.830, 283 (825)
+       rollback procedures 0.923; rollback process 0.920; incorrect rollbacks 0.920; deployment failures 0.920; repeated rollbacks 0.916; rollback scenarios 0.911; transaction rollback 0.909; deployment rollback 0.909; rollback loop 0.906
+procedural change      0.897  0.75 |                          0.870, 40 (238) |                         0.852, 211 (992) |                       0.807, 2394 (4123)
+       infrastructure changes 0.897; resolution 0.896; regulations 0.891; architectural changes 0.890; approved 0.889; approval 0.889; architecture change 0.889; strategy change 0.889; advancements 0.888
+failure analysis       0.867  0.71 |                          0.841, 35 (134) |                         0.824, 117 (536) |                       0.781, 1531 (3564)
+       testing processes 0.867; testing methods 0.867; technical investigation 0.866; bug analysis 0.865; reliability testing 0.864; testing procedures 0.863; project investigation 0.861; product reliability 0.861; issue investigation 0.859

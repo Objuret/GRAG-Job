@@ -1,0 +1,109 @@
+9 question tags, 16609 graph tags, 57204 edges, 4808 chunks
+
+A. THE PICK. Per question tag: its closest graph tag, the bulk and spread of its own list, and how
+   many graph tags (chunks they hang on) lie within 0.5 / 1 / 2 of its own spreads from the closest.
+   question tag                               list  centr  best  bulk spread standing | within 0.5 / 1 / 2 spreads: tags (chunks)
+   rollback procedure                         descr  0.96  0.98  0.74  0.067     3.53 | 2 (8) / 12 (18) / 300 (1014)
+   model updates                              descr  0.85  0.99  0.77  0.063     3.61 | 2 (15) / 5 (19) / 192 (462)
+   rollback failures                          descr  1.00  0.92  0.72  0.069     2.95 | 14 (23) / 66 (134) / 2244 (3582)
+   procedural change                          descr  0.89  0.90  0.75  0.063     2.28 | 62 (338) / 682 (2251) / 6368 (4756)
+   failure analysis                           descr  0.82  0.87  0.71  0.061     2.52 | 48 (192) / 398 (1497) / 4754 (4651)
+   rollback procedure                         quest  0.96  0.98  0.74  0.067     3.53 | 2 (8) / 12 (18) / 300 (1014)
+   model updates                              quest  0.85  0.99  0.77  0.063     3.61 | 2 (15) / 5 (19) / 192 (462)
+   rollback failures                          quest  1.00  0.92  0.72  0.069     2.95 | 14 (23) / 66 (134) / 2244 (3582)
+   procedural change                          quest  0.89  0.90  0.75  0.063     2.28 | 62 (338) / 682 (2251) / 6368 (4756)
+
+   The eight closest graph tags of the three most central question tags: closeness, and the same number
+   as its standing (spreads above the bulk of that list).
+   "rollback failures"
+       0.923   standing  2.95   below the closest 0.00   rollback procedures
+       0.920   standing  2.92   below the closest 0.03   rollback process
+       0.920   standing  2.92   below the closest 0.03   incorrect rollbacks
+       0.920   standing  2.92   below the closest 0.04   deployment failures
+       0.916   standing  2.85   below the closest 0.10   repeated rollbacks
+       0.911   standing  2.79   below the closest 0.16   rollback scenarios
+       0.909   standing  2.75   below the closest 0.20   transaction rollback
+       0.909   standing  2.75   below the closest 0.20   deployment rollback
+   "rollback failures"
+       0.923   standing  2.95   below the closest 0.00   rollback procedures
+       0.920   standing  2.92   below the closest 0.03   rollback process
+       0.920   standing  2.92   below the closest 0.03   incorrect rollbacks
+       0.920   standing  2.92   below the closest 0.04   deployment failures
+       0.916   standing  2.85   below the closest 0.10   repeated rollbacks
+       0.911   standing  2.79   below the closest 0.16   rollback scenarios
+       0.909   standing  2.75   below the closest 0.20   transaction rollback
+       0.909   standing  2.75   below the closest 0.20   deployment rollback
+   "rollback procedure"
+       0.978   standing  3.53   below the closest 0.00   rollback process
+       0.974   standing  3.47   below the closest 0.06   rollback procedures
+       0.940   standing  2.96   below the closest 0.57   Rollback process
+       0.933   standing  2.86   below the closest 0.67   Rollback Procedures
+       0.927   standing  2.77   below the closest 0.76   rollback scenarios
+       0.926   standing  2.76   below the closest 0.77   rollback strategy
+       0.924   standing  2.73   below the closest 0.80   deployment rollback
+       0.924   standing  2.72   below the closest 0.81   rollback loop
+
+B. THE LISTS AGAINST EACH OTHER. Each list in its own spreads. Shared chunks among the first
+   15 / 50 / 150 of two lists, and the rank correlation over all chunks.
+   tags (best tag carries)        best   3.39   15th   3.07   50th   2.32   150th   2.02   chunks above 0: 4804
+   description (same mode)        best   4.15   15th   3.14   50th   2.56   150th   2.06   chunks above 0: 2404
+   raw question (same mode)       best   4.87   15th   3.23   50th   2.50   150th   1.91   chunks above 0: 2404
+   description (question mode)    best   4.32   15th   2.92   50th   2.45   150th   1.92   chunks above 0: 2404
+   raw question (question mode)   best   5.33   15th   2.95   50th   2.23   150th   1.60   chunks above 0: 2404
+
+   shared 15/50/150, rho             tags (best tag carries)    description (same mode)   raw question (same mode)   description (question mo   raw question (question m
+   tags (best tag carries)              15/50/150  rho  1.00          2/8/17  rho  0.21         3/11/21  rho  0.26          1/8/20  rho  0.29         2/11/26  rho  0.29
+   description (same mode)                 2/8/17  rho  0.21       15/50/150  rho  1.00         2/20/59  rho  0.66         5/24/89  rho  0.79          0/8/30  rho  0.43
+   raw question (same mode)               3/11/21  rho  0.26         2/20/59  rho  0.66       15/50/150  rho  1.00         4/16/52  rho  0.71         5/28/86  rho  0.84
+   description (question mode)             1/8/20  rho  0.29         5/24/89  rho  0.79         4/16/52  rho  0.71       15/50/150  rho  1.00         4/13/55  rho  0.76
+   raw question (question mode)           2/11/26  rho  0.29          0/8/30  rho  0.43         5/28/86  rho  0.84         4/13/55  rho  0.76       15/50/150  rho  1.00
+
+   The first 15 of each list: record kinds and how many products they spread over.
+   tags (best tag carries)        {np.str_('document_part'): 2, np.str_('pr_batch'): 3, np.str_('slack_thread_batch'): 10}  products 9, the commonest holds 7
+   description (same mode)        {np.str_('document_part'): 2, np.str_('meeting_transcript'): 1, np.str_('pr_batch'): 5, np.str_('slack_thread_batch'): 7}  products 11, the commonest holds 4
+   raw question (same mode)       {np.str_('pr_batch'): 2, np.str_('slack_thread_batch'): 13}  products 5, the commonest holds 10
+   description (question mode)    {np.str_('pr_batch'): 3, np.str_('slack_thread_batch'): 12}  products 8, the commonest holds 4
+   raw question (question mode)   {np.str_('pr_batch'): 1, np.str_('slack_thread_batch'): 14}  products 1, the commonest holds 15
+
+D. ONE ORDER FROM THE TWO LISTS (text = the better of description (same mode) and raw question (question mode)).
+   The first 15 under each rule: how many of them are also in the first 15 of tags-only and of text-only,
+   and how many are held up by one side alone (the other side at or below 0).
+   sum: tags + text     in tags-only first 15:  7   in text-only first 15:  8   held up by one side alone:  0   shared with the other rule:  8
+   best of the two      in tags-only first 15:  4   in text-only first 15: 14   held up by one side alone:  0   shared with the other rule:  8
+
+   Demonstration 1. The chunk that is first on the tags and its place on the text, the chunk first on
+   the text and its place on the tags, and each one's place under the two rules.
+   first on the tags: tags  3.39 (place 1), text  0.53 (place 2122) -> place under sum 143, under best-of-two 14   [slack_thread_batch]
+   first on the text: tags  3.07 (place 17), text  5.33 (place 1) -> place under sum 1, under best-of-two 1   [slack_thread_batch]
+   strongest on both at once: tags  3.33 (place 4), text  3.47 (place 9) -> place under sum 3, under best-of-two 9   [document_part]
+
+   Demonstration 2. Does a chunk reached by several question tags come ahead of a chunk reached by one,
+   at the same best strength? Over the chunks with a tag strength above 0: the rank correlation between
+   the number of question tags reaching the chunk (standing above 0) and its tag strength.
+   best tag carries: rho  0.16   sum over question tags: rho  0.17   (question tags reaching a chunk: median 9, most 9)
+   and against the number of tags on the chunk: best tag carries rho  0.08   sum over question tags rho  0.12
+
+C. THE FACETS ON THE PICKED EDGES. For the three most central question tags: the facet order from its
+   readings; the edges of the tags picked within 1 spread; each facet's range over those edges; how many
+   "equal" classes the facet's own retrain gap makes of that range; and how the edges split key by key.
+   "rollback failures"
+      readings topic 0.95, temporal 0.80, why 0.90, activity 0.80, concreteness 0.85  -> order why > concreteness > temporal > activity
+      picked tags 66, their edges 147, chunks 134
+      why           range over the picked  -4.25 ..   2.73 (whole graph  -4.94 ..   5.15), gap 1.38 -> 6 classes; groups so far 5, edges alone 1, largest group 58
+      concreteness  range over the picked  -3.33 ..   2.43 (whole graph  -5.22 ..   5.03), gap 1.30 -> 5 classes; groups so far 13, edges alone 2, largest group 39
+      temporal      range over the picked  -3.51 ..   3.68 (whole graph  -5.99 ..   4.89), gap 1.01 -> 8 classes; groups so far 50, edges alone 20, largest group 16
+      activity      range over the picked  -2.93 ..   2.41 (whole graph  -4.96 ..   4.17), gap 1.06 -> 6 classes; groups so far 69, edges alone 34, largest group 13
+   "rollback failures"
+      readings topic 0.90, temporal 0.90, why 0.80, activity 0.80, concreteness 0.80  -> order temporal > why > activity > concreteness
+      picked tags 66, their edges 147, chunks 134
+      temporal      range over the picked  -3.51 ..   3.68 (whole graph  -5.99 ..   4.89), gap 1.01 -> 8 classes; groups so far 8, edges alone 1, largest group 54
+      why           range over the picked  -4.25 ..   2.73 (whole graph  -4.94 ..   5.15), gap 1.38 -> 6 classes; groups so far 28, edges alone 8, largest group 23
+      activity      range over the picked  -2.93 ..   2.41 (whole graph  -4.96 ..   4.17), gap 1.06 -> 6 classes; groups so far 48, edges alone 21, largest group 15
+      concreteness  range over the picked  -3.33 ..   2.43 (whole graph  -5.22 ..   5.03), gap 1.30 -> 5 classes; groups so far 69, edges alone 34, largest group 13
+   "rollback procedure"
+      readings topic 1.00, temporal 0.20, why 0.90, activity 0.90, concreteness 0.70  -> order why > activity > concreteness > temporal
+      picked tags 12, their edges 18, chunks 18
+      why           range over the picked  -2.12 ..   2.27 (whole graph  -4.94 ..   5.15), gap 1.38 -> 4 classes; groups so far 4, edges alone 1, largest group 9
+      activity      range over the picked  -1.75 ..   1.38 (whole graph  -4.96 ..   4.17), gap 1.06 -> 3 classes; groups so far 8, edges alone 3, largest group 5
+      concreteness  range over the picked  -2.71 ..   0.83 (whole graph  -5.22 ..   5.03), gap 1.30 -> 3 classes; groups so far 12, edges alone 8, largest group 3
+      temporal      range over the picked  -3.51 ..   1.58 (whole graph  -5.99 ..   4.89), gap 1.01 -> 6 classes; groups so far 13, edges alone 9, largest group 3

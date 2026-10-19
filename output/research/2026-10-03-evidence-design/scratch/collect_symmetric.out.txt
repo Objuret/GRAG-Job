@@ -1,0 +1,42 @@
+artefact_v2: concentration modifier on (HERB_STR_CONCENTRATION=1.0)
+artefact_v2: agreement modifier on (HERB_STR_AGREEMENT=1.0)
+artefact_v2: the raw question probes beside the interpreted plan (HERB_RAW_QUESTION=1)
+artefact_v4: loading the learned facet layer from round1
+artefact_v4: 61018 learned edges, 61018 stored positions; reading herb-eval-volmax tag vectors
+artefact_v4: 16654 tag vectors read, reading chunk descriptions
+artefact_v4: 4808 chunk vectors read, reading product names
+artefact_v4: 30 products, resolving structure names
+landing names: 1642 from landing_names.json
+artefact_v4: 0 chunks carry no learned edge; 6 edges have a negative topic cosine
+artefact_v4: 45 graph tags equal a product name casefolded (15 of them in another case)
+artefact_v4: retrain flip gap 1.0 score units (BANDS.md line 15); building the percentile and level layer
+artefact_v4: reading the refit means for multikey from scores_b24.npz
+artefact_v4: multikey facet values are each edge's mean over 24 refits; per-facet flip gaps temporal 1.01, why 1.38, activity 1.06, concreteness 1.3 (BANDS.md, column "gap (any)", lines 11, 12, 13, 14)
+artefact_v4: reading each chunk's channels and product, and the file adjacency, for the multikey structure keys
+artefact_v3: shape: 302 channels, 2677 chunk-channel edges, 2669 chunks with at least one channel, 30 products
+artefact_v3: shape: 45 of 16654 tags carry a Product node's name (30 names)
+artefact_v4: reading the corpus words of the 4808 pool chunks for the landing
+artefact_v4: corpus words: 1000/4808 chunks read (1.6s)
+artefact_v4: corpus words: 2000/4808 chunks read (2.0s)
+artefact_v4: corpus words: 3000/4808 chunks read (2.5s)
+artefact_v4: corpus words: 4000/4808 chunks read (2.9s)
+artefact_v4: 103643 distinct corpus words
+artefact_v3: file adjacency: 2787 adjacent chunk pairs over 4808 of 4808 located chunks in 581 sequences (documents 386, meeting_transcripts 26, slack 2375)
+artefact_v4: prepared 4808 chunks, 16654 tags, 61018 edges, 30 product-named tags in 72.0s
+collect_symmetric: prepared in 72.5s; eligible tags whose readable form differs from the stored name: 63 of 16609
+embedder: loading nvidia/llama-nemotron-embed-1b-v2 @ 113abe4acafa on cpu (float32) — first use
+Loading weights:   0%|          | 0/146 [00:00<?, ?it/s]Loading weights:   1%|          | 1/146 [00:06<15:59,  6.62s/it]Loading weights:  70%|██████▉   | 102/146 [00:07<00:02, 20.13it/s]Loading weights:  80%|████████  | 117/146 [00:07<00:01, 20.45it/s]Loading weights:  86%|████████▋ | 126/146 [00:07<00:00, 22.01it/s]Loading weights:  92%|█████████▏| 134/146 [00:08<00:00, 20.17it/s]Loading weights:  95%|█████████▌| 139/146 [00:08<00:00, 20.78it/s]Loading weights: 100%|██████████| 146/146 [00:08<00:00, 16.73it/s]
+embedder: ready in 38s (2048 dim, 8192-token context)
+collect_symmetric: ForecastForce::a::24: 7 + 4 query tags and the description in the passage role; query-role recomputation against the first collection: largest difference 0.00e+00 (tags), 0.00e+00 (description), 55.3s
+collect_symmetric: ActionGenie::a::5: 6 + 3 query tags and the description in the passage role, 6.7s
+collect_symmetric: ActionGenie::a::0: 5 + 4 query tags and the description in the passage role, 6.4s
+collect_symmetric: CoachForce::a::5: 6 + 4 query tags and the description in the passage role, 6.5s
+collect_symmetric: VizForce::a::16: 8 + 2 query tags and the description in the passage role, 6.6s
+collect_symmetric: MonitorForce::a::16: 6 + 3 query tags and the description in the passage role, 6.2s
+collect_symmetric: ActionGenie::a::7: 6 + 4 query tags and the description in the passage role, 7.3s
+collect_symmetric: ActionGenie::a::1: 6 + 4 query tags and the description in the passage role, 7.2s
+collect_symmetric: CoachForce::a::11: 6 + 4 query tags and the description in the passage role, 7.0s
+collect_symmetric: PersonalizeForce::a::24: 7 + 5 query tags and the description in the passage role, 7.2s
+collect_symmetric: 300 identity names embedded in the passage role in 129.5s
+collect_symmetric: own cosine in the passage role: median 0.991068, min 0.974592, max 0.995239; saved (334.4s total)
+exit=0

@@ -1,0 +1,31 @@
+luc: questions in both 100
+   identical context_ids list (same ids, same order): 31/100   same id set: 88/100
+   identical contexts list (every text equal)        : 31/100   identical cut piece record: 85/100
+   identical answer text                             : 0/100
+   overlap of the two id sets (shared / union) min/median/max: 0.7133 / 1.0000 / 1.0000
+   rows whose order first differs at a rank: 69; that rank (0-based) min/median/max: 0 / 14 / 78
+   context_precision_id       equal value in both: 96/100
+   context_recall_id          equal value in both: 100/100
+   context_precision_nonllm   equal value in both: 82/100
+   context_recall_nonllm      equal value in both: 100/100
+vec: questions in both 100
+   identical context_ids list (same ids, same order): 0/100   same id set: 0/100
+   identical contexts list (every text equal)        : 0/100   identical cut piece record: 0/100
+   identical answer text                             : 0/100
+   overlap of the two id sets (shared / union) min/median/max: 0.5586 / 0.7447 / 0.9825
+   rows whose order first differs at a rank: 100; that rank (0-based) min/median/max: 0 / 1.0 / 11
+   context_precision_id       equal value in both: 3/100
+   context_recall_id          equal value in both: 41/100
+   context_precision_nonllm   equal value in both: 1/100
+   context_recall_nonllm      equal value in both: 45/100
+
+generator rows with cached_input_tokens > 0 (A): tokens_in, cached, tokens_in - cached, tokens_out, time_s, attempts, whole units
+  A.luc: median tokens_in of the rows with cached == 0: 24787.5
+     row  23: tokens_in 48089  cached 23837  in - cached 24252  tokens_out 632  time_s 12.3  attempts 1  kept 87
+     row  55: tokens_in 49891  cached 24489  in - cached 25402  tokens_out 1181  time_s 16.8  attempts 1  kept 94
+     row  65: tokens_in 46084  cached 22556  in - cached 23528  tokens_out 1360  time_s 20.5  attempts 1  kept 26
+     row  73: tokens_in 49326  cached 24215  in - cached 25111  tokens_out 1151  time_s 18.6  attempts 1  kept 137
+  A.vec: median tokens_in of the rows with cached == 0: 29163.0
+     row  37: tokens_in 49624  cached 24447  in - cached 25177  tokens_out 1193  time_s 19.9  attempts 1  kept 89
+     row  44: tokens_in 51908  cached 25838  in - cached 26070  tokens_out 404  time_s 9.4  attempts 1  kept 171
+  B.luc: rows with generator.tokens_in == 0: 8   their tokens_out [0, 0, 0, 0, 0, 0, 0, 0]  answer chars [910, 491, 499, 778, 671, 493, 467, 545]  time_s [58.9, 52.0, 31.3, 112.9, 36.0, 37.4, 17.3, 14.3]

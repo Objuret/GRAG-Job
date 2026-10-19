@@ -1,0 +1,425 @@
+lucene: 38540 artifacts + 0 directory records
+lucene: 38540 artifacts + 0 directory records
+lucene: 38540 artifacts + 0 directory records
+================ folder output\research\2026-10-08-keep-everything-proof\lucene__answer
+  arm_outputs.jsonl                160,100 bytes
+  code.leg1.diff                   882,579 bytes
+  code.leg2.diff                   882,579 bytes
+  failures.jsonl                         0 bytes
+  run_manifest.json                 15,570 bytes
+================ the row (one question = one run)
+{
+ "id": "madeup::walkthrough::0",
+ "question": "str[127]",
+ "answered_at": "2026-10-08T00:22:03.946536+00:00",
+ "answer": "str[1049]",
+ "contexts": [
+  "list[176] of",
+  "str[303]"
+ ],
+ "context_ids": [
+  "list[175] of",
+  "20270315-5-d02dd"
+ ],
+ "search_time_s": 0.09102399996481836,
+ "generator": {
+  "calls": 1,
+  "tokens_in": 25508,
+  "cached_input_tokens": 0,
+  "tokens_out": 772,
+  "reasoning_tokens": 0,
+  "time_s": 13.815008099889383,
+  "attempts": 1,
+  "request_s": 13.812564400024712,
+  "wait_s": 0.0,
+  "retry_s": 0.0,
+  "cost_usd": 0.18224800000000002
+ },
+ "retrieval": {
+  "calls": 0,
+  "tokens_in": 0,
+  "cached_input_tokens": 0,
+  "tokens_out": 0,
+  "reasoning_tokens": 0,
+  "time_s": 0.0,
+  "attempts": 0,
+  "request_s": 0.0,
+  "wait_s": 0.0,
+  "retry_s": 0.0,
+  "cost_usd": 0.0
+ },
+ "meta": {
+  "char_budget": {
+   "budget": 72000,
+   "chars": 72000,
+   "kept": 175,
+   "boundary": {
+    "id": "new_ef_aix_product_vision_document",
+    "chars_kept": 529,
+    "chars_full": 6320
+   },
+   "exhausted": false
+  }
+ },
+ "leg": 1,
+ "timing": {
+  "started_at": "2026-10-08T00:21:50.021123+00:00",
+  "finished_at": "2026-10-08T00:22:03.946536+00:00",
+  "wall_s": 13.92524900007993,
+  "thread": "ThreadPoolExecutor-0_0"
+ },
+ "calls": [
+  "list[1] of",
+  {
+   "seq": 0,
+   "kind": "chat",
+   "model": "claude-sonnet-5",
+   "exe": "C:\\Users\\jocke\\.local\\bin\\claude.exe",
+   "flags": [
+    "list[8] of",
+    "-p"
+   ],
+   "system": "str[66]",
+   "schema": {
+    "type": "object",
+    "properties": {
+     "answer": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "list[1] of",
+     "answer"
+    ],
+    "additionalProperties": false
+   },
+   "prompt": "str[72500]",
+   "effort": null,
+   "join_parts": false,
+   "cwd": "str[50]",
+   "timeout_s": 480.0,
+   "max_tries": 6,
+   "payload_dropped": [
+    "list[4] of",
+    "chat_template_kwargs"
+   ],
+   "started_at": "2026-10-08T00:21:50.120012+00:00",
+   "finished_at": "2026-10-08T00:22:03.932982+00:00",
+   "attempts": [
+    "list[1] of",
+    {
+     "n": 1,
+     "started_at": "2026-10-08T00:21:50.120012+00:00",
+     "seconds": 13.812564400024712,
+     "outcome": "ok",
+     "returncode": 0,
+     "error": null,
+     "stdout": null,
+     "stderr": null
+    }
+   ],
+   "ok": true,
+   "text": "str[1068]",
+   "usage": {
+    "prompt_tokens": 25508,
+    "completion_tokens": 772,
+    "cached_input_tokens": 0
+   },
+   "cost_usd": 0.18224800000000002,
+   "envelope": {
+    "type": "result",
+    "subtype": "success",
+    "is_error": false,
+    "api_error_status": null,
+    "duration_ms": 9817,
+    "duration_api_ms": 11484,
+    "ttft_ms": 3157,
+    "ttft_stream_ms": 1867,
+    "time_to_request_ms": 155,
+    "num_turns": 2,
+    "result": "str[1068]",
+    "stop_reason": "tool_use",
+    "session_id": "3e9807a8-4970-4256-b580-39673de9d5cb",
+    "total_cost_usd": 0.18224800000000002,
+    "usage": {
+     "input_tokens": 2,
+     "cache_creation_input_tokens": 25506,
+     "cache_read_input_tokens": 0,
+     "output_tokens": 772,
+     "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+     },
+     "service_tier": "standard",
+     "cache_creation": {
+      "ephemeral_1h_input_tokens": 25506,
+      "ephemeral_5m_input_tokens": 0
+     },
+     "inference_geo": "not_available",
+     "iterations": [
+      "list[1] of",
+      "dict[6]"
+     ],
+     "speed": "standard"
+    },
+    "modelUsage": {
+     "claude-haiku-4-5-20251001": {
+      "inputTokens": 17541,
+      "outputTokens": 17,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "webSearchRequests": 0,
+      "costUSD": 0.017626000000000003,
+      "contextWindow": 200000,
+      "maxOutputTokens": 32000
+     },
+     "claude-sonnet-5": {
+      "inputTokens": 2,
+      "outputTokens": 772,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 25506,
+      "webSearchRequests": 0,
+      "costUSD": 0.16462200000000002,
+      "contextWindow": 1000000,
+      "maxOutputTokens": 64000
+     }
+    },
+    "permission_denials": "list[0]",
+    "structured_output": {
+     "answer": "str[1049]"
+    },
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "uuid": "b6ca93bf-3e28-4008-9223-baece1ec8a52"
+   },
+   "stream": null,
+   "stderr": "",
+   "error": null
+  }
+ ]
+}
+================ run_manifest.json
+{
+ "arm": "lucene",
+ "generator_model": "claude-sonnet-5",
+ "interpreter_model": null,
+ "top_k": 50,
+ "questions_file": "str[98]",
+ "n_questions": 1,
+ "n_ran": 1,
+ "n_failed": 0,
+ "timestamp": "2026-10-08T00:22:05.263093+00:00",
+ "build_stats": {
+  "build_time_s": 4.47180510009639,
+  "model": {
+   "calls": 0,
+   "tokens_in": 0,
+   "cached_input_tokens": 0,
+   "tokens_out": 0,
+   "reasoning_tokens": 0,
+   "time_s": 0.0,
+   "attempts": 0,
+   "request_s": 0.0,
+   "wait_s": 0.0,
+   "retry_s": 0.0,
+   "cost_usd": 0.0
+  },
+  "models": "list[0]"
+ },
+ "retrieval_flags": {
+  "HERB_BASELINE_METADATA": false
+ },
+ "char_budget": 72000,
+ "code_version": {
+  "commit": "a140636a35b9ddba479df317e81ee66044b62a2b",
+  "branch": "artefact-v4",
+  "dirty": true
+ },
+ "environment": {
+  "host": "Wiktop",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.7",
+  "python_executable": "str[52]",
+  "cpu": "str[51]",
+  "cpu_count": 16,
+  "ram_bytes": 16907755520,
+  "packages": {
+   "bm25s": "0.2.14",
+   "PyStemmer": "3.1.0",
+   "numpy": "2.4.6",
+   "sentence-transformers": "6.0.1",
+   "torch": "2.14.0+cpu",
+   "transformers": "5.12.1",
+   "httpx": "0.28.1",
+   "ragas": "0.4.3",
+   "neo4j": "6.2.0"
+  },
+  "embedder": {
+   "model": "nvidia/llama-nemotron-embed-1b-v2",
+   "revision": "113abe4acafa848e77ead9c0623205e511932348",
+   "device": "cpu",
+   "dtype": "float32"
+  }
+ },
+ "inputs": {
+  "questions_sha256": "str[64]",
+  "ids_sha256": "str[64]",
+  "corpus": {
+   "sha256": "str[64]",
+   "n_files": 33
+  }
+ },
+ "graph": null,
+ "n_exhausted": 0,
+ "flags": null,
+ "legs": [
+  "list[2] of",
+  {
+   "leg": 1,
+   "started_at": "2026-10-08T00:21:45.527149+00:00",
+   "finished_at": "2026-10-08T00:22:04.808129+00:00",
+   "wall_s": 19.280773099977523,
+   "workers": 1,
+   "argv": [
+    "list[3] of",
+    "str[57]"
+   ],
+   "pid": 41440,
+   "python_executable": "str[52]",
+   "ids_file": "str[93]",
+   "n_chosen": 1,
+   "n_todo": 1,
+   "n_answered": 1,
+   "n_unanswered_after": 0,
+   "aborted": null,
+   "prepare_s": 4.490221400046721,
+   "embedder_load_s": null,
+   "retrieval_only": false,
+   "evaluator": "gen",
+   "peak_memory_bytes": 169832448,
+   "code_version": {
+    "commit": "a140636a35b9ddba479df317e81ee66044b62a2b",
+    "branch": "artefact-v4",
+    "dirty": true
+   },
+   "code_state": {
+    "status": [
+     "list[36] of",
+     " M data/question_query_vecs.npz"
+    ],
+    "diff_sha256": "str[64]",
+    "untracked_sha256": {
+     "prod/harness/capture.py": "str[64]",
+     "prod/tests/test_capture.py": "str[64]",
+     "test/artefact/graph_layer.py": "str[64]",
+     "test/artefact/scope_filter.py": "str[64]",
+     "test/artefact/v4_db.py": "str[64]",
+     "test/graph/write_facet_layer.py": "str[64]",
+     "test/tests/test_artefact_v4_clouds.py": "str[64]",
+     "test/tests/test_graph_layer.py": "str[64]",
+     "test/tests/test_v4_walk.py": "str[64]"
+    },
+    "diff_file": "code.leg1.diff"
+   },
+   "flags": null,
+   "lane": {
+    "exe": "C:\\Users\\jocke\\.local\\bin\\claude.exe",
+    "cli_version": "2.1.212 (Claude Code)",
+    "cwd": "str[50]",
+    "fixed_flags": [
+     "list[4] of",
+     "-p"
+    ],
+    "env_set": {
+     "MEMPALACE_HOOKS_AUTO_SAVE": "false"
+    },
+    "max_tries_default": 6
+   },
+   "index": {
+    "units": 38540,
+    "text_chars": 11304304,
+    "method": "lucene",
+    "k1": 0.9,
+    "b": 0.4,
+    "stopwords": "en",
+    "stemmer": "english",
+    "bm25s": "0.2.14",
+    "PyStemmer": "3.1.0",
+    "kept": "str[42]"
+   }
+  }
+ ],
+ "workers": 1,
+ "lane": {
+  "exe": "C:\\Users\\jocke\\.local\\bin\\claude.exe",
+  "cli_version": "2.1.212 (Claude Code)",
+  "cwd": "str[50]",
+  "fixed_flags": [
+   "list[4] of",
+   "-p"
+  ],
+  "env_set": {
+   "MEMPALACE_HOOKS_AUTO_SAVE": "false"
+  },
+  "max_tries_default": 6
+ },
+ "generator": {
+  "model": "claude-sonnet-5",
+  "system": "str[66]",
+  "user_template": "str[81]",
+  "schema": {
+   "type": "object",
+   "properties": {
+    "answer": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "list[1] of",
+    "answer"
+   ],
+   "additionalProperties": false
+  },
+  "payload": {
+   "temperature": 0,
+   "max_tokens": 8192,
+   "min_tokens": 1,
+   "chat_template_kwargs": {
+    "enable_thinking": false
+   }
+  },
+  "timeout_s": 480.0
+ },
+ "index": {
+  "units": 38540,
+  "text_chars": 11304304,
+  "method": "lucene",
+  "k1": 0.9,
+  "b": 0.4,
+  "stopwords": "en",
+  "stemmer": "english",
+  "bm25s": "0.2.14",
+  "PyStemmer": "3.1.0",
+  "kept": "str[42]"
+ },
+ "code_state": {
+  "status": [
+   "list[36] of",
+   " M data/question_query_vecs.npz"
+  ],
+  "diff_sha256": "str[64]",
+  "untracked_sha256": {
+   "prod/harness/capture.py": "str[64]",
+   "prod/tests/test_capture.py": "str[64]",
+   "test/artefact/graph_layer.py": "str[64]",
+   "test/artefact/scope_filter.py": "str[64]",
+   "test/artefact/v4_db.py": "str[64]",
+   "test/graph/write_facet_layer.py": "str[64]",
+   "test/tests/test_artefact_v4_clouds.py": "str[64]",
+   "test/tests/test_graph_layer.py": "str[64]",
+   "test/tests/test_v4_walk.py": "str[64]"
+  },
+  "diff_file": "code.leg1.diff"
+ },
+ "env": {}
+}

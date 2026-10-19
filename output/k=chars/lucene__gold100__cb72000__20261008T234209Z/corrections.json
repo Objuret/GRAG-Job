@@ -1,0 +1,205 @@
+{
+  "made_at": "2026-10-09T10:04:41.072422+00:00",
+  "ordered_by": "\"why did you add sleep to the metrics.. ffs\" · \"i thought you were done so i slapped the laptop lid down and fell asleep yesterday, thats why it fucking 'broke connection'\" · \"no, i meant, while you still have the stats and information since YOU are the conversation.. you can correct the data based on that\" (2026-10-09)",
+  "what_happened": "The laptop's lid was closed while the answers were being made. Two answer calls were under way, one after the other. Each was cut as a timeout when the laptop woke, although its reply had come back, and was asked again. The second reply is the answer that was kept and judged. No answer, context or score is changed by this correction: only times.",
+  "rule": {
+    "id": "slept-try/1",
+    "text": "A try of a model call is one the machine slept under when all three hold:\n  1. it ended as a timeout;\n  2. it lasted longer than its own timeout (a call that is running is cut at its timeout, so a\n     longer one was not running the whole time);\n  3. the low-power time the machine itself logged inside the try's start and end is at least the\n     try's overrun past its timeout.\nThe seconds recorded for such a try are taken out of the three sums they went into: the row's\ngenerator.time_s and generator.retry_s, the row's timing.wall_s, and the wall_s of that start in\nthe run manifest. What those sums hold afterwards: the try that answered, the pause the harness\nwaits before it tries again, and the harness's own overhead. The slept try's own share of awake\nseconds, in which its reply came back, cannot be told apart from the sleep by the run's clock and\ngoes out with it."
+  },
+  "not_changed_and_worth_knowing": [
+    "generator.attempts is 2 and generator.calls is 1 in these rows: two requests were made and paid for, one answer was kept.",
+    "The tokens of the discarded reply are listed under slept_tries. They are not part of the row's token counts, which are those of the try that answered.",
+    "The try that answered read the prompt from the cache the first try had written (generator.cached_input_tokens), which no other row of this run does.",
+    "started_at, finished_at and answered_at are clock times and have the sleep between them."
+  ],
+  "slept_tries": [
+    {
+      "question_id": "CollaborationForce::a::0",
+      "row": 93,
+      "try": 1,
+      "started_at": "2026-10-08T23:52:59.586311+00:00",
+      "recorded_seconds": 18289.515918700024,
+      "timeout_s": 480.0,
+      "low_power_seconds_the_machine_logged_inside_it": 18289.511297225952,
+      "a_whole_reply_had_come_back": true,
+      "tokens_of_the_discarded_reply": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 22679,
+        "cache_read_input_tokens": 0,
+        "output_tokens": 103
+      }
+    },
+    {
+      "question_id": "ConnectForce::a::0",
+      "row": 94,
+      "try": 1,
+      "started_at": "2026-10-09T04:57:56.603808+00:00",
+      "recorded_seconds": 7037.336775699863,
+      "timeout_s": 480.0,
+      "low_power_seconds_the_machine_logged_inside_it": 7030.45019197464,
+      "a_whole_reply_had_come_back": true,
+      "tokens_of_the_discarded_reply": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 22678,
+        "cache_read_input_tokens": 0,
+        "output_tokens": 195
+      }
+    }
+  ],
+  "changes": [
+    {
+      "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+      "field": "generator.time_s",
+      "recorded": 18296.913243100047,
+      "corrected": 7.397324400022626,
+      "taken_out": 18289.515918700024
+    },
+    {
+      "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+      "field": "generator.retry_s",
+      "recorded": 18290.516016099835,
+      "corrected": 1.000097399810329,
+      "taken_out": 18289.515918700024
+    },
+    {
+      "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+      "field": "timing.wall_s",
+      "recorded": 18296.98557859985,
+      "corrected": 7.469659899827093,
+      "taken_out": 18289.515918700024
+    },
+    {
+      "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+      "field": "generator.time_s",
+      "recorded": 7045.97102149995,
+      "corrected": 8.634245800087228,
+      "taken_out": 7037.336775699863
+    },
+    {
+      "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+      "field": "generator.retry_s",
+      "recorded": 7038.337227199925,
+      "corrected": 1.0004515000618994,
+      "taken_out": 7037.336775699863
+    },
+    {
+      "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+      "field": "timing.wall_s",
+      "recorded": 7046.080426099943,
+      "corrected": 8.743650400079787,
+      "taken_out": 7037.336775699863
+    },
+    {
+      "where": "run_manifest.json legs[leg=1]",
+      "field": "wall_s",
+      "recorded": 26009.67611969984,
+      "corrected": 682.8234252999537,
+      "taken_out": 25326.852694399888
+    }
+  ],
+  "judge_calls_with_logged_low_power_time_inside_them": {
+    "note": "No change is made to these. Whether the call was held while the machine was in this state is not known from the record, so its seconds stand as recorded.",
+    "calls": [
+      {
+        "question_id": "ExplainabilityForce::a::0",
+        "score": "context_recall_llm",
+        "started_at": "2026-10-09T08:08:54.257780+00:00",
+        "finished_at": "2026-10-09T08:09:29.648183+00:00",
+        "tries": [
+          [
+            1,
+            "ok",
+            35.39452819991857
+          ]
+        ],
+        "low_power_seconds_the_machine_logged_inside_it": 24.741999864578247
+      },
+      {
+        "question_id": "FeedbackForce::a::0",
+        "score": "answer_correctness",
+        "started_at": "2026-10-09T08:10:02.059782+00:00",
+        "finished_at": "2026-10-09T08:10:17.261038+00:00",
+        "tries": [
+          [
+            1,
+            "ok",
+            15.200434300117195
+          ]
+        ],
+        "low_power_seconds_the_machine_logged_inside_it": 0.12303805351257324
+      },
+      {
+        "question_id": "FeedbackForce::a::0",
+        "score": "context_recall_llm",
+        "started_at": "2026-10-09T08:10:17.280071+00:00",
+        "finished_at": "2026-10-09T08:10:27.100744+00:00",
+        "tries": [
+          [
+            1,
+            "ok",
+            9.824482300085947
+          ]
+        ],
+        "low_power_seconds_the_machine_logged_inside_it": 5.252928972244263
+      }
+    ]
+  },
+  "low_power_intervals_the_machine_logged": [
+    {
+      "start": "2026-10-08T22:33:41.814000+00:00",
+      "end": "2026-10-08T22:33:42.345000+00:00",
+      "seconds": 0.5310001373291016,
+      "what": "Modern Standby: Reason: Idle Timeout."
+    },
+    {
+      "start": "2026-10-08T23:52:59.525000+00:00",
+      "end": "2026-10-08T23:58:17.413000+00:00",
+      "seconds": 317.8880000114441,
+      "what": "Modern Standby: Reason: Lid."
+    },
+    {
+      "start": "2026-10-08T23:58:17.417000+00:00",
+      "end": "2026-10-09T04:57:40.068000+00:00",
+      "seconds": 17962.65100002289,
+      "what": "Modern Standby: Reason: Austerity Battery Drain Budget Exceeded."
+    },
+    {
+      "start": "2026-10-09T04:57:40.068622+00:00",
+      "end": "2026-10-09T06:55:04.356332+00:00",
+      "seconds": 7044.287710428238,
+      "what": "sleep or hibernate"
+    },
+    {
+      "start": "2026-10-09T06:55:04.305000+00:00",
+      "end": "2026-10-09T06:55:07.054000+00:00",
+      "seconds": 2.748999834060669,
+      "what": "Modern Standby: Reason: Sleep, Hibernate, or Shutdown."
+    },
+    {
+      "start": "2026-10-09T08:08:58.223000+00:00",
+      "end": "2026-10-09T08:09:22.965000+00:00",
+      "seconds": 24.741999864578247,
+      "what": "Modern Standby: Reason: Idle Timeout."
+    },
+    {
+      "start": "2026-10-09T08:10:17.138000+00:00",
+      "end": "2026-10-09T08:10:22.533000+00:00",
+      "seconds": 5.394999980926514,
+      "what": "Modern Standby: Reason: Idle Timeout."
+    }
+  ],
+  "files": {
+    "arm_outputs.jsonl": {
+      "sha256_as_recorded": "11a0cc3bba9f620c9bf365df81c05405cd0092c41b014525cbec65a661bce036",
+      "sha256_corrected": "26eedeff715667af1d0a87d0f612e979c3634c6c11bf86a246119f672c8902a8",
+      "as_recorded_copy": "arm_outputs.as_recorded.jsonl"
+    },
+    "run_manifest.json": {
+      "sha256_as_recorded": "035b75d98f68cf1856cda4bdc3b642a006118b498642a8c7fcd1d14da75e742b",
+      "sha256_corrected": "29e1ab72decb37ddef7b634c9030c9724e6e1a8daba742dd5030d075cb304c2c",
+      "as_recorded_copy": "run_manifest.as_recorded.json"
+    }
+  },
+  "evidence": "machine_sleep_events.txt (Windows' System log, Kernel-Power and Power-Troubleshooter, in UTC)",
+  "script": "correct_slept_tries.py, in this folder; run on the files as recorded it gives these files again"
+}

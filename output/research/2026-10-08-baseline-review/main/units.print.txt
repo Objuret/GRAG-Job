@@ -1,0 +1,19 @@
+resource module not available on Windows
+lucene: 38540 artifacts + 0 directory records
+vector: 38540 artifacts + 0 directory records
+units: lucene 38540 vector 38540 | same ids in the same order: True
+characters over all units: lucene 11304304 vector 11237921
+
+per kind of record: n | text identical in both arms | chars lucene | chars vector | median chars lucene / vector | longest lucene / vector | empty lucene / vector
+  slack                 33632 |      0 |   6964901 |   6931269 |     195 / 194     |    704 / 703    | 0 / 0
+  documents               400 |    400 |   1943308 |   1943308 |    4654 / 4654    |   8656 / 8656   | 0 / 0
+  meeting_transcripts     321 |    321 |    977076 |    977076 |    2895 / 2895    |   5508 / 5508   | 0 / 0
+  meeting_chats            50 |      0 |      6530 |      5880 |     128 / 116     |    141 / 128    | 0 / 0
+  urls                    575 |      0 |     99540 |     67439 |     176 / 114     |    307 / 206    | 0 / 0
+  prs                    3562 |   3562 |   1312949 |   1312949 |     162 / 162     |   1445 / 1445   | 0 / 0
+
+url records: 635; of them with the description standing twice in lucene's text: 581
+lucene: distinct texts 38186 of 38540; units sharing their text with another unit: 667 in 313 groups (largest group 5)
+vector: distinct texts 38186 of 38540; units sharing their text with another unit: 667 in 313 groups (largest group 5)
+lucene unit length in characters: min 52  median 194  mean 293  90% 343  99% 3632  max 8656 | units longer than 72,000: 0 | units longer than 7,200: 20
+vector unit length in characters: min 51  median 192  mean 292  90% 342  99% 3632  max 8656 | units longer than 72,000: 0 | units longer than 7,200: 20

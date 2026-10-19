@@ -1,0 +1,34 @@
+== the answer call (lucene proof) ==
+prompt the harness kept: 72500 chars | user message in the CLI's transcript: 73308 chars | the kept prompt is inside it verbatim: False
+   same for the first 10 chars; kept prompt goes on "\nSlack #bug-juliamartinez-EdgeForce — eid_91523bad\nLastly, Kubernetes has a 'Fai"; transcript goes on "\r\nSlack #bug-juliamartinez-EdgeForce — eid_91523bad\r\nLastly, Kubernetes has a 'F"
+   transcript's last 120 chars: ' the EdgeForce team change the rollback procedure for model updates, and what had gone wrong with rollbacks before that?'
+   kept prompt's last 120 chars: ' the EdgeForce team change the rollback procedure for model updates, and what had gone wrong with rollbacks before that?'
+   newline counts: kept 808 LF / 0 CR; transcript 808 LF / 808 CR
+   queue-operation: enqueue | content chars: 73308
+   queue-operation: dequeue | content chars: 0
+   user record: {'entrypoint': 'claude-vscode', 'permissionMode': 'default', 'promptSource': 'sdk', 'version': '2.1.212'}
+   ai-title record: Fix model update rollback issues and transaction management
+   assistant block thinking: text 0 chars, signature 1100 chars | effort on the record: 'medium' | version 2.1.212 | model claude-sonnet-5
+   assistant block text: 919 chars | similarity to the kept answer (1049 chars): 0.53 | starts: '**What went wrong:** The EdgeForce "Model Update Rollback Error" bug meant that when a model update failed, the system didn\'t properly roll back the changes. This left devices with incomplete or corru'
+   assistant block tool_use: name 'StructuredOutput' | input keys ['answer'] | input.answer equals the kept answer: True
+   attachment record: {"type": "structured_output", "data": {"answer": "**What went wrong before:** EdgeForce had a \"Model Update Rollback Error\" bug — when a model update failed, the transaction management system did not correctly revert the changes. This left devices with incomplete or corrupted models, causing inaccurate insights for customers (impacting CUST-0076).\n\n**Why the procedure was changed:** The root cause was identified as a flaw in the transaction management logic that failed to properly track and 
+   tool_result: "Structured output provided successfully"
+
+== the calls of the vector answer + evaluation proof ==
+   no kept prompt matches: user message 73371 chars (None more than the kept prompt) | model ['claude-sonnet-5'] | effort on the record ["'medium'"] | blocks ['text', 'tool_use'] | thinking text 0 chars | text 1093 chars | output_tokens [733] | title record: True
+   no kept prompt matches: user message 2887 chars (None more than the kept prompt) | model ['claude-haiku-4-5-20251001'] | effort on the record ['None'] | blocks ['thinking', 'text'] | thinking text 0 chars | text 1508 chars | output_tokens [5509] | title record: True
+   no kept prompt matches: user message 77742 chars (None more than the kept prompt) | model ['claude-haiku-4-5-20251001'] | effort on the record ['None'] | blocks ['thinking', 'text'] | thinking text 0 chars | text 5161 chars | output_tokens [3665] | title record: True
+   no kept prompt matches: user message 2887 chars (None more than the kept prompt) | model ['claude-haiku-4-5-20251001'] | effort on the record ['None'] | blocks ['thinking', 'text'] | thinking text 0 chars | text 1493 chars | output_tokens [7641] | title record: True
+   no kept prompt matches: user message 1862 chars (None more than the kept prompt) | model ['claude-haiku-4-5-20251001'] | effort on the record ['None'] | blocks ['thinking', 'text'] | thinking text 0 chars | text 139 chars | output_tokens [628] | title record: True
+   no kept prompt matches: user message 6888 chars (None more than the kept prompt) | model ['claude-haiku-4-5-20251001'] | effort on the record ['None'] | blocks ['thinking', 'text'] | thinking text 0 chars | text 4090 chars | output_tokens [2223] | title record: True
+   no kept prompt matches: user message 76651 chars (None more than the kept prompt) | model ['claude-haiku-4-5-20251001'] | effort on the record ['None'] | blocks ['thinking', 'text'] | thinking text 0 chars | text 524 chars | output_tokens [622] | title record: True
+
+== with CR LF turned back into LF, is the user message in the CLI's transcript exactly the kept prompt? ==
+   lucene answer call: True | CR count 808 | kept prompt chars 72500
+   transcript user message 73371 chars, CR 665: equals a kept prompt after CR LF -> LF: True ['(the answer call)']
+   transcript user message 2887 chars, CR 25: equals a kept prompt after CR LF -> LF: True ['faithfulness', 'answer_correctness']
+   transcript user message 77742 chars, CR 81: equals a kept prompt after CR LF -> LF: True ['faithfulness']
+   transcript user message 2887 chars, CR 25: equals a kept prompt after CR LF -> LF: True ['faithfulness', 'answer_correctness']
+   transcript user message 1862 chars, CR 25: equals a kept prompt after CR LF -> LF: True ['answer_correctness']
+   transcript user message 6888 chars, CR 112: equals a kept prompt after CR LF -> LF: True ['answer_correctness']
+   transcript user message 76651 chars, CR 43: equals a kept prompt after CR LF -> LF: True ['context_recall_llm']

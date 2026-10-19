@@ -1,0 +1,19 @@
+resource module not available on Windows
+lucene: 38540 artifacts + 0 directory records
+units by kind in the index: {'slack': 33632, 'documents': 400, 'meeting_transcripts': 321, 'meeting_chats': 50, 'urls': 575, 'prs': 3562}
+
+lucene 10-07: whole units delivered 12682, their characters 7065363
+  slack                units  10221 ( 80.6%)  characters  2073677 ( 29.3%)  questions with at least one: 99
+  documents            units    667 (  5.3%)  characters  3195247 ( 45.2%)  questions with at least one: 84
+  meeting_transcripts  units    279 (  2.2%)  characters   832946 ( 11.8%)  questions with at least one: 57
+  meeting_chats        units      0 (  0.0%)  characters        0 (  0.0%)  questions with at least one: 0
+  urls                 units     50 (  0.4%)  characters    10461 (  0.1%)  questions with at least one: 21
+  prs                  units   1465 ( 11.6%)  characters   953032 ( 13.5%)  questions with at least one: 81
+
+vector 10-07: whole units delivered 25349, their characters 7130657
+  slack                units  24171 ( 95.4%)  characters  5122685 ( 71.8%)  questions with at least one: 100
+  documents            units    173 (  0.7%)  characters   879108 ( 12.3%)  questions with at least one: 37
+  meeting_transcripts  units    284 (  1.1%)  characters   851031 ( 11.9%)  questions with at least one: 62
+  meeting_chats        units     46 (  0.2%)  characters     5237 (  0.1%)  questions with at least one: 7
+  urls                 units    232 (  0.9%)  characters    20619 (  0.3%)  questions with at least one: 28
+  prs                  units    443 (  1.7%)  characters   251977 (  3.5%)  questions with at least one: 64

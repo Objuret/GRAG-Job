@@ -1,0 +1,84 @@
+
+============================================================
+  Results for: "evidence hit-rate token cost latency traceability indicators harness"
+  Wing: grag-job
+============================================================
+
+  [1] grag-job / technical
+      Source: 2311cb8a-730e-4bac-ae48-eb0744d04950.jsonl
+      Match:  cosine_sim=0.476  bm25=10.239
+
+      . One full run of it on the hundred.
+      
+      Two phrases need changing either way: "structural filtering", and the two measures that aren't computed (evidence hit-rate and traceability indicators).
+
+  --------------------------------------------------------
+  [2] grag-job / general
+      Source: 2026-09-22-facet-retrieval-plan.md
+      Match:  cosine_sim=0.415  bm25=4.118
+
+      acquisition cost, not a demonstrated loss
+      of either source or a validation of facet exchange rates.
+      
+      The measurement audit now distinguishes route arithmetic, pair ordering,
+      fixed-budget source inclusion, exact whole-frontier source acquisition cost,
+      and known support for all parts of a question. See
+      `output/research/2026-09-22-joint-streams/independent_sources/query_interpretation_intervention/MEASUREMENT_CONTRACT.md`
+      and the adjacent repair/results and selection/content audits. Source costs use
+      saved text lengths, not production token or serialization cost. Source readers
+      remain model judgments; no user annotation request is reinstated.
+
+  --------------------------------------------------------
+  [3] grag-job / technical
+      Source: eceb6d17-22c2-4938-a054-1a2a8fc3f569.jsonl
+      Match:  cosine_sim=0.411  bm25=1.454
+
+      ration") | "actively corrected by DevOps" → RIGHT | a |
+      | root cause analysis | "No, a general methodology" → **WRONG** ("After a thorough review, I've determined…") | "Ian actively investigates" → RIGHT | a |
+      | server clock | "Yes, issue and solution revolve around it" → RIGHT | "No, the clock itself is not being changed" → RIGHT | |
+      | time synchronization | "Yes, inherently about … time intervals" → RIGHT ("they're working on correcting") | "actively corrected" → RIGHT | a |
+      | timestamp mechanism | "Yes, timestamps are inherently temporal" → RIGHT (just fixed) | "being updated to fetch server time" → RIGHT | a |
+      | API latency metrics | "Yes, depended on when recorded" → RIGHT | "investigated … issue being corrected" → RIGHT | |
+      | DevOps team | "No, identifying a team does not depend on w
+
+  --------------------------------------------------------
+  [4] grag-job / general
+      Source: 2026-09-24-reconstruction-completion-audit.md
+      Match:  cosine_sim=0.413  bm25=0.958
+
+      e retrieval. | Supported as an API/dataflow boundary; process isolation is explicitly not claimed. |
+      | Separate metrics and types of evidence | Source-ID set formulas, partial-boundary credit, development-selected versus per-case gold-selected policies, historical model judgments, heldout/model-selection distinction, completed smoke versus numeric preflight. | Supported. No retrieval metric is presented as answer quality or semantic validation. |
+      | Deliver a substantive explanation rather than only links | Main report contains coherent intended flow, exact implemented flow, comparisons, historical tests and consequences. User-facing response must present those findings directly. | Documentary deliverable complete; fulfilled in the accompanying response, not by this checklist alone. |
+
+  --------------------------------------------------------
+  [5] grag-job / technical
+      Source: 66fb9016-4452-4c54-8b4d-add091517b18.jsonl
+      Match:  cosine_sim=0.417  bm25=0.0
+
+      ses><duration_ms>150251</duration_ms></usage>
+      </task-notification>
+      The scope check is in, and it turns one thing over.
+      
+      | the interpreter's hint, checked against gold | |
+      |---|---|
+      | section hint, 27 questions: share of gold in the hinted section | 8 percent |
+      | pull-request questions, 17: share of gold in the PR records | 6 percent |
+      | product hint, 97 questions: share of gold in the hinted product's file | 100 percent, on 97 of 97 |
+      
+      The section hint is wrong. A question about pull requests cites Slack and documents, not the PRs. Cutting to the hinted section drops those 27 questions to 0.04. Dead, and measured before anyone built it.
+      
+      The product hint is exact. Every gold id of every product question lives in that product's file. And the quarter of the region that spills into other prod
+
+  --------------------------------------------------------
+  [6] grag-job / general
+      Source: 2026-09-23-construction-query-reduction.md
+      Match:  cosine_sim=0.41  bm25=0.0
+
+      Gold-linked movement alone cannot establish semantic relevance.
+      
+      ## Mechanical trace and live graph
+      
+      `case_001` has seven distinct numeric query readings and a saved area of 151 chunks. Before the whole-description gate, direct support reaches all 4,808 chunks, adjacency 3,189, and grouped support 2,620. The prepared graph has 2,787 undirected locator-neighbor pairs, 302 product/channel groups and 4,396 recovery components (including singletons). After description gating/recovery, the traced reference and mean each expose 4,807 chunks.
+
+  --------------------------------------------------------
+

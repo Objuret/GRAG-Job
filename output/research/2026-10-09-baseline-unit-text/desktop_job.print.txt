@@ -1,0 +1,23 @@
+sample_units_20261009_gpu.npz: 200 texts, mode passage, device cuda
+embedder: loading nvidia/llama-nemotron-embed-1b-v2 @ 113abe4acafa on cuda (float32) — first use
+Loading weights:   0%|          | 0/146 [00:00<?, ?it/s]Loading weights:   1%|          | 1/146 [00:02<04:53,  2.03s/it]Loading weights:  77%|███████▋  | 113/146 [00:02<00:00, 73.96it/s]Loading weights: 100%|██████████| 146/146 [00:02<00:00, 59.38it/s]
+embedder: ready in 5s (2048 dim, 8192-token context)
+  200/200  9.8 texts/s  about 0.0 min left
+done sample_units_20261009_gpu.npz: (200, 2048) float32, 20.5s, sha256 372bd0c90a1a687b
+corpus_units_20261009_local.npz: 38540 texts, mode passage, device cuda
+embedder: loading nvidia/llama-nemotron-embed-1b-v2 @ 113abe4acafa on cuda (float32) — first use
+Loading weights:   0%|          | 0/146 [00:00<?, ?it/s]Loading weights:  25%|██▍       | 36/146 [00:00<00:00, 358.21it/s]Loading weights:  49%|████▉     | 72/146 [00:00<00:00, 285.51it/s]Loading weights:  70%|██████▉   | 102/146 [00:00<00:00, 250.70it/s]Loading weights:  88%|████████▊ | 129/146 [00:00<00:00, 256.22it/s]Loading weights: 100%|██████████| 146/146 [00:00<00:00, 278.09it/s]
+embedder: ready in 3s (2048 dim, 8192-token context)
+  2000/38540  12.9 texts/s  about 47.2 min left
+  4000/38540  12.9 texts/s  about 44.6 min left
+  6000/38540  13.0 texts/s  about 41.8 min left
+  8000/38540  12.9 texts/s  about 39.5 min left
+  10000/38540  12.9 texts/s  about 36.8 min left
+  12000/38540  13.0 texts/s  about 34.0 min left
+  14000/38540  13.0 texts/s  about 31.5 min left
+  16000/38540  13.0 texts/s  about 28.9 min left
+  18000/38540  13.0 texts/s  about 26.3 min left
+  20000/38540  13.0 texts/s  about 23.7 min left
+Read from remote host 192.168.50.253: Connection reset by peer
+client_loop: send disconnect: Connection reset by peer
+ssh exit 255

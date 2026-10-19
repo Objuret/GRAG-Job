@@ -46,7 +46,7 @@ the code, solutions, results on all of it, they you will do it in context of eac
 - Write no sentence about the system into the repo. The ledger is outside the repo and is for
   the agents; keep it factual and sourced.
 - Speak in his terms: parts, facets, facetweights, tags, chunks, region, levels of k's, fuzzy,
-  stated scope, walk, the chain query → tag → chunk → file.
+  stated scope, walk, query → tag → chunk → file ("the chain" is not his word).
 
 ## Report (in chat, short)
 

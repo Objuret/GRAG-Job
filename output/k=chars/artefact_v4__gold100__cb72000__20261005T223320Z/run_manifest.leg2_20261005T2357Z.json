@@ -1,0 +1,377 @@
+{
+  "arm": "artefact_v4",
+  "generator_model": "claude-sonnet-5",
+  "interpreter_model": "claude-sonnet-5",
+  "top_k": 50,
+  "questions_file": "C:\\Coding\\exjobbet\\GRAG-Job\\data\\questions.jsonl",
+  "n_questions": 100,
+  "n_ran": 99,
+  "n_failed": 1,
+  "timestamp": "2026-10-05T22:54:22.617301+00:00",
+  "build_stats": {
+    "build_time_s": 151.07652420015074,
+    "model": {
+      "calls": 0,
+      "tokens_in": 0,
+      "cached_input_tokens": 0,
+      "tokens_out": 0,
+      "reasoning_tokens": 0,
+      "time_s": 0.0,
+      "attempts": 0,
+      "request_s": 0.0,
+      "wait_s": 0.0,
+      "retry_s": 0.0
+    },
+    "models": [
+      "claude-sonnet-5"
+    ]
+  },
+  "retrieval_flags": {
+    "interpretation": "query_content: one querytagger call; the question in, the description, the description-side tags and the question-side tags, five readings each, out.",
+    "interpreter_model": "claude-sonnet-5",
+    "query_tags": "strength, multikey, adjust_lower and walk: both tag lists, each embedded beside the description; the other sorts: the description-side list only. The question text and the description are the two texts matched against the chunk descriptions. Every sort but walk embeds the query side in the embedder's query role; walk embeds each comparison in the role its three role knobs name.",
+    "cos_noise": 0.002,
+    "strength": {
+      "unit": "standing(x) = (x - median) / (1.4826 * the median absolute deviation from the median) over x's own population; a zero spread raises. N: every graph tag except the product-name tags (casefolded); E: the edges whose tag is among them.",
+      "fit": "per query tag q of either list, the standing of cos(q,t) over the N eligible graph tags.",
+      "edge_values": "per eligible edge, query-independent: topic = the standing of cos(tag, chunk description) over E; temporal, why, activity, concreteness each the normal score of the edge's average rank in its column over E, the standard normal quantile of (rank - 1/2) / |E|, ties sharing a rank; the columns are the values multikey reads, their order alone is used.",
+      "weight": "w(q,e) = sum over the five of share_f(q) * value_f(e); share_f(q) = q's reading over the sum of q's five readings; five equal shares when that sum is 0.",
+      "tag_route": "s(q,c) = max over c's eligible edges (t,c) of fit(q,t) + w(q,e); a chunk with no eligible edge has none.",
+      "centrality": "cos(q, query description), both vectors from the one query-role embedding call that embeds q, a negative one as 0, over the question's largest; no positive cosine raises.",
+      "tags": "T(c) = max over q of centrality(q) * max(s(q,c), 0); 0 for a chunk with no eligible edge.",
+      "description": "D(c), Q(c) = the standing over the chunks of cos(query description, chunk description) and of cos(raw question, chunk description); S(c) = T(c) + max(D(c), Q(c)).",
+      "structure": "per node type (product, channel, file = the chunk's relpath) and chunk c with another chunk under the same node: max(0, mean of S over the other chunks under the node - mean of S over all chunks); the largest over a chunk's channels; S'(c) = S(c) + the three boosts; nothing is lowered, no chunk is removed.",
+      "level": "floor((max S' - S'(c)) / step), step = COS_NOISE over the median of the question's query tags' fit spreads.",
+      "order": "level -> chunks with a winning edge before chunks with no eligible edge -> the winning edge's four facet normal scores, descending, in the order of the winning query tag's readings for temporal, why, activity, concreteness, largest first, equal readings in that order -> chunk id; full order returned, harness cuts.",
+      "ties": "an exact tie between two edges of a chunk goes to the earlier edge, between two query tags to the earlier query tag in the list; D where D = Q; a chunk counts once under a node.",
+      "diagnostic": "for the credited rows: each term's sum and its share of their total strength, the term with the largest absolute difference per adjacent pair, the rows taking D or Q, the levels; over all chunks the largest boost and the chunks with a positive boost per node type."
+    },
+    "multikey": {
+      "edges": "Every (q,t,c): q every query tag of both lists, t every graph tag except the product-name tags (casefolded), c every chunk on t's HAS_TAG edge; no pick, no cut.",
+      "key": "fit level floor((best fit over the question's edges - fit) / W), W from HERB_V4_FITEQ -> the four facets temporal, why, activity, concreteness in the order of q's readings for them, largest first, equal readings in that order, each floor((best value of the column over the question's edges - value) / the column's gap) -> landed -> seed distance -> topic level floor((best topic over the question's edges - topic) / COS_NOISE) -> description level -> question level (COS_NOISE below the best over the chunks) -> chunk id; HERB_V4_STRUCT_AT=after_fit moves landed and seed distance right after fit, off leaves both out.",
+      "landed": "0 if the chunk sits in the question's landed area (landing.land, areas, combine: the meet of the distinct landings), else 1; no landing: 0 for every chunk. A capitalised word the pool chunks' texts carry never reaches the nearest-name pass; a landing that reaches no chunk is dropped from the meet (both the orchestrator's).",
+      "seed_distance": "seeds: the chunks an edge at fit level 0 reaches; 0 a seed, 1 sharing a [:channel] node with a seed or file-adjacent to one (artefact_v3.file_adjacency), 2 under the same product as a seed, 3 otherwise; channels and products read by artefact_v3.load_shape.",
+      "fit_equal_widths": {
+        "noise": 0.002,
+        "paraphrase": 0.028
+      },
+      "facet_values": "each edge's mean score over the 24 refits in rounds/round1/bootstrap/scores_b24.npz, the quantity the gaps were measured on",
+      "facet_gaps": "each column's own \"gap (any)\" (uniform edge pairs) from the per-column table of rounds/round1/bootstrap/BANDS.md",
+      "chunk_place": "a chunk takes the place of its best edge, its first appearance in the sorted edge list",
+      "unreached": "chunks with no eligible edge follow, by their own keys in the same order (landed, seed distance, description level, question level, chunk id)",
+      "diagnostic": "for the adjacent pairs among the first 50 credited rows, the first key that separates the two"
+    },
+    "adjust_lower": {
+      "reach": "Every query tag of both lists to every graph tag except the product-name tags; fit = cos(q,t); no pick, no band, no cut.",
+      "relevance": "rel = fit(q,t) * T(t,c) * prod over temporal, why, activity, concreteness of pct_f(t,c) ** (q_f / sum q_f), the weighted geometric mean (1 when the sum is 0 or HERB_V4_FACETS=off); fit and topic as they are; T = topic (HERB_V4_QTOPIC=off), or max(topic, 0) ** q_topic where q_topic > 0 and topic where q_topic = 0 (exp); pct_f the stored percentile rank r/n.",
+      "edge_combination": "HERB_V4_EDGECOMB=sum: every (q,t) reaching c adds; max: per query tag the best graph tag, summed over query tags; best: the single largest (q,t) term over every query tag and graph tag reaching c.",
+      "description": "HERB_V4_DESCJOIN=key: on an exact tie of the tag score, cos(description, chunk desc), then cos(question, chunk desc), each levelled at COS_NOISE below its best; mul: S * max(cos(description), 0) * max(cos(question), 0), continuous.",
+      "order": "reached before unreached -> score descending, continuous -> (key: description level -> question level) -> landing meet first -> chunk id; full order returned, harness cuts."
+    },
+    "multirank": {
+      "best_edge": "Per chunk its best (q,t) edge by strength = fit * topic over every query tag and every non-product graph tag (casefolded).",
+      "key": "strength level floor((best strength of the question - strength) / COS_NOISE), the same quantity that chose the edge -> the five levels of that edge in the order of the five readings of its query tag, largest first, equal readings in facet order -> description level -> question level -> landing -> id.",
+      "levels": "facets: floor((column max - stored score) / flip gap) over all edges, the gap the pooled same-chunk retrain flip gap from bootstrap/BANDS.md; topic: floor((max cosine - cosine) / COS_NOISE) over all edges.",
+      "unreached": "Chunks with no non-product edge follow, by description level, question level, landing, id."
+    },
+    "concept": {
+      "reach": "Every query tag to every graph tag except the product-name tags; fit = cos(q,t); no pick, no band.",
+      "relevance": "rel = fit+(q,t) * topic+(t,c) * (1 + (1/4) sum over temporal, why, activity, concreteness of r_f v_f); x+ = max(x, 0); T_q(c) = max over the chunk's edges; S(c) = sum_q T_q(c).",
+      "text": "D(c) = cos+(question, chunk desc) + cos+(description, chunk desc).",
+      "join": "HERB_V4_JOIN=adjust: S*(1+D) (default); mul: S*D; add: S+D. All three are the arm's constructions.",
+      "adjust_facets": [
+        "temporal",
+        "why",
+        "activity",
+        "concreteness"
+      ],
+      "order": "score desc -> chunk id; full order returned, harness cuts. No area key.",
+      "hub_edges": 500
+    },
+    "chain": {
+      "fit_level": "floor((best_fit_all - fit(q,t)) / COS_NOISE), best_fit_all the highest fit of any query tag to any graph tag; one scale for the question; no cut.",
+      "relevance": "topic(t,c) * (1 + sum_f r_f v_f / sum_f r_f), five facets, stored _pos columns; levelled floor((max rel at the fit level - rel) / COS_NOISE) over every edge at that fit level; the anchor is the question's own pool.",
+      "description": "cos(the querytagger description, chunk description), continuous, after the tag keys.",
+      "order": "per chunk its best (fit_level, rel_level) over every (q,t) reaching it; reached by (best key, -d, id); unreached after, by (-d, id). No text probe, no area key."
+    },
+    "sum": {
+      "pick": "Per query tag, graph tags with fit >= best fit - band.",
+      "bands": {
+        "noise": 0.002,
+        "paraphrase": 0.028
+      },
+      "score": "sum_q sum_t fit(q,t) * topic(t,c) * (1 + sum_f r_f v_f / sum_f r_f) + sum_text cos(text, chunk description).",
+      "scale": "The tag part and the text part are added 1:1 with nothing making them commensurate.",
+      "area": "landing.combine meet; HERB_V4_AREA=first sorts in-area first, a cut under a budget.",
+      "order": "area key (when on) -> score desc -> chunk id."
+    },
+    "walk": {
+      "chain": "v4_walk.chain, the one implementation tools/walkthrough.py prints from and this arm sorts by. N: every graph tag except the product-name tags (casefolded); E: the edges whose tag is among them. Every step is the orchestrator's calculation. M1 to M7 are marked steps awaiting his word: each knob's default is the step's PROPOSAL, each other value the alternative of the walk-through it names or one of the two changes built after it (C3r: HERB_V4_WALK_RANK=picked, the four facets ranking the edges inside one class of closeness, the class one self-difference wide; C4n: HERB_V4_WALK_TAGS=off, no tag term), and the build settles none of them. A phrase standing in both tag lists is two query tags: it enters twice, once with each list's readings.",
+      "roles": "each comparison is embedded in one of the embedder's two roles; the graph's tag vectors and chunk description vectors are stored in the passage role (test/graph/reembed_herb_eval.py). HERB_V4_WALK_TAGROLE: the role of the question's tags, both lists, for their cosines to the graph tags (M1) - passage (the default, on his 2026-10-05 ruling: a tag against a tag is compared in the same role on both sides) or query, the role every other sort embeds them in. HERB_V4_WALK_DESCROLE: the role of the query description for its cosines to the chunk descriptions (M5); HERB_V4_WALK_QUESTROLE: the role of the raw question for its cosines to the chunk descriptions (M5) - each passage or query; the description defaults to passage (his 2026-10-05 ruling that everything embedded for the artefact is embedded the same way), the raw question to query (his \"yes to the question\" the same night: it is the one text that is a question). The centrality (M4) compares a tag with the query description in one role for both: the passage role when the tags' and the description's knobs both say passage, the query role in every other combination - the orchestrator's rule, unruled. Under the defaults the tags, the description and the centrality are in the passage role and the raw question in the query role; each text is embedded once per call, the description beside each tag list (a repeat is read from the rows kept on the side); all three knobs at query reproduce the 17 runs of 2026-10-05 08:28Z-09:51Z.",
+      "M1_fit": "per query tag q of either list, z_q(t) = the standing of cos(q,t) over the N eligible graph tags, (cos - median) / (1.4826 * the median absolute deviation from the median); fit_q(t) = max(z_q(t), 0); a zero spread raises. HERB_V4_WALK_FIT=raw (A1): fit_q(t) = cos(q,t); under raw more than the fit is exchanged: the tag term T is in raw cosines while the text side stays in standings, the lifts are taken on the sum of the two, and the level step stays COS_NOISE over the median s_q.",
+      "M2_positions": "per eligible edge, query-independent: pos_k(e) = the edge's average rank in column k over E (1 the smallest, ties sharing a rank) / |E|; the columns topic = cos(tag, chunk description) and temporal, why, activity, concreteness, the values multikey reads. Ranking topic, a cosine, like the four stored columns is the orchestrator's. No alternative, no knob.",
+      "M3_weight": "share_q = q's five readings over their sum, five equal shares when that sum is 0; R_q(e) = sum_k share_q[k] * pos_k(e); w_q(e) = fit_q(t) * R_q(e) / 0.5. 0.5 stands for the middle position: an edge at the middle rank of all five columns has R = (|E| + 1) / (2 |E|) and the factor (|E| + 1) / |E|, not 1. For a positive fit a factor above 1 raises the closeness and one below 1 lowers it; a fit of 0 stays 0; under HERB_V4_WALK_FIT=raw a graph tag with a negative cosine turns it round. HERB_V4_WALK_SHARES=equal (A3): five equal shares; off (A3b): w_q(e) = fit_q(t). Under equal and under off the readings still give the facet order inside a level; under off the edge's positions leave the weight and the order inside a level is still the winning edge's four facet positions.",
+      "M4_tags": "v_q(c) = the largest w_q over c's eligible edges, 0 with none; no correction for n_c, the number of c's eligible edges. HERB_V4_WALK_TAGS=pooled (A4a): in place of v the k-th largest w_q over E, k = ceil(p * |E|), p = 1 - (1 - K / |E|)^n_c, K the eligible edges with w_q >= v; peredge (A4e): in place of v the k-th largest fit_q over N, k = ceil(p * |N|), p = 1 - the product over c's edges i of (1 - K_i / |N|), K_i the eligible graph tags t with fit_q(t) * R_q(i) / 0.5 >= v; sum (A4b): in place of v the sum of w_q over c's edges. The sum stands against his 2026-09-10 sentence on parts and is kept as an alternative the walk-through measured: under it the tag term grows with the chunk's number of eligible edges while the text side and the level step stay as they are.",
+      "M4_query_tags": "centrality_q = cos(q, query description), both vectors from the one embedding call that embeds q beside the description, in the centrality's role (roles), a negative one as 0, over the question's largest; no positive cosine raises; T(c) = max over q of centrality_q * v_q(c). HERB_V4_WALK_QTAGS=equal (A4c): centrality 1; sum (A4d): the sum over q in place of the max. The sum stands against his 2026-09-10 sentence on parts and is kept as an alternative the walk-through measured: under it the tag term grows with the number of query tags, a phrase in both lists counted twice, while the text side and the level step stay as they are.",
+      "M5_text": "D(c), Qs(c) = the standing over the chunks of cos(query description, chunk description) and of cos(raw question, chunk description), not clipped; S(c) = T(c) + max(D(c), Qs(c)). HERB_V4_WALK_TEXT=off (A5a): S = T; description (A5b): S = T + D; clipped (A5c): S = T + max(D, Qs, 0).",
+      "M6_structure": "two groupings: product; near group, a connected component of the file adjacency (artefact_v3.file_adjacency) with at least two chunks. Product: x = S, reference the mean of S over the chunks. Near: x = S - the mean of S over the chunk's product, reference(c) the mean of x over the chunks of c's record kind that sit in a near group. raw(c,g) = the mean of x over g's members other than c - reference(c); on x - reference: sigma2 the pooled within-group variance, tau2 = max(0, (SSB - (G - 1) * sigma2) / (M - sum n_g^2 / M)), SSB = sum_g n_g * (mean_g - the mean over the memberships)^2, G the groups, M the memberships; trust(g) = tau2 / (tau2 + sigma2 / (n_g - 1)); lift(c,g) = max(0, trust(g) * raw(c,g)); S'(c) = S(c) + the two lifts; nothing is lowered, no chunk is removed. HERB_V4_WALK_STRUCT=off (A6a): S' = S; trust1 (A6b): trust 1; ref0 (A6c): near with reference 0; double (A6d): three groupings, product, channel and record (= near group), channel and record on x with reference 0, the largest lift over a chunk's channels, tau2 = max(0, SSB / M - G * sigma2 / M), S' = S + the three lifts.",
+      "M7_order": "step = COS_NOISE over the median of the question's query tags' s_q; level(c) = floor((max S' - S'(c)) / step); order: level -> chunks with a winning edge before chunks with no eligible edge -> the winning edge's pos for temporal, why, activity, concreteness, descending, in the order of the winning query tag's readings for those four, largest first, equal readings in that order -> chunk id; full order returned, harness cuts. HERB_V4_WALK_EQUAL=off (A7): S' descending -> chunk id.",
+      "ties": "the winning query tag of a chunk: the largest centrality_q * v_q(c), the earlier query tag in the list on an exact tie; its winning edge: that query tag's edge of the chunk with the largest w_q, the earlier edge on an exact tie. A chunk with T = 0 has no pair above 0: the same two rules give it the first query tag and that tag's edge for the order inside its level.",
+      "knobs": {
+        "HERB_V4_WALK_FIT": {
+          "step": "M1",
+          "values": {
+            "standing": "PROPOSAL",
+            "raw": "A1"
+          }
+        },
+        "HERB_V4_WALK_SHARES": {
+          "step": "M3",
+          "values": {
+            "readings": "PROPOSAL",
+            "equal": "A3",
+            "off": "A3b"
+          }
+        },
+        "HERB_V4_WALK_RANK": {
+          "step": "M3",
+          "values": {
+            "off": "PROPOSAL",
+            "picked": "C3r",
+            "percent": "C3p",
+            "same": "C3s"
+          }
+        },
+        "HERB_V4_WALK_TAGS": {
+          "step": "M4, within a query tag",
+          "values": {
+            "best": "PROPOSAL",
+            "pooled": "A4a",
+            "peredge": "A4e",
+            "sum": "A4b",
+            "off": "C4n"
+          }
+        },
+        "HERB_V4_WALK_QTAGS": {
+          "step": "M4, across the query tags",
+          "values": {
+            "central": "PROPOSAL",
+            "equal": "A4c",
+            "sum": "A4d"
+          }
+        },
+        "HERB_V4_WALK_TEXT": {
+          "step": "M5",
+          "values": {
+            "better": "PROPOSAL",
+            "off": "A5a",
+            "description": "A5b",
+            "clipped": "A5c"
+          }
+        },
+        "HERB_V4_WALK_STRUCT": {
+          "step": "M6",
+          "values": {
+            "near": "PROPOSAL",
+            "off": "A6a",
+            "trust1": "A6b",
+            "ref0": "A6c",
+            "double": "A6d"
+          }
+        },
+        "HERB_V4_WALK_EQUAL": {
+          "step": "M7",
+          "values": {
+            "levels": "PROPOSAL",
+            "off": "A7"
+          }
+        }
+      },
+      "role_knobs": {
+        "HERB_V4_WALK_TAGROLE": {
+          "values": [
+            "passage",
+            "query"
+          ],
+          "default": "passage"
+        },
+        "HERB_V4_WALK_DESCROLE": {
+          "values": [
+            "passage",
+            "query"
+          ],
+          "default": "passage"
+        },
+        "HERB_V4_WALK_QUESTROLE": {
+          "values": [
+            "passage",
+            "query"
+          ],
+          "default": "query"
+        }
+      },
+      "diagnostic": "embedding_roles: the role of the tags, the description, the question and the centrality, and per tag list the vector sha256 of each embedding call by role. For the credited rows: per row T, the side, each grouping's lift, S', the level and the winning query tag, -1 for a chunk with no eligible edge or with T = 0; each term's sum and its share of their total strength, the rows whose Qs stands above their D, the levels; over all chunks per grouping the groups, memberships, sigma2, tau2, the chunks with a lift above 0 and the largest lift; the phrases standing in both tag lists; the switches of v4_walk.chain the knobs set and the alternatives they name. A part a knob leaves unread is None or absent and named under not_read: no text term, no text bulk or spread and no Qs-above-D count under HERB_V4_WALK_TEXT=off, the description's alone and no count under description; no lift and no grouping under HERB_V4_WALK_STRUCT=off; no description cosines of the query tags under HERB_V4_WALK_QTAGS=equal; the query tags with equal shares are all of them under HERB_V4_WALK_SHARES=equal and None under off; under HERB_V4_WALK_EQUAL=off levels_order_the_rows is false and the level numbers the chain still computes stand under unused_ names."
+    },
+    "facet_values": "round1 stored scores and _pos columns, query-independent. strength reads each edge's mean over the 24 bootstrap refits as the normal score of its rank in the column over the eligible edges; walk reads the same means as the edge's average rank in the column over the eligible edges, over their number; multikey reads each edge's mean over the 24 bootstrap refits, levelled below the question's best at each column's own gap; adjust_lower and multirank read the stored scores through the rank layer (percentile r/n; levels at the pooled flip gap); concept, chain and sum read the _pos columns directly, each by the form its own entry states.",
+    "topic_edge_value": "cos(tag vector, chunk description vector) from the live graph.",
+    "tagside": "nonscope gives product-named graph tags no fit level (chain) / no pick (sum); the best fit is taken over the remaining tags.",
+    "cut": "Full order returned; the harness cuts at the character budget.",
+    "offline": "HERB_V4_OFFLINE=on: a question whose querytagger answer is not a good cached answer raises before any model call; off: a cache miss asks the model.",
+    "knobs": [
+      "HERB_V4_SORT",
+      "HERB_V4_FITEQ",
+      "HERB_V4_STRUCT_AT",
+      "HERB_V4_QTOPIC",
+      "HERB_V4_EDGECOMB",
+      "HERB_V4_DESCJOIN",
+      "HERB_V4_JOIN",
+      "HERB_V4_BAND",
+      "HERB_V4_PROBES",
+      "HERB_V4_FACETS",
+      "HERB_V4_AREA",
+      "HERB_V4_TAGSIDE",
+      "HERB_V4_OFFLINE",
+      "HERB_V4_WALK_FIT",
+      "HERB_V4_WALK_SHARES",
+      "HERB_V4_WALK_RANK",
+      "HERB_V4_WALK_TAGS",
+      "HERB_V4_WALK_QTAGS",
+      "HERB_V4_WALK_TEXT",
+      "HERB_V4_WALK_STRUCT",
+      "HERB_V4_WALK_EQUAL",
+      "HERB_V4_WALK_TAGROLE",
+      "HERB_V4_WALK_DESCROLE",
+      "HERB_V4_WALK_QUESTROLE"
+    ],
+    "defaults": {
+      "HERB_V4_SORT": "walk",
+      "HERB_V4_FITEQ": "noise",
+      "HERB_V4_STRUCT_AT": "after_facets",
+      "HERB_V4_QTOPIC": "off",
+      "HERB_V4_EDGECOMB": "sum",
+      "HERB_V4_DESCJOIN": "key",
+      "HERB_V4_JOIN": "adjust",
+      "HERB_V4_BAND": "noise",
+      "HERB_V4_PROBES": "all",
+      "HERB_V4_FACETS": "on",
+      "HERB_V4_AREA": "off",
+      "HERB_V4_TAGSIDE": "all",
+      "HERB_V4_OFFLINE": "off",
+      "HERB_V4_WALK_FIT": "standing",
+      "HERB_V4_WALK_SHARES": "off",
+      "HERB_V4_WALK_RANK": "same",
+      "HERB_V4_WALK_TAGS": "best",
+      "HERB_V4_WALK_QTAGS": "central",
+      "HERB_V4_WALK_TEXT": "better",
+      "HERB_V4_WALK_STRUCT": "trust1",
+      "HERB_V4_WALK_EQUAL": "levels",
+      "HERB_V4_WALK_TAGROLE": "passage",
+      "HERB_V4_WALK_DESCROLE": "passage",
+      "HERB_V4_WALK_QUESTROLE": "query"
+    },
+    "status": "Constructed arm; under strength the spread unit, the rank-to-normal step, the weighted mean of the five edge values, the plus of fit and weight, the relative centrality and the positive part, max(D, Q) and its plus, the leave-one-out boost and the level step are the orchestrator choices, the tie rules the arm's; under multikey the one fit anchor for the question, the fit equal width (noise and paraphrase both kept, noise the default), the refit mean as the facet value and the column's \"gap (any)\" flip gap as a facet's \"equal\", the tie order of equal readings, topic -> description -> question, a chunk at its best edge, the unreached tail, the landed and seed-distance keys and both their places, the corpus-word rule on the nearest-name pass and the dropped empty landings are the orchestrator choices; under adjust_lower the product-of-powers form, the normalisation of the readings by their sum, the percentile convention r/n, the sum, max or single best over edges, the key join with the description before the question, and the topic handling under exp are the orchestrator choices; under multirank the best edge by fit * topic, COS_NOISE as the step on that product (not a cosine), the tie order of equal readings, and COS_NOISE as the topic equal are the orchestrator choices; under concept the max-per-query-tag, the sum over query tags (against his 2026-09-10 sentence on parts), the four-facet mean, the clipping at 0 and the three joins are the arm's; the fit grid (COS_NOISE steps anchored at the question's best fit, one level scale for every query tag), the relevance form and its levelling are not his rulings; under walk every step M1 to M7 is the orchestrator's calculation, marked and not settled - the standing clipped at 0 as the fit, the average rank over |E| as an edge value's position, topic ranked like the four stored columns, the shares over the five positions and the division by 0.5, the chunk's best w with no correction for its tag count, the relative centrality and the max over the query tags, max(D, Qs) and its plus, the product and near-group lifts with their references, variances and trust, and the level step, each with its alternative behind a HERB_V4_WALK_* knob (M2 has none), the two sums among the alternatives (against his 2026-09-10 sentence on parts), a phrase in both tag lists entering twice, and the tie rules; the passage role of the tags and the description is his 2026-10-05 ruling (everything embedded for the artefact the same way), the query role of the raw question his \"yes to the question\" the same night, the one-role rule of the centrality the orchestrator's, unruled; HERB_V4_WALK_RANK=picked (C3r) and HERB_V4_WALK_TAGS=off (C4n) were built after the walk-through, the first on his 2026-10-05 words on the facets as a ranking in the orchestrator's form, the second for a measurement. Nothing written to the graph.",
+    "knobs_at_prepare": {
+      "active": {
+        "HERB_V4_SORT": "walk",
+        "HERB_V4_FITEQ": "noise",
+        "HERB_V4_STRUCT_AT": "after_facets",
+        "HERB_V4_QTOPIC": "off",
+        "HERB_V4_EDGECOMB": "sum",
+        "HERB_V4_DESCJOIN": "key",
+        "HERB_V4_JOIN": "adjust",
+        "HERB_V4_BAND": "noise",
+        "HERB_V4_PROBES": "all",
+        "HERB_V4_FACETS": "on",
+        "HERB_V4_AREA": "off",
+        "HERB_V4_TAGSIDE": "all",
+        "HERB_V4_OFFLINE": "off",
+        "HERB_V4_WALK_FIT": "standing",
+        "HERB_V4_WALK_SHARES": "off",
+        "HERB_V4_WALK_RANK": "same",
+        "HERB_V4_WALK_TAGS": "best",
+        "HERB_V4_WALK_QTAGS": "central",
+        "HERB_V4_WALK_TEXT": "better",
+        "HERB_V4_WALK_STRUCT": "trust1",
+        "HERB_V4_WALK_EQUAL": "levels",
+        "HERB_V4_WALK_TAGROLE": "passage",
+        "HERB_V4_WALK_DESCROLE": "passage",
+        "HERB_V4_WALK_QUESTROLE": "query"
+      },
+      "read_by_active_sort": [
+        "HERB_V4_SORT",
+        "HERB_V4_WALK_FIT",
+        "HERB_V4_WALK_SHARES",
+        "HERB_V4_WALK_RANK",
+        "HERB_V4_WALK_TAGS",
+        "HERB_V4_WALK_QTAGS",
+        "HERB_V4_WALK_TEXT",
+        "HERB_V4_WALK_STRUCT",
+        "HERB_V4_WALK_EQUAL",
+        "HERB_V4_WALK_TAGROLE",
+        "HERB_V4_WALK_DESCROLE",
+        "HERB_V4_WALK_QUESTROLE",
+        "HERB_V4_OFFLINE"
+      ],
+      "ignored_by_active_sort": [
+        "HERB_V4_FITEQ",
+        "HERB_V4_STRUCT_AT",
+        "HERB_V4_QTOPIC",
+        "HERB_V4_EDGECOMB",
+        "HERB_V4_DESCJOIN",
+        "HERB_V4_JOIN",
+        "HERB_V4_BAND",
+        "HERB_V4_PROBES",
+        "HERB_V4_FACETS",
+        "HERB_V4_AREA",
+        "HERB_V4_TAGSIDE"
+      ],
+      "product_name_tags_excluded_by_the_sort": true
+    }
+  },
+  "char_budget": 72000,
+  "code_version": {
+    "commit": "a140636a35b9ddba479df317e81ee66044b62a2b",
+    "branch": "artefact-v4",
+    "dirty": true
+  },
+  "environment": {
+    "host": "Wiktop",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.7",
+    "packages": {
+      "bm25s": "0.2.14",
+      "PyStemmer": "3.1.0",
+      "numpy": "2.4.6",
+      "sentence-transformers": "6.0.1",
+      "torch": "2.14.0+cpu",
+      "transformers": "5.12.1",
+      "httpx": "0.28.1",
+      "ragas": "0.4.3",
+      "neo4j": "6.2.0"
+    },
+    "embedder": {
+      "model": "nvidia/llama-nemotron-embed-1b-v2",
+      "revision": "113abe4acafa848e77ead9c0623205e511932348",
+      "device": "cpu",
+      "dtype": "float32"
+    }
+  },
+  "inputs": {
+    "questions_sha256": "1dfb00e8773123eb66d2d5ae2828bdce976a5e7eb0637f7b3e6c0ca6f52f47ea",
+    "ids_sha256": "cddaca624c8513c618657ece0b357b1463282f7c4ef083d1a7058959d8ccbf3d",
+    "corpus": {
+      "sha256": "4eeb46d025c6187319e462e1a78de67631e1b1dbf7b6a18f966cd14ce1ac5a82",
+      "n_files": 33
+    }
+  },
+  "graph": {
+    "database": "herb-eval-volmax",
+    "graph_version": "semantic-copy+registry-entities",
+    "graph_census_sha256": "e09bb272d8a7bbef1d8e268abcae9378c865115e6020bfee7661cf6555eb8f28",
+    "removed_tags_sha256": null,
+    "build_timestamp": "2026-08-16T21:46:16Z",
+    "source_database": "herb-eval-v2"
+  },
+  "n_exhausted": 0,
+  "flags": null
+}

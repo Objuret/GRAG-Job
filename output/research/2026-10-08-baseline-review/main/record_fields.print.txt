@@ -1,0 +1,57 @@
+resource module not available on Windows
+
+slack: 33632 records | characters as json.dumps(record) 14740820 | as lucene's text 6964901 | as vector's text 6931269 | json / vector text per record: median 2.20
+   field (leaf path) | records' leaf count | characters | in the baselines' text
+   Message.User.text                            33632    5220644   yes
+   Channel.name                                 33632     966887   yes
+   Message.User.timestamp                       33632     639008   NO
+   Message.User.utterranceID                    33632     541381   NO
+   id                                           33632     541381   NO
+   Channel.channelID                            33632     504480   NO
+   Message.User.userId                          33632     407420   yes
+
+documents: 400 records | characters as json.dumps(record) 2044671 | as lucene's text 1943308 | as vector's text 1943308 | json / vector text per record: median 1.05
+   field (leaf path) | records' leaf count | characters | in the baselines' text
+   content                                        400    1798864   yes
+   feedback                                       200     133524   yes
+   document_link                                  400      32965   NO
+   id                                             400      15365   NO
+   type                                           400      10320   yes
+   date                                           400       7600   NO
+   author                                         400       4800   NO
+
+meeting_transcripts: 321 records | characters as json.dumps(record) 1164193 | as lucene's text 977076 | as vector's text 977076 | json / vector text per record: median 1.19
+   field (leaf path) | records' leaf count | characters | in the baselines' text
+   transcript                                     321     971129   yes
+   participants[]                                8884     106608   NO
+   id                                             321       7807   NO
+   date                                           321       6099   NO
+   document_type                                  321       5626   yes
+
+meeting_chats: 50 records | characters as json.dumps(record) 8170 | as lucene's text 6530 | as vector's text 5880 | json / vector text per record: median 1.39
+   field (leaf path) | records' leaf count | characters | in the baselines' text
+   text                                            50       5880   yes
+   id                                              50       1140   NO
+
+urls: 575 records | characters as json.dumps(record) 121040 | as lucene's text 99540 | as vector's text 67439 | json / vector text per record: median 1.80
+   field (leaf path) | records' leaf count | characters | in the baselines' text
+   link                                           575      35338   yes
+   description                                    575      31526   yes
+   id                                             575      30601   NO
+
+prs: 3562 records | characters as json.dumps(record) 2881951 | as lucene's text 1312949 | as vector's text 1312949 | json / vector text per record: median 3.49
+   field (leaf path) | records' leaf count | characters | in the baselines' text
+   summary                                       3562     787595   yes
+   reviews[].comment                             4609     368977   yes
+   link                                          3562     164980   NO
+   title                                         3562     148206   yes
+   id                                            3562     136484   NO
+   reviews[].submitted_at                        4609      87571   NO
+   created_at                                    3562      67678   NO
+   reviews[].user.login                          4609      57354   NO
+   user.login                                    3562      44816   NO
+   reviews[].state                               4609      38890   NO
+   state                                         3562      20734   NO
+   merged                                        3562      14679   NO
+   mergeable                                     3562      14248   NO
+   number                                        3562      10982   NO

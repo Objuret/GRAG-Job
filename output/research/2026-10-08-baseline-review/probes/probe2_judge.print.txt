@@ -1,0 +1,291 @@
+CLI: 2.1.212 (Claude Code)
+
+===== probe a_claude_mds_off: extra flags () extra env [('CLAUDE_CODE_DISABLE_CLAUDE_MDS', '1')]
+{
+ "probe": "a_claude_mds_off",
+ "started_at": "2026-10-08T19:36:44.401095+00:00",
+ "finished_at": "2026-10-08T19:36:50.004829+00:00",
+ "seconds": 5.603,
+ "returncode": 0,
+ "model": "claude-sonnet-5",
+ "flags": [
+  "-p",
+  "--model",
+  "claude-sonnet-5",
+  "--output-format",
+  "json",
+  "--tools",
+  "",
+  "--safe-mode"
+ ],
+ "extra_env": [
+  "CLAUDE_CODE_DISABLE_CLAUDE_MDS",
+  "<request logging>"
+ ],
+ "prompt_chars": 822,
+ "session_id": "1f472681-c03f-4657-bdaa-70bf2cc17379",
+ "num_turns": 2,
+ "stop_reason": "tool_use",
+ "usage": {
+  "input_tokens": 985,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 316
+ },
+ "modelUsage": {
+  "claude-haiku-4-5-20251001": {
+   "inputTokens": 752,
+   "outputTokens": 14,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  },
+  "claude-sonnet-5": {
+   "inputTokens": 985,
+   "outputTokens": 316,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  }
+ },
+ "duration_ms": 3946,
+ "duration_api_ms": 4582,
+ "result_chars": 635
+}
+
+===== probe j_system_placeholder: extra flags () extra env []
+{
+ "probe": "j_system_placeholder",
+ "started_at": "2026-10-08T19:36:50.014626+00:00",
+ "finished_at": "2026-10-08T19:36:52.716827+00:00",
+ "seconds": 2.701,
+ "returncode": 0,
+ "model": "claude-haiku-4-5",
+ "flags": [
+  "-p",
+  "--model",
+  "claude-haiku-4-5",
+  "--output-format",
+  "json",
+  "--tools",
+  "",
+  "--safe-mode"
+ ],
+ "extra_env": [
+  "<request logging>"
+ ],
+ "prompt_chars": 33,
+ "session_id": "bf518a3d-a2fc-44ab-a5da-d5fc4d5ba98d",
+ "num_turns": 1,
+ "stop_reason": "end_turn",
+ "usage": {
+  "input_tokens": 165,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 61
+ },
+ "modelUsage": {
+  "claude-haiku-4-5-20251001": {
+   "inputTokens": 523,
+   "outputTokens": 13,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  },
+  "claude-haiku-4-5": {
+   "inputTokens": 165,
+   "outputTokens": 61,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  }
+ },
+ "duration_ms": 1051,
+ "duration_api_ms": 1672,
+ "result_chars": 5
+}
+
+===== probe j_system_empty: extra flags ('--system-prompt', '') extra env []
+{
+ "probe": "j_system_empty",
+ "started_at": "2026-10-08T19:36:52.718997+00:00",
+ "finished_at": "2026-10-08T19:36:55.775793+00:00",
+ "seconds": 3.056,
+ "returncode": 0,
+ "model": "claude-haiku-4-5",
+ "flags": [
+  "-p",
+  "--model",
+  "claude-haiku-4-5",
+  "--output-format",
+  "json",
+  "--tools",
+  "",
+  "--safe-mode",
+  "--system-prompt",
+  ""
+ ],
+ "extra_env": [
+  "<request logging>"
+ ],
+ "prompt_chars": 33,
+ "session_id": "2f78e0be-eb97-4f42-b506-c7ee9bea5a89",
+ "num_turns": 1,
+ "stop_reason": "end_turn",
+ "usage": {
+  "input_tokens": 157,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 84
+ },
+ "modelUsage": {
+  "claude-haiku-4-5-20251001": {
+   "inputTokens": 523,
+   "outputTokens": 13,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  },
+  "claude-haiku-4-5": {
+   "inputTokens": 157,
+   "outputTokens": 84,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  }
+ },
+ "duration_ms": 1343,
+ "duration_api_ms": 2114,
+ "result_chars": 5
+}
+
+===== probe j_thinking_off: extra flags () extra env [('MAX_THINKING_TOKENS', '0')]
+{
+ "probe": "j_thinking_off",
+ "started_at": "2026-10-08T19:36:55.776796+00:00",
+ "finished_at": "2026-10-08T19:36:58.263886+00:00",
+ "seconds": 2.485,
+ "returncode": 0,
+ "model": "claude-haiku-4-5",
+ "flags": [
+  "-p",
+  "--model",
+  "claude-haiku-4-5",
+  "--output-format",
+  "json",
+  "--tools",
+  "",
+  "--safe-mode"
+ ],
+ "extra_env": [
+  "MAX_THINKING_TOKENS",
+  "<request logging>"
+ ],
+ "prompt_chars": 33,
+ "session_id": "7135377d-e8d0-458f-9507-f5cc95aca74a",
+ "num_turns": 1,
+ "stop_reason": "end_turn",
+ "usage": {
+  "input_tokens": 3616,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 4
+ },
+ "modelUsage": {
+  "claude-haiku-4-5-20251001": {
+   "inputTokens": 523,
+   "outputTokens": 13,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  },
+  "claude-haiku-4-5": {
+   "inputTokens": 3616,
+   "outputTokens": 4,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  }
+ },
+ "duration_ms": 838,
+ "duration_api_ms": 1446,
+ "result_chars": 5
+}
+
+===== probe j_temp_with_thinking: extra flags () extra env [('CLAUDE_CODE_DISABLE_TERMINAL_TITLE', '1'), ('CLAUDE_CODE_EXTRA_BODY', '{"temperature": 0.01}')]
+{
+ "probe": "j_temp_with_thinking",
+ "started_at": "2026-10-08T19:36:58.264885+00:00",
+ "finished_at": "2026-10-08T19:37:00.237726+00:00",
+ "seconds": 1.973,
+ "returncode": 1,
+ "model": "claude-haiku-4-5",
+ "flags": [
+  "-p",
+  "--model",
+  "claude-haiku-4-5",
+  "--output-format",
+  "json",
+  "--tools",
+  "",
+  "--safe-mode"
+ ],
+ "extra_env": [
+  "CLAUDE_CODE_DISABLE_TERMINAL_TITLE",
+  "CLAUDE_CODE_EXTRA_BODY",
+  "<request logging>"
+ ],
+ "prompt_chars": 33,
+ "session_id": "0a0886a5-4739-4898-8c22-777c982bfbc3",
+ "num_turns": 1,
+ "stop_reason": "stop_sequence",
+ "usage": {
+  "input_tokens": 0,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 0
+ },
+ "modelUsage": {},
+ "duration_ms": 324,
+ "duration_api_ms": 0,
+ "result_chars": 183
+}
+
+===== probe j_temp_thinking_off: extra flags () extra env [('CLAUDE_CODE_DISABLE_TERMINAL_TITLE', '1'), ('CLAUDE_CODE_EXTRA_BODY', '{"temperature": 0.01}'), ('MAX_THINKING_TOKENS', '0')]
+{
+ "probe": "j_temp_thinking_off",
+ "started_at": "2026-10-08T19:37:00.239282+00:00",
+ "finished_at": "2026-10-08T19:37:02.429948+00:00",
+ "seconds": 2.186,
+ "returncode": 0,
+ "model": "claude-haiku-4-5",
+ "flags": [
+  "-p",
+  "--model",
+  "claude-haiku-4-5",
+  "--output-format",
+  "json",
+  "--tools",
+  "",
+  "--safe-mode"
+ ],
+ "extra_env": [
+  "CLAUDE_CODE_DISABLE_TERMINAL_TITLE",
+  "CLAUDE_CODE_EXTRA_BODY",
+  "MAX_THINKING_TOKENS",
+  "<request logging>"
+ ],
+ "prompt_chars": 33,
+ "session_id": "7b74823d-0e08-416b-98ef-7f5d44c2024c",
+ "num_turns": 1,
+ "stop_reason": "end_turn",
+ "usage": {
+  "input_tokens": 3617,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 4
+ },
+ "modelUsage": {
+  "claude-haiku-4-5": {
+   "inputTokens": 3617,
+   "outputTokens": 4,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  }
+ },
+ "duration_ms": 560,
+ "duration_api_ms": 535,
+ "result_chars": 5
+}

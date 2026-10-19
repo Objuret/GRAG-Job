@@ -1,0 +1,117 @@
+
+============================================================
+  Results for: "separate the artefacts and the llm answers when it comes to time join discount from resumed runs"
+  Wing: grag-job
+============================================================
+
+  [1] grag-job / general
+      Source: whole.md
+      Match:  cosine_sim=0.404  bm25=7.116
+
+      recall_llm asks a model to attribute the gold ANSWER's sentences to the joined delivered TEXT — two
+        references, two units, one delivered set (harness Q10-3). Scope "ahead" has never differed from
+        "cut" (97/97, 30/30, one sweep pair); scope OR against AND DOES differ (corr. 12). Every number in
+        the ledger except the four concept runs stands on the OR join, including the best gold100 v3 number
+        (0.455) and every v3GRAG number (harness Q10-2). The baselines ran without the metadata lane while
+        the artefacts had those 61 chunks in the pool (corr. 11). `output/k=chars` holds two unread folders
+        in a nested directory (corr. 4).
+
+  --------------------------------------------------------
+  [2] grag-job / technical
+      Source: cec0749e-b7c9-4bbb-917d-9181894f1107.jsonl
+      Match:  cosine_sim=0.39  bm25=5.682
+
+      stions the gate names product and section, joined with AND, which leaves 29 to 37 chunks in scope. The gold on those questions lies in the product but not in that section: 11 of 13, 14 of 17 and 6 of 12 gold chunks out of scope, sitting at AND levels 0 to 2, while the delivered chunks came from levels 4 to 7 inside the scope. The AND join is an agent choice, not your ruling.
+      
+      **The facets order nothing.** Level 0 holds 0 to 7 edges per part and the walk fills the budget from many levels, so the facet keys see one or two rows at a time. This is why the facets change delivered sets on 67 of 100 questions but never the recall: they reorder inside levels that are already decided.
+      
+      **The bands are unstable across questions.** They run from 0.002 to 0.049. One question's description embeds ident
+
+  --------------------------------------------------------
+  [3] grag-job / general
+      Source: 2026-09-24-query-priority.md
+      Match:  cosine_sim=0.453  bm25=4.309
+
+      t/research/2026-09-24-query-priority-directed`.
+      
+      ## Verified priority and directed-route integration
+      
+      The 95 x 20 bridge completed with 1,900 independently verified deliveries.
+      The canonical and unchanged lexicographic controls match all original full-order
+      hashes and delivery metrics (190 comparisons). Parent artifact hashes pass.
+      The explicit user stop left 66 saved case files; after the authorized resume,
+      all 66 are byte-for-byte unchanged (`resume-integrity.json`). The original
+      checkpoint timer was 1,098.44 seconds; the resumed timer was 472.57 seconds.
+      These are separate run segments, not a measured end-to-end walltime.
+
+  --------------------------------------------------------
+  [4] grag-job / general
+      Source: chain.md
+      Match:  cosine_sim=0.389  bm25=2.447
+
+      ows/new per part and the graph (df of the top-6 names); no gold. Answerable from disk and the graph.
+      - C-23. His 09-06 00:30:34 "yes, let clustering hand me the k" answered an agent proposal at 00:26-00:30 (session b2c67359): print the assistant text he said yes to, so the rule built at 01:14 (`_gap_break`) can be held against what was proposed - a clustering, a gap rule, or unstated. Answerable from the log.
+      - C-24. The agent's 09-04 15:31:12 "One judgment for the whole query ... is what you said in August": grep his August turns (user_turns_all 08-01..08-31) for a sentence that weights the WHOLE query by facets (not per tag, not per part); if none, the claim was the agent's and C-18's reading stands. Answerable from his record.
+
+  --------------------------------------------------------
+  [5] grag-job / general
+      Source: 2026-06-28-artefact-build-deferred-and-next.md
+      Match:  cosine_sim=0.403  bm25=2.07
+
+      -recall, or the nonllm metric may not be the right measure for the
+        artefact's multi-record chunks.
+      - **The 1/100 MUST-NOT violation** (§5 blocker 5) — the only retrieval failure; the validator
+        caught it loudly.
+      
+      ## 7. The immediate next task (the fork — OPEN pending the user's call)
+      
+      The conversation's last fork: the assistant asked **"start the aggregate-path design pass now, or
+      hold until NIM recovers?"** — the user has not answered (they asked for this build record instead).
+      So the next task is OPEN. The three options:
+
+  --------------------------------------------------------
+  [6] grag-job / general
+      Source: 2026-09-24-construction-coverage.md
+      Match:  cosine_sim=0.39  bm25=1.893
+
+      ll smoke report. This does not
+      complete structural coverage or establish answer-quality superiority.
+      The user has since authorized continuing; the interrupted query-priority/directed
+      run resumed only after 66 saved cases and all sealed dependencies were verified.
+      Final selection must preserve the distinction between a fixed
+      development-selected rule and a gold-selected per-case diagnostic. Any new leading
+      construction needs its exact program exported, live replay checked, and material
+      matched tradeoffs explained.
+
+  --------------------------------------------------------
+  [7] grag-job / general
+      Source: 2026-06-28-artefact-build-deferred-and-next.md
+      Match:  cosine_sim=0.39  bm25=0.383
+
+      ot answered (they asked for this build record instead).
+      So the next task is OPEN. The three options:
+      
+      - **Option A — the aggregate-path design pass.** Sketch the §3.1 design as a decided-vs-open list
+        (semantic-filter threshold, scope-narrowing rule, group-by attribute set, Cypher vs in-memory)
+        and get the user's sign-off per CLAUDE.md design-before-build. **Does not need NIM** — pure
+        design. Unblocks the 30+ aggregate gold-100 questions and the zero-scored `exact_match` /
+        `bleu` / `rouge` / `string_presence` metrics.
+      - **Option B — wait for NIM recovery + re-run all three arms with the judged metrics + k=5.** The
+        judged RAGAS metrics (faithfulness / answer_correctness / context_recall_llm) + the
+
+  --------------------------------------------------------
+  [8] grag-job / general
+      Source: 2026-09-22-gold-pointer-ablation-protocol.md
+      Match:  cosine_sim=0.385  bm25=0.325
+
+      e existing policy, not an
+      independent held-out validation or a new RAGAS answer-quality measurement.
+      
+      Finish with the paired outcomes, including losses/ties. Do not adjust coefficients
+      or resolve individual misses in response. ID credit measures artifact membership,
+      not whether the answer-bearing passage was delivered; ordinary misses remain
+      acceptable. The comparison addresses whether the auxiliary block changes and
+      helps this measured retrieval function under fixed surrounding machinery.
+
+  --------------------------------------------------------
+

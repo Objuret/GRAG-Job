@@ -227,7 +227,9 @@ LEG = {
     "code_version": sub("The code the start ran on, read before it answered anything.",
                         CODE_VERSION),
     "code_state": sub("How that code differed from the commit.", CODE_STATE),
-    "flags": "The switches given on the command line for this start; empty when none.",
+    "flags": whole("The switches given on the command line for this start, each by its name with "
+                   "the value it was given; empty when none. What a switch does is the arm's to "
+                   "say (retrieval_flags)."),
     "lane": sub("How every model call of the start was made.", LANE),
     "correction": CORRECTION,
 }
@@ -255,7 +257,9 @@ MANIFEST = {
         "model": sub("What the model that built it cost.", USAGE),
         "models": "The models used to build it, by name.",
     }),
-    "flags": "The switches given on the command line; empty when none.",
+    "flags": whole("The switches given on the command line, each by its name with the value it "
+                   "was given; empty when none. What a switch does is the arm's to say "
+                   "(retrieval_flags)."),
     "graph": whole("For an arm that reads the graph database: which database and which build of "
                    "it. Empty for an arm that reads none."),
     "code_version": sub("The code the last answering start ran on.", CODE_VERSION),

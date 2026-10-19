@@ -1,0 +1,27 @@
+question tag "rollback procedure" against the 16609 graph tags
+   the five closest: rollback process 0.978; rollback procedures 0.974; Rollback process 0.940; Rollback Procedures 0.933; rollback scenarios 0.927
+   five at the one-in-ten mark: error message improvement 0.812; system health 0.812; policy inheritance 0.812; Data Serialization 0.812; development pipeline 0.812
+   five in the middle of the list: flexible querying 0.742; UX improvement 0.742; NLP improvements 0.742; GraphQL implementation 0.742; types and mutations 0.742
+   the five furthest: Apache Kafka Consumer Group Lag Mo 0.369; Mattermost's AI-Powered Message In 0.357; Apache Kafka Data Anonymization fo 0.354; Vue.js Virtual Scrolling for Large 0.347; ethical considerations of AI in sa 0.333
+
+question tag "model updates" against the 16609 graph tags
+   the five closest: model updates 0.993; model update 0.977; model improvements 0.944; Model Updates 0.937; model versions 0.933
+   five at the one-in-ten mark: cache performance 0.828; security issue 0.828; menu structure 0.828; feature integration request 0.828; scheduling mechanism 0.828
+   five in the middle of the list: UI thread blocking 0.765; session management testing 0.765; architecture review 0.765; file encryption 0.765; ethical considerations 0.765
+   the five furthest: LibreOffice Dynamic Language Chang 0.391; Apache Kafka Consumer Group Lag Mo 0.382; ethical considerations of AI in sa 0.363; Vue.js Virtual Scrolling for Large 0.361; Apache Kafka Data Anonymization fo 0.343
+
+every list, lowest / 1% / 25% / middle / 75% / 99% / highest score:
+   rollback procedure     0.33 / 0.50 / 0.69 / 0.74 / 0.78 / 0.85 / 0.98
+   model updates          0.34 / 0.53 / 0.71 / 0.77 / 0.80 / 0.87 / 0.99
+   rollback failures      0.33 / 0.49 / 0.67 / 0.72 / 0.76 / 0.84 / 0.92
+   procedural change      0.32 / 0.50 / 0.70 / 0.75 / 0.79 / 0.85 / 0.90
+   failure analysis       0.29 / 0.49 / 0.67 / 0.71 / 0.75 / 0.82 / 0.87
+   the 100 question tags of the ten, each column the range over the 100 lists:
+      lowest   0.28 to 0.43   (typical 0.35)
+      1%       0.46 to 0.56   (typical 0.52)
+      25%      0.60 to 0.73   (typical 0.69)
+      middle   0.63 to 0.78   (typical 0.74)
+      75%      0.66 to 0.82   (typical 0.77)
+      99%      0.72 to 0.89   (typical 0.84)
+      highest  0.80 to 0.99   (typical 0.93)
+   share of graph tags scoring under 0.5, per list: typical 0.0065, most 0.0275

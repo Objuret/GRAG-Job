@@ -1,0 +1,276 @@
+16609 eligible graph tags; universal level 4.409 spreads; 89 distinct lists over 10 questions
+lists per question (cached, distinct, description-side, question-side): [(11, 9, 7, 2), (9, 9, 6, 3), (9, 9, 5, 4), (10, 8, 6, 2), (10, 8, 8, 0), (9, 9, 6, 3), (10, 8, 6, 2), (10, 9, 6, 3), (10, 8, 6, 2), (12, 12, 7, 5)]
+
+SINGLE LISTS (the instrument on 100 cached lists: 67 tags above the universal level, top-1/10/100 at 8.6/6.4/4.0 spreads, a break in the top 100 on 8-13)
+  tags above the universal level: 59 (3-383); beyond the mirrored lowest value: 74 (0-773)
+  top-1 / top-10 / top-100 in spreads, median: 8.4 / 6.3 / 3.9
+  lists with a break in the top 100: clear-break rule 10, Fisher g p<0.01 7, of 89
+
+TWO LISTS AT A TIME: pairs inside one question against pairs from two different questions (358 inside, 3558 across)
+  rank correlation over all tags, median (5%-95%): inside 0.39 (0.00-0.81), across 0.27 (-0.05-0.60); inside pairs above 0.8: 20
+  stand-out = above the universal level:
+    pairs sharing at least one stand-out tag: inside 156 of 358 (44%), across 642 of 3558 (18%)
+    shared tags over what unrelated lists of the same sizes would share: inside 19.1x, across 3.8x
+    inside pairs whose two sets are more than half the same: 7
+  stand-out = above the mirrored lowest value:
+    pairs sharing at least one stand-out tag: inside 164 of 358 (46%), across 817 of 3558 (23%)
+    shared tags over what unrelated lists of the same sizes would share: inside 12.4x, across 2.8x
+    inside pairs whose two sets are more than half the same: 5
+
+QUESTION 1: 9 distinct lists (7 description-side, 2 question-side)
+  stand-out = above the universal level; per list [8, 8, 25, 36, 37, 42, 50, 67, 120]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [320, 41, 26, 6]; unrelated lists [389.2, 3.8, 0.0, 0.0]; lists of other questions [629.7, 42.2, 2.0, 0.0]
+    shared tags summed over the pairs: seen 111; lists of these sizes overlapping as lists of different questions do 15; the one biggest pair 31
+    on at least 2 description-side lists 40; on at least 2 question-side lists 0; on at least one of each 1
+  stand-out = above the mirrored lowest value; per list [5, 11, 13, 24, 39, 58, 86, 114, 198]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [464, 54, 24, 6]; unrelated lists [541.0, 7.0, 0.0, 0.0]; lists of other questions [872.5, 58.9, 2.3, 0.0]
+    shared tags summed over the pairs: seen 120; lists of these sizes overlapping as lists of different questions do 20; the one biggest pair 29
+    on at least 2 description-side lists 53; on at least 2 question-side lists 0; on at least one of each 1
+  one value per graph tag from all the lists; the top of that list in spreads above its own bulk (top-1 / top-10 / top-100) | the same from lists of other questions (median) | tags above anything those typically reach | break in the top 100 (clear / Fisher)
+    best single list                10.7 /   6.7 /   4.6 |  10.4 /   8.3 /   5.1 |    1 | no  / no  | other questions break on 3 of 40
+    second-best list                 8.6 /   5.9 /   3.3 |   7.5 /   5.8 /   3.7 |    6 | no  / no  | other questions break on 2 of 40
+    third-best list                  8.1 /   5.9 /   3.1 |   5.8 /   4.2 /   2.9 |   28 | yes / no  (after rank 39) | other questions break on 0 of 40
+    mean over the lists              4.9 /   3.8 /   2.5 |   3.5 /   3.0 /   2.3 |   34 | no  / no  | other questions break on 0 of 40
+    sum of what is above the bulk    8.5 /   6.2 /   3.9 |   5.9 /   4.7 /   3.5 |   29 | no  / no  | other questions break on 0 of 40
+    sum of -ln(rank/N)               5.4 /   4.8 /   3.3 |   4.5 /   3.7 /   2.9 |   53 | no  / no  | other questions break on 0 of 40
+  what each level reaches (universal level): tags, chunks, share of the chunks in the commonest product, products | a random tag set of the same size: chunks, share
+    at least 1 list(s):   320 tags,   833 chunks, 0.06, 30 products | 1012, 0.06
+    at least 2 list(s):    41 tags,   292 chunks, 0.05, 30 products | 138, 0.13
+    at least 3 list(s):    26 tags,   255 chunks, 0.05, 30 products | 77, 0.16
+    one list alone, median over the lists: 37 tags, 235 chunks, 0.11
+  gap statistic on the 9 lists together: 1 group(s)
+
+QUESTION 2: 9 distinct lists (6 description-side, 3 question-side)
+  stand-out = above the universal level; per list [24, 30, 49, 67, 70, 101, 140, 154, 205]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [487, 226, 95, 31]; unrelated lists [822.2, 17.5, 0.2, 0.0]; lists of other questions [591.6, 41.1, 2.7, 0.0]
+    shared tags summed over the pairs: seen 513; lists of these sizes overlapping as lists of different questions do 68; the one biggest pair 111
+    on at least 2 description-side lists 96; on at least 2 question-side lists 2; on at least one of each 224
+  stand-out = above the mirrored lowest value; per list [26, 33, 47, 54, 128, 206, 234, 253, 264]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [747, 337, 122, 37]; unrelated lists [1206.6, 37.7, 0.6, 0.0]; lists of other questions [789.3, 67.0, 3.8, 0.1]
+    shared tags summed over the pairs: seen 700; lists of these sizes overlapping as lists of different questions do 108; the one biggest pair 181
+    on at least 2 description-side lists 125; on at least 2 question-side lists 5; on at least one of each 330
+  one value per graph tag from all the lists; the top of that list in spreads above its own bulk (top-1 / top-10 / top-100) | the same from lists of other questions (median) | tags above anything those typically reach | break in the top 100 (clear / Fisher)
+    best single list                12.1 /   8.6 /   5.6 |  10.1 /   8.2 /   5.0 |    2 | no  / no  | other questions break on 2 of 40
+    second-best list                12.3 /   8.3 /   5.3 |   7.2 /   5.6 /   3.7 |   62 | no  / no  | other questions break on 1 of 40
+    third-best list                  6.5 /   5.9 /   4.4 |   5.7 /   4.3 /   3.0 |   79 | no  / no  | other questions break on 0 of 40
+    mean over the lists              5.2 /   4.3 /   3.3 |   3.8 /   3.1 /   2.4 |  184 | no  / no  | other questions break on 0 of 40
+    sum of what is above the bulk   10.5 /   8.6 /   6.5 |   6.3 /   5.0 /   3.7 |  169 | no  / no  | other questions break on 0 of 40
+    sum of -ln(rank/N)               7.6 /   6.0 /   4.3 |   4.7 /   3.9 /   3.0 |  178 | no  / no  | other questions break on 0 of 40
+  what each level reaches (universal level): tags, chunks, share of the chunks in the commonest product, products | a random tag set of the same size: chunks, share
+    at least 1 list(s):   487 tags,  1038 chunks, 0.10, 30 products | 1432, 0.05
+    at least 2 list(s):   226 tags,   586 chunks, 0.15, 30 products | 715, 0.07
+    at least 3 list(s):    95 tags,   268 chunks, 0.14, 28 products | 287, 0.11
+    one list alone, median over the lists: 70 tags, 173 chunks, 0.13
+  gap statistic on the 9 lists together: 3 group(s), sizes [8383, 5020, 3206]
+
+QUESTION 3: 9 distinct lists (5 description-side, 4 question-side)
+  stand-out = above the universal level; per list [3, 18, 23, 41, 45, 46, 91, 113, 178]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [401, 148, 7, 2]; unrelated lists [550.5, 7.5, 0.1, 0.0]; lists of other questions [664.6, 37.8, 1.5, 0.1]
+    shared tags summed over the pairs: seen 168; lists of these sizes overlapping as lists of different questions do 29; the one biggest pair 68
+    on at least 2 description-side lists 36; on at least 2 question-side lists 1; on at least one of each 116
+  stand-out = above the mirrored lowest value; per list [0, 14, 24, 24, 28, 38, 100, 106, 304]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [508, 122, 6, 2]; unrelated lists [629.3, 8.6, 0.1, 0.0]; lists of other questions [955.6, 55.6, 2.5, 0.1]
+    shared tags summed over the pairs: seen 140; lists of these sizes overlapping as lists of different questions do 24; the one biggest pair 65
+    on at least 2 description-side lists 22; on at least 2 question-side lists 2; on at least one of each 104
+  one value per graph tag from all the lists; the top of that list in spreads above its own bulk (top-1 / top-10 / top-100) | the same from lists of other questions (median) | tags above anything those typically reach | break in the top 100 (clear / Fisher)
+    best single list                11.2 /   9.3 /   5.3 |  10.6 /   8.2 /   5.2 |    0 | no  / no  | other questions break on 1 of 40
+    second-best list                11.4 /   8.0 /   4.7 |   6.7 /   5.2 /   3.5 |   30 | yes / yes (after rank 14) | other questions break on 3 of 40
+    third-best list                  7.0 /   4.6 /   2.9 |   5.6 /   4.1 /   2.9 |    7 | no  / no  | other questions break on 0 of 40
+    mean over the lists              5.1 /   3.6 /   2.6 |   3.6 /   3.1 /   2.4 |   41 | no  / no  | other questions break on 0 of 40
+    sum of what is above the bulk    9.7 /   6.6 /   4.6 |   5.9 /   4.8 /   3.6 |   46 | no  / no  | other questions break on 0 of 40
+    sum of -ln(rank/N)               6.7 /   5.1 /   3.5 |   4.6 /   3.9 /   3.0 |   51 | no  / no  | other questions break on 0 of 40
+  what each level reaches (universal level): tags, chunks, share of the chunks in the commonest product, products | a random tag set of the same size: chunks, share
+    at least 1 list(s):   401 tags,  1330 chunks, 0.05, 30 products | 1184, 0.06
+    at least 2 list(s):   148 tags,   515 chunks, 0.06, 30 products | 469, 0.08
+    at least 3 list(s):     7 tags,    21 chunks, 0.10, 16 products | 29, 0.23
+    one list alone, median over the lists: 45 tags, 93 chunks, 0.10
+  gap statistic on the 9 lists together: 1 group(s)
+
+QUESTION 4: 8 distinct lists (6 description-side, 2 question-side)
+  stand-out = above the universal level; per list [46, 63, 68, 73, 77, 81, 93, 252]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [575, 133, 35, 9]; unrelated lists [739.1, 13.8, 0.1, 0.0]; lists of other questions [540.2, 29.4, 0.8, 0.1]
+    shared tags summed over the pairs: seen 234; lists of these sizes overlapping as lists of different questions do 53; the one biggest pair 61
+    on at least 2 description-side lists 44; on at least 2 question-side lists 1; on at least one of each 123
+  stand-out = above the mirrored lowest value; per list [50, 54, 74, 75, 80, 83, 133, 272]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [611, 148, 45, 12]; unrelated lists [804.5, 16.3, 0.2, 0.0]; lists of other questions [788.0, 45.6, 1.0, 0.1]
+    shared tags summed over the pairs: seen 295; lists of these sizes overlapping as lists of different questions do 46; the one biggest pair 77
+    on at least 2 description-side lists 63; on at least 2 question-side lists 3; on at least one of each 127
+  one value per graph tag from all the lists; the top of that list in spreads above its own bulk (top-1 / top-10 / top-100) | the same from lists of other questions (median) | tags above anything those typically reach | break in the top 100 (clear / Fisher)
+    best single list                10.9 /   8.9 /   6.1 |  10.2 /   8.4 /   5.1 |    2 | no  / no  | other questions break on 4 of 40
+    second-best list                 8.9 /   8.0 /   5.5 |   6.7 /   5.6 /   3.5 |   60 | no  / no  | other questions break on 3 of 40
+    third-best list                  7.9 /   6.3 /   4.2 |   5.2 /   3.9 /   2.8 |   74 | no  / no  | other questions break on 0 of 40
+    mean over the lists              6.1 /   5.1 /   3.4 |   3.8 /   3.1 /   2.3 |  112 | no  / no  | other questions break on 1 of 40
+    sum of what is above the bulk   11.1 /   9.2 /   6.1 |   6.2 /   4.9 /   3.5 |  117 | no  / no  | other questions break on 1 of 40
+    sum of -ln(rank/N)               7.2 /   6.3 /   4.6 |   4.9 /   3.9 /   3.0 |  121 | no  / no  | other questions break on 0 of 40
+  what each level reaches (universal level): tags, chunks, share of the chunks in the commonest product, products | a random tag set of the same size: chunks, share
+    at least 1 list(s):   575 tags,  1887 chunks, 0.05, 30 products | 1597, 0.05
+    at least 2 list(s):   133 tags,   834 chunks, 0.06, 30 products | 457, 0.07
+    at least 3 list(s):    35 tags,   245 chunks, 0.07, 30 products | 109, 0.15
+    one list alone, median over the lists: 75 tags, 474 chunks, 0.07
+  gap statistic on the 8 lists together: 1 group(s)
+
+QUESTION 5: 8 distinct lists (8 description-side, 0 question-side)
+  stand-out = above the universal level; per list [5, 27, 39, 53, 68, 70, 79, 154]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [333, 108, 39, 14]; unrelated lists [489.0, 6.0, 0.0, 0.0]; lists of other questions [568.6, 36.9, 0.7, 0.0]
+    shared tags summed over the pairs: seen 232; lists of these sizes overlapping as lists of different questions do 23; the one biggest pair 35
+    on at least 2 description-side lists 108; on at least 2 question-side lists 0; on at least one of each 0
+  stand-out = above the mirrored lowest value; per list [5, 60, 61, 83, 118, 142, 165, 243]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [545, 208, 91, 21]; unrelated lists [858.1, 18.7, 0.2, 0.0]; lists of other questions [774.5, 49.5, 1.1, 0.0]
+    shared tags summed over the pairs: seen 502; lists of these sizes overlapping as lists of different questions do 53; the one biggest pair 74
+    on at least 2 description-side lists 208; on at least 2 question-side lists 0; on at least one of each 0
+  one value per graph tag from all the lists; the top of that list in spreads above its own bulk (top-1 / top-10 / top-100) | the same from lists of other questions (median) | tags above anything those typically reach | break in the top 100 (clear / Fisher)
+    best single list                11.5 /   9.0 /   5.1 |  10.9 /   8.3 /   5.2 |    0 | no  / no  | other questions break on 1 of 40
+    second-best list                 9.6 /   7.4 /   4.5 |   7.5 /   5.8 /   3.6 |   16 | no  / no  | other questions break on 4 of 40
+    third-best list                  8.7 /   6.5 /   3.9 |   5.5 /   4.1 /   2.9 |   52 | no  / no  | other questions break on 0 of 40
+    mean over the lists              6.8 /   5.2 /   3.2 |   3.9 /   3.2 /   2.4 |  125 | no  / no  | other questions break on 0 of 40
+    sum of what is above the bulk   14.9 /  11.1 /   6.7 |   6.4 /   5.2 /   3.7 |   95 | no  / no  | other questions break on 1 of 40
+    sum of -ln(rank/N)               8.0 /   6.6 /   4.4 |   4.7 /   3.9 /   3.0 |  135 | no  / no  | other questions break on 0 of 40
+  what each level reaches (universal level): tags, chunks, share of the chunks in the commonest product, products | a random tag set of the same size: chunks, share
+    at least 1 list(s):   333 tags,   950 chunks, 0.06, 30 products | 1020, 0.06
+    at least 2 list(s):   108 tags,   424 chunks, 0.06, 30 products | 367, 0.08
+    at least 3 list(s):    39 tags,   273 chunks, 0.06, 30 products | 125, 0.12
+    one list alone, median over the lists: 60 tags, 254 chunks, 0.09
+  gap statistic on the 8 lists together: 1 group(s)
+
+QUESTION 6: 9 distinct lists (6 description-side, 3 question-side)
+  stand-out = above the universal level; per list [21, 22, 40, 59, 61, 67, 72, 111, 120]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [381, 85, 50, 34]; unrelated lists [564.6, 8.4, 0.1, 0.0]; lists of other questions [580.6, 38.5, 2.3, 0.1]
+    shared tags summed over the pairs: seen 383; lists of these sizes overlapping as lists of different questions do 32; the one biggest pair 44
+    on at least 2 description-side lists 81; on at least 2 question-side lists 0; on at least one of each 39
+  stand-out = above the mirrored lowest value; per list [6, 13, 69, 77, 81, 83, 99, 118, 198]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [498, 107, 72, 43]; unrelated lists [730.1, 13.7, 0.1, 0.0]; lists of other questions [779.5, 48.9, 2.8, 0.2]
+    shared tags summed over the pairs: seen 478; lists of these sizes overlapping as lists of different questions do 39; the one biggest pair 60
+    on at least 2 description-side lists 92; on at least 2 question-side lists 0; on at least one of each 79
+  one value per graph tag from all the lists; the top of that list in spreads above its own bulk (top-1 / top-10 / top-100) | the same from lists of other questions (median) | tags above anything those typically reach | break in the top 100 (clear / Fisher)
+    best single list                 9.1 /   6.9 /   4.9 |  11.2 /   8.6 /   5.2 |    0 | no  / no  | other questions break on 1 of 40
+    second-best list                 7.8 /   7.0 /   4.3 |   7.8 /   5.7 /   3.7 |    3 | no  / no  | other questions break on 2 of 40
+    third-best list                  8.6 /   7.1 /   4.4 |   5.7 /   4.1 /   2.8 |   49 | no  / no  | other questions break on 1 of 40
+    mean over the lists              6.4 /   5.2 /   3.2 |   3.5 /   2.9 /   2.2 |   93 | no  / no  | other questions break on 0 of 40
+    sum of what is above the bulk   11.6 /   9.6 /   5.8 |   5.9 /   4.7 /   3.5 |  105 | no  / no  | other questions break on 0 of 40
+    sum of -ln(rank/N)               8.8 /   7.1 /   4.6 |   4.4 /   3.7 /   2.9 |  122 | no  / no  | other questions break on 0 of 40
+  what each level reaches (universal level): tags, chunks, share of the chunks in the commonest product, products | a random tag set of the same size: chunks, share
+    at least 1 list(s):   381 tags,   886 chunks, 0.09, 30 products | 1122, 0.06
+    at least 2 list(s):    85 tags,   397 chunks, 0.05, 30 products | 294, 0.09
+    at least 3 list(s):    50 tags,   345 chunks, 0.05, 30 products | 156, 0.12
+    one list alone, median over the lists: 61 tags, 318 chunks, 0.05
+  gap statistic on the 9 lists together: 1 group(s)
+
+QUESTION 7: 8 distinct lists (6 description-side, 2 question-side)
+  stand-out = above the universal level; per list [25, 30, 36, 67, 93, 181, 205, 383]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [839, 177, 3, 1]; unrelated lists [996.1, 23.6, 0.3, 0.0]; lists of other questions [533.4, 33.1, 0.8, 0.0]
+    shared tags summed over the pairs: seen 186; lists of these sizes overlapping as lists of different questions do 91; the one biggest pair 65
+    on at least 2 description-side lists 85; on at least 2 question-side lists 1; on at least one of each 94
+  stand-out = above the mirrored lowest value; per list [25, 26, 36, 54, 144, 195, 206, 773]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [1249, 203, 6, 1]; unrelated lists [1416.7, 41.7, 0.6, 0.0]; lists of other questions [719.4, 43.5, 1.7, 0.1]
+    shared tags summed over the pairs: seen 218; lists of these sizes overlapping as lists of different questions do 118; the one biggest pair 83
+    on at least 2 description-side lists 119; on at least 2 question-side lists 1; on at least one of each 88
+  one value per graph tag from all the lists; the top of that list in spreads above its own bulk (top-1 / top-10 / top-100) | the same from lists of other questions (median) | tags above anything those typically reach | break in the top 100 (clear / Fisher)
+    best single list                10.3 /   8.8 /   5.9 |  10.7 /   8.0 /   5.1 |    0 | no  / no  | other questions break on 0 of 40
+    second-best list                10.1 /   8.6 /   4.7 |   7.2 /   5.6 /   3.7 |   25 | no  / no  | other questions break on 1 of 40
+    third-best list                  5.9 /   4.3 /   3.0 |   5.6 /   4.0 /   2.8 |    3 | no  / no  | other questions break on 0 of 40
+    mean over the lists              3.9 /   3.4 /   2.6 |   3.8 /   3.1 /   2.4 |    7 | no  / no  | other questions break on 0 of 40
+    sum of what is above the bulk    6.7 /   5.3 /   4.0 |   6.3 /   5.1 /   3.8 |   13 | no  / no  | other questions break on 0 of 40
+    sum of -ln(rank/N)               4.3 /   3.8 /   3.0 |   4.7 /   4.1 /   3.1 |    1 | no  / no  | other questions break on 0 of 40
+  what each level reaches (universal level): tags, chunks, share of the chunks in the commonest product, products | a random tag set of the same size: chunks, share
+    at least 1 list(s):   839 tags,  1663 chunks, 0.05, 30 products | 2105, 0.05
+    at least 2 list(s):   177 tags,   497 chunks, 0.11, 30 products | 570, 0.07
+    at least 3 list(s):     3 tags,     4 chunks, 0.75,  2 products | 13, 0.39
+    one list alone, median over the lists: 80 tags, 188 chunks, 0.11
+  gap statistic on the 8 lists together: 3 group(s), sizes [5934, 5400, 5275]
+
+QUESTION 8: 9 distinct lists (6 description-side, 3 question-side)
+  stand-out = above the universal level; per list [3, 22, 23, 41, 45, 46, 58, 58, 124]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [310, 86, 21, 2]; unrelated lists [415.6, 4.4, 0.0, 0.0]; lists of other questions [616.8, 46.0, 1.3, 0.0]
+    shared tags summed over the pairs: seen 138; lists of these sizes overlapping as lists of different questions do 17; the one biggest pair 32
+    on at least 2 description-side lists 42; on at least 2 question-side lists 1; on at least one of each 54
+  stand-out = above the mirrored lowest value; per list [0, 15, 24, 24, 28, 35, 38, 45, 155]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [290, 61, 11, 2]; unrelated lists [361.0, 3.0, 0.0, 0.0]; lists of other questions [849.6, 64.5, 2.4, 0.1]
+    shared tags summed over the pairs: seen 89; lists of these sizes overlapping as lists of different questions do 8; the one biggest pair 19
+    on at least 2 description-side lists 27; on at least 2 question-side lists 0; on at least one of each 39
+  one value per graph tag from all the lists; the top of that list in spreads above its own bulk (top-1 / top-10 / top-100) | the same from lists of other questions (median) | tags above anything those typically reach | break in the top 100 (clear / Fisher)
+    best single list                13.9 /   9.9 /   4.9 |  10.5 /   8.1 /   5.3 |    6 | no  / no  | other questions break on 0 of 40
+    second-best list                 7.5 /   6.3 /   4.3 |   7.2 /   5.8 /   3.7 |    5 | no  / no  | other questions break on 0 of 40
+    third-best list                  7.6 /   5.8 /   3.6 |   5.7 /   4.2 /   2.9 |   22 | no  / no  | other questions break on 0 of 40
+    mean over the lists              5.7 /   4.0 /   2.7 |   3.7 /   3.1 /   2.4 |   42 | no  / no  | other questions break on 0 of 40
+    sum of what is above the bulk   10.8 /   7.3 /   4.7 |   6.0 /   4.9 /   3.6 |   34 | no  / no  | other questions break on 0 of 40
+    sum of -ln(rank/N)               7.7 /   5.8 /   3.8 |   4.5 /   3.9 /   3.0 |   74 | no  / no  | other questions break on 0 of 40
+  what each level reaches (universal level): tags, chunks, share of the chunks in the commonest product, products | a random tag set of the same size: chunks, share
+    at least 1 list(s):   310 tags,  1471 chunks, 0.05, 30 products | 942, 0.06
+    at least 2 list(s):    86 tags,   435 chunks, 0.06, 30 products | 295, 0.09
+    at least 3 list(s):    21 tags,    74 chunks, 0.09, 27 products | 61, 0.20
+    one list alone, median over the lists: 45 tags, 117 chunks, 0.10
+  gap statistic on the 9 lists together: 2 group(s), sizes [9929, 6680]
+
+QUESTION 9: 8 distinct lists (6 description-side, 2 question-side)
+  stand-out = above the universal level; per list [29, 41, 53, 73, 74, 84, 117, 159]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [460, 125, 36, 9]; unrelated lists [620.0, 9.9, 0.1, 0.0]; lists of other questions [604.7, 23.2, 0.8, 0.0]
+    shared tags summed over the pairs: seen 224; lists of these sizes overlapping as lists of different questions do 38; the one biggest pair 56
+    on at least 2 description-side lists 106; on at least 2 question-side lists 0; on at least one of each 37
+  stand-out = above the mirrored lowest value; per list [8, 54, 65, 83, 86, 103, 111, 208]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [494, 153, 51, 16]; unrelated lists [705.2, 12.6, 0.1, 0.0]; lists of other questions [974.1, 35.7, 1.1, 0.0]
+    shared tags summed over the pairs: seen 320; lists of these sizes overlapping as lists of different questions do 36; the one biggest pair 69
+    on at least 2 description-side lists 131; on at least 2 question-side lists 0; on at least one of each 57
+  one value per graph tag from all the lists; the top of that list in spreads above its own bulk (top-1 / top-10 / top-100) | the same from lists of other questions (median) | tags above anything those typically reach | break in the top 100 (clear / Fisher)
+    best single list                11.8 /   9.5 /   5.9 |  10.4 /   7.8 /   5.1 |    2 | no  / no  | other questions break on 0 of 40
+    second-best list                 9.8 /   7.5 /   4.9 |   6.5 /   5.0 /   3.4 |   31 | no  / no  | other questions break on 2 of 40
+    third-best list                  8.1 /   6.4 /   4.2 |   4.8 /   3.8 /   2.7 |   99 | no  / no  | other questions break on 0 of 40
+    mean over the lists              5.8 /   4.7 /   3.3 |   3.6 /   3.0 /   2.3 |  133 | no  / no  | other questions break on 2 of 40
+    sum of what is above the bulk   11.6 /   9.0 /   6.2 |   5.9 /   4.6 /   3.5 |  137 | no  / no  | other questions break on 1 of 40
+    sum of -ln(rank/N)               6.7 /   6.0 /   4.2 |   4.5 /   3.7 /   2.9 |  125 | no  / no  | other questions break on 0 of 40
+  what each level reaches (universal level): tags, chunks, share of the chunks in the commonest product, products | a random tag set of the same size: chunks, share
+    at least 1 list(s):   460 tags,  1467 chunks, 0.07, 30 products | 1335, 0.05
+    at least 2 list(s):   125 tags,   612 chunks, 0.07, 30 products | 445, 0.09
+    at least 3 list(s):    36 tags,   233 chunks, 0.08, 30 products | 127, 0.15
+    one list alone, median over the lists: 74 tags, 254 chunks, 0.08
+  gap statistic on the 8 lists together: 1 group(s)
+
+QUESTION 10: 12 distinct lists (7 description-side, 5 question-side)
+  stand-out = above the universal level; per list [20, 28, 36, 38, 42, 55, 67, 88, 118, 130, 154, 292]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [866, 190, 11, 1]; unrelated lists [1039.0, 28.6, 0.5, 0.0]; lists of other questions [801.1, 100.3, 8.3, 0.8]
+    shared tags summed over the pairs: seen 215; lists of these sizes overlapping as lists of different questions do 111; the one biggest pair 81
+    on at least 2 description-side lists 20; on at least 2 question-side lists 3; on at least one of each 179
+  stand-out = above the mirrored lowest value; per list [11, 12, 15, 38, 66, 78, 90, 161, 178, 193, 608, 700]
+    tags standing out on at least 1 / 2 / 3 / 4 lists: seen [1640, 486, 22, 2]; unrelated lists [2043.1, 104.1, 2.8, 0.0]; lists of other questions [1031.5, 119.1, 10.3, 1.2]
+    shared tags summed over the pairs: seen 536; lists of these sizes overlapping as lists of different questions do 303; the one biggest pair 299
+    on at least 2 description-side lists 30; on at least 2 question-side lists 15; on at least one of each 465
+  one value per graph tag from all the lists; the top of that list in spreads above its own bulk (top-1 / top-10 / top-100) | the same from lists of other questions (median) | tags above anything those typically reach | break in the top 100 (clear / Fisher)
+    best single list                 8.1 /   7.5 /   5.6 |  10.9 /   8.4 /   5.4 |    0 | no  / no  | other questions break on 0 of 40
+    second-best list                 8.3 /   6.7 /   4.3 |   8.4 /   6.6 /   4.2 |    7 | no  / no  | other questions break on 5 of 40
+    third-best list                  7.0 /   5.3 /   3.2 |   6.3 /   4.9 /   3.2 |    3 | no  / no  | other questions break on 1 of 40
+    mean over the lists              4.5 /   3.5 /   2.6 |   3.6 /   2.9 /   2.3 |    6 | no  / no  | other questions break on 1 of 40
+    sum of what is above the bulk    6.9 /   5.2 /   3.8 |   6.1 /   5.0 /   3.7 |    5 | no  / no  | other questions break on 0 of 40
+    sum of -ln(rank/N)               5.4 /   4.2 /   3.2 |   4.5 /   3.8 /   2.9 |    6 | no  / no  | other questions break on 0 of 40
+  what each level reaches (universal level): tags, chunks, share of the chunks in the commonest product, products | a random tag set of the same size: chunks, share
+    at least 1 list(s):   866 tags,  1748 chunks, 0.05, 30 products | 2181, 0.05
+    at least 2 list(s):   190 tags,   453 chunks, 0.11, 30 products | 627, 0.07
+    at least 3 list(s):    11 tags,    27 chunks, 0.15, 15 products | 40, 0.26
+    one list alone, median over the lists: 61 tags, 144 chunks, 0.13
+  gap statistic on the 12 lists together: 1 group(s)
+
+SUMMARY OVER THE TEN QUESTIONS (median, min-max)
+  stand-out = above the universal level
+    on at least 1 list(s): seen 430 (310-866); unrelated lists 592.3 (389.2-1039.0); lists of other questions 598.2 (533.4-801.1)
+    on at least 2 list(s): seen 129 (41-226); unrelated lists 9.1 (3.8-28.6); lists of other questions 38.2 (23.2-100.3)
+    on at least 3 list(s): seen 30 (3-95); unrelated lists 0.1 (0.0-0.5); lists of other questions 1.4 (0.7-8.3)
+    on at least 4 list(s): seen 8 (1-34); unrelated lists 0.0 (0.0-0.0); lists of other questions 0.0 (0.0-0.8)
+    shared tags summed over the pairs: seen 220 (111-513); size-matched from other questions 35 (15-111); ratio 6.7 (1.9-11.9)
+    at least 2 description-side 62 (20-108); at least 2 question-side 1 (0-3); one of each 74 (0-224)
+  stand-out = above the mirrored lowest value
+    on at least 1 list(s): seen 526 (290-1640); unrelated lists 767.3 (361.0-2043.1); lists of other questions 819.5 (719.4-1031.5)
+    on at least 2 list(s): seen 150 (54-486); unrelated lists 15.0 (3.0-104.1); lists of other questions 52.5 (35.7-119.1)
+    on at least 3 list(s): seen 34 (6-122); unrelated lists 0.2 (0.0-2.8); lists of other questions 2.3 (1.0-10.3)
+    on at least 4 list(s): seen 9 (1-43); unrelated lists 0.0 (0.0-0.0); lists of other questions 0.1 (0.0-1.2)
+    shared tags summed over the pairs: seen 308 (89-700); size-matched from other questions 42 (8-303); ratio 6.5 (1.8-12.3)
+    at least 2 description-side 78 (22-208); at least 2 question-side 0 (0-15); one of each 84 (0-465)
+  reach at least 1 list(s): tags 430 (310-866), chunks 1398 (833-1887), share in the commonest product 0.06 (0.05-0.10), random set of the same size 0.05 (0.05-0.06)
+  reach at least 2 list(s): tags 129 (41-226), chunks 475 (292-834), share in the commonest product 0.06 (0.05-0.15), random set of the same size 0.08 (0.07-0.13)
+  reach at least 3 list(s): tags 30 (3-95), chunks 239 (4-345), share in the commonest product 0.09 (0.05-0.75), random set of the same size 0.15 (0.11-0.39)
+  best single list: top-1 11.0 (8.1-13.9), from other questions 10.5 (10.1-11.2); tags above what those typically reach 0 (0-6); break in the top 100 on 0 (clear) / 0 (Fisher) of 10; other questions' bundles break on 12 of 400
+  second-best list: top-1 9.3 (7.5-12.3), from other questions 7.2 (6.5-8.4); tags above what those typically reach 20 (3-62); break in the top 100 on 1 (clear) / 1 (Fisher) of 10; other questions' bundles break on 23 of 400
+  third-best list: top-1 7.8 (5.9-8.7), from other questions 5.6 (4.8-6.3); tags above what those typically reach 38 (3-99); break in the top 100 on 1 (clear) / 0 (Fisher) of 10; other questions' bundles break on 2 of 400
+  mean over the lists: top-1 5.5 (3.9-6.8), from other questions 3.6 (3.5-3.9); tags above what those typically reach 68 (6-184); break in the top 100 on 0 (clear) / 0 (Fisher) of 10; other questions' bundles break on 4 of 400
+  sum of what is above the bulk: top-1 10.6 (6.7-14.9), from other questions 6.1 (5.9-6.4); tags above what those typically reach 70 (5-169); break in the top 100 on 0 (clear) / 0 (Fisher) of 10; other questions' bundles break on 3 of 400
+  sum of -ln(rank/N): top-1 7.0 (4.3-8.8), from other questions 4.6 (4.4-4.9); tags above what those typically reach 98 (1-178); break in the top 100 on 0 (clear) / 0 (Fisher) of 10; other questions' bundles break on 0 of 400
+  gap statistic on the lists together, groups per question: [1, 3, 1, 1, 1, 1, 3, 2, 1, 1]
+
+seed 20261004; 40 reference bundles a question; 25s

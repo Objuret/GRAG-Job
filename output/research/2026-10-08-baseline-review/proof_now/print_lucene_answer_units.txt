@@ -1,0 +1,12 @@
+resource module not available on Windows
+lucene: 38540 artifacts + 0 directory records
+code state at the start: diff sha256 d37a41bc9c5fdc34 | 39 changed or new paths
+lucene: 38540 artifacts + 0 directory records
+first start done in 23.7 s
+lucene: 38540 artifacts + 0 directory records
+
+folder output\research\2026-10-08-baseline-review\proof_now\lucene__answer__units
+  arm_outputs.jsonl                      160,743 bytes
+  code.d37a41bc9c5fdc34.diff             878,763 bytes
+  failures.jsonl                               0 bytes
+  run_manifest.json                       27,690 bytes

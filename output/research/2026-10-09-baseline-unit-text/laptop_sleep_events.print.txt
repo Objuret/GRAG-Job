@@ -1,0 +1,21 @@
+
+TimeCreated          Id msg                                             
+-----------          -- ---                                             
+2026-10-09 00:33:41 506 The system is entering Modern Standby           
+2026-10-09 00:33:42 507 The system is exiting Modern Standby            
+2026-10-09 01:52:59 506 The system is entering Modern Standby           
+2026-10-09 01:58:17 507 The system is exiting Modern Standby            
+2026-10-09 01:58:17 506 The system is entering Modern Standby           
+2026-10-09 06:57:40 507 The system is exiting Modern Standby            
+2026-10-09 06:57:47  42 The system is entering sleep.                   
+2026-10-09 06:57:59 107 The system has resumed from sleep.              
+2026-10-09 08:55:04 506 The system is entering Modern Standby           
+2026-10-09 08:55:05   1 The system has returned from a low power state. 
+2026-10-09 08:55:07 507 The system is exiting Modern Standby            
+2026-10-09 10:08:58 506 The system is entering Modern Standby           
+2026-10-09 10:09:22 507 The system is exiting Modern Standby            
+2026-10-09 10:10:17 506 The system is entering Modern Standby           
+2026-10-09 10:10:22 507 The system is exiting Modern Standby            
+
+
+

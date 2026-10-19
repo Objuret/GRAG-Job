@@ -1,0 +1,50 @@
+1. is everything there
+   [ok] one answer row per question of the hundred, in the hundred's order | 100 rows
+   [ok] no failed question on file
+   [ok] every question has each of the 14 scores exactly once | 1400 score rows
+   [ok] every score row is ok, a number, between 0 and 1
+   [ok] no failed score cell on file
+   [ok] every answer is a non-empty text
+2. do the pieces agree with each other
+   [ok] one answer call per row | 100 calls
+   [ok] the kept prompt and system text are exactly what the row's question and contexts give | 0 rows differ
+   [ok] the kept reply of the call holds the row's answer | 0 rows differ
+   [ok] the row's token counts are the kept call's | 0 rows differ
+   [ok] delivered characters equal the budget's record (72,000 unless the ranking ran out) | 0 rows differ; exhausted 0
+   [ok] one score per delivered context, in falling order | 0 rows differ
+   [ok] no record delivered twice to one question | 0 rows
+   [ok] every answer call went out under the same settings | [('claude-sonnet-5', '{"effort": "none sent (the model\'s own default)", "max_output_tokens": 8192, "thinking": "off"}', '["min_tokens", "temperature"]')]
+3. can each delivered text be traced back to its record
+   [ok] every delivered context is its record's text, rebuilt from the corpus by the id the row names | 7555 whole contexts, 100 cut at the budget, 0 differ
+   [ok] the manifest's unit digest is the corpus's as it stands now
+   [ok] the manifest names the commit, a clean code state and its inputs' hashes | commit fbc2f22, ids sha cddaca624c85
+4. the judging
+   [ok] the same number of judge calls for a score on every question | {'answer_correctness': 3, 'context_recall_llm': 1, 'faithfulness': 2}
+   [ok] every judge call went out under the same settings, with no system text | [('claude-haiku-4-5-20251001', '{"effort": "none sent (the model\'s own default)", "temperature": 0.01, "thinking": "off"}')]
+   [ok] the kept judge calls add up to the manifest's totals | 600 calls, 4,225,152 in, 285,760 out; embed requests kept 200
+   [ok] every judge call answered at its first try
+   [ok] every score row carries what its cell cost | 1400 of 1400
+5. the scores, as numbers (min / median / mean / max, and how many are exactly 0 or exactly 1)
+   context_precision_id       0.000 / 0.039 / 0.055 / 0.333 | exactly 0:  26 | exactly 1:   0
+   context_recall_id          0.000 / 0.077 / 0.091 / 0.400 | exactly 0:  26 | exactly 1:   0
+   context_precision_nonllm   0.000 / 0.089 / 0.176 / 1.000 | exactly 0:  26 | exactly 1:   0
+   context_recall_nonllm      0.000 / 0.058 / 0.073 / 0.400 | exactly 0:  26 | exactly 1:   0
+   semantic_similarity        0.081 / 0.300 / 0.327 / 0.709 | exactly 0:   0 | exactly 1:   0
+   string_similarity          0.011 / 0.111 / 0.131 / 0.435 | exactly 0:   0 | exactly 1:   0
+   bleu                       0.000 / 0.006 / 0.025 / 0.280 | exactly 0:  42 | exactly 1:   0
+   rouge                      0.000 / 0.076 / 0.097 / 0.426 | exactly 0:  21 | exactly 1:   0
+   chrf                       0.012 / 0.189 / 0.210 / 0.609 | exactly 0:   0 | exactly 1:   0
+   exact_match                0.000 / 0.000 / 0.000 / 0.000 | exactly 0: 100 | exactly 1:   0
+   string_presence            0.000 / 0.000 / 0.010 / 1.000 | exactly 0:  99 | exactly 1:   1
+   faithfulness               0.000 / 1.000 / 0.898 / 1.000 | exactly 0:   1 | exactly 1:  58
+   answer_correctness         0.020 / 0.083 / 0.175 / 0.677 | exactly 0:   0 | exactly 1:   0
+   context_recall_llm         0.000 / 0.000 / 0.253 / 1.000 | exactly 0:  64 | exactly 1:  18
+6. what a row and a manifest hold (keys)
+   row: ['answer', 'answered_at', 'calls', 'context_ids', 'contexts', 'generator', 'id', 'leg', 'meta', 'question', 'retrieval', 'search_time_s', 'timing']
+   row.generator: ['attempts', 'cached_input_tokens', 'calls', 'reasoning_tokens', 'request_s', 'retry_s', 'time_s', 'tokens_in', 'tokens_out', 'wait_s']
+   row.meta: {'char_budget': ['boundary', 'budget', 'chars', 'exhausted', 'kept'], 'ranking': ['n_ranked', 'n_units', 'next_score', 'scores']}
+   run manifest: ['arm', 'build_stats', 'char_budget', 'code_state', 'code_version', 'env', 'environment', 'flags', 'generator', 'generator_model', 'graph', 'index', 'inputs', 'interpreter_model', 'lane', 'legs', 'n_exhausted', 'n_failed', 'n_questions', 'n_ran', 'questions_file', 'retrieval_flags', 'timestamp', 'top_k', 'workers']
+   score row: ['arm', 'components', 'human_label', 'metric', 'question_id', 'status', 'type', 'value'] | components.usage: ['cached_input_tokens', 'chat_attempts', 'chat_calls', 'chat_s', 'embed_calls', 'embed_s', 'embed_texts', 'embed_tokens', 'eval_leg', 'finished_at', 'started_at', 'thread', 'tokens_in', 'tokens_out', 'wall_s']
+   files that describe the fields: none
+
+all checks ok: True

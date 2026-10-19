@@ -1,0 +1,78 @@
+{
+  "scorer": "ragas",
+  "judge_model": "claude-haiku-4-5",
+  "source_run": "output\\k=chars\\artefact_v4__gold100__cb72000__20261005T223320Z",
+  "arm": "artefact_v4",
+  "timestamp": "2026-10-06T09:26:57.038187+00:00",
+  "judge_backend": "claude-cli",
+  "judge_effort": null,
+  "judge_usage": {
+    "calls": 604,
+    "tokens_in": 8416398,
+    "cached_input_tokens": 0,
+    "tokens_out": 2064277,
+    "reasoning_tokens": 0,
+    "time_s": 18487.616880098823,
+    "attempts": 604,
+    "request_s": 18487.43803530303,
+    "wait_s": 0.0,
+    "retry_s": 0.0
+  },
+  "judge_elapsed_s": 3741.1488966001198,
+  "judge_legs": [
+    {
+      "timestamp": "2026-10-05T23:50:49.084548+00:00",
+      "judge_model": "claude-haiku-4-5",
+      "judge_backend": "claude-cli",
+      "usage": {
+        "calls": 591,
+        "tokens_in": 8251826,
+        "cached_input_tokens": 0,
+        "tokens_out": 1992214,
+        "reasoning_tokens": 0,
+        "time_s": 17843.82685459894,
+        "attempts": 591,
+        "request_s": 17843.653341502184,
+        "wait_s": 0.0,
+        "retry_s": 0.0
+      },
+      "elapsed_s": 3383.2119281999767
+    },
+    {
+      "timestamp": "2026-10-05T23:57:40.196933+00:00",
+      "judge_model": "claude-haiku-4-5",
+      "judge_backend": "claude-cli",
+      "usage": {
+        "calls": 7,
+        "tokens_in": 84309,
+        "cached_input_tokens": 0,
+        "tokens_out": 43247,
+        "reasoning_tokens": 0,
+        "time_s": 386.7225746996701,
+        "attempts": 7,
+        "request_s": 386.7190345006529,
+        "wait_s": 0.0,
+        "retry_s": 0.0
+      },
+      "elapsed_s": 205.01393200014718
+    },
+    {
+      "timestamp": "2026-10-06T09:26:57.038187+00:00",
+      "judge_model": "claude-haiku-4-5",
+      "judge_backend": "claude-cli",
+      "usage": {
+        "calls": 6,
+        "tokens_in": 80263,
+        "cached_input_tokens": 0,
+        "tokens_out": 28816,
+        "reasoning_tokens": 0,
+        "time_s": 257.0674508002121,
+        "attempts": 6,
+        "request_s": 257.0656593001913,
+        "wait_s": 0.0,
+        "retry_s": 0.0
+      },
+      "elapsed_s": 152.9230363999959
+    }
+  ]
+}

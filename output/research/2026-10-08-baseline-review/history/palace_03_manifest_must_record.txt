@@ -1,0 +1,137 @@
+
+============================================================
+  Results for: "run manifest must record"
+  Wing: grag-job
+============================================================
+
+  [1] grag-job / general
+      Source: 2026-08-14-entity-relation-layer.md
+      Match:  cosine_sim=0.36  bm25=3.063
+
+      t is now a different graph from the one the same name resolves
+      to, so the record was made to say so:
+      
+      - **The prior manifest is archived, not overwritten**:
+        `v3/output/graph_build/herb-eval-v2/build_manifest_20260812T203800Z.json` holds the
+        pre-relation state byte for byte, and its timestamp is exactly the one that run's
+        manifest cites — so the earlier run is still attributable to a readable record.
+      - **The new manifest carries a version**: `graph_version` =
+        `copy+cleanup+entities+relations` (`build_entity_graph.py` · `GRAPH_VERSION`), plus
+        `graph_census_sha256` = `3cc68e274e2bcbc265a9e56ebcc3b06af79de3cf5abe42caee7a7155bb004ae4`
+        — sha256 over the final label counts, relationship counts and the removed-tag set
+
+  --------------------------------------------------------
+  [2] grag-job / general
+      Source: 2026-08-24-artefact-v2-critical-review.md
+      Match:  cosine_sim=0.483  bm25=2.395
+
+      and the manifest records all four as `false`.
+      By contrast `HERB_DESC_CUT=true` raises `ValueError`.
+      
+      Failure path: `--flag HERB_FRESH_INTERP=true` echoes back in the terminal, serves stale
+      cached plans, and records `false` — the run you asked for did not happen and the record
+      agrees with the misread.
+      
+      ### 1.9 The graph identity in every manifest describes a graph that no longer exists
+      
+      `orchestrator.py`:340-351 reads `output/graph_build/<db>/build_manifest.json` off disk,
+      never the live database.
+
+  --------------------------------------------------------
+  [3] grag-job / technical
+      Source: cec0749e-b7c9-4bbb-917d-9181894f1107.jsonl
+      Match:  cosine_sim=0.39  bm25=1.066
+
+      _backend,
+      → 289:                     "elapsed_s": manifest.judge_elapsed_s})
+      → 292:        return manifest
+      → 309:    manifest.judge_usage = total
+      → 310:    manifest.judge_elapsed_s = elapsed
+      → 311:    manifest.judge_legs = legs
+      → 312:    return manifest
+      → 315:def build_eval_manifest(config, scorer, arm, source_run):
+      → 330:def _arm_name(module):
+      → 334:def run(pipeline, evaluator, ids_file, config=None):
+      → 346:    root = CHUNKS_ROOT if config.get("char_budget") is None else CHARS_ROOT
+      → 352:        char_budget=config.get("char_budget"))
+      → 356:    n_exhausted = (None if config.get("char_budget") is None
+      → 358:    manifest_path = out / "run_manifest.json"
+      → 359:    if ran or not manifest_path.is_file():
+      → 360:        manifest = build_run_manifest(
+      [Bash] grep -n "class IDBased\|def _single_tur
+
+  --------------------------------------------------------
+  [4] grag-job / technical
+      Source: eceb6d17-22c2-4938-a054-1a2a8fc3f569.jsonl
+      Match:  cosine_sim=0.365  bm25=0.991
+
+      n_ms>242794</duration_ms></usage>
+      </task-notification>
+      Activity, third try: 114 right / 11 partly / 3 wrong, up from 99 / 22 / 7. Passes. Waiting on the why judge, then the full run launches.
+
+  --------------------------------------------------------
+  [5] grag-job / problems
+      Source: 45dfed7b-0dd5-4bc7-9782-ca285bae4cb5.jsonl
+      Match:  cosine_sim=0.381  bm25=0.29
+
+      son | grep -v manifest | grep -vc failed && for k in 0 1; do ...
+      → {'copied': 1, 'duplicates': 933, 'conflicts': 0, 'skipped': 0}
+      → 1513
+      → manifest.0of5.json remaining 143
+      → manifest.1of5.json remaining 127
+      → "remaining": 66 "remaining": 213 "remaining": 112
+      → 06:59Z
+      [Agent] {"description":"Audit the pilot's check code","subagent_type":"critical-reviewer","model":"opus","run_in_background":true,"prompt":"Read-only adversarial review; edit nothing. Repo root C:\\Coding\\ex...
+      → Async agent launched successfully. (This tool result is internal metadata — never quote or paste any part of it, including the agentId below, into a user-facing reply.)
+      agentId: a3289568b5c77a0f8 (internal ID - do not mention to user. Use SendMessage with to: 'a3289568b5c77a0f8', summary: '<5-10 word recap>' to con
+
+  --------------------------------------------------------
+  [6] grag-job / problems
+      Source: 7044598e-7235-40b6-914a-4029a2c43056.jsonl
+      Match:  cosine_sim=0.381  bm25=0.29
+
+      son | grep -v manifest | grep -vc failed && for k in 0 1; do ...
+      → {'copied': 1, 'duplicates': 933, 'conflicts': 0, 'skipped': 0}
+      → 1513
+      → manifest.0of5.json remaining 143
+      → manifest.1of5.json remaining 127
+      → "remaining": 66 "remaining": 213 "remaining": 112
+      → 06:59Z
+      [Agent] {"description":"Audit the pilot's check code","subagent_type":"critical-reviewer","model":"opus","run_in_background":true,"prompt":"Read-only adversarial review; edit nothing. Repo root C:\\Coding\\ex...
+      → Async agent launched successfully. (This tool result is internal metadata — never quote or paste any part of it, including the agentId below, into a user-facing reply.)
+      agentId: a3289568b5c77a0f8 (internal ID - do not mention to user. Use SendMessage with to: 'a3289568b5c77a0f8', summary: '<5-10 word recap>' to con
+
+  --------------------------------------------------------
+  [7] grag-job / problems
+      Source: b5448b15-f07d-42bb-be4f-33e27502130b.jsonl
+      Match:  cosine_sim=0.381  bm25=0.29
+
+      son | grep -v manifest | grep -vc failed && for k in 0 1; do ...
+      → {'copied': 1, 'duplicates': 933, 'conflicts': 0, 'skipped': 0}
+      → 1513
+      → manifest.0of5.json remaining 143
+      → manifest.1of5.json remaining 127
+      → "remaining": 66 "remaining": 213 "remaining": 112
+      → 06:59Z
+      [Agent] {"description":"Audit the pilot's check code","subagent_type":"critical-reviewer","model":"opus","run_in_background":true,"prompt":"Read-only adversarial review; edit nothing. Repo root C:\\Coding\\ex...
+      → Async agent launched successfully. (This tool result is internal metadata — never quote or paste any part of it, including the agentId below, into a user-facing reply.)
+      agentId: a3289568b5c77a0f8 (internal ID - do not mention to user. Use SendMessage with to: 'a3289568b5c77a0f8', summary: '<5-10 word recap>' to con
+
+  --------------------------------------------------------
+  [8] grag-job / problems
+      Source: ec0647ad-d4fa-425f-a571-8b03ea408768.jsonl
+      Match:  cosine_sim=0.381  bm25=0.29
+
+      son | grep -v manifest | grep -vc failed && for k in 0 1; do ...
+      → {'copied': 1, 'duplicates': 933, 'conflicts': 0, 'skipped': 0}
+      → 1513
+      → manifest.0of5.json remaining 143
+      → manifest.1of5.json remaining 127
+      → "remaining": 66 "remaining": 213 "remaining": 112
+      → 06:59Z
+      [Agent] {"description":"Audit the pilot's check code","subagent_type":"critical-reviewer","model":"opus","run_in_background":true,"prompt":"Read-only adversarial review; edit nothing. Repo root C:\\Coding\\ex...
+      → Async agent launched successfully. (This tool result is internal metadata — never quote or paste any part of it, including the agentId below, into a user-facing reply.)
+      agentId: a3289568b5c77a0f8 (internal ID - do not mention to user. Use SendMessage with to: 'a3289568b5c77a0f8', summary: '<5-10 word recap>' to con
+
+  --------------------------------------------------------
+

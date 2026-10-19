@@ -1,0 +1,18 @@
+A.luc: context ids delivered 12682 (distinct 5446); ids starting with 'metadata::' 0
+A.vec: context ids delivered 25349 (distinct 11490); ids starting with 'metadata::' 0
+B.luc: context ids delivered 12680 (distinct 5450); ids starting with 'metadata::' 0
+B.vec: context ids delivered 24853 (distinct 10992); ids starting with 'metadata::' 0
+
+D.v4_100 meta.provenance.source_sha256 (made 2026-10-07T04:19Z) against the files now and at HEAD:
+   test/arms/artefact_v4.py                     == file now: False   == HEAD blob: False   (in git at HEAD: True)
+   test/artefact/v4_walk.py                     == file now: False   == HEAD blob: False   (in git at HEAD: True)
+   test/artefact/query_content.py               == file now: False   == HEAD blob: False   (in git at HEAD: True)
+   test/artefact/querytagger.py                 == file now: True   == HEAD blob: True   (in git at HEAD: True)
+   test/artefact/graph_layer.py                 == file now: True   == HEAD blob: False   (in git at HEAD: False)
+   test/artefact/landing.py                     == file now: True   == HEAD blob: True   (in git at HEAD: True)
+   test/arms/artefact_facet_joint.py            == file now: False   == HEAD blob: True   (in git at HEAD: True)
+   test/arms/artefact_v2.py                     == file now: True   == HEAD blob: True   (in git at HEAD: True)
+   test/arms/artefact_v3.py                     == file now: True   == HEAD blob: True   (in git at HEAD: True)
+   prod/harness/chat.py                         == file now: False   == HEAD blob: True   (in git at HEAD: True)
+   prod/harness/embed.py                        == file now: False   == HEAD blob: True   (in git at HEAD: True)
+   prod/harness/char_budget.py                  == file now: True   == HEAD blob: True   (in git at HEAD: True)

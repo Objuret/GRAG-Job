@@ -1,0 +1,1 @@
+questions 100 | delivered ids in the same order: 31 | same ids as a set: 88 | delivered text identical, in order: 31 | identical as a set of texts: 85 | same cut unit: 88 | where the sets differ, units in one and not the other: [1, 1, 1, 2, 2, 2, 2, 2, 2, 10, 37, 86]

@@ -1,0 +1,21 @@
+rows 1 | ids ['madeup::walkthrough::0']
+
+row madeup::walkthrough::0: answer 870 chars | contexts 176 (72000 chars), ids 175 | search 0.026 s | leg 1
+   generator {'calls': 1, 'tokens_in': 25508, 'cached_input_tokens': 0, 'tokens_out': 553, 'reasoning_tokens': 0, 'time_s': 7.288085599895567, 'attempts': 1, 'request_s': 7.2874853000976145, 'wait_s': 0.0, 'retry_s': 0.0}
+   retrieval {'calls': 0, 'tokens_in': 0, 'cached_input_tokens': 0, 'tokens_out': 0, 'reasoning_tokens': 0, 'time_s': 0.0, 'attempts': 0, 'request_s': 0.0, 'wait_s': 0.0, 'retry_s': 0.0}
+   timing {'started_at': '2026-10-08T18:30:54.697836+00:00', 'finished_at': '2026-10-08T18:31:02.018009+00:00', 'wall_s': 7.321668699849397, 'thread': 'ThreadPoolExecutor-0_0'}
+   meta.ranking: n_units 38540 n_ranked 15202 scores 176 next_score 5.247885227203369
+   dollar key anywhere in the row: False
+   call chat: model claude-sonnet-5 | flags ['-p', '--model', 'claude-sonnet-5', '--output-format', 'json', '--tools', '', '--safe-mode'] | effort field None | dropped ['chat_template_kwargs', 'max_tokens', 'min_tokens', 'temperature'] | prompt 72500 chars | tries [(1, 'ok', 7.29)]
+        started 18:30:54.724 finished 18:31:02.012 | kept usage {'prompt_tokens': 25508, 'completion_tokens': 553, 'cached_input_tokens': 0}
+        envelope: num_turns 2 stop tool_use duration_ms 5603 api_ms 6749 ttft 3101 | usage in 2 cache_creation 25506 cache_read 0 out 553 | iterations 1 | models ['claude-haiku-4-5-20251001', 'claude-sonnet-5'] | session 8d5a648d-0c92-4091-b29b-cd0369095fe4
+
+manifest: generator.payload {"temperature": 0, "max_tokens": 8192, "min_tokens": 1, "chat_template_kwargs": {"enable_thinking": false}} | workers 1 | top_k 50 | lane cli 2.1.212 (Claude Code) | env {}
+   code_version {'commit': 'a140636a35b9ddba479df317e81ee66044b62a2b', 'branch': 'artefact-v4', 'dirty': True} | code_state: diff_file code.1deb262bf72f166a.diff untracked 10
+   index {"units": 38540, "text_chars": 11304304, "method": "lucene", "k1": 0.9, "b": 0.4, "stopwords": "en", "stemmer": "english", "bm25s": "0.2.14", "PyStemmer": "3.1.0", "kept": "in memory, built at the start of every leg"}
+   start 1: 18:30:53-18:31:02 wall 9.2 s cpu 1.546875 workers 1 answered 1 todo 1 prepare 1.5 s peak mem 0.17 GB embedder_load None
+   start 2: 18:31:02-18:31:04 wall 1.4 s cpu 1.265625 workers 1 answered 0 todo 0 prepare 1.3 s peak mem 0.18 GB embedder_load None
+
+against the earlier proof row (lucene__answer): key paths only in the earlier one: ['calls[].cost_usd', 'generator.cost_usd', 'retrieval.cost_usd'] | only in today's: ['meta.ranking.n_ranked', 'meta.ranking.n_units', 'meta.ranking.next_score', 'meta.ranking.scores[]']
+manifest key paths only in the earlier one: ['build_stats.model.cost_usd'] | only in today's: ['code_state.untracked_sha256.test/graph/write_tag_vectors.py', 'legs[].code_state.untracked_sha256.test/graph/write_tag_vectors.py', 'legs[].process_cpu_s']
+same delivered ids as the earlier proof: True | same context text: True | same answer text: False

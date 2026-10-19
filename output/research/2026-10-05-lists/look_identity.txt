@@ -1,0 +1,19 @@
+100 graph tag names embedded in the same mode, each against its own stored vector
+  closeness to its own tag, 5 / 25 / 50 / 75 / 95%: 0.985 / 0.990 / 0.991 / 0.992 / 0.993   lowest 0.983
+  shortfall from 1.0, same percentiles:            0.007 / 0.008 / 0.009 / 0.010 / 0.015   largest 0.017
+  the shortfall in the list's own spreads:          0.115 / 0.134 / 0.163 / 0.224 / 0.284   largest 0.336
+  its own tag is the closest on 100 of 100
+  other graph tags within one shortfall below the own tag: median 0, 75% 0, most 2
+
+The pick on the made-up question, "equally close" = within that shortfall (in closeness, not spreads) of the closest:
+  question tag                 median shortfall 0.009: tags (chunks)   95% shortfall 0.015: tags (chunks)   largest shortfall 0.017: tags (chunks)
+  rollback procedure                                      2 (8)                              2 (8)                              2 (8)
+       rollback process 0.978; rollback procedures 0.974
+  model updates                                          1 (14)                             1 (14)                             2 (15)
+       model updates 0.993
+  rollback failures                                      5 (11)                             8 (14)                             9 (15)
+       rollback procedures 0.923; rollback process 0.920; incorrect rollbacks 0.920; deployment failures 0.920; repeated rollbacks 0.916; rollback scenarios 0.911; transaction rollback 0.909; deployment rollback 0.909
+  procedural change                                      9 (18)                            14 (23)                            15 (24)
+       infrastructure changes 0.897; resolution 0.896; regulations 0.891; architectural changes 0.890; approved 0.889; approval 0.889; architecture change 0.889; strategy change 0.889; advancements 0.888; system changes 0.887
+  failure analysis                                       9 (13)                            15 (41)                            20 (47)
+       testing processes 0.867; testing methods 0.867; technical investigation 0.866; bug analysis 0.865; reliability testing 0.864; testing procedures 0.863; project investigation 0.861; product reliability 0.861; issue investigation 0.859; troubleshooting process 0.858

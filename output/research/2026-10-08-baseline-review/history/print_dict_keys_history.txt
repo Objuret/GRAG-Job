@@ -1,0 +1,388 @@
+
+=== orchestrator: 15 versions in git; working-tree file present
+key | first commit | last commit containing it | commit that dropped it | in working tree
+calls | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+content | 0733a9d 2026-06-23 | 69115e0 2026-07-12 | ec0c1c6 2026-07-15 | NO
+messages | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+model | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+n_questions | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+n_results | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+out_dir | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+role | 0733a9d 2026-06-23 | 69115e0 2026-07-12 | ec0c1c6 2026-07-15 | NO
+temperature | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+time | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+tokens | 0733a9d 2026-06-23 | 69115e0 2026-07-12 | ec0c1c6 2026-07-15 | NO
+additionalProperties | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+answer | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+chat_template_kwargs | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+enable_thinking | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+error | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+id | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+json_schema | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+max_tokens | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+n | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+n_failed | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+n_ran | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+name | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+properties | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+question | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+required | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+response_format | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+schema | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+type | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+min_tokens | 69115e0 2026-07-12 | e0c2df6 2026-10-05 |  | yes
+tokens_in | ec0c1c6 2026-07-15 | e0c2df6 2026-10-05 |  | yes
+tokens_out | ec0c1c6 2026-07-15 | e0c2df6 2026-10-05 |  | yes
+build_timestamp | 8e33b2d 2026-08-13 | e0c2df6 2026-10-05 |  | yes
+char_budget | 8e33b2d 2026-08-13 | e0c2df6 2026-10-05 |  | yes
+citations | 8e33b2d 2026-08-13 | e0c2df6 2026-10-05 |  | yes
+corpus_root | 8e33b2d 2026-08-13 | e0c2df6 2026-10-05 |  | yes
+database | 8e33b2d 2026-08-13 | e0c2df6 2026-10-05 |  | yes
+graph_database | 8e33b2d 2026-08-13 | e0c2df6 2026-10-05 |  | yes
+ground_truth | 8e33b2d 2026-08-13 | e0c2df6 2026-10-05 |  | yes
+mixed_builds | 8e33b2d 2026-08-13 | e0c2df6 2026-10-05 |  | yes
+questions_path | 8e33b2d 2026-08-13 | e0c2df6 2026-10-05 |  | yes
+removed_tags_sha256 | 8e33b2d 2026-08-13 | e0c2df6 2026-10-05 |  | yes
+retrieval_only | 8e33b2d 2026-08-13 | e0c2df6 2026-10-05 |  | yes
+source_database | 8e33b2d 2026-08-13 | e0c2df6 2026-10-05 |  | yes
+timestamp | 8e33b2d 2026-08-13 | e0c2df6 2026-10-05 |  | yes
+answered_at | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+cached_input_tokens | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+elapsed_s | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+graph_census_sha256 | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+graph_version | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+judge_backend | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+judge_model | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+n_exhausted | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+usage | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+aborted | working tree only | — |  | yes
+argv | working tree only | — |  | yes
+code_state | working tree only | — |  | yes
+code_version | working tree only | — |  | yes
+embedder_load_s | working tree only | — |  | yes
+evaluator | working tree only | — |  | yes
+failed_at | working tree only | — |  | yes
+finished_at | working tree only | — |  | yes
+flags | working tree only | — |  | yes
+generator_info | working tree only | — |  | yes
+ids_file | working tree only | — |  | yes
+index | working tree only | — |  | yes
+lane | working tree only | — |  | yes
+leg | working tree only | — |  | yes
+legs | working tree only | — |  | yes
+n_answered | working tree only | — |  | yes
+n_chosen | working tree only | — |  | yes
+n_todo | working tree only | — |  | yes
+n_unanswered_after | working tree only | — |  | yes
+payload | working tree only | — |  | yes
+peak_memory_bytes | working tree only | — |  | yes
+pid | working tree only | — |  | yes
+prepare_s | working tree only | — |  | yes
+prepared | working tree only | — |  | yes
+process_cpu_s | working tree only | — |  | yes
+python_executable | working tree only | — |  | yes
+settings | working tree only | — |  | yes
+started_at | working tree only | — |  | yes
+system | working tree only | — |  | yes
+timeout_s | working tree only | — |  | yes
+traceback | working tree only | — |  | yes
+user_template | working tree only | — |  | yes
+wall_s | working tree only | — |  | yes
+workers | working tree only | — |  | yes
+
+=== provenance: 3 versions in git; working-tree file present
+key | first commit | last commit containing it | commit that dropped it | in working tree
+branch | 169f64a 2026-08-14 | 44470b0 2026-09-05 |  | yes
+commit | 169f64a 2026-08-14 | 44470b0 2026-09-05 |  | yes
+corpus | 169f64a 2026-08-14 | 44470b0 2026-09-05 |  | yes
+dirty | 169f64a 2026-08-14 | 44470b0 2026-09-05 |  | yes
+host | 169f64a 2026-08-14 | 44470b0 2026-09-05 |  | yes
+ids_sha256 | 169f64a 2026-08-14 | 44470b0 2026-09-05 |  | yes
+n_files | 169f64a 2026-08-14 | 44470b0 2026-09-05 |  | yes
+packages | 169f64a 2026-08-14 | 44470b0 2026-09-05 |  | yes
+platform | 169f64a 2026-08-14 | 44470b0 2026-09-05 |  | yes
+python | 169f64a 2026-08-14 | 44470b0 2026-09-05 |  | yes
+questions_sha256 | 169f64a 2026-08-14 | 44470b0 2026-09-05 |  | yes
+sha256 | 169f64a 2026-08-14 | 44470b0 2026-09-05 |  | yes
+device | 44470b0 2026-09-05 | 44470b0 2026-09-05 |  | yes
+dtype | 44470b0 2026-09-05 | 44470b0 2026-09-05 |  | yes
+embedder | 44470b0 2026-09-05 | 44470b0 2026-09-05 |  | yes
+model | 44470b0 2026-09-05 | 44470b0 2026-09-05 |  | yes
+revision | 44470b0 2026-09-05 | 44470b0 2026-09-05 |  | yes
+cpu | working tree only | — |  | yes
+cpu_count | working tree only | — |  | yes
+diff | working tree only | — |  | yes
+diff_sha256 | working tree only | — |  | yes
+python_executable | working tree only | — |  | yes
+ram_bytes | working tree only | — |  | yes
+status | working tree only | — |  | yes
+untracked_sha256 | working tree only | — |  | yes
+
+=== chat lane (nim.py → chat.py): 10 versions in git; working-tree file present
+key | first commit | last commit containing it | commit that dropped it | in working tree
+Authorization | 0733a9d 2026-06-23 | 44470b0 2026-09-05 | e0c2df6 2026-10-05 | NO
+n | 0733a9d 2026-06-23 | 44470b0 2026-09-05 | e0c2df6 2026-10-05 | yes
+Retry-After | 8a640bf 2026-06-28 | 44470b0 2026-09-05 | e0c2df6 2026-10-05 | NO
+t | 8a640bf 2026-06-28 | 44470b0 2026-09-05 | e0c2df6 2026-10-05 | NO
+choices | 14dd887 2026-07-20 | df937bf 2026-10-06 |  | yes
+completion_tokens | 14dd887 2026-07-20 | df937bf 2026-10-06 |  | yes
+content | 14dd887 2026-07-20 | df937bf 2026-10-06 |  | yes
+finish_reason | 14dd887 2026-07-20 | df937bf 2026-10-06 |  | yes
+message | 14dd887 2026-07-20 | df937bf 2026-10-06 |  | yes
+prompt_tokens | 14dd887 2026-07-20 | df937bf 2026-10-06 |  | yes
+usage | 14dd887 2026-07-20 | df937bf 2026-10-06 |  | yes
+attempts | 169f64a 2026-08-14 | df937bf 2026-10-06 |  | yes
+cached_input_tokens | 169f64a 2026-08-14 | df937bf 2026-10-06 |  | yes
+request_s | 169f64a 2026-08-14 | df937bf 2026-10-06 |  | yes
+retry_s | 169f64a 2026-08-14 | df937bf 2026-10-06 |  | yes
+wait_s | 169f64a 2026-08-14 | df937bf 2026-10-06 |  | yes
+MEMPALACE_HOOKS_AUTO_SAVE | e0c2df6 2026-10-05 | df937bf 2026-10-06 |  | yes
+num_turns | e0c2df6 2026-10-05 | df937bf 2026-10-06 |  | yes
+stop_reason | e0c2df6 2026-10-05 | df937bf 2026-10-06 |  | yes
+call | working tree only | — |  | yes
+cli_version | working tree only | — |  | yes
+cwd | working tree only | — |  | yes
+effort | working tree only | — |  | yes
+env_set | working tree only | — |  | yes
+envelope | working tree only | — |  | yes
+error | working tree only | — |  | yes
+exe | working tree only | — |  | yes
+finished_at | working tree only | — |  | yes
+fixed_flags | working tree only | — |  | yes
+flags | working tree only | — |  | yes
+join_parts | working tree only | — |  | yes
+kind | working tree only | — |  | yes
+max_tries | working tree only | — |  | yes
+max_tries_default | working tree only | — |  | yes
+model | working tree only | — |  | yes
+ok | working tree only | — |  | yes
+outcome | working tree only | — |  | yes
+payload_dropped | working tree only | — |  | yes
+prompt | working tree only | — |  | yes
+returncode | working tree only | — |  | yes
+schema | working tree only | — |  | yes
+seconds | working tree only | — |  | yes
+started_at | working tree only | — |  | yes
+stderr | working tree only | — |  | yes
+stdout | working tree only | — |  | yes
+stream | working tree only | — |  | yes
+system | working tree only | — |  | yes
+text | working tree only | — |  | yes
+timeout_s | working tree only | — |  | yes
+
+=== eval/ragas: 10 versions in git; working-tree file present
+key | first commit | last commit containing it | commit that dropped it | in working tree
+answer_accuracy_nv | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+answer_correctness | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+answer_relevancy | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+bleu | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+chat_template_kwargs | 8a640bf 2026-06-28 | 44470b0 2026-09-05 | e0c2df6 2026-10-05 | NO
+chrf | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+content | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+context_entity_recall | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+context_precision_id | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+context_precision_llm | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+context_precision_llm_ref | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+context_precision_nonllm | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+context_recall_id | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+context_recall_llm | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+context_recall_nonllm | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+context_relevance_nv | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+enable_thinking | 8a640bf 2026-06-28 | 44470b0 2026-09-05 | e0c2df6 2026-10-05 | NO
+error | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+exact_match | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+factual_correctness | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+faithfulness | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+input | 8a640bf 2026-06-28 | 169f64a 2026-08-14 | 44470b0 2026-09-05 | NO
+input_type | 8a640bf 2026-06-28 | 169f64a 2026-08-14 | 44470b0 2026-09-05 | NO
+max_tokens | 8a640bf 2026-06-28 | 44470b0 2026-09-05 | e0c2df6 2026-10-05 | NO
+messages | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+metric | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+min_tokens | 8a640bf 2026-06-28 | 44470b0 2026-09-05 | e0c2df6 2026-10-05 | NO
+model | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+noise_sensitivity | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+question_id | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+response_groundedness_nv | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+role | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+rouge | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+semantic_similarity | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+stop | 8a640bf 2026-06-28 | 44470b0 2026-09-05 | e0c2df6 2026-10-05 | NO
+string_presence | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+string_similarity | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+temperature | 8a640bf 2026-06-28 | 44470b0 2026-09-05 | e0c2df6 2026-10-05 | NO
+truncate | 8a640bf 2026-06-28 | 169f64a 2026-08-14 | 44470b0 2026-09-05 | NO
+cwd | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+encoding | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+env | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+inflight | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+stderr | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+stdin | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+stdout | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+text | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+timeout_s | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+tries | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+attempts | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+request_s | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+retry_s | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+wait_s | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+argv | working tree only | — |  | yes
+arm | working tree only | — |  | yes
+calls_file | working tree only | — |  | yes
+embed_model | working tree only | — |  | yes
+embedding | working tree only | — |  | yes
+eval_leg | working tree only | — |  | yes
+failed_at | working tree only | — |  | yes
+finished_at | working tree only | — |  | yes
+interrupted | working tree only | — |  | yes
+judge_backend | working tree only | — |  | yes
+judge_inflight | working tree only | — |  | yes
+judge_max_tries | working tree only | — |  | yes
+judge_model | working tree only | — |  | yes
+judge_timeout_s | working tree only | — |  | yes
+lane | working tree only | — |  | yes
+max_consecutive_failed_questions | working tree only | — |  | yes
+max_judge_context_chars | working tree only | — |  | yes
+pid | working tree only | — |  | yes
+python_executable | working tree only | — |  | yes
+ragas | working tree only | — |  | yes
+retrieval_only | working tree only | — |  | yes
+scores | working tree only | — |  | yes
+started_at | working tree only | — |  | yes
+usage | working tree only | — |  | yes
+wall_s | working tree only | — |  | yes
+workers | working tree only | — |  | yes
+
+=== run.py: 17 versions in git; working-tree file present
+key | first commit | last commit containing it | commit that dropped it | in working tree
+id | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+out_dir | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+retrieval_only | a515c94 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+top_k | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+workers | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+judge_backend | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+judge_effort | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+judge_elapsed_s | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+judge_model | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+judge_usage | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+char_budget | 69e2048 2026-08-13 | e0c2df6 2026-10-05 |  | yes
+flags | e0c2df6 2026-10-05 | e0c2df6 2026-10-05 |  | yes
+
+=== arm lucene: 9 versions in git; working-tree file present
+key | first commit | last commit containing it | commit that dropped it | in working tree
+contents | a45292f 2026-06-21 | 44470b0 2026-09-05 |  | yes
+id | a45292f 2026-06-21 | 44470b0 2026-09-05 |  | yes
+kind | a45292f 2026-06-21 | 44470b0 2026-09-05 |  | yes
+rank | a45292f 2026-06-21 | 44470b0 2026-09-05 |  | yes
+score | a45292f 2026-06-21 | 44470b0 2026-09-05 |  | yes
+text | a45292f 2026-06-21 | 44470b0 2026-09-05 |  | yes
+title | a45292f 2026-06-21 | 44470b0 2026-09-05 |  | yes
+boundary | 69e2048 2026-08-13 | 44470b0 2026-09-05 |  | yes
+budget | 69e2048 2026-08-13 | 44470b0 2026-09-05 |  | yes
+char_budget | 69e2048 2026-08-13 | 44470b0 2026-09-05 |  | yes
+chars | 69e2048 2026-08-13 | 44470b0 2026-09-05 |  | yes
+exhausted | 69e2048 2026-08-13 | 44470b0 2026-09-05 |  | yes
+kept | 69e2048 2026-08-13 | 44470b0 2026-09-05 |  | yes
+HERB_BASELINE_METADATA | 169f64a 2026-08-14 | 44470b0 2026-09-05 |  | yes
+chunk_ids | 169f64a 2026-08-14 | 44470b0 2026-09-05 |  | yes
+PyStemmer | working tree only | — |  | yes
+b | working tree only | — |  | yes
+bm25s | working tree only | — |  | yes
+k1 | working tree only | — |  | yes
+method | working tree only | — |  | yes
+n_ranked | working tree only | — |  | yes
+n_units | working tree only | — |  | yes
+next_score | working tree only | — |  | yes
+ranking | working tree only | — |  | yes
+scores | working tree only | — |  | yes
+stemmer | working tree only | — |  | yes
+stopwords | working tree only | — |  | yes
+text_chars | working tree only | — |  | yes
+units | working tree only | — |  | yes
+
+=== arm vector: 9 versions in git; working-tree file present
+key | first commit | last commit containing it | commit that dropped it | in working tree
+id | 0733a9d 2026-06-23 | 44470b0 2026-09-05 |  | yes
+input | 0733a9d 2026-06-23 | 169f64a 2026-08-14 | 44470b0 2026-09-05 | NO
+input_type | 0733a9d 2026-06-23 | 169f64a 2026-08-14 | 44470b0 2026-09-05 | NO
+model | 0733a9d 2026-06-23 | 44470b0 2026-09-05 |  | yes
+rank | 0733a9d 2026-06-23 | 44470b0 2026-09-05 |  | yes
+score | 0733a9d 2026-06-23 | 44470b0 2026-09-05 |  | yes
+text | 0733a9d 2026-06-23 | 44470b0 2026-09-05 |  | yes
+truncate | 0733a9d 2026-06-23 | 169f64a 2026-08-14 | 44470b0 2026-09-05 | NO
+build_time_s | 8a640bf 2026-06-28 | 44470b0 2026-09-05 |  | yes
+calls | 8a640bf 2026-06-28 | 44470b0 2026-09-05 |  | yes
+tokens | 8a640bf 2026-06-28 | 8a640bf 2026-06-28 | ec0c1c6 2026-07-15 | NO
+tokens_in | ec0c1c6 2026-07-15 | 44470b0 2026-09-05 |  | yes
+tokens_out | ec0c1c6 2026-07-15 | 44470b0 2026-09-05 |  | yes
+boundary | 69e2048 2026-08-13 | 44470b0 2026-09-05 |  | yes
+budget | 69e2048 2026-08-13 | 44470b0 2026-09-05 |  | yes
+char_budget | 69e2048 2026-08-13 | 44470b0 2026-09-05 |  | yes
+chars | 69e2048 2026-08-13 | 44470b0 2026-09-05 |  | yes
+exhausted | 69e2048 2026-08-13 | 44470b0 2026-09-05 |  | yes
+kept | 69e2048 2026-08-13 | 44470b0 2026-09-05 |  | yes
+HERB_BASELINE_METADATA | 169f64a 2026-08-14 | 44470b0 2026-09-05 |  | yes
+chunk_ids | 169f64a 2026-08-14 | 44470b0 2026-09-05 |  | yes
+cache_cost_note | working tree only | — |  | yes
+cache_file | working tree only | — |  | yes
+cache_file_bytes | working tree only | — |  | yes
+cache_file_sha256 | working tree only | — |  | yes
+embedder_warm_s | working tree only | — |  | yes
+matrix_bytes | working tree only | — |  | yes
+matrix_dtype | working tree only | — |  | yes
+matrix_shape | working tree only | — |  | yes
+n_ranked | working tree only | — |  | yes
+n_units | working tree only | — |  | yes
+next_score | working tree only | — |  | yes
+question_embedding | working tree only | — |  | yes
+ranking | working tree only | — |  | yes
+scores | working tree only | — |  | yes
+text_chars | working tree only | — |  | yes
+units | working tree only | — |  | yes
+
+=== char_budget: 3 versions in git; working-tree file present
+key | first commit | last commit containing it | commit that dropped it | in working tree
+chars_full | 69e2048 2026-08-13 | 44470b0 2026-09-05 |  | yes
+chars_kept | 69e2048 2026-08-13 | 44470b0 2026-09-05 |  | yes
+id | 69e2048 2026-08-13 | 44470b0 2026-09-05 |  | yes
+
+=== capture: 0 versions in git; working-tree file present
+key | first commit | last commit containing it | commit that dropped it | in working tree
+cached_input_tokens | working tree only | — |  | yes
+calls | working tree only | — |  | yes
+chat_attempts | working tree only | — |  | yes
+chat_calls | working tree only | — |  | yes
+chat_s | working tree only | — |  | yes
+embed_calls | working tree only | — |  | yes
+embed_s | working tree only | — |  | yes
+embed_texts | working tree only | — |  | yes
+embed_tokens | working tree only | — |  | yes
+finished_at | working tree only | — |  | yes
+seq | working tree only | — |  | yes
+started_at | working tree only | — |  | yes
+thread | working tree only | — |  | yes
+timing | working tree only | — |  | yes
+tokens_in | working tree only | — |  | yes
+tokens_out | working tree only | — |  | yes
+wall_s | working tree only | — |  | yes
+
+=== embed: 1 versions in git; working-tree file present
+key | first commit | last commit containing it | commit that dropped it | in working tree
+dtype | 44470b0 2026-09-05 | 44470b0 2026-09-05 |  | yes
+passage | 44470b0 2026-09-05 | 44470b0 2026-09-05 |  | yes
+query | 44470b0 2026-09-05 | 44470b0 2026-09-05 |  | yes
+batch | working tree only | — |  | yes
+device | working tree only | — |  | yes
+encode_s | working tree only | — |  | yes
+finished_at | working tree only | — |  | yes
+input_type | working tree only | — |  | yes
+kind | working tree only | — |  | yes
+lock_wait_s | working tree only | — |  | yes
+model | working tree only | — |  | yes
+n_texts | working tree only | — |  | yes
+prefix | working tree only | — |  | yes
+requests | working tree only | — |  | yes
+revision | working tree only | — |  | yes
+started_at | working tree only | — |  | yes
+texts | working tree only | — |  | yes
+tokens | working tree only | — |  | yes
+tokens_in | working tree only | — |  | yes

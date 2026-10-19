@@ -1,0 +1,28 @@
+resource module not available on Windows
+lucene: 38540 artifacts + 0 directory records
+code state at the start: diff sha256 d37a41bc9c5fdc34 | 39 changed or new paths
+lucene: 38540 artifacts + 0 directory records
+ragas judge: claude-haiku-4-5-20251001 backend=claude-cli timeout=120s tries=1
+ragas embed: priming 2 text(s) in 2 batch(es) of up to 1
+embedder: loading nvidia/llama-nemotron-embed-1b-v2 @ 113abe4acafa on cpu (float32) — first use
+Loading weights:   0%|          | 0/146 [00:00<?, ?it/s]Loading weights:   1%|          | 1/146 [00:02<06:59,  2.89s/it]Loading weights:  43%|####3     | 63/146 [00:03<00:02, 29.16it/s]Loading weights:  63%|######3   | 92/146 [00:04<00:02, 26.26it/s]Loading weights:  75%|#######4  | 109/146 [00:04<00:01, 26.73it/s]Loading weights:  83%|########2 | 121/146 [00:05<00:01, 24.74it/s]Loading weights:  88%|########8 | 129/146 [00:05<00:00, 26.36it/s]Loading weights:  95%|#########4| 138/146 [00:06<00:00, 22.70it/s]Loading weights: 100%|##########| 146/146 [00:06<00:00, 23.06it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+embedder: ready in 14s (2048 dim, 8192-token context)
+ragas embed: primed in 2 forward pass(es)
+ragas: all 14 cells ok
+ragas judge usage: 6 call(s), in=44973 cached=0 out=3433 reasoning=0 tokens, request-time=38.6s wall=58.5s
+first start done in 72.4 s
+lucene: 38540 artifacts + 0 directory records
+DEBUG:bm25s:Building index from IDs objects
+ragas judge: claude-haiku-4-5-20251001 backend=claude-cli timeout=120s tries=1
+ragas: all 0 cells ok
+
+folder output\research\2026-10-08-baseline-review\proof_now\lucene__answer__eval__units_eval
+  arm_outputs.jsonl                      160,343 bytes
+  code.d37a41bc9c5fdc34.diff             878,763 bytes
+  eval_calls.jsonl                       222,765 bytes
+  eval_failures.jsonl                          0 bytes
+  eval_manifest.json                      14,396 bytes
+  eval_results.jsonl                       8,355 bytes
+  failures.jsonl                               0 bytes
+  run_manifest.json                       27,835 bytes

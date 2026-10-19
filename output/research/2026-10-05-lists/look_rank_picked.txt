@@ -1,0 +1,118 @@
+question tag "rollback failures" (description-side list)
+  readings: topic 0.95, temporal 0.80, why 0.90, activity 0.80, concreteness 0.85
+  facet order: why > concreteness > temporal > activity
+  picked: 9 graph tags within 0.0175 of the closest (0.923); 15 edges, 15 chunks
+  "equal" per facet (retrain gap): why 1.38, concreteness 1.30, temporal 1.01, activity 1.06
+   # graph tag                    close |      why cls | concrete cls | temporal cls | activity cls | topic |  desc quest | chunk
+   1 incorrect rollbacks          0.920 |     1.32   2 |     0.08   3 |     1.10   3 |     0.90   3 |  0.23 |  2.74  5.33 | slack_thread EdgeForce
+   2 rollback scenarios           0.911 |     1.03   2 |     0.46   3 |    -1.75   6 |    -0.49   4 |  0.26 |  1.32 -0.40 | document_par SearchFlow
+   3 rollback loop                0.906 |     1.16   2 |     0.75   3 |    -2.34   7 |    -0.22   4 |  0.34 |  3.08  1.09 | pr_batch InsightForce
+   4 rollback procedures          0.923 |     2.27   2 |     0.43   3 |    -3.51   8 |    -1.64   5 |  0.18 |  3.47  2.61 | document_par EdgeForce
+   5 repeated rollbacks           0.916 |     0.65   3 |     0.41   3 |     1.57   3 |     0.85   3 |  0.22 |  0.33  1.66 | slack_thread InsightForce
+   6 deployment failures          0.920 |     0.08   3 |    -0.03   3 |    -0.91   5 |     0.72   3 |  0.40 |  1.74  0.36 | pr_batch ExplainabilityForce
+   7 rollback procedures          0.923 |     0.52   3 |    -0.06   3 |    -2.03   6 |    -1.11   4 |  0.07 | -0.22  0.05 | document_par EdgeForce
+   8 rollback procedures          0.923 |    -0.02   3 |    -0.21   4 |     1.58   3 |     1.38   2 |  0.26 |  3.45  2.73 | slack_thread LeadForce
+   9 transaction rollback         0.909 |     0.17   3 |    -0.67   4 |    -2.15   6 |    -1.75   5 |  0.38 |  3.27  0.55 | pr_batch InsightForce
+  10 rollback procedures          0.923 |    -0.87   4 |    -1.28   4 |     1.13   3 |     0.57   3 |  0.19 |  1.46  3.26 | slack_thread EdgeForce
+  11 rollback procedures          0.923 |    -0.76   4 |    -0.82   4 |     1.03   3 |     0.81   3 |  0.16 |  1.88  2.86 | slack_thread EdgeForce
+  12 rollback procedures          0.923 |    -1.55   4 |    -1.44   4 |     0.70   4 |     0.40   3 |  0.13 |  1.97  2.67 | slack_thread EdgeForce
+  13 rollback process             0.920 |    -1.71   4 |    -1.30   4 |     0.25   4 |    -0.36   4 |  0.16 | -0.73  0.53 | slack_thread AnomalyForce
+  14 deployment rollback          0.909 |    -1.87   5 |    -2.71   5 |     1.47   3 |     0.30   3 |  0.25 |  1.65  1.19 | slack_thread SearchFlow
+  15 rollback procedures          0.923 |    -2.12   5 |    -1.82   5 |     0.80   4 |    -0.19   4 |  0.11 |  1.13  2.79 | slack_thread EdgeForce
+
+question tag "rollback failures" (question-side list)
+  readings: topic 0.90, temporal 0.90, why 0.80, activity 0.80, concreteness 0.80
+  facet order: temporal > why > activity > concreteness
+  picked: 9 graph tags within 0.0175 of the closest (0.923); 15 edges, 15 chunks
+  "equal" per facet (retrain gap): temporal 1.01, why 1.38, activity 1.06, concreteness 1.30
+   # graph tag                    close | temporal cls |      why cls | activity cls | concrete cls | topic |  desc quest | chunk
+   1 incorrect rollbacks          0.920 |     1.10   3 |     1.32   2 |     0.90   3 |     0.08   3 |  0.23 |  2.74  5.33 | slack_thread EdgeForce
+   2 rollback procedures          0.923 |     1.58   3 |    -0.02   3 |     1.38   2 |    -0.21   4 |  0.26 |  3.45  2.73 | slack_thread LeadForce
+   3 repeated rollbacks           0.916 |     1.57   3 |     0.65   3 |     0.85   3 |     0.41   3 |  0.22 |  0.33  1.66 | slack_thread InsightForce
+   4 rollback procedures          0.923 |     1.13   3 |    -0.87   4 |     0.57   3 |    -1.28   4 |  0.19 |  1.46  3.26 | slack_thread EdgeForce
+   5 rollback procedures          0.923 |     1.03   3 |    -0.76   4 |     0.81   3 |    -0.82   4 |  0.16 |  1.88  2.86 | slack_thread EdgeForce
+   6 deployment rollback          0.909 |     1.47   3 |    -1.87   5 |     0.30   3 |    -2.71   5 |  0.25 |  1.65  1.19 | slack_thread SearchFlow
+   7 rollback procedures          0.923 |     0.70   4 |    -1.55   4 |     0.40   3 |    -1.44   4 |  0.13 |  1.97  2.67 | slack_thread EdgeForce
+   8 rollback process             0.920 |     0.25   4 |    -1.71   4 |    -0.36   4 |    -1.30   4 |  0.16 | -0.73  0.53 | slack_thread AnomalyForce
+   9 rollback procedures          0.923 |     0.80   4 |    -2.12   5 |    -0.19   4 |    -1.82   5 |  0.11 |  1.13  2.79 | slack_thread EdgeForce
+  10 deployment failures          0.920 |    -0.91   5 |     0.08   3 |     0.72   3 |    -0.03   3 |  0.40 |  1.74  0.36 | pr_batch ExplainabilityForce
+  11 rollback scenarios           0.911 |    -1.75   6 |     1.03   2 |    -0.49   4 |     0.46   3 |  0.26 |  1.32 -0.40 | document_par SearchFlow
+  12 rollback procedures          0.923 |    -2.03   6 |     0.52   3 |    -1.11   4 |    -0.06   3 |  0.07 | -0.22  0.05 | document_par EdgeForce
+  13 transaction rollback         0.909 |    -2.15   6 |     0.17   3 |    -1.75   5 |    -0.67   4 |  0.38 |  3.27  0.55 | pr_batch InsightForce
+  14 rollback loop                0.906 |    -2.34   7 |     1.16   2 |    -0.22   4 |     0.75   3 |  0.34 |  3.08  1.09 | pr_batch InsightForce
+  15 rollback procedures          0.923 |    -3.51   8 |     2.27   2 |    -1.64   5 |     0.43   3 |  0.18 |  3.47  2.61 | document_par EdgeForce
+
+question tag "rollback procedure" (description-side list)
+  readings: topic 1.00, temporal 0.40, why 0.80, activity 0.90, concreteness 0.70
+  facet order: activity > why > concreteness > temporal
+  picked: 2 graph tags within 0.0175 of the closest (0.978); 8 edges, 8 chunks
+  "equal" per facet (retrain gap): activity 1.06, why 1.38, concreteness 1.30, temporal 1.01
+   # graph tag                    close | activity cls |      why cls | concrete cls | temporal cls | topic |  desc quest | chunk
+   1 rollback procedures          0.974 |     1.38   2 |    -0.02   3 |    -0.21   4 |     1.58   3 |  0.26 |  3.45  2.73 | slack_thread LeadForce
+   2 rollback procedures          0.974 |     0.57   3 |    -0.87   4 |    -1.28   4 |     1.13   3 |  0.19 |  1.46  3.26 | slack_thread EdgeForce
+   3 rollback procedures          0.974 |     0.81   3 |    -0.76   4 |    -0.82   4 |     1.03   3 |  0.16 |  1.88  2.86 | slack_thread EdgeForce
+   4 rollback procedures          0.974 |     0.40   3 |    -1.55   4 |    -1.44   4 |     0.70   4 |  0.13 |  1.97  2.67 | slack_thread EdgeForce
+   5 rollback procedures          0.974 |    -1.11   4 |     0.52   3 |    -0.06   3 |    -2.03   6 |  0.07 | -0.22  0.05 | document_par EdgeForce
+   6 rollback process             0.978 |    -0.36   4 |    -1.71   4 |    -1.30   4 |     0.25   4 |  0.16 | -0.73  0.53 | slack_thread AnomalyForce
+   7 rollback procedures          0.974 |    -0.19   4 |    -2.12   5 |    -1.82   5 |     0.80   4 |  0.11 |  1.13  2.79 | slack_thread EdgeForce
+   8 rollback procedures          0.974 |    -1.64   5 |     2.27   2 |     0.43   3 |    -3.51   8 |  0.18 |  3.47  2.61 | document_par EdgeForce
+
+question tag "rollback procedure" (question-side list)
+  readings: topic 1.00, temporal 0.20, why 0.90, activity 0.90, concreteness 0.70
+  facet order: why > activity > concreteness > temporal
+  picked: 2 graph tags within 0.0175 of the closest (0.978); 8 edges, 8 chunks
+  "equal" per facet (retrain gap): why 1.38, activity 1.06, concreteness 1.30, temporal 1.01
+   # graph tag                    close |      why cls | activity cls | concrete cls | temporal cls | topic |  desc quest | chunk
+   1 rollback procedures          0.974 |     2.27   2 |    -1.64   5 |     0.43   3 |    -3.51   8 |  0.18 |  3.47  2.61 | document_par EdgeForce
+   2 rollback procedures          0.974 |    -0.02   3 |     1.38   2 |    -0.21   4 |     1.58   3 |  0.26 |  3.45  2.73 | slack_thread LeadForce
+   3 rollback procedures          0.974 |     0.52   3 |    -1.11   4 |    -0.06   3 |    -2.03   6 |  0.07 | -0.22  0.05 | document_par EdgeForce
+   4 rollback procedures          0.974 |    -0.87   4 |     0.57   3 |    -1.28   4 |     1.13   3 |  0.19 |  1.46  3.26 | slack_thread EdgeForce
+   5 rollback procedures          0.974 |    -0.76   4 |     0.81   3 |    -0.82   4 |     1.03   3 |  0.16 |  1.88  2.86 | slack_thread EdgeForce
+   6 rollback procedures          0.974 |    -1.55   4 |     0.40   3 |    -1.44   4 |     0.70   4 |  0.13 |  1.97  2.67 | slack_thread EdgeForce
+   7 rollback process             0.978 |    -1.71   4 |    -0.36   4 |    -1.30   4 |     0.25   4 |  0.16 | -0.73  0.53 | slack_thread AnomalyForce
+   8 rollback procedures          0.974 |    -2.12   5 |    -0.19   4 |    -1.82   5 |     0.80   4 |  0.11 |  1.13  2.79 | slack_thread EdgeForce
+
+question tag "model updates" (description-side list)
+  readings: topic 0.80, temporal 0.10, why 0.50, activity 0.80, concreteness 0.60
+  facet order: activity > concreteness > why > temporal
+  picked: 2 graph tags within 0.0175 of the closest (0.993); 15 edges, 15 chunks
+  "equal" per facet (retrain gap): activity 1.06, concreteness 1.30, why 1.38, temporal 1.01
+   # graph tag                    close | activity cls | concrete cls |      why cls | temporal cls | topic |  desc quest | chunk
+   1 model updates                0.993 |     1.75   2 |     0.99   3 |     1.62   2 |     1.28   3 |  0.20 |  0.98  0.92 | slack_thread AutoTuneForce
+   2 model updates                0.993 |     1.18   2 |     0.10   3 |     0.69   3 |     2.05   2 |  0.28 |  0.92  3.49 | slack_thread EdgeForce
+   3 model updates                0.993 |     1.80   2 |     0.52   3 |     0.78   3 |     2.29   2 |  0.20 |  2.74  5.33 | slack_thread EdgeForce
+   4 model updates                0.993 |     1.79   2 |    -0.40   4 |     0.42   3 |     2.24   2 |  0.22 |  2.64  2.94 | slack_thread LeadForce
+   5 model updates                0.993 |     1.22   2 |    -0.46   4 |    -0.84   4 |     1.59   3 |  0.28 |  1.00  1.81 | slack_thread InsightForce
+   6 model updates                0.993 |     0.50   3 |     1.44   2 |     1.58   2 |    -1.48   6 |  0.37 |  2.19  1.67 | pr_batch AutoTuneForce
+   7 model update                 0.977 |     0.94   3 |    -1.11   4 |     0.03   3 |     1.39   3 |  0.21 |  0.70  1.94 | slack_thread AutoTuneForce
+   8 model updates                0.993 |     0.61   3 |    -0.69   4 |    -1.67   4 |     1.06   3 |  0.20 | -1.66  0.01 | slack_thread AnomalyForce
+   9 model updates                0.993 |     0.62   3 |    -0.76   4 |    -1.75   4 |     1.27   3 |  0.19 | -0.78  0.02 | slack_thread KnowledgeForce
+  10 model updates                0.993 |     0.54   3 |    -1.11   4 |    -1.07   4 |     0.53   4 |  0.19 |  0.38  0.24 | slack_thread SearchFlow
+  11 model updates                0.993 |     0.21   3 |    -1.14   4 |    -0.68   4 |     0.49   4 |  0.17 |  0.06  1.00 | slack_thread CoachForce
+  12 model updates                0.993 |     0.02   3 |    -0.36   4 |    -0.54   4 |    -0.16   5 |  0.17 | -1.03  0.11 | slack_thread AutoTuneForce
+  13 model updates                0.993 |    -1.13   4 |    -0.53   4 |    -0.03   3 |    -1.63   6 |  0.25 |  1.51  0.43 | pr_batch FeedbackForce
+  14 model updates                0.993 |    -0.58   4 |    -3.13   6 |    -2.07   5 |    -1.37   6 |  0.37 |  1.56  1.23 | pr_batch CollaborateForce
+  15 model updates                0.993 |    -2.51   6 |    -3.87   6 |    -1.23   4 |    -2.44   7 |  0.29 |  0.06  0.19 | pr_batch PersonalizeForce
+
+question tag "model updates" (question-side list)
+  readings: topic 0.90, temporal 0.10, why 0.50, activity 0.80, concreteness 0.60
+  facet order: activity > concreteness > why > temporal
+  picked: 2 graph tags within 0.0175 of the closest (0.993); 15 edges, 15 chunks
+  "equal" per facet (retrain gap): activity 1.06, concreteness 1.30, why 1.38, temporal 1.01
+   # graph tag                    close | activity cls | concrete cls |      why cls | temporal cls | topic |  desc quest | chunk
+   1 model updates                0.993 |     1.75   2 |     0.99   3 |     1.62   2 |     1.28   3 |  0.20 |  0.98  0.92 | slack_thread AutoTuneForce
+   2 model updates                0.993 |     1.18   2 |     0.10   3 |     0.69   3 |     2.05   2 |  0.28 |  0.92  3.49 | slack_thread EdgeForce
+   3 model updates                0.993 |     1.80   2 |     0.52   3 |     0.78   3 |     2.29   2 |  0.20 |  2.74  5.33 | slack_thread EdgeForce
+   4 model updates                0.993 |     1.79   2 |    -0.40   4 |     0.42   3 |     2.24   2 |  0.22 |  2.64  2.94 | slack_thread LeadForce
+   5 model updates                0.993 |     1.22   2 |    -0.46   4 |    -0.84   4 |     1.59   3 |  0.28 |  1.00  1.81 | slack_thread InsightForce
+   6 model updates                0.993 |     0.50   3 |     1.44   2 |     1.58   2 |    -1.48   6 |  0.37 |  2.19  1.67 | pr_batch AutoTuneForce
+   7 model update                 0.977 |     0.94   3 |    -1.11   4 |     0.03   3 |     1.39   3 |  0.21 |  0.70  1.94 | slack_thread AutoTuneForce
+   8 model updates                0.993 |     0.61   3 |    -0.69   4 |    -1.67   4 |     1.06   3 |  0.20 | -1.66  0.01 | slack_thread AnomalyForce
+   9 model updates                0.993 |     0.62   3 |    -0.76   4 |    -1.75   4 |     1.27   3 |  0.19 | -0.78  0.02 | slack_thread KnowledgeForce
+  10 model updates                0.993 |     0.54   3 |    -1.11   4 |    -1.07   4 |     0.53   4 |  0.19 |  0.38  0.24 | slack_thread SearchFlow
+  11 model updates                0.993 |     0.21   3 |    -1.14   4 |    -0.68   4 |     0.49   4 |  0.17 |  0.06  1.00 | slack_thread CoachForce
+  12 model updates                0.993 |     0.02   3 |    -0.36   4 |    -0.54   4 |    -0.16   5 |  0.17 | -1.03  0.11 | slack_thread AutoTuneForce
+  13 model updates                0.993 |    -1.13   4 |    -0.53   4 |    -0.03   3 |    -1.63   6 |  0.25 |  1.51  0.43 | pr_batch FeedbackForce
+  14 model updates                0.993 |    -0.58   4 |    -3.13   6 |    -2.07   5 |    -1.37   6 |  0.37 |  1.56  1.23 | pr_batch CollaborateForce
+  15 model updates                0.993 |    -2.51   6 |    -3.87   6 |    -1.23   4 |    -2.44   7 |  0.29 |  0.06  0.19 | pr_batch PersonalizeForce
+

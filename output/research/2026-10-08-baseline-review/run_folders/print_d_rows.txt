@@ -1,0 +1,28 @@
+D.v4_100: rows 100   top-level keys ['answer', 'answered_at', 'context_ids', 'contexts', 'generator', 'id', 'meta', 'question', 'retrieval', 'search_time_s']
+   sum(len(contexts)) == 72000: 100/100   answers empty: 100/100
+   len(contexts) min/median/max (12, 14.0, 24)   len(context_ids) (39, 145.5, 171)   context_ids unique in row: 100/100
+   meta.ranking.delivered_chunk_ids    length min/median/max (11, 13.0, 23)
+   meta.ranking.delivered_strength     length min/median/max (11, 13.0, 23)
+   meta.ranking.delivered_levels       length min/median/max (11, 13.0, 23)
+   meta.ranking.delivered_query_tags   length min/median/max (11, 13.0, 23)
+   meta.ranking.ordered_chunk_ids      length min/median/max (4808, 4808.0, 4808)
+   len(delivered_strength) == len(contexts): 0/100   len(delivered_chunk_ids) == len(contexts): 0/100
+   meta.chunk_ids (one list per context) length == len(contexts): 100/100   meta.returned min/median/max (12, 14.0, 24)
+   retrieval.calls values {1: 100}   attempts {1: 100}   tokens_in sum 725740  tokens_out sum 5027  cached sum 650386  time_s sum 568.1
+   meta.interpreter.stages (stage, cache_hit, offline, asks): {('querytag', True, False, 1): 100, ('scope', False, False, 1): 100}
+   eval rows 1000   scores 10: ['bleu', 'chrf', 'context_precision_id', 'context_precision_nonllm', 'context_recall_id', 'context_recall_nonllm', 'exact_match', 'rouge', 'string_presence', 'string_similarity']   status {'ok': 1000}   components non-empty 0
+D.v4_10: rows 10   top-level keys ['answer', 'answered_at', 'calls', 'context_ids', 'contexts', 'generator', 'id', 'leg', 'meta', 'question', 'retrieval', 'search_time_s', 'timing']
+   sum(len(contexts)) == 72000: 10/10   answers empty: 10/10
+   len(contexts) min/median/max (13, 14.5, 28)   len(context_ids) (50, 142.5, 163)   context_ids unique in row: 10/10
+   meta.ranking.delivered_chunk_ids    length min/median/max (12, 13.5, 27)
+   meta.ranking.delivered_strength     length min/median/max (12, 13.5, 27)
+   meta.ranking.delivered_levels       length min/median/max (12, 13.5, 27)
+   meta.ranking.delivered_query_tags   length min/median/max (12, 13.5, 27)
+   meta.ranking.ordered_chunk_ids      length min/median/max (66, 130.5, 409)
+   len(delivered_strength) == len(contexts): 0/10   len(delivered_chunk_ids) == len(contexts): 0/10
+   meta.chunk_ids (one list per context) length == len(contexts): 10/10   meta.returned min/median/max (13, 14.5, 28)
+   retrieval.calls values {0: 10}   attempts {0: 10}   tokens_in sum 0  tokens_out sum 0  cached sum 0  time_s sum 0.0
+   meta.interpreter.stages (stage, cache_hit, offline, asks): {('querytag', True, True, 1): 10}
+   calls list lengths {0: 10}   timing present 10/10   timing.wall_s min/median/max (1.71, 2.34, 3.01)   threads 6   leg values {1: 10}
+   timing.wall_s - (search_time_s + retrieval.time_s + generator.time_s) min/median/max (0.001, 0.002, 0.006)
+   eval rows 100   scores 10: ['bleu', 'chrf', 'context_precision_id', 'context_precision_nonllm', 'context_recall_id', 'context_recall_nonllm', 'exact_match', 'rouge', 'string_presence', 'string_similarity']   status {'ok': 100}   components non-empty 100

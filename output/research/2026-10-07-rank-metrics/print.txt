@@ -1,0 +1,10 @@
+run                                                    n                hit    reciprocal_rank  average_precision               ndcg
+lucene__gold100__cb72000__20260814T134547Z           100             0.8200             0.2937             0.0272             0.1121
+                                                          questions with a hit: 82; recall and precision recomputed here differ from the stored id scores on 0 values; questions with more citation ids than delivered ids: 13
+lucene__gold100__cb72000__20261007T211014Z           100             0.8200             0.2998             0.0272             0.1124
+                                                          questions with a hit: 82; recall and precision recomputed here differ from the stored id scores on 0 values; questions with more citation ids than delivered ids: 13
+vector__gold100__cb72000__20260814T145615Z           100             0.9900             0.3511             0.0460             0.1905
+                                                          questions with a hit: 99; recall and precision recomputed here differ from the stored id scores on 0 values; questions with more citation ids than delivered ids: 2
+vector__gold100__cb72000__20261007T211515Z           100             0.9700             0.3399             0.0476             0.1931
+                                                          questions with a hit: 97; recall and precision recomputed here differ from the stored id scores on 0 values; questions with more citation ids than delivered ids: 2
+per-question values: 1600 rows -> output\research\2026-10-07-rank-metrics\per_question.jsonl

@@ -1,0 +1,31 @@
+{
+  "input": "sample_units_20261009.jsonl",
+  "input_sha256": "a50c735b79bf8f79bfe8361e9813f7b4ea3cfd8698f033382c7599fd74e2e274",
+  "n": 200,
+  "mode": "passage",
+  "prefix": "passage: ",
+  "model": "nvidia/llama-nemotron-embed-1b-v2",
+  "revision": "113abe4acafa848e77ead9c0623205e511932348",
+  "dtype": "float32",
+  "batch": 1,
+  "device": "cuda",
+  "device_name": "NVIDIA GeForce GTX 1080 Ti",
+  "max_seq_length": 8192,
+  "tokens_in": 22458,
+  "matrix_shape": [
+    200,
+    2048
+  ],
+  "matrix_dtype": "float32",
+  "matrix_sha256": "372bd0c90a1a687b321e67ccf4b4150f591da7ad7dbf874bf0f92ce8487cef27",
+  "output_sha256": "01c3c138db1f92b2e77ccc7ba0566e9e740272854cb1e78ac190f2e1c86c87d4",
+  "seconds_this_call": 20.5,
+  "texts_embedded_this_call": 200,
+  "host": "FR\u00c4SH",
+  "python": "3.11.9",
+  "torch": "2.6.0+cu124",
+  "sentence_transformers": "5.5.0",
+  "transformers": "5.8.1",
+  "numpy": "2.4.4",
+  "made_utc": "2026-10-08T23:24:47Z"
+}

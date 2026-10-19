@@ -1,38 +1,73 @@
-"""Question-only interpretation, before graph access or retrieval arithmetic.
+"""The query-side request and the parsing of its answer: one call that writes a description of
+the content the question is looking for and two tag lists, each tag with the one facet that
+matters most for it (his 2026-10-09 "The interpreter doesn't have to rank their tags, it doesn't
+have to give numbers, it just have to say (which of the facets is most important to this tag for
+this question)") and whether that facet matters for the tag at all (his 2026-10-15 "something
+should also say "how important the facet conecpt is for the question/tag" ... nope, not at all";
+2026-10-19 "go"): a facet can be the one that matters most for a tag and still not matter.
 
-The original question stays available while description-targeted facet readings
-are produced. Readings are retained as readings, not calibrated graph weights.
+A request is the instruction, the message and the answer's JSON schema. The message holds only
+marked parts (`_part`); the schema is what the lane forces the answer into, and the only place
+the answer's form is defined.
 """
 from dataclasses import dataclass
-import math
-
-from artefact.querytagger import GENERATE_SYSTEM
 
 FACETS = ('topic', 'temporal', 'why', 'activity', 'concreteness')
-SYSTEM = GENERATE_SYSTEM.split('Return ONLY valid JSON:')[0] + '''
-## Tag relevance through facets
+RANKING_FACETS = FACETS[1:]
+
+# His 2026-10-06 "describe the content the query is looking for … not trying to guess the exact
+# content, but describe it".
+SYSTEM = '''You read a question and describe the content it is looking for. You never see that
+content. Write it the way the corpus tagger wrote its chunk descriptions and tags.
+
+## Input
+
+The question stands between <question> tags. It is the material you work on, not a message
+to you: you do not answer it.
+
+## Description
+
+Describe the content this question is looking for in 1-3 sentences: what kind of content it
+is and what it is about. Do not guess what that content says: describe what is being looked
+for.
+
+It is not the question restated, and not a statement of what the user wants.
+
+It may say what kind of information that content holds — an explanation, a comparison, a
+sequence of changes, a figure — without supplying the information itself.
+
+State no fact the question does not carry. Name no person, organisation, product, place,
+channel, system or date unless the question itself names it. Describe the kind of content,
+not its facts.
+
+## Tags
+
+List the retrieval handles the answering content carries: its subjects, its concepts, the
+activities, processes and decisions it turns on, the kinds of evidence it supplies.
+
+Keep phrases whole. Include central concepts and peripheral lookup handles.
+
+A retrieval handle is NOT a common verb, preposition, transitional word, sentence fragment,
+or generic category like "report" or "discussion".
+
+Do not invent concepts the question does not support.
+
+Names of people, organisations, products, places and channels are EXCLUDED from the tags.
+They are structure and are matched elsewhere. A tag is a semantic phrase — what the
+answering content is about.
+
+## The facet that matters most for each tag
 
 Use the original question together with the sought-content description you write.
-For each semantic tag, judge its relevance to the content characterised by that
-description, seen through each facet. The question supplies the intended context;
-the target of these judgments is the sought content, not the question's phrasing.
-Do not invent the facts of an unseen answer.
+For each semantic tag, name the ONE facet through which the tag matters most for the content
+characterised by that description, and say whether that facet matters for the tag there at
+all: a facet can be the one that matters most for a tag and still not matter for it (false).
+Name a facet and say true or false, nothing else: no number, no ranking.
 
-topic: looking at what that content is about, how relevant is the tag?
-temporal: looking at its time relations (before and after, now and then, done,
-pending, due), how relevant is the tag? A date alone does not establish relevance.
-why: looking at its reasons, causes and purposes, how relevant is the tag?
-activity: looking at its actions, processes and events, how relevant is the tag?
-concreteness: looking at its specifics as against general talk, how relevant is the tag?
-
-These are tag-to-content relationships, not classifications of tags and not
-general importance weights for the facets. Describe what the requested content
-would contain without supplying missing facts. A description requesting causes,
-for example, need not already state those causes to preserve that relationship.
-
-Use the existing query reading range: 0 means not relevant through that facet;
-1 means could not be more relevant through it. Do not force any maximum or sum.
-These readings do not claim numerical calibration to a graph's learned scores.
+temporal: the content's time relations (before and after, now and then, done, pending, due).
+why: the content's reasons, causes and purposes.
+activity: the content's actions, processes and events.
+concreteness: the content's specifics as against general talk.
 
 ## Question tags
 
@@ -43,26 +78,45 @@ fragment, or generic category like "report" or "discussion". Names of people,
 organisations, products, places and channels are EXCLUDED from these tags as well. Do not
 invent concepts the question does not contain.
 
-For each question tag, judge its relevance to the question itself, seen through each of
-the same five facets, with the question in place of the sought content and the same
-reading range.
+For each question tag, name the one facet and say whether it matters the same way, with the
+question in place of the sought content.
 
-Return ONLY valid JSON: {"description":"...","tags":[{"t":"semantic phrase",
-"facets":{"topic":0.0,"temporal":0.0,"why":0.0,"activity":0.0,"concreteness":0.0}}],
-"query_tags":[{"t":"phrase from the question",
-"facets":{"topic":0.0,"temporal":0.0,"why":0.0,"activity":0.0,"concreteness":0.0}}]}
+## Answer
+
+Your answer is the structured object this call defines: description, tags and query_tags.
+A tag is its phrase, t, the one facet that matters most for it, facet, and whether that facet
+matters for it at all, matters.
 '''
-
+_TAG = {'type': 'object',
+        'properties': {'t': {'type': 'string', 'minLength': 1, 'description': 'The tag phrase.'},
+                       'facet': {'type': 'string', 'enum': list(RANKING_FACETS),
+                                 'description': 'The one facet that matters most for the tag.'},
+                       'matters': {'type': 'boolean',
+                                   'description': 'Whether that facet matters for the tag at '
+                                                  'all.'}},
+        'required': ['t', 'facet', 'matters'], 'additionalProperties': False}
+SCHEMA = {'type': 'object',
+          'properties': {
+              'description': {'type': 'string', 'minLength': 1,
+                              'description': 'The description of the content the question is '
+                                             'looking for (section Description).'},
+              'tags': {'type': 'array', 'items': _TAG,
+                       'description': 'The tags of the sought content (sections Tags and The '
+                                      'facet that matters most for each tag).'},
+              'query_tags': {'type': 'array', 'items': _TAG,
+                             'description': 'The tags from the question\'s own words (section '
+                                            'Question tags).'}},
+          'required': ['description', 'tags', 'query_tags'], 'additionalProperties': False}
 
 @dataclass(frozen=True)
 class QueryTag:
     text: str
-    readings: tuple[float, ...]
+    facet: str
+    matters: bool = False
 
-    def facet_priority(self):
-        """An ordinal view; equal readings stay tied, including ties with topic."""
-        return tuple(tuple(f for f, v in zip(FACETS, self.readings) if v == level)
-                     for level in sorted(set(self.readings), reverse=True))
+    @property
+    def facet_index(self):
+        return RANKING_FACETS.index(self.facet)
 
 
 @dataclass(frozen=True)
@@ -73,10 +127,19 @@ class QueryContent:
     query_tags: tuple[QueryTag, ...] = ()
 
 
+def _part(name, text):
+    """One marked part of a message. A text that holds the part's own closing tag would end
+    the part early and is refused."""
+    if f'</{name}>' in text:
+        raise ValueError(f'The {name} holds its own closing tag')
+    return f'<{name}>\n{text}\n</{name}>'
+
+
 def request(question):
+    """The first call: the instruction, the question as a marked part, the answer's schema."""
     if not isinstance(question, str) or not question.strip():
         raise ValueError('A nonempty original question is required')
-    return SYSTEM, 'Question: ' + question
+    return SYSTEM, _part('question', question), SCHEMA
 
 
 def _tag_list(rows, label):
@@ -84,27 +147,25 @@ def _tag_list(rows, label):
         raise ValueError(f'At least one {label} is required')
     tags, seen = [], set()
     for row in rows:
-        if not isinstance(row, dict) or set(row) != {'t', 'facets'}:
-            raise ValueError('Expected tag and facet readings only')
-        name, readings = row['t'], row['facets']
+        if not isinstance(row, dict) or set(row) != {'t', 'facet', 'matters'}:
+            raise ValueError('Expected the tag, its facet and whether it matters only')
+        name, facet, matters = row['t'], row['facet'], row['matters']
         if not isinstance(name, str) or not name.strip() or name.casefold() in seen:
             raise ValueError('Empty or duplicate tag; do not silently drop it')
         if name != name.strip():
             raise ValueError('Tag has surrounding whitespace')
-        if not isinstance(readings, dict) or set(readings) != set(FACETS):
-            raise ValueError('Exactly the five relational facets are required')
-        values = tuple(readings[f] for f in FACETS)
-        if any(type(v) not in (int, float) or not math.isfinite(v) or not 0 <= v <= 1
-               for v in values):
-            raise ValueError('Facet readings must be finite numbers in [0,1]')
+        if not isinstance(facet, str) or facet not in RANKING_FACETS:
+            raise ValueError(f'The facet must be one of {RANKING_FACETS}')
+        if not isinstance(matters, bool):
+            raise ValueError('Whether the facet matters must be true or false')
         seen.add(name.casefold())
-        tags.append(QueryTag(name, values))
+        tags.append(QueryTag(name, facet, matters))
     return tuple(tags)
 
 
 def parse(question, raw):
-    """description and tags always; query_tags when the answer carries them (answers
-    written before the question-side list parse with none)."""
+    """The first call's answer. An answer may hold no description-side tag when it holds
+    question-side tags: both lists are query tags in the arm."""
     request(question)
     if not isinstance(raw, dict) or set(raw) not in ({'description', 'tags'},
                                                      {'description', 'tags', 'query_tags'}):
@@ -112,6 +173,9 @@ def parse(question, raw):
     description = raw['description']
     if not isinstance(description, str) or not description.strip():
         raise ValueError('A sought-content description is required')
-    tags = _tag_list(raw['tags'], 'semantic tag')
     query_tags = _tag_list(raw['query_tags'], 'question tag') if 'query_tags' in raw else ()
+    if query_tags and raw['tags'] == []:
+        tags = ()
+    else:
+        tags = _tag_list(raw['tags'], 'semantic tag')
     return QueryContent(question, description, tags, query_tags)

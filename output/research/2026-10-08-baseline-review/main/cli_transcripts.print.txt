@@ -1,0 +1,20 @@
+lucene answers 10-07 (21:10:14Z-21:15:00Z): 100 transcript files, 15.8 MB
+vector answers 10-07 (21:15:15Z-21:21:30Z): 100 transcript files, 16.1 MB
+evaluation of both, 10-07 (21:21:30Z-23:40:00Z): 1201 transcript files, 94.5 MB
+proof, lucene answer (10-08 00:21:45Z-00:22:10Z): 1 transcript files, 0.2 MB
+proof, vector answer + evaluation (10-08 09:55:45Z-09:59:40Z): 7 transcript files, 0.6 MB
+
+structure of the transcript of the proof's lucene answer call (made-up question):
+ file of 162033 bytes, written 00:22:03Z
+   queue-operation | model None | stop_reason None | content None | usage {} | other keys ['content', 'operation', 'timestamp']
+   queue-operation | model None | stop_reason None | content None | usage {} | other keys ['operation', 'timestamp']
+   user | model None | stop_reason None | content str[73308] | usage {} | other keys ['entrypoint', 'isSidechain', 'permissionMode', 'promptId', 'promptSource', 'timestamp', 'version']
+   file-history-snapshot | model None | stop_reason None | content None | usage {} | other keys ['isSnapshotUpdate', 'messageId', 'snapshot']
+   last-prompt | model None | stop_reason None | content None | usage {} | other keys ['lastPrompt', 'leafUuid']
+   ai-title | model None | stop_reason None | content None | usage {} | other keys ['aiTitle']
+   assistant | model claude-sonnet-5 | stop_reason tool_use | content ['thinking[2]'] | usage {'input_tokens': 2, 'cache_creation_input_tokens': 25506, 'cache_read_input_tokens': 0, 'output_tokens': 772} | other keys ['effort', 'entrypoint', 'isSidechain', 'requestId', 'timestamp', 'version']
+   assistant | model claude-sonnet-5 | stop_reason tool_use | content ['text[919]'] | usage {'input_tokens': 2, 'cache_creation_input_tokens': 25506, 'cache_read_input_tokens': 0, 'output_tokens': 772} | other keys ['effort', 'entrypoint', 'isSidechain', 'requestId', 'timestamp', 'version']
+   assistant | model claude-sonnet-5 | stop_reason tool_use | content ['tool_use[1074]'] | usage {'input_tokens': 2, 'cache_creation_input_tokens': 25506, 'cache_read_input_tokens': 0, 'output_tokens': 772} | other keys ['effort', 'entrypoint', 'isSidechain', 'requestId', 'timestamp', 'version']
+   attachment | model None | stop_reason None | content None | usage {} | other keys ['attachment', 'entrypoint', 'isSidechain', 'timestamp', 'version']
+   user | model None | stop_reason None | content ['tool_result[41]'] | usage {} | other keys ['entrypoint', 'isSidechain', 'promptId', 'sourceToolAssistantUUID', 'timestamp', 'toolEndsTurn', 'toolUseResult', 'version']
+   last-prompt | model None | stop_reason None | content None | usage {} | other keys ['lastPrompt', 'leafUuid']

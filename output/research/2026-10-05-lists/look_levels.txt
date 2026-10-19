@@ -1,0 +1,32 @@
+=== tag width = the median self-difference 0.0089; description width 0.028 ===
+  -- raw question in question mode
+     tags          chunks in class 0 / 1 / 2 / 3: 54 / 46 / 295 / 303   of them in EdgeForce: 8 / 3 / 8 / 9
+     description   chunks in class 0 / 1 / 2 / 3: 2 / 19 / 51 / 154   of them in EdgeForce: 0 / 2 / 3 / 8
+     raw question  chunks in class 0 / 1 / 2 / 3: 1 / 0 / 0 / 2   of them in EdgeForce: 1 / 0 / 0 / 2
+     pool class 0: 56 chunks ({'tags only': 53, 'description only': 2, 'raw question only': 0}, by two or three routes 1); in EdgeForce 8; kinds {'document_part': 2, 'meeting_transcript': 1, 'pr_batch': 10, 'slack_thread_batch': 43}
+     pool class 1: 61 chunks ({'tags only': 44, 'description only': 15, 'raw question only': 0}, by two or three routes 2); in EdgeForce 4; kinds {'document': 3, 'document_part': 14, 'meeting_transcript': 3, 'pr_batch': 10, 'slack_thread_batch': 31}
+     pool class 2: 337 chunks ({'tags only': 289, 'description only': 43, 'raw question only': 0}, by two or three routes 5); in EdgeForce 10; kinds {'document': 2, 'document_part': 22, 'meeting_transcript': 3, 'meeting_transcript_part': 1, 'pr_batch': 175, 'slack_thread_batch': 134}
+  -- raw question in the same mode
+     tags          chunks in class 0 / 1 / 2 / 3: 54 / 46 / 295 / 303   of them in EdgeForce: 8 / 3 / 8 / 9
+     description   chunks in class 0 / 1 / 2 / 3: 2 / 19 / 51 / 154   of them in EdgeForce: 0 / 2 / 3 / 8
+     raw question  chunks in class 0 / 1 / 2 / 3: 1 / 0 / 7 / 16   of them in EdgeForce: 1 / 0 / 6 / 10
+     pool class 0: 56 chunks ({'tags only': 53, 'description only': 2, 'raw question only': 0}, by two or three routes 1); in EdgeForce 8; kinds {'document_part': 2, 'meeting_transcript': 1, 'pr_batch': 10, 'slack_thread_batch': 43}
+     pool class 1: 61 chunks ({'tags only': 44, 'description only': 15, 'raw question only': 0}, by two or three routes 2); in EdgeForce 4; kinds {'document': 3, 'document_part': 14, 'meeting_transcript': 3, 'pr_batch': 10, 'slack_thread_batch': 31}
+     pool class 2: 342 chunks ({'tags only': 289, 'description only': 43, 'raw question only': 5}, by two or three routes 5); in EdgeForce 15; kinds {'document': 2, 'document_part': 22, 'meeting_transcript': 3, 'meeting_transcript_part': 1, 'pr_batch': 176, 'slack_thread_batch': 138}
+
+=== tag width = the largest self-difference 0.0175; description width 0.028 ===
+  -- raw question in question mode
+     tags          chunks in class 0 / 1 / 2 / 3: 98 / 587 / 1322 / 1445   of them in EdgeForce: 11 / 16 / 51 / 28
+     description   chunks in class 0 / 1 / 2 / 3: 2 / 19 / 51 / 154   of them in EdgeForce: 0 / 2 / 3 / 8
+     raw question  chunks in class 0 / 1 / 2 / 3: 1 / 0 / 0 / 2   of them in EdgeForce: 1 / 0 / 0 / 2
+     pool class 0: 100 chunks ({'tags only': 97, 'description only': 2, 'raw question only': 0}, by two or three routes 1); in EdgeForce 11; kinds {'document': 3, 'document_part': 14, 'meeting_transcript': 3, 'pr_batch': 16, 'slack_thread_batch': 64}
+     pool class 1: 598 chunks ({'tags only': 583, 'description only': 12, 'raw question only': 0}, by two or three routes 3); in EdgeForce 17; kinds {'document': 13, 'document_part': 75, 'meeting_transcript': 15, 'meeting_transcript_part': 5, 'pr_batch': 198, 'slack_thread_batch': 292}
+     pool class 2: 1336 chunks ({'tags only': 1295, 'description only': 22, 'raw question only': 0}, by two or three routes 19); in EdgeForce 51; kinds {'document': 58, 'document_part': 136, 'meeting_transcript': 78, 'meeting_transcript_part': 9, 'pr_batch': 139, 'slack_thread_batch': 902, 'url_batch': 14}
+  -- raw question in the same mode
+     tags          chunks in class 0 / 1 / 2 / 3: 98 / 587 / 1322 / 1445   of them in EdgeForce: 11 / 16 / 51 / 28
+     description   chunks in class 0 / 1 / 2 / 3: 2 / 19 / 51 / 154   of them in EdgeForce: 0 / 2 / 3 / 8
+     raw question  chunks in class 0 / 1 / 2 / 3: 1 / 0 / 7 / 16   of them in EdgeForce: 1 / 0 / 6 / 10
+     pool class 0: 100 chunks ({'tags only': 97, 'description only': 2, 'raw question only': 0}, by two or three routes 1); in EdgeForce 11; kinds {'document': 3, 'document_part': 14, 'meeting_transcript': 3, 'pr_batch': 16, 'slack_thread_batch': 64}
+     pool class 1: 598 chunks ({'tags only': 583, 'description only': 12, 'raw question only': 0}, by two or three routes 3); in EdgeForce 17; kinds {'document': 13, 'document_part': 75, 'meeting_transcript': 15, 'meeting_transcript_part': 5, 'pr_batch': 198, 'slack_thread_batch': 292}
+     pool class 2: 1337 chunks ({'tags only': 1291, 'description only': 22, 'raw question only': 1}, by two or three routes 23); in EdgeForce 52; kinds {'document': 58, 'document_part': 136, 'meeting_transcript': 78, 'meeting_transcript_part': 9, 'pr_batch': 140, 'slack_thread_batch': 902, 'url_batch': 14}
+

@@ -1,0 +1,16 @@
+2026-10-08T20:21:27.720Z  id 507  The system is exiting Modern Standby | Reason: Sleep Button.
+2026-10-08T22:33:41.814Z  id 506  The system is entering Modern Standby | Reason: Idle Timeout.
+2026-10-08T22:33:42.345Z  id 507  The system is exiting Modern Standby | Reason: AC/DC Display Burst.
+2026-10-08T23:52:59.525Z  id 506  The system is entering Modern Standby | Reason: Lid.
+2026-10-08T23:58:17.413Z  id 507  The system is exiting Modern Standby | Reason: Austerity Battery Drain Budget Exceeded.
+2026-10-08T23:58:17.417Z  id 506  The system is entering Modern Standby | Reason: Austerity Battery Drain Budget Exceeded.
+2026-10-09T04:57:40.068Z  id 507  The system is exiting Modern Standby | Reason: Sleep, Hibernate, or Shutdown.
+2026-10-09T04:57:47.200Z  id  42  The system is entering sleep. | Sleep Reason: Hibernate from Sleep - Standby Battery Budget Exceeded
+2026-10-09T04:57:59.649Z  id 107  The system has resumed from sleep.
+2026-10-09T06:55:04.305Z  id 506  The system is entering Modern Standby | Reason: Sleep, Hibernate, or Shutdown.
+2026-10-09T06:55:05.791Z  id   1  The system has returned from a low power state. | Sleep Time: ‎2026‎-‎10‎-‎09T04:57:40.068621600Z | Wake Time: ‎2026‎-‎10‎-‎09T06:55:04.356332100Z | Wake Source: Unknown
+2026-10-09T06:55:07.054Z  id 507  The system is exiting Modern Standby | Reason: Lid.
+2026-10-09T08:08:58.223Z  id 506  The system is entering Modern Standby | Reason: Idle Timeout.
+2026-10-09T08:09:22.965Z  id 507  The system is exiting Modern Standby | Reason: Sleep Button.
+2026-10-09T08:10:17.138Z  id 506  The system is entering Modern Standby | Reason: Idle Timeout.
+2026-10-09T08:10:22.533Z  id 507  The system is exiting Modern Standby | Reason: Sleep Button.

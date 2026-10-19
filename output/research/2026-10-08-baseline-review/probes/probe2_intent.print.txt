@@ -1,0 +1,90 @@
+CLI: 2.1.212 (Claude Code)
+
+===== probe a_thinking_off_temp0: extra flags () extra env [('CLAUDE_CODE_ATTRIBUTION_HEADER', '0'), ('CLAUDE_CODE_DISABLE_TERMINAL_TITLE', '1'), ('CLAUDE_CODE_EXTRA_BODY', '{"temperature": 0}'), ('MAX_THINKING_TOKENS', '0')]
+{
+ "probe": "a_thinking_off_temp0",
+ "started_at": "2026-10-08T19:54:57.256828+00:00",
+ "finished_at": "2026-10-08T19:54:59.334785+00:00",
+ "seconds": 2.077,
+ "returncode": 1,
+ "model": "claude-sonnet-5",
+ "flags": [
+  "-p",
+  "--model",
+  "claude-sonnet-5",
+  "--output-format",
+  "json",
+  "--tools",
+  "",
+  "--safe-mode"
+ ],
+ "extra_env": [
+  "CLAUDE_CODE_ATTRIBUTION_HEADER",
+  "CLAUDE_CODE_DISABLE_TERMINAL_TITLE",
+  "CLAUDE_CODE_EXTRA_BODY",
+  "MAX_THINKING_TOKENS",
+  "<request logging>"
+ ],
+ "prompt_chars": 822,
+ "session_id": "4de608e9-1c33-49e1-b6a8-fbe563a5e789",
+ "num_turns": 1,
+ "stop_reason": "stop_sequence",
+ "usage": {
+  "input_tokens": 0,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 0
+ },
+ "modelUsage": {},
+ "duration_ms": 315,
+ "duration_api_ms": 0,
+ "result_chars": 58
+}
+
+===== probe a_thinking_off_max8192: extra flags () extra env [('CLAUDE_CODE_ATTRIBUTION_HEADER', '0'), ('CLAUDE_CODE_DISABLE_TERMINAL_TITLE', '1'), ('CLAUDE_CODE_MAX_OUTPUT_TOKENS', '8192'), ('MAX_THINKING_TOKENS', '0')]
+{
+ "probe": "a_thinking_off_max8192",
+ "started_at": "2026-10-08T19:54:59.335787+00:00",
+ "finished_at": "2026-10-08T19:55:04.719111+00:00",
+ "seconds": 5.383,
+ "returncode": 0,
+ "model": "claude-sonnet-5",
+ "flags": [
+  "-p",
+  "--model",
+  "claude-sonnet-5",
+  "--output-format",
+  "json",
+  "--tools",
+  "",
+  "--safe-mode"
+ ],
+ "extra_env": [
+  "CLAUDE_CODE_ATTRIBUTION_HEADER",
+  "CLAUDE_CODE_DISABLE_TERMINAL_TITLE",
+  "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+  "MAX_THINKING_TOKENS",
+  "<request logging>"
+ ],
+ "prompt_chars": 822,
+ "session_id": "3d8e70a8-f5f6-495f-9db5-b3a17d1df7a6",
+ "num_turns": 2,
+ "stop_reason": "tool_use",
+ "usage": {
+  "input_tokens": 985,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 280
+ },
+ "modelUsage": {
+  "claude-sonnet-5": {
+   "inputTokens": 985,
+   "outputTokens": 280,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  }
+ },
+ "duration_ms": 3576,
+ "duration_api_ms": 3556,
+ "result_chars": 683
+}

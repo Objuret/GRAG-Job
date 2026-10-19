@@ -1,0 +1,14 @@
+reference under an exponential tail: {'max50_median': 4.315, 'max50_p99': 8.863, 'max100_median': 5.008, 'max100_p99': 9.638, 'reps': 200000}
+pure normal: clear break on 2 of 200 lists (first ranks: median 60, at rank 1: 0, at the planted rank shown below); Fisher top-100 p<0.01 on 3; largest top-50 ratio median 3.50; spacing ratio ranks 1-50 0.80, 51-100 0.93; largest top-50 gap 0.26 s, predicted 0.32 s
+student t, 6 df: clear break on 25 of 200 lists (first ranks: median 2, at rank 1: 9, at the planted rank shown below); Fisher top-100 p<0.01 on 10; largest top-50 ratio median 6.14; spacing ratio ranks 1-50 1.31, 51-100 1.07; largest top-50 gap 1.44 s, predicted 0.63 s
+normal + 3% on an exponential tail: clear break on 3 of 200 lists (first ranks: median 41, at rank 1: 0, at the planted rank shown below); Fisher top-100 p<0.01 on 1; largest top-50 ratio median 4.77; spacing ratio ranks 1-50 1.09, 51-100 1.09; largest top-50 gap 1.08 s, predicted 0.84 s
+exponential tail, the 1 best lifted by 3.0 s: clear break on 1 of 200 lists (first ranks: median 57, at rank 1: 0, at the planted rank shown below); Fisher top-100 p<0.01 on 1; largest top-50 ratio median 5.19; spacing ratio ranks 1-50 1.17, 51-100 1.10; largest top-50 gap 3.91 s, predicted 1.04 s
+    first clear break exactly after rank 1: 0 lists
+exponential tail, the 1 best lifted by 6.0 s: clear break on 10 of 200 lists (first ranks: median 1, at rank 1: 7, at the planted rank shown below); Fisher top-100 p<0.01 on 5; largest top-50 ratio median 6.56; spacing ratio ranks 1-50 1.20, 51-100 1.09; largest top-50 gap 6.56 s, predicted 1.05 s
+    first clear break exactly after rank 1: 7 lists
+exponential tail, the 5 best lifted by 3.0 s: clear break on 200 of 200 lists (first ranks: median 5, at rank 1: 0, at the planted rank shown below); Fisher top-100 p<0.01 on 199; largest top-50 ratio median 15.11; spacing ratio ranks 1-50 1.41, 51-100 1.11; largest top-50 gap 3.09 s, predicted 0.21 s
+    first clear break exactly after rank 5: 200 lists
+exponential tail, the 5 best lifted by 6.0 s: clear break on 200 of 200 lists (first ranks: median 5, at rank 1: 0, at the planted rank shown below); Fisher top-100 p<0.01 on 200; largest top-50 ratio median 28.74; spacing ratio ranks 1-50 1.64, 51-100 1.08; largest top-50 gap 5.94 s, predicted 0.21 s
+    first clear break exactly after rank 5: 199 lists
+exponential tail, the 20 best lifted by 3.0 s: clear break on 200 of 200 lists (first ranks: median 20, at rank 1: 0, at the planted rank shown below); Fisher top-100 p<0.01 on 200; largest top-50 ratio median 56.38; spacing ratio ranks 1-50 2.17, 51-100 1.07; largest top-50 gap 2.95 s, predicted 0.05 s
+    first clear break exactly after rank 20: 200 lists

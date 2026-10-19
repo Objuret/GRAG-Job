@@ -16,8 +16,8 @@ for _p in (ROOT / "test", ROOT / "prod"):
     if str(_p) not in sys.path:
         sys.path.insert(0, str(_p))
 
-torch = pytest.importorskip("torch")
-pytest.importorskip("transformers")
+import torch  # noqa: E402
+import transformers  # noqa: E402,F401
 
 # Imported as a package: `model` and `data` are also the names of facet_neural's modules, and a
 # plain import would hand whichever test file ran first to whichever ran second.

@@ -1,0 +1,27 @@
+resource module not available on Windows
+lucene: 38540 artifacts + 0 directory records
+code state at the start: diff sha256 aa3319a3eac7fdae | 42 changed or new paths
+vector: 38540 artifacts + 0 directory records
+embedder: loading nvidia/llama-nemotron-embed-1b-v2 @ 113abe4acafa on cpu (float32) — first use
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/146 [00:00<?, ?it/s]Loading weights:   1%|          | 1/146 [00:03<07:55,  3.28s/it]Loading weights:  39%|###9      | 57/146 [00:03<00:04, 21.43it/s]Loading weights:  46%|####5     | 67/146 [00:03<00:03, 23.05it/s]Loading weights:  51%|#####1    | 75/146 [00:04<00:03, 20.43it/s]Loading weights:  56%|#####6    | 82/146 [00:04<00:02, 23.15it/s]Loading weights:  60%|#####9    | 87/146 [00:04<00:02, 22.51it/s]Loading weights:  62%|######2   | 91/146 [00:05<00:02, 21.93it/s]Loading weights:  65%|######5   | 95/146 [00:05<00:02, 18.40it/s]Loading weights:  70%|######9   | 102/146 [00:05<00:01, 23.87it/s]Loading weights:  73%|#######2  | 106/146 [00:08<00:07,  5.46it/s]Loading weights:  79%|#######9  | 116/146 [00:08<00:03,  8.94it/s]Loading weights:  83%|########2 | 121/146 [00:09<00:02,  9.85it/s]Loading weights:  88%|########8 | 129/146 [00:09<00:01, 11.92it/s]Loading weights:  95%|#########4| 138/146 [00:09<00:00, 14.80it/s]Loading weights: 100%|##########| 146/146 [00:09<00:00, 14.92it/s]
+embedder: ready in 21s (2048 dim, 8192-token context)
+ragas judge: claude-haiku-4-5-20251001 backend=claude-cli timeout=120s tries=1
+ragas embed: priming 2 text(s) in 2 batch(es) of up to 1
+ragas embed: primed in 2 forward pass(es)
+ragas: all 14 cells ok
+ragas judge usage: 6 call(s), in=45951 cached=0 out=2565 reasoning=0 tokens, request-time=40.3s wall=45.8s
+first start done in 83.4 s
+vector: 38540 artifacts + 0 directory records
+ragas judge: claude-haiku-4-5-20251001 backend=claude-cli timeout=120s tries=1
+ragas: all 0 cells ok
+
+folder output\research\2026-10-08-baseline-review\proof_now\vector__answer__eval__fixed
+  arm_outputs.jsonl                      167,340 bytes
+  code.aa3319a3eac7fdae.diff             923,324 bytes
+  eval_calls.jsonl                       212,870 bytes
+  eval_failures.jsonl                          0 bytes
+  eval_manifest.json                      12,580 bytes
+  eval_results.jsonl                       8,354 bytes
+  failures.jsonl                               0 bytes
+  run_manifest.json                       28,088 bytes

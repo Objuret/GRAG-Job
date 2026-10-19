@@ -1,0 +1,34 @@
+100 question tag lists over 16609 graph tags, same mode
+
+the largest drop among the first 30 tags, over the median drop of those 30:
+   in the top of the list   5 / 25 / 50 / 75 / 95%: 5.9 / 11.1 / 16.6 / 26.7 / 53.3
+   far down the same lists  5 / 25 / 50 / 75 / 95%: 3.1 / 4.3 / 5.3 / 6.9 / 9.9   largest 19.6 (2000 stretches)
+   lists whose top drop stands above the 95% point of the far-down stretches (9.9): 78 of 100
+   lists whose top drop stands above the largest of the far-down stretches (19.6): 43 of 100
+
+where that largest drop sits (after how many tags), for the lists standing above every far-down stretch:
+   after 1-1 tags: 30
+   after 2-2 tags: 10
+   after 3-5 tags: 3
+   after 6-10 tags: 0
+   after 11-20 tags: 0
+   after 21-30 tags: 0
+
+by how close the closest tag is:
+   closest tag 0.95-1.00: 34 lists, with a drop above every far-down stretch 20; median place of the drop 1, median size 0.0273
+   closest tag 0.90-0.95: 37 lists, with a drop above every far-down stretch 18; median place of the drop 1, median size 0.0166
+   closest tag 0.00-0.90: 29 lists, with a drop above every far-down stretch 5; median place of the drop 2, median size 0.0085
+
+twelve lists, the first 12 values (the closest first), the place of the largest drop marked with |:
+   drop x127.1 after  1: 0.991 | 0.900 0.895 0.888 0.887 0.885 0.882 0.882 0.881 0.874 0.874 0.872
+   drop x 89.5 after  1: 0.979 | 0.918 0.911 0.904 0.904 0.902 0.902 0.896 0.896 0.896 0.895 0.895
+   drop x 89.5 after  1: 0.979 | 0.918 0.911 0.904 0.904 0.902 0.902 0.896 0.896 0.896 0.895 0.895
+   drop x 78.0 after  1: 0.989 | 0.950 0.916 0.911 0.903 0.903 0.903 0.901 0.900 0.900 0.898 0.898
+   drop x 61.3 after  2: 0.994 0.972 | 0.941 0.932 0.930 0.929 0.929 0.923 0.921 0.919 0.919 0.916
+   drop x 52.9 after  1: 0.989 | 0.924 0.893 0.889 0.884 0.883 0.883 0.878 0.873 0.871 0.867 0.863
+   drop x 17.0 after  3: 0.880 0.874 0.874 | 0.865 0.859 0.857 0.856 0.854 0.854 0.852 0.848 0.847
+   drop x 17.0 after  3: 0.880 0.874 0.874 | 0.865 0.859 0.857 0.856 0.854 0.854 0.852 0.848 0.847
+   drop x 16.6 after  2: 0.920 0.910 | 0.887 0.884 0.873 0.868 0.866 0.864 0.863 0.859 0.858 0.855
+   drop x  5.3 after  3: 0.916 0.916 0.914 | 0.908 0.907 0.905 0.899 0.897 0.896 0.894 0.894 0.894
+   drop x  5.3 after  3: 0.916 0.916 0.914 | 0.908 0.907 0.905 0.899 0.897 0.896 0.894 0.894 0.894
+   drop x  5.1 after  4: 0.837 0.836 0.833 0.832 | 0.830 0.828 0.827 0.827 0.826 0.826 0.825 0.824

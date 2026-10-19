@@ -1,158 +1,49 @@
-"""artefact_v4's walk sort: the chain of the 2026-10-05 walk-through, M1 to M7, one strength per
-chunk from the tags, the description and the structure. `tools/walkthrough.py` prints from this
-module and the arm sorts by it.
+"""artefact_v4's arithmetic: arrays in, arrays out.
 
-q is a query tag, t a graph tag, e = (t, c) an eligible edge, c a chunk; N is the eligible graph
-tags, E the edges whose tag is eligible, n the chunks. Every step's PROPOSAL and every
-alternative is the orchestrator's calculation. Per step the PROPOSAL, then the alternative each
-switch of `chain` selects, by its name in `ALTERNATIVES`:
-
-  M1 fit        z_q(t) = (cos(q, t) - b_q) / s_q over N, b_q the median and s_q 1.4826 times the
-                median |cos - b_q| (`v4_strength.standing`); fit_q(t) = max(z_q(t), 0).
-                A1: fit_q(t) = cos(q, t).
-  M2 positions  pos_k(e) = the edge's average rank in column k over E (1 the smallest, ties
-                sharing a rank) / |E|; the columns in ALL_FACETS order: topic = cos(tag, chunk
-                description), temporal, why, activity, concreteness.
-  M3 weight     share_q = readings_q over their sum, five equal shares when the sum is 0;
-                R_q(e) = sum_k share_q[k] * pos_k(e); factor_q(e) = R_q(e) / 0.5, 0.5 the
-                position of the middle edge; w_q(e) = fit_q(t) * factor_q(e).
-                A3: five equal shares. A3b: factor 1.
-                C3r, the four facets as a ranking inside one class of closeness (his
-                2026-10-05 "perhaps we just use them as ranking (the 4, not topic) based on
-                the most important in order from the query, per tag?" and "rank the TAGS,
-                no, i am not supersure how we we that"; the form, the class and its width
-                are the orchestrator's):
-                class_q(t) = floor((the largest cos(q, .) over N - cos(q, t)) / d), d the
-                self-difference (`self_difference`: how far a graph tag's own name, embedded
-                in the tags' role, lands from its own stored vector, the largest over the
-                probes); inside a class the edges are ordered by the four facets in q's
-                `v4_multikey.facet_order`, each facet in classes
-                floor((the column's largest - value) / the column's retrain gap), then topic,
-                then cos, then the edge's index; cos'_q(e) = the largest cos
-                - d * (class + place / the class's size), place counted from 0;
-                fit_q(e) = max((cos'_q(e) - b_q) / s_q, 0) in place of fit_q(t), cos'_q(e)
-                itself under A1. With A3b the four facets leave the weight and act through
-                that ranking and through the order inside a level (M7); topic as the key
-                after them is the orchestrator's, his sentence says "the 4, not topic".
-                Refused with A4e. Reviewed 2026-10-05: d is the gap between the serving
-                that built the stored vectors and the local one, the largest of 100 probes,
-                one width for every query tag - not his "fully relative to that facets tags
-                numberrange"; cos' also depends on how many edges share the class.
-                C3p, the same ranking with the class a share of the closest tag's own score
-                (his 2026-10-05 "on the stopgap, why not just use a relative %?"):
-                d_q = (1 - EQUAL_SHARE) * the largest cos(q, .) over N, so class 0 is every
-                graph tag scoring at least EQUAL_SHARE of the closest one. EQUAL_SHARE is 0.95,
-                the share NVIDIA's hard-negative recipe for this embedder calls "so close to
-                the positive they may actually be relevant" (the TopK-PercPos rule of
-                Moreira et al. 2024); its transfer from passages to tags is the
-                orchestrator's. A closest tag at or below 0 leaves that query tag unranked.
-                C3s, the pick as the same thing (his 2026-10-05 "what matters is the fucking
-                semantic relevance of that number for the tag"): the picked graph tags of q
-                are those with cos(q, t) >= L, L the level the graph's own same-thing pairs
-                score (`same_thing_level`: tags equal once lower-cased or once a final s is
-                dropped; the point SAME_POINT percent of those pairs' cosines lie under).
-                Only the picked edges are ranked, as in C3r, and placed between L and the
-                closest tag: cos'_q(e) = the largest cos - (the largest cos - L) * place /
-                the number picked. Every other edge keeps its cosine; a query tag with no
-                graph tag at L or above is left as it is. The pairs, the point and the
-                placement are the orchestrator's.
-  M4 tags      v_q(c) = the largest w_q over c's eligible edges, 0 with none;
-                centrality_q = max(cos(q, query description), 0) over the question's largest;
-                T(c) = max over q of centrality_q * v_q(c).
-                A4a, pooled tail: K = #{e' in E: w_q(e') >= v_q(c)}; p = 1 - (1 - K / |E|)^n_c,
-                n_c the chunk's eligible edges; v*_q(c) = the k-th largest w_q over E,
-                k = ceil(p * |E|), in place of v.
-                A4e, per edge: K_i = #{t in N: fit_q(t) * factor_q(i) >= v_q(c)} per edge i of
-                c; p = 1 - prod_i (1 - K_i / |N|); v*_q(c) = the k-th largest fit_q over N,
-                k = ceil(p * |N|), in place of v.
-                A4b: the sum of w_q over c's edges in place of v. A4c: centrality 1.
-                A4d: the sum over q in place of the max.
-                C4n: v_q(c) = 0 for every chunk; the tags leave the strength and no chunk
-                has a winning edge; M7's step is then cos_noise over the median spread of
-                the texts in the side.
-  M5 text       D, Qs = the standings over the n chunks of cos(query description, chunk
-                description) and of cos(raw question, chunk description), not clipped;
-                side = max(D, Qs); S = T + side.
-                A5a: S = T. A5b: side = D. A5c: side = max(D, Qs, 0).
-  M6 structure  two groupings: product; near group, a connected component of the file
-                adjacency with at least two chunks. Product: x = S, reference the mean of S
-                over the chunks. Near: x = S - the mean of S over the chunk's product,
-                reference(c) the mean of x over the chunks of c's record kind that sit in a
-                near group. others(c, g) = the mean of x over g's members other than c;
-                raw = others - reference; on x - reference: sigma2 = the pooled within-group
-                variance, tau2 = max(0, (SSB - (G - 1) * sigma2) / (M - sum n_g^2 / M)),
-                SSB = sum_g n_g * (mean_g - the mean over the memberships)^2, G the groups, M
-                the memberships; trust(g) = tau2 / (tau2 + sigma2 / (n_g - 1));
-                lift(c, g) = max(0, trust(g) * raw(c, g)); S' = S + the two lifts.
-                A6a: S' = S. A6b: trust 1. A6c: near with reference 0.
-                A6d: three groupings, product, channel and record (= near group); channel and
-                record on x with reference 0, a chunk in several channels taking its largest
-                lift; tau2 = max(0, SSB / M - G * sigma2 / M); S' = S + the three lifts.
-  M7 order      step = cos_noise / the median of the question's s_q;
-                level = floor((max S' - S') / step); the order: level; inside a level the
-                chunks with a winning edge first, by its pos for temporal, why, activity,
-                concreteness in the winning query tag's `v4_multikey.facet_order`, descending;
-                then the chunk id.
-                A7: S' descending, then the chunk id.
-
-The winning query tag of a chunk is the one with the largest centrality_q * v_q(c), the earlier
-query tag on an exact tie; its winning edge is that query tag's edge of the chunk with the
-largest w_q, the earlier edge on an exact tie. Nothing is read from disk and nothing is written.
+`build_layer` holds what does not depend on the question. Per question: `tags_nearness` is each
+chunk's closest tag to a query tag; `facet_influenced_nearness` is the same with the query's
+facets as an influence on the tag relationship; `cloud_combo` finds the tags' side's
+cloud and the chunk descriptions' side's cloud, each the chunks before the knee of its own
+closeness, a chunk's step is its two levels added (in a cloud or not), and the scope gauged after
+that (`majority_scopes`) puts its chunks first inside a step.
+`storyline` is the 4-combo: how strongly each chunk of the clouds is tied to the chosen chunks by
+scope, entities, time and nearness in what the query asks about (`query_tag_profiles`), and
+`storyline_order` puts the chosen chunks first, the rest of the clouds by that strength, and what
+lies outside the clouds after them as the combo has it. Every near group is read off where the
+upper half of its list bends (`levels_of`; the half, the median, is the agent's choice).
+`conversations` cuts a channel's messages where its long gaps are, for the arm's handing over.
 """
 from __future__ import annotations
 
-import math
-
 import numpy as np
-from scipy.sparse import csr_matrix
-from scipy.sparse.csgraph import connected_components
 from scipy.stats import rankdata
 
-from artefact.v4_multikey import facet_order
-from artefact.v4_rank import ADJUST_FACETS, ALL_FACETS
-from artefact.v4_strength import best_edges, centrality, level_order, shares, standing
-
-MIDDLE = 0.5             # M3: the position of the middle edge
-FACET_COLUMNS = [ALL_FACETS.index(f) for f in ADJUST_FACETS]
-GROUPINGS = ('product', 'near')
-FIRST_GROUPINGS = ('product', 'channel', 'record')
-STRUCTURES = ('near', 'none', 'unshrunk', 'near_zero', 'first', 'first_unshrunk',
-              'first_overall')
-# Each alternative as the switches of `chain` it sets: the whole chain with that one step
-# exchanged.
-ALTERNATIVES = {
-    'A1': {'fit': 'cosine'},
-    'A3': {'share': 'equal'},
-    'A3b': {'share': 'none'},
-    'A4a': {'chunk': 'pooled'},
-    'A4b': {'chunk': 'sum'},
-    'A4c': {'central': 'equal'},
-    'A4d': {'tags': 'sum'},
-    'A4e': {'chunk': 'per_edge'},
-    'A5a': {'side': 'none'},
-    'A5b': {'side': 'description'},
-    'A5c': {'side': 'clipped'},
-    'A6a': {'structure': 'none'},
-    'A6b': {'structure': 'unshrunk'},
-    'A6c': {'structure': 'near_zero'},
-    'A6d': {'structure': 'first'},
-    'A7': {'order': 'plain'},
-}
-# The steps built after the walk-through, each as the switches of `chain` it sets. None is a
-# PROPOSAL of the walk-through and none one of its alternatives.
-CHANGES = {
-    'C3r': {'rank': 'picked'},
-    'C3p': {'rank': 'percent'},
-    'C3s': {'rank': 'same'},
-    'C4n': {'chunk': 'none'},
-}
-EQUAL_SHARE = 0.95       # C3p: at least this share of the closest tag's score is class 0
-SAME_POINT = 5           # C3s: the percent of the same-thing pairs' cosines under the level
-PROBES = 100             # C3r: the eligible graph tag names the self-difference is measured on
-PROBE_SEED = 20261005    # the draw of `tools/walkthrough.py`'s probes
+FACETS = ('topic', 'temporal', 'why', 'activity', 'concreteness')
+RANKING_FACETS = FACETS[1:]
+MAD_TO_SPREAD = 1.4826
+CLUSTER_BINS = 1500      # the resolution of the clustering on the line: a cut falls on a bin edge
 
 
-# ------------------------------------------------------------------ the steps, on arrays
+def best_edges(value, edge_chunk, n_chunks):
+    """Per chunk the largest value over its edges and the edge that carries it, the earlier edge
+    on an exact tie; nan and -1 for a chunk with no edge."""
+    value = np.asarray(value, dtype=np.float64)
+    edge_chunk = np.asarray(edge_chunk, dtype=np.int64)
+    if value.shape != edge_chunk.shape or value.ndim != 1 or not np.isfinite(value).all():
+        raise ValueError('Expected one finite value per edge')
+    best = np.full(n_chunks, np.nan)
+    edge = np.full(n_chunks, -1, dtype=np.int64)
+    if not value.size:
+        return best, edge
+    order = np.lexsort((np.arange(value.size), -value, edge_chunk))
+    chunks = edge_chunk[order]
+    first = np.ones(order.size, dtype=bool)
+    first[1:] = chunks[1:] != chunks[:-1]
+    top = order[first]
+    best[edge_chunk[top]] = value[top]
+    edge[edge_chunk[top]] = top
+    return best, edge
+
 
 def positions(values):
     """Per column: each value's average rank (1 the smallest, ties sharing a rank) over the
@@ -164,454 +55,23 @@ def positions(values):
     return np.column_stack(ranks) / values.shape[0]
 
 
-def draw_probes(eligible, seed=PROBE_SEED, size=PROBES):
-    """`size` eligible graph tags drawn without replacement by one generator from `seed`, in
-    index order."""
-    pool = np.flatnonzero(np.asarray(eligible, dtype=bool))
-    rng = np.random.default_rng(seed)
-    return np.sort(rng.choice(pool, size=min(size, pool.size), replace=False))
+def build_layer(chunk_ids, chunk_kinds, eligible, edge_tag, edge_chunk, edge_topic, edge_facets,
+                pos=None):
+    """The edges of the eligible graph tags with their five values and their positions, each
+    chunk's edge count and record kind, and each chunk's place in chunk-id order.
 
-
-def self_difference(probe_cosines, probe_tags):
-    """How far a graph tag's own name lands from its own stored vector: per probe 1 - its
-    cosine to its own tag. Returns the largest, the median and the smallest over the probes
-    and on how many the own tag is the closest."""
-    cosines = np.asarray(probe_cosines, dtype=np.float64)
-    tags = np.asarray(probe_tags, dtype=np.int64)
-    if cosines.ndim != 2 or tags.shape != (cosines.shape[0],) or not tags.size:
-        raise ValueError('Expected one row of cosines over the graph tags per probe')
-    if not np.isfinite(cosines).all():
-        raise ValueError('A probe cosine is not finite')
-    own = cosines[np.arange(tags.size), tags]
-    short = 1. - own
-    if not (short > 0).all():
-        raise ValueError('A probe lands on its own stored vector exactly or beyond it')
-    return {'largest': float(short.max()), 'median': float(np.median(short)),
-            'smallest': float(short.min()), 'probes': int(tags.size),
-            'own_tag_closest': int((cosines.argmax(axis=1) == tags).sum())}
-
-
-def same_thing_pairs(names):
-    """The pairs (i < j) of names that are the same thing in another spelling: equal once
-    lower-cased, or equal once lower-cased and a final s dropped from every word longer than
-    three letters."""
-    def stem(name):
-        return ' '.join(w[:-1] if w.endswith('s') and len(w) > 3 else w
-                        for w in name.casefold().split())
-    groups = {}
-    for i, name in enumerate(names):
-        groups.setdefault(stem(str(name)), []).append(i)
-    return [(a, b) for group in groups.values() if len(group) > 1
-            for k, a in enumerate(group) for b in group[k + 1:]]
-
-
-def same_thing_level(names, vectors, eligible):
-    """What two graph tags that are the same thing score against each other: the cosines of
-    `same_thing_pairs` over the eligible tags' stored vectors. Returns the level (the point
-    SAME_POINT percent of them lie under), their median and their number; None with no pair."""
-    keep = np.flatnonzero(np.asarray(eligible, dtype=bool))
-    pairs = same_thing_pairs([names[i] for i in keep])
-    if not pairs:
-        return None
-    rows = np.asarray(vectors, dtype=np.float64)[keep]
-    rows = rows / np.linalg.norm(rows, axis=1, keepdims=True)
-    at = np.array(pairs, dtype=np.int64)
-    scores = np.einsum('ij,ij->i', rows[at[:, 0]], rows[at[:, 1]])
-    return {'level': float(np.percentile(scores, SAME_POINT)), 'median': float(np.median(scores)),
-            'pairs': int(scores.size), 'point': SAME_POINT}
-
-
-def facet_classes(values, gaps):
-    """Per edge and facet column: floor((the column's largest - value) / the column's gap)."""
-    values = np.asarray(values, dtype=np.float64)
-    gaps = np.asarray(gaps, dtype=np.float64)
-    if values.ndim != 2 or not values.shape[0] or gaps.shape != (values.shape[1],):
-        raise ValueError('Expected one gap per facet column')
-    if not np.isfinite(values).all() or not np.isfinite(gaps).all() or not (gaps > 0).all():
-        raise ValueError('Expected finite facet values and positive gaps')
-    return np.floor((values.max(axis=0) - values) / gaps).astype(np.int64)
-
-
-def ranked_closeness(cosine, best, width, facet_class, order, topic):
-    """C3r for one query tag, per edge: the class of the edge's tag below `best`, the edge's
-    place inside its class (0 first) under the facet classes in `order`, then topic
-    descending, then the cosine descending, then the edge's index, and the cosine that place
-    gives it: best - width * (class + place / the class's size)."""
-    cosine = np.asarray(cosine, dtype=np.float64)
-    topic = np.asarray(topic, dtype=np.float64)
-    facet_class = np.asarray(facet_class, dtype=np.int64)
-    order = [int(j) for j in order]
-    if cosine.ndim != 1 or topic.shape != cosine.shape or facet_class.shape[0] != cosine.size:
-        raise ValueError('Expected one cosine, one topic and one row of facet classes per edge')
-    if sorted(order) != list(range(facet_class.shape[1])):
-        raise ValueError('Expected every facet column once in the order')
-    if not (np.isfinite(width) and width > 0) or not np.isfinite(best):
-        raise ValueError('Expected a positive width and a finite best cosine')
-    if not cosine.size:
-        return np.zeros(0, dtype=np.int64), np.zeros(0, dtype=np.int64), np.zeros(0)
-    if cosine.max() > best:
-        raise ValueError('An edge is closer than the closest tag')
-    cls = np.floor((best - cosine) / width).astype(np.int64)
-    keys = [np.arange(cosine.size), -cosine, -topic]
-    keys += [facet_class[:, j] for j in reversed(order)]
-    by = np.lexsort((*keys, cls))
-    sorted_cls = cls[by]
-    starts = np.flatnonzero(np.r_[True, sorted_cls[1:] != sorted_cls[:-1]])
-    sizes = np.diff(np.r_[starts, sorted_cls.size])
-    inside = np.arange(sorted_cls.size) - np.repeat(starts, sizes)
-    place = np.empty(cosine.size, dtype=np.int64)
-    place[by] = inside
-    placed = np.empty(cosine.size)
-    placed[by] = best - width * (sorted_cls + inside / np.repeat(sizes, sizes))
-    return cls, place, placed
-
-
-def relevance(pos, share):
-    """R(e) = sum_k share[k] * pos_k(e)."""
-    pos = np.asarray(pos, dtype=np.float64)
-    share = np.asarray(share, dtype=np.float64)
-    if pos.ndim != 2 or share.shape != (pos.shape[1],):
-        raise ValueError('Expected one share per position column')
-    if not np.isfinite(share).all() or (share < 0).any() or not np.isclose(share.sum(), 1.):
-        raise ValueError('Expected non-negative shares adding to 1')
-    return pos @ share
-
-
-def chance_corrected_best(w, edge_chunk, n_chunks):
-    """The pooled tail. Per chunk with n_c >= 1 edges: v the largest w over its edges and the
-    edge that carries it (`best_edges`); K = #{edges with w >= v}; tail = K / |E|;
-    p = 1 - (1 - tail)^n_c; k = ceil(p * |E|) and v* the k-th largest w. k is taken in whole
-    numbers, |E| - floor((|E| - K)^n_c / |E|^(n_c - 1)). A chunk with no edge: v nan, edge -1,
-    K 0, tail nan, p nan, k 0, v* 0."""
-    w = np.asarray(w, dtype=np.float64)
-    edge_chunk = np.asarray(edge_chunk, dtype=np.int64)
-    best, edge = best_edges(w, edge_chunk, n_chunks)
-    total = int(w.size)
-    n_c = np.bincount(edge_chunk, minlength=n_chunks).astype(np.int64)
-    held = np.flatnonzero(n_c > 0)
-    ascending = np.sort(w)
-    count = np.zeros(n_chunks, dtype=np.int64)
-    count[held] = total - np.searchsorted(ascending, best[held], side='left')
-    k = np.zeros(n_chunks, dtype=np.int64)
-    k[held] = [total - (total - int(a)) ** int(m) // total ** (int(m) - 1)
-               for a, m in zip(count[held], n_c[held])]
-    if held.size and (k[held].min() < 1 or k[held].max() > total):
-        raise ValueError('k left [1, |E|]')
-    star = np.zeros(n_chunks)
-    star[held] = ascending[total - k[held]]
-    tail = np.full(n_chunks, np.nan)
-    tail[held] = count[held] / total
-    p = np.full(n_chunks, np.nan)
-    with np.errstate(divide='ignore'):
-        p[held] = -np.expm1(n_c[held] * np.log1p(-tail[held]))
-    return {'v': best, 'edge': edge, 'n_c': n_c, 'count': count, 'tail': tail, 'p': p, 'k': k,
-            'v_star': star}
-
-
-def reaching(fits, factor, target):
-    """Per edge: how many of `fits` f have f * factor >= target, the product as the machine
-    multiplies it, so a fit counts for the product it gives itself."""
-    ascending = np.sort(np.asarray(fits, dtype=np.float64))
-    factor = np.asarray(factor, dtype=np.float64)
-    target = np.asarray(target, dtype=np.float64)
-    if factor.shape != target.shape or factor.ndim != 1:
-        raise ValueError('Expected one factor and one target per edge')
-    if not ascending.size or not np.isfinite(ascending).all():
-        raise ValueError('Expected a nonempty list of finite fits')
-    if not (np.isfinite(factor).all() and (factor > 0).all() and np.isfinite(target).all()):
-        raise ValueError('Expected positive factors and finite targets')
-    size = ascending.size
-    at = np.searchsorted(ascending, target / factor, side='left')
-    while True:
-        value = ascending[np.maximum(at - 1, 0)]
-        move = (at > 0) & (value * factor >= target)
-        if not move.any():
-            break
-        at[move] = np.searchsorted(ascending, value[move], side='left')
-    while True:
-        value = ascending[np.minimum(at, size - 1)]
-        move = (at < size) & (value * factor < target)
-        if not move.any():
-            break
-        at[move] = np.searchsorted(ascending, value[move], side='right')
-    return size - at
-
-
-def per_edge_corrected_best(fit, factor, fits, edge_chunk, n_chunks):
-    """The per-edge form. w = fit * factor per edge; per chunk v the largest w over its edges
-    and the edge that carries it. Per edge i of the chunk K_i = #{f in fits: f * factor_i >= v}
-    (`reaching`); p = 1 - prod_i (1 - K_i / N), N the size of fits; k = ceil(p * N), taken in
-    whole numbers, N - floor(prod_i (N - K_i) / N^(n_c - 1)), kept in [1, N]; v* the k-th
-    largest of fits. A chunk with one edge whose fit is among fits gets that fit. A chunk with
-    no edge: v nan, edge -1, p nan, k 0, v* 0."""
-    fit = np.asarray(fit, dtype=np.float64)
-    factor = np.asarray(factor, dtype=np.float64)
-    fits = np.asarray(fits, dtype=np.float64)
-    edge_chunk = np.asarray(edge_chunk, dtype=np.int64)
-    if not fit.shape == factor.shape == edge_chunk.shape or fit.ndim != 1:
-        raise ValueError('Expected one fit, one factor and one chunk per edge')
-    best, edge = best_edges(fit * factor, edge_chunk, n_chunks)
-    n_c = np.bincount(edge_chunk, minlength=n_chunks).astype(np.int64)
-    held = np.flatnonzero(n_c > 0)
-    size = int(fits.size)
-    k = np.zeros(n_chunks, dtype=np.int64)
-    star = np.zeros(n_chunks)
-    p = np.full(n_chunks, np.nan)
-    count = np.zeros(fit.size, dtype=np.int64)
-    if held.size:
-        count = reaching(fits, factor, best[edge_chunk])
-        by_chunk = np.argsort(edge_chunk, kind='stable')
-        rest = (size - count[by_chunk]).tolist()
-        start = np.concatenate([[0], np.cumsum(n_c)]).tolist()
-        power = [size ** m for m in range(int(n_c.max()))]
-        k[held] = [size - math.prod(rest[start[c]:start[c + 1]]) // power[int(n_c[c]) - 1]
-                   for c in held.tolist()]
-        k[held] = np.clip(k[held], 1, size)
-        star[held] = np.sort(fits)[size - k[held]]
-        with np.errstate(divide='ignore'):
-            kept = np.bincount(edge_chunk, weights=np.log1p(-count / size), minlength=n_chunks)
-        p[held] = -np.expm1(kept[held])
-    return {'v': best, 'edge': edge, 'n_c': n_c, 'reach': count, 'p': p, 'k': k,
-            'v_star': star}
-
-
-def chunk_values(fit, factor, fits, edge_chunk, n_chunks):
-    """What a chunk takes from one query tag, from each edge's fit and factor: best, the
-    largest w = fit * factor over its edges (0 with no edge); pooled, `chance_corrected_best`
-    on w; per_edge, `per_edge_corrected_best` with `fits` the fit of every eligible tag; total,
-    the sum of w over its edges."""
-    fit = np.asarray(fit, dtype=np.float64)
-    factor = np.asarray(factor, dtype=np.float64)
-    w = fit * factor
-    pooled = chance_corrected_best(w, edge_chunk, n_chunks)
-    return {'w': w, 'best': np.where(pooled['n_c'] > 0, pooled['v'], 0.), 'pooled': pooled,
-            'per_edge': per_edge_corrected_best(fit, factor, fits, edge_chunk, n_chunks),
-            'total': np.bincount(np.asarray(edge_chunk, dtype=np.int64), weights=w,
-                                 minlength=n_chunks)}
-
-
-def tag_value(values, central, combine='max'):
-    """T(c) from each query tag's value per chunk. max: the largest central_q * value_q(c),
-    the earlier query tag on an exact tie. sum: their sum over q. Returns T, the query tag with
-    the largest term, and the terms."""
-    values = np.asarray(values, dtype=np.float64)
-    central = np.asarray(central, dtype=np.float64)
-    if values.ndim != 2 or not values.shape[0] or central.shape != (values.shape[0],):
-        raise ValueError('Expected one row of chunk values and one weight per query tag')
-    if not np.isfinite(values).all() or not np.isfinite(central).all():
-        raise ValueError('A query tag value is not finite')
-    terms = central[:, None] * values
-    winner = np.argmax(terms, axis=0)
-    if combine == 'max':
-        total = terms[winner, np.arange(values.shape[1])]
-    elif combine == 'sum':
-        total = terms.sum(axis=0)
-    else:
-        raise ValueError(f'combine must be max or sum, got {combine!r}')
-    return total, winner, terms
-
-
-def text_side(d_description, d_question, mode='max'):
-    """D and Qs, the standings over the chunks of the two cosine lists, not clipped, and the
-    side: max(D, Qs) (max), D (description), max(D, Qs, 0) (clipped), 0 (none)."""
-    d, d_bulk, d_spread = standing(d_description)
-    q, q_bulk, q_spread = standing(d_question)
-    if d.shape != q.shape:
-        raise ValueError('Expected the two cosine lists over the same chunks')
-    if mode == 'max':
-        side = np.maximum(d, q)
-    elif mode == 'description':
-        side = d.copy()
-    elif mode == 'clipped':
-        side = np.clip(np.maximum(d, q), 0., None)
-    elif mode == 'none':
-        side = np.zeros_like(d)
-    else:
-        raise ValueError(f'unknown side mode {mode!r}')
-    return {'D': d, 'Qs': q, 'side': side,
-            'bulk': {'description': d_bulk, 'question': q_bulk},
-            'spread': {'description': d_spread, 'question': q_spread}}
-
-
-def memberships(chunk, node):
-    """The distinct (chunk, node) pairs."""
-    chunk = np.asarray(chunk, dtype=np.int64)
-    node = np.asarray(node, dtype=np.int64)
-    if chunk.shape != node.shape or chunk.ndim != 1:
-        raise ValueError('Expected one node per chunk membership')
-    if not chunk.size:
-        return chunk, node
-    pairs = np.unique(np.stack([chunk, node]), axis=1)
-    return pairs[0], pairs[1]
-
-
-def record_groups(adjacency_ptr, adjacency):
-    """Per chunk the index of its near group - its connected component in the file-adjacency
-    graph - when the component holds at least two chunks, else -1."""
-    ptr = np.asarray(adjacency_ptr, dtype=np.int64)
-    members = np.asarray(adjacency, dtype=np.int64)
-    n = ptr.size - 1
-    if n < 0 or ptr[0] != 0 or ptr[-1] != members.size or (np.diff(ptr) < 0).any():
-        raise ValueError('Expected one CSR row of adjacent chunks per chunk')
-    graph = csr_matrix((np.ones(members.size, dtype=np.int8), members, ptr), shape=(n, n))
-    _, label = connected_components(graph, directed=False)
-    size = np.bincount(label, minlength=n)
-    grouped = size[label] >= 2
-    record = np.full(n, -1, dtype=np.int64)
-    if grouped.any():
-        _, record[grouped] = np.unique(label[grouped], return_inverse=True)
-    return record
-
-
-def kind_reference(x, grouped, kind):
-    """Per chunk the mean of x over the grouped chunks of its kind, 0 for a kind with none;
-    and per kind that mean with the number of grouped chunks."""
-    x = np.asarray(x, dtype=np.float64)
-    grouped = np.asarray(grouped, dtype=bool)
-    kind = np.asarray(kind, dtype=np.int64)
-    if not x.shape == grouped.shape == kind.shape:
-        raise ValueError('Expected one value, one flag and one kind per chunk')
-    reference, table = np.zeros(x.size), {}
-    for code in np.unique(kind[grouped]).tolist():
-        members = grouped & (kind == code)
-        value = float(x[members].mean())
-        reference[kind == code] = value
-        table[code] = {'reference': value, 'chunks': int(members.sum())}
-    return reference, table
-
-
-def group_lift(x, chunk, node, reference, shrink=True, tau='weighted'):
-    """The lift of each chunk from one grouping. x: a value per chunk. chunk, node: the
-    memberships, a chunk once per group it sits in. reference: a number, or one per chunk.
-    With M memberships in G groups, on y = x - reference (a reference that is one number for
-    every chunk leaves both variances as on x):
-
-      n_g, mean_g   the members of group g and the mean of y over them
-      sigma2        sum over the memberships of (y - mean_g)^2 / (M - G)
-      SSB           sum_g n_g * (mean_g - m)^2, m the mean of y over the memberships
-      tau2          weighted: max(0, SSB / M - G * sigma2 / M)
-                    anova:    max(0, (SSB - (G - 1) * sigma2) / (M - sum_g n_g^2 / M)),
-                              0 with a single group
-      raw(c, g)     the mean of x over g's members other than c, less the reference of c
-      trust(g)      tau2 / (tau2 + sigma2 / (n_g - 1)); 0 where tau2 is 0; 1 when not shrinking
-      lift(c)       max(0, trust(g) * raw(c, g)), the largest over the chunk's groups
-
-    A group of one gives no lift. With no group of two or more members there is no sigma2,
-    no tau2 and no lift."""
-    x = np.asarray(x, dtype=np.float64)
-    chunk = np.asarray(chunk, dtype=np.int64)
-    node = np.asarray(node, dtype=np.int64)
-    if x.ndim != 1 or not x.size or not np.isfinite(x).all():
-        raise ValueError('Expected one finite value per chunk')
-    if chunk.shape != node.shape or chunk.ndim != 1:
-        raise ValueError('Expected one node per chunk membership')
-    if chunk.size and (chunk.min() < 0 or chunk.max() >= x.size):
-        raise ValueError('A chunk membership is out of range')
-    if tau not in ('weighted', 'anova'):
-        raise ValueError(f'tau must be weighted or anova, got {tau!r}')
-    reference = np.broadcast_to(np.asarray(reference, dtype=np.float64), x.shape)
-    if not np.isfinite(reference).all():
-        raise ValueError('Expected a finite reference')
-    out = {'lift': np.zeros(x.size), 'pick': np.full(x.size, -1, dtype=np.int64),
-           'chunk': chunk, 'node': np.zeros(0, dtype=np.int64),
-           'labels': np.zeros(0, dtype=np.int64), 'size': np.zeros(0, dtype=np.int64),
-           'mean': np.zeros(0), 'trust': np.zeros(0), 'raw': np.zeros(0), 'value': np.zeros(0),
-           'gain': np.zeros(0), 'sigma2': None, 'tau2': None, 'between': None, 'noise': None,
-           'ssb': None, 'sum_sq_over_m': None, 'grand': None, 'groups': 0,
-           'memberships': int(chunk.size), 'tau': tau}
-    if not chunk.size:
-        return out
-    labels, node = np.unique(node, return_inverse=True)
-    size = np.bincount(node)
-    total = np.bincount(node, weights=x[chunk])
-    mean = total / size
-    n_memberships, n_groups = int(chunk.size), int(size.size)
-    grand = float(total.sum() / n_memberships)
-    out.update(node=node, labels=labels, size=size, mean=mean, grand=grand, groups=n_groups,
-               trust=np.zeros(n_groups), raw=np.full(n_memberships, np.nan),
-               value=np.full(n_memberships, np.nan), gain=np.zeros(n_memberships),
-               sum_sq_over_m=float((size.astype(np.float64) ** 2).sum() / n_memberships))
-    if n_memberships == n_groups:
-        return out
-    if np.ptp(reference) > 0:
-        y = x - reference
-        mean_y = np.bincount(node, weights=y[chunk]) / size
-        grand_y = float(y[chunk].sum() / n_memberships)
-    else:
-        y, mean_y, grand_y = x, mean, grand
-    sigma2 = float(((y[chunk] - mean_y[node]) ** 2).sum() / (n_memberships - n_groups))
-    ssb = float((size * (mean_y - grand_y) ** 2).sum())
-    between = ssb / n_memberships
-    noise = n_groups * sigma2 / n_memberships
-    if tau == 'weighted':
-        tau2 = max(0., between - noise)
-    elif n_groups > 1:
-        tau2 = max(0., (ssb - (n_groups - 1) * sigma2)
-                   / (n_memberships - out['sum_sq_over_m']))
-    else:
-        tau2 = 0.
-    others = size[node] - 1
-    shared = others > 0
-    raw = out['raw']
-    raw[shared] = ((total[node[shared]] - x[chunk[shared]]) / others[shared]
-                   - reference[chunk[shared]])
-    trust = np.zeros(n_groups)
-    plural = size >= 2
-    if not shrink:
-        trust[plural] = 1.
-    elif tau2 > 0.:
-        trust[plural] = tau2 / (tau2 + sigma2 / (size[plural] - 1))
-    value = out['value']
-    value[shared] = trust[node[shared]] * raw[shared]
-    gain = out['gain']
-    gain[shared] = np.maximum(value[shared], 0.)
-    at = np.flatnonzero(shared)
-    best, edge = best_edges(value[at], chunk[at], x.size)
-    has = edge >= 0
-    out['pick'][has] = at[edge[has]]
-    out['lift'][has] = np.maximum(best[has], 0.)
-    out.update(trust=trust, sigma2=sigma2, tau2=tau2, between=between, noise=noise, ssb=ssb)
-    return out
-
-
-def levels_and_order(chunk_ids, strength, spreads, cos_noise, has_edge, slots):
-    """step = cos_noise / the median of the spreads; level = floor((max - strength) / step);
-    the order by level, then the chunks with a winning edge by their four slot values,
-    descending, then by chunk id (`level_order`)."""
-    strength = np.asarray(strength, dtype=np.float64)
-    spreads = np.asarray(spreads, dtype=np.float64)
-    if strength.ndim != 1 or not strength.size or not np.isfinite(strength).all():
-        raise ValueError('Expected one finite strength per chunk')
-    if spreads.ndim != 1 or not spreads.size or not (spreads > 0).all():
-        raise ValueError('Expected one positive spread per query tag')
-    if not (np.isfinite(cos_noise) and cos_noise > 0):
-        raise ValueError('Expected a positive noise')
-    step = float(cos_noise) / float(np.median(spreads))
-    level = np.floor((strength.max() - strength) / step).astype(np.int64)
-    return step, level, level_order(chunk_ids, level, has_edge, slots)
-
-
-# ------------------------------------------------------------------ the chain
-
-def build_layer(inputs):
-    """What does not depend on the query: the eligible edges, their five raw values and
-    positions, each chunk's edge count and record kind, and the groupings.
-
-    inputs: 'chunk_ids' and 'chunk_kinds' per chunk; 'eligible' per graph tag; 'edge_tag',
-    'edge_chunk', 'edge_topic' per edge and 'edge_facets' (edges, 4) in ADJUST_FACETS order,
-    the higher the more; 'product' per chunk; 'channel_ptr', 'channels' and 'adjacency_ptr',
-    'adjacency', the CSR of each chunk's channel nodes and of its file-adjacent chunks. For
-    C3r also 'facet_gaps', the four columns' retrain gaps, and 'self_difference', the width of
-    "equally close"; without them the layer holds neither and `chain` refuses rank picked."""
-    chunk_ids = [str(c) for c in inputs['chunk_ids']]
+    eligible per graph tag; edge_tag, edge_chunk, edge_topic per edge and edge_facets (edges, 4)
+    in RANKING_FACETS order, the higher the more; pos, when given, the edges' places as premade
+    over the whole graph (edges, 5), else their places among the edges given (`positions`)."""
+    chunk_ids = [str(c) for c in chunk_ids]
     n = len(chunk_ids)
-    eligible = np.asarray(inputs['eligible'], dtype=bool)
-    edge_tag = np.asarray(inputs['edge_tag'], dtype=np.int64)
-    edge_chunk = np.asarray(inputs['edge_chunk'], dtype=np.int64)
-    edge_topic = np.asarray(inputs['edge_topic'], dtype=np.float64)
-    edge_facets = np.asarray(inputs['edge_facets'], dtype=np.float64)
+    eligible = np.asarray(eligible, dtype=bool)
+    edge_tag = np.asarray(edge_tag, dtype=np.int64)
+    edge_chunk = np.asarray(edge_chunk, dtype=np.int64)
+    edge_topic = np.asarray(edge_topic, dtype=np.float64)
+    edge_facets = np.asarray(edge_facets, dtype=np.float64)
     if (not edge_tag.shape == edge_chunk.shape == edge_topic.shape
-            or edge_facets.shape != (edge_tag.size, len(ADJUST_FACETS))):
+            or edge_facets.shape != (edge_tag.size, len(RANKING_FACETS))):
         raise ValueError('Expected one tag, chunk, topic and four facet values per edge')
     if edge_tag.size and (edge_tag.min() < 0 or edge_tag.max() >= eligible.size
                           or edge_chunk.min() < 0 or edge_chunk.max() >= n):
@@ -620,224 +80,407 @@ def build_layer(inputs):
     if not sel.size:
         raise ValueError('No edge carries an eligible graph tag')
     raw = np.column_stack([edge_topic[sel], edge_facets[sel]])
-    product = np.asarray(inputs['product'], dtype=np.int64)
-    if product.shape != (n,) or (product < 0).any():
-        raise ValueError('Expected one product per chunk')
-    channel_ptr = np.asarray(inputs['channel_ptr'], dtype=np.int64)
-    channels = np.asarray(inputs['channels'], dtype=np.int64)
-    if channel_ptr.shape != (n + 1,) or channel_ptr[-1] != channels.size:
-        raise ValueError('Expected one CSR row of channels per chunk')
-    kinds = [str(k) for k in inputs['chunk_kinds']]
+    kinds = [str(k) for k in chunk_kinds]
     if len(kinds) != n:
         raise ValueError('Expected one record kind per chunk')
     kind_names = sorted(set(kinds))
-    every = np.arange(n, dtype=np.int64)
-    near = record_groups(inputs['adjacency_ptr'], inputs['adjacency'])
-    if near.shape != (n,):
-        raise ValueError('Expected the file adjacency over the same chunks')
     id_rank = np.empty(n, dtype=np.int64)
     id_rank[sorted(range(n), key=lambda i: chunk_ids[i])] = np.arange(n)
-    gaps, width = inputs.get('facet_gaps'), inputs.get('self_difference')
-    same = inputs.get('same_level')
-    if width is not None and not (np.isfinite(width) and width > 0):
-        raise ValueError('Expected a positive self-difference')
+    if pos is not None:
+        pos = np.asarray(pos, dtype=np.float64)
+        if pos.shape != (edge_tag.size, len(FACETS)):
+            raise ValueError('Expected five premade places per edge')
     return {'chunk_ids': chunk_ids, 'chunks': n, 'eligible': eligible, 'edges': sel,
             'edge_tag': edge_tag[sel], 'edge_chunk': edge_chunk[sel], 'raw': raw,
-            'pos': positions(raw),
-            'facet_class': None if gaps is None else facet_classes(raw[:, FACET_COLUMNS], gaps),
-            'self_difference': None if width is None else float(width),
-            'same_level': None if same is None else float(same),
+            'pos': positions(raw) if pos is None else pos[sel],
             'n_c': np.bincount(edge_chunk[sel], minlength=n).astype(np.int64),
-            'product': product, 'near': near, 'id_rank': id_rank, 'kinds': kinds,
-            'kind_names': kind_names,
-            'kind': np.array([kind_names.index(k) for k in kinds], dtype=np.int64),
-            'groups': {'product': (every, product),
-                       'channel': memberships(np.repeat(every, np.diff(channel_ptr)), channels),
-                       'near': (every[near >= 0], near[near >= 0])}}
+            'id_rank': id_rank, 'kind_names': kind_names,
+            'kind': np.array([kind_names.index(k) for k in kinds], dtype=np.int64)}
 
 
-def structure_lifts(strength, layer, mode='near'):
-    """M6 on S: per grouping the `group_lift`, and each grouping's lift per chunk.
+def levels(values, k):
+    """The values cut into k clusters on the line, the number given and not found (his
+    2026-10-09 "what if we force the n of k in the kNN instead?"): least squares, the values
+    gathered into CLUSTER_BINS equal-width bins first. Returns each
+    value's level, 1 the cluster of the highest values; fewer than k levels when the values
+    fill fewer bins, one level when they are all alike."""
+    x = np.asarray(values, dtype=np.float64)
+    if x.ndim != 1 or not x.size or not np.isfinite(x).all():
+        raise ValueError('Expected a nonempty row of finite values')
+    if type(k) is not int or k < 1:
+        raise ValueError('Expected k, the number of clusters')
+    lo, hi = float(x.min()), float(x.max())
+    if hi == lo:
+        return np.ones(x.size, dtype=np.int64)
+    edges = np.linspace(lo, hi, CLUSTER_BINS + 1)
+    which = np.clip(np.searchsorted(edges, x, side='right') - 1, 0, CLUSTER_BINS - 1)
+    count = np.bincount(which, minlength=CLUSTER_BINS).astype(np.float64)
+    used = np.flatnonzero(count)
+    w = count[used]
+    a = np.bincount(which, weights=x, minlength=CLUSTER_BINS)[used]
+    q = np.bincount(which, weights=x * x, minlength=CLUSTER_BINS)[used]
+    m = used.size
+    k = min(k, m)
+    c0, c1, c2 = (np.concatenate(([0.], np.cumsum(v))) for v in (w, a, q))
+    j, i = np.meshgrid(np.arange(m), np.arange(m), indexing='ij')
+    inside = i >= j
+    size = np.where(inside, c0[i + 1] - c0[j], 1.)
+    # cost[j, i]: the squares of one cluster holding the bins j to i
+    cost = np.where(inside, np.maximum(c2[i + 1] - c2[j] - (c1[i + 1] - c1[j]) ** 2 / size, 0.),
+                    np.inf)
+    at = np.arange(m)
+    prev = cost[0].copy()
+    back = [np.zeros(m, dtype=np.int64)]
+    for _ in range(2, k + 1):
+        lead = np.full(m, np.inf)
+        lead[1:] = prev[:-1]                  # the best with one cluster fewer, ending before j
+        table = lead[:, None] + cost
+        start = np.argmin(table, axis=0)
+        prev = table[start, at]
+        back.append(start)
+    bin_level = np.zeros(m, dtype=np.int64)
+    end = m - 1
+    for level, g in enumerate(range(k - 1, -1, -1), 1):
+        first = int(back[g][end]) if g else 0
+        bin_level[first:end + 1] = level
+        end = first - 1
+    return bin_level[np.searchsorted(used, which)]
 
-    near            product on x = S against the mean of S; near group on x = S - the mean of
-                    S over the chunk's product against `kind_reference`; tau2 anova
-    unshrunk        the same with trust 1
-    near_zero       the same with the near group's reference 0
-    none            no grouping, no lift
-    first           product, channel, record (the near groups): channel and record on
-                    x = S - the product's mean against 0; tau2 weighted
-    first_unshrunk  first with trust 1
-    first_overall   first with channel and record on x = S against the mean of S"""
-    strength = np.asarray(strength, dtype=np.float64)
-    if mode not in STRUCTURES:
-        raise ValueError(f'structure must be one of {STRUCTURES}, got {mode!r}')
-    if mode == 'none':
-        return {}, {}
-    overall = float(strength.mean())
-    product = layer['product']
-    product_mean = np.bincount(product, weights=strength) / np.bincount(product)
-    left = strength - product_mean[product]
-    parts = {}
-    if mode.startswith('first'):
-        for kind in FIRST_GROUPINGS:
-            if kind == 'product' or mode == 'first_overall':
-                x, reference = strength, overall
-            else:
-                x, reference = left, 0.
-            pairs = layer['groups']['near' if kind == 'record' else kind]
-            parts[kind] = group_lift(x, *pairs, reference, shrink=mode != 'first_unshrunk')
-            parts[kind].update(reference=reference, x=x, kind_reference=None)
-        return parts, {kind: parts[kind]['lift'] for kind in FIRST_GROUPINGS}
-    shrink = mode != 'unshrunk'
-    parts['product'] = group_lift(strength, *layer['groups']['product'], overall,
-                                  shrink=shrink, tau='anova')
-    parts['product'].update(reference=overall, x=strength, kind_reference=None)
-    if mode == 'near_zero':
-        reference, table = np.zeros(strength.size), {}
-    else:
-        reference, table = kind_reference(left, layer['near'] >= 0, layer['kind'])
-    parts['near'] = group_lift(left, *layer['groups']['near'], reference, shrink=shrink,
-                               tau='anova')
-    parts['near'].update(reference=reference, x=left, kind_reference=table)
-    return parts, {kind: parts[kind]['lift'] for kind in GROUPINGS}
 
-
-def chain(layer, query, cos_noise, *, fit='standing', share='readings', chunk='best',
-          central='description', tags='max', side='max', structure='near', order='levels',
-          rank='none'):
-    """M1 to M7, every intermediate array. query: 'cosines' (query tags, graph tags),
-    'readings' (query tags, 5), 'description_cosines' (query tags,), 'd_description' and
-    'd_question' (chunks,). The switches: fit standing | cosine; share readings | equal | none;
-    chunk best | pooled | per_edge | sum | none; central description | equal; tags max | sum;
-    side max | none | description | clipped; structure as `structure_lifts`;
-    order levels | plain; rank none | picked (C3r, on a layer built with the facet gaps and
-    the self-difference) | percent (C3p, on a layer built with the facet gaps) | same (C3s,
-    on a layer built with the facet gaps and the same-thing level)."""
-    for name, value, allowed in (('fit', fit, ('standing', 'cosine')),
-                                 ('share', share, ('readings', 'equal', 'none')),
-                                 ('chunk', chunk, ('best', 'pooled', 'per_edge', 'sum',
-                                                   'none')),
-                                 ('central', central, ('description', 'equal')),
-                                 ('order', order, ('levels', 'plain')),
-                                 ('rank', rank, ('none', 'picked', 'percent', 'same'))):
-        if value not in allowed:
-            raise ValueError(f'{name} must be one of {allowed}, got {value!r}')
-    n, eligible = layer['chunks'], layer['eligible']
-    tag_e, chunk_e, pos = layer['edge_tag'], layer['edge_chunk'], layer['pos']
-    rows = np.asarray(query['cosines'], dtype=np.float64)
-    readings = np.asarray(query['readings'], dtype=np.float64)
-    count = rows.shape[0]
-    if rows.ndim != 2 or not count or rows.shape[1] != eligible.size:
+def tags_nearness(layer, cosines):
+    """Per chunk the closeness of its closest eligible tag to a query tag, the largest over the
+    query tags, and the edge that carries it (-1 with no eligible edge; such a chunk stands with
+    the farthest)."""
+    rows = np.asarray(cosines, dtype=np.float64)
+    if rows.ndim != 2 or not rows.shape[0] or rows.shape[1] != layer['eligible'].size:
         raise ValueError('Expected one cosine row over the graph tags per query tag')
-    if readings.shape != (count, len(ALL_FACETS)):
-        raise ValueError('Expected five readings per query tag')
-    bulk, spread = np.zeros(count), np.zeros(count)
-    z = np.full(rows.shape, np.nan)
-    fit_of_tag = np.zeros(rows.shape)
-    share_of = np.zeros((count, len(ALL_FACETS)))
-    equal = np.zeros(count, dtype=bool)
-    rel = np.zeros((count, chunk_e.size))
-    w = np.zeros((count, chunk_e.size))
-    names = ('v', 'edge', 'count', 'tail', 'p', 'k', 'v_star')
-    parts = {key: [] for key in names + ('pe_p', 'pe_k', 'pe_v_star', 'total')}
-    value = np.zeros((count, n))
-    orders = np.array([facet_order(r) for r in readings], dtype=np.int64)
-    ranked = rank != 'none'
-    if ranked and layer.get('facet_class') is None:
-        raise ValueError('the ranking needs a layer built with the facet gaps')
-    if rank == 'picked' and layer.get('self_difference') is None:
-        raise ValueError('rank picked needs a layer built with the facet gaps and the '
-                         'self-difference')
-    if rank == 'same' and layer.get('same_level') is None:
-        raise ValueError('rank same needs a layer built with the same-thing level')
-    rank_width = np.zeros(count) if ranked else None
-    if ranked and chunk == 'per_edge':
-        raise ValueError('the ranking places each edge; the per-edge correction draws from '
-                         'the unplaced tag fits')
-    edge_class = np.zeros((count, chunk_e.size), dtype=np.int64) if ranked else None
-    edge_place = np.zeros((count, chunk_e.size), dtype=np.int64) if ranked else None
-    for i in range(count):
-        z[i, eligible], bulk[i], spread[i] = standing(rows[i][eligible])
-        if fit == 'standing':
-            fit_of_tag[i, eligible] = np.clip(z[i, eligible], 0., None)
-        else:
-            fit_of_tag[i] = rows[i]
-        share_of[i], equal[i] = shares(readings[i])
-        if share == 'equal':
-            share_of[i] = 1. / len(ALL_FACETS)
-        rel[i] = MIDDLE if share == 'none' else relevance(pos, share_of[i])
-        fit_edge = fit_of_tag[i][tag_e]
-        if rank == 'same':
-            edge_cosines = rows[i][tag_e]
-            closest = float(rows[i][eligible].max())
-            picked = np.flatnonzero(edge_cosines >= layer['same_level'])
-            edge_class[i] = 1
-            rank_width[i] = max(closest - layer['same_level'], 0.)
-            if picked.size and rank_width[i] > 0:
-                # one band from the level up to the closest tag, wide enough to hold them all
-                _, place, placed = ranked_closeness(
-                    edge_cosines[picked], closest, rank_width[i] * (1. + 1e-9) + 1e-12,
-                    layer['facet_class'][picked], orders[i], layer['raw'][picked, 0])
-                edge_class[i, picked], edge_place[i, picked] = 0, place
-                moved = edge_cosines.copy()
-                moved[picked] = placed
-                fit_edge = (np.clip((moved - bulk[i]) / spread[i], 0., None)
-                            if fit == 'standing' else moved)
-            elif picked.size:
-                edge_class[i, picked] = 0
-        elif ranked:
-            closest = float(rows[i][eligible].max())
-            rank_width[i] = (layer['self_difference'] if rank == 'picked'
-                             else max((1. - EQUAL_SHARE) * closest, 0.))
-        if ranked and rank != 'same' and rank_width[i] > 0:
-            edge_class[i], edge_place[i], placed = ranked_closeness(
-                rows[i][tag_e], closest, rank_width[i],
-                layer['facet_class'], orders[i], layer['raw'][:, 0])
-            fit_edge = (np.clip((placed - bulk[i]) / spread[i], 0., None)
-                        if fit == 'standing' else placed)
-        got = chunk_values(fit_edge, rel[i] / MIDDLE, fit_of_tag[i][eligible], chunk_e, n)
-        w[i] = got['w']
-        for key in names:
-            parts[key].append(got['pooled'][key])
-        parts['pe_p'].append(got['per_edge']['p'])
-        parts['pe_k'].append(got['per_edge']['k'])
-        parts['pe_v_star'].append(got['per_edge']['v_star'])
-        parts['total'].append(got['total'])
-        value[i] = {'best': got['best'], 'pooled': got['pooled']['v_star'],
-                    'per_edge': got['per_edge']['v_star'], 'sum': got['total'],
-                    'none': np.zeros(n)}[chunk]
-    parts = {key: np.array(rows_) for key, rows_ in parts.items()}
-    weight = (centrality(query['description_cosines']) if central == 'description'
-              else np.ones(count))
-    total, winner, terms = tag_value(value, weight, tags)
-    has_edge = (layer['n_c'] > 0) & (chunk != 'none')
-    win_edge = np.where(has_edge, parts['edge'][winner, np.arange(n)], -1)
-    slots = np.zeros((n, len(ADJUST_FACETS)))
-    held = np.flatnonzero(has_edge)
-    slots[held] = np.take_along_axis(pos[win_edge[held]][:, FACET_COLUMNS],
-                                     orders[winner[held]], axis=1)
-    text = text_side(query['d_description'], query['d_question'], side)
-    if text['side'].shape != (n,):
-        raise ValueError('Expected one description cosine per chunk')
-    base = total + text['side']
-    groups, lifts = structure_lifts(base, layer, structure)
-    strength = base + sum(lifts.values()) if lifts else base.copy()
-    step_spreads = spread
-    if chunk == 'none':
-        named = {'max': ('description', 'question'), 'clipped': ('description', 'question'),
-                 'description': ('description',), 'none': ()}[side]
-        if not named:
-            raise ValueError('with the tags and the text both off nothing enters the strength')
-        step_spreads = np.array([text['spread'][name] for name in named])
-    step, level, ordered = levels_and_order(layer['chunk_ids'], strength, step_spreads,
-                                            cos_noise, has_edge, slots)
-    if order == 'plain':
-        ordered = np.lexsort((layer['id_rank'], -strength)).tolist()
-    return {'bulk': bulk, 'spread': spread, 'z': z, 'fit': fit_of_tag, 'shares': share_of,
-            'equal_shares': equal, 'facet_orders': orders, 'R': rel, 'w': w, **parts,
-            'value': value, 'centrality': weight, 'terms': terms, 'T': total, 'winner': winner,
-            'win_edge': win_edge, 'has_edge': has_edge, 'slots': slots, 'D': text['D'],
-            'Qs': text['Qs'], 'side': text['side'], 'text_bulk': text['bulk'],
-            'text_spread': text['spread'], 'S': base, 'groups': groups, 'lift': lifts,
-            'S_prime': strength, 'step': step, 'level': level, 'order': ordered,
-            'edge_class': edge_class, 'edge_place': edge_place, 'rank_width': rank_width}
+    on_edge = rows[:, layer['edge_tag']]
+    if not on_edge.size or not np.isfinite(on_edge).all():
+        raise ValueError('Expected finite cosines over the eligible graph tags')
+    near, edge = best_edges(on_edge.max(axis=0), layer['edge_chunk'], layer['chunks'])
+    has = edge >= 0
+    return np.where(has, near, near[has].min()), edge
+
+
+def knee(falling):
+    """The knee of a falling run of values: with both axes run from 0 to 1, the index of the
+    value furthest below the straight line between the first and the last. 0 when no value
+    lies below that line or the run is flat or shorter than three."""
+    y = np.asarray(falling, dtype=np.float64)
+    if y.size < 3 or not y[0] > y[-1]:
+        return 0
+    below = (1. - np.linspace(0., 1., y.size)) - (y - y[-1]) / (y[0] - y[-1])
+    at = int(np.argmax(below))
+    return at if below[at] > 1e-12 else 0      # rounding alone is not a knee
+
+
+def levels_of(values):
+    """The levels one list of nearness values falls into, read off the distances themselves
+    (his "knn values and get levels of n", "that curve ... decide the correct K"). The values
+    above the middle, from the nearest down, are split at their knee; what lies above the knee
+    is split at its own knee, and so on until three values or fewer are left. Returns each
+    value's level (1 the nearest; 0 at or below the middle, or beyond the first knee) and the
+    number of levels; no level at all when the first run has no knee."""
+    values = np.asarray(values, dtype=np.float64)
+    if values.ndim != 1 or not values.size or not np.isfinite(values).all():
+        raise ValueError('Expected a nonempty row of finite values')
+    level = np.zeros(values.size, dtype=np.int64)
+    above = np.flatnonzero(values > np.median(values))
+    by = above[np.argsort(-values[above], kind='stable')]
+    run = values[by]
+    first = knee(run)
+    if first < 1:
+        return level, 0
+    ends, end = [first], first
+    while end > 3:
+        at = knee(run[:end])
+        if at < 1 or at >= end - 1:
+            break
+        ends.append(at)
+        end = at
+    ends = ends[::-1]                     # the nearest level's end first
+    start = 0
+    for number, stop in enumerate(ends, 1):
+        level[by[start:stop]] = number
+        start = stop
+    return level, len(ends)
+
+
+def influenced_edge_values(layer, cosines, weights, close_spread=None):
+    """Per query tag and eligible edge, the edge's weight with the query's facets as an influence
+    (`facet_influenced_nearness`): the tag's closeness to the query tag plus, per facet, the query
+    tag's weight for it times where the edge stands in the facet's ranking, in units of the query
+    tag's own spread of closeness over the graph's tags. Where the edge stands is its place less
+    the middle place over the spread of places, over the whole graph when the layer carries them
+    (`place_middle`, `place_spread`), else over its own edges; close_spread, when given, is each
+    query tag's spread over the whole graph's tags, else it is taken over the layer's tags.
+    Returns (query tags, edges)."""
+    rows = np.asarray(cosines, dtype=np.float64)
+    weights = np.asarray(weights, dtype=np.float64)
+    place = layer['pos'][:, 1:]
+    middle = layer['place_middle'] if 'place_middle' in layer else np.median(place, axis=0)
+    spread_place = (layer['place_spread'] if 'place_spread' in layer
+                    else MAD_TO_SPREAD * np.median(np.abs(place - middle), axis=0))
+    stands = np.where(spread_place > 0, (place - middle) / np.where(spread_place > 0, spread_place, 1.), 0.)
+    if close_spread is None:
+        eligible = layer['eligible']
+        close_spread = [MAD_TO_SPREAD * float(np.median(np.abs(r[eligible] - np.median(r[eligible]))))
+                        for r in rows]
+    close_spread = np.asarray(close_spread, dtype=np.float64)
+    if close_spread.shape != (rows.shape[0],):
+        raise ValueError('Expected one spread of closeness per query tag')
+    return rows[:, layer['edge_tag']] + close_spread[:, None] * (weights @ stands.T)
+
+
+def query_tag_profiles(layer, on_edge):
+    """Per chunk and query tag, the weight of the chunk's strongest edge for that query tag
+    (`influenced_edge_values`): the chunk's closeness to each thing the query asks about. nan for a
+    chunk with no eligible edge. Returns (chunks, query tags)."""
+    on_edge = np.asarray(on_edge, dtype=np.float64)
+    out = np.full((layer['chunks'], on_edge.shape[0]), -np.inf)
+    np.maximum.at(out, layer['edge_chunk'], on_edge.T)
+    out[~np.isfinite(out).all(axis=1)] = np.nan
+    return out
+
+
+def storyline(n, start, pair_start, pair_chunk, same_parent, shares_person, gap, profiles):
+    """The 4-combo (his 2026-10-17 "time, scope, entities, chunknearness?", "that IS the 4-combo",
+    "shouldnt that enforce the relevance if its reach in many ways?", "near eachother, based on the
+    query?"): how strongly each chunk is tied to the chosen chunks.
+
+    One pair is a chosen chunk and another chunk of the border. A pair is tied in up to four ways:
+    scope      the two chunks sit under the same parent
+    entities   a person is tied to both
+    time       the gap in time (the smallest gap between a record of the one and a record of the
+               other, each at its own time) lies before the knee of the pairs' gaps sorted from
+               the nearest, on the logarithm (`levels_of`); a chunk with no time is never near in
+               time
+    nearness   near each other in what the query asks about: the two chunks' profiles over the
+               query tags (`query_tag_profiles`), each less its own mean, point the same way (their
+               correlation) before the knee of the pairs' correlations sorted from the highest; a
+               chunk with no eligible edge, or a profile with no spread, is never near
+    Where the upper half of each list bends decides what is near (`levels_of`).
+    A chunk's strength is the ways it is tied in, added over the chosen chunks: reached in more
+    ways, from more chosen chunks, it is the more relevant.
+
+    start: the chosen chunks' indices; pair_start, pair_chunk: per pair the chosen chunk and the
+    other chunk; same_parent, shares_person: per pair; gap: per pair in seconds, nan without a
+    time; profiles: (n, query tags). Returns per chunk the strength and the count of each way, per
+    pair the four ties, and the record."""
+    pair_start = np.asarray(pair_start, dtype=np.int64)
+    pair_chunk = np.asarray(pair_chunk, dtype=np.int64)
+    same_parent = np.asarray(same_parent, dtype=bool)
+    shares_person = np.asarray(shares_person, dtype=bool)
+    gap = np.asarray(gap, dtype=np.float64)
+    profiles = np.asarray(profiles, dtype=np.float64)
+    m = pair_start.size
+    if not (pair_chunk.shape == same_parent.shape == shares_person.shape == gap.shape == (m,)):
+        raise ValueError('Expected one chosen chunk, chunk, parent tie, person tie and gap per pair')
+    if profiles.ndim != 2 or profiles.shape[0] != n:
+        raise ValueError('Expected one profile over the query tags per chunk')
+    if (gap[np.isfinite(gap)] < 0).any():
+        raise ValueError('A gap in time is negative')
+    time_near = np.zeros(m, dtype=bool)
+    timed = np.isfinite(gap)
+    time_bound = None
+    if timed.any():
+        lv, _ = levels_of(-np.log1p(gap[timed]))
+        time_near[np.flatnonzero(timed)[lv >= 1]] = True
+        time_bound = float(gap[time_near].max()) if time_near.any() else None
+    # a chunk with no profile (all nan) stays nan; the mean is taken over the chunks that have one
+    with np.errstate(invalid='ignore'):
+        means = np.full((n, 1), np.nan)
+        whole = np.isfinite(profiles).all(axis=1) if profiles.shape[1] else np.zeros(n, dtype=bool)
+        means[whole, 0] = profiles[whole].mean(axis=1)
+    centred = profiles - means
+    norm = np.linalg.norm(centred, axis=1) if profiles.shape[1] else np.zeros(n)
+    corr = np.full(m, np.nan)
+    if m and profiles.shape[1]:
+        a, b = centred[pair_start], centred[pair_chunk]
+        na, nb = norm[pair_start], norm[pair_chunk]
+        ok = np.isfinite(na) & np.isfinite(nb) & (na > 0) & (nb > 0)
+        corr[ok] = np.einsum('ij,ij->i', a[ok], b[ok]) / (na[ok] * nb[ok])
+    query_near = np.zeros(m, dtype=bool)
+    query_bound = None
+    has = np.isfinite(corr)
+    if has.any():
+        lv, _ = levels_of(corr[has])
+        query_near[np.flatnonzero(has)[lv >= 1]] = True
+        query_bound = float(corr[query_near].min()) if query_near.any() else None
+    ties = {'scope': same_parent, 'entities': shares_person, 'time': time_near, 'nearness': query_near}
+    ways = {name: np.bincount(pair_chunk, weights=tie.astype(np.float64), minlength=n).astype(np.int64)
+            for name, tie in ties.items()}
+    strength = sum(ways.values()) if ways else np.zeros(n, dtype=np.int64)
+    tied_ways = sum(t.astype(np.int64) for t in ties.values())
+    record = {'chosen_chunks': int(np.asarray(start).size), 'pairs': int(m),
+              'pairs_tied': {name: int(t.sum()) for name, t in ties.items()},
+              'pairs_by_ways': {int(w): int((tied_ways == w).sum()) for w in range(5)},
+              'time_near_up_to_seconds': time_bound, 'nearness_from_correlation': query_bound,
+              'chunks_reached': int(np.unique(pair_chunk[tied_ways > 0]).size)}
+    return {'strength': strength, 'ways': ways, 'ties': ties, 'correlation': corr, 'record': record}
+
+
+def storyline_order(combo_order, start, strength, region):
+    """The chosen chunks first, in the combo's order; then the other chunks of the region (the
+    clouds) by how strongly they are tied to the chosen ones, the more strongly the earlier,
+    chunks equally tied in the combo's order; then every chunk outside the region in the combo's
+    order: nothing is lifted from below the clouds."""
+    chosen = set(int(i) for i in start)
+    inside = set(int(i) for i in region)
+    place = {int(i): p for p, i in enumerate(combo_order)}
+    first = [int(i) for i in combo_order if int(i) in chosen]
+    tied = sorted((int(i) for i in combo_order if int(i) in inside and int(i) not in chosen),
+                  key=lambda i: (-int(strength[i]), place[i]))
+    rest = [int(i) for i in combo_order if int(i) not in inside and int(i) not in chosen]
+    return first + tied + rest
+
+
+def facet_influenced_nearness(layer, cosines, weights, close_spread=None):
+    """The query's facets as an influence on the tag relationship, not an order (his 2026-10-15
+    "they are supposed to influence the already existing relationship for chunks and tags",
+    2026-10-16 "YOU CANNOT FORCE THEM TO TRY AND CHANGE THE FUCKING ORDERS"; 2026-08-31 "the
+    facetweights from the QUERY, determines how many fucks the retrieval take to each tag's
+    facets"; 2026-09-18 "the main weight on a tag is the topic one, and the others adjust that
+    weight").
+
+    An edge's weight for a query tag is the tag's closeness to it, the existing relationship.
+    The facets add to it: for each facet, the query tag's weight for that facet (0 when the facet
+    does not matter for the tag, up to 1) times where the edge stands in that facet's ranking
+    (its place less the middle, over the spread of places), in units of that query tag's own
+    spread of closeness over the graph's tags. With every weight 0 nothing changes. A chunk's
+    nearness through its tags is its strongest edge to any query tag after the influence.
+
+    cosines: (query tags, graph tags); weights: (query tags, 4) in RANKING_FACETS order, each 0 to
+    1. Returns per chunk the nearness, the edge and the query tag that carry it (-1 with no
+    eligible edge; such a chunk stands with the farthest)."""
+    rows = np.asarray(cosines, dtype=np.float64)
+    weights = np.asarray(weights, dtype=np.float64)
+    if rows.ndim != 2 or rows.shape[1] != layer['eligible'].size:
+        raise ValueError('Expected one cosine row over the graph tags per query tag')
+    if weights.shape != (rows.shape[0], len(RANKING_FACETS)) or (weights < 0).any() or (weights > 1).any():
+        raise ValueError('Expected four facet weights from 0 to 1 per query tag')
+    tag_e, chunk_e, n = layer['edge_tag'], layer['edge_chunk'], layer['chunks']
+    on_edge = influenced_edge_values(layer, rows, weights, close_spread)
+    best_q = on_edge.argmax(axis=0)
+    value = on_edge[best_q, np.arange(tag_e.size)]
+    near, edge = best_edges(value, chunk_e, n)
+    has = edge >= 0
+    query_tag = np.where(has, best_q[np.maximum(edge, 0)], -1)
+    return np.where(has, near, near[has].min()), edge, query_tag
+
+
+def majority_scopes(hits, scope_of):
+    """The scopes that hold the majority of the hit chunks (his 2026-10-09 "what the majority has
+    on their scope stats", "I did sure as fuck not mean that a single scope is chosen"): the
+    scopes from the one holding the most hits down, taken until they hold more than half of the
+    hits, and every scope holding as many as the last one taken. hits: per chunk whether it is
+    a hit; scope_of: per chunk the number of its scope. Returns the taken scopes' numbers,
+    sorted; none when there is no hit."""
+    hits = np.asarray(hits, dtype=bool)
+    scope_of = np.asarray(scope_of, dtype=np.int64)
+    if hits.shape != scope_of.shape or hits.ndim != 1:
+        raise ValueError('Expected one hit flag and one scope per chunk')
+    if not hits.any():
+        return []
+    scopes, held = np.unique(scope_of[hits], return_counts=True)
+    by = np.lexsort((scopes, -held))
+    total, last = 0, None
+    for at in by:
+        total += int(held[at])
+        last = int(held[at])
+        if total * 2 > int(held.sum()):
+            break
+    return sorted(int(s) for s, count in zip(scopes, held) if count >= last)
+
+
+def cloud_combo(layer, cosines, d_near, inside, scope_of, tags_near=None):
+    """The chunk cloud and the tags' cloud together, over the chunks of a border (his 2026-10-12
+    "the combo should fucking work.. So, if we use the chunk-cloud, see if you can find a way to
+    combo or lift with the tags", his 2026-10-10 "overlapping clouds for each step"). No
+    strength is made and no facet is read.
+
+    A chunk has a nearness on each side. Through its tags: the closeness of its closest eligible
+    tag to a query tag, the largest over the query tags (`tags_nearness`). By its description:
+    `d_near`, the description's closeness to what the chunk side is asked with. Each side's cloud
+    is its near group over the border's chunks: the chunks before the knee of its closeness sorted
+    from the nearest down, the knee looked for among the values above the median (`levels_of`), so
+    a cloud holds at most half the border. A side whose closeness has no knee has no cloud.
+
+    The level    per side 1 in its cloud, 2 outside it.
+    The step     a chunk's two levels added: 2 in both clouds, 3 in one, 4 in neither.
+    The scope    gauged after the steps, from the chunks in at least one cloud (with none, every
+                 chunk): the scopes holding the majority of those chunks (`majority_scopes`). It
+                 is weight and not a cut: inside a step the chunks in scope come first.
+    The order    the step, then in scope first, then the two sides' standings added (each
+                 nearness less its middle over its spread, over the border), then chunk id.
+
+    inside: the border's chunk indices; scope_of: per chunk the number of its scope; tags_near:
+    the tags side's closeness per chunk when it was made otherwise (`facet_influenced_nearness`),
+    the closest tag's closeness when not given. Returns the order (the border's chunks only), what
+    lies behind it per chunk, and the record."""
+    n = layer['chunks']
+    d_near = np.asarray(d_near, dtype=np.float64)
+    inside = np.asarray(inside, dtype=np.int64)
+    scope_of = np.asarray(scope_of, dtype=np.int64)
+    if d_near.shape != (n,) or not np.isfinite(d_near).all():
+        raise ValueError('Expected one finite description closeness per chunk')
+    if scope_of.shape != (n,):
+        raise ValueError('Expected one scope per chunk')
+    if inside.ndim != 1 or not inside.size or inside.min() < 0 or inside.max() >= n \
+            or np.unique(inside).size != inside.size:
+        raise ValueError('Expected the distinct chunks of the border')
+    rows = np.asarray(cosines, dtype=np.float64)
+    t_near, t_edge = tags_nearness(layer, rows)
+    if tags_near is not None:
+        t_near = np.asarray(tags_near, dtype=np.float64)
+        if t_near.shape != (n,) or not np.isfinite(t_near).all():
+            raise ValueError("Expected one finite tags' closeness per chunk")
+    query_tag = np.where(t_edge >= 0, rows[:, layer['edge_tag']].argmax(axis=0)[np.maximum(t_edge, 0)], -1)
+    sides = {'tags': t_near, 'description': d_near}
+    level = {name: np.zeros(n, dtype=np.int64) for name in sides}
+    value = np.zeros(n)
+    for name, x in sides.items():
+        here = x[inside]
+        lv, _ = levels_of(here)
+        level[name][inside] = np.where(lv >= 1, 1, 2)
+        bulk = float(np.median(here))
+        spread = MAD_TO_SPREAD * float(np.median(np.abs(here - bulk)))
+        if spread > 0.:                        # a side whose values do not spread says nothing
+            value[inside] += (here - bulk) / spread
+    step = np.zeros(n, dtype=np.int64)
+    step[inside] = level['tags'][inside] + level['description'][inside]
+    lowest = int(step[inside].min())
+    gauged_from = inside[step[inside] <= max(3, lowest)]
+    hits = np.zeros(n, dtype=bool)
+    hits[gauged_from] = True
+    taken = majority_scopes(hits[inside], scope_of[inside])
+    in_scope = np.zeros(n, dtype=bool)
+    in_scope[inside] = np.isin(scope_of[inside], taken)
+    by = np.lexsort((layer['id_rank'][inside], -value[inside], ~in_scope[inside], step[inside]))
+    steps, counts = np.unique(step[inside], return_counts=True)
+    record = {'chunks': int(inside.size),
+              'clouds': {name: int((level[name][inside] == 1).sum()) for name in sides},
+              'chunks_on_each_step': {int(s): int(c) for s, c in zip(steps, counts)},
+              'scope_gauged_from_chunks': int(gauged_from.size),
+              'scopes_taken': taken, 'chunks_in_scope': int(in_scope.sum())}
+    return {'order': inside[by].tolist(), 'tags_nearness': t_near, 'description_nearness': d_near,
+            'edge': t_edge, 'query_tag': query_tag, 'level': level, 'step': step,
+            'in_scope': in_scope, 'value': value, 'record': record}
+
+
+def conversations(times):
+    """One channel's messages as conversations: a new one starts where the gap to the message
+    before is one of the channel's long gaps. The logarithms of the gaps are cut in two by least
+    squares (`levels`) and the cluster of the larger ones is the long gaps; no length of a gap
+    is given. times: the messages' times in seconds, in the order written. Returns per message
+    the number of its conversation, 0 the first; one conversation when the gaps are all alike
+    or there is one message."""
+    t = np.asarray(times, dtype=np.float64)
+    if t.ndim != 1 or not t.size or not np.isfinite(t).all() or (np.diff(t) < 0).any():
+        raise ValueError("Expected one channel's message times in the order written")
+    if t.size == 1:
+        return np.zeros(1, dtype=np.int64)
+    gaps = np.log1p(np.diff(t))
+    if gaps.max() == gaps.min():
+        return np.zeros(t.size, dtype=np.int64)
+    return np.concatenate(([0], np.cumsum(levels(gaps, 2) == 1))).astype(np.int64)

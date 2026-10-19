@@ -1,0 +1,8 @@
+D.v4_10 (6 workers): answered_at - timing.finished_at, seconds, min/median/max (0.0, 0.001, 0.338); rows where it is > 0: 7/10
+   timing.finished_at non-decreasing in file order: 7/9 steps; answered_at non-decreasing: 9/9
+A.luc: steps between consecutive answered_at, seconds, min/median/max (0.0, 0.004, 82.212); steps shorter than the folder's shortest generator.time_s (4.84 s): 90/99
+A.vec: steps between consecutive answered_at, seconds, min/median/max (0.001, 0.004, 61.877); steps shorter than the folder's shortest generator.time_s (5.80 s): 88/99
+
+C: the two input files on disk against the manifests' hashes
+   madeup_question.jsonl: sha256 cf9c99ee5ad12e2c   equals inputs.questions_sha256 in {'C.luc': True, 'C.lucA': True, 'C.vec': True, 'C.vecAE': True}
+   madeup_ids.jsonl: sha256 3fc5c42fca057696   equals inputs.ids_sha256 in {'C.luc': True, 'C.lucA': True, 'C.vec': True, 'C.vecAE': True}

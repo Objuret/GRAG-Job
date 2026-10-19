@@ -1,0 +1,193 @@
+== A.luc arm_outputs.jsonl: 100 rows
+   <row>: 100 dicts, 1 key set, 10 keys
+   generator: 100 dicts, 1 key set, 10 keys
+   meta: 100 dicts, 1 key set, 1 keys
+   meta.char_budget: 100 dicts, 1 key set, 5 keys
+   meta.char_budget.boundary: 100 dicts, 1 key set, 3 keys
+   retrieval: 100 dicts, 1 key set, 10 keys
+== A.luc eval_results.jsonl: 1400 rows
+   <row>: 1400 dicts, 1 key set, 8 keys
+   components: 1400 dicts, 1 key set, 0 keys
+== A.vec arm_outputs.jsonl: 100 rows
+   <row>: 100 dicts, 1 key set, 10 keys
+   generator: 100 dicts, 1 key set, 10 keys
+   meta: 100 dicts, 1 key set, 1 keys
+   meta.char_budget: 100 dicts, 1 key set, 5 keys
+   meta.char_budget.boundary: 100 dicts, 1 key set, 3 keys
+   retrieval: 100 dicts, 1 key set, 10 keys
+== A.vec eval_results.jsonl: 1400 rows
+   <row>: 1400 dicts, 1 key set, 8 keys
+   components: 1400 dicts, 1 key set, 0 keys
+== B.luc arm_outputs.jsonl: 100 rows
+   <row>: 100 dicts, 1 key set, 10 keys
+   generator: 100 dicts, 1 key set, 10 keys
+   meta: 100 dicts, 1 key set, 1 keys
+   meta.char_budget: 100 dicts, 1 key set, 5 keys
+   meta.char_budget.boundary: 100 dicts, 1 key set, 3 keys
+   retrieval: 100 dicts, 1 key set, 10 keys
+== B.luc eval_results.jsonl: 1400 rows
+   <row>: 1400 dicts, 1 key set, 8 keys
+   components: 1400 dicts, 1 key set, 0 keys
+== B.vec arm_outputs.jsonl: 100 rows
+   <row>: 100 dicts, 1 key set, 10 keys
+   generator: 100 dicts, 1 key set, 10 keys
+   meta: 100 dicts, 1 key set, 1 keys
+   meta.char_budget: 100 dicts, 1 key set, 5 keys
+   meta.char_budget.boundary: 100 dicts, 1 key set, 3 keys
+   retrieval: 100 dicts, 1 key set, 10 keys
+== B.vec eval_results.jsonl: 1400 rows
+   <row>: 1400 dicts, 1 key set, 8 keys
+   components: 1400 dicts, 1 key set, 0 keys
+== C.luc arm_outputs.jsonl: 1 rows
+   <row>: 1 dicts, 1 key set, 13 keys
+   generator: 1 dicts, 1 key set, 11 keys
+   meta: 1 dicts, 1 key set, 2 keys
+   meta.char_budget: 1 dicts, 1 key set, 5 keys
+   meta.char_budget.boundary: 1 dicts, 1 key set, 3 keys
+   meta.ranking: 1 dicts, 1 key set, 4 keys
+   retrieval: 1 dicts, 1 key set, 11 keys
+   timing: 1 dicts, 1 key set, 4 keys
+== C.lucA arm_outputs.jsonl: 1 rows
+   <row>: 1 dicts, 1 key set, 13 keys
+   calls[]: 1 dicts, 1 key set, 25 keys
+   calls[].attempts[]: 1 dicts, 1 key set, 8 keys
+   calls[].envelope: 1 dicts, 1 key set, 21 keys
+   calls[].envelope.modelUsage: 1 dicts, 1 key set, 2 keys
+   calls[].envelope.modelUsage.claude-haiku-4-5-20251001: 1 dicts, 1 key set, 8 keys
+   calls[].envelope.modelUsage.claude-sonnet-5: 1 dicts, 1 key set, 8 keys
+   calls[].envelope.structured_output: 1 dicts, 1 key set, 1 keys
+   calls[].envelope.usage: 1 dicts, 1 key set, 10 keys
+   calls[].envelope.usage.cache_creation: 1 dicts, 1 key set, 2 keys
+   calls[].envelope.usage.iterations[]: 1 dicts, 1 key set, 6 keys
+   calls[].envelope.usage.iterations[].cache_creation: 1 dicts, 1 key set, 2 keys
+   calls[].envelope.usage.server_tool_use: 1 dicts, 1 key set, 2 keys
+   calls[].schema: 1 dicts, 1 key set, 4 keys
+   calls[].schema.properties: 1 dicts, 1 key set, 1 keys
+   calls[].schema.properties.answer: 1 dicts, 1 key set, 1 keys
+   calls[].usage: 1 dicts, 1 key set, 3 keys
+   generator: 1 dicts, 1 key set, 11 keys
+   meta: 1 dicts, 1 key set, 1 keys
+   meta.char_budget: 1 dicts, 1 key set, 5 keys
+   meta.char_budget.boundary: 1 dicts, 1 key set, 3 keys
+   retrieval: 1 dicts, 1 key set, 11 keys
+   timing: 1 dicts, 1 key set, 4 keys
+== C.vec arm_outputs.jsonl: 1 rows
+   <row>: 1 dicts, 1 key set, 13 keys
+   calls[]: 1 dicts, 1 key set, 17 keys
+   generator: 1 dicts, 1 key set, 11 keys
+   meta: 1 dicts, 1 key set, 2 keys
+   meta.char_budget: 1 dicts, 1 key set, 5 keys
+   meta.char_budget.boundary: 1 dicts, 1 key set, 3 keys
+   meta.ranking: 1 dicts, 1 key set, 4 keys
+   retrieval: 1 dicts, 1 key set, 11 keys
+   timing: 1 dicts, 1 key set, 4 keys
+== C.vecAE arm_outputs.jsonl: 1 rows
+   <row>: 1 dicts, 1 key set, 13 keys
+   calls[]: 2 dicts, 2 key sets, 37 distinct keys, keys per dict 17..25  <-- VARIES
+   calls[].attempts[]: 1 dicts, 1 key set, 8 keys
+   calls[].envelope: 1 dicts, 1 key set, 21 keys
+   calls[].envelope.modelUsage: 1 dicts, 1 key set, 2 keys
+   calls[].envelope.modelUsage.claude-haiku-4-5-20251001: 1 dicts, 1 key set, 8 keys
+   calls[].envelope.modelUsage.claude-sonnet-5: 1 dicts, 1 key set, 8 keys
+   calls[].envelope.structured_output: 1 dicts, 1 key set, 1 keys
+   calls[].envelope.usage: 1 dicts, 1 key set, 10 keys
+   calls[].envelope.usage.cache_creation: 1 dicts, 1 key set, 2 keys
+   calls[].envelope.usage.iterations[]: 1 dicts, 1 key set, 6 keys
+   calls[].envelope.usage.iterations[].cache_creation: 1 dicts, 1 key set, 2 keys
+   calls[].envelope.usage.server_tool_use: 1 dicts, 1 key set, 2 keys
+   calls[].schema: 1 dicts, 1 key set, 4 keys
+   calls[].schema.properties: 1 dicts, 1 key set, 1 keys
+   calls[].schema.properties.answer: 1 dicts, 1 key set, 1 keys
+   calls[].usage: 1 dicts, 1 key set, 3 keys
+   generator: 1 dicts, 1 key set, 11 keys
+   meta: 1 dicts, 1 key set, 1 keys
+   meta.char_budget: 1 dicts, 1 key set, 5 keys
+   meta.char_budget.boundary: 1 dicts, 1 key set, 3 keys
+   retrieval: 1 dicts, 1 key set, 11 keys
+   timing: 1 dicts, 1 key set, 4 keys
+== C.vecAE eval_calls.jsonl: 8 rows
+   <row>: 8 dicts, 2 key sets, 43 distinct keys, keys per dict 22..31  <-- VARIES
+   attempts[]: 6 dicts, 1 key set, 8 keys
+   envelope: 6 dicts, 1 key set, 20 keys
+   envelope.modelUsage: 6 dicts, 1 key set, 2 keys
+   envelope.modelUsage.claude-haiku-4-5: 6 dicts, 1 key set, 8 keys
+   envelope.modelUsage.claude-haiku-4-5-20251001: 6 dicts, 1 key set, 8 keys
+   envelope.usage: 6 dicts, 1 key set, 10 keys
+   envelope.usage.cache_creation: 6 dicts, 1 key set, 2 keys
+   envelope.usage.iterations[]: 6 dicts, 1 key set, 6 keys
+   envelope.usage.iterations[].cache_creation: 6 dicts, 1 key set, 2 keys
+   envelope.usage.server_tool_use: 6 dicts, 1 key set, 2 keys
+   usage: 6 dicts, 1 key set, 3 keys
+== C.vecAE eval_results.jsonl: 14 rows
+   <row>: 14 dicts, 1 key set, 8 keys
+   components: 14 dicts, 1 key set, 1 keys
+   components.usage: 14 dicts, 1 key set, 16 keys
+== D.v4_100 arm_outputs.jsonl: 100 rows
+   <row>: 100 dicts, 1 key set, 10 keys
+   generator: 100 dicts, 1 key set, 10 keys
+   meta: 100 dicts, 1 key set, 8 keys
+   meta.char_budget: 100 dicts, 1 key set, 5 keys
+   meta.char_budget.boundary: 100 dicts, 1 key set, 3 keys
+   meta.diagnostics: 100 dicts, 1 key set, 24 keys
+   meta.diagnostics.chunks_with_a_lift: 100 dicts, 1 key set, 2 keys
+   meta.diagnostics.delivered_term_shares: 100 dicts, 1 key set, 4 keys
+   meta.diagnostics.delivered_term_sums: 100 dicts, 1 key set, 4 keys
+   meta.diagnostics.largest_lift: 100 dicts, 1 key set, 2 keys
+   meta.diagnostics.text_bulk: 100 dicts, 1 key set, 2 keys
+   meta.diagnostics.text_spread: 100 dicts, 1 key set, 2 keys
+   meta.interpreter: 100 dicts, 1 key set, 5 keys
+   meta.interpreter.embeddings: 100 dicts, 1 key set, 3 keys
+   meta.interpreter.embeddings.description_side_tags: 100 dicts, 1 key set, 3 keys
+   meta.interpreter.embeddings.question: 100 dicts, 1 key set, 2 keys
+   meta.interpreter.embeddings.question_side_tags: 100 dicts, 1 key set, 2 keys
+   meta.interpreter.stages[]: 200 dicts, 2 key sets, 6 distinct keys, keys per dict 5..6  <-- VARIES
+   meta.provenance: 100 dicts, 1 key set, 9 keys
+   meta.provenance.counts: 100 dicts, 1 key set, 10 keys
+   meta.provenance.facet_layer: 100 dicts, 1 key set, 18 keys
+   meta.provenance.same_thing_pairs: 100 dicts, 1 key set, 4 keys
+   meta.provenance.source_sha256: 100 dicts, 1 key set, 12 keys
+   meta.ranking: 100 dicts, 1 key set, 6 keys
+   meta.ranking.delivered_terms: 100 dicts, 1 key set, 4 keys
+   meta.scope: 100 dicts, 1 key set, 5 keys
+   retrieval: 100 dicts, 1 key set, 10 keys
+== D.v4_100 eval_results.jsonl: 1000 rows
+   <row>: 1000 dicts, 1 key set, 8 keys
+   components: 1000 dicts, 1 key set, 0 keys
+== D.v4_10 arm_outputs.jsonl: 10 rows
+   <row>: 10 dicts, 1 key set, 13 keys
+   generator: 10 dicts, 1 key set, 11 keys
+   meta: 10 dicts, 1 key set, 8 keys
+   meta.char_budget: 10 dicts, 1 key set, 5 keys
+   meta.char_budget.boundary: 10 dicts, 1 key set, 3 keys
+   meta.diagnostics: 10 dicts, 1 key set, 24 keys
+   meta.diagnostics.chunks_with_a_lift: 10 dicts, 1 key set, 2 keys
+   meta.diagnostics.delivered_term_shares: 10 dicts, 1 key set, 4 keys
+   meta.diagnostics.delivered_term_sums: 10 dicts, 1 key set, 4 keys
+   meta.diagnostics.largest_lift: 10 dicts, 1 key set, 2 keys
+   meta.diagnostics.text_bulk: 10 dicts, 1 key set, 2 keys
+   meta.diagnostics.text_spread: 10 dicts, 1 key set, 2 keys
+   meta.interpreter: 10 dicts, 1 key set, 5 keys
+   meta.interpreter.embeddings: 10 dicts, 1 key set, 3 keys
+   meta.interpreter.embeddings.description_side_tags: 10 dicts, 1 key set, 3 keys
+   meta.interpreter.embeddings.question: 10 dicts, 1 key set, 2 keys
+   meta.interpreter.embeddings.question_side_tags: 10 dicts, 1 key set, 2 keys
+   meta.interpreter.stages[]: 10 dicts, 1 key set, 6 keys
+   meta.provenance: 10 dicts, 1 key set, 9 keys
+   meta.provenance.counts: 10 dicts, 1 key set, 10 keys
+   meta.provenance.facet_layer: 10 dicts, 1 key set, 18 keys
+   meta.provenance.same_thing_pairs: 10 dicts, 1 key set, 4 keys
+   meta.provenance.source_sha256: 10 dicts, 1 key set, 12 keys
+   meta.ranking: 10 dicts, 1 key set, 6 keys
+   meta.ranking.delivered_terms: 10 dicts, 1 key set, 4 keys
+   meta.scope: 10 dicts, 1 key set, 7 keys
+   meta.scope.gauged: 10 dicts, 1 key set, 2 keys
+   meta.scope.gauged.chunk_desc: 10 dicts, 1 key set, 6 keys
+   meta.scope.gauged.chunk_desc.largest[]: 12 dicts, 1 key set, 3 keys
+   meta.scope.gauged.tags: 10 dicts, 1 key set, 6 keys
+   meta.scope.gauged.tags.largest[]: 29 dicts, 1 key set, 3 keys
+   retrieval: 10 dicts, 1 key set, 11 keys
+   timing: 10 dicts, 1 key set, 4 keys
+== D.v4_10 eval_results.jsonl: 100 rows
+   <row>: 100 dicts, 1 key set, 8 keys
+   components: 100 dicts, 1 key set, 1 keys
+   components.usage: 100 dicts, 1 key set, 16 keys

@@ -1,0 +1,84 @@
+artefact_v2: concentration modifier on (HERB_STR_CONCENTRATION=1.0)
+artefact_v2: agreement modifier on (HERB_STR_AGREEMENT=1.0)
+artefact_v2: the raw question probes beside the interpreted plan (HERB_RAW_QUESTION=1)
+artefact_v4: loading the learned facet layer from round1
+artefact_v4: 61018 learned edges, 61018 stored positions; reading herb-eval-volmax tag vectors
+artefact_v4: 16654 tag vectors read, reading chunk descriptions
+artefact_v4: 4808 chunk vectors read, reading product names
+artefact_v4: 30 products, resolving structure names
+landing names: 1642 from landing_names.json
+artefact_v4: 0 chunks carry no learned edge; 6 edges have a negative topic cosine
+artefact_v4: 45 graph tags equal a product name casefolded (15 of them in another case)
+artefact_v4: retrain flip gap 1.0 score units (BANDS.md line 15); building the percentile and level layer
+artefact_v4: reading the refit means for multikey from scores_b24.npz
+artefact_v4: multikey facet values are each edge's mean over 24 refits; per-facet flip gaps temporal 1.01, why 1.38, activity 1.06, concreteness 1.3 (BANDS.md, column "gap (any)", lines 11, 12, 13, 14)
+artefact_v4: reading each chunk's channels and product, and the file adjacency, for the multikey structure keys
+artefact_v3: shape: 302 channels, 2677 chunk-channel edges, 2669 chunks with at least one channel, 30 products
+artefact_v3: shape: 45 of 16654 tags carry a Product node's name (30 names)
+artefact_v4: reading the corpus words of the 4808 pool chunks for the landing
+artefact_v4: corpus words: 1000/4808 chunks read (1.0s)
+artefact_v4: corpus words: 2000/4808 chunks read (1.4s)
+artefact_v4: corpus words: 3000/4808 chunks read (1.8s)
+artefact_v4: corpus words: 4000/4808 chunks read (2.1s)
+artefact_v4: 103643 distinct corpus words
+artefact_v3: file adjacency: 2787 adjacent chunk pairs over 4808 of 4808 located chunks in 581 sequences (documents 386, meeting_transcripts 26, slack 2375)
+artefact_v4: building the strength layer over the eligible edges
+artefact_v4: strength layer: 57204 eligible edges on 16609 eligible graph tags; topic bulk 0.2199, spread 0.0722; nodes product 30, channel 302, file 30
+artefact_v4: building the walk layer over the eligible edges
+artefact_v4: walk layer: 57204 eligible edges on 16609 eligible graph tags, five positions each; 402 near groups over 3189 chunks; 30 products; 8 record kinds
+artefact_v4: prepared 4808 chunks, 16654 tags, 61018 edges, 30 product-named tags in 48.3s
+16609 graph tags, tag against tag, both stored in the same mode; score at 5 / 25 / 50 / 75 / 95%
+   same letters, other capitals:  0.921 / 0.948 / 0.961 / 0.971 / 0.985   (1244 pairs)
+   singular against plural:       0.923 / 0.952 / 0.968 / 0.976 / 0.982   (711 pairs)
+   random pairs, a word in common: 0.605 / 0.703 / 0.761 / 0.809 / 0.878   (1202 pairs)
+   random pairs, no word in common: 0.554 / 0.648 / 0.704 / 0.752 / 0.809   (58796 pairs)
+
+examples, same letters with other capitals:
+   '24/7 Support' / '24/7 support': 0.992
+   'A/B Testing' / 'A/B testing': 0.988
+   'A/B Testing Framework' / 'A/B testing framework': 0.980
+   'AES-256 Data Encryption' / 'AES-256 data encryption': 0.986
+   'AES-256 Encryption' / 'AES-256 encryption': 0.988
+   'AI Algorithms' / 'AI algorithms': 0.985
+examples, singular against plural:
+   'AI Algorithms' / 'AI algorithm': 0.973
+   'AI algorithm' / 'AI algorithms': 0.979
+   'AI Engine' / 'AI engines': 0.923
+   'AI engine' / 'AI engines': 0.968
+   'AI Features' / 'AI feature': 0.935
+   'AI feature' / 'AI features': 0.977
+
+the closest tag with NO word in common, for 400 random tags (score, the pair):
+   its score, 5 / 25 / 50 / 75 / 95%: 0.770 / 0.848 / 0.881 / 0.906 / 0.938
+   the fifteen highest:
+      0.979  'caching' / 'cache'
+      0.976  'indexes' / 'indexing'
+      0.967  'reporting' / 'reports'
+      0.959  'AI functionality' / 'AI features'
+      0.957  'replication' / 'duplication'
+      0.953  'AI support assistants' / 'AI assistant'
+      0.952  'heatmaps' / 'heatmap visualization'
+      0.951  'stale cache problem' / 'caching issue'
+      0.949  'UI performance improvement' / 'UI optimization'
+      0.948  'local storage' / 'LocalStorage'
+      0.946  'AI-powered visualizations' / 'AI-driven data visualization'
+      0.946  'features' / 'types'
+      0.945  'Kong' / 'Gong'
+      0.944  'summary reports' / 'report summaries'
+      0.944  'forecasting' / 'predictions'
+   fifteen around the middle:
+      0.882  'protocol adherence' / 'testing protocols'
+      0.882  'big data' / 'business intelligence'
+      0.882  'network optimization' / 'algorithm improvement'
+      0.882  'listener implementation' / 'callback mechanism'
+      0.881  'customer experience enhancement' / 'UX improvement'
+      0.881  'data visualization performance' / 'visualizations'
+      0.881  'visual feedback' / 'visualization'
+      0.881  'context-specific language nuances' / 'contextual misunderstanding'
+      0.881  'anomaly detection issue' / 'data anomalies'
+      0.881  'data drift' / 'dataset balancing'
+      0.881  'AI-enhanced user experience' / 'AI model enhancements'
+      0.881  'document retrieval delay' / 'request processing delays'
+      0.880  'enterprise system interfaces' / 'Platform Integration'
+      0.880  'Slack channel integration' / 'chat channels'
+      0.880  'microservices enhancement' / 'api management'

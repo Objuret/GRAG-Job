@@ -1,0 +1,324 @@
+resource module not available on Windows
+lucene: 38540 artifacts + 0 directory records
+vector: 38540 artifacts + 0 directory records
+embedder: loading nvidia/llama-nemotron-embed-1b-v2 @ 113abe4acafa on cpu (float32) — first use
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/146 [00:00<?, ?it/s]Loading weights:   1%|          | 1/146 [00:00<01:15,  1.92it/s]Loading weights:  33%|###2      | 48/146 [00:00<00:01, 79.80it/s]Loading weights:  41%|####1     | 60/146 [00:00<00:01, 75.54it/s]Loading weights:  48%|####7     | 70/146 [00:01<00:01, 63.57it/s]Loading weights:  53%|#####3    | 78/146 [00:01<00:01, 58.01it/s]Loading weights:  58%|#####8    | 85/146 [00:01<00:01, 50.00it/s]Loading weights:  62%|######2   | 91/146 [00:01<00:01, 47.80it/s]Loading weights:  66%|######5   | 96/146 [00:01<00:01, 41.12it/s]Loading weights:  70%|######9   | 102/146 [00:02<00:01, 23.85it/s]Loading weights:  76%|#######6  | 111/146 [00:02<00:01, 25.66it/s]Loading weights:  79%|#######8  | 115/146 [00:03<00:01, 23.41it/s]Loading weights:  82%|########2 | 120/146 [00:03<00:01, 21.57it/s]Loading weights:  84%|########4 | 123/146 [00:03<00:01, 22.00it/s]Loading weights:  88%|########8 | 129/146 [00:03<00:00, 19.77it/s]Loading weights:  95%|#########4| 138/146 [00:04<00:00, 21.52it/s]Loading weights: 100%|##########| 146/146 [00:04<00:00, 34.55it/s]
+embedder: ready in 24s (2048 dim, 8192-token context)
+vector: 38540 artifacts + 0 directory records
+
+================ folder output\research\2026-10-08-keep-everything-proof\vector
+  arm_outputs.jsonl                 86,810 bytes
+  code.95d3382b606e528b.diff       918,983 bytes
+  failures.jsonl                         0 bytes
+  run_manifest.json                 16,975 bytes
+
+================ the row (one question = one run)
+{
+ "id": "madeup::walkthrough::0",
+ "question": "str[127]",
+ "answered_at": "2026-10-08T10:03:49.870192+00:00",
+ "answer": "",
+ "contexts": [
+  "list[279] of",
+  "str[222]"
+ ],
+ "context_ids": [
+  "list[278] of",
+  "20270401-0-fe24c"
+ ],
+ "search_time_s": 0.4825317000504583,
+ "generator": {
+  "calls": 0,
+  "tokens_in": 0,
+  "cached_input_tokens": 0,
+  "tokens_out": 0,
+  "reasoning_tokens": 0,
+  "time_s": 0.0,
+  "attempts": 0,
+  "request_s": 0.0,
+  "wait_s": 0.0,
+  "retry_s": 0.0,
+  "cost_usd": 0.0
+ },
+ "retrieval": {
+  "calls": 1,
+  "tokens_in": 28,
+  "cached_input_tokens": 0,
+  "tokens_out": 0,
+  "reasoning_tokens": 0,
+  "time_s": 0.6649460000917315,
+  "attempts": 1,
+  "request_s": 0.6649460000917315,
+  "wait_s": 0.0,
+  "retry_s": 0.0,
+  "cost_usd": 0.0
+ },
+ "meta": {
+  "char_budget": {
+   "budget": 72000,
+   "chars": 72000,
+   "kept": 278,
+   "boundary": {
+    "id": "20261229-6-38810",
+    "chars_kept": 104,
+    "chars_full": 209
+   },
+   "exhausted": false
+  },
+  "ranking": {
+   "n_units": 38540,
+   "n_ranked": 38540,
+   "scores": [
+    "list[279] of",
+    0.6047218441963196
+   ],
+   "next_score": 0.3030264973640442
+  }
+ },
+ "leg": 1,
+ "timing": {
+  "started_at": "2026-10-08T10:03:48.709666+00:00",
+  "finished_at": "2026-10-08T10:03:49.870192+00:00",
+  "wall_s": 1.1609624999109656,
+  "thread": "ThreadPoolExecutor-2_0"
+ },
+ "calls": [
+  "list[1] of",
+  {
+   "seq": 0,
+   "kind": "embed",
+   "model": "nvidia/llama-nemotron-embed-1b-v2",
+   "revision": "113abe4acafa848e77ead9c0623205e511932348",
+   "device": "cpu",
+   "dtype": "float32",
+   "input_type": "query",
+   "prefix": "query: ",
+   "batch": 1,
+   "n_texts": 1,
+   "texts": [
+    "list[1] of",
+    "str[127]"
+   ],
+   "tokens": [
+    "list[1] of",
+    28
+   ],
+   "tokens_in": 28,
+   "started_at": "2026-10-08T10:03:48.709666+00:00",
+   "finished_at": "2026-10-08T10:03:49.374348+00:00",
+   "lock_wait_s": 1.8998980522155762e-06,
+   "encode_s": 0.6648013000376523
+  }
+ ]
+}
+
+================ run_manifest.json
+{
+ "arm": "vector",
+ "generator_model": null,
+ "interpreter_model": null,
+ "top_k": 50,
+ "questions_file": "str[98]",
+ "n_questions": 1,
+ "n_ran": 1,
+ "n_failed": 0,
+ "timestamp": "2026-10-08T10:03:51.688185+00:00",
+ "build_stats": {
+  "build_time_s": 1708.9,
+  "model": {
+   "calls": 38540,
+   "tokens_in": 2719968,
+   "cached_input_tokens": 0,
+   "tokens_out": 0,
+   "reasoning_tokens": 0,
+   "time_s": 1708.9,
+   "attempts": 0,
+   "request_s": 0.0,
+   "wait_s": 0.0,
+   "retry_s": 0.0,
+   "cost_usd": 0.0
+  },
+  "models": [
+   "list[1] of",
+   "nvidia/llama-nemotron-embed-1b-v2"
+  ]
+ },
+ "retrieval_flags": {
+  "HERB_BASELINE_METADATA": false
+ },
+ "char_budget": 72000,
+ "code_version": {
+  "commit": "a140636a35b9ddba479df317e81ee66044b62a2b",
+  "branch": "artefact-v4",
+  "dirty": true
+ },
+ "environment": {
+  "host": "Wiktop",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.7",
+  "python_executable": "str[52]",
+  "cpu": "str[51]",
+  "cpu_count": 16,
+  "ram_bytes": 16907755520,
+  "packages": {
+   "bm25s": "0.2.14",
+   "PyStemmer": "3.1.0",
+   "numpy": "2.4.6",
+   "sentence-transformers": "6.0.1",
+   "torch": "2.14.0+cpu",
+   "transformers": "5.12.1",
+   "httpx": "0.28.1",
+   "ragas": "0.4.3",
+   "neo4j": "6.2.0"
+  },
+  "embedder": {
+   "model": "nvidia/llama-nemotron-embed-1b-v2",
+   "revision": "113abe4acafa848e77ead9c0623205e511932348",
+   "device": "cpu",
+   "dtype": "float32"
+  }
+ },
+ "inputs": {
+  "questions_sha256": "str[64]",
+  "ids_sha256": "str[64]",
+  "corpus": {
+   "sha256": "str[64]",
+   "n_files": 33
+  }
+ },
+ "graph": null,
+ "n_exhausted": 0,
+ "flags": null,
+ "legs": [
+  "list[2] of",
+  {
+   "leg": 1,
+   "started_at": "2026-10-08T10:03:24.107793+00:00",
+   "finished_at": "2026-10-08T10:03:50.978820+00:00",
+   "wall_s": 26.872982000000775,
+   "process_cpu_s": 65.5,
+   "workers": 1,
+   "argv": [
+    "list[2] of",
+    "str[57]"
+   ],
+   "pid": 69836,
+   "python_executable": "str[52]",
+   "ids_file": "str[93]",
+   "n_chosen": 1,
+   "n_todo": 1,
+   "n_answered": 1,
+   "n_unanswered_after": 0,
+   "aborted": null,
+   "prepare_s": 24.59570090007037,
+   "embedder_load_s": 23.508566500153393,
+   "retrieval_only": true,
+   "evaluator": "gen",
+   "peak_memory_bytes": 7700606976,
+   "code_version": {
+    "commit": "a140636a35b9ddba479df317e81ee66044b62a2b",
+    "branch": "artefact-v4",
+    "dirty": true
+   },
+   "code_state": {
+    "status": [
+     "list[40] of",
+     " M data/question_query_vecs.npz"
+    ],
+    "diff_sha256": "str[64]",
+    "untracked_sha256": {
+     "prod/harness/capture.py": "str[64]",
+     "prod/tests/test_capture.py": "str[64]",
+     "test/artefact/graph_layer.py": "str[64]",
+     "test/artefact/scope_filter.py": "str[64]",
+     "test/artefact/v4_db.py": "str[64]",
+     "test/graph/write_facet_layer.py": "str[64]",
+     "test/tests/test_artefact_v4_clouds.py": "str[64]",
+     "test/tests/test_graph_layer.py": "str[64]",
+     "test/tests/test_v4_walk.py": "str[64]"
+    },
+    "diff_file": "code.95d3382b606e528b.diff"
+   },
+   "flags": null,
+   "lane": null,
+   "index": {
+    "units": 38540,
+    "text_chars": 11237921,
+    "matrix_shape": [
+     "list[2] of",
+     38540
+    ],
+    "matrix_dtype": "float32",
+    "matrix_bytes": 315719680,
+    "cache_file": "str[94]",
+    "cache_file_bytes": 328012061,
+    "cache_file_sha256": "str[64]",
+    "cache_cost_note": {
+     "model": "nvidia/llama-nemotron-embed-1b-v2",
+     "revision": "113abe4acafa848e77ead9c0623205e511932348",
+     "calls": 38540,
+     "tokens_in": 2719968,
+     "tokens_out": 0,
+     "build_time_s": 1708.9,
+     "device": "NVIDIA GeForce GTX 1080 Ti",
+     "dtype": "float32",
+     "source": "str[65]",
+     "replaces": "str[77]"
+    },
+    "embedder_warm_s": 23.915025800000876,
+    "question_embedding": "str[41]"
+   }
+  }
+ ],
+ "workers": 1,
+ "lane": null,
+ "generator": null,
+ "index": {
+  "units": 38540,
+  "text_chars": 11237921,
+  "matrix_shape": [
+   "list[2] of",
+   38540
+  ],
+  "matrix_dtype": "float32",
+  "matrix_bytes": 315719680,
+  "cache_file": "str[94]",
+  "cache_file_bytes": 328012061,
+  "cache_file_sha256": "str[64]",
+  "cache_cost_note": {
+   "model": "nvidia/llama-nemotron-embed-1b-v2",
+   "revision": "113abe4acafa848e77ead9c0623205e511932348",
+   "calls": 38540,
+   "tokens_in": 2719968,
+   "tokens_out": 0,
+   "build_time_s": 1708.9,
+   "device": "NVIDIA GeForce GTX 1080 Ti",
+   "dtype": "float32",
+   "source": "str[65]",
+   "replaces": "str[77]"
+  },
+  "embedder_warm_s": 23.915025800000876,
+  "question_embedding": "str[41]"
+ },
+ "code_state": {
+  "status": [
+   "list[40] of",
+   " M data/question_query_vecs.npz"
+  ],
+  "diff_sha256": "str[64]",
+  "untracked_sha256": {
+   "prod/harness/capture.py": "str[64]",
+   "prod/tests/test_capture.py": "str[64]",
+   "test/artefact/graph_layer.py": "str[64]",
+   "test/artefact/scope_filter.py": "str[64]",
+   "test/artefact/v4_db.py": "str[64]",
+   "test/graph/write_facet_layer.py": "str[64]",
+   "test/tests/test_artefact_v4_clouds.py": "str[64]",
+   "test/tests/test_graph_layer.py": "str[64]",
+   "test/tests/test_v4_walk.py": "str[64]"
+  },
+  "diff_file": "code.95d3382b606e528b.diff"
+ },
+ "env": {}
+}

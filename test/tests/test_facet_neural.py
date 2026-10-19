@@ -16,8 +16,8 @@ for _p in (ROOT / "test" / "graph" / "facet_neural", ROOT / "test", ROOT / "prod
     if str(_p) not in sys.path:
         sys.path.insert(0, str(_p))
 
-torch = pytest.importorskip("torch")
-transformers = pytest.importorskip("transformers")
+import torch  # noqa: E402
+import transformers  # noqa: E402,F401
 
 from model import FACETS, FacetModel  # noqa: E402
 import data as D  # noqa: E402
@@ -239,12 +239,11 @@ def test_empty_edit_list_is_the_text_unchanged():
 # ------------------------------------------------------------------ the real checkpoint
 
 def test_real_backbone_pair_is_tag_first_and_truncates_only_the_chunk():
-    pytest.importorskip("transformers")
     from model import BACKBONE, encode_pairs, load_tokenizer
     try:
         tok = load_tokenizer(BACKBONE)
     except Exception as exc:                                    # not cached, offline
-        pytest.skip(f"backbone tokenizer unavailable: {exc}")
+        pytest.fail(f"backbone tokenizer unavailable: {exc}")
     tag = "database migration schedule"
     chunk = "word " * 4000
     enc = encode_pairs(tok, [tag], [chunk], max_length=64)

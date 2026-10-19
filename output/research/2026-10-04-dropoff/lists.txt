@@ -1,0 +1,471 @@
+16609 eligible graph tags
+embedder: loading nvidia/llama-nemotron-embed-1b-v2 @ 113abe4acafa on cpu (float32) — first use
+embedder: ready in 24s (2048 dim, 8192-token context)
+
+=== PROBE (own phrase): 'API rate limiting'   bulk 0.147  spread 0.036
+    1  cos 0.511  z  10.2  chunks   1  API rate limiting settings
+    2  cos 0.500  z   9.9  chunks   1  API rate limiting logic
+    3  cos 0.492  z   9.7  chunks   3  API Rate Limiting
+    4  cos 0.487  z   9.5  chunks  15  API rate limits
+    5  cos 0.486  z   9.5  chunks   1  API Server Rate Limiting
+    6  cos 0.483  z   9.4  chunks   1  API Rate Limiting Causes Proposal Generation Failures bug
+    7  cos 0.483  z   9.4  chunks  24  API rate limiting
+    8  cos 0.470  z   9.0  chunks   1  API Rate Limiting Causes Delayed Model Updates
+    9  cos 0.468  z   9.0  chunks   1  API rate limiting configuration
+   10  cos 0.467  z   9.0  chunks   2  API Rate Limiting Causes Data Fetch Failures
+   11  cos 0.464  z   8.9  chunks   2  API rate limiting feedback
+   12  cos 0.461  z   8.8  chunks   1  API rate limiting alerts
+   13  cos 0.459  z   8.7  chunks   1  API rate limit adjustment
+   14  cos 0.459  z   8.7  chunks   1  API rate limiting violations
+   15  cos 0.452  z   8.5  chunks   1  API rate limiting issue
+   16  cos 0.450  z   8.5  chunks   1  Flask API Rate Limiting Middleware
+   17  cos 0.443  z   8.3  chunks   1  api rate limiting bug
+   18  cos 0.442  z   8.3  chunks   1  Salesforce API rate limit handling
+   19  cos 0.440  z   8.2  chunks   2  API Rate Limiting Causes Feedback Loss
+   20  cos 0.435  z   8.1  chunks   2  API rate limiting bug
+   21  cos 0.434  z   8.0  chunks   1  Incorrect API Rate Limiting
+   22  cos 0.434  z   8.0  chunks   1  API requests throttled
+   23  cos 0.430  z   7.9  chunks   4  API Gateway & Rate Limiting Configuration
+   24  cos 0.427  z   7.9  chunks   2  Insufficient Rate Limiting on API Requests
+   25  cos 0.424  z   7.8  chunks   1  rate limit error handling
+   30  cos 0.391  z   6.8  chunks   1  request throttling
+   40  cos 0.366  z   6.1  chunks   1  API call prioritization
+   50  cos 0.347  z   5.6  chunks   2  API key validation
+   75  cos 0.326  z   5.0  chunks   1  API request efficiency
+  100  cos 0.316  z   4.7  chunks   1  decision: no rate limiting changes
+  150  cos 0.300  z   4.3  chunks   4  API Shield Pro
+  200  cos 0.289  z   4.0  chunks   1  request count reset
+  300  cos 0.270  z   3.4  chunks   1  jwt authentication
+  500  cos 0.249  z   2.9  chunks   1  API integration documentation
+ 1000  cos 0.219  z   2.0  chunks   1  metadata caching
+ 3000  cos 0.181  z   1.0  chunks   1  latency expectations
+ 8000  cos 0.148  z   0.0  chunks   2  Processing Engine Service
+
+=== PROBE (own phrase): 'customer onboarding process'   bulk 0.039  spread 0.025
+    1  cos 0.415  z  15.3  chunks   3  user onboarding process
+    2  cos 0.376  z  13.7  chunks   1  user training and onboarding
+    3  cos 0.375  z  13.7  chunks   1  User Onboarding and Training
+    4  cos 0.372  z  13.5  chunks   4  User Onboarding and Support
+    5  cos 0.335  z  12.0  chunks   5  onboarding processes
+    6  cos 0.335  z  12.0  chunks  11  onboarding process
+    7  cos 0.334  z  12.0  chunks   1  decision: implement structured onboarding process
+    8  cos 0.332  z  12.0  chunks  28  user onboarding
+    9  cos 0.327  z  11.7  chunks   4  member onboarding
+   10  cos 0.325  z  11.7  chunks   1  Onboarding process
+   11  cos 0.321  z  11.5  chunks   1  User Onboarding Guide
+   12  cos 0.320  z  11.5  chunks   1  Onboarding processes
+   13  cos 0.320  z  11.4  chunks   1  onboarding process improvement
+   14  cos 0.318  z  11.4  chunks   2  onboarding features
+   15  cos 0.318  z  11.4  chunks   3  User Onboarding
+   16  cos 0.317  z  11.3  chunks   1  personalized onboarding
+   17  cos 0.316  z  11.3  chunks   1  onboarding programs
+   18  cos 0.316  z  11.3  chunks   1  guided onboarding
+   19  cos 0.312  z  11.1  chunks   1  platform onboarding
+   20  cos 0.311  z  11.1  chunks   1  user onboarding strategies
+   21  cos 0.305  z  10.8  chunks   3  interactive onboarding tutorials
+   22  cos 0.304  z  10.8  chunks   3  onboarding sessions
+   23  cos 0.296  z  10.5  chunks   1  onboarding tutorial feature
+   24  cos 0.294  z  10.4  chunks  12  onboarding
+   25  cos 0.289  z  10.2  chunks   2  team member onboarding
+   30  cos 0.280  z   9.8  chunks   3  onboarding tutorial
+   40  cos 0.195  z   6.4  chunks  19  customer profiles
+   50  cos 0.190  z   6.2  chunks   2  customer data issue
+   75  cos 0.171  z   5.4  chunks   1  sales cycle optimization
+  100  cos 0.165  z   5.1  chunks   1  sensitive customer information
+  150  cos 0.155  z   4.7  chunks   1  Customer CUST-0037
+  200  cos 0.146  z   4.4  chunks   2  client interactions
+  300  cos 0.129  z   3.7  chunks  51  user personas
+  500  cos 0.109  z   2.9  chunks   1  new users
+ 1000  cos 0.091  z   2.1  chunks   1  AI-driven workflow automation
+ 3000  cos 0.065  z   1.1  chunks   1  healthcare organization pilot test
+ 8000  cos 0.040  z   0.0  chunks   1  real-time query performance
+
+=== PROBE (own phrase): 'data privacy compliance'   bulk 0.099  spread 0.027
+    1  cos 0.469  z  13.8  chunks   7  data privacy compliance
+    2  cos 0.463  z  13.6  chunks   1  privacy and data protection compliance
+    3  cos 0.460  z  13.5  chunks   1  Data Privacy Compliance
+    4  cos 0.445  z  12.9  chunks   1  data privacy and compliance
+    5  cos 0.436  z  12.6  chunks   1  Apache Kafka Data Privacy Compliance Audits
+    6  cos 0.434  z  12.5  chunks   5  privacy compliance
+    7  cos 0.433  z  12.5  chunks   1  Data Privacy and Compliance
+    8  cos 0.431  z  12.4  chunks   2  Data Compliance and Security
+    9  cos 0.425  z  12.2  chunks  10  data compliance
+   10  cos 0.419  z  11.9  chunks   3  data privacy audits
+   11  cos 0.418  z  11.9  chunks   2  data protection compliance
+   12  cos 0.407  z  11.5  chunks   1  data protection standards compliance
+   13  cos 0.404  z  11.4  chunks   1  gdpr compliance
+   14  cos 0.402  z  11.3  chunks   1  Data Privacy Audits
+   15  cos 0.397  z  11.1  chunks  10  data privacy and security
+   16  cos 0.392  z  10.9  chunks  45  CCPA compliance
+   17  cos 0.390  z  10.9  chunks   1  data privacy strategy
+   18  cos 0.389  z  10.8  chunks   1  Compliance and Privacy
+   19  cos 0.388  z  10.8  chunks   4  data privacy laws
+   20  cos 0.388  z  10.8  chunks   2  data privacy agreements
+   21  cos 0.388  z  10.8  chunks  91  GDPR compliance
+   22  cos 0.388  z  10.8  chunks  17  Data Privacy and Security
+   23  cos 0.387  z  10.7  chunks   1  data privacy regulation
+   24  cos 0.384  z  10.6  chunks  17  data privacy regulations
+   25  cos 0.383  z  10.6  chunks   4  data privacy measures
+   30  cos 0.372  z  10.2  chunks   1  encryption and compliance
+   40  cos 0.343  z   9.1  chunks   1  advanced data privacy measures
+   50  cos 0.331  z   8.6  chunks   2  data privacy testing
+   75  cos 0.312  z   7.9  chunks   1  Data residency requirements
+  100  cos 0.287  z   7.0  chunks   3  security and compliance audit
+  150  cos 0.265  z   6.2  chunks   2  legal and compliance teams
+  200  cos 0.246  z   5.5  chunks   1  PDPA
+  300  cos 0.211  z   4.2  chunks   2  threshold breaches
+  500  cos 0.184  z   3.2  chunks   1  monitoring standards
+ 1000  cos 0.158  z   2.2  chunks   1  cryptographic standards
+ 3000  cos 0.127  z   1.0  chunks   8  training programs
+ 8000  cos 0.101  z   0.0  chunks   6  sales calls
+
+=== PROBE (own phrase): 'user interface redesign'   bulk 0.119  spread 0.033
+    1  cos 0.466  z  10.7  chunks   4  user interface redesign
+    2  cos 0.418  z   9.2  chunks   1  interface redesign
+    3  cos 0.415  z   9.1  chunks   6  UI redesign
+    4  cos 0.408  z   8.9  chunks   2  dashboard redesign
+    5  cos 0.407  z   8.8  chunks   2  navigation bar redesign
+    6  cos 0.403  z   8.7  chunks   1  tool palette redesign
+    7  cos 0.403  z   8.7  chunks   1  layout redesign
+    8  cos 0.398  z   8.6  chunks   1  search widget redesign
+    9  cos 0.378  z   7.9  chunks   1  UI revamp
+   10  cos 0.371  z   7.7  chunks   3  UI/UX improvements
+   11  cos 0.367  z   7.6  chunks   9  UI/UX enhancements
+   12  cos 0.354  z   7.2  chunks   2  filter redesign
+   13  cos 0.353  z   7.2  chunks   2  User Experience Improvements
+   14  cos 0.351  z   7.1  chunks   3  user interface improvements
+   15  cos 0.343  z   6.9  chunks   1  product redesign
+   16  cos 0.343  z   6.9  chunks   1  UI/UX Enhancements
+   17  cos 0.341  z   6.8  chunks   2  UI/UX updates
+   18  cos 0.339  z   6.8  chunks   1  user interface updates
+   19  cos 0.339  z   6.7  chunks   1  user interface enhancements
+   20  cos 0.338  z   6.7  chunks   6  UI/UX enhancement
+   21  cos 0.335  z   6.6  chunks   1  dashboard UI/UX
+   22  cos 0.334  z   6.6  chunks   4  UX improvements
+   23  cos 0.334  z   6.6  chunks   1  UI refinement
+   24  cos 0.333  z   6.6  chunks   1  UI layout simplification
+   25  cos 0.332  z   6.6  chunks   4  User Interface & Mobile Compatibility
+   30  cos 0.326  z   6.4  chunks   5  user interface simplification
+   40  cos 0.312  z   5.9  chunks   9  UI simplification
+   50  cos 0.309  z   5.8  chunks   1  real-time insights UI/UX
+   75  cos 0.296  z   5.5  chunks   2  mobile UI enhancement
+  100  cos 0.287  z   5.2  chunks   1  User Customization and Interface
+  150  cos 0.271  z   4.7  chunks   1  drag-and-drop interface responsiveness
+  200  cos 0.262  z   4.4  chunks   1  PR#12 Develop Responsive UI for Real-time Collaboration
+  300  cos 0.245  z   3.9  chunks   1  user resistance mitigation
+  500  cos 0.223  z   3.2  chunks   3  UI overlap issue
+ 1000  cos 0.194  z   2.3  chunks   1  request: roadmap integration
+ 3000  cos 0.152  z   1.0  chunks   1  data binding processes
+ 8000  cos 0.120  z   0.0  chunks   1  logging system investigation
+
+=== PROBE (own phrase): 'performance bottleneck'   bulk 0.097  spread 0.036
+    1  cos 0.400  z   8.4  chunks   2  concurrency control bottleneck
+    2  cos 0.392  z   8.2  chunks   3  performance bottleneck
+    3  cos 0.381  z   7.9  chunks   1  indexing bottleneck
+    4  cos 0.375  z   7.7  chunks   1  concurrency bottleneck
+    5  cos 0.373  z   7.7  chunks   1  event processing queue bottleneck
+    6  cos 0.359  z   7.3  chunks   1  data fetch bottleneck
+    7  cos 0.358  z   7.2  chunks   3  Database Query Bottleneck
+    8  cos 0.358  z   7.2  chunks   1  UI Rendering Bottleneck
+    9  cos 0.357  z   7.2  chunks   6  performance bottlenecks
+   10  cos 0.355  z   7.2  chunks   1  Rendering queue bottleneck
+   11  cos 0.353  z   7.1  chunks   1  system bottlenecks
+   12  cos 0.351  z   7.1  chunks   1  data flow bottlenecks
+   13  cos 0.347  z   6.9  chunks   2  data retrieval bottleneck
+   14  cos 0.339  z   6.7  chunks   2  processing bottlenecks
+   15  cos 0.330  z   6.5  chunks   2  Data Fetch Bottleneck
+   16  cos 0.327  z   6.4  chunks   3  Data Serialization Bottleneck
+   17  cos 0.326  z   6.4  chunks   5  bottlenecks
+   18  cos 0.326  z   6.4  chunks   1  performance bottleneck mitigation
+   19  cos 0.326  z   6.4  chunks   1  Concurrency Control Bottlenecks
+   20  cos 0.318  z   6.1  chunks   2  Concurrency Bottleneck in Query Processing
+   21  cos 0.318  z   6.1  chunks   1  Bottleneck in Data Retrieval
+   22  cos 0.317  z   6.1  chunks   3  Data Aggregation Bottleneck
+   23  cos 0.299  z   5.6  chunks   1  bottleneck reduction
+   24  cos 0.296  z   5.5  chunks   4  bottleneck identification
+   25  cos 0.292  z   5.4  chunks   1  bottleneck identification bug
+   30  cos 0.272  z   4.9  chunks   1  bottleneck investigation
+   40  cos 0.255  z   4.4  chunks   1  performance delay
+   50  cos 0.245  z   4.1  chunks  17  latency optimization
+   75  cos 0.234  z   3.8  chunks   1  capacity issue
+  100  cos 0.230  z   3.7  chunks   8  latency issues
+  150  cos 0.220  z   3.4  chunks   1  algorithm limitation
+  200  cos 0.213  z   3.2  chunks   1  Inefficient Cache Utilization
+  300  cos 0.204  z   3.0  chunks   1  distributed query performance
+  500  cos 0.190  z   2.6  chunks   2  workload patterns
+ 1000  cos 0.171  z   2.1  chunks   5  resource allocation optimization
+ 3000  cos 0.134  z   1.0  chunks   1  technological changes
+ 8000  cos 0.098  z   0.0  chunks   1  Continuous monitoring
+
+=== PROBE (own phrase): 'quarterly revenue forecast'   bulk 0.086  spread 0.023
+    1  cos 0.312  z   9.8  chunks   1  revenue growth projections
+    2  cos 0.305  z   9.5  chunks   2  $2 million revenue projection
+    3  cos 0.297  z   9.2  chunks   1  Q3 2024 timeline
+    4  cos 0.293  z   9.0  chunks   5  Q2 2024
+    5  cos 0.288  z   8.8  chunks  10  Q1 2024
+    6  cos 0.282  z   8.6  chunks  21  Q3 2024
+    7  cos 0.282  z   8.5  chunks   6  Q4 2024
+    8  cos 0.272  z   8.1  chunks  11  Q1 2025
+    9  cos 0.269  z   8.0  chunks   1  Q3 2024 deadline
+   10  cos 0.268  z   7.9  chunks   3  Q2 2025
+   11  cos 0.265  z   7.8  chunks   1  Q2 2024 launch
+   12  cos 0.264  z   7.8  chunks   1  quarterly update schedule
+   13  cos 0.263  z   7.7  chunks   1  $50 billion market projection
+   14  cos 0.261  z   7.6  chunks   1  $6.5 billion market projection 2027
+   15  cos 0.259  z   7.5  chunks   1  Q4 2024 Zoom integration
+   16  cos 0.257  z   7.4  chunks   1  market projections
+   17  cos 0.254  z   7.3  chunks   1  quarterly
+   18  cos 0.253  z   7.3  chunks   1  Q1 Q2 Q3 timeline
+   19  cos 0.253  z   7.3  chunks   1  Q2 deadline
+   20  cos 0.252  z   7.2  chunks   1  2023-2030 CAGR
+   21  cos 0.252  z   7.2  chunks   1  first-year revenue $2 million
+   22  cos 0.251  z   7.2  chunks   1  $50 billion by 2028
+   23  cos 0.251  z   7.2  chunks   8  revenue growth
+   24  cos 0.249  z   7.1  chunks   1  2022-2027 projection
+   25  cos 0.248  z   7.1  chunks   1  TrendForce prediction issue
+   30  cos 0.245  z   6.9  chunks  14  financial projections
+   40  cos 0.239  z   6.6  chunks   3  market growth projection
+   50  cos 0.226  z   6.1  chunks   6  quarterly audits
+   75  cos 0.207  z   5.2  chunks   1  Q2 launch
+  100  cos 0.195  z   4.7  chunks   6  subscription-based revenue model
+  150  cos 0.169  z   3.6  chunks   1  sales outcomes
+  200  cos 0.159  z   3.2  chunks   3  analytics capabilities
+  300  cos 0.150  z   2.8  chunks   1  April 4 2026 deadline
+  500  cos 0.139  z   2.3  chunks   1  degraded performance
+ 1000  cos 0.126  z   1.8  chunks  37  retail
+ 3000  cos 0.108  z   0.9  chunks   1  merge hold decision
+ 8000  cos 0.087  z   0.0  chunks   1  outdated training data
+
+=== PROBE (own phrase): 'security vulnerability fix'   bulk 0.080  spread 0.030
+    1  cos 0.353  z   9.3  chunks  17  security fix
+    2  cos 0.330  z   8.5  chunks   1  API security patch
+    3  cos 0.324  z   8.3  chunks   1  vulnerability fixes
+    4  cos 0.320  z   8.1  chunks   1  Fix Session Fixation Vulnerability
+    5  cos 0.313  z   7.9  chunks   1  vulnerability patching
+    6  cos 0.304  z   7.6  chunks   2  security upgrade
+    7  cos 0.304  z   7.6  chunks   1  bug fix - token expiry
+    8  cos 0.296  z   7.3  chunks   1  decision: no fix required for API
+    9  cos 0.296  z   7.3  chunks   1  security bug resolution
+   10  cos 0.292  z   7.2  chunks   1  decision: no fix required for call logs data corruption
+   11  cos 0.292  z   7.2  chunks   1  security vulnerability resolution
+   12  cos 0.291  z   7.2  chunks   1  security vulnerability in search api
+   13  cos 0.288  z   7.0  chunks   1  decision: no fix required for JSON parsing issue
+   14  cos 0.287  z   7.0  chunks   1  security bug
+   15  cos 0.283  z   6.9  chunks   1  security enhancements approval
+   16  cos 0.281  z   6.8  chunks   1  Security Flaw
+   17  cos 0.281  z   6.8  chunks   2  Security Vulnerability in API Flow Authentication
+   18  cos 0.279  z   6.7  chunks   1  no fix required
+   19  cos 0.279  z   6.7  chunks   2  Security Vulnerability in Query Handling
+   20  cos 0.277  z   6.7  chunks   4  Security Vulnerability in User Authentication
+   21  cos 0.277  z   6.7  chunks  12  security patch
+   22  cos 0.276  z   6.6  chunks   1  decision: enhance API security protocols
+   23  cos 0.276  z   6.6  chunks   2  security update
+   24  cos 0.276  z   6.6  chunks   1  Security Vulnerability in Lead Data Export
+   25  cos 0.275  z   6.6  chunks   1  Security Vulnerability in Log Upload Feature
+   30  cos 0.272  z   6.5  chunks   1  Fix XSS Vulnerability on Login Page
+   40  cos 0.263  z   6.2  chunks   1  token expiry fix
+   50  cos 0.256  z   6.0  chunks  89  security vulnerability
+   75  cos 0.243  z   5.5  chunks   1  security enhancement decision
+  100  cos 0.237  z   5.3  chunks   1  session token expiry bug
+  150  cos 0.224  z   4.9  chunks   2  AI-driven vulnerability detection
+  200  cos 0.216  z   4.6  chunks   1  misconfigured access control
+  300  cos 0.200  z   4.1  chunks   1  security implementation strategy
+  500  cos 0.179  z   3.4  chunks   1  OAuth security
+ 1000  cos 0.153  z   2.5  chunks   1  Inefficient Event Handling bug
+ 3000  cos 0.115  z   1.2  chunks   1  layout persistence issue
+ 8000  cos 0.081  z   0.1  chunks   1  AI for API management
+
+=== PROBE (own phrase): 'feedback from beta testers'   bulk 0.100  spread 0.035
+    1  cos 0.358  z   7.4  chunks   1  beta feedback
+    2  cos 0.335  z   6.7  chunks   6  user testing feedback
+    3  cos 0.331  z   6.6  chunks   2  beta testers
+    4  cos 0.331  z   6.6  chunks   1  request: user testing insights
+    5  cos 0.326  z   6.5  chunks   5  beta users
+    6  cos 0.317  z   6.2  chunks   2  User Feedback and Future Enhancements
+    7  cos 0.317  z   6.2  chunks   2  User Feedback and Future Updates
+    8  cos 0.308  z   5.9  chunks 119  user feedback
+    9  cos 0.306  z   5.9  chunks   2  beta testing
+   10  cos 0.303  z   5.8  chunks   1  User Feedback and Improvements
+   11  cos 0.303  z   5.8  chunks   1  feedback and testing sessions
+   12  cos 0.301  z   5.8  chunks   2  user testing results
+   13  cos 0.300  z   5.7  chunks   1  request: check user feedback documentation
+   14  cos 0.300  z   5.7  chunks   1  industry feedback
+   15  cos 0.296  z   5.6  chunks   2  request for feedback
+   16  cos 0.292  z   5.5  chunks   5  user feedback incorporation
+   17  cos 0.291  z   5.5  chunks   2  beta tests
+   18  cos 0.290  z   5.4  chunks   1  Feedback Button Unresponsive
+   19  cos 0.289  z   5.4  chunks  22  user feedback mechanisms
+   20  cos 0.286  z   5.3  chunks   1  user feedback strategies
+   21  cos 0.285  z   5.3  chunks   2  User Feedback
+   22  cos 0.284  z   5.3  chunks   1  feedback data skew bug resolution
+   23  cos 0.284  z   5.2  chunks   2  product feedback
+   24  cos 0.283  z   5.2  chunks   1  feedback and improvement
+   25  cos 0.281  z   5.2  chunks   4  feedback submissions
+   30  cos 0.279  z   5.1  chunks  18  user testing
+   40  cos 0.270  z   4.9  chunks   1  user feedback sessions
+   50  cos 0.264  z   4.7  chunks   3  user feedback learning
+   75  cos 0.254  z   4.4  chunks   2  User Feedback section
+  100  cos 0.240  z   4.0  chunks   2  Failure to Adapt to User Feedback
+  150  cos 0.228  z   3.7  chunks   1  request: review criteria with team
+  200  cos 0.215  z   3.3  chunks   1  guided feedback process
+  300  cos 0.202  z   2.9  chunks   1  QA progress
+  500  cos 0.185  z   2.4  chunks   1  request: roadmap integration
+ 1000  cos 0.165  z   1.9  chunks   1  API issues
+ 3000  cos 0.134  z   1.0  chunks   3  sentiment scoring
+ 8000  cos 0.102  z   0.1  chunks   2  non-English text
+
+=== PROBE (graph tag): 'competitive positioning'   bulk 0.096  spread 0.027
+    1  cos 0.445  z  12.8  chunks   7  competitive positioning
+    2  cos 0.373  z  10.2  chunks  14  market positioning
+    3  cos 0.359  z   9.6  chunks  10  product positioning
+    4  cos 0.358  z   9.6  chunks   1  market positioning decision
+    5  cos 0.342  z   9.0  chunks   1  competitive product analysis
+    6  cos 0.335  z   8.7  chunks   1  competitive selling propositions
+    7  cos 0.329  z   8.5  chunks   1  product competitiveness
+    8  cos 0.324  z   8.4  chunks  15  competitive differentiation
+    9  cos 0.323  z   8.3  chunks  21  competitive landscape
+   10  cos 0.319  z   8.2  chunks   1  niche market strategy
+   11  cos 0.318  z   8.1  chunks   1  market position
+   12  cos 0.317  z   8.1  chunks   1  competitive strategy
+   13  cos 0.314  z   8.0  chunks 128  competitive analysis
+   14  cos 0.309  z   7.8  chunks  42  Competitive Analysis
+   15  cos 0.304  z   7.6  chunks   3  Competitive Differentiation
+   16  cos 0.304  z   7.6  chunks  10  competitor analysis
+   17  cos 0.301  z   7.5  chunks   3  Competitive Landscape
+   18  cos 0.298  z   7.4  chunks   2  product market potential
+   19  cos 0.294  z   7.3  chunks   9  market differentiation
+   20  cos 0.293  z   7.2  chunks  42  competitive advantage
+   21  cos 0.291  z   7.1  chunks   1  competitors analysis
+   22  cos 0.290  z   7.1  chunks   1  competitive analysis Tuesday
+   23  cos 0.290  z   7.1  chunks   2  competitive threats
+   24  cos 0.287  z   7.0  chunks   2  competitive advantages
+   25  cos 0.286  z   6.9  chunks   1  Competitive edge
+   30  cos 0.279  z   6.7  chunks   1  competitive analysis research
+   40  cos 0.272  z   6.5  chunks  27  product differentiation
+   50  cos 0.261  z   6.0  chunks   1  market landscape analysis
+   75  cos 0.235  z   5.1  chunks   3  value proposition
+  100  cos 0.218  z   4.5  chunks   1  product objectives
+  150  cos 0.196  z   3.7  chunks   1  Market Saturation
+  200  cos 0.185  z   3.3  chunks   2  sales optimization
+  300  cos 0.173  z   2.8  chunks   3  operational cost reduction
+  500  cos 0.160  z   2.4  chunks   1  sales process
+ 1000  cos 0.145  z   1.8  chunks   4  phased approach
+ 3000  cos 0.122  z   1.0  chunks   1  authentication strategy
+ 8000  cos 0.097  z   0.0  chunks   1  key generation
+
+=== PROBE (graph tag): 'consent management'   bulk 0.150  spread 0.032
+    1  cos 0.507  z  11.2  chunks  15  consent management
+    2  cos 0.503  z  11.1  chunks   1  User Consent Management
+    3  cos 0.490  z  10.7  chunks   8  user consent management
+    4  cos 0.453  z   9.5  chunks   2  consent management system
+    5  cos 0.449  z   9.4  chunks   1  Nextcloud User Data Consent Management
+    6  cos 0.436  z   9.0  chunks   1  User Consent Management System
+    7  cos 0.395  z   7.7  chunks   1  WordPress User Consent Management for Comments
+    8  cos 0.389  z   7.5  chunks   1  user consent features
+    9  cos 0.381  z   7.2  chunks   8  user consent mechanisms
+   10  cos 0.379  z   7.2  chunks   1  user consent flow
+   11  cos 0.377  z   7.1  chunks   1  user consent mechanism
+   12  cos 0.377  z   7.1  chunks   1  user consent flows
+   13  cos 0.372  z   7.0  chunks   1  decision: expand consent options
+   14  cos 0.368  z   6.8  chunks   1  user consent withdrawal
+   15  cos 0.358  z   6.5  chunks   1  user consent updates
+   16  cos 0.357  z   6.5  chunks   2  consent tracking
+   17  cos 0.342  z   6.0  chunks   2  permission management
+   18  cos 0.335  z   5.8  chunks   1  WordPress GDPR Consent Capture Plugin
+   19  cos 0.335  z   5.8  chunks   1  consent capture
+   20  cos 0.331  z   5.7  chunks   3  consent verification
+   21  cos 0.327  z   5.6  chunks   2  consent mechanism
+   22  cos 0.322  z   5.4  chunks   1  Moodle Consent Verification System
+   23  cos 0.314  z   5.1  chunks   1  Consent Mechanism
+   24  cos 0.311  z   5.0  chunks   6  user consent
+   25  cos 0.307  z   4.9  chunks   1  opt-in and opt-out functionality
+   30  cos 0.293  z   4.5  chunks   8  schema management
+   40  cos 0.275  z   3.9  chunks   1  Topic Management
+   50  cos 0.271  z   3.8  chunks   5  privacy compliance
+   75  cos 0.262  z   3.5  chunks   1  token management logic
+  100  cos 0.252  z   3.2  chunks  25  key management
+  150  cos 0.245  z   3.0  chunks   2  dependency management
+  200  cos 0.238  z   2.8  chunks   5  layer management
+  300  cos 0.230  z   2.5  chunks   1  RBAC policies
+  500  cos 0.219  z   2.2  chunks   1  customer relationship management
+ 1000  cos 0.205  z   1.7  chunks   1  document automation
+ 3000  cos 0.180  z   0.9  chunks   5  collaboration features
+ 8000  cos 0.152  z   0.0  chunks   1  touch event handling
+
+=== PROBE (graph tag): 'API Layer'   bulk 0.154  spread 0.030
+    1  cos 0.456  z  10.1  chunks   1  Abstract API Layer
+    2  cos 0.452  z   9.9  chunks  10  API Layer
+    3  cos 0.436  z   9.4  chunks   7  API layer
+    4  cos 0.427  z   9.1  chunks   7  API Security Layer
+    5  cos 0.422  z   9.0  chunks   1  API layer architecture
+    6  cos 0.414  z   8.7  chunks  13  API Authentication Layer
+    7  cos 0.413  z   8.6  chunks  10  abstract API layer
+    8  cos 0.409  z   8.5  chunks   6  API & Data Integration Layer
+    9  cos 0.405  z   8.4  chunks   2  API security layer
+   10  cos 0.405  z   8.4  chunks   1  API integration layer
+   11  cos 0.388  z   7.8  chunks   1  Kubernetes Abstract Networking API Layer
+   12  cos 0.370  z   7.2  chunks   1  Modular Layered API
+   13  cos 0.357  z   6.8  chunks   6  Data Retrieval & Caching Layer
+   14  cos 0.354  z   6.7  chunks   3  Database & Caching Layer
+   15  cos 0.344  z   6.3  chunks   3  Database Layer
+   16  cos 0.340  z   6.2  chunks   3  API ecosystem
+   17  cos 0.331  z   5.9  chunks   1  API data
+   18  cos 0.328  z   5.8  chunks   1  Caching Layer
+   19  cos 0.328  z   5.8  chunks   5  data ingestion layer
+   20  cos 0.327  z   5.8  chunks   5  data transformation layer
+   21  cos 0.327  z   5.8  chunks   4  User Interaction Layer
+   22  cos 0.327  z   5.8  chunks   2  middleware layer
+   23  cos 0.326  z   5.8  chunks   2  API architecture
+   24  cos 0.325  z   5.7  chunks   1  visualization layer
+   25  cos 0.324  z   5.7  chunks   2  API framework
+   30  cos 0.320  z   5.6  chunks   3  API offerings
+   40  cos 0.315  z   5.4  chunks   3  API ecosystems
+   50  cos 0.311  z   5.2  chunks   1  cache layer
+   75  cos 0.302  z   4.9  chunks   1  data storage layer
+  100  cos 0.298  z   4.8  chunks  23  API performance
+  150  cos 0.290  z   4.5  chunks   1  API flow management
+  200  cos 0.285  z   4.4  chunks  44  GraphQL API
+  300  cos 0.276  z   4.1  chunks   1  processing layer integration
+  500  cos 0.255  z   3.4  chunks   1  Security Vulnerability in API Endpoint
+ 1000  cos 0.214  z   2.0  chunks   1  pricing model
+ 3000  cos 0.183  z   1.0  chunks   1  multi-channel notifications
+ 8000  cos 0.155  z   0.0  chunks   1  GitHub repository yzhao062/pyod
+
+=== PROBE (graph tag): 'cloud-based architecture'   bulk 0.131  spread 0.036
+    1  cos 0.499  z  10.3  chunks  22  cloud-based architecture
+    2  cos 0.450  z   9.0  chunks   1  cloud-based microservices architecture
+    3  cos 0.424  z   8.2  chunks  19  cloud-based infrastructure
+    4  cos 0.408  z   7.8  chunks   1  Cloud-based Infrastructure
+    5  cos 0.397  z   7.5  chunks   1  cloud architecture
+    6  cos 0.396  z   7.5  chunks   7  cloud-native architecture
+    7  cos 0.388  z   7.2  chunks   1  cloud architecture integration
+    8  cos 0.379  z   7.0  chunks  29  cloud-based deployment
+    9  cos 0.379  z   7.0  chunks   7  cloud-native architectures
+   10  cos 0.376  z   6.9  chunks   1  cloud-based operations
+   11  cos 0.355  z   6.3  chunks   7  cloud-based application
+   12  cos 0.349  z   6.1  chunks  14  cloud-based solutions
+   13  cos 0.347  z   6.1  chunks   3  cloud-based database
+   14  cos 0.341  z   5.9  chunks   4  AWS cloud architecture
+   15  cos 0.339  z   5.9  chunks   5  decentralized architecture
+   16  cos 0.339  z   5.8  chunks   4  Azure cloud architecture
+   17  cos 0.338  z   5.8  chunks   1  scalable architecture
+   18  cos 0.335  z   5.7  chunks   1  cloud-based solution
+   19  cos 0.335  z   5.7  chunks   1  cloud-native infrastructure
+   20  cos 0.332  z   5.7  chunks   2  cloud-based analytics
+   21  cos 0.332  z   5.6  chunks   1  Azure Cloud Architecture
+   22  cos 0.330  z   5.6  chunks   4  flexible architecture
+   23  cos 0.324  z   5.4  chunks   2  distributed architecture
+   24  cos 0.321  z   5.3  chunks   1  API layer architecture
+   25  cos 0.321  z   5.3  chunks   1  cloud services integration
+   30  cos 0.310  z   5.0  chunks   2  cloud-native deployment
+   40  cos 0.300  z   4.7  chunks   1  cloud deployment strategy
+   50  cos 0.292  z   4.5  chunks   1  data pipeline architecture
+   75  cos 0.280  z   4.2  chunks   1  cloud provider
+  100  cos 0.266  z   3.8  chunks   1  widget architecture
+  150  cos 0.246  z   3.2  chunks   2  architecture integration
+  200  cos 0.235  z   2.9  chunks   6  Data Retrieval & Caching Layer
+  300  cos 0.223  z   2.6  chunks   1  automation based on usage patterns
+  500  cos 0.209  z   2.2  chunks   1  Data Fragmentation
+ 1000  cos 0.192  z   1.7  chunks  11  proprietary algorithm
+ 3000  cos 0.165  z   1.0  chunks   1  recurrent neural network
+ 8000  cos 0.133  z   0.0  chunks   1  slow performance

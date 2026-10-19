@@ -1,0 +1,81 @@
+{
+  "arm": "artefact_v4",
+  "generator_model": null,
+  "interpreter_model": "claude-sonnet-5",
+  "top_k": 50,
+  "questions_file": "C:\\Coding\\exjobbet\\GRAG-Job\\data\\questions.jsonl",
+  "n_questions": 100,
+  "n_ran": 100,
+  "n_failed": 0,
+  "timestamp": "2026-10-07T04:23:35.855340+00:00",
+  "build_stats": {
+    "build_time_s": 70.33716739993542,
+    "model": {
+      "calls": 0,
+      "tokens_in": 0,
+      "cached_input_tokens": 0,
+      "tokens_out": 0,
+      "reasoning_tokens": 0,
+      "time_s": 0.0,
+      "attempts": 0,
+      "request_s": 0.0,
+      "wait_s": 0.0,
+      "retry_s": 0.0
+    },
+    "models": [
+      "claude-sonnet-5"
+    ]
+  },
+  "retrieval_flags": {
+    "interpreter_model": "claude-sonnet-5",
+    "cos_noise": 0.002,
+    "offline": "HERB_V4_OFFLINE=on reads both query-side answers from the cache and raises where one is missing; off asks the model on a miss.",
+    "offline_at_prepare": false
+  },
+  "char_budget": 72000,
+  "code_version": {
+    "commit": "a140636a35b9ddba479df317e81ee66044b62a2b",
+    "branch": "artefact-v4",
+    "dirty": true
+  },
+  "environment": {
+    "host": "Wiktop",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.7",
+    "packages": {
+      "bm25s": "0.2.14",
+      "PyStemmer": "3.1.0",
+      "numpy": "2.4.6",
+      "sentence-transformers": "6.0.1",
+      "torch": "2.14.0+cpu",
+      "transformers": "5.12.1",
+      "httpx": "0.28.1",
+      "ragas": "0.4.3",
+      "neo4j": "6.2.0"
+    },
+    "embedder": {
+      "model": "nvidia/llama-nemotron-embed-1b-v2",
+      "revision": "113abe4acafa848e77ead9c0623205e511932348",
+      "device": "cpu",
+      "dtype": "float32"
+    }
+  },
+  "inputs": {
+    "questions_sha256": "1dfb00e8773123eb66d2d5ae2828bdce976a5e7eb0637f7b3e6c0ca6f52f47ea",
+    "ids_sha256": "cddaca624c8513c618657ece0b357b1463282f7c4ef083d1a7058959d8ccbf3d",
+    "corpus": {
+      "sha256": "4eeb46d025c6187319e462e1a78de67631e1b1dbf7b6a18f966cd14ce1ac5a82",
+      "n_files": 33
+    }
+  },
+  "graph": {
+    "database": "herb-eval-volmax",
+    "graph_version": "semantic-copy+registry-entities",
+    "graph_census_sha256": "e09bb272d8a7bbef1d8e268abcae9378c865115e6020bfee7661cf6555eb8f28",
+    "removed_tags_sha256": null,
+    "build_timestamp": "2026-08-16T21:46:16Z",
+    "source_database": "herb-eval-v2"
+  },
+  "n_exhausted": 0,
+  "flags": null
+}

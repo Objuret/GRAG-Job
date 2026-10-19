@@ -1,0 +1,552 @@
+==============================================================================================================
+arm_outputs.jsonl: key paths  A 41  B 41  C 180  D 241
+  in C, not in A: 139 paths (112 leaves)
+     calls[].attempts[]                   8 leaves  in C.lucA,C.vecAE
+         error, n, outcome, returncode, seconds, started_at, stderr, stdout
+     calls[].batch                        1 leaves  in C.vec,C.vecAE
+         (itself)
+     calls[].cost_usd                     1 leaves  in C.lucA,C.vecAE
+         (itself)
+     calls[].cwd                          1 leaves  in C.lucA,C.vecAE
+         (itself)
+     calls[].device                       1 leaves  in C.vec,C.vecAE
+         (itself)
+     calls[].dtype                        1 leaves  in C.vec,C.vecAE
+         (itself)
+     calls[].effort                       1 leaves  in C.lucA,C.vecAE
+         (itself)
+     calls[].encode_s                     1 leaves  in C.vec,C.vecAE
+         (itself)
+     calls[].envelope                    53 leaves  in C.lucA,C.vecAE
+         api_error_status, duration_api_ms, duration_ms, fast_mode_state, is_error, modelUsage.claude-haiku-4-5-20251001.cacheCreationInputTokens, modelUsage.claude-haiku-4-5-20251001.cacheReadInputTokens, modelUsage.claude-haiku-4-5-20251001.contextWindow, modelUsage.claude-haiku-4-5-20251001.costUSD, modelUsage.claude-haiku-4-5-20251001.inputTokens, modelUsage.claude-haiku-4-5-20251001.maxOutputTokens, modelUsage.claude-haiku-4-5-20251001.outputTokens, modelUsage.claude-haiku-4-5-20251001.webSearchRequests, modelUsage.claude-sonnet-5.cacheCreationInputTokens, modelUsage.claude-sonnet-5.cacheReadInputTokens, modelUsage.claude-sonnet-5.contextWindow, modelUsage.claude-sonnet-5.costUSD, modelUsage.claude-sonnet-5.inputTokens, modelUsage.claude-sonnet-5.maxOutputTokens, modelUsage.claude-sonnet-5.outputTokens, modelUsage.claude-sonnet-5.webSearchRequests, num_turns, permission_denials, result, session_id, stop_reason, structured_output.answer, subtype, terminal_reason, time_to_request_ms, total_cost_usd, ttft_ms, ttft_stream_ms, type, usage.cache_creation.ephemeral_1h_input_tokens, usage.cache_creation.ephemeral_5m_input_tokens, usage.cache_creation_input_tokens, usage.cache_read_input_tokens, usage.inference_geo, usage.input_tokens, usage.iterations[].cache_creation.ephemeral_1h_input_tokens, usage.iterations[].cache_creation.ephemeral_5m_input_tokens, usage.iterations[].cache_creation_input_tokens, usage.iterations[].cache_read_input_tokens, usage.iterations[].input_tokens, usage.iterations[].output_tokens, usage.iterations[].type, usage.output_tokens, usage.server_tool_use.web_fetch_requests, usage.server_tool_use.web_search_requests, usage.service_tier, usage.speed, uuid
+     calls[].error                        1 leaves  in C.lucA,C.vecAE
+         (itself)
+     calls[].exe                          1 leaves  in C.lucA,C.vecAE
+         (itself)
+     calls[].finished_at                  1 leaves  in C.lucA,C.vec,C.vecAE
+         (itself)
+     calls[].flags[]                      1 leaves  in C.lucA,C.vecAE
+         (itself)
+     calls[].input_type                   1 leaves  in C.vec,C.vecAE
+         (itself)
+     calls[].join_parts                   1 leaves  in C.lucA,C.vecAE
+         (itself)
+     calls[].kind                         1 leaves  in C.lucA,C.vec,C.vecAE
+         (itself)
+     calls[].lock_wait_s                  1 leaves  in C.vec,C.vecAE
+         (itself)
+     calls[].max_tries                    1 leaves  in C.lucA,C.vecAE
+         (itself)
+     calls[].model                        1 leaves  in C.lucA,C.vec,C.vecAE
+         (itself)
+     calls[].n_texts                      1 leaves  in C.vec,C.vecAE
+         (itself)
+     calls[].ok                           1 leaves  in C.lucA,C.vecAE
+         (itself)
+     calls[].payload_dropped[]            1 leaves  in C.lucA,C.vecAE
+         (itself)
+     calls[].prefix                       1 leaves  in C.vec,C.vecAE
+         (itself)
+     calls[].prompt                       1 leaves  in C.lucA,C.vecAE
+         (itself)
+     calls[].revision                     1 leaves  in C.vec,C.vecAE
+         (itself)
+     calls[].schema                       4 leaves  in C.lucA,C.vecAE
+         additionalProperties, properties.answer.type, required[], type
+     calls[].seq                          1 leaves  in C.lucA,C.vec,C.vecAE
+         (itself)
+     calls[].started_at                   1 leaves  in C.lucA,C.vec,C.vecAE
+         (itself)
+     calls[].stderr                       1 leaves  in C.lucA,C.vecAE
+         (itself)
+     calls[].stream                       1 leaves  in C.lucA,C.vecAE
+         (itself)
+     calls[].system                       1 leaves  in C.lucA,C.vecAE
+         (itself)
+     calls[].text                         1 leaves  in C.lucA,C.vecAE
+         (itself)
+     calls[].texts[]                      1 leaves  in C.vec,C.vecAE
+         (itself)
+     calls[].timeout_s                    1 leaves  in C.lucA,C.vecAE
+         (itself)
+     calls[].tokens[]                     1 leaves  in C.vec,C.vecAE
+         (itself)
+     calls[].tokens_in                    1 leaves  in C.vec,C.vecAE
+         (itself)
+     calls[].usage                        3 leaves  in C.lucA,C.vecAE
+         cached_input_tokens, completion_tokens, prompt_tokens
+     generator.cost_usd                   1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     leg                                  1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     meta.ranking                         4 leaves  in C.luc,C.vec
+         n_ranked, n_units, next_score, scores[]
+     retrieval.cost_usd                   1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     timing.finished_at                   1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     timing.started_at                    1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     timing.thread                        1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     timing.wall_s                        1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+  in A, not in C: 0 paths (0 leaves)
+  in B, not in C: 0 paths (0 leaves)
+  in D, not in C: 190 paths (136 leaves)
+     meta.chunk_ids[]                     1 leaves  in D.v4_10,D.v4_100
+         []
+     meta.diagnostics                    34 leaves  in D.v4_10,D.v4_100
+         boundary_chunk_id_not_credited, chunks_with_a_lift.near, chunks_with_a_lift.product, chunks_with_a_positive_tag_strength, chunks_with_an_eligible_edge, credited_delivered_rows, delivered_rows_with_question_above_description, delivered_strength_total, delivered_term_shares.description, delivered_term_shares.near, delivered_term_shares.product, delivered_term_shares.tags, delivered_term_sums.description, delivered_term_sums.near, delivered_term_sums.product, delivered_term_sums.tags, delivered_winning_edge_is_a_same_thing_edge[], largest_lift.near, largest_lift.product, level_step, levels_among_delivered_rows, phrases_standing_in_both_tag_lists, product_named_tags_left_out, query_tag_bulk[], query_tag_centrality[], query_tag_description_cosine[], query_tag_spread[], query_tags, same_thing_edges_per_query_tag[], same_thing_level, text_bulk.description, text_bulk.question, text_spread.description, text_spread.question
+     meta.interpreter                    16 leaves  in D.v4_10,D.v4_100
+         description_side_tags, embeddings.description_side_tags.embedding, embeddings.description_side_tags.tags, embeddings.description_side_tags.text_chars, embeddings.question.embedding, embeddings.question.text_chars, embeddings.question_side_tags.embedding, embeddings.question_side_tags.tags, model, question_side_tags, stages[].asks, stages[].cache_hit, stages[].duplicate_tags_dropped, stages[].key, stages[].offline, stages[].stage
+     meta.provenance                     49 leaves  in D.v4_10,D.v4_100
+         corpus_argument, counts.chunks, counts.chunks_in_a_near_group, counts.chunks_without_an_edge, counts.edges, counts.eligible_edges, counts.eligible_graph_tags, counts.graph_tags, counts.near_groups, counts.places, counts.products, database, facet_layer.edges, facet_layer.equal_gap[], facet_layer.equal_gap_column, facet_layer.equal_gap_facets[], facet_layer.facets[], facet_layer.name, facet_layer.pooled_flip_gap, facet_layer.pooled_flip_gap_column, facet_layer.refits, facet_layer.rows_sha256, facet_layer.run_id, facet_layer.source_bands_sha256, facet_layer.source_dir, facet_layer.source_refits_sha256, facet_layer.source_scores_sha256, facet_layer.value_others, facet_layer.value_topic, facet_layer.written, interpreter_model, run_id, same_thing_pairs.level, same_thing_pairs.median, same_thing_pairs.pairs, same_thing_pairs.point, source_sha256.prod\harness\char_budget.py, source_sha256.prod\harness\chat.py, source_sha256.prod\harness\embed.py, source_sha256.test\arms\artefact_facet_joint.py, source_sha256.test\arms\artefact_v2.py, source_sha256.test\arms\artefact_v3.py, source_sha256.test\arms\artefact_v4.py, source_sha256.test\artefact\graph_layer.py, source_sha256.test\artefact\landing.py, source_sha256.test\artefact\query_content.py, source_sha256.test\artefact\querytagger.py, source_sha256.test\artefact\v4_walk.py, topic_on_the_edge_against_the_vectors_max_abs
+     meta.ranking                         9 leaves  in D.v4_10,D.v4_100
+         delivered_chunk_ids[], delivered_levels[], delivered_query_tags[], delivered_strength[], delivered_terms.description[], delivered_terms.near[], delivered_terms.product[], delivered_terms.tags[], ordered_chunk_ids[]
+     meta.returned                        1 leaves  in D.v4_10,D.v4_100
+         (itself)
+     meta.scope                          26 leaves  in D.v4_10,D.v4_100
+         chunks_cut, chunks_kept, chunks_under_the_products, delivered_under_the_products, gauged.chunk_desc.clouds, gauged.chunk_desc.hit_chunks, gauged.chunk_desc.hit_scopes, gauged.chunk_desc.largest[].cloud, gauged.chunk_desc.largest[].hit_chunks, gauged.chunk_desc.largest[].scopes[], gauged.chunk_desc.minorities, gauged.chunk_desc.stood_apart, gauged.tags.clouds, gauged.tags.hit_chunks, gauged.tags.hit_scopes, gauged.tags.largest[].cloud, gauged.tags.largest[].hit_chunks, gauged.tags.largest[].scopes[], gauged.tags.minorities, gauged.tags.stood_apart[], places[], places_in_the_tree[], places_not_in_the_tree, places_returned[], reading, step
+  in A, not in B: []
+  in B, not in A: []
+==============================================================================================================
+run_manifest.json: key paths  A 59  B 50  C 223  D 181
+  in C, not in A: 164 paths (135 leaves)
+     build_stats.model                    1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         cost_usd
+     code_state.diff_file                 1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     code_state.diff_sha256               1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     code_state.status[]                  1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     code_state.untracked_sha256          9 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         prod/harness/capture.py, prod/tests/test_capture.py, test/artefact/graph_layer.py, test/artefact/scope_filter.py, test/artefact/v4_db.py, test/graph/write_facet_layer.py, test/tests/test_artefact_v4_clouds.py, test/tests/test_graph_layer.py, test/tests/test_v4_walk.py
+     env                                  1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     environment.cpu                      1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     environment.cpu_count                1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     environment.python_executable        1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     environment.ram_bytes                1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     generator.model                      1 leaves  in C.lucA,C.vecAE
+         (itself)
+     generator.payload                    4 leaves  in C.lucA,C.vecAE
+         chat_template_kwargs.enable_thinking, max_tokens, min_tokens, temperature
+     generator.schema                     4 leaves  in C.lucA,C.vecAE
+         additionalProperties, properties.answer.type, required[], type
+     generator.system                     1 leaves  in C.lucA,C.vecAE
+         (itself)
+     generator.timeout_s                  1 leaves  in C.lucA,C.vecAE
+         (itself)
+     generator.user_template              1 leaves  in C.lucA,C.vecAE
+         (itself)
+     index.PyStemmer                      1 leaves  in C.luc,C.lucA
+         (itself)
+     index.b                              1 leaves  in C.luc,C.lucA
+         (itself)
+     index.bm25s                          1 leaves  in C.luc,C.lucA
+         (itself)
+     index.cache_cost_note               10 leaves  in C.vec,C.vecAE
+         build_time_s, calls, device, dtype, model, replaces, revision, source, tokens_in, tokens_out
+     index.cache_file                     1 leaves  in C.vec,C.vecAE
+         (itself)
+     index.cache_file_bytes               1 leaves  in C.vec,C.vecAE
+         (itself)
+     index.cache_file_sha256              1 leaves  in C.vec,C.vecAE
+         (itself)
+     index.embedder_warm_s                1 leaves  in C.vec,C.vecAE
+         (itself)
+     index.k1                             1 leaves  in C.luc,C.lucA
+         (itself)
+     index.kept                           1 leaves  in C.luc,C.lucA
+         (itself)
+     index.matrix_bytes                   1 leaves  in C.vec,C.vecAE
+         (itself)
+     index.matrix_dtype                   1 leaves  in C.vec,C.vecAE
+         (itself)
+     index.matrix_shape[]                 1 leaves  in C.vec,C.vecAE
+         (itself)
+     index.method                         1 leaves  in C.luc,C.lucA
+         (itself)
+     index.question_embedding             1 leaves  in C.vec,C.vecAE
+         (itself)
+     index.stemmer                        1 leaves  in C.luc,C.lucA
+         (itself)
+     index.stopwords                      1 leaves  in C.luc,C.lucA
+         (itself)
+     index.text_chars                     1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     index.units                          1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     lane.cli_version                     1 leaves  in C.lucA,C.vecAE
+         (itself)
+     lane.cwd                             1 leaves  in C.lucA,C.vecAE
+         (itself)
+     lane.env_set                         1 leaves  in C.lucA,C.vecAE
+         MEMPALACE_HOOKS_AUTO_SAVE
+     lane.exe                             1 leaves  in C.lucA,C.vecAE
+         (itself)
+     lane.fixed_flags[]                   1 leaves  in C.lucA,C.vecAE
+         (itself)
+     lane.max_tries_default               1 leaves  in C.lucA,C.vecAE
+         (itself)
+     legs[].aborted                       1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].argv[]                        1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].code_state                   12 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         diff_file, diff_sha256, status[], untracked_sha256.prod/harness/capture.py, untracked_sha256.prod/tests/test_capture.py, untracked_sha256.test/artefact/graph_layer.py, untracked_sha256.test/artefact/scope_filter.py, untracked_sha256.test/artefact/v4_db.py, untracked_sha256.test/graph/write_facet_layer.py, untracked_sha256.test/tests/test_artefact_v4_clouds.py, untracked_sha256.test/tests/test_graph_layer.py, untracked_sha256.test/tests/test_v4_walk.py
+     legs[].code_version                  3 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         branch, commit, dirty
+     legs[].embedder_load_s               1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].evaluator                     1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].finished_at                   1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].flags                         1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].ids_file                      1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].index                        28 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         PyStemmer, b, bm25s, cache_cost_note.build_time_s, cache_cost_note.calls, cache_cost_note.device, cache_cost_note.dtype, cache_cost_note.model, cache_cost_note.replaces, cache_cost_note.revision, cache_cost_note.source, cache_cost_note.tokens_in, cache_cost_note.tokens_out, cache_file, cache_file_bytes, cache_file_sha256, embedder_warm_s, k1, kept, matrix_bytes, matrix_dtype, matrix_shape[], method, question_embedding, stemmer, stopwords, text_chars, units
+     legs[].lane                          6 leaves  in C.lucA,C.vecAE
+         cli_version, cwd, env_set.MEMPALACE_HOOKS_AUTO_SAVE, exe, fixed_flags[], max_tries_default
+     legs[].leg                           1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].n_answered                    1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].n_chosen                      1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].n_todo                        1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].n_unanswered_after            1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].peak_memory_bytes             1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].pid                           1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].prepare_s                     1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].process_cpu_s                 1 leaves  in C.luc,C.vec
+         (itself)
+     legs[].python_executable             1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].retrieval_only                1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].started_at                    1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].wall_s                        1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     legs[].workers                       1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+     workers                              1 leaves  in C.luc,C.lucA,C.vec,C.vecAE
+         (itself)
+  in A, not in C: 0 paths (0 leaves)
+  in B, not in C: 0 paths (0 leaves)
+  in D, not in C: 38 paths (36 leaves)
+     env.HERB_V4_CLUSTER_PLACES           1 leaves  in D.v4_10
+         (itself)
+     env.HERB_V4_CLUSTER_READING          1 leaves  in D.v4_10
+         (itself)
+     env.HERB_V4_OFFLINE                  1 leaves  in D.v4_10
+         (itself)
+     env.HERB_V4_SCOPE_STEP               1 leaves  in D.v4_10
+         (itself)
+     env.NEO4J_PASSWORD                   1 leaves  in D.v4_10
+         (itself)
+     flags.HERB_V4_CLUSTER_PLACES         1 leaves  in D.v4_10
+         (itself)
+     flags.HERB_V4_CLUSTER_READING        1 leaves  in D.v4_10
+         (itself)
+     flags.HERB_V4_OFFLINE                1 leaves  in D.v4_10
+         (itself)
+     flags.HERB_V4_SCOPE_STEP             1 leaves  in D.v4_10
+         (itself)
+     graph.build_timestamp                1 leaves  in D.v4_10,D.v4_100
+         (itself)
+     graph.database                       1 leaves  in D.v4_10,D.v4_100
+         (itself)
+     graph.graph_census_sha256            1 leaves  in D.v4_10,D.v4_100
+         (itself)
+     graph.graph_version                  1 leaves  in D.v4_10,D.v4_100
+         (itself)
+     graph.removed_tags_sha256            1 leaves  in D.v4_10,D.v4_100
+         (itself)
+     graph.source_database                1 leaves  in D.v4_10,D.v4_100
+         (itself)
+     legs[].flags                         4 leaves  in D.v4_10
+         HERB_V4_CLUSTER_PLACES, HERB_V4_CLUSTER_READING, HERB_V4_OFFLINE, HERB_V4_SCOPE_STEP
+     retrieval_flags.cloud_groups         1 leaves  in D.v4_10
+         (itself)
+     retrieval_flags.cloud_levels         1 leaves  in D.v4_10
+         (itself)
+     retrieval_flags.cloud_places         1 leaves  in D.v4_10
+         (itself)
+     retrieval_flags.cloud_shape          1 leaves  in D.v4_10
+         (itself)
+     retrieval_flags.cluster              1 leaves  in D.v4_10
+         (itself)
+     retrieval_flags.cos_noise            1 leaves  in D.v4_10,D.v4_100
+         (itself)
+     retrieval_flags.hit_stages           1 leaves  in D.v4_10
+         (itself)
+     retrieval_flags.interpreter_model    1 leaves  in D.v4_10,D.v4_100
+         (itself)
+     retrieval_flags.level_places         1 leaves  in D.v4_10
+         (itself)
+     retrieval_flags.offline              1 leaves  in D.v4_10,D.v4_100
+         (itself)
+     retrieval_flags.offline_at_prepare   1 leaves  in D.v4_10,D.v4_100
+         (itself)
+     retrieval_flags.scan_scatters        1 leaves  in D.v4_10
+         (itself)
+     retrieval_flags.scan_seed            1 leaves  in D.v4_10
+         (itself)
+     retrieval_flags.scope_settings_at_prepare   2 leaves  in D.v4_10
+         places[], reading
+     retrieval_flags.scope_step           1 leaves  in D.v4_10
+         (itself)
+     retrieval_flags.scope_step_at_prepare   1 leaves  in D.v4_10
+         (itself)
+  in A, not in B: ['environment.embedder.device', 'environment.embedder.dtype', 'environment.embedder.model', 'environment.embedder.revision', 'environment.packages.sentence-transformers', 'environment.packages.torch', 'environment.packages.transformers', 'flags']
+  in B, not in A: []
+==============================================================================================================
+eval_results.jsonl: key paths  A 8  B 8  C 25  D 25
+  in C, not in A: 17 paths (16 leaves)
+     components.usage                    16 leaves  in C.vecAE
+         cached_input_tokens, chat_attempts, chat_calls, chat_s, cost_usd, embed_calls, embed_s, embed_texts, embed_tokens, eval_leg, finished_at, started_at, thread, tokens_in, tokens_out, wall_s
+  in A, not in C: 0 paths (0 leaves)
+  in B, not in C: 0 paths (0 leaves)
+  in D, not in C: 0 paths (0 leaves)
+  in A, not in B: []
+  in B, not in A: []
+==============================================================================================================
+eval_manifest.json: key paths  A 36  B 37  C 116  D 53
+  in C, not in A: 80 paths (66 leaves)
+     judge_legs[].settings               32 leaves  in C.vecAE
+         argv[], calls_file, cells, embed_model, embedding.encode_s, embedding.lock_wait_s, embedding.requests, embedding.texts, embedding.tokens_in, finished_at, interrupted, judge_backend, judge_inflight, judge_max_tries, judge_model, judge_timeout_s, lane.cli_version, lane.cwd, lane.env_set.MEMPALACE_HOOKS_AUTO_SAVE, lane.exe, lane.fixed_flags[], lane.max_tries_default, max_consecutive_failed_questions, max_judge_context_chars, pid, python_executable, ragas, retrieval_only, scores[], started_at, wall_s, workers
+     judge_legs[].usage                   1 leaves  in C.vecAE
+         cost_usd
+     judge_settings.argv[]                1 leaves  in C.vecAE
+         (itself)
+     judge_settings.calls_file            1 leaves  in C.vecAE
+         (itself)
+     judge_settings.cells                 1 leaves  in C.vecAE
+         (itself)
+     judge_settings.embed_model           1 leaves  in C.vecAE
+         (itself)
+     judge_settings.embedding             5 leaves  in C.vecAE
+         encode_s, lock_wait_s, requests, texts, tokens_in
+     judge_settings.finished_at           1 leaves  in C.vecAE
+         (itself)
+     judge_settings.interrupted           1 leaves  in C.vecAE
+         (itself)
+     judge_settings.judge_backend         1 leaves  in C.vecAE
+         (itself)
+     judge_settings.judge_inflight        1 leaves  in C.vecAE
+         (itself)
+     judge_settings.judge_max_tries       1 leaves  in C.vecAE
+         (itself)
+     judge_settings.judge_model           1 leaves  in C.vecAE
+         (itself)
+     judge_settings.judge_timeout_s       1 leaves  in C.vecAE
+         (itself)
+     judge_settings.lane                  6 leaves  in C.vecAE
+         cli_version, cwd, env_set.MEMPALACE_HOOKS_AUTO_SAVE, exe, fixed_flags[], max_tries_default
+     judge_settings.max_consecutive_failed_questions   1 leaves  in C.vecAE
+         (itself)
+     judge_settings.max_judge_context_chars   1 leaves  in C.vecAE
+         (itself)
+     judge_settings.pid                   1 leaves  in C.vecAE
+         (itself)
+     judge_settings.python_executable     1 leaves  in C.vecAE
+         (itself)
+     judge_settings.ragas                 1 leaves  in C.vecAE
+         (itself)
+     judge_settings.retrieval_only        1 leaves  in C.vecAE
+         (itself)
+     judge_settings.scores[]              1 leaves  in C.vecAE
+         (itself)
+     judge_settings.started_at            1 leaves  in C.vecAE
+         (itself)
+     judge_settings.wall_s                1 leaves  in C.vecAE
+         (itself)
+     judge_settings.workers               1 leaves  in C.vecAE
+         (itself)
+     judge_usage.cost_usd                 1 leaves  in C.vecAE
+         (itself)
+  in A, not in C: 0 paths (0 leaves)
+  in B, not in C: 1 paths (1 leaves)
+     judge_legs[].recovered               1 leaves  in B.luc
+         (itself)
+  in D, not in C: 1 paths (1 leaves)
+     judge_settings.cells                 1 leaves  in D.v4_10
+         ok
+  in A, not in B: []
+  in B, not in A: ['judge_legs[].recovered']
+==============================================================================================================
+eval_calls.jsonl: key paths  A 0  B 0  C 119  D 0
+  in C, not in A: 119 paths (103 leaves)
+     arm                                  1 leaves  in C.vecAE
+         (itself)
+     attempts[].error                     1 leaves  in C.vecAE
+         (itself)
+     attempts[].n                         1 leaves  in C.vecAE
+         (itself)
+     attempts[].outcome                   1 leaves  in C.vecAE
+         (itself)
+     attempts[].returncode                1 leaves  in C.vecAE
+         (itself)
+     attempts[].seconds                   1 leaves  in C.vecAE
+         (itself)
+     attempts[].started_at                1 leaves  in C.vecAE
+         (itself)
+     attempts[].stderr                    1 leaves  in C.vecAE
+         (itself)
+     attempts[].stdout                    1 leaves  in C.vecAE
+         (itself)
+     batch                                1 leaves  in C.vecAE
+         (itself)
+     cost_usd                             1 leaves  in C.vecAE
+         (itself)
+     cwd                                  1 leaves  in C.vecAE
+         (itself)
+     device                               1 leaves  in C.vecAE
+         (itself)
+     dtype                                1 leaves  in C.vecAE
+         (itself)
+     effort                               1 leaves  in C.vecAE
+         (itself)
+     encode_s                             1 leaves  in C.vecAE
+         (itself)
+     envelope.api_error_status            1 leaves  in C.vecAE
+         (itself)
+     envelope.duration_api_ms             1 leaves  in C.vecAE
+         (itself)
+     envelope.duration_ms                 1 leaves  in C.vecAE
+         (itself)
+     envelope.fast_mode_state             1 leaves  in C.vecAE
+         (itself)
+     envelope.is_error                    1 leaves  in C.vecAE
+         (itself)
+     envelope.modelUsage                 16 leaves  in C.vecAE
+         claude-haiku-4-5-20251001.cacheCreationInputTokens, claude-haiku-4-5-20251001.cacheReadInputTokens, claude-haiku-4-5-20251001.contextWindow, claude-haiku-4-5-20251001.costUSD, claude-haiku-4-5-20251001.inputTokens, claude-haiku-4-5-20251001.maxOutputTokens, claude-haiku-4-5-20251001.outputTokens, claude-haiku-4-5-20251001.webSearchRequests, claude-haiku-4-5.cacheCreationInputTokens, claude-haiku-4-5.cacheReadInputTokens, claude-haiku-4-5.contextWindow, claude-haiku-4-5.costUSD, claude-haiku-4-5.inputTokens, claude-haiku-4-5.maxOutputTokens, claude-haiku-4-5.outputTokens, claude-haiku-4-5.webSearchRequests
+     envelope.num_turns                   1 leaves  in C.vecAE
+         (itself)
+     envelope.permission_denials          1 leaves  in C.vecAE
+         (itself)
+     envelope.result                      1 leaves  in C.vecAE
+         (itself)
+     envelope.session_id                  1 leaves  in C.vecAE
+         (itself)
+     envelope.stop_reason                 1 leaves  in C.vecAE
+         (itself)
+     envelope.subtype                     1 leaves  in C.vecAE
+         (itself)
+     envelope.terminal_reason             1 leaves  in C.vecAE
+         (itself)
+     envelope.time_to_request_ms          1 leaves  in C.vecAE
+         (itself)
+     envelope.total_cost_usd              1 leaves  in C.vecAE
+         (itself)
+     envelope.ttft_ms                     1 leaves  in C.vecAE
+         (itself)
+     envelope.ttft_stream_ms              1 leaves  in C.vecAE
+         (itself)
+     envelope.type                        1 leaves  in C.vecAE
+         (itself)
+     envelope.usage                      18 leaves  in C.vecAE
+         cache_creation.ephemeral_1h_input_tokens, cache_creation.ephemeral_5m_input_tokens, cache_creation_input_tokens, cache_read_input_tokens, inference_geo, input_tokens, iterations[].cache_creation.ephemeral_1h_input_tokens, iterations[].cache_creation.ephemeral_5m_input_tokens, iterations[].cache_creation_input_tokens, iterations[].cache_read_input_tokens, iterations[].input_tokens, iterations[].output_tokens, iterations[].type, output_tokens, server_tool_use.web_fetch_requests, server_tool_use.web_search_requests, service_tier, speed
+     envelope.uuid                        1 leaves  in C.vecAE
+         (itself)
+     error                                1 leaves  in C.vecAE
+         (itself)
+     eval_leg                             1 leaves  in C.vecAE
+         (itself)
+     exe                                  1 leaves  in C.vecAE
+         (itself)
+     finished_at                          1 leaves  in C.vecAE
+         (itself)
+     flags[]                              1 leaves  in C.vecAE
+         (itself)
+     input_type                           1 leaves  in C.vecAE
+         (itself)
+     join_parts                           1 leaves  in C.vecAE
+         (itself)
+     kind                                 1 leaves  in C.vecAE
+         (itself)
+     lock_wait_s                          1 leaves  in C.vecAE
+         (itself)
+     max_tries                            1 leaves  in C.vecAE
+         (itself)
+     model                                1 leaves  in C.vecAE
+         (itself)
+     n_texts                              1 leaves  in C.vecAE
+         (itself)
+     ok                                   1 leaves  in C.vecAE
+         (itself)
+     payload_dropped                      1 leaves  in C.vecAE
+         (itself)
+     phase                                1 leaves  in C.vecAE
+         (itself)
+     prefix                               1 leaves  in C.vecAE
+         (itself)
+     prompt                               1 leaves  in C.vecAE
+         (itself)
+     question_id                          1 leaves  in C.vecAE
+         (itself)
+     revision                             1 leaves  in C.vecAE
+         (itself)
+     schema                               1 leaves  in C.vecAE
+         (itself)
+     score                                1 leaves  in C.vecAE
+         (itself)
+     seq                                  1 leaves  in C.vecAE
+         (itself)
+     started_at                           1 leaves  in C.vecAE
+         (itself)
+     stderr                               1 leaves  in C.vecAE
+         (itself)
+     stream                               1 leaves  in C.vecAE
+         (itself)
+     system                               1 leaves  in C.vecAE
+         (itself)
+     text                                 1 leaves  in C.vecAE
+         (itself)
+     texts[]                              1 leaves  in C.vecAE
+         (itself)
+     timeout_s                            1 leaves  in C.vecAE
+         (itself)
+     tokens[]                             1 leaves  in C.vecAE
+         (itself)
+     tokens_in                            1 leaves  in C.vecAE
+         (itself)
+     type                                 1 leaves  in C.vecAE
+         (itself)
+     usage.cached_input_tokens            1 leaves  in C.vecAE
+         (itself)
+     usage.completion_tokens              1 leaves  in C.vecAE
+         (itself)
+     usage.prompt_tokens                  1 leaves  in C.vecAE
+         (itself)
+  in A, not in C: 0 paths (0 leaves)
+  in B, not in C: 0 paths (0 leaves)
+  in D, not in C: 0 paths (0 leaves)
+  in A, not in B: []
+  in B, not in A: []
+==============================================================================================================
+C folder by folder: key paths one C folder has and another lacks (arm_outputs.jsonl, run_manifest.json; leaves)
+  arm_outputs.jsonl C.luc: lacks 101 leaves under ['calls[].attempts[]', 'calls[].batch', 'calls[].cost_usd', 'calls[].cwd', 'calls[].device', 'calls[].dtype', 'calls[].effort', 'calls[].encode_s', 'calls[].envelope', 'calls[].error', 'calls[].exe', 'calls[].finished_at', 'calls[].flags[]', 'calls[].input_type', 'calls[].join_parts', 'calls[].kind', 'calls[].lock_wait_s', 'calls[].max_tries', 'calls[].model', 'calls[].n_texts', 'calls[].ok', 'calls[].payload_dropped[]', 'calls[].prefix', 'calls[].prompt', 'calls[].revision', 'calls[].schema', 'calls[].seq', 'calls[].started_at', 'calls[].stderr', 'calls[].stream', 'calls[].system', 'calls[].text', 'calls[].texts[]', 'calls[].timeout_s', 'calls[].tokens[]', 'calls[].tokens_in', 'calls[].usage']
+  arm_outputs.jsonl C.lucA: lacks 16 leaves under ['calls[].batch', 'calls[].device', 'calls[].dtype', 'calls[].encode_s', 'calls[].input_type', 'calls[].lock_wait_s', 'calls[].n_texts', 'calls[].prefix', 'calls[].revision', 'calls[].texts[]', 'calls[].tokens[]', 'calls[].tokens_in', 'meta.ranking']
+  arm_outputs.jsonl C.vec: lacks 84 leaves under ['calls[].attempts[]', 'calls[].cost_usd', 'calls[].cwd', 'calls[].effort', 'calls[].envelope', 'calls[].error', 'calls[].exe', 'calls[].flags[]', 'calls[].join_parts', 'calls[].max_tries', 'calls[].ok', 'calls[].payload_dropped[]', 'calls[].prompt', 'calls[].schema', 'calls[].stderr', 'calls[].stream', 'calls[].system', 'calls[].text', 'calls[].timeout_s', 'calls[].usage']
+  arm_outputs.jsonl C.vecAE: lacks 4 leaves under ['meta.ranking']
+  run_manifest.json C.luc: lacks 61 leaves under ['build_stats.models[]', 'generator.model', 'generator.payload', 'generator.schema', 'generator.system', 'generator.timeout_s', 'generator.user_template', 'index.cache_cost_note', 'index.cache_file', 'index.cache_file_bytes', 'index.cache_file_sha256', 'index.embedder_warm_s', 'index.matrix_bytes', 'index.matrix_dtype', 'index.matrix_shape[]', 'index.question_embedding', 'lane.cli_version', 'lane.cwd', 'lane.env_set', 'lane.exe', 'lane.fixed_flags[]', 'lane.max_tries_default', 'legs[].index', 'legs[].lane']
+  run_manifest.json C.lucA: lacks 38 leaves under ['build_stats.models[]', 'index.cache_cost_note', 'index.cache_file', 'index.cache_file_bytes', 'index.cache_file_sha256', 'index.embedder_warm_s', 'index.matrix_bytes', 'index.matrix_dtype', 'index.matrix_shape[]', 'index.question_embedding', 'legs[].index', 'legs[].process_cpu_s']
+  run_manifest.json C.vec: lacks 40 leaves under ['generator.model', 'generator.payload', 'generator.schema', 'generator.system', 'generator.timeout_s', 'generator.user_template', 'index.PyStemmer', 'index.b', 'index.bm25s', 'index.k1', 'index.kept', 'index.method', 'index.stemmer', 'index.stopwords', 'lane.cli_version', 'lane.cwd', 'lane.env_set', 'lane.exe', 'lane.fixed_flags[]', 'lane.max_tries_default', 'legs[].index', 'legs[].lane']
+  run_manifest.json C.vecAE: lacks 17 leaves under ['index.PyStemmer', 'index.b', 'index.bm25s', 'index.k1', 'index.kept', 'index.method', 'index.stemmer', 'index.stopwords', 'legs[].index', 'legs[].process_cpu_s']

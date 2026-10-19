@@ -1,0 +1,308 @@
+CLI: 2.1.212 (Claude Code)
+
+===== probe a_attribution_off: extra flags () extra env [('CLAUDE_CODE_ATTRIBUTION_HEADER', '0')]
+{
+ "probe": "a_attribution_off",
+ "started_at": "2026-10-08T19:35:38.824035+00:00",
+ "finished_at": "2026-10-08T19:35:45.424176+00:00",
+ "seconds": 6.598,
+ "returncode": 0,
+ "model": "claude-sonnet-5",
+ "flags": [
+  "-p",
+  "--model",
+  "claude-sonnet-5",
+  "--output-format",
+  "json",
+  "--tools",
+  "",
+  "--safe-mode"
+ ],
+ "extra_env": [
+  "CLAUDE_CODE_ATTRIBUTION_HEADER",
+  "<request logging>"
+ ],
+ "prompt_chars": 822,
+ "session_id": "3a9c10d2-6ff3-43d4-a0f7-9b088961370d",
+ "num_turns": 2,
+ "stop_reason": "tool_use",
+ "usage": {
+  "input_tokens": 985,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 343
+ },
+ "modelUsage": {
+  "claude-haiku-4-5-20251001": {
+   "inputTokens": 752,
+   "outputTokens": 18,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  },
+  "claude-sonnet-5": {
+   "inputTokens": 985,
+   "outputTokens": 343,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  }
+ },
+ "duration_ms": 4372,
+ "duration_api_ms": 5765,
+ "result_chars": 696
+}
+
+===== probe a_attachments_off: extra flags () extra env [('CLAUDE_CODE_DISABLE_ATTACHMENTS', '1')]
+{
+ "probe": "a_attachments_off",
+ "started_at": "2026-10-08T19:35:45.426169+00:00",
+ "finished_at": "2026-10-08T19:35:52.451099+00:00",
+ "seconds": 7.024,
+ "returncode": 0,
+ "model": "claude-sonnet-5",
+ "flags": [
+  "-p",
+  "--model",
+  "claude-sonnet-5",
+  "--output-format",
+  "json",
+  "--tools",
+  "",
+  "--safe-mode"
+ ],
+ "extra_env": [
+  "CLAUDE_CODE_DISABLE_ATTACHMENTS",
+  "<request logging>"
+ ],
+ "prompt_chars": 822,
+ "session_id": "f4457ca6-e63f-4264-8768-0a49e7e664d1",
+ "num_turns": 2,
+ "stop_reason": "tool_use",
+ "usage": {
+  "input_tokens": 985,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 386
+ },
+ "modelUsage": {
+  "claude-haiku-4-5-20251001": {
+   "inputTokens": 752,
+   "outputTokens": 14,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  },
+  "claude-sonnet-5": {
+   "inputTokens": 985,
+   "outputTokens": 386,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  }
+ },
+ "duration_ms": 5315,
+ "duration_api_ms": 5910,
+ "result_chars": 846
+}
+
+===== probe a_demo: extra flags () extra env [('IS_DEMO', '1')]
+{
+ "probe": "a_demo",
+ "started_at": "2026-10-08T19:35:52.453097+00:00",
+ "finished_at": "2026-10-08T19:35:59.239530+00:00",
+ "seconds": 6.785,
+ "returncode": 0,
+ "model": "claude-sonnet-5",
+ "flags": [
+  "-p",
+  "--model",
+  "claude-sonnet-5",
+  "--output-format",
+  "json",
+  "--tools",
+  "",
+  "--safe-mode"
+ ],
+ "extra_env": [
+  "IS_DEMO",
+  "<request logging>"
+ ],
+ "prompt_chars": 822,
+ "session_id": "24612eb3-f053-4b86-bb09-40bea7917b4f",
+ "num_turns": 2,
+ "stop_reason": "tool_use",
+ "usage": {
+  "input_tokens": 985,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 341
+ },
+ "modelUsage": {
+  "claude-haiku-4-5-20251001": {
+   "inputTokens": 752,
+   "outputTokens": 19,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  },
+  "claude-sonnet-5": {
+   "inputTokens": 985,
+   "outputTokens": 341,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  }
+ },
+ "duration_ms": 5133,
+ "duration_api_ms": 5981,
+ "result_chars": 677
+}
+
+===== probe a_thinking_off: extra flags () extra env [('MAX_THINKING_TOKENS', '0')]
+{
+ "probe": "a_thinking_off",
+ "started_at": "2026-10-08T19:35:59.250185+00:00",
+ "finished_at": "2026-10-08T19:36:04.064774+00:00",
+ "seconds": 4.814,
+ "returncode": 0,
+ "model": "claude-sonnet-5",
+ "flags": [
+  "-p",
+  "--model",
+  "claude-sonnet-5",
+  "--output-format",
+  "json",
+  "--tools",
+  "",
+  "--safe-mode"
+ ],
+ "extra_env": [
+  "MAX_THINKING_TOKENS",
+  "<request logging>"
+ ],
+ "prompt_chars": 822,
+ "session_id": "b3ca978b-04f4-4c6a-9c18-3ff765a0a94f",
+ "num_turns": 2,
+ "stop_reason": "tool_use",
+ "usage": {
+  "input_tokens": 985,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 194
+ },
+ "modelUsage": {
+  "claude-haiku-4-5-20251001": {
+   "inputTokens": 752,
+   "outputTokens": 18,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  },
+  "claude-sonnet-5": {
+   "inputTokens": 985,
+   "outputTokens": 194,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  }
+ },
+ "duration_ms": 3146,
+ "duration_api_ms": 3798,
+ "result_chars": 431
+}
+
+===== probe a_effort_flag_high: extra flags ('--effort', 'high') extra env []
+{
+ "probe": "a_effort_flag_high",
+ "started_at": "2026-10-08T19:36:04.074052+00:00",
+ "finished_at": "2026-10-08T19:36:11.086863+00:00",
+ "seconds": 7.011,
+ "returncode": 0,
+ "model": "claude-sonnet-5",
+ "flags": [
+  "-p",
+  "--model",
+  "claude-sonnet-5",
+  "--output-format",
+  "json",
+  "--tools",
+  "",
+  "--safe-mode",
+  "--effort",
+  "high"
+ ],
+ "extra_env": [
+  "<request logging>"
+ ],
+ "prompt_chars": 822,
+ "session_id": "eb43b051-2c95-475d-895a-97f7d077a65e",
+ "num_turns": 2,
+ "stop_reason": "tool_use",
+ "usage": {
+  "input_tokens": 985,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 371
+ },
+ "modelUsage": {
+  "claude-haiku-4-5-20251001": {
+   "inputTokens": 752,
+   "outputTokens": 18,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  },
+  "claude-sonnet-5": {
+   "inputTokens": 985,
+   "outputTokens": 371,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  }
+ },
+ "duration_ms": 5392,
+ "duration_api_ms": 6213,
+ "result_chars": 605
+}
+
+===== probe a_effort_env_auto: extra flags () extra env [('CLAUDE_CODE_EFFORT_LEVEL', 'auto')]
+{
+ "probe": "a_effort_env_auto",
+ "started_at": "2026-10-08T19:36:11.088968+00:00",
+ "finished_at": "2026-10-08T19:36:17.609562+00:00",
+ "seconds": 6.519,
+ "returncode": 0,
+ "model": "claude-sonnet-5",
+ "flags": [
+  "-p",
+  "--model",
+  "claude-sonnet-5",
+  "--output-format",
+  "json",
+  "--tools",
+  "",
+  "--safe-mode"
+ ],
+ "extra_env": [
+  "CLAUDE_CODE_EFFORT_LEVEL",
+  "<request logging>"
+ ],
+ "prompt_chars": 822,
+ "session_id": "b7d1d42b-948b-461b-8f6c-77d2189577f8",
+ "num_turns": 2,
+ "stop_reason": "tool_use",
+ "usage": {
+  "input_tokens": 985,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 333
+ },
+ "modelUsage": {
+  "claude-haiku-4-5-20251001": {
+   "inputTokens": 752,
+   "outputTokens": 18,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  },
+  "claude-sonnet-5": {
+   "inputTokens": 985,
+   "outputTokens": 333,
+   "cacheCreationInputTokens": 0,
+   "cacheReadInputTokens": 0
+  }
+ },
+ "duration_ms": 4823,
+ "duration_api_ms": 5444,
+ "result_chars": 573
+}

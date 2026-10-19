@@ -1,0 +1,4 @@
+  html: graph.html written - open in any browser, no server needed
+  done in 21.7s
+rejected 11119, collapsed 724 duplicates
+done in 148.3s

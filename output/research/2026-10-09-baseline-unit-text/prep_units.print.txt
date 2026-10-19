@@ -1,0 +1,22 @@
+resource module not available on Windows
+lucene: 38540 artifacts + 0 directory records
+vector: 38540 artifacts + 0 directory records
+form: SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript
+units 38540 | same ids and texts in both arms: True | units_sha256 af778f9dc9fbf1519ebb6a8b252351d5b6647a1c12112c23e7ab4924c28c1ef1
+the arm's cache file for these texts: llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz | exists: False
+same 38540 unit ids, in the same order, as the 10-07 vectors: True
+characters per unit, by kind (vector's text of 10-07 -> the new text):
+   slack                n  33632 | before: min 51 median 194 mean 206 99% 407 max 703 | after: min 120 median 262 mean 274 99% 475 max 771 | total 6,931,269 -> 9,221,516 (x1.33)
+   documents            n    400 | before: min 2623 median 4654 mean 4858 99% 7663 max 8656 | after: min 2783 median 4836 mean 5037 99% 7859 max 8830 | total 1,943,308 -> 2,014,838 (x1.04)
+   meeting_transcripts  n    321 | before: min 2046 median 2895 mean 3044 99% 5046 max 5508 | after: min 2129 median 3426 mean 3560 99% 5725 max 6218 | total 977,076 -> 1,142,756 (x1.17)
+   meeting_chats        n     50 | before: min 110 median 115 mean 118 99% 127 max 128 | after: min 153 median 160 mean 161 99% 172 max 173 | total 5,880 -> 8,070 (x1.37)
+   urls                 n    575 | before: min 60 median 114 mean 117 99% 197 max 206 | after: min 79 median 133 mean 136 99% 216 max 225 | total 67,439 -> 78,364 (x1.16)
+   prs                  n   3562 | before: min 104 median 162 mean 369 99% 1230 max 1445 | after: min 329 median 391 mean 613 99% 1463 max 1675 | total 1,312,949 -> 2,181,977 (x1.66)
+   all                  n  38540 | total 11,237,921 -> 14,647,521 (x1.30) | mean 292 -> 380 | units that fit in 72,000 characters at the mean: 246 -> 189
+   longer than 72,000 characters: 0
+units whose text equals an earlier unit's text: before 354, after 0
+embedder: loading nvidia/llama-nemotron-embed-1b-v2 @ 113abe4acafa on cpu (float32) — first use
+embedder: ready in 27s (2048 dim, 8192-token context)
+embedder's longest input 8192 tokens | units over it: 0 (longest unit 1540 tokens; 4 longest units tokenised, the rest are shorter than 8192 characters)
+corpus_units.jsonl: 38540 rows, sha256 45b13744ea5326fde468c6af7a816f2cbb80a0234db1420da721cf77144f6dc8
+sample.jsonl: 200 rows, sha256 a50c735b79bf8f79bfe8361e9813f7b4ea3cfd8698f033382c7599fd74e2e274

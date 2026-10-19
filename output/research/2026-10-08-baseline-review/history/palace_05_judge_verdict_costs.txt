@@ -1,0 +1,102 @@
+
+============================================================
+  Results for: "what a judge verdict costs"
+  Wing: grag-job
+============================================================
+
+  [1] grag-job / technical
+      Source: 7e83ce9f-406e-4001-ae0f-57bb7c4ee5db.jsonl
+      Match:  cosine_sim=0.389  bm25=3.043
+
+      nd environment catch up
+      → 8e33b2d runs record which graph they queried
+      → 69e2048 matched evidence budgets in characters
+      → fc0f611 a person path beside tags, description and stated scope
+      → a8668cb two arms: relevance weighting and five-questions matching
+      → 8ee8693 herb-eval-v2: cleaned tag vocabulary, person product and channel nodes
+      → 3f13627 entity nodes ordered, the tag vocabulary read, four paths where the concept was a chain
+      → 05194ff the record carries his turns through 08-13
+      → 8c8c787 what the det probes varied, and what a judge verdict costs
+      → --- state docs ---
+      → 2026-08-12-entity-nodes-and-tag-cleanup-design.md
+      → 2026-08-13-person-support-path.md
+      → 2026-08-11-five-questions-matching-design.md
+      → 2026-08-11-tag-vocabulary-inventory.md
+      → 2026-08-11-relevance-weight-demand-and-facet-m
+
+  --------------------------------------------------------
+  [2] grag-job / general
+      Source: ENVIRONMENT.md
+      Match:  cosine_sim=0.444  bm25=1.793
+
+      with "Not logged in"; and headless
+      reads stdin, so redirect it (`< /dev/null`) to avoid a 3s stall.
+      
+      Measured throughput, 2026-07-17, haiku: **5.3 s per verdict serial, and 4 verdicts in
+      6.6 s concurrently.** That is the only latency figure anyone has recorded for this lane,
+      and it is what a judge-run cost estimate should be built on rather than a guess. Source:
+      the machine-local `2026-07-17-judge-shootout-rebuilt-artefact-v1-laptop.md`; not
+      re-measured since, and no judge run in `output/` persisted timing to check it against
+      (`judge_elapsed_s` is null in every eval manifest).
+      
+      ### State-transfer docs
+      
+      **Two locations are live, and the OneDrive one is authoritative.**
+
+  --------------------------------------------------------
+  [3] grag-job / architecture
+      Source: ecbdfcc2-6259-4c0a-a702-70b48e2fc5d7.jsonl
+      Match:  cosine_sim=0.379  bm25=1.62
+
+      > now we are making it do a judgement on a judgement? or am i misunderstsanding that?
+      Partly right. As the answers stand, yes. The prompt asked either-or questions, so every answer opens with a verdict and then explains from the text. The reader then judges that verdict-plus-explanation. Two judgements stacked, and the pole reading kept only the verdict half.
+      
+      The clean form has one judgement. The edge carries a description: what the text does with the phrase, in the context of this text, quoting it, no yes or no. The NLI makes the one judgement, at query time, of that description against what the query needs. Haiku describes, the reader judges.
+      
+      The answers on disk are close to that already. Strip the opening verdict clause and the explanation that follows is the description, on most of t
+
+  --------------------------------------------------------
+  [4] grag-job / architecture
+      Source: ecbdfcc2-6259-4c0a-a702-70b48e2fc5d7.jsonl
+      Match:  cosine_sim=0.447  bm25=0.662
+
+      ut off the verdict clause, run the reader with each candidate claim, and see if the claim separates the content on its own with the verdict word gone. That was the sixteen-minute CPU pass.
+      
+      The output was one report with the candidates and their numbers, so that when we go through temporal, why, activity and concreteness, each candidate claim is on the table with evidence, not just my wording.
+      
+      That is all it was. Whether to run it is your call.
+
+  --------------------------------------------------------
+  [5] grag-job / technical
+      Source: feedback_judge_run_cost_math.md
+      Match:  cosine_sim=0.375  bm25=0.743
+
+      ---
+      name: judge-run-cost-math
+      description: "Do the usage/cost math before green-lighting any judge run — k=50 prompts are huge, Sonnet/Opus drain the shared subscription window, wide-open concurrency multiplies it"
+      metadata: 
+        node_type: memory
+        type: feedback
+        originSessionId: 3b10041c-68f0-4aa1-a959-730ed70f5cc7
+        modified: 2026-08-07T05:36:52.938Z
+      ---
+
+  --------------------------------------------------------
+  [6] grag-job / technical
+      Source: b2c67359-13c4-47a7-848b-2ec7fe8014b1.jsonl
+      Match:  cosine_sim=0.372  bm25=0.676
+
+      exit � no questions, no scoring. The construction cost
+      →                         is saved beside the index. Re-run an eval later; it
+      →                         loads the cached index. (default: False)
+      →   --no-eval             arm run only � generate answers to arm_outputs.jsonl,
+      →                         skip RAGAS scoring (default: False)
+      →   --retrieval-only      retrieval only � no generation (generator=None);
+      →                         ArmOutput.answer is empty. RAGAS scores only the
+      →                         judge-free, embed-free metrics (context_precision_id,
+      →                         context_recall_id, context_precision_nonllm,
+      →                         context_recall_nonllm, and the deterministic answer-
+      →                         vs-gold string scores); the judge+embed p
+
+  --------------------------------------------------------
+

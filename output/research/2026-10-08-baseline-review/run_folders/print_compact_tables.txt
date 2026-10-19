@@ -1,0 +1,330 @@
+
+### arm_outputs.jsonl
+rows per folder: A.luc 100, A.vec 100, B.luc 100, B.vec 100, C.luc 1, C.lucA 1, C.vec 1, C.vecAE 1, D.v4_100 100, D.v4_10 10
+| key path | type | A (luc vec) | B (luc vec) | C (luc lucA vec vecAE) | D (v4_100 v4_10) |
+|---|---|---|---|---|---|
+| `answer` | str | Y Y | Y Y | 0 Y 0 Y | 0 0 |
+| `answered_at` | str | Y Y | Y Y | Y Y Y Y | Y Y |
+| `calls[].attempts[]` + 8 leaves: error, n, outcome, returncode, seconds, started_at, stderr, stdout | | - - | - - | - 8(4Y) - 8(4Y) | - - |
+| `calls[].batch` | int | - - | - - | - - Y Y | - - |
+| `calls[].cost_usd` | float | - - | - - | - Y - Y | - - |
+| `calls[].cwd` | str | - - | - - | - Y - Y | - - |
+| `calls[].device` | str | - - | - - | - - Y Y | - - |
+| `calls[].dtype` | str | - - | - - | - - Y Y | - - |
+| `calls[].effort` | null | - - | - - | - n - n | - - |
+| `calls[].encode_s` | float | - - | - - | - - Y Y | - - |
+| `calls[].envelope` + 53 leaves: api_error_status, duration_api_ms, duration_ms, fast_mode_state, is_error, modelUsage.claude-haiku-4-5-20251001.cacheCreationInputTokens, modelUsage.claude-haiku-4-5-20251001.cacheReadInputTokens, modelUsage.claude-haiku-4-5-20251001.contextWindow, modelUsage.claude-haiku-4-5-20251001.costUSD, modelUsage.claude-haiku-4-5-20251001.inputTokens, modelUsage.claude-haiku-4-5-20251001.maxOutputTokens, modelUsage.claude-haiku-4-5-20251001.outputTokens, modelUsage.claude-haiku-4-5-20251001.webSearchRequests, modelUsage.claude-sonnet-5.cacheCreationInputTokens, modelUsage.claude-sonnet-5.cacheReadInputTokens, modelUsage.claude-sonnet-5.contextWindow, modelUsage.claude-sonnet-5.costUSD, modelUsage.claude-sonnet-5.inputTokens, modelUsage.claude-sonnet-5.maxOutputTokens, modelUsage.claude-sonnet-5.outputTokens, modelUsage.claude-sonnet-5.webSearchRequests, num_turns, permission_denials, result, session_id, stop_reason, structured_output.answer, subtype, terminal_reason, time_to_request_ms, total_cost_usd, ttft_ms, ttft_stream_ms, type, usage.cache_creation.ephemeral_1h_input_tokens, usage.cache_creation.ephemeral_5m_input_tokens, usage.cache_creation_input_tokens, usage.cache_read_input_tokens, usage.inference_geo, usage.input_tokens, usage.iterations[].cache_creation.ephemeral_1h_input_tokens, usage.iterations[].cache_creation.ephemeral_5m_input_tokens, usage.iterations[].cache_creation_input_tokens, usage.iterations[].cache_read_input_tokens, usage.iterations[].input_tokens, usage.iterations[].output_tokens, usage.iterations[].type, usage.output_tokens, usage.server_tool_use.web_fetch_requests, usage.server_tool_use.web_search_requests, usage.service_tier, usage.speed, uuid | | - - | - - | - 53(39Y) - 53(39Y) | - - |
+| `calls[].error` | null | - - | - - | - n - n | - - |
+| `calls[].exe` | str | - - | - - | - Y - Y | - - |
+| `calls[].finished_at` | str | - - | - - | - Y Y Y | - - |
+| `calls[].flags[]` | str | - - | - - | - Y - Y | - - |
+| `calls[].input_type` | str | - - | - - | - - Y Y | - - |
+| `calls[].join_parts` | bool | - - | - - | - 0 - 0 | - - |
+| `calls[].kind` | str | - - | - - | - Y Y Y | - - |
+| `calls[].lock_wait_s` | float | - - | - - | - - Y Y | - - |
+| `calls[].max_tries` | int | - - | - - | - Y - Y | - - |
+| `calls[].model` | str | - - | - - | - Y Y Y | - - |
+| `calls[].n_texts` | int | - - | - - | - - Y Y | - - |
+| `calls[].ok` | bool | - - | - - | - Y - Y | - - |
+| `calls[].payload_dropped[]` | str | - - | - - | - Y - Y | - - |
+| `calls[].prefix` | str | - - | - - | - - Y Y | - - |
+| `calls[].prompt` | str | - - | - - | - Y - Y | - - |
+| `calls[].revision` | str | - - | - - | - - Y Y | - - |
+| `calls[].schema` + 4 leaves: additionalProperties, properties.answer.type, required[], type | | - - | - - | - 4(3Y) - 4(3Y) | - - |
+| `calls[].seq` | int | - - | - - | - 0 0 Y | - - |
+| `calls[].started_at` | str | - - | - - | - Y Y Y | - - |
+| `calls[].stderr` | str | - - | - - | - 0 - 0 | - - |
+| `calls[].stream` | null | - - | - - | - n - n | - - |
+| `calls[].system` | str | - - | - - | - Y - Y | - - |
+| `calls[].text` | str | - - | - - | - Y - Y | - - |
+| `calls[].texts[]` | str | - - | - - | - - Y Y | - - |
+| `calls[].timeout_s` | float | - - | - - | - Y - Y | - - |
+| `calls[].tokens[]` | int | - - | - - | - - Y Y | - - |
+| `calls[].tokens_in` | int | - - | - - | - - Y Y | - - |
+| `calls[].usage` + 3 leaves: cached_input_tokens, completion_tokens, prompt_tokens | | - - | - - | - 3(2Y) - 3(2Y) | - - |
+| `context_ids[]` | str | Y Y | Y Y | Y Y Y Y | Y Y |
+| `contexts[]` | str | Y Y | Y Y | Y Y Y Y | Y Y |
+| `generator.attempts` | int | Y Y | Y Y | 0 Y 0 Y | 0 0 |
+| `generator.cached_input_tokens` | int | nz=4 nz=2 | nz=81 nz=99 | 0 0 0 0 | 0 0 |
+| `generator.calls` | int | Y Y | Y Y | 0 Y 0 Y | 0 0 |
+| `generator.cost_usd` | float | - - | - - | 0 Y 0 Y | - 0 |
+| `generator.reasoning_tokens` | int | 0 0 | 0 0 | 0 0 0 0 | 0 0 |
+| `generator.request_s` | float | Y Y | Y Y | 0 Y 0 Y | 0 0 |
+| `generator.retry_s` | float | 0 0 | 0 0 | 0 0 0 0 | 0 0 |
+| `generator.time_s` | float | Y Y | Y Y | 0 Y 0 Y | 0 0 |
+| `generator.tokens_in` | int | Y Y | nz=92 Y | 0 Y 0 Y | 0 0 |
+| `generator.tokens_out` | int | Y Y | nz=92 Y | 0 Y 0 Y | 0 0 |
+| `generator.wait_s` | float | 0 0 | 0 0 | 0 0 0 0 | 0 0 |
+| `id` | str | Y Y | Y Y | Y Y Y Y | Y Y |
+| `leg` | int | - - | - - | Y Y Y Y | - Y |
+| `meta.char_budget.boundary.chars_full` | int | Y Y | Y Y | Y Y Y Y | Y Y |
+| `meta.char_budget.boundary.chars_kept` | int | Y Y | Y Y | Y Y Y Y | Y Y |
+| `meta.char_budget.boundary.id` | str | Y Y | Y Y | Y Y Y Y | Y Y |
+| `meta.char_budget.budget` | int | Y Y | Y Y | Y Y Y Y | Y Y |
+| `meta.char_budget.chars` | int | Y Y | Y Y | Y Y Y Y | Y Y |
+| `meta.char_budget.exhausted` | bool | 0 0 | 0 0 | 0 0 0 0 | 0 0 |
+| `meta.char_budget.kept` | int | Y Y | Y Y | Y Y Y Y | Y Y |
+| `meta.chunk_ids` + 1 leaves: [][] | | - - | - - | - - - - | 1(1Y) 1(1Y) |
+| `meta.diagnostics` + 34 leaves: boundary_chunk_id_not_credited, chunks_with_a_lift.near, chunks_with_a_lift.product, chunks_with_a_positive_tag_strength, chunks_with_an_eligible_edge, credited_delivered_rows, delivered_rows_with_question_above_description, delivered_strength_total, delivered_term_shares.description, delivered_term_shares.near, delivered_term_shares.product, delivered_term_shares.tags, delivered_term_sums.description, delivered_term_sums.near, delivered_term_sums.product, delivered_term_sums.tags, delivered_winning_edge_is_a_same_thing_edge[], largest_lift.near, largest_lift.product, level_step, levels_among_delivered_rows, phrases_standing_in_both_tag_lists, product_named_tags_left_out, query_tag_bulk[], query_tag_centrality[], query_tag_description_cosine[], query_tag_spread[], query_tags, same_thing_edges_per_query_tag[], same_thing_level, text_bulk.description, text_bulk.question, text_spread.description, text_spread.question | | - - | - - | - - - - | 34(32Y) 34(30Y) |
+| `meta.interpreter` + 16 leaves: description_side_tags, embeddings.description_side_tags.embedding, embeddings.description_side_tags.tags, embeddings.description_side_tags.text_chars, embeddings.question.embedding, embeddings.question.text_chars, embeddings.question_side_tags.embedding, embeddings.question_side_tags.tags, model, question_side_tags, stages[].asks, stages[].cache_hit, stages[].duplicate_tags_dropped, stages[].key, stages[].offline, stages[].stage | | - - | - - | - - - - | 16(14Y) 16(15Y) |
+| `meta.provenance` + 49 leaves: corpus_argument, counts.chunks, counts.chunks_in_a_near_group, counts.chunks_without_an_edge, counts.edges, counts.eligible_edges, counts.eligible_graph_tags, counts.graph_tags, counts.near_groups, counts.places, counts.products, database, facet_layer.edges, facet_layer.equal_gap[], facet_layer.equal_gap_column, facet_layer.equal_gap_facets[], facet_layer.facets[], facet_layer.name, facet_layer.pooled_flip_gap, facet_layer.pooled_flip_gap_column, facet_layer.refits, facet_layer.rows_sha256, facet_layer.run_id, facet_layer.source_bands_sha256, facet_layer.source_dir, facet_layer.source_refits_sha256, facet_layer.source_scores_sha256, facet_layer.value_others, facet_layer.value_topic, facet_layer.written, interpreter_model, run_id, same_thing_pairs.level, same_thing_pairs.median, same_thing_pairs.pairs, same_thing_pairs.point, source_sha256.prod\harness\char_budget.py, source_sha256.prod\harness\chat.py, source_sha256.prod\harness\embed.py, source_sha256.test\arms\artefact_facet_joint.py, source_sha256.test\arms\artefact_v2.py, source_sha256.test\arms\artefact_v3.py, source_sha256.test\arms\artefact_v4.py, source_sha256.test\artefact\graph_layer.py, source_sha256.test\artefact\landing.py, source_sha256.test\artefact\query_content.py, source_sha256.test\artefact\querytagger.py, source_sha256.test\artefact\v4_walk.py, topic_on_the_edge_against_the_vectors_max_abs | | - - | - - | - - - - | 49(47Y) 49(47Y) |
+| `meta.ranking.delivered_chunk_ids[]` | str | - - | - - | - - - - | Y Y |
+| `meta.ranking.delivered_levels[]` | int | - - | - - | - - - - | Y Y |
+| `meta.ranking.delivered_query_tags[]` | int | - - | - - | - - - - | nz=98 Y |
+| `meta.ranking.delivered_strength[]` | float | - - | - - | - - - - | Y Y |
+| `meta.ranking.delivered_terms.description[]` | float | - - | - - | - - - - | Y Y |
+| `meta.ranking.delivered_terms.near[]` | float | - - | - - | - - - - | Y Y |
+| `meta.ranking.delivered_terms.product[]` | float | - - | - - | - - - - | Y nz=9 |
+| `meta.ranking.delivered_terms.tags[]` | float | - - | - - | - - - - | Y Y |
+| `meta.ranking.n_ranked` | int | - - | - - | Y - Y - | - - |
+| `meta.ranking.n_units` | int | - - | - - | Y - Y - | - - |
+| `meta.ranking.next_score` | float | - - | - - | Y - Y - | - - |
+| `meta.ranking.ordered_chunk_ids[]` | str | - - | - - | - - - - | Y Y |
+| `meta.ranking.scores[]` | float | - - | - - | Y - Y - | - - |
+| `meta.returned` | int | - - | - - | - - - - | Y Y |
+| `meta.scope` + 26 leaves: chunks_cut, chunks_kept, chunks_under_the_products, delivered_under_the_products, gauged.chunk_desc.clouds, gauged.chunk_desc.hit_chunks, gauged.chunk_desc.hit_scopes, gauged.chunk_desc.largest[].cloud, gauged.chunk_desc.largest[].hit_chunks, gauged.chunk_desc.largest[].scopes[], gauged.chunk_desc.minorities, gauged.chunk_desc.stood_apart, gauged.tags.clouds, gauged.tags.hit_chunks, gauged.tags.hit_scopes, gauged.tags.largest[].cloud, gauged.tags.largest[].hit_chunks, gauged.tags.largest[].scopes[], gauged.tags.minorities, gauged.tags.stood_apart[], places[], places_in_the_tree[], places_not_in_the_tree, places_returned[], reading, step | | - - | - - | - - - - | 5(4Y) 22(20Y) |
+| `question` | str | Y Y | Y Y | Y Y Y Y | Y Y |
+| `retrieval.attempts` | int | 0 0 | 0 0 | 0 0 Y Y | Y 0 |
+| `retrieval.cached_input_tokens` | int | 0 0 | 0 0 | 0 0 0 0 | nz=94 0 |
+| `retrieval.calls` | int | 0 0 | 0 0 | 0 0 Y Y | Y 0 |
+| `retrieval.cost_usd` | float | - - | - - | 0 0 0 0 | - 0 |
+| `retrieval.reasoning_tokens` | int | 0 0 | 0 0 | 0 0 0 0 | 0 0 |
+| `retrieval.request_s` | float | 0 0 | 0 0 | 0 0 Y Y | Y 0 |
+| `retrieval.retry_s` | float | 0 0 | 0 0 | 0 0 0 0 | 0 0 |
+| `retrieval.time_s` | float | 0 0 | 0 0 | 0 0 Y Y | Y 0 |
+| `retrieval.tokens_in` | int | 0 0 | 0 0 | 0 0 Y Y | Y 0 |
+| `retrieval.tokens_out` | int | 0 0 | 0 0 | 0 0 0 0 | Y 0 |
+| `retrieval.wait_s` | float | 0 0 | 0 0 | 0 0 0 0 | 0 0 |
+| `search_time_s` | float | Y Y | Y Y | Y Y Y Y | Y Y |
+| `timing.finished_at` | str | - - | - - | Y Y Y Y | - Y |
+| `timing.started_at` | str | - - | - - | Y Y Y Y | - Y |
+| `timing.thread` | str | - - | - - | Y Y Y Y | - Y |
+| `timing.wall_s` | float | - - | - - | Y Y Y Y | - Y |
+
+### run_manifest.json
+rows per folder: A.luc 1, A.vec 1, B.luc 1, B.vec 1, C.luc 1, C.lucA 1, C.vec 1, C.vecAE 1, D.v4_100 1, D.v4_10 1
+| key path | type | A (luc vec) | B (luc vec) | C (luc lucA vec vecAE) | D (v4_100 v4_10) |
+|---|---|---|---|---|---|
+| `arm` | str | Y Y | Y Y | Y Y Y Y | Y Y |
+| `build_stats.build_time_s` | float | Y Y | Y Y | Y Y Y Y | Y Y |
+| `build_stats.model.attempts` | int | 0 0 | 0 0 | 0 0 0 0 | 0 0 |
+| `build_stats.model.cached_input_tokens` | int | 0 0 | 0 0 | 0 0 0 0 | 0 0 |
+| `build_stats.model.calls` | int | 0 Y | 0 Y | 0 0 Y Y | 0 0 |
+| `build_stats.model.cost_usd` | float | - - | - - | 0 0 0 0 | - 0 |
+| `build_stats.model.reasoning_tokens` | int | 0 0 | 0 0 | 0 0 0 0 | 0 0 |
+| `build_stats.model.request_s` | float | 0 0 | 0 0 | 0 0 0 0 | 0 0 |
+| `build_stats.model.retry_s` | float | 0 0 | 0 0 | 0 0 0 0 | 0 0 |
+| `build_stats.model.time_s` | float | 0 Y | 0 Y | 0 0 Y Y | 0 0 |
+| `build_stats.model.tokens_in` | int | 0 Y | 0 Y | 0 0 Y Y | 0 0 |
+| `build_stats.model.tokens_out` | int | 0 0 | 0 0 | 0 0 0 0 | 0 0 |
+| `build_stats.model.wait_s` | float | 0 0 | 0 0 | 0 0 0 0 | 0 0 |
+| `build_stats.models[]` | str | - Y | - Y | - - Y Y | Y Y |
+| `char_budget` | int | Y Y | Y Y | Y Y Y Y | Y Y |
+| `code_state.diff_file` | str | - - | - - | Y Y Y Y | - Y |
+| `code_state.diff_sha256` | str | - - | - - | Y Y Y Y | - Y |
+| `code_state.status[]` | str | - - | - - | Y Y Y Y | - Y |
+| `code_state.untracked_sha256` + 9 leaves: prod/harness/capture.py, prod/tests/test_capture.py, test/artefact/graph_layer.py, test/artefact/scope_filter.py, test/artefact/v4_db.py, test/graph/write_facet_layer.py, test/tests/test_artefact_v4_clouds.py, test/tests/test_graph_layer.py, test/tests/test_v4_walk.py | | - - | - - | 9(9Y) 9(9Y) 9(9Y) 9(9Y) | - 9(9Y) |
+| `code_version.branch` | str | Y Y | Y Y | Y Y Y Y | Y Y |
+| `code_version.commit` | str | Y Y | Y Y | Y Y Y Y | Y Y |
+| `code_version.dirty` | bool | Y Y | Y Y | Y Y Y Y | Y Y |
+| `env` + 5 leaves: HERB_V4_CLUSTER_PLACES, HERB_V4_CLUSTER_READING, HERB_V4_OFFLINE, HERB_V4_SCOPE_STEP, NEO4J_PASSWORD | | - - | - - | - - - - | - 5(5Y) |
+| `environment.cpu` | str | - - | - - | Y Y Y Y | - Y |
+| `environment.cpu_count` | int | - - | - - | Y Y Y Y | - Y |
+| `environment.embedder.device` | str | Y Y | - - | Y Y Y Y | Y Y |
+| `environment.embedder.dtype` | str | Y Y | - - | Y Y Y Y | Y Y |
+| `environment.embedder.model` | str | Y Y | - - | Y Y Y Y | Y Y |
+| `environment.embedder.revision` | str | Y Y | - - | Y Y Y Y | Y Y |
+| `environment.host` | str | Y Y | Y Y | Y Y Y Y | Y Y |
+| `environment.packages` + 9 leaves: PyStemmer, bm25s, httpx, neo4j, numpy, ragas, sentence-transformers, torch, transformers | | 9(9Y) 9(9Y) | 6(6Y) 6(6Y) | 9(9Y) 9(9Y) 9(9Y) 9(9Y) | 9(9Y) 9(9Y) |
+| `environment.platform` | str | Y Y | Y Y | Y Y Y Y | Y Y |
+| `environment.python` | str | Y Y | Y Y | Y Y Y Y | Y Y |
+| `environment.python_executable` | str | - - | - - | Y Y Y Y | - Y |
+| `environment.ram_bytes` | int | - - | - - | Y Y Y Y | - Y |
+| `flags` + 4 leaves: HERB_V4_CLUSTER_PLACES, HERB_V4_CLUSTER_READING, HERB_V4_OFFLINE, HERB_V4_SCOPE_STEP | | - - | - - | - - - - | - 4(4Y) |
+| `generator.model` | str | - - | - - | - Y - Y | - - |
+| `generator.payload` + 4 leaves: chat_template_kwargs.enable_thinking, max_tokens, min_tokens, temperature | | - - | - - | - 4(2Y) - 4(2Y) | - - |
+| `generator.schema` + 4 leaves: additionalProperties, properties.answer.type, required[], type | | - - | - - | - 4(3Y) - 4(3Y) | - - |
+| `generator.system` | str | - - | - - | - Y - Y | - - |
+| `generator.timeout_s` | float | - - | - - | - Y - Y | - - |
+| `generator.user_template` | str | - - | - - | - Y - Y | - - |
+| `generator_model` | null/str | Y Y | Y Y | n Y n Y | n n |
+| `graph` + 6 leaves: build_timestamp, database, graph_census_sha256, graph_version, removed_tags_sha256, source_database | | - - | - - | - - - - | 6(5Y) 6(5Y) |
+| `index.PyStemmer` | str | - - | - - | Y Y - - | - - |
+| `index.b` | float | - - | - - | Y Y - - | - - |
+| `index.bm25s` | str | - - | - - | Y Y - - | - - |
+| `index.cache_cost_note` + 10 leaves: build_time_s, calls, device, dtype, model, replaces, revision, source, tokens_in, tokens_out | | - - | - - | - - 10(9Y) 10(9Y) | - - |
+| `index.cache_file` | str | - - | - - | - - Y Y | - - |
+| `index.cache_file_bytes` | int | - - | - - | - - Y Y | - - |
+| `index.cache_file_sha256` | str | - - | - - | - - Y Y | - - |
+| `index.embedder_warm_s` | float | - - | - - | - - Y Y | - - |
+| `index.k1` | float | - - | - - | Y Y - - | - - |
+| `index.kept` | str | - - | - - | Y Y - - | - - |
+| `index.matrix_bytes` | int | - - | - - | - - Y Y | - - |
+| `index.matrix_dtype` | str | - - | - - | - - Y Y | - - |
+| `index.matrix_shape[]` | int | - - | - - | - - Y Y | - - |
+| `index.method` | str | - - | - - | Y Y - - | - - |
+| `index.question_embedding` | str | - - | - - | - - Y Y | - - |
+| `index.stemmer` | str | - - | - - | Y Y - - | - - |
+| `index.stopwords` | str | - - | - - | Y Y - - | - - |
+| `index.text_chars` | int | - - | - - | Y Y Y Y | - - |
+| `index.units` | int | - - | - - | Y Y Y Y | - - |
+| `inputs.corpus.n_files` | int | Y Y | Y Y | Y Y Y Y | Y Y |
+| `inputs.corpus.sha256` | str | Y Y | Y Y | Y Y Y Y | Y Y |
+| `inputs.ids_sha256` | str | Y Y | Y Y | Y Y Y Y | Y Y |
+| `inputs.questions_sha256` | str | Y Y | Y Y | Y Y Y Y | Y Y |
+| `interpreter_model` | null/str | n n | n n | n n n n | Y Y |
+| `lane` + 6 leaves: cli_version, cwd, env_set.MEMPALACE_HOOKS_AUTO_SAVE, exe, fixed_flags[], max_tries_default | | - - | - - | - 6(6Y) - 6(6Y) | - 6(6Y) |
+| `legs[].aborted` | null | - - | - - | n n n n | - n |
+| `legs[].argv[]` | str | - - | - - | Y Y Y Y | - Y |
+| `legs[].code_state` + 12 leaves: diff_file, diff_sha256, status[], untracked_sha256.prod/harness/capture.py, untracked_sha256.prod/tests/test_capture.py, untracked_sha256.test/artefact/graph_layer.py, untracked_sha256.test/artefact/scope_filter.py, untracked_sha256.test/artefact/v4_db.py, untracked_sha256.test/graph/write_facet_layer.py, untracked_sha256.test/tests/test_artefact_v4_clouds.py, untracked_sha256.test/tests/test_graph_layer.py, untracked_sha256.test/tests/test_v4_walk.py | | - - | - - | 12(12Y) 12(12Y) 12(12Y) 12(12Y) | - 12(12Y) |
+| `legs[].code_version` + 3 leaves: branch, commit, dirty | | - - | - - | 3(3Y) 3(3Y) 3(3Y) 3(3Y) | - 3(3Y) |
+| `legs[].embedder_load_s` | float/null | - - | - - | n n Y Y | - n |
+| `legs[].evaluator` | str | - - | - - | Y Y Y Y | - Y |
+| `legs[].finished_at` | str | - - | - - | Y Y Y Y | - Y |
+| `legs[].flags` + 4 leaves: HERB_V4_CLUSTER_PLACES, HERB_V4_CLUSTER_READING, HERB_V4_OFFLINE, HERB_V4_SCOPE_STEP | | - - | - - | - - - - | - 4(4Y) |
+| `legs[].ids_file` | str | - - | - - | Y Y Y Y | - Y |
+| `legs[].index` + 28 leaves: PyStemmer, b, bm25s, cache_cost_note.build_time_s, cache_cost_note.calls, cache_cost_note.device, cache_cost_note.dtype, cache_cost_note.model, cache_cost_note.replaces, cache_cost_note.revision, cache_cost_note.source, cache_cost_note.tokens_in, cache_cost_note.tokens_out, cache_file, cache_file_bytes, cache_file_sha256, embedder_warm_s, k1, kept, matrix_bytes, matrix_dtype, matrix_shape[], method, question_embedding, stemmer, stopwords, text_chars, units | | - - | - - | 10(10Y) 10(10Y) 20(19Y) 20(19Y) | - - |
+| `legs[].lane` + 6 leaves: cli_version, cwd, env_set.MEMPALACE_HOOKS_AUTO_SAVE, exe, fixed_flags[], max_tries_default | | - - | - - | - 6(6Y) - 6(6Y) | - 6(6Y) |
+| `legs[].leg` | int | - - | - - | Y Y Y Y | - Y |
+| `legs[].n_answered` | int | - - | - - | Y Y Y Y | - Y |
+| `legs[].n_chosen` | int | - - | - - | Y Y Y Y | - Y |
+| `legs[].n_todo` | int | - - | - - | Y Y Y Y | - Y |
+| `legs[].n_unanswered_after` | int | - - | - - | 0 0 0 0 | - 0 |
+| `legs[].peak_memory_bytes` | int | - - | - - | Y Y Y Y | - Y |
+| `legs[].pid` | int | - - | - - | Y Y Y Y | - Y |
+| `legs[].prepare_s` | float | - - | - - | Y Y Y Y | - Y |
+| `legs[].process_cpu_s` | float | - - | - - | Y - Y - | - - |
+| `legs[].python_executable` | str | - - | - - | Y Y Y Y | - Y |
+| `legs[].retrieval_only` | bool | - - | - - | Y 0 Y 0 | - Y |
+| `legs[].started_at` | str | - - | - - | Y Y Y Y | - Y |
+| `legs[].wall_s` | float | - - | - - | Y Y Y Y | - Y |
+| `legs[].workers` | int | - - | - - | Y Y Y Y | - Y |
+| `n_exhausted` | int | 0 0 | 0 0 | 0 0 0 0 | 0 0 |
+| `n_failed` | int | 0 0 | 0 0 | 0 0 0 0 | 0 0 |
+| `n_questions` | int | Y Y | Y Y | Y Y Y Y | Y Y |
+| `n_ran` | int | Y Y | Y Y | Y Y Y Y | Y Y |
+| `questions_file` | str | Y Y | Y Y | Y Y Y Y | Y Y |
+| `retrieval_flags` + 18 leaves: HERB_BASELINE_METADATA, cloud_groups, cloud_levels, cloud_places, cloud_shape, cluster, cos_noise, hit_stages, interpreter_model, level_places, offline, offline_at_prepare, scan_scatters, scan_seed, scope_settings_at_prepare.places[], scope_settings_at_prepare.reading, scope_step, scope_step_at_prepare | | 1(0Y) 1(0Y) | 1(0Y) 1(0Y) | 1(0Y) 1(0Y) 1(0Y) 1(0Y) | 4(3Y) 17(17Y) |
+| `timestamp` | str | Y Y | Y Y | Y Y Y Y | Y Y |
+| `top_k` | int | Y Y | Y Y | Y Y Y Y | Y Y |
+| `workers` | int | - - | - - | Y Y Y Y | - Y |
+
+### eval_results.jsonl
+rows per folder: A.luc 1400, A.vec 1400, B.luc 1400, B.vec 1400, C.vecAE 14, D.v4_100 1000, D.v4_10 100
+| key path | type | A (luc vec) | B (luc vec) | C (vecAE) | D (v4_100 v4_10) |
+|---|---|---|---|---|---|
+| `arm` | str | Y Y | Y Y | Y | Y Y |
+| `components.usage.cached_input_tokens` | int | - - | - - | 0 | - 0 |
+| `components.usage.chat_attempts` | int | - - | - - | nz=3 | - 0 |
+| `components.usage.chat_calls` | int | - - | - - | nz=3 | - 0 |
+| `components.usage.chat_s` | float | - - | - - | nz=3 | - 0 |
+| `components.usage.cost_usd` | float | - - | - - | nz=3 | - 0 |
+| `components.usage.embed_calls` | int | - - | - - | 0 | - 0 |
+| `components.usage.embed_s` | float | - - | - - | 0 | - 0 |
+| `components.usage.embed_texts` | int | - - | - - | 0 | - 0 |
+| `components.usage.embed_tokens` | int | - - | - - | 0 | - 0 |
+| `components.usage.eval_leg` | str | - - | - - | Y | - Y |
+| `components.usage.finished_at` | str | - - | - - | Y | - Y |
+| `components.usage.started_at` | str | - - | - - | Y | - Y |
+| `components.usage.thread` | str | - - | - - | Y | - Y |
+| `components.usage.tokens_in` | int | - - | - - | nz=3 | - 0 |
+| `components.usage.tokens_out` | int | - - | - - | nz=3 | - 0 |
+| `components.usage.wall_s` | float | - - | - - | Y | - Y |
+| `human_label` | null | n n | n n | n | n n |
+| `metric` | str | Y Y | Y Y | Y | Y Y |
+| `question_id` | str | Y Y | Y Y | Y | Y Y |
+| `status` | str | Y Y | Y Y | Y | Y Y |
+| `type` | str | Y Y | Y Y | Y | Y Y |
+| `value` | float | nz=1014 nz=1099 | nz=1012 nz=1113 | nz=7 | nz=268 nz=18 |
+
+### eval_manifest.json
+rows per folder: A.luc 1, A.vec 1, B.luc 1, B.vec 1, C.vecAE 1, D.v4_100 1, D.v4_10 1
+| key path | type | A (luc vec) | B (luc vec) | C (vecAE) | D (v4_100 v4_10) |
+|---|---|---|---|---|---|
+| `arm` | str | Y Y | Y Y | Y | Y Y |
+| `judge_backend` | str | Y Y | Y Y | Y | Y Y |
+| `judge_effort` | null | n n | n n | n | n n |
+| `judge_elapsed_s` | float | Y Y | Y Y | Y | Y Y |
+| `judge_legs[].elapsed_s` | float | Y Y | Y Y | Y | - - |
+| `judge_legs[].judge_backend` | str | Y Y | Y Y | Y | - - |
+| `judge_legs[].judge_model` | null/str | Y Y | Y Y | Y | - - |
+| `judge_legs[].recovered` | str | - - | Y - | - | - - |
+| `judge_legs[].settings` + 32 leaves: argv[], calls_file, cells, embed_model, embedding.encode_s, embedding.lock_wait_s, embedding.requests, embedding.texts, embedding.tokens_in, finished_at, interrupted, judge_backend, judge_inflight, judge_max_tries, judge_model, judge_timeout_s, lane.cli_version, lane.cwd, lane.env_set.MEMPALACE_HOOKS_AUTO_SAVE, lane.exe, lane.fixed_flags[], lane.max_tries_default, max_consecutive_failed_questions, max_judge_context_chars, pid, python_executable, ragas, retrieval_only, scores[], started_at, wall_s, workers | | - - | - - | 32(24Y) | - - |
+| `judge_legs[].timestamp` | null/str | Y Y | Y Y | Y | - - |
+| `judge_legs[].usage` + 11 leaves: attempts, cached_input_tokens, calls, cost_usd, reasoning_tokens, request_s, retry_s, time_s, tokens_in, tokens_out, wait_s | | 10(6Y) 10(6Y) | 10(7Y) 10(7Y) | 11(7Y) | - - |
+| `judge_model` | null/str | Y Y | Y Y | n | n n |
+| `judge_settings.argv[]` | str | - - | - - | Y | - Y |
+| `judge_settings.calls_file` | str | - - | - - | Y | - Y |
+| `judge_settings.cells.ok` | int | - - | - - | - | - Y |
+| `judge_settings.embed_model` | str | - - | - - | Y | - Y |
+| `judge_settings.embedding` + 5 leaves: encode_s, lock_wait_s, requests, texts, tokens_in | | - - | - - | 5(0Y) | - 5(0Y) |
+| `judge_settings.finished_at` | str | - - | - - | Y | - Y |
+| `judge_settings.interrupted` | null | - - | - - | n | - n |
+| `judge_settings.judge_backend` | str | - - | - - | Y | - Y |
+| `judge_settings.judge_inflight` | int | - - | - - | Y | - Y |
+| `judge_settings.judge_max_tries` | int | - - | - - | Y | - Y |
+| `judge_settings.judge_model` | str | - - | - - | Y | - Y |
+| `judge_settings.judge_timeout_s` | float | - - | - - | Y | - Y |
+| `judge_settings.lane` + 6 leaves: cli_version, cwd, env_set.MEMPALACE_HOOKS_AUTO_SAVE, exe, fixed_flags[], max_tries_default | | - - | - - | 6(6Y) | - - |
+| `judge_settings.max_consecutive_failed_questions` | int | - - | - - | Y | - Y |
+| `judge_settings.max_judge_context_chars` | int | - - | - - | Y | - Y |
+| `judge_settings.pid` | int | - - | - - | Y | - Y |
+| `judge_settings.python_executable` | str | - - | - - | Y | - Y |
+| `judge_settings.ragas` | str | - - | - - | Y | - Y |
+| `judge_settings.retrieval_only` | bool | - - | - - | 0 | - Y |
+| `judge_settings.scores[]` | str | - - | - - | Y | - Y |
+| `judge_settings.started_at` | str | - - | - - | Y | - Y |
+| `judge_settings.wall_s` | float | - - | - - | Y | - Y |
+| `judge_settings.workers` | int | - - | - - | Y | - Y |
+| `judge_usage` + 11 leaves: attempts, cached_input_tokens, calls, cost_usd, reasoning_tokens, request_s, retry_s, time_s, tokens_in, tokens_out, wait_s | | 10(6Y) 10(6Y) | 10(7Y) 10(7Y) | 11(7Y) | 10(0Y) 11(0Y) |
+| `scorer` | str | Y Y | Y Y | Y | Y Y |
+| `source_run` | str | Y Y | Y Y | Y | Y Y |
+| `timestamp` | str | Y Y | Y Y | Y | Y Y |
+
+### eval_calls.jsonl
+rows per folder: C.vecAE 8, D.v4_10 None
+| key path | type | C (vecAE) | D (v4_10) |
+|---|---|---|---|
+| `arm` | str | Y | x |
+| `attempts[]` + 8 leaves: error, n, outcome, returncode, seconds, started_at, stderr, stdout | | 8(0Y) | - |
+| `batch` | int | p=2,nn=2,nz=2 | x |
+| `cost_usd` | float | p=6,nn=6,nz=6 | x |
+| `cwd` | str | p=6,nn=6,nz=6 | x |
+| `device` | str | p=2,nn=2,nz=2 | x |
+| `dtype` | str | p=2,nn=2,nz=2 | x |
+| `effort` | null | p=6,nn=0,nz=0 | x |
+| `encode_s` | float | p=2,nn=2,nz=2 | x |
+| `envelope` + 52 leaves: api_error_status, duration_api_ms, duration_ms, fast_mode_state, is_error, modelUsage.claude-haiku-4-5-20251001.cacheCreationInputTokens, modelUsage.claude-haiku-4-5-20251001.cacheReadInputTokens, modelUsage.claude-haiku-4-5-20251001.contextWindow, modelUsage.claude-haiku-4-5-20251001.costUSD, modelUsage.claude-haiku-4-5-20251001.inputTokens, modelUsage.claude-haiku-4-5-20251001.maxOutputTokens, modelUsage.claude-haiku-4-5-20251001.outputTokens, modelUsage.claude-haiku-4-5-20251001.webSearchRequests, modelUsage.claude-haiku-4-5.cacheCreationInputTokens, modelUsage.claude-haiku-4-5.cacheReadInputTokens, modelUsage.claude-haiku-4-5.contextWindow, modelUsage.claude-haiku-4-5.costUSD, modelUsage.claude-haiku-4-5.inputTokens, modelUsage.claude-haiku-4-5.maxOutputTokens, modelUsage.claude-haiku-4-5.outputTokens, modelUsage.claude-haiku-4-5.webSearchRequests, num_turns, permission_denials, result, session_id, stop_reason, subtype, terminal_reason, time_to_request_ms, total_cost_usd, ttft_ms, ttft_stream_ms, type, usage.cache_creation.ephemeral_1h_input_tokens, usage.cache_creation.ephemeral_5m_input_tokens, usage.cache_creation_input_tokens, usage.cache_read_input_tokens, usage.inference_geo, usage.input_tokens, usage.iterations[].cache_creation.ephemeral_1h_input_tokens, usage.iterations[].cache_creation.ephemeral_5m_input_tokens, usage.iterations[].cache_creation_input_tokens, usage.iterations[].cache_read_input_tokens, usage.iterations[].input_tokens, usage.iterations[].output_tokens, usage.iterations[].type, usage.output_tokens, usage.server_tool_use.web_fetch_requests, usage.server_tool_use.web_search_requests, usage.service_tier, usage.speed, uuid | | 52(0Y) | - |
+| `error` | null | p=6,nn=0,nz=0 | x |
+| `eval_leg` | str | Y | x |
+| `exe` | str | p=6,nn=6,nz=6 | x |
+| `finished_at` | str | Y | x |
+| `flags[]` | str | p=6,nn=6,nz=6 | x |
+| `input_type` | str | p=2,nn=2,nz=2 | x |
+| `join_parts` | bool | p=6,nn=6,nz=0 | x |
+| `kind` | str | Y | x |
+| `lock_wait_s` | float | p=2,nn=2,nz=2 | x |
+| `max_tries` | int | p=6,nn=6,nz=6 | x |
+| `model` | str | Y | x |
+| `n_texts` | int | p=2,nn=2,nz=2 | x |
+| `ok` | bool | p=6,nn=6,nz=6 | x |
+| `payload_dropped` | list | p=6,nn=6,nz=0 | x |
+| `phase` | str | Y | x |
+| `prefix` | str | p=2,nn=2,nz=2 | x |
+| `prompt` | str | p=6,nn=6,nz=6 | x |
+| `question_id` | null/str | nn=6 | x |
+| `revision` | str | p=2,nn=2,nz=2 | x |
+| `schema` | null | p=6,nn=0,nz=0 | x |
+| `score` | null/str | nn=6 | x |
+| `seq` | int | nz=4 | x |
+| `started_at` | str | Y | x |
+| `stderr` | str | p=6,nn=6,nz=0 | x |
+| `stream` | null | p=6,nn=0,nz=0 | x |
+| `system` | str | p=6,nn=6,nz=0 | x |
+| `text` | str | p=6,nn=6,nz=6 | x |
+| `texts[]` | str | p=2,nn=2,nz=2 | x |
+| `timeout_s` | float | p=6,nn=6,nz=6 | x |
+| `tokens[]` | int | p=2,nn=2,nz=2 | x |
+| `tokens_in` | int | p=2,nn=2,nz=2 | x |
+| `type` | str | p=6,nn=6,nz=6 | x |
+| `usage` + 3 leaves: cached_input_tokens, completion_tokens, prompt_tokens | | 3(0Y) | - |

@@ -1,0 +1,300 @@
+{
+  "scorer": "ragas",
+  "judge_model": "claude-haiku-4-5-20251001",
+  "source_run": "C:\\Coding\\exjobbet\\GRAG-Job\\output\\k=chars\\lucene__gold100__cb72000__20261008T234209Z",
+  "arm": "lucene",
+  "timestamp": "2026-10-09T08:10:27.125749+00:00",
+  "judge_backend": "claude-cli",
+  "judge_effort": null,
+  "judge_usage": {
+    "calls": 600,
+    "tokens_in": 4225152,
+    "cached_input_tokens": 15287,
+    "tokens_out": 285760,
+    "reasoning_tokens": 0,
+    "time_s": 4127.127373297699,
+    "attempts": 600,
+    "request_s": 4126.479345697444,
+    "wait_s": 0.0,
+    "retry_s": 0.0
+  },
+  "judge_elapsed_s": 4471.126690400066,
+  "judge_legs": [
+    {
+      "timestamp": "2026-10-09T08:10:27.125749+00:00",
+      "judge_model": "claude-haiku-4-5-20251001",
+      "judge_backend": "claude-cli",
+      "usage": {
+        "calls": 600,
+        "tokens_in": 4225152,
+        "cached_input_tokens": 15287,
+        "tokens_out": 285760,
+        "reasoning_tokens": 0,
+        "time_s": 4127.127373297699,
+        "attempts": 600,
+        "request_s": 4126.479345697444,
+        "wait_s": 0.0,
+        "retry_s": 0.0
+      },
+      "elapsed_s": 4471.126690400066,
+      "settings": {
+        "started_at": "2026-10-09T06:55:55.998835+00:00",
+        "finished_at": "2026-10-09T08:10:27.125749+00:00",
+        "interrupted": null,
+        "workers": 1,
+        "retrieval_only": false,
+        "scores": [
+          "context_precision_id",
+          "context_recall_id",
+          "context_precision_nonllm",
+          "context_recall_nonllm",
+          "semantic_similarity",
+          "string_similarity",
+          "bleu",
+          "rouge",
+          "chrf",
+          "exact_match",
+          "string_presence",
+          "faithfulness",
+          "answer_correctness",
+          "context_recall_llm"
+        ],
+        "judge_model": "claude-haiku-4-5-20251001",
+        "judge_backend": "claude-cli",
+        "judge_timeout_s": 120.0,
+        "judge_max_tries": 1,
+        "judge_inflight": 64,
+        "judge_empty_reply_tries": 3,
+        "judge_call": {
+          "model": "claude-haiku-4-5-20251001",
+          "system": "",
+          "payload": {
+            "temperature": 0.01,
+            "thinking": false
+          },
+          "applied": {
+            "effort": "none sent (the model's own default)",
+            "thinking": "off",
+            "temperature": 0.01
+          },
+          "not_applied": {},
+          "env_set": {
+            "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+            "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+            "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+            "CLAUDE_CONFIG_DIR": "C:\\Users\\jocke\\.claude-herb-lane",
+            "CLAUDE_CODE_EFFORT_LEVEL": "auto",
+            "MAX_THINKING_TOKENS": "0",
+            "CLAUDE_CODE_EXTRA_BODY": "{\"temperature\": 0.01}"
+          },
+          "env_unset": [
+            "CLAUDE_CODE_MAX_OUTPUT_TOKENS"
+          ]
+        },
+        "max_judge_context_chars": 60000,
+        "max_consecutive_failed_questions": 10,
+        "ragas": "0.4.3",
+        "embed_model": "nvidia/llama-nemotron-embed-1b-v2",
+        "ragas_run_config": {
+          "max_retries": 1,
+          "timeout": 180,
+          "max_wait": 60,
+          "seed": 42
+        },
+        "ragas_do_not_track": "true",
+        "lane": {
+          "exe": "C:\\Users\\jocke\\.local\\bin\\claude.exe",
+          "cli_version": "2.1.212 (Claude Code)",
+          "cwd": "C:\\Users\\jocke\\AppData\\Local\\Temp\\herb-claude-lane",
+          "fixed_flags": [
+            "-p",
+            "--tools",
+            "",
+            "--safe-mode"
+          ],
+          "system_prompt": "always passed, empty when the call has no system text",
+          "stdin": "the prompt as UTF-8 bytes",
+          "env_set": {
+            "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+            "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+            "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+            "CLAUDE_CONFIG_DIR": "C:\\Users\\jocke\\.claude-herb-lane"
+          },
+          "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it",
+          "config_settings": {
+            "cleanupPeriodDays": 36500
+          },
+          "env_per_call": [
+            "CLAUDE_CODE_EFFORT_LEVEL",
+            "MAX_THINKING_TOKENS",
+            "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+            "CLAUDE_CODE_EXTRA_BODY"
+          ],
+          "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+          "cli_adds": {
+            "seen_with": "2.1.212 (Claude Code)",
+            "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+            "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+          },
+          "max_tries_default": 6
+        },
+        "calls_file": "eval_calls.jsonl",
+        "argv": [
+          "prod/run.py",
+          "--arm",
+          "lucene",
+          "--set",
+          "gold",
+          "--char-budget",
+          "72000",
+          "--workers",
+          "1",
+          "--out",
+          "C:/Coding/exjobbet/GRAG-Job/output/k=chars/lucene__gold100__cb72000__20261008T234209Z"
+        ],
+        "pid": 2892,
+        "python_executable": "C:\\Coding\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+        "wall_s": 4471.126690400066,
+        "embedding": {
+          "requests": 200,
+          "texts": 200,
+          "tokens_in": 18144,
+          "lock_wait_s": 0.00037899939343333244,
+          "encode_s": 244.39648159896024
+        },
+        "cells": {
+          "ok": 1400
+        }
+      }
+    }
+  ],
+  "judge_settings": {
+    "started_at": "2026-10-09T06:55:55.998835+00:00",
+    "finished_at": "2026-10-09T08:10:27.125749+00:00",
+    "interrupted": null,
+    "workers": 1,
+    "retrieval_only": false,
+    "scores": [
+      "context_precision_id",
+      "context_recall_id",
+      "context_precision_nonllm",
+      "context_recall_nonllm",
+      "semantic_similarity",
+      "string_similarity",
+      "bleu",
+      "rouge",
+      "chrf",
+      "exact_match",
+      "string_presence",
+      "faithfulness",
+      "answer_correctness",
+      "context_recall_llm"
+    ],
+    "judge_model": "claude-haiku-4-5-20251001",
+    "judge_backend": "claude-cli",
+    "judge_timeout_s": 120.0,
+    "judge_max_tries": 1,
+    "judge_inflight": 64,
+    "judge_empty_reply_tries": 3,
+    "judge_call": {
+      "model": "claude-haiku-4-5-20251001",
+      "system": "",
+      "payload": {
+        "temperature": 0.01,
+        "thinking": false
+      },
+      "applied": {
+        "effort": "none sent (the model's own default)",
+        "thinking": "off",
+        "temperature": 0.01
+      },
+      "not_applied": {},
+      "env_set": {
+        "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+        "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+        "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+        "CLAUDE_CONFIG_DIR": "C:\\Users\\jocke\\.claude-herb-lane",
+        "CLAUDE_CODE_EFFORT_LEVEL": "auto",
+        "MAX_THINKING_TOKENS": "0",
+        "CLAUDE_CODE_EXTRA_BODY": "{\"temperature\": 0.01}"
+      },
+      "env_unset": [
+        "CLAUDE_CODE_MAX_OUTPUT_TOKENS"
+      ]
+    },
+    "max_judge_context_chars": 60000,
+    "max_consecutive_failed_questions": 10,
+    "ragas": "0.4.3",
+    "embed_model": "nvidia/llama-nemotron-embed-1b-v2",
+    "ragas_run_config": {
+      "max_retries": 1,
+      "timeout": 180,
+      "max_wait": 60,
+      "seed": 42
+    },
+    "ragas_do_not_track": "true",
+    "lane": {
+      "exe": "C:\\Users\\jocke\\.local\\bin\\claude.exe",
+      "cli_version": "2.1.212 (Claude Code)",
+      "cwd": "C:\\Users\\jocke\\AppData\\Local\\Temp\\herb-claude-lane",
+      "fixed_flags": [
+        "-p",
+        "--tools",
+        "",
+        "--safe-mode"
+      ],
+      "system_prompt": "always passed, empty when the call has no system text",
+      "stdin": "the prompt as UTF-8 bytes",
+      "env_set": {
+        "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+        "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+        "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+        "CLAUDE_CONFIG_DIR": "C:\\Users\\jocke\\.claude-herb-lane"
+      },
+      "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it",
+      "config_settings": {
+        "cleanupPeriodDays": 36500
+      },
+      "env_per_call": [
+        "CLAUDE_CODE_EFFORT_LEVEL",
+        "MAX_THINKING_TOKENS",
+        "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+        "CLAUDE_CODE_EXTRA_BODY"
+      ],
+      "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+      "cli_adds": {
+        "seen_with": "2.1.212 (Claude Code)",
+        "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+        "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+      },
+      "max_tries_default": 6
+    },
+    "calls_file": "eval_calls.jsonl",
+    "argv": [
+      "prod/run.py",
+      "--arm",
+      "lucene",
+      "--set",
+      "gold",
+      "--char-budget",
+      "72000",
+      "--workers",
+      "1",
+      "--out",
+      "C:/Coding/exjobbet/GRAG-Job/output/k=chars/lucene__gold100__cb72000__20261008T234209Z"
+    ],
+    "pid": 2892,
+    "python_executable": "C:\\Coding\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+    "wall_s": 4471.126690400066,
+    "embedding": {
+      "requests": 200,
+      "texts": 200,
+      "tokens_in": 18144,
+      "lock_wait_s": 0.00037899939343333244,
+      "encode_s": 244.39648159896024
+    },
+    "cells": {
+      "ok": 1400
+    }
+  }
+}

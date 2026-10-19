@@ -1,0 +1,11 @@
+questions with byte-identical delivered context in both runs: 31 of 100 | of them with a byte-identical answer: 0
+score | on those questions: mean 08-14, mean 10-07, mean absolute difference per question, questions moving more than 0.10, largest move || all 100: mean 08-14, mean 10-07
+  faithfulness         0.9062  0.8782  0.1250   14  0.750  ||  0.8933  0.8735
+  answer_correctness   0.2160  0.2250  0.0687    8  0.333  ||  0.1697  0.1785
+  context_recall_llm   0.3001  0.3339  0.0630    5  0.667  ||  0.2609  0.2620
+  semantic_similarity  0.3903  0.3922  0.0347    1  0.101  ||  0.3344  0.3458
+  rouge                0.1087  0.1171  0.0382    4  0.163  ||  0.0861  0.0968
+  chrf                 0.2380  0.2345  0.0404    4  0.195  ||  0.2034  0.2059
+  string_similarity    0.1244  0.1158  0.0278    1  0.131  ||  0.1134  0.1189
+context_recall_llm is judged on the context and the gold answer only (no generated answer): on identical context its two values are two judgings of the same input.
+   identical on 26 of 31 | median absolute difference 0.000

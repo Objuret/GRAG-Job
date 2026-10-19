@@ -1,0 +1,14 @@
+corpus_units_20261009_local.npz: 38540 texts, mode passage, device cuda
+embedder: loading nvidia/llama-nemotron-embed-1b-v2 @ 113abe4acafa on cuda (float32) — first use
+Loading weights:   0%|          | 0/146 [00:00<?, ?it/s]Loading weights:   1%|          | 1/146 [00:02<05:04,  2.10s/it]Loading weights:  76%|███████▌  | 111/146 [00:02<00:00, 69.60it/s]Loading weights: 100%|██████████| 146/146 [00:02<00:00, 55.57it/s]
+embedder: ready in 5s (2048 dim, 8192-token context)
+  26000/38540  12.7 texts/s  about 16.5 min left
+  28000/38540  12.7 texts/s  about 13.9 min left
+  30000/38540  12.8 texts/s  about 11.1 min left
+  32000/38540  12.8 texts/s  about 8.5 min left
+  34000/38540  12.8 texts/s  about 5.9 min left
+  36000/38540  12.8 texts/s  about 3.3 min left
+  38000/38540  12.8 texts/s  about 0.7 min left
+  38540/38540  12.8 texts/s  about 0.0 min left
+done corpus_units_20261009_local.npz: (38540, 2048) float32, 1141.6s, sha256 8aa3b0f71ad97153
+exit 0 

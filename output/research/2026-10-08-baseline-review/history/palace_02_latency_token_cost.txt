@@ -1,0 +1,82 @@
+
+============================================================
+  Results for: "latency token cost per question"
+  Wing: grag-job
+============================================================
+
+  [1] grag-job / planning
+      Source: 5802c26c-66c9-4f04-8ed0-cd31a06d0ecb.jsonl
+      Match:  cosine_sim=0.417  bm25=0.772
+
+      o = 2,862 chars; 48-tag chunk = 3,426 chars; 72.3 chars per tag row on average. cl100k proxy (not Claude's tokenizer): 1,453 tokens vs budget 1,664 for 40 tags; 1,738 vs 1,984 for 48. 12-13% headroom on a proxy. Moot given finding 4 — the budget never reaches the model.
+      
+      **7. Cost arithmetic (item 7), 5 random chunks via `read_chunks`.**
+      Measured 3.27 chars/token (cl100k proxy; per sample 2.76-3.79) against the script's 4 (`:154`); the estimate also omits the tag JSON (1,314,767 chars over the corpus) and the `Chunk:/Tags:` wrapper. Input: script 6.06M tokens; proxy ≈ 7.6M. Output: script 62,028×40 = 2.48M; proxy 36.3/tag ≈ 2.25M. The dollar line prices at API rates while `chat.py:1-4` says the only lane is the subscription CLI: 4,872 serial calls, `timeout=480` each (`artefact_v2.py:944`)
+
+  --------------------------------------------------------
+  [2] grag-job / planning
+      Source: 622d2867-c13c-4ee8-bdd0-f55bb756d2f9.jsonl
+      Match:  cosine_sim=0.417  bm25=0.772
+
+      o = 2,862 chars; 48-tag chunk = 3,426 chars; 72.3 chars per tag row on average. cl100k proxy (not Claude's tokenizer): 1,453 tokens vs budget 1,664 for 40 tags; 1,738 vs 1,984 for 48. 12-13% headroom on a proxy. Moot given finding 4 — the budget never reaches the model.
+      
+      **7. Cost arithmetic (item 7), 5 random chunks via `read_chunks`.**
+      Measured 3.27 chars/token (cl100k proxy; per sample 2.76-3.79) against the script's 4 (`:154`); the estimate also omits the tag JSON (1,314,767 chars over the corpus) and the `Chunk:/Tags:` wrapper. Input: script 6.06M tokens; proxy ≈ 7.6M. Output: script 62,028×40 = 2.48M; proxy 36.3/tag ≈ 2.25M. The dollar line prices at API rates while `chat.py:1-4` says the only lane is the subscription CLI: 4,872 serial calls, `timeout=480` each (`artefact_v2.py:944`)
+
+  --------------------------------------------------------
+  [3] grag-job / planning
+      Source: 66ec8afa-de35-43da-bc25-943980f84acf.jsonl
+      Match:  cosine_sim=0.417  bm25=0.772
+
+      o = 2,862 chars; 48-tag chunk = 3,426 chars; 72.3 chars per tag row on average. cl100k proxy (not Claude's tokenizer): 1,453 tokens vs budget 1,664 for 40 tags; 1,738 vs 1,984 for 48. 12-13% headroom on a proxy. Moot given finding 4 — the budget never reaches the model.
+      
+      **7. Cost arithmetic (item 7), 5 random chunks via `read_chunks`.**
+      Measured 3.27 chars/token (cl100k proxy; per sample 2.76-3.79) against the script's 4 (`:154`); the estimate also omits the tag JSON (1,314,767 chars over the corpus) and the `Chunk:/Tags:` wrapper. Input: script 6.06M tokens; proxy ≈ 7.6M. Output: script 62,028×40 = 2.48M; proxy 36.3/tag ≈ 2.25M. The dollar line prices at API rates while `chat.py:1-4` says the only lane is the subscription CLI: 4,872 serial calls, `timeout=480` each (`artefact_v2.py:944`)
+
+  --------------------------------------------------------
+  [4] grag-job / planning
+      Source: 97d07f1f-10b9-4178-a982-6cfe6979740f.jsonl
+      Match:  cosine_sim=0.417  bm25=0.772
+
+      o = 2,862 chars; 48-tag chunk = 3,426 chars; 72.3 chars per tag row on average. cl100k proxy (not Claude's tokenizer): 1,453 tokens vs budget 1,664 for 40 tags; 1,738 vs 1,984 for 48. 12-13% headroom on a proxy. Moot given finding 4 — the budget never reaches the model.
+      
+      **7. Cost arithmetic (item 7), 5 random chunks via `read_chunks`.**
+      Measured 3.27 chars/token (cl100k proxy; per sample 2.76-3.79) against the script's 4 (`:154`); the estimate also omits the tag JSON (1,314,767 chars over the corpus) and the `Chunk:/Tags:` wrapper. Input: script 6.06M tokens; proxy ≈ 7.6M. Output: script 62,028×40 = 2.48M; proxy 36.3/tag ≈ 2.25M. The dollar line prices at API rates while `chat.py:1-4` says the only lane is the subscription CLI: 4,872 serial calls, `timeout=480` each (`artefact_v2.py:944`)
+
+  --------------------------------------------------------
+  [5] grag-job / planning
+      Source: 9d6b85ba-f5b1-4679-b762-126693a10a56.jsonl
+      Match:  cosine_sim=0.417  bm25=0.772
+
+      o = 2,862 chars; 48-tag chunk = 3,426 chars; 72.3 chars per tag row on average. cl100k proxy (not Claude's tokenizer): 1,453 tokens vs budget 1,664 for 40 tags; 1,738 vs 1,984 for 48. 12-13% headroom on a proxy. Moot given finding 4 — the budget never reaches the model.
+      
+      **7. Cost arithmetic (item 7), 5 random chunks via `read_chunks`.**
+      Measured 3.27 chars/token (cl100k proxy; per sample 2.76-3.79) against the script's 4 (`:154`); the estimate also omits the tag JSON (1,314,767 chars over the corpus) and the `Chunk:/Tags:` wrapper. Input: script 6.06M tokens; proxy ≈ 7.6M. Output: script 62,028×40 = 2.48M; proxy 36.3/tag ≈ 2.25M. The dollar line prices at API rates while `chat.py:1-4` says the only lane is the subscription CLI: 4,872 serial calls, `timeout=480` each (`artefact_v2.py:944`)
+
+  --------------------------------------------------------
+  [6] grag-job / technical
+      Source: 8b5001ac-9de4-4335-a7c5-580428e6fc11.jsonl
+      Match:  cosine_sim=0.423  bm25=0.644
+
+      ted to you with its token cost, before any batch.
+
+  --------------------------------------------------------
+  [7] grag-job / technical
+      Source: eceb6d17-22c2-4938-a054-1a2a8fc3f569.jsonl
+      Match:  cosine_sim=0.416  bm25=0.409
+
+      as things in the text. Since names are structure in your design, that's fine, and consistent.
+      
+      **Cost is the lane, not the model.** Our text per call is a few thousand tokens; the CLI's preamble makes it 28,000. Ten chunks cost 280,000 tokens in. All 4,869 chunks that way is around 140 million tokens in and about 80 hours serial at a minute a call, parallelisable. Worth knowing before the full pass, not before the reader test.
+      
+      Next step by your ruling: the reader on these 820 answers, seconds on the card, and we see if "somewhat" lands between "no" and "yes".
+
+  --------------------------------------------------------
+  [8] grag-job / decisions
+      Source: no-cost-estimates.md
+      Match:  cosine_sim=0.436  bm25=0.105
+
+      Cost (time or money) must carry ZERO weight in my own reasoning, recommendations, or option-comparisons. It is the user's factor alone, not mine. Don't frame paths as "cheap"/"expensive", don't let throughput/rate-limits/API-spend tilt which approach I recommend, and don't keep dragging cost back into the discussion. (User, emphatically: "YOU do not care about cost here, 0 fucks given… only for me.")
+
+  --------------------------------------------------------
+

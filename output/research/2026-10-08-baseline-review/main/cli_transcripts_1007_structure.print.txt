@@ -1,0 +1,9 @@
+lucene answers 10-07: 100 files, 100 read | files with a thinking block: 72 | files with more than one model request: 4 | title records: 100
+     effort on assistant records: {"'medium'": 218} | model: {'claude-sonnet-5': 218} | block types: {'thinking': 72, 'text': 46, 'tool_use': 100}
+     entrypoint on user records: {'claude-vscode': 204} | CLI version: {'2.1.212': 204}
+vector answers 10-07: 100 files, 100 read | files with a thinking block: 77 | files with more than one model request: 2 | title records: 100
+     effort on assistant records: {"'medium'": 240} | model: {'claude-sonnet-5': 240} | block types: {'thinking': 77, 'text': 63, 'tool_use': 100}
+     entrypoint on user records: {'claude-vscode': 202} | CLI version: {'2.1.212': 202}
+evaluation, both arms, 10-07: 1201 files, 1201 read | files with a thinking block: 1201 | files with more than one model request: 0 | title records: 1519
+     effort on assistant records: {'None': 2402} | model: {'claude-haiku-4-5-20251001': 2402} | block types: {'thinking': 1201, 'text': 1201}
+     entrypoint on user records: {'claude-vscode': 1201} | CLI version: {'2.1.212': 1201}

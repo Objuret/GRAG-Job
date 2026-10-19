@@ -1,0 +1,40 @@
+tracked code now: files with uncommitted changes 30   sha256 of the diff (LF) ec849026a8c3bed0
+C.lucA code.leg1.diff: files in its diff 26; files whose uncommitted change differs from now: 13
+      prod/arms/lucene.py                          differs   'cost_usd' in its diff then 0, now 0
+      prod/arms/vector.py                          differs   'cost_usd' in its diff then 0, now 0
+      prod/eval/ragas.py                           differs   'cost_usd' in its diff then 4, now 0
+      prod/harness/chat.py                         differs   'cost_usd' in its diff then 4, now 0
+      prod/harness/contract.py                     differs   'cost_usd' in its diff then 3, now 0
+      prod/harness/orchestrator.py                 differs   'cost_usd' in its diff then 4, now 0
+      pytest.ini                                   differs   'cost_usd' in its diff then 0, now 0
+      test/arms/artefact_v4.py                     differs   'cost_usd' in its diff then 0, now 0
+      test/artefact/v4_walk.py                     differs   'cost_usd' in its diff then 0, now 0
+      test/tests/test_artefact_v3_facet_file.py    only now  'cost_usd' in its diff then 0, now 0
+      test/tests/test_facet_neural.py              only now  'cost_usd' in its diff then 0, now 0
+      test/tests/test_facet_pairs_ranker.py        only now  'cost_usd' in its diff then 0, now 0
+      test/tests/test_retrieval_harness_keepalive.py only now  'cost_usd' in its diff then 0, now 0
+D.v4_10 code.be2d0944ae0197a7.diff: files in its diff 30; files whose uncommitted change differs from now: 6
+      prod/arms/lucene.py                          differs   'cost_usd' in its diff then 0, now 0
+      prod/arms/vector.py                          differs   'cost_usd' in its diff then 0, now 0
+      prod/eval/ragas.py                           differs   'cost_usd' in its diff then 4, now 0
+      prod/harness/chat.py                         differs   'cost_usd' in its diff then 4, now 0
+      prod/harness/contract.py                     differs   'cost_usd' in its diff then 3, now 0
+      prod/harness/orchestrator.py                 differs   'cost_usd' in its diff then 4, now 0
+C.vecAE code.be2d0944ae0197a7.diff: files in its diff 30; files whose uncommitted change differs from now: 6
+      prod/arms/lucene.py                          differs   'cost_usd' in its diff then 0, now 0
+      prod/arms/vector.py                          differs   'cost_usd' in its diff then 0, now 0
+      prod/eval/ragas.py                           differs   'cost_usd' in its diff then 4, now 0
+      prod/harness/chat.py                         differs   'cost_usd' in its diff then 4, now 0
+      prod/harness/contract.py                     differs   'cost_usd' in its diff then 3, now 0
+      prod/harness/orchestrator.py                 differs   'cost_usd' in its diff then 4, now 0
+C.luc code.95d3382b606e528b.diff: files in its diff 30; files whose uncommitted change differs from now: 4
+      prod/eval/ragas.py                           differs   'cost_usd' in its diff then 4, now 0
+      prod/harness/chat.py                         differs   'cost_usd' in its diff then 4, now 0
+      prod/harness/contract.py                     differs   'cost_usd' in its diff then 3, now 0
+      prod/harness/orchestrator.py                 differs   'cost_usd' in its diff then 4, now 0
+C.vec code.95d3382b606e528b.diff: files in its diff 30; files whose uncommitted change differs from now: 4
+      prod/eval/ragas.py                           differs   'cost_usd' in its diff then 4, now 0
+      prod/harness/chat.py                         differs   'cost_usd' in its diff then 4, now 0
+      prod/harness/contract.py                     differs   'cost_usd' in its diff then 3, now 0
+      prod/harness/orchestrator.py                 differs   'cost_usd' in its diff then 4, now 0
+untracked prod/harness/capture.py: sha256 now 0b87af78f1999c41   'cost_usd' occurrences now 0

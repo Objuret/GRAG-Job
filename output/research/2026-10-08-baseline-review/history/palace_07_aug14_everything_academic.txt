@@ -1,0 +1,114 @@
+
+============================================================
+  Results for: "runs are fully robust resumable recording exactly all metadata data times costs tokens in and out EVERYTHING an academic could possibly want"
+  Wing: grag-job
+============================================================
+
+  [1] grag-job / general
+      Source: user_turns_all.jsonl
+      Match:  cosine_sim=0.562  bm25=31.749
+
+      s, they are resumable? and they are recording exactly all metadata, data, times, costs, tokens in and out etc, EVERYTHING an academic could possibly want to know about the runs?", "machine": "desktop", "source_corpus": "user_turns_all.jsonl"}
+      {"iso_timestamp": "2026-08-14T10:32:06.532Z", "session_file": "6fed3f94-ea57-49bf-b671-bceaa6d62b22.jsonl", "session_id": "6fed3f94-ea57-49bf-b671-bceaa6d62b22", "uuid": "97cf291a-28da-48e9-a284-d707c5fba381", "cwd": "c:\\Coding\\exjobbet\\GRAG-Job", "git_branch": "user-canon-record", "char_len": 175, "is_paste": false, "text": "number 6 probably needs to be fixed, we do want to separate the artefacts and the llm answers when it comes to time, AND be able to join/discount from resumed runs etc, right?", "machine": "desktop", "source_corpus": "user_tur
+
+  --------------------------------------------------------
+  [2] grag-job / technical
+      Source: eceb6d17-22c2-4938-a054-1a2a8fc3f569.jsonl
+      Match:  cosine_sim=0.51  bm25=3.691
+
+      ONMENT.md:138` records "No GPU on this [laptop]" and says nothing about a GPU on the desktop — "on the desktop GPU" is a claim with no line in the machine record behind it, and the whole schedule rests on it.
+      
+      **GO WITH CHANGES, on a much smaller thing than steps 1–3**, and only if he names it:
+      
+      1. **Settle per-edge vs per-chunk first, on ~50 chunks, before any corpus pass.** Take chunks with many tags, score all their sentences against all their tags, report the sd of each facet column *within a chunk across its tags*. If it is ~0, the instrument is a chunk property and steps 1–3 are dead for ~7M pairs' worth of nothing. Cost: a few thousand pairs, minutes.
+      2. **Fix the null before any number is reported again.** Swap in a tag that is also on that chunk, or score the real tag against sent
+
+  --------------------------------------------------------
+  [3] grag-job / general
+      Source: user_turns.md
+      Match:  cosine_sim=0.532  bm25=2.588
+
+      ment cases back to me for audit.
+      
+      Overnight, do the parts that do not require the unresolved rubric:
+      
+      1. Measure token lengths for all 4,808 chunks, with useful percentiles and counts above 256/512/768/1024/1680.
+      2. Pull and verify `tasksource/deberta-small-long-nli`; benchmark inference throughput, batch size and VRAM at relevant sequence lengths on the available runtime.
+      3. Build the shared DeBERTa relation model with four independent ordinal heads and support for pairwise ranking loss.
+      4. Build and test the full train/eval/checkpoint/resume pipeline using clearly marked synthetic dummy labels only. Nothing learned from those labels is meaningful.
+      5. Define durable data schemas for:
+
+  --------------------------------------------------------
+  [4] grag-job / general
+      Source: 2026-09-24-reconstruction-completion-audit.md
+      Match:  cosine_sim=0.513  bm25=3.254
+
+      within this task's actions. No blanket claim that other actors cannot modify the shared workspace. |
+      | No new models, retrieval experiments, graph mutations or extra retrieval data | Only historical/code/document reads, evidence extraction, hash checks and documentary writes during this continuation; earlier reconstruction's graph read is an aggregate inventory. | Supported. No arm, generator, judge or training routine invoked. |
+      | Explain corpus/source/gold boundaries accurately | Value-only GraphInput inspected; outer source-bearing holder disclosed; source resolution happens after order; build-time tag–chunk measurement separated from online retrieval. | Supported as an API/dataflow boundary; process isolation is explicitly not claimed. |
+
+  --------------------------------------------------------
+  [5] grag-job / technical
+      Source: 616bc40d-d678-43f0-b681-bbec035c78e0.jsonl
+      Match:  cosine_sim=0.488  bm25=2.589
+
+      on passage-level evidence work from the nineties and soft membership. Cost: about 48,000 record embeddings, seven hours of CPU, once. Both agents note the weakness: documents and transcripts are one record per chunk, so it buys grain in Slack and none where the description order already loses PR and document gold. Constraint at risk: your "no embedding the corpus", at a third of the sentence count.
+      
+      2. **The tag read in the company it keeps, projected on published poles.** Per edge, blend the tag vector with the chunk's other tags and its description, then read it against five directions built only from published inventories: PDTB for why, Quirk for activity, TimeML for temporal, the Brysbaert concreteness norms. Zero corpus embeddings, seconds. Rests on second-order context vectors and t
+
+  --------------------------------------------------------
+  [6] grag-job / general
+      Source: whole.md
+      Match:  cosine_sim=0.489  bm25=1.223
+
+      ne record. Product locates (97/97; the scope pass fills the budget inside it on 30/30 rows); section
+        is the named record kind used as a place (16% gold-carrying inside vs 28% outside on the one run counted);
+        `Chunk.years` a residue of deleted temporal tags, read by no link; channel / employee_id parsed, unused.
+      - Harness: recall_id over deduplicated record ids; a Slack chunk ~13 ids, a document chunk 1 (which is the whole
+        of cluster's person lead, corr. 13); the partial unit <= 0.03; 72,000 = a run argument x a code default; the 61
+        metadata chunks resolve to ids = [] and were delivered only by editions without a product pass (corr. 1); judged
+        metrics complete on one artefact folder (corr. 13); v2 at cb720000 holds 0.974 of gold ids; v2's 0.403 -> 0.356
+
+  --------------------------------------------------------
+  [7] grag-job / general
+      Source: user_turns.jsonl
+      Match:  cosine_sim=0.484  bm25=1.01
+
+      sly/resumably\n   * export clean JSONL.\n\n9. Build the future weak-supervision generator but DO NOT run it over the corpus.\n\n   It must support:\n\n   * A vs B\n   * reversed B vs A\n   * independent repeated asks\n   * rationale capture\n   * confidence/agreement metadata\n   * explicit provenance\n   * disagreement detection.\n\n   Model-generated labels must always be marked WEAK MODEL LABELS, never ground truth.\n\n   Test the mechanism on only 2–3 disposable example pairs to prove plumbing.\n\n10. Build evaluation split logic that prevents leakage.\n\nAt minimum support:\n\n* unseen chunks\n* unseen tags\n* unseen source documents/threads/files where applicable.\n\nPrepare metrics for:\n\n* ordinal error\n* rank correlation\n* pairwise accuracy\n* threshold consistency\n* per-facet
+
+  --------------------------------------------------------
+  [8] grag-job / general
+      Source: user_turns.md
+      Match:  cosine_sim=0.485  bm25=0.723
+
+      disposable example pairs to prove plumbing.
+      
+      10. Build evaluation split logic that prevents leakage.
+      
+      At minimum support:
+      
+      * unseen chunks
+      * unseen tags
+      * unseen source documents/threads/files where applicable.
+      
+      Prepare metrics for:
+      
+      * ordinal error
+      * rank correlation
+      * pairwise accuracy
+      * threshold consistency
+      * per-facet performance
+      * per-record-kind performance.
+      
+      11. Prepare infrastructure for explicit shortcut/contrast tests, including cases such as:
+      
+      * a nearby date unrelated to the tag
+      * highly relevant tag with little/no temporal dependence
+      * weak tag with explicit timing
+      * causal-looking words unrelated to the tag
+      * proposed vs completed activity
+      * IDs/numbers that are not meaningful specificity
+      * world-knowledge reasons absent from the source text.
+
+  --------------------------------------------------------
+

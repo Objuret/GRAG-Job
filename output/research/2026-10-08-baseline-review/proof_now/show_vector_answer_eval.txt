@@ -1,0 +1,22 @@
+rows 1 | ids ['madeup::walkthrough::0']
+
+row madeup::walkthrough::0: answer 1019 chars | contexts 279 (72000 chars), ids 278 | search 0.783 s | leg 1
+   generator {'calls': 1, 'tokens_in': 28368, 'cached_input_tokens': 0, 'tokens_out': 650, 'reasoning_tokens': 0, 'time_s': 11.099159499863163, 'attempts': 1, 'request_s': 11.096784299938008, 'wait_s': 0.0, 'retry_s': 0.0}
+   retrieval {'calls': 1, 'tokens_in': 28, 'cached_input_tokens': 0, 'tokens_out': 0, 'reasoning_tokens': 0, 'time_s': 0.20914080017246306, 'attempts': 1, 'request_s': 0.20914080017246306, 'wait_s': 0.0, 'retry_s': 0.0}
+   timing {'started_at': '2026-10-08T18:32:11.272210+00:00', 'finished_at': '2026-10-08T18:32:23.371231+00:00', 'wall_s': 12.098785100039095, 'thread': 'ThreadPoolExecutor-3_0'}
+   meta.ranking: n_units 38540 n_ranked 38540 scores 279 next_score 0.3030264973640442
+   dollar key anywhere in the row: False
+   call embed: query prefix 'query: ' device cpu tokens [28] encode_s 0.209 lock_wait_s 0.000001 started 18:32:11.273
+   call chat: model claude-sonnet-5 | flags ['-p', '--model', 'claude-sonnet-5', '--output-format', 'json', '--tools', '', '--safe-mode'] | effort field None | dropped ['chat_template_kwargs', 'max_tokens', 'min_tokens', 'temperature'] | prompt 72706 chars | tries [(1, 'ok', 11.1)]
+        started 18:32:12.266 finished 18:32:23.363 | kept usage {'prompt_tokens': 28368, 'completion_tokens': 650, 'cached_input_tokens': 0}
+        envelope: num_turns 2 stop tool_use duration_ms 8483 api_ms 9858 ttft 5099 | usage in 2 cache_creation 28366 cache_read 0 out 650 | iterations 1 | models ['claude-haiku-4-5-20251001', 'claude-sonnet-5'] | session d70c2be0-2b31-471d-8078-5375c4f0a990
+
+manifest: generator.payload {"temperature": 0, "max_tokens": 8192, "min_tokens": 1, "chat_template_kwargs": {"enable_thinking": false}} | workers 1 | top_k 50 | lane cli 2.1.212 (Claude Code) | env {}
+   code_version {'commit': 'a140636a35b9ddba479df317e81ee66044b62a2b', 'branch': 'artefact-v4', 'dirty': True} | code_state: diff_file code.1deb262bf72f166a.diff untracked 10
+   index {"units": 38540, "text_chars": 11237921, "matrix_shape": [38540, 2048], "matrix_dtype": "float32", "matrix_bytes": 315719680, "cache_file": "C:\\Coding\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_a43c8c706908de3a.npz", "cache_file_bytes": 328012061, "cache_file_sha256": "7550aafdde0bb76aa0e949b66a1ed93050ad1387ca2921a943cf96d04d23a3a5", "cache_cost_note": {"model": "nvidia/llama-nemotron-embe
+   start 1: 18:31:59-18:32:24 wall 24.2 s cpu 66.953125 workers 1 answered 1 todo 1 prepare 11.4 s peak mem 4.92 GB embedder_load 10.233694599941373
+   start 2: 18:35:36-18:35:37 wall 1.1 s cpu 4.75 workers 1 answered 0 todo 0 prepare 0.7 s peak mem 5.00 GB embedder_load 10.233694599941373
+
+against the earlier proof row (vector__answer__eval): key paths only in the earlier one: ['calls[].cost_usd', 'generator.cost_usd', 'retrieval.cost_usd'] | only in today's: ['meta.ranking.n_ranked', 'meta.ranking.n_units', 'meta.ranking.next_score', 'meta.ranking.scores[]']
+manifest key paths only in the earlier one: ['build_stats.model.cost_usd'] | only in today's: ['code_state.untracked_sha256.test/graph/write_tag_vectors.py', 'legs[].code_state.untracked_sha256.test/graph/write_tag_vectors.py', 'legs[].process_cpu_s']
+same delivered ids as the earlier proof: True | same context text: True | same answer text: False

@@ -1,0 +1,35 @@
+checkout fbc2f22c38238562599c683a0523b25e2f7e0221 | status lines in code paths: 0 | started 2026-10-08T23:42:18Z
+resource module not available on Windows
+lucene | set=gold | 100 questions | char-budget=72000 | k=50 | serial | answers + RAGAS eval
+  ->  C:\Coding\exjobbet\GRAG-Job\output\k=chars\lucene__gold100__cb72000__20261008T234209Z
+running - press q to abort
+
+lucene: 38540 artifacts + 0 directory records
+ragas judge: claude-haiku-4-5-20251001 backend=claude-cli timeout=120s tries=1
+ragas embed: priming 200 text(s) in 200 batch(es) of up to 1
+embedder: loading nvidia/llama-nemotron-embed-1b-v2 @ 113abe4acafa on cpu (float32) — first use
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/146 [00:00<?, ?it/s]Loading weights:   1%|          | 1/146 [00:00<00:56,  2.58it/s]Loading weights:   3%|▎         | 4/146 [00:00<00:33,  4.22it/s]Loading weights:   3%|▎         | 5/146 [00:01<00:59,  2.37it/s]Loading weights:  19%|█▉        | 28/146 [00:01<00:05, 21.93it/s]Loading weights:  26%|██▌       | 38/146 [00:02<00:05, 18.75it/s]Loading weights:  32%|███▏      | 46/146 [00:02<00:04, 23.68it/s]Loading weights:  36%|███▋      | 53/146 [00:03<00:04, 23.19it/s]Loading weights:  40%|████      | 59/146 [00:03<00:03, 26.17it/s]Loading weights:  44%|████▍     | 64/146 [00:03<00:03, 25.44it/s]Loading weights:  48%|████▊     | 70/146 [00:03<00:02, 30.15it/s]Loading weights:  51%|█████▏    | 75/146 [00:03<00:02, 29.98it/s]Loading weights:  55%|█████▍    | 80/146 [00:03<00:02, 32.96it/s]Loading weights:  58%|█████▊    | 85/146 [00:04<00:02, 25.97it/s]Loading weights:  62%|██████▏   | 90/146 [00:04<00:02, 27.26it/s]Loading weights:  64%|██████▍   | 94/146 [00:04<00:02, 19.24it/s]Loading weights:  70%|██████▉   | 102/146 [00:05<00:02, 17.03it/s]Loading weights:  74%|███████▍  | 108/146 [00:05<00:02, 18.56it/s]Loading weights:  76%|███████▌  | 111/146 [00:06<00:02, 13.16it/s]Loading weights:  86%|████████▋ | 126/146 [00:06<00:00, 25.90it/s]Loading weights:  90%|████████▉ | 131/146 [00:06<00:00, 24.26it/s]Loading weights:  92%|█████████▏| 135/146 [00:06<00:00, 24.06it/s]Loading weights:  95%|█████████▌| 139/146 [00:06<00:00, 20.20it/s]Loading weights: 100%|██████████| 146/146 [00:06<00:00, 20.98it/s]
+embedder: ready in 31s (2048 dim, 8192-token context)
+ragas embed: primed in 200 forward pass(es)
+ragas: all 1400 cells ok
+ragas judge usage: 600 call(s), in=4225152 cached=15287 out=285760 reasoning=0 tokens, request-time=4127.1s wall=4471.1s
+
+results  (lucene, n=100)
+  context_precision_id       0.05
+  context_recall_id          0.09
+  context_precision_nonllm   0.18
+  context_recall_nonllm      0.07
+  semantic_similarity        0.33
+  string_similarity          0.13
+  bleu                       0.02
+  rouge                      0.10
+  chrf                       0.21
+  exact_match                0.00
+  string_presence            0.01
+  faithfulness               0.90
+  answer_correctness         0.17
+  context_recall_llm         0.25
+
+100/100 answered, 0 failed, 0 did not fill the 72000 char budget  ->  C:\Coding\exjobbet\GRAG-Job\output\k=chars\lucene__gold100__cb72000__20261008T234209Z
+exit 0 | finished 2026-10-09T08:10:32Z

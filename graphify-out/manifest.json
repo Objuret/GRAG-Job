@@ -535,14 +535,9 @@
     "semantic_hash": "874e3c34d58d243cb9f69005a176ea42"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\test\\arms\\artefact_v4.py": {
-    "mtime": 1791544458.6299534,
-    "ast_hash": "39e2a525060d6cbbcf85a20b79c3ab04",
-    "semantic_hash": "39e2a525060d6cbbcf85a20b79c3ab04"
-  },
-  "C:\\Coding\\exjobbet\\GRAG-Job\\test\\artefact\\complementary_query.py": {
-    "mtime": 1790328482.9150772,
-    "ast_hash": "97a568c133e782428b05d6f91ee400b5",
-    "semantic_hash": "97a568c133e782428b05d6f91ee400b5"
+    "mtime": 1792388229.182636,
+    "ast_hash": "2850b241ce43edb7ada8db12530027a1",
+    "semantic_hash": "2850b241ce43edb7ada8db12530027a1"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\test\\artefact\\concept_baseline.py": {
     "mtime": 1790283975.9210894,
@@ -705,9 +700,9 @@
     "semantic_hash": "e2e196539079b4a42d29868f3fe041f0"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\test\\artefact\\query_content.py": {
-    "mtime": 1791378603.693721,
-    "ast_hash": "3fad4839403913968579c71409f91be6",
-    "semantic_hash": "3fad4839403913968579c71409f91be6"
+    "mtime": 1792388166.3974931,
+    "ast_hash": "4a76489d56019cdebc9666a470c8c5a6",
+    "semantic_hash": "4a76489d56019cdebc9666a470c8c5a6"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\test\\artefact\\querytagger_split_check.py": {
     "mtime": 1790019323.033559,
@@ -960,14 +955,9 @@
     "semantic_hash": "2aab46d70117b4f2af8eaceee9f8cffd"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\test\\tests\\test_artefact_v4.py": {
-    "mtime": 1791544687.188501,
-    "ast_hash": "c2f821454edb536158b0cd9dbbe20f29",
-    "semantic_hash": "c2f821454edb536158b0cd9dbbe20f29"
-  },
-  "C:\\Coding\\exjobbet\\GRAG-Job\\test\\tests\\test_complementary_query.py": {
-    "mtime": 1790328285.6972375,
-    "ast_hash": "92fc4109826e591bc8bbc1f8dbe117d8",
-    "semantic_hash": "92fc4109826e591bc8bbc1f8dbe117d8"
+    "mtime": 1792388363.1867938,
+    "ast_hash": "20190552d73721e62dc23ca9719d6f4d",
+    "semantic_hash": "20190552d73721e62dc23ca9719d6f4d"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\test\\tests\\test_facet_combined_leaderboard.py": {
     "mtime": 1790081895.2735157,
@@ -1240,9 +1230,9 @@
     "semantic_hash": "d598cefd788bd3d50c40c43ed4c89bd3"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\test\\tests\\test_query_content.py": {
-    "mtime": 1791378468.8354237,
-    "ast_hash": "321e81f4d774eb34750180b0aca76e89",
-    "semantic_hash": "321e81f4d774eb34750180b0aca76e89"
+    "mtime": 1792388305.6383228,
+    "ast_hash": "f67b82c7a3396890fb0246d27e7306f8",
+    "semantic_hash": "f67b82c7a3396890fb0246d27e7306f8"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\test\\tests\\test_querytagger_split_check.py": {
     "mtime": 1790019357.0358703,
@@ -1305,9 +1295,9 @@
     "semantic_hash": "d50eb42ebc0d6799f7d88cddb60e16f2"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\test\\artefact\\v4_walk.py": {
-    "mtime": 1791544639.8895836,
-    "ast_hash": "5cc452d9f574ffa2c87779b56ccccdd8",
-    "semantic_hash": "5cc452d9f574ffa2c87779b56ccccdd8"
+    "mtime": 1792388269.1025102,
+    "ast_hash": "4b8f9a8ce303d88af16350cad146ef35",
+    "semantic_hash": "4b8f9a8ce303d88af16350cad146ef35"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\prod\\harness\\capture.py": {
     "mtime": 1791472308.606296,
@@ -1349,20 +1339,15 @@
     "ast_hash": "9e9cf277d167751e2beab4a89da29786",
     "semantic_hash": "9e9cf277d167751e2beab4a89da29786"
   },
-  "C:\\Coding\\exjobbet\\GRAG-Job\\test\\tests\\test_artefact_v4_clouds.py": {
-    "mtime": 1791544687.1895278,
-    "ast_hash": "e1abbd555871033ceb56fc316db6cb92",
-    "semantic_hash": "e1abbd555871033ceb56fc316db6cb92"
-  },
   "C:\\Coding\\exjobbet\\GRAG-Job\\test\\tests\\test_graph_layer.py": {
     "mtime": 1791276523.9763978,
     "ast_hash": "22d3c17daf293a38a2226a8e6aecc836",
     "semantic_hash": "22d3c17daf293a38a2226a8e6aecc836"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\test\\tests\\test_v4_walk.py": {
-    "mtime": 1791544639.8905864,
-    "ast_hash": "61653f955f12d10bc0b9943ac010d70d",
-    "semantic_hash": "61653f955f12d10bc0b9943ac010d70d"
+    "mtime": 1792388305.6383228,
+    "ast_hash": "198955d628590d7c1a1729ddfe4b3a4a",
+    "semantic_hash": "198955d628590d7c1a1729ddfe4b3a4a"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\prod\\harness\\record_text.py": {
     "mtime": 1791501571.5740013,
@@ -1375,18 +1360,63 @@
     "semantic_hash": "827b1ccc3a97e2a1abebbb245416b4c7"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\prod\\harness\\fields.py": {
-    "mtime": 1791562962.9272833,
-    "ast_hash": "d3164930fcbe3c3682e69417762158fb",
-    "semantic_hash": "d3164930fcbe3c3682e69417762158fb"
+    "mtime": 1791839973.0016065,
+    "ast_hash": "e322811933743c8df1d0e2f15b6459e3",
+    "semantic_hash": "e322811933743c8df1d0e2f15b6459e3"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\prod\\tests\\test_fields.py": {
     "mtime": 1791562962.9282844,
     "ast_hash": "2e683948aa7a771c72c46cbbe8d06dac",
     "semantic_hash": "2e683948aa7a771c72c46cbbe8d06dac"
   },
-  "C:\\Coding\\exjobbet\\GRAG-Job\\test\\artefact\\query_facets.py": {
-    "mtime": 1791542567.4254498,
-    "ast_hash": "e5fdd2ee721c6c7eada0115458773c83",
-    "semantic_hash": "e5fdd2ee721c6c7eada0115458773c83"
+  "C:\\Coding\\exjobbet\\GRAG-Job\\test\\graph\\build_person_edges.py": {
+    "mtime": 1792204129.343779,
+    "ast_hash": "c0be3b2dc0de0ef9f1e9da67fd3493af",
+    "semantic_hash": "c0be3b2dc0de0ef9f1e9da67fd3493af"
+  },
+  "C:\\Coding\\exjobbet\\GRAG-Job\\test\\tests\\test_build_person_edges.py": {
+    "mtime": 1792204247.5805426,
+    "ast_hash": "c05adb725d90ed3b8d56f0f38a2c1b31",
+    "semantic_hash": "c05adb725d90ed3b8d56f0f38a2c1b31"
+  },
+  "C:\\Coding\\exjobbet\\GRAG-Job\\test\\graph\\build_chunk_times.py": {
+    "mtime": 1792378837.5267692,
+    "ast_hash": "3e6b6711640cb15c54fe069b83f99720",
+    "semantic_hash": "3e6b6711640cb15c54fe069b83f99720"
+  },
+  "C:\\Coding\\exjobbet\\GRAG-Job\\test\\graph\\build_customer_edges.py": {
+    "mtime": 1792373328.3242285,
+    "ast_hash": "6eac39f9eec0fe1cc5e897f08abb9563",
+    "semantic_hash": "6eac39f9eec0fe1cc5e897f08abb9563"
+  },
+  "C:\\Coding\\exjobbet\\GRAG-Job\\test\\graph\\build_edge_places.py": {
+    "mtime": 1792388276.6447282,
+    "ast_hash": "302e7a70e800dde35149fde481c39081",
+    "semantic_hash": "302e7a70e800dde35149fde481c39081"
+  },
+  "C:\\Coding\\exjobbet\\GRAG-Job\\test\\graph\\build_structure_names.py": {
+    "mtime": 1792373330.6027217,
+    "ast_hash": "ed1eda2526017565f0095739a1922d4e",
+    "semantic_hash": "ed1eda2526017565f0095739a1922d4e"
+  },
+  "C:\\Coding\\exjobbet\\GRAG-Job\\test\\tests\\test_build_chunk_times.py": {
+    "mtime": 1792378900.9803185,
+    "ast_hash": "da5d4f487d9a3a7939a0309a03bf6bc4",
+    "semantic_hash": "da5d4f487d9a3a7939a0309a03bf6bc4"
+  },
+  "C:\\Coding\\exjobbet\\GRAG-Job\\test\\tests\\test_build_customer_edges.py": {
+    "mtime": 1792373332.8127084,
+    "ast_hash": "d8f239f1bf22c4be5c887289098231d7",
+    "semantic_hash": "d8f239f1bf22c4be5c887289098231d7"
+  },
+  "C:\\Coding\\exjobbet\\GRAG-Job\\test\\tests\\test_build_edge_places.py": {
+    "mtime": 1792388271.3778908,
+    "ast_hash": "cd86275da4b7dc92010a693cb1963034",
+    "semantic_hash": "cd86275da4b7dc92010a693cb1963034"
+  },
+  "C:\\Coding\\exjobbet\\GRAG-Job\\test\\tests\\test_build_structure_names.py": {
+    "mtime": 1792373331.714161,
+    "ast_hash": "92ece20bc76b1be8ba14946034b08ecb",
+    "semantic_hash": "92ece20bc76b1be8ba14946034b08ecb"
   }
 }

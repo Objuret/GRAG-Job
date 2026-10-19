@@ -1,0 +1,193 @@
+{
+  "scorer": "ragas",
+  "judge_model": null,
+  "source_run": "C:\\Coding\\exjobbet\\GRAG-Job\\output\\research\\2026-10-08-keep-everything-proof\\vector__answer__eval",
+  "arm": "vector",
+  "timestamp": "2026-10-08T09:59:32.535042+00:00",
+  "judge_backend": "claude-cli",
+  "judge_effort": null,
+  "judge_usage": {
+    "calls": 6,
+    "tokens_in": 67176,
+    "cached_input_tokens": 0,
+    "tokens_out": 20288,
+    "reasoning_tokens": 0,
+    "time_s": 178.9780061999336,
+    "attempts": 6,
+    "request_s": 178.97258159983903,
+    "wait_s": 0.0,
+    "retry_s": 0.0,
+    "cost_usd": 0.28063099999999996
+  },
+  "judge_elapsed_s": 187.97403600020334,
+  "judge_legs": [
+    {
+      "timestamp": "2026-10-08T09:59:27.443139+00:00",
+      "judge_model": "claude-haiku-4-5",
+      "judge_backend": "claude-cli",
+      "usage": {
+        "calls": 6,
+        "tokens_in": 67176,
+        "cached_input_tokens": 0,
+        "tokens_out": 20288,
+        "reasoning_tokens": 0,
+        "time_s": 178.9780061999336,
+        "attempts": 6,
+        "request_s": 178.97258159983903,
+        "wait_s": 0.0,
+        "retry_s": 0.0,
+        "cost_usd": 0.28063099999999996
+      },
+      "elapsed_s": 186.2859914000146
+    },
+    {
+      "timestamp": "2026-10-08T09:59:32.535042+00:00",
+      "judge_model": null,
+      "judge_backend": "claude-cli",
+      "usage": {
+        "calls": 0,
+        "tokens_in": 0,
+        "cached_input_tokens": 0,
+        "tokens_out": 0,
+        "reasoning_tokens": 0,
+        "time_s": 0.0,
+        "attempts": 0,
+        "request_s": 0.0,
+        "wait_s": 0.0,
+        "retry_s": 0.0,
+        "cost_usd": 0.0
+      },
+      "elapsed_s": 1.6880446001887321,
+      "settings": {
+        "started_at": "2026-10-08T09:59:30.837357+00:00",
+        "finished_at": "2026-10-08T09:59:32.526864+00:00",
+        "interrupted": null,
+        "workers": 1,
+        "retrieval_only": false,
+        "scores": [
+          "context_precision_id",
+          "context_recall_id",
+          "context_precision_nonllm",
+          "context_recall_nonllm",
+          "semantic_similarity",
+          "string_similarity",
+          "bleu",
+          "rouge",
+          "chrf",
+          "exact_match",
+          "string_presence",
+          "faithfulness",
+          "answer_correctness",
+          "context_recall_llm"
+        ],
+        "judge_model": "claude-haiku-4-5",
+        "judge_backend": "claude-cli",
+        "judge_timeout_s": 120.0,
+        "judge_max_tries": 2,
+        "judge_inflight": 64,
+        "max_judge_context_chars": 60000,
+        "max_consecutive_failed_questions": 10,
+        "ragas": "0.4.3",
+        "embed_model": "nvidia/llama-nemotron-embed-1b-v2",
+        "lane": {
+          "exe": "C:\\Users\\jocke\\.local\\bin\\claude.exe",
+          "cli_version": "2.1.212 (Claude Code)",
+          "cwd": "C:\\Users\\jocke\\AppData\\Local\\Temp\\herb-claude-lane",
+          "fixed_flags": [
+            "-p",
+            "--tools",
+            "",
+            "--safe-mode"
+          ],
+          "env_set": {
+            "MEMPALACE_HOOKS_AUTO_SAVE": "false"
+          },
+          "max_tries_default": 6
+        },
+        "calls_file": "eval_calls.jsonl",
+        "argv": [
+          "output/research/2026-10-08-keep-everything-proof/proof.py",
+          "vector",
+          "--answer",
+          "--evaluate"
+        ],
+        "pid": 60552,
+        "python_executable": "C:\\Coding\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+        "wall_s": 1.6880446001887321,
+        "embedding": {
+          "requests": 0,
+          "texts": 0,
+          "tokens_in": 0,
+          "lock_wait_s": 0.0,
+          "encode_s": 0.0
+        },
+        "cells": {}
+      }
+    }
+  ],
+  "judge_settings": {
+    "started_at": "2026-10-08T09:59:30.837357+00:00",
+    "finished_at": "2026-10-08T09:59:32.526864+00:00",
+    "interrupted": null,
+    "workers": 1,
+    "retrieval_only": false,
+    "scores": [
+      "context_precision_id",
+      "context_recall_id",
+      "context_precision_nonllm",
+      "context_recall_nonllm",
+      "semantic_similarity",
+      "string_similarity",
+      "bleu",
+      "rouge",
+      "chrf",
+      "exact_match",
+      "string_presence",
+      "faithfulness",
+      "answer_correctness",
+      "context_recall_llm"
+    ],
+    "judge_model": "claude-haiku-4-5",
+    "judge_backend": "claude-cli",
+    "judge_timeout_s": 120.0,
+    "judge_max_tries": 2,
+    "judge_inflight": 64,
+    "max_judge_context_chars": 60000,
+    "max_consecutive_failed_questions": 10,
+    "ragas": "0.4.3",
+    "embed_model": "nvidia/llama-nemotron-embed-1b-v2",
+    "lane": {
+      "exe": "C:\\Users\\jocke\\.local\\bin\\claude.exe",
+      "cli_version": "2.1.212 (Claude Code)",
+      "cwd": "C:\\Users\\jocke\\AppData\\Local\\Temp\\herb-claude-lane",
+      "fixed_flags": [
+        "-p",
+        "--tools",
+        "",
+        "--safe-mode"
+      ],
+      "env_set": {
+        "MEMPALACE_HOOKS_AUTO_SAVE": "false"
+      },
+      "max_tries_default": 6
+    },
+    "calls_file": "eval_calls.jsonl",
+    "argv": [
+      "output/research/2026-10-08-keep-everything-proof/proof.py",
+      "vector",
+      "--answer",
+      "--evaluate"
+    ],
+    "pid": 60552,
+    "python_executable": "C:\\Coding\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+    "wall_s": 1.6880446001887321,
+    "embedding": {
+      "requests": 0,
+      "texts": 0,
+      "tokens_in": 0,
+      "lock_wait_s": 0.0,
+      "encode_s": 0.0
+    },
+    "cells": {}
+  }
+}

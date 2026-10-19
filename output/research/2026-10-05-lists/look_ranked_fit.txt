@@ -1,0 +1,4 @@
+tag side                             first 15 shared with closeness alone   ...of the first 50 | tags + text: first 15 shared, in EdgeForce | largest change of a chunk's tag term
+closeness alone                                                        15                   50 |  15, 10 |
+ranked, median self-difference                                         11                   47 |  14,  9 | 0.127 spreads (width 0.0089)
+ranked, largest self-difference                                        11                   45 |  14,  9 | 0.248 spreads (width 0.0175)

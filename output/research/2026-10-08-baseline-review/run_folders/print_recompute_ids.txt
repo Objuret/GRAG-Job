@@ -1,0 +1,16 @@
+A.luc: rows 100, rows with no citation ids 0
+   context_recall_id    recomputed == stored: 100/100   mean recomputed 0.121672
+   context_precision_id recomputed == stored: 100/100   mean recomputed 0.044790
+   context_recall_id with the cut piece's id counted as retrieved: mean 0.121916   rows that change: 1
+A.vec: rows 100, rows with no citation ids 0
+   context_recall_id    recomputed == stored: 100/100   mean recomputed 0.267544
+   context_precision_id recomputed == stored: 100/100   mean recomputed 0.045618
+   context_recall_id with the cut piece's id counted as retrieved: mean 0.268569   rows that change: 3
+B.luc: rows 100, rows with no citation ids 0
+   context_recall_id    recomputed == stored: 100/100   mean recomputed 0.121672
+   context_precision_id recomputed == stored: 100/100   mean recomputed 0.044789
+   context_recall_id with the cut piece's id counted as retrieved: mean 0.121916   rows that change: 1
+B.vec: rows 100, rows with no citation ids 0
+   context_recall_id    recomputed == stored: 100/100   mean recomputed 0.263666
+   context_precision_id recomputed == stored: 100/100   mean recomputed 0.046267
+   context_recall_id with the cut piece's id counted as retrieved: mean 0.264542   rows that change: 4

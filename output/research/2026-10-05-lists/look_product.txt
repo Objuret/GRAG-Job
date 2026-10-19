@@ -1,0 +1,17 @@
+question: Why did the EdgeForce team change the rollback procedure for model updates, and what had gone wrong with rollbacks before that?
+description: Content detailing specific problems and failures that occurred with prior rollback operations for model updates, the particular issues that prompted the procedural change, and explanations of the reasons behind redesigning the rollback procedure.
+product names: 30 e.g. ['VizForce', 'ContentForce', 'SentimentForce', 'SummarizeForce', 'AnomalyForce']
+
+list                           first 15: commonest product (share), products  first 50: commonest product (share), products  first 150: commonest product (share), products
+tags (best tag carries)        EdgeForce 7/15, 9 products  |  EdgeForce 13/50, 14 products  |  EdgeForce 16/150, 30 products
+description, same mode         ContentForce 4/15, 11 products  |  ContentForce 7/50, 19 products  |  ExplainabilityForce 15/150, 27 products
+description, question mode     EdgeForce 4/15, 8 products  |  EdgeForce 8/50, 17 products  |  ContentForce 18/150, 26 products
+raw question, same mode        EdgeForce 10/15, 5 products  |  EdgeForce 28/50, 11 products  |  EdgeForce 54/150, 21 products
+raw question, question mode    EdgeForce 15/15, 1 products  |  EdgeForce 43/50, 5 products  |  EdgeForce 68/150, 22 products
+
+EdgeForce holds 148 of 4808 chunks. Of the first 15 / 50 / 150 of each list, in EdgeForce:
+   tags (best tag carries)        7 / 13 / 16
+   description, same mode         1 / 5 / 9
+   description, question mode     4 / 8 / 14
+   raw question, same mode        10 / 28 / 54
+   raw question, question mode    15 / 43 / 68

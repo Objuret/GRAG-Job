@@ -1,0 +1,12 @@
+an identical phrase scores 0.991 at the median on this graph (100 graph tag names)
+question tag            best  bulk spread | range = 1 - best: width, tags (chunks) | range = 0.991 - best: width, tags (chunks) | serving gap 0.0175: tags (chunks)
+rollback procedure     0.978  0.74  0.067 |                       0.022, 2 (8) |                         0.013, 2 (8) |         0.018, 2 (8)
+       rollback process 0.978; rollback procedures 0.974
+model updates          0.993  0.77  0.063 |                      0.007, 1 (14) |                        0.000, 1 (14) |        0.018, 2 (15)
+       model updates 0.993
+rollback failures      0.923  0.72  0.069 |                   0.077, 106 (284) |                      0.068, 65 (133) |        0.018, 9 (15)
+       rollback procedures 0.923; rollback process 0.920; incorrect rollbacks 0.920; deployment failures 0.920; repeated rollbacks 0.916; rollback scenarios 0.911; transaction rollback 0.909; deployment rollback 0.909
+procedural change      0.897  0.75  0.063 |                 0.103, 3767 (4490) |                   0.094, 2790 (4271) |       0.018, 15 (24)
+       infrastructure changes 0.897; resolution 0.896; regulations 0.891; architectural changes 0.890; approved 0.889; approval 0.889; architecture change 0.889; strategy change 0.889
+failure analysis       0.867  0.71  0.061 |                 0.133, 5904 (4733) |                   0.124, 4931 (4667) |       0.018, 20 (47)
+       testing processes 0.867; testing methods 0.867; technical investigation 0.866; bug analysis 0.865; reliability testing 0.864; testing procedures 0.863; project investigation 0.861; product reliability 0.861

@@ -1,0 +1,11 @@
+the made-up question: floor, picked tags (their chunks)
+  rollback procedure   closest 0.978, middle of its list 0.742 | 95% of the score: 0.929, 4 (10) | top 5% of the range: 0.966, 2 (8) | top 10% of the range: 0.954, 2 (8)
+  model updates        closest 0.993, middle of its list 0.765 | 95% of the score: 0.943, 3 (16) | top 5% of the range: 0.981, 1 (14) | top 10% of the range: 0.970, 2 (15)
+  rollback failures    closest 0.923, middle of its list 0.718 | 95% of the score: 0.877, 20 (36) | top 5% of the range: 0.912, 5 (11) | top 10% of the range: 0.902, 9 (15)
+  procedural change    closest 0.897, middle of its list 0.752 | 95% of the score: 0.852, 211 (992) | top 5% of the range: 0.890, 4 (6) | top 10% of the range: 0.882, 13 (22)
+  failure analysis     closest 0.867, middle of its list 0.714 | 95% of the score: 0.824, 117 (536) | top 5% of the range: 0.860, 8 (12) | top 10% of the range: 0.852, 15 (41)
+
+the 100 question tags of the ten: picked tags per question tag, and their chunks (5 / 25 / 50 / 75 / 95%)
+  95% of the score       tags 2 / 4 / 12 / 43 / 132   chunks 3 / 32 / 142 / 330 / 704
+  top 5% of the range    tags 1 / 1 / 1 / 2 / 5   chunks 1 / 2 / 5 / 29 / 152
+  top 10% of the range   tags 1 / 2 / 2 / 5 / 12   chunks 2 / 3 / 13 / 51 / 191

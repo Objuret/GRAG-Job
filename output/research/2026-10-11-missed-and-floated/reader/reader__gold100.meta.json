@@ -1,0 +1,32 @@
+{
+ "model": "Alibaba-NLP/gte-reranker-modernbert-base",
+ "revision": "f7481e6055501a30fb19d090657df9ec1f79ab2c",
+ "dtype": "float32 compute, float16 storage",
+ "max_length": 1509,
+ "longest_joint_input_tokens": 1509,
+ "truncation": "only_second (the tag is never cut)",
+ "truncation_rate": 0.0,
+ "n_truncated": 0,
+ "edges": 19888,
+ "seconds": 378.6,
+ "seconds_per_1000_edges": 19.0,
+ "edges_this_run": 19888,
+ "hidden_size": 768,
+ "num_hidden_layers": 22,
+ "layers_saved": [
+  "L-1",
+  "L-2",
+  "L-3",
+  "L-4"
+ ],
+ "pooling": [
+  "first_token",
+  "attention_masked_mean"
+ ],
+ "native_logit": true,
+ "head_outputs": 1,
+ "attn_implementation": "sdpa",
+ "device": "cuda",
+ "torch": "2.6.0+cu124",
+ "written": "2026-10-12T23:57:48Z"
+}

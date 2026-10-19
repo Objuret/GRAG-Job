@@ -221,7 +221,7 @@ class TheRealOverlay(unittest.TestCase):
 
     def test_shape_and_count(self):
         if not self.PATH.is_file():
-            self.skipTest("round1/overlay.json not written")
+            self.fail("round1/overlay.json not written")
         body = json.loads(self.PATH.read_text(encoding="utf-8"))
         self.assertEqual(body["database"], DB)
         self.assertEqual(body["run_id"], RUN_ID)

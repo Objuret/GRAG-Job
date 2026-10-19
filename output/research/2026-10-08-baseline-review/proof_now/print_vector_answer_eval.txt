@@ -1,0 +1,27 @@
+resource module not available on Windows
+lucene: 38540 artifacts + 0 directory records
+code state at the start: diff sha256 1deb262bf72f166a | 41 changed or new paths
+vector: 38540 artifacts + 0 directory records
+embedder: loading nvidia/llama-nemotron-embed-1b-v2 @ 113abe4acafa on cpu (float32) — first use
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/146 [00:00<?, ?it/s]Loading weights:   1%|          | 1/146 [00:02<06:38,  2.75s/it]Loading weights:  51%|#####1    | 75/146 [00:02<00:01, 35.85it/s]Loading weights:  71%|#######   | 103/146 [00:03<00:01, 40.78it/s]Loading weights:  83%|########2 | 121/146 [00:03<00:00, 41.31it/s]Loading weights:  92%|#########1| 134/146 [00:04<00:00, 42.55it/s]Loading weights:  99%|#########8| 144/146 [00:04<00:00, 42.13it/s]Loading weights: 100%|##########| 146/146 [00:04<00:00, 33.52it/s]
+embedder: ready in 10s (2048 dim, 8192-token context)
+ragas judge: claude-haiku-4-5 backend=claude-cli timeout=120s tries=2
+ragas embed: priming 2 text(s) in 2 batch(es) of up to 1
+ragas embed: primed in 2 forward pass(es)
+ragas: all 14 cells ok
+ragas judge usage: 6 call(s), in=67095 cached=0 out=21489 reasoning=0 tokens, request-time=186.2s wall=191.6s
+first start done in 216.4 s
+vector: 38540 artifacts + 0 directory records
+ragas judge: claude-haiku-4-5 backend=claude-cli timeout=120s tries=2
+ragas: all 0 cells ok
+
+folder output\research\2026-10-08-baseline-review\proof_now\vector__answer__eval
+  arm_outputs.jsonl                      167,308 bytes
+  code.1deb262bf72f166a.diff             916,888 bytes
+  eval_calls.jsonl                       212,206 bytes
+  eval_failures.jsonl                          0 bytes
+  eval_manifest.json                       7,715 bytes
+  eval_results.jsonl                       8,349 bytes
+  failures.jsonl                               0 bytes
+  run_manifest.json                       19,509 bytes

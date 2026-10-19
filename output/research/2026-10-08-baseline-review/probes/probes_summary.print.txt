@@ -1,0 +1,11 @@
+answer_logged: model claude-sonnet-5 | thinking {"type": "adaptive", "display": "omitted"} | output_config {"effort": "medium"} | temperature in request: False | max_tokens 64000 | tools ['StructuredOutput'] | tool_choice in request: False
+     system blocks (chars): [91, 62, 66] | user message blocks (chars, start): [(365, '<system-reminder>'), (832, 'Documents:\r\nSlack')]
+answer_no_user_settings: model claude-sonnet-5 | thinking {"type": "adaptive", "display": "omitted"} | output_config {"effort": "high"} | temperature in request: False | max_tokens 64000 | tools ['StructuredOutput'] | tool_choice in request: False
+     system blocks (chars): [91, 62, 66] | user message blocks (chars, start): [(365, '<system-reminder>'), (832, 'Documents:\r\nSlack')]
+judge_logged: model claude-haiku-4-5 | thinking {"budget_tokens": 31999, "type": "enabled", "display": "omitted"} | output_config null | temperature in request: False | max_tokens 32000 | tools [] | tool_choice in request: False
+     system blocks (chars): [91, 62, 10598, 4690] | user message blocks (chars, start): [(365, '<system-reminder>'), (33, 'Reply with the si')]
+
+call answer_logged              2026-10-08T18:28:15Z session 41913a71-07d7-4b2b-a66d-b8896690cfba | models that were asked: ['claude-haiku-4-5-20251001', 'claude-sonnet-5'] | main call tokens in 985 out 328
+call judge_logged               2026-10-08T18:29:16Z session ac0b68ad-b63a-4f9b-834a-7b67f2c1343d | models that were asked: ['claude-haiku-4-5', 'claude-haiku-4-5-20251001'] | main call tokens in 3649 out 44
+call answer_no_user_settings    2026-10-08T18:29:43Z session d865cc9b-61e7-4691-9e8d-949dd83df2be | models that were asked: ['claude-haiku-4-5-20251001', 'claude-sonnet-5'] | main call tokens in 985 out 335
+call answer_no_title            2026-10-08T18:29:49Z session 36dafe18-124c-4141-9a2d-faf4a07eb82a | models that were asked: ['claude-sonnet-5'] | main call tokens in 985 out 415

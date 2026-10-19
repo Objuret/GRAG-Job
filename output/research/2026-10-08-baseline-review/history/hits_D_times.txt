@@ -1,0 +1,166 @@
+=== 2026-07-16T10:23Z · session 3b7c153b · 257 chars
+do NOT fuck with my runs now, i just want to talk...
+but i would like to try the evalution using a faster model than qwen, but do it on these same 3 runs/questions etc so i can compare it straight up vs qwen so we can see if qwen really is wortth the hassle
+
+=== 2026-07-17T10:22Z · session 3b7c153b · 199 chars
+but that is the max parrallelism you got for me? 1q at a time? we cant speed up the evals or something also? those are the ones taking time after all, for example answering 1 eval / agent so to speak
+
+=== 2026-07-17T13:17Z · session 3b10041c · 119 chars
+dude, fucking what did you do!? literally burned almost my entire usage in 30 seconds.. they all started running twice?
+
+=== 2026-07-18T23:06Z · session 3b10041c · 153 chars
+you saying the fucking cli CANT use the enforced schema /structured input/output!? i asked you a fucking million times about this and you kept saying yes
+
+=== 2026-07-19T23:19Z · session 3b10041c · 50 chars
+all the times and all the tokens in and outputs et
+
+=== 2026-07-21T10:55Z · session d7933ea3 · 245 chars
+you know what, based on the speed of lucene and vector, i get the feeling we fucking REALLY should try to make as much as possible deterministic, but, before we go on now, how did the actual values look from the smoke now compared to the others?
+
+=== 2026-07-23T12:22Z · session 42699b8f · 45 chars
+how long did the multitest you just ran take?
+
+=== 2026-07-23T12:24Z · session 42699b8f · 213 chars
+and amount of tokens spent on it?
+and asking again because i am getting shitty info everytime i ask, IS THE METADATA EXISTING? Do we know the times and in/out tokencount for each and every fucking step/thing here?
+
+=== 2026-07-23T14:14Z · session 42699b8f · 101 chars
+"if fewer than 8 questions move, it's noise, stop" does this fucking matter if it only takes seconds?
+
+=== 2026-07-23T14:34Z · session 42699b8f · 122 chars
+havent you said multiple times that the actual gold pretty much always is in the retrieved? that part actually beeing 100%
+
+=== 2026-07-24T03:48Z · session 42699b8f · 51 chars
+times out crashes? really? are you sure about that?
+
+=== 2026-07-25T10:03Z · session 1ccd9ede · 96 chars
+v1 takes 4sec/q now, is that WITH haiku-calls!? how the fuck do i get it to use the "pre-saved"?
+
+=== 2026-07-29T18:14Z · session 579f6380 · 156 chars
+Dude, your dates and times are ALWAYS wrong, please stop from trying to measure time, it's genuinely terrible and just builds a false narrative in YOUR mind
+
+=== 2026-07-29T18:18Z · session 579f6380 · 226 chars
+That's a GOOD feature then.. Why the fuck would you not jusg say that!? Shesus goddamn fucking christ.. I yelled at you like 4 times before you fucking revealed that, and only after a specific detailed prompt about that detail
+
+=== 2026-07-29T23:02Z · session f6cb7de7 · 254 chars
+ok, but the graphify is only supposed to update actually new things, so that should not take 17 fucking minutes, and changing 2 lines of code.. that took 25 minutes!? no, you are not reporting something here because all of that is actually fully retarded
+
+=== 2026-08-06T11:30Z · session 8db534ec · 119 chars
+while on it, "temportal" never was about explicit dates or times, it was about the temporality context of the tag/chunk
+
+=== 2026-08-06T22:17Z · session 8db534ec · 97 chars
+i dont get it? you dint build it? you kinda said so a bunch of fucking times, what ARE you doing?
+
+=== 2026-08-06T22:18Z · session 8db534ec · 73 chars
+i told you that so fucking many times i was sure we were on the next step
+
+=== 2026-08-10T20:06Z · session b167dfcf · 73 chars
+you said retrieval only, but it takes forever.. over 10sec per question..
+
+=== 2026-08-14T10:23Z · session 6fed3f94 · 256 chars
+good, and the runs are fully robust now? if api och my laptop or connection dies, they are resumable? and they are recording exactly all metadata, data, times, costs, tokens in and out etc, EVERYTHING an academic could possibly want to know about the runs?
+
+=== 2026-08-16T16:12Z · session 0381c576 · 338 chars
+STOP.
+"No company name appears anywhere in the corpus content. Not one — BlueWave, TechCorp, none of them, zero occurrences across all 30 product files. Customer names hit eight times and all eight are collisions with employee names. "
+What in the actual goddamn fuck are you talking about!? WHAT IS THIS!? WHY IS THIS EVEN SEARCHED FOR!?
+
+=== 2026-08-23T00:32Z · session 0c32d2b9 · 184 chars
+This is aggrevating, its impossible for me to know what the artefact/codebase actually do when you keep doing shit like this, also, you are set at max speed and this is going very slow
+
+=== 2026-08-23T00:34Z · session 0c32d2b9 · 156 chars
+yeah, scope them TIGHT TIGHT, and i dont mean the "speed mode" i mean dude, a hundred fucking tool calls!? why does it even need a single fucking tool call?
+
+=== 2026-08-23T23:16Z · session 95914f4c · 52 chars
+... you took that long for.. that..?.. fucking what?
+
+=== 2026-09-01T02:03Z · session 3e773522 · 1047 chars
+"Measured it on volmax, all 62,028 edges — spread within one tag's edges, and the share of that facet's variance it accounts for:
+
+facet	sd within a tag	share	sd within a chunk	share
+topic	0.1002	44.8%	0.2408	79.8%
+evidence	0.1913	73.6%	0.0000	0.0%
+temporal	0.0121	4.8%	0.1520	74.2%
+entities	0.0000	0.0%	0.2603	86.6%
+activity	0.0000	0.0%	0.2485	82.8%
+Your framing holds everywhere except one detail. Entities and activity are exactly zero — structurally, they're read from the tag embedding, so there is no per-edge number to read. Temporal is 0.0121, which is small but not that. It's a weak signal, not an absent one — eight times less movement than topic, on an axis whose total spread is already the narrowest of the five.
+
+So it's not the same kind of thing as entities and activity, and whether weak counts as usable is yours to say. Everything else lands: topic is the only axis that reaches the last step, evidence separates chunks and says nothing about which tag found them.
+
+Written into CLAUDE.md, your words and the measurement both."
+
+=== 2026-09-01T23:47Z · session 987dba72 · 499 chars
+"employee.json, salesforce_team.json, customers_data.json" tho, werent those just supposed to be for the structure? the chunks are chosen but dont have any content? what?
+
+so, what is the REAL actual issue tho, is it the level of fuzzyness when picking the correct chunks? is it the best fit, i mean, i'm pretty fucking sure we should be able to do something smart with the actual chosen chunk-pool.. 1200 does seem a bit steep tho.. is that per question? so many qualify? that does not seem correct
+
+=== 2026-09-03T00:43Z · session 66fb9016 · 19 chars
+... so many times..
+
+=== 2026-09-06T04:30Z · session b2c67359 · 146 chars
+dude, is this only takes seconds to run, just fucking try it with dozens of different valuecombinations then.. ffs.. different k, clusters etc etc
+
+=== 2026-09-08T06:06Z · session 5802c26c · 30 chars
+sure, finish it at max speed..
+
+=== 2026-09-09T03:10Z · session 0c8cb0bf · 85 chars
+good god you have fucked me so many times on a shitty, fake, halfbaked implementation
+
+=== 2026-09-09T03:34Z · session 0c8cb0bf · 308 chars
+yeah, but what is the ACTUAL build now then? how does it work and how does it use the facets? there are quite alot of parts in this artefact and have you really reviewed and analysed all of them well enough here?  because literally dozens of times, aka ALL of them, you have failed at this, every single time
+
+=== 2026-09-11T20:22Z · session cec0749e · 245 chars
+So, the way you answer and the speed you do it with, pretty much all means you did fucking NOT look at the code, at all, and you did you look at the actual db either, you jjust fucking read this from docs and docstrings like a lazy fucking idiot
+
+=== 2026-09-13T01:10Z · session 6c806933 · 356 chars
+just dont use those chunks, ffs, and yeah, i did ask for their fucking removal a million times but whatever, 
+try the results of the 72k with a smoke, then go through the laundylist of the fie we disussed to the artefact, but first, tell me the list so i can send you off to "work until done" with that skill or whatever it was,  if it works for this too..
+
+=== 2026-09-13T07:41Z · session 6c806933 · 86 chars
+Well, YOUR task, is finding out.. Dude.. How many times do I have to formulate this..?
+
+=== 2026-09-15T00:04Z · session eceb6d17 · 95 chars
+dudeis this is the speed, we literally will never be able to do this on all thousands of them..
+
+=== 2026-09-15T00:10Z · session eceb6d17 · 114 chars
+stfu dude, and focus on the actual run now, how long is the estimated time for it and how much can we speed it up?
+
+=== 2026-09-15T00:57Z · session eceb6d17 · 261 chars
+i have to fucking run it on djuret too? dude, you are making this so fucking retardedly messy instantly, you do realise you have just made this a dozen times worse than if i had just done this on the desktop instead? you absolute piece of fucking shit, as usual
+
+=== 2026-09-15T01:20Z · session eceb6d17 · 39 chars
+it took 11 minutes building 100 pairs..
+
+=== 2026-09-26T15:36Z · session b538c568 · 279 chars
+dude, we have put hundreds of hours into this and you are so lazy now you refuse to even check the most fucking basic stuff? you are literally wasting all my time now.. do your fucking effort and get up to speed on what has been done, and more importantly, what i WANT to be done
+
+=== 2026-09-29T09:45Z · session 232eaa9a · 112 chars
+i asked you a question..
+you asked for 2 answers, got 1 question back, and you took that as the fucking answer!?
+
+=== 2026-09-29T14:13Z · session 232eaa9a · 66 chars
+" the bare description cosines took nearly the whole score." what?
+
+=== 2026-10-04T12:24Z · session 3ce6a756 · 235 chars
+ok, wow that took some time, but all done now, however.. "Desktop (192.168.50.253) not reachable from here; run this script again at home to pull it.", pretty damn sure the pc is on tho, maybe sleeping or something, but sure as fuck on
+
+=== 2026-10-05T16:40Z · session a2b8a286 · 99 chars
+wait a minute, why on earth would you use the other format is this way is a bajillion times better?
+
+=== 2026-10-06T20:23Z · session a2b8a286 · 200 chars
+"Took the two rows you doubted apart. The drop from 0.636 to 0.561 came from the tag phrases Sonnet wrote in that call, not from your description wording.
+" so it made worse tags? or what do you mean?
+
+=== 2026-10-07T16:18Z · session 8b7cede2 · 61 chars
+We have a 10 gold smoke that has been used a bunch of times..
+
+=== 2026-10-07T18:07Z · session 8b7cede2 · 225 chars
+Dude, we literally have ALL THE FUCKING DATA possibly available! From tokens in/out, times, stamps, DATAPOINTERS and so on and on and on.. YOU just have to make fucking sure that is KEPT every run.. It is so goddamn important
+
+=== 2026-10-07T22:42Z · session c66705a4 · 101 chars
+what i am talking about are "times, tokens, runtime, build cost" etc etc etc, ALL FUCKING DATAMETRICS
+
+=== 2026-10-08T15:28Z · session 33b3bd58 · 245 chars
+do a critical review of the full lucene and vector runs now, extra careful with academic rigor, compare to the historically required data (metrics like times, tokens in and out, build and more) in the git history, mempalace etc, the new abstract
+
+--- 48 turns matched '\\btimes\\b|how long|\\btook\\b|per question|s/q|sec/|seconds|minutes per|\\bspeed\\b|latenc|\\bhow fast\\b|\\btiming'

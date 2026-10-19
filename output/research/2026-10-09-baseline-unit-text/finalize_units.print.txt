@@ -1,0 +1,28 @@
+== corpus: (38540, 2048) float32, 4232334 tokens, 1141.6 s, device NVIDIA GeForce GTX 1080 Ti, longest input 8192 tokens
+   [ok] file hash equals the desktop's
+   [ok] matrix hash equals the desktop's
+   [ok] input hash equals the laptop's file
+   [ok] ids equal the input, same order
+   [ok] one row per input row, 2048 wide
+   [ok] float32
+   [ok] no NaN or inf
+   [ok] unit length
+   [ok] passage mode, the repo's model and revision
+== sample on the desktop: (200, 2048) float32, 22458 tokens, 20.5 s, device NVIDIA GeForce GTX 1080 Ti, longest input 8192 tokens
+   [ok] file hash equals the desktop's
+   [ok] matrix hash equals the desktop's
+   [ok] input hash equals the laptop's file
+   [ok] ids equal the input, same order
+   [ok] one row per input row, 2048 wide
+   [ok] float32
+   [ok] no NaN or inf
+   [ok] unit length
+   [ok] passage mode, the repo's model and revision
+== desktop GPU against laptop CPU, the 200-unit sample: cosine per row min 1.000000  1% 1.000000  median 1.000000  99% 1.000000  max 1.000000 | largest difference in one number 3.17e-07
+== the corpus rows of those 200 units against the sample made in its own call on the desktop: largest difference in one number 0.00e+00
+== each unit's new vector against its vector of 10-07 (the text changed): cosine min 0.494863  1% 0.622246  median 0.876341  99% 0.954981  max 0.985655
+== build time: first call 1,841.3 s (parts 0-11, 24000 texts, from the parts' times), second call 1,141.6 s (14540 texts, its manifest); together 2,982.9 s
+the arm's cache for these texts: output\embed_cache\llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz  331,459,074 bytes  sha256 ae3f8073eea7d9d1
+cost note beside it; record in output\embed_local\20261009_units_rev113abe4acafa_float32
+vector: 38540 artifacts + 0 directory records
+the arm now reads it: cache_file llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz | units 38540 | matrix (38540, 2048) | build_stats 2982.903398909091 s, 38540 calls, 4232334 tokens

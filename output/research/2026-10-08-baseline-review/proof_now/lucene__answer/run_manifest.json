@@ -1,0 +1,425 @@
+{
+  "arm": "lucene",
+  "generator_model": "claude-sonnet-5",
+  "interpreter_model": null,
+  "top_k": 50,
+  "questions_file": "C:\\Coding\\exjobbet\\GRAG-Job\\output\\research\\2026-10-08-baseline-review\\proof_now\\madeup_question__lucene__answer.jsonl",
+  "n_questions": 1,
+  "n_ran": 1,
+  "n_failed": 0,
+  "timestamp": "2026-10-08T18:31:02.503255+00:00",
+  "build_stats": {
+    "build_time_s": 1.5337469999212772,
+    "model": {
+      "calls": 0,
+      "tokens_in": 0,
+      "cached_input_tokens": 0,
+      "tokens_out": 0,
+      "reasoning_tokens": 0,
+      "time_s": 0.0,
+      "attempts": 0,
+      "request_s": 0.0,
+      "wait_s": 0.0,
+      "retry_s": 0.0
+    },
+    "models": []
+  },
+  "retrieval_flags": {
+    "HERB_BASELINE_METADATA": false
+  },
+  "char_budget": 72000,
+  "code_version": {
+    "commit": "a140636a35b9ddba479df317e81ee66044b62a2b",
+    "branch": "artefact-v4",
+    "dirty": true
+  },
+  "environment": {
+    "host": "Wiktop",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.7",
+    "python_executable": "C:\\Coding\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+    "cpu": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
+    "cpu_count": 16,
+    "ram_bytes": 16907755520,
+    "packages": {
+      "bm25s": "0.2.14",
+      "PyStemmer": "3.1.0",
+      "numpy": "2.4.6",
+      "sentence-transformers": "6.0.1",
+      "torch": "2.14.0+cpu",
+      "transformers": "5.12.1",
+      "httpx": "0.28.1",
+      "ragas": "0.4.3",
+      "neo4j": "6.2.0"
+    },
+    "embedder": {
+      "model": "nvidia/llama-nemotron-embed-1b-v2",
+      "revision": "113abe4acafa848e77ead9c0623205e511932348",
+      "device": "cpu",
+      "dtype": "float32"
+    }
+  },
+  "inputs": {
+    "questions_sha256": "cf9c99ee5ad12e2cd16dea6fb4cb3007cd8940b2654e5538df9f362bc7bd07e2",
+    "ids_sha256": "3fc5c42fca057696918cc24ebe9d57a5190aab59a35097c128cdadcb88da4621",
+    "corpus": {
+      "sha256": "4eeb46d025c6187319e462e1a78de67631e1b1dbf7b6a18f966cd14ce1ac5a82",
+      "n_files": 33
+    }
+  },
+  "graph": null,
+  "n_exhausted": 0,
+  "flags": null,
+  "legs": [
+    {
+      "leg": 1,
+      "started_at": "2026-10-08T18:30:53.152863+00:00",
+      "finished_at": "2026-10-08T18:31:02.336774+00:00",
+      "wall_s": 9.18421410000883,
+      "process_cpu_s": 1.546875,
+      "workers": 1,
+      "argv": [
+        "output/research/2026-10-08-baseline-review/proof_now/proof_now.py",
+        "lucene",
+        "--answer"
+      ],
+      "pid": 7892,
+      "python_executable": "C:\\Coding\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "C:\\Coding\\exjobbet\\GRAG-Job\\output\\research\\2026-10-08-baseline-review\\proof_now\\madeup_ids__lucene__answer.jsonl",
+      "n_chosen": 1,
+      "n_todo": 1,
+      "n_answered": 1,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 1.542978199897334,
+      "embedder_load_s": null,
+      "retrieval_only": false,
+      "evaluator": "gen",
+      "peak_memory_bytes": 171143168,
+      "code_version": {
+        "commit": "a140636a35b9ddba479df317e81ee66044b62a2b",
+        "branch": "artefact-v4",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [
+          " M data/question_query_vecs.npz",
+          " M prod/arms/lucene.py",
+          " M prod/arms/vector.py",
+          " M prod/eval/ragas.py",
+          " M prod/harness/chat.py",
+          " M prod/harness/contract.py",
+          " M prod/harness/embed.py",
+          " M prod/harness/orchestrator.py",
+          " M prod/harness/provenance.py",
+          " M prod/tests/test_char_budget.py",
+          " M pytest.ini",
+          " M test/arms/artefact_facet_joint.py",
+          " M test/arms/artefact_v4.py",
+          " M test/artefact/query_content.py",
+          "D  test/artefact/query_tags_measure.py",
+          "D  test/artefact/v4_multikey.py",
+          "D  test/artefact/v4_rank.py",
+          "D  test/artefact/v4_strength.py",
+          " M test/artefact/v4_walk.py",
+          " M test/tests/test_artefact_v3_facet_file.py",
+          " M test/tests/test_artefact_v4.py",
+          "D  test/tests/test_artefact_v4_multikey.py",
+          "D  test/tests/test_artefact_v4_rank.py",
+          "D  test/tests/test_artefact_v4_strength.py",
+          "D  test/tests/test_artefact_v4_walk.py",
+          " M test/tests/test_facet_neural.py",
+          " M test/tests/test_facet_pairs_ranker.py",
+          " M test/tests/test_query_content.py",
+          " M test/tests/test_retrieval_harness_keepalive.py",
+          "D  tools/tests/test_walkthrough.py",
+          "D  tools/walkthrough.py",
+          "?? prod/harness/capture.py",
+          "?? prod/tests/test_capture.py",
+          "?? test/artefact/graph_layer.py",
+          "?? test/artefact/scope_filter.py",
+          "?? test/artefact/v4_db.py",
+          "?? test/graph/write_facet_layer.py",
+          "?? test/graph/write_tag_vectors.py",
+          "?? test/tests/test_artefact_v4_clouds.py",
+          "?? test/tests/test_graph_layer.py",
+          "?? test/tests/test_v4_walk.py"
+        ],
+        "diff_sha256": "1deb262bf72f166a1e06c0506a0654413020644de7e19cffae94a41ff57cc250",
+        "untracked_sha256": {
+          "prod/harness/capture.py": "0b87af78f1999c41eb0f6f6924e4780b05ef4bcbce79bd05e999c2f7581fa764",
+          "prod/tests/test_capture.py": "1f4e571ac85dd7c240444d139731f6e0498639be2315e17860629805ee457097",
+          "test/artefact/graph_layer.py": "b045ad548ff4b82a9c99a83778e68f75a41c2a9ad6fc87a41aa758a99cddbc5c",
+          "test/artefact/scope_filter.py": "68b258333d1edc4596c33799fde54928e7ff6a0e7d2808264636199d4a1ac3b3",
+          "test/artefact/v4_db.py": "18b85f716726b52d18bd4e44ce63362538d94d6c62e8f2bd4134622a2e2f83ac",
+          "test/graph/write_facet_layer.py": "6d4905b6b60ff298cc0d2589e6eccf23411589356b9da3ec9fb345c869b4caef",
+          "test/graph/write_tag_vectors.py": "4714287f498492d5742986e2b5cc1cc9bd0425c94157e523406fd26b871dcdbe",
+          "test/tests/test_artefact_v4_clouds.py": "74d4658ae83829301c675a04ff220cd5354a610da0da855f475f6f7cb7bea2b9",
+          "test/tests/test_graph_layer.py": "c0f33e6497d473e26603bdf4bc93aa2a747102c579d5751b7e685a174637d6f5",
+          "test/tests/test_v4_walk.py": "befd4af016b49e32922470e085c0bab636fd8f0d3addc84e8ce86517bf0faf28"
+        },
+        "diff_file": "code.1deb262bf72f166a.diff"
+      },
+      "flags": null,
+      "lane": {
+        "exe": "C:\\Users\\jocke\\.local\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\jocke\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "units": 38540,
+        "text_chars": 11304304,
+        "method": "lucene",
+        "k1": 0.9,
+        "b": 0.4,
+        "stopwords": "en",
+        "stemmer": "english",
+        "bm25s": "0.2.14",
+        "PyStemmer": "3.1.0",
+        "kept": "in memory, built at the start of every leg"
+      }
+    },
+    {
+      "leg": 2,
+      "started_at": "2026-10-08T18:31:02.775940+00:00",
+      "finished_at": "2026-10-08T18:31:04.157536+00:00",
+      "wall_s": 1.381561400135979,
+      "process_cpu_s": 1.265625,
+      "workers": 1,
+      "argv": [
+        "output/research/2026-10-08-baseline-review/proof_now/proof_now.py",
+        "lucene",
+        "--answer"
+      ],
+      "pid": 7892,
+      "python_executable": "C:\\Coding\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "C:\\Coding\\exjobbet\\GRAG-Job\\output\\research\\2026-10-08-baseline-review\\proof_now\\madeup_ids__lucene__answer.jsonl",
+      "n_chosen": 1,
+      "n_todo": 0,
+      "n_answered": 0,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 1.2644863999448717,
+      "embedder_load_s": null,
+      "retrieval_only": false,
+      "evaluator": "gen",
+      "peak_memory_bytes": 175042560,
+      "code_version": {
+        "commit": "a140636a35b9ddba479df317e81ee66044b62a2b",
+        "branch": "artefact-v4",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [
+          " M data/question_query_vecs.npz",
+          " M prod/arms/lucene.py",
+          " M prod/arms/vector.py",
+          " M prod/eval/ragas.py",
+          " M prod/harness/chat.py",
+          " M prod/harness/contract.py",
+          " M prod/harness/embed.py",
+          " M prod/harness/orchestrator.py",
+          " M prod/harness/provenance.py",
+          " M prod/tests/test_char_budget.py",
+          " M pytest.ini",
+          " M test/arms/artefact_facet_joint.py",
+          " M test/arms/artefact_v4.py",
+          " M test/artefact/query_content.py",
+          "D  test/artefact/query_tags_measure.py",
+          "D  test/artefact/v4_multikey.py",
+          "D  test/artefact/v4_rank.py",
+          "D  test/artefact/v4_strength.py",
+          " M test/artefact/v4_walk.py",
+          " M test/tests/test_artefact_v3_facet_file.py",
+          " M test/tests/test_artefact_v4.py",
+          "D  test/tests/test_artefact_v4_multikey.py",
+          "D  test/tests/test_artefact_v4_rank.py",
+          "D  test/tests/test_artefact_v4_strength.py",
+          "D  test/tests/test_artefact_v4_walk.py",
+          " M test/tests/test_facet_neural.py",
+          " M test/tests/test_facet_pairs_ranker.py",
+          " M test/tests/test_query_content.py",
+          " M test/tests/test_retrieval_harness_keepalive.py",
+          "D  tools/tests/test_walkthrough.py",
+          "D  tools/walkthrough.py",
+          "?? prod/harness/capture.py",
+          "?? prod/tests/test_capture.py",
+          "?? test/artefact/graph_layer.py",
+          "?? test/artefact/scope_filter.py",
+          "?? test/artefact/v4_db.py",
+          "?? test/graph/write_facet_layer.py",
+          "?? test/graph/write_tag_vectors.py",
+          "?? test/tests/test_artefact_v4_clouds.py",
+          "?? test/tests/test_graph_layer.py",
+          "?? test/tests/test_v4_walk.py"
+        ],
+        "diff_sha256": "1deb262bf72f166a1e06c0506a0654413020644de7e19cffae94a41ff57cc250",
+        "untracked_sha256": {
+          "prod/harness/capture.py": "0b87af78f1999c41eb0f6f6924e4780b05ef4bcbce79bd05e999c2f7581fa764",
+          "prod/tests/test_capture.py": "1f4e571ac85dd7c240444d139731f6e0498639be2315e17860629805ee457097",
+          "test/artefact/graph_layer.py": "b045ad548ff4b82a9c99a83778e68f75a41c2a9ad6fc87a41aa758a99cddbc5c",
+          "test/artefact/scope_filter.py": "68b258333d1edc4596c33799fde54928e7ff6a0e7d2808264636199d4a1ac3b3",
+          "test/artefact/v4_db.py": "18b85f716726b52d18bd4e44ce63362538d94d6c62e8f2bd4134622a2e2f83ac",
+          "test/graph/write_facet_layer.py": "6d4905b6b60ff298cc0d2589e6eccf23411589356b9da3ec9fb345c869b4caef",
+          "test/graph/write_tag_vectors.py": "4714287f498492d5742986e2b5cc1cc9bd0425c94157e523406fd26b871dcdbe",
+          "test/tests/test_artefact_v4_clouds.py": "74d4658ae83829301c675a04ff220cd5354a610da0da855f475f6f7cb7bea2b9",
+          "test/tests/test_graph_layer.py": "c0f33e6497d473e26603bdf4bc93aa2a747102c579d5751b7e685a174637d6f5",
+          "test/tests/test_v4_walk.py": "befd4af016b49e32922470e085c0bab636fd8f0d3addc84e8ce86517bf0faf28"
+        },
+        "diff_file": "code.1deb262bf72f166a.diff"
+      },
+      "flags": null,
+      "lane": {
+        "exe": "C:\\Users\\jocke\\.local\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\jocke\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "units": 38540,
+        "text_chars": 11304304,
+        "method": "lucene",
+        "k1": 0.9,
+        "b": 0.4,
+        "stopwords": "en",
+        "stemmer": "english",
+        "bm25s": "0.2.14",
+        "PyStemmer": "3.1.0",
+        "kept": "in memory, built at the start of every leg"
+      }
+    }
+  ],
+  "workers": 1,
+  "lane": {
+    "exe": "C:\\Users\\jocke\\.local\\bin\\claude.exe",
+    "cli_version": "2.1.212 (Claude Code)",
+    "cwd": "C:\\Users\\jocke\\AppData\\Local\\Temp\\herb-claude-lane",
+    "fixed_flags": [
+      "-p",
+      "--tools",
+      "",
+      "--safe-mode"
+    ],
+    "env_set": {
+      "MEMPALACE_HOOKS_AUTO_SAVE": "false"
+    },
+    "max_tries_default": 6
+  },
+  "generator": {
+    "model": "claude-sonnet-5",
+    "system": "Answer the question using only the provided documents. Be concise.",
+    "user_template": "Documents:\\n<the contexts, a blank line between them>\\n\\nQuestion: <the question>",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "answer"
+      ],
+      "additionalProperties": false
+    },
+    "payload": {
+      "temperature": 0,
+      "max_tokens": 8192,
+      "min_tokens": 1,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "timeout_s": 480.0
+  },
+  "index": {
+    "units": 38540,
+    "text_chars": 11304304,
+    "method": "lucene",
+    "k1": 0.9,
+    "b": 0.4,
+    "stopwords": "en",
+    "stemmer": "english",
+    "bm25s": "0.2.14",
+    "PyStemmer": "3.1.0",
+    "kept": "in memory, built at the start of every leg"
+  },
+  "code_state": {
+    "status": [
+      " M data/question_query_vecs.npz",
+      " M prod/arms/lucene.py",
+      " M prod/arms/vector.py",
+      " M prod/eval/ragas.py",
+      " M prod/harness/chat.py",
+      " M prod/harness/contract.py",
+      " M prod/harness/embed.py",
+      " M prod/harness/orchestrator.py",
+      " M prod/harness/provenance.py",
+      " M prod/tests/test_char_budget.py",
+      " M pytest.ini",
+      " M test/arms/artefact_facet_joint.py",
+      " M test/arms/artefact_v4.py",
+      " M test/artefact/query_content.py",
+      "D  test/artefact/query_tags_measure.py",
+      "D  test/artefact/v4_multikey.py",
+      "D  test/artefact/v4_rank.py",
+      "D  test/artefact/v4_strength.py",
+      " M test/artefact/v4_walk.py",
+      " M test/tests/test_artefact_v3_facet_file.py",
+      " M test/tests/test_artefact_v4.py",
+      "D  test/tests/test_artefact_v4_multikey.py",
+      "D  test/tests/test_artefact_v4_rank.py",
+      "D  test/tests/test_artefact_v4_strength.py",
+      "D  test/tests/test_artefact_v4_walk.py",
+      " M test/tests/test_facet_neural.py",
+      " M test/tests/test_facet_pairs_ranker.py",
+      " M test/tests/test_query_content.py",
+      " M test/tests/test_retrieval_harness_keepalive.py",
+      "D  tools/tests/test_walkthrough.py",
+      "D  tools/walkthrough.py",
+      "?? prod/harness/capture.py",
+      "?? prod/tests/test_capture.py",
+      "?? test/artefact/graph_layer.py",
+      "?? test/artefact/scope_filter.py",
+      "?? test/artefact/v4_db.py",
+      "?? test/graph/write_facet_layer.py",
+      "?? test/graph/write_tag_vectors.py",
+      "?? test/tests/test_artefact_v4_clouds.py",
+      "?? test/tests/test_graph_layer.py",
+      "?? test/tests/test_v4_walk.py"
+    ],
+    "diff_sha256": "1deb262bf72f166a1e06c0506a0654413020644de7e19cffae94a41ff57cc250",
+    "untracked_sha256": {
+      "prod/harness/capture.py": "0b87af78f1999c41eb0f6f6924e4780b05ef4bcbce79bd05e999c2f7581fa764",
+      "prod/tests/test_capture.py": "1f4e571ac85dd7c240444d139731f6e0498639be2315e17860629805ee457097",
+      "test/artefact/graph_layer.py": "b045ad548ff4b82a9c99a83778e68f75a41c2a9ad6fc87a41aa758a99cddbc5c",
+      "test/artefact/scope_filter.py": "68b258333d1edc4596c33799fde54928e7ff6a0e7d2808264636199d4a1ac3b3",
+      "test/artefact/v4_db.py": "18b85f716726b52d18bd4e44ce63362538d94d6c62e8f2bd4134622a2e2f83ac",
+      "test/graph/write_facet_layer.py": "6d4905b6b60ff298cc0d2589e6eccf23411589356b9da3ec9fb345c869b4caef",
+      "test/graph/write_tag_vectors.py": "4714287f498492d5742986e2b5cc1cc9bd0425c94157e523406fd26b871dcdbe",
+      "test/tests/test_artefact_v4_clouds.py": "74d4658ae83829301c675a04ff220cd5354a610da0da855f475f6f7cb7bea2b9",
+      "test/tests/test_graph_layer.py": "c0f33e6497d473e26603bdf4bc93aa2a747102c579d5751b7e685a174637d6f5",
+      "test/tests/test_v4_walk.py": "befd4af016b49e32922470e085c0bab636fd8f0d3addc84e8ce86517bf0faf28"
+    },
+    "diff_file": "code.1deb262bf72f166a.diff"
+  },
+  "env": {}
+}

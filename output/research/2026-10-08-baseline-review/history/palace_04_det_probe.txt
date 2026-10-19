@@ -1,0 +1,131 @@
+
+============================================================
+  Results for: "det probe judge variance"
+  Wing: grag-job
+============================================================
+
+  [1] grag-job / technical
+      Source: 616bc40d-d678-43f0-b681-bbec035c78e0.jsonl
+      Match:  cosine_sim=0.395  bm25=1.239
+
+      pted; v1_det T211258Z/T211627Z are empty directories; the one real judge failure (T212445Z, faithfulness timeout) is recorded.
+      - Q12-2: T212445Z is a re-run landing on the identical delivered set (10/10, same order), answers differ 10/10 — one v1_det retrieval in this section.
+      - Q12-3: gold100 refs able to pass ragas' 0.5 gate by the length bound — combo 675/3,932 (110 observed hits, median context 5,340 chars), lucene 3,922 (426, 213 chars), vector 3,862 (1,016, 193 chars).
+      - Q12-4: per delivered UNIT precision — scope 0.2389, combo 0.2427, v2 0.2166, composed 0.2127, cluster 0.2002 against precision_id 0.106–0.128; baselines 0.0463 / 0.0448 (unit = record, both columns equal).
+      
+      **Held together (the caller's ask):** the loss has two shapes. Whole-corpus-ranking arms lose nothing to reach
+
+  --------------------------------------------------------
+  [2] grag-job / technical
+      Source: 6c806933-883b-46c5-aec7-22468ef6b7f2.jsonl
+      Match:  cosine_sim=0.395  bm25=1.239
+
+      pted; v1_det T211258Z/T211627Z are empty directories; the one real judge failure (T212445Z, faithfulness timeout) is recorded.
+      - Q12-2: T212445Z is a re-run landing on the identical delivered set (10/10, same order), answers differ 10/10 — one v1_det retrieval in this section.
+      - Q12-3: gold100 refs able to pass ragas' 0.5 gate by the length bound — combo 675/3,932 (110 observed hits, median context 5,340 chars), lucene 3,922 (426, 213 chars), vector 3,862 (1,016, 193 chars).
+      - Q12-4: per delivered UNIT precision — scope 0.2389, combo 0.2427, v2 0.2166, composed 0.2127, cluster 0.2002 against precision_id 0.106–0.128; baselines 0.0463 / 0.0448 (unit = record, both columns equal).
+      
+      **Held together (the caller's ask):** the loss has two shapes. Whole-corpus-ranking arms lose nothing to reach
+
+  --------------------------------------------------------
+  [3] grag-job / general
+      Source: 2026-08-11-five-questions-matching-design.md
+      Match:  cosine_sim=0.392  bm25=1.001
+
+      er, quote, cause,
+        summary, comparison, status, confirmed_fact) vs the register-feature classes the
+        derived build measures; and the question-form → kind mapping.
+      - **O6 — who reads the query.** Deterministic extractor (det leg, no model) vs the
+        interpreter emitting words. §4c measures the deterministic read only.
+      - **O7 — the combine's test plan.** D2 says testing decides; which candidates run, on
+        what set (gold-100 det retrieval-only is the cheap lane), against which controls —
+        presented for sign-off before any run, with hypothesis and decision rule pre-stated.
+        **Reviewed property the multiplicative leg carries (08-12, review-confirmed):** with
+        {0,1}-valued or floored matches (evidence label mode, temporal floor on undated
+
+  --------------------------------------------------------
+  [4] grag-job / general
+      Source: 2026-08-11-five-questions-matching-design.md
+      Match:  cosine_sim=0.392  bm25=1.001
+
+      er, quote, cause,
+        summary, comparison, status, confirmed_fact) vs the register-feature classes the
+        derived build measures; and the question-form → kind mapping.
+      - **O6 — who reads the query.** Deterministic extractor (det leg, no model) vs the
+        interpreter emitting words. §4c measures the deterministic read only.
+      - **O7 — the combine's test plan.** D2 says testing decides; which candidates run, on
+        what set (gold-100 det retrieval-only is the cheap lane), against which controls —
+        presented for sign-off before any run, with hypothesis and decision rule pre-stated.
+        **Reviewed property the multiplicative leg carries (08-12, review-confirmed):** with
+        {0,1}-valued or floored matches (evidence label mode, temporal floor on undated
+
+  --------------------------------------------------------
+  [5] grag-job / general
+      Source: 2026-08-11-relevance-weight-demand-and-facet-measurements.md
+      Match:  cosine_sim=0.377  bm25=0.704
+
+      artefact_v1_relevance_weight`, `HERB_DEMAND=flat` | 0.2477 |
+      | vector | 0.1129 |
+      | lucene | 0.0894 |
+      
+      **[MEASURED] Control-to-control variation, which bounds how any of the above may be
+      read:** two `artefact_v1_det` runs with byte-identical retrieval flags, three minutes
+      apart, differ on **76 of 100 retrieved id sets** and **0.005095** mean recall_id. The
+      baked facet-live delta is +0.009416; the two derived deltas are −0.006185 and −0.015683.
+      
+      **[READING]** This session took that to mean no ordering among the det runs is separable
+      from run-to-run variation, and stopped comparing them. A later session may disagree; the
+      control figure above is what it must argue against.
+      
+      **[MEASURED] Paired, per question, `centred` against `read` (n=100):**
+
+  --------------------------------------------------------
+  [6] grag-job / general
+      Source: 2026-08-11-relevance-weight-demand-and-facet-measurements.md
+      Match:  cosine_sim=0.377  bm25=0.704
+
+      artefact_v1_relevance_weight`, `HERB_DEMAND=flat` | 0.2477 |
+      | vector | 0.1129 |
+      | lucene | 0.0894 |
+      
+      **[MEASURED] Control-to-control variation, which bounds how any of the above may be
+      read:** two `artefact_v1_det` runs with byte-identical retrieval flags, three minutes
+      apart, differ on **76 of 100 retrieved id sets** and **0.005095** mean recall_id. The
+      baked facet-live delta is +0.009416; the two derived deltas are −0.006185 and −0.015683.
+      
+      **[READING]** This session took that to mean no ordering among the det runs is separable
+      from run-to-run variation, and stopped comparing them. A later session may disagree; the
+      control figure above is what it must argue against.
+      
+      **[MEASURED] Paired, per question, `centred` against `read` (n=100):**
+
+  --------------------------------------------------------
+  [7] grag-job / technical
+      Source: 66fb9016-4452-4c54-8b4d-add091517b18.jsonl
+      Match:  cosine_sim=0.398  bm25=0.0
+
+      cosine over the question's probes)
+      | bin | bearing mean | med | purity mean | med | lift mean | med | pooled |
+      |---|---|---|---|---|---|---|---|
+      | 1–8 | 0.2712 | 0.2500 | 0.0785 | 0.0315 | 61.42 | 54.51 | 49.55 |
+      | 9–16 | 0.0850 | 0.0625 | 0.0433 | 0.0003 | 17.42 | 4.45 | 15.53 |
+      | 17–32 | 0.0525 | 0.0000 | 0.0266 | 0.0000 | 9.58 | 0.00 | 9.59 |
+      | 33–64 | 0.0400 | 0.0312 | 0.0167 | 0.0010 | 6.71 | 5.00 | 7.31 |
+      | 65–128 | 0.0248 | 0.0156 | 0.0112 | 0.0035 | 4.39 | 3.22 | 4.54 |
+      | 129–256 | 0.0124 | 0.0078 | 0.0054 | 0.0026 | 2.37 | 2.18 | 2.27 |
+      | 257–512 | 0.0111 | 0.0078 | 0.0048 | 0.0039 | 2.23 | 1.93 | 2.02 |
+      | 513–1024 | 0.0082 | 0.0078 | 0.0033 | 0.0025 | 1.57 | 1.40 | 1.50 |
+      | 1025–4096 | 0.0063 | 0.0059 | 0.0024 | 0.0020 | 1.16 | 1.12 | 1.16 |
+      | 4097–16714 | 0.0045 | 0.0040 | 0.00
+
+  --------------------------------------------------------
+  [8] grag-job / technical
+      Source: 35c6be4d-c200-4b52-8a7f-f48fbb9b56e7.jsonl
+      Match:  cosine_sim=0.374  bm25=0.0
+
+      e-existing, from `test_facet_pairs_ranker.py`.
+        
+        New tests: zero noise → gap 0; known Gaussian noise → gap within 0.03 (three grid steps) of the analytically integrated crossing, stated in the test body; values×k with grid×k → gap×k exactly; adding a constant → identical gap and identical curve; deterministic on repeat; curve pair counts monotone and the returned t is the first below the rate; retrain sd is the sd over draws; shape/index/grid errors raise; empty pairs → no gap; the resampling unit is the row (a drawn row brings all five of its observations, total observation count preserved, deterministic on the seed); both pair samplers deterministic and well-formed; a static AST guard that the module names none of `facet_stats`, `topic_key`, `load_topic`, `known_topic`, `topic_reg` as
+
+  --------------------------------------------------------
+

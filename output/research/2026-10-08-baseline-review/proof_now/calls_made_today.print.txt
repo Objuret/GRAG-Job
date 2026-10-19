@@ -1,0 +1,14 @@
+18:28:15Z probe answer_logged                            claude-sonnet-5   session 41913a71 | transcript: True | effort ['medium'] | blocks ['thinking', 'tool_use'] | tokens in 985 out 328 | title record 1 | CLI ['2.1.212']
+18:29:16Z probe judge_logged                             claude-haiku-4-5  session ac0b68ad | transcript: True | effort ['None'] | blocks ['thinking', 'text'] | tokens in 3649 out 44 | title record 1 | CLI ['2.1.212']
+18:29:43Z probe answer_no_user_settings                  claude-sonnet-5   session d865cc9b | transcript: True | effort ['high'] | blocks ['thinking', 'tool_use'] | tokens in 985 out 335 | title record 1 | CLI ['2.1.212']
+18:29:49Z probe answer_no_title                          claude-sonnet-5   session 36dafe18 | transcript: True | effort ['medium'] | blocks ['thinking', 'text', 'tool_use'] | tokens in 985 out 415 | title record 0 | CLI ['2.1.212']
+18:30:54Z proof lucene__answer answer                    claude-sonnet-5   session 8d5a648d | transcript: True | effort ['medium'] | blocks ['text', 'tool_use'] | tokens in 25508 out 553 | title record 1 | CLI ['2.1.212']
+18:32:12Z proof vector__answer__eval answer              claude-sonnet-5   session d70c2be0 | transcript: True | effort ['medium'] | blocks ['text', 'tool_use'] | tokens in 28368 out 650 | title record 1 | CLI ['2.1.212']
+18:32:27Z proof vector__answer__eval judge:faithfulness  claude-haiku-4-5  session e742c755 | transcript: True | effort ['None'] | blocks ['thinking', 'text'] | tokens in 4254 out 4410 | title record 2 | CLI ['2.1.212']
+18:33:00Z proof vector__answer__eval judge:faithfulness  claude-haiku-4-5  session a38ada3b | transcript: True | effort ['None'] | blocks ['thinking', 'text'] | tokens in 24759 out 2703 | title record 1 | CLI ['2.1.212']
+18:33:27Z proof vector__answer__eval judge:answer_correctness claude-haiku-4-5  session 0b752f77 | transcript: True | effort ['None'] | blocks ['thinking', 'text'] | tokens in 4256 out 7721 | title record 2 | CLI ['2.1.212']
+18:34:37Z proof vector__answer__eval judge:answer_correctness claude-haiku-4-5  session d8697677 | transcript: True | effort ['None'] | blocks ['thinking', 'text'] | tokens in 4046 out 2853 | title record 1 | CLI ['2.1.212']
+18:35:02Z proof vector__answer__eval judge:answer_correctness claude-haiku-4-5  session 9f7bae2d | transcript: True | effort ['None'] | blocks ['thinking', 'text'] | tokens in 5236 out 3092 | title record 2 | CLI ['2.1.212']
+18:35:25Z proof vector__answer__eval judge:context_recall_llm claude-haiku-4-5  session 48d94daf | transcript: True | effort ['None'] | blocks ['thinking', 'text'] | tokens in 24544 out 710 | title record 1 | CLI ['2.1.212']
+
+calls made today by this review: 12 | main-call tokens: Sonnet in 56831 out 2281; Haiku in 70744 out 21533 (title calls not counted here)

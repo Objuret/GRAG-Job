@@ -1,0 +1,22 @@
+code state now: diff sha256 ec849026a8c3bed0 | changed or new paths: 40
+  proof lucene__answer         leg 1 started 2026-10-08T00:21:45Z  diff sha256 7d9eb64824114179  same as now: False  | has process_cpu_s: False
+  proof lucene__answer         leg 2 started 2026-10-08T00:22:05Z  diff sha256 7d9eb64824114179  same as now: False  | has process_cpu_s: False
+      row: meta.ranking present: False | dollar field in generator block: True
+  proof vector__answer__eval   leg 1 started 2026-10-08T09:55:49Z  diff sha256 be2d0944ae0197a7  same as now: False  | has process_cpu_s: False
+  proof vector__answer__eval   leg 2 started 2026-10-08T09:59:27Z  diff sha256 be2d0944ae0197a7  same as now: False  | has process_cpu_s: False
+      row: meta.ranking present: False | dollar field in generator block: True
+  proof lucene                 leg 1 started 2026-10-08T10:03:19Z  diff sha256 95d3382b606e528b  same as now: False  | has process_cpu_s: True
+  proof lucene                 leg 2 started 2026-10-08T10:03:21Z  diff sha256 95d3382b606e528b  same as now: False  | has process_cpu_s: True
+      row: meta.ranking present: True (n_units 38540, n_ranked 15202, delivered scores 176, distinct 148, next_score 5.247885227203369) | dollar field in generator block: True
+  proof vector                 leg 1 started 2026-10-08T10:03:24Z  diff sha256 95d3382b606e528b  same as now: False  | has process_cpu_s: True
+  proof vector                 leg 2 started 2026-10-08T10:03:52Z  diff sha256 95d3382b606e528b  same as now: False  | has process_cpu_s: True
+      row: meta.ranking present: True (n_units 38540, n_ranked 38540, delivered scores 279, distinct 274, next_score 0.3030264973640442) | dollar field in generator block: True
+
+files under prod/ changed after the newest proof folder was written (mtime, UTC):
+  newest proof manifest written 2026-10-08T10:03:54Z
+   prod/eval/ragas.py 2026-10-08T15:11:48Z
+   prod/harness/capture.py 2026-10-08T15:11:48Z
+   prod/harness/chat.py 2026-10-08T15:11:48Z
+   prod/harness/contract.py 2026-10-08T15:11:48Z
+   prod/harness/orchestrator.py 2026-10-08T15:11:48Z
+   prod/tests/test_capture.py 2026-10-08T15:11:48Z

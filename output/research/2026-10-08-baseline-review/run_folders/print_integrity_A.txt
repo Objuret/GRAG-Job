@@ -1,0 +1,206 @@
+====================================================================================================
+A.luc   lucene__gold100__cb72000__20261007T211014Z
+====================================================================================================
+[inputs]
+  manifest questions_file         : C:\Coding\exjobbet\GRAG-Job\data\questions.jsonl   exists now: True
+  manifest names an id file path  : False
+  ids_sha256 == sha256(data/gold100.jsonl)        : True
+  questions_sha256 == sha256(data/questions.jsonl): True
+  corpus sha256 == tree digest of data/corpus/Salesforce__HERB now: True  (n_files manifest 33, now 33)
+[rows]
+  rows                            : 100   manifest n_questions 100 n_ran 100 n_failed 0 n_exhausted 0
+  ids unique                      : True  (100 distinct)
+  ids == id file, same order      : True   same set: True   id file lines 100
+  row question == question file's : 100/100
+  failures.jsonl bytes            : 0
+[the cut]  manifest char_budget 72000, top_k 50
+  sum(len(contexts)) == 72000                        : 100/100
+  meta.char_budget.chars == that sum and budget == 72000: 100/100
+  meta.char_budget.kept == len(context_ids)              : 100/100
+  len(contexts) == kept + (1 if a cut piece)             : 100/100
+  rows with a cut piece (boundary not null)              : 100/100   exhausted rows: 0
+  cut piece: chars_kept == len(last context)             : 100/100
+  cut piece: chars_full > chars_kept                     : 100/100
+  cut piece id absent from context_ids                   : 100/100
+  context_ids unique within the row                      : 100/100
+  whole units per row (kept)        min/median/max       : (18, 86.5, 479)
+  contexts per row (with the piece) min/median/max       : (19, 87.5, 480)
+  cut piece chars kept              min/median/max       : (3, 703.5, 7031)
+  cut piece full length             min/median/max       : (98, 3242.5, 8118)
+  rows with more whole units than the manifest top_k     : 67/100
+  rows whose cut piece id is one of the question citation ids: 1/100
+[tokens and tries]
+  generator.tokens_in > 0         : 100/100     tokens_out > 0: 100/100
+  generator.calls values          : {1: 100}
+  generator.attempts values       : {1: 100}   rows with attempts > 1: 0
+  generator.retry_s > 0 rows      : 0   wait_s > 0 rows: 0
+  generator.cached_input_tokens>0 : 4 rows, sum 95097
+  generator tokens_in  sum, (min, median, max): 2616508, (22418, 25011.5, 49891)
+  generator tokens_out sum, (min, median, max): 78901, (138, 619.0, 2762)
+  retrieval.calls values          : {0: 100}   retrieval tokens_in sum 0  time_s sum 0.000
+  empty answers                   : 0/100
+[stamps and seconds]
+  folder stamp (start)            : 2026-10-07T21:10:14+00:00
+  first / last answered_at        : 2026-10-07T21:10:26.796387+00:00 / 2026-10-07T21:14:47.636271+00:00
+  run_manifest timestamp (end)    : 2026-10-07T21:14:47.753289+00:00
+  arm_outputs.jsonl last written  : 2026-10-07T21:14:47+00:00   run_manifest.json: 2026-10-07T21:14:48+00:00
+  answered_at inside [start, end] : 100/100
+  answered_at non-decreasing in file order: 99/99 steps
+  wall window end - start         : 273.8 s   first-to-last answered_at: 260.8 s   start to first answer: 12.8 s
+  sum generator.time_s            : 1539.4 s   sum generator.request_s: 1539.4 s   sum search_time_s: 5.19 s
+  (sum generator.time_s + sum search_time_s) / wall window: 5.64
+  generator.time_s min/median/max : (4.84, 11.28, 141.59)
+  search_time_s    min/median/max : (0.0196, 0.045, 0.1605)
+  manifest build_stats            : build_time_s 3.029199699871242  calls 0  tokens_in 0  time_s 0.0  models []
+  manifest has key                : {'workers': False, 'legs': False, 'lane': False, 'index': False, 'code_state': False, 'generator': False, 'env': False}
+  code_version                    : {'commit': 'a140636a35b9ddba479df317e81ee66044b62a2b', 'branch': 'artefact-v4', 'dirty': True}   diff files in folder: []
+[eval rows]
+  rows                            : 1400
+  distinct (question, score) pairs: 1400   duplicated pairs: 0
+  questions                       : 100   rows per question: {14: 100}   same id set as arm_outputs: True
+  arm field values                : {'lucene': 1400}
+  status values                   : {'ok': 1400}
+  components non-empty rows       : 0   human_label non-null: 0
+  type field == question file type: 1400/1400
+  question types (count of the 100) : {'company': 5, 'content': 55, 'person': 22, 'pr': 17, 'url': 1}
+  score                      rows   ok  nan  err None NaNval <0|>1   mean of ok rows      min      max
+  context_precision_id        100  100    0    0    0      0     0          0.044790   0.0000   0.2500
+  context_recall_id           100  100    0    0    0      0     0          0.121672   0.0000   0.5122
+  context_precision_nonllm    100  100    0    0    0      0     0          0.224110   0.0000   1.0000
+  context_recall_nonllm       100  100    0    0    0      0     0          0.129767   0.0000   0.5610
+  semantic_similarity         100  100    0    0    0      0     0          0.345786   0.0987   0.8021
+  string_similarity           100  100    0    0    0      0     0          0.118913   0.0131   0.5076
+  bleu                        100  100    0    0    0      0     0          0.026765   0.0000   0.2930
+  rouge                       100  100    0    0    0      0     0          0.096782   0.0000   0.5941
+  chrf                        100  100    0    0    0      0     0          0.205931   0.0114   0.5999
+  exact_match                 100  100    0    0    0      0     0          0.000000   0.0000   0.0000
+  string_presence             100  100    0    0    0      0     0          0.030000   0.0000   1.0000
+  faithfulness                100  100    0    0    0      0     0          0.873463   0.2500   1.0000
+  answer_correctness          100  100    0    0    0      0     0          0.178474   0.0247   0.9179
+  context_recall_llm          100  100    0    0    0      0     0          0.262000   0.0000   1.0000
+[eval manifest]
+  judge_model claude-haiku-4-5  backend claude-cli  effort None  timestamp 2026-10-07T22:32:11.760527+00:00
+  eval_manifest.json     last written 2026-10-07T22:32:11+00:00   1622 B
+  eval_results.jsonl     last written 2026-10-07T22:32:11+00:00   255506 B
+  eval_failures.jsonl    last written 2026-10-07T21:42:56+00:00   0 B
+  failures.jsonl         last written 2026-10-07T21:37:13+00:00   0 B
+  judge_usage                     : {'calls': 600, 'tokens_in': 6047685, 'cached_input_tokens': 0, 'tokens_out': 1899500, 'reasoning_tokens': 0, 'time_s': 17308.37783350027, 'attempts': 600, 'request_s': 17308.228267199127, 'wait_s': 0.0, 'retry_s': 0.0}
+  judge_elapsed_s                 : 3432.327487599803
+  leg 1: timestamp 2026-10-07T21:17:48.863199+00:00  judge_model None  calls 0  attempts 0  tokens_in 0  cached 0  tokens_out 0  time_s 0.0  request_s 0.0  elapsed_s 134.8  other keys []
+  leg 2: timestamp 2026-10-07T22:32:11.760527+00:00  judge_model claude-haiku-4-5  calls 600  attempts 600  tokens_in 6047685  cached 0  tokens_out 1899500  time_s 17308.4  request_s 17308.2  elapsed_s 3297.6  other keys []
+  sum of legs calls               : 600   == judge_usage: True
+  sum of legs tokens_in           : 6047685   == judge_usage: True
+  sum of legs cached_input_tokens : 0   == judge_usage: True
+  sum of legs tokens_out          : 1899500   == judge_usage: True
+  sum of legs attempts            : 600   == judge_usage: True
+  sum of legs time_s              : 17308.378   judge_usage: 17308.378   equal within 1e-6: True
+  sum of legs request_s           : 17308.228   judge_usage: 17308.228   equal within 1e-6: True
+  sum of legs elapsed_s           : 3432.327   judge_elapsed_s: 3432.327   equal within 1e-6: True
+  judged cells (3 judged scores)  : 300   judge calls / judged cell: 2.000   judge calls / question: 6.00
+  tokens_in / call                : 10079.5   tokens_out / call: 3165.8   cached / tokens_in: 0.0000
+  request_s / elapsed_s           : 5.04
+  per-cell stamps, tokens or call records in this folder: none; eval_calls.jsonl present: False
+
+====================================================================================================
+A.vec   vector__gold100__cb72000__20261007T211515Z
+====================================================================================================
+[inputs]
+  manifest questions_file         : C:\Coding\exjobbet\GRAG-Job\data\questions.jsonl   exists now: True
+  manifest names an id file path  : False
+  ids_sha256 == sha256(data/gold100.jsonl)        : True
+  questions_sha256 == sha256(data/questions.jsonl): True
+  corpus sha256 == tree digest of data/corpus/Salesforce__HERB now: True  (n_files manifest 33, now 33)
+[rows]
+  rows                            : 100   manifest n_questions 100 n_ran 100 n_failed 0 n_exhausted 0
+  ids unique                      : True  (100 distinct)
+  ids == id file, same order      : True   same set: True   id file lines 100
+  row question == question file's : 100/100
+  failures.jsonl bytes            : 0
+[the cut]  manifest char_budget 72000, top_k 50
+  sum(len(contexts)) == 72000                        : 100/100
+  meta.char_budget.chars == that sum and budget == 72000: 100/100
+  meta.char_budget.kept == len(context_ids)              : 100/100
+  len(contexts) == kept + (1 if a cut piece)             : 100/100
+  rows with a cut piece (boundary not null)              : 100/100   exhausted rows: 0
+  cut piece: chars_kept == len(last context)             : 100/100
+  cut piece: chars_full > chars_kept                     : 100/100
+  cut piece id absent from context_ids                   : 100/100
+  context_ids unique within the row                      : 100/100
+  whole units per row (kept)        min/median/max       : (47, 279.0, 431)
+  contexts per row (with the piece) min/median/max       : (48, 280.0, 432)
+  cut piece chars kept              min/median/max       : (4, 137.0, 6907)
+  cut piece full length             min/median/max       : (107, 280.0, 7174)
+  rows with more whole units than the manifest top_k     : 96/100
+  rows whose cut piece id is one of the question citation ids: 3/100
+[tokens and tries]
+  generator.tokens_in > 0         : 100/100     tokens_out > 0: 100/100
+  generator.calls values          : {1: 100}
+  generator.attempts values       : {1: 100}   rows with attempts > 1: 0
+  generator.retry_s > 0 rows      : 0   wait_s > 0 rows: 0
+  generator.cached_input_tokens>0 : 2 rows, sum 50285
+  generator tokens_in  sum, (min, median, max): 2877677, (23547, 29187.5, 51908)
+  generator tokens_out sum, (min, median, max): 121821, (104, 798.5, 8748)
+  retrieval.calls values          : {0: 100}   retrieval tokens_in sum 0  time_s sum 0.000
+  empty answers                   : 0/100
+[stamps and seconds]
+  folder stamp (start)            : 2026-10-07T21:15:15+00:00
+  first / last answered_at        : 2026-10-07T21:15:48.712495+00:00 / 2026-10-07T21:20:56.349614+00:00
+  run_manifest timestamp (end)    : 2026-10-07T21:20:56.466954+00:00
+  arm_outputs.jsonl last written  : 2026-10-07T21:20:56+00:00   run_manifest.json: 2026-10-07T21:20:56+00:00
+  answered_at inside [start, end] : 100/100
+  answered_at non-decreasing in file order: 99/99 steps
+  wall window end - start         : 341.5 s   first-to-last answered_at: 307.6 s   start to first answer: 33.7 s
+  sum generator.time_s            : 1943.8 s   sum generator.request_s: 1943.8 s   sum search_time_s: 5.04 s
+  (sum generator.time_s + sum search_time_s) / wall window: 5.71
+  generator.time_s min/median/max : (5.8, 14.79, 89.46)
+  search_time_s    min/median/max : (0.0255, 0.0455, 0.1451)
+  manifest build_stats            : build_time_s 1708.9  calls 38540  tokens_in 2719968  time_s 1708.9  models ['nvidia/llama-nemotron-embed-1b-v2']
+  manifest has key                : {'workers': False, 'legs': False, 'lane': False, 'index': False, 'code_state': False, 'generator': False, 'env': False}
+  code_version                    : {'commit': 'a140636a35b9ddba479df317e81ee66044b62a2b', 'branch': 'artefact-v4', 'dirty': True}   diff files in folder: []
+[eval rows]
+  rows                            : 1400
+  distinct (question, score) pairs: 1400   duplicated pairs: 0
+  questions                       : 100   rows per question: {14: 100}   same id set as arm_outputs: True
+  arm field values                : {'vector': 1400}
+  status values                   : {'ok': 1400}
+  components non-empty rows       : 0   human_label non-null: 0
+  type field == question file type: 1400/1400
+  question types (count of the 100) : {'company': 5, 'content': 55, 'person': 22, 'pr': 17, 'url': 1}
+  score                      rows   ok  nan  err None NaNval <0|>1   mean of ok rows      min      max
+  context_precision_id        100  100    0    0    0      0     0          0.045618   0.0000   0.1983
+  context_recall_id           100  100    0    0    0      0     0          0.267544   0.0000   0.7000
+  context_precision_nonllm    100  100    0    0    0      0     0          0.229308   0.0000   0.6754
+  context_recall_nonllm       100  100    0    0    0      0     0          0.282798   0.0000   0.6410
+  semantic_similarity         100  100    0    0    0      0     0          0.348369   0.0862   0.8310
+  string_similarity           100  100    0    0    0      0     0          0.114686   0.0188   0.3542
+  bleu                        100  100    0    0    0      0     0          0.031443   0.0000   0.3310
+  rouge                       100  100    0    0    0      0     0          0.108514   0.0000   0.5660
+  chrf                        100  100    0    0    0      0     0          0.228700   0.0198   0.7117
+  exact_match                 100  100    0    0    0      0     0          0.000000   0.0000   0.0000
+  string_presence             100  100    0    0    0      0     0          0.080000   0.0000   1.0000
+  faithfulness                100  100    0    0    0      0     0          0.847136   0.0000   1.0000
+  answer_correctness          100  100    0    0    0      0     0          0.208355   0.0216   0.7983
+  context_recall_llm          100  100    0    0    0      0     0          0.450238   0.0000   1.0000
+[eval manifest]
+  judge_model claude-haiku-4-5  backend claude-cli  effort None  timestamp 2026-10-07T23:34:24.853375+00:00
+  eval_manifest.json     last written 2026-10-07T23:34:24+00:00   1622 B
+  eval_results.jsonl     last written 2026-10-07T23:34:24+00:00   256618 B
+  eval_failures.jsonl    last written 2026-10-07T22:38:26+00:00   0 B
+  failures.jsonl         last written 2026-10-07T22:32:26+00:00   0 B
+  judge_usage                     : {'calls': 600, 'tokens_in': 6726850, 'cached_input_tokens': 0, 'tokens_out': 2089186, 'reasoning_tokens': 0, 'time_s': 19596.629468603758, 'attempts': 600, 'request_s': 19596.396413300885, 'wait_s': 0.0, 'retry_s': 0.0}
+  judge_elapsed_s                 : 3846.101105599897
+  leg 1: timestamp 2026-10-07T21:23:21.102929+00:00  judge_model None  calls 0  attempts 0  tokens_in 0  cached 0  tokens_out 0  time_s 0.0  request_s 0.0  elapsed_s 128.1  other keys []
+  leg 2: timestamp 2026-10-07T23:34:24.853375+00:00  judge_model claude-haiku-4-5  calls 600  attempts 600  tokens_in 6726850  cached 0  tokens_out 2089186  time_s 19596.6  request_s 19596.4  elapsed_s 3718.0  other keys []
+  sum of legs calls               : 600   == judge_usage: True
+  sum of legs tokens_in           : 6726850   == judge_usage: True
+  sum of legs cached_input_tokens : 0   == judge_usage: True
+  sum of legs tokens_out          : 2089186   == judge_usage: True
+  sum of legs attempts            : 600   == judge_usage: True
+  sum of legs time_s              : 19596.629   judge_usage: 19596.629   equal within 1e-6: True
+  sum of legs request_s           : 19596.396   judge_usage: 19596.396   equal within 1e-6: True
+  sum of legs elapsed_s           : 3846.101   judge_elapsed_s: 3846.101   equal within 1e-6: True
+  judged cells (3 judged scores)  : 300   judge calls / judged cell: 2.000   judge calls / question: 6.00
+  tokens_in / call                : 11211.4   tokens_out / call: 3482.0   cached / tokens_in: 0.0000
+  request_s / elapsed_s           : 5.10
+  per-cell stamps, tokens or call records in this folder: none; eval_calls.jsonl present: False
+

@@ -1,0 +1,38 @@
+== 1. three artefact_v1_det 10smoke folders, 2026-08-21
+   20260821T205659Z: 10 rows; generator_model in manifest: claude-sonnet-5; non-empty answers: 10; files: ['.run.lock', 'arm_outputs.jsonl', 'eval_failures.jsonl', 'eval_results.jsonl', 'failures.jsonl', 'run_manifest.json']
+   20260821T211728Z: 10 rows; generator_model in manifest: claude-sonnet-5; non-empty answers: 10; files: ['.run.lock', 'arm_outputs.jsonl', 'failures.jsonl', 'run_manifest.json']
+   20260821T212445Z: 10 rows; generator_model in manifest: claude-sonnet-5; non-empty answers: 10; files: ['arm_outputs.jsonl', 'eval_failures.jsonl', 'eval_manifest.json', 'eval_results.jsonl', 'failures.jsonl', 'run_manifest.json']
+   20260821T205659Z vs 20260821T211728Z: common questions 10; identical context_ids (order kept) 10; identical contexts 10; identical answer text 0
+   20260821T205659Z vs 20260821T212445Z: common questions 10; identical context_ids (order kept) 10; identical contexts 10; identical answer text 0
+   20260821T211728Z vs 20260821T212445Z: common questions 10; identical context_ids (order kept) 10; identical contexts 10; identical answer text 0
+
+== 2. the same answers judged a second time
+   __10smoke__cb72000__20260821T205659Z: NO eval_manifest.json in the folder
+   20260821T205659Z__j-claude-haiku-4-5: NO eval_manifest.json in the folder
+   answers identical on 10 of 10; contexts identical on 10 of 10
+   score | cells in both | both ok | equal value | mean |diff| | max |diff| | not ok in one
+   bleu | 10 | 10 | 10 | 0.0000 | 0.0000 | 0
+   chrf | 10 | 10 | 10 | 0.0000 | 0.0000 | 0
+   context_precision_id | 10 | 10 | 10 | 0.0000 | 0.0000 | 0
+   context_precision_nonllm | 10 | 10 | 10 | 0.0000 | 0.0000 | 0
+   context_recall_id | 10 | 10 | 10 | 0.0000 | 0.0000 | 0
+   context_recall_nonllm | 10 | 10 | 10 | 0.0000 | 0.0000 | 0
+   exact_match | 10 | 10 | 10 | 0.0000 | 0.0000 | 0
+   rouge | 10 | 10 | 10 | 0.0000 | 0.0000 | 0
+   semantic_similarity | 1 | 1 | 1 | 0.0000 | 0.0000 | 0
+   string_presence | 10 | 10 | 10 | 0.0000 | 0.0000 | 0
+   string_similarity | 10 | 10 | 10 | 0.0000 | 0.0000 | 0
+
+== 3. baseline folders: non-empty answer with zero generator token counters
+   lucene__gold100__cb72000__20260814T134547Z: rows 100; answers with tokens_in and tokens_out both 0: 8; with tokens_in 0: 8
+      manifest: commit 4e79759 dirty=True host=Wiktop python=3.12.7 bm25s=0.3.10 embedder=None build_time_s=1.4 build_calls=0 build_tokens_in=0
+      eval manifest: judge_model=claude-haiku-4-5 judge_backend=claude-cli calls=616 elapsed_s=1477.1954185000068 legs=2
+   vector__gold100__cb72000__20260814T145615Z: rows 100; answers with tokens_in and tokens_out both 0: 0; with tokens_in 0: 0
+      manifest: commit 4e79759 dirty=True host=Wiktop python=3.12.7 bm25s=0.2.14 embedder=None build_time_s=213.1 build_calls=19 build_tokens_in=2719968
+      eval manifest: judge_model=claude-haiku-4-5 judge_backend=claude-cli calls=466 elapsed_s=8315.732072700019 legs=2
+   lucene__gold100__cb72000__20261007T211014Z: rows 100; answers with tokens_in and tokens_out both 0: 0; with tokens_in 0: 0
+      manifest: commit a140636 dirty=True host=Wiktop python=3.12.7 bm25s=0.2.14 embedder={'model': 'nvidia/llama-nemotron-embed-1b-v2', 'revision': '113abe4acafa848e77ead9c0623205e511932348', 'device': 'cpu', 'dtype': 'float32'} build_time_s=3.0 build_calls=0 build_tokens_in=0
+      eval manifest: judge_model=claude-haiku-4-5 judge_backend=claude-cli calls=600 elapsed_s=3432.327487599803 legs=2
+   vector__gold100__cb72000__20261007T211515Z: rows 100; answers with tokens_in and tokens_out both 0: 0; with tokens_in 0: 0
+      manifest: commit a140636 dirty=True host=Wiktop python=3.12.7 bm25s=0.2.14 embedder={'model': 'nvidia/llama-nemotron-embed-1b-v2', 'revision': '113abe4acafa848e77ead9c0623205e511932348', 'device': 'cpu', 'dtype': 'float32'} build_time_s=1708.9 build_calls=38540 build_tokens_in=2719968
+      eval manifest: judge_model=claude-haiku-4-5 judge_backend=claude-cli calls=600 elapsed_s=3846.101105599897 legs=2

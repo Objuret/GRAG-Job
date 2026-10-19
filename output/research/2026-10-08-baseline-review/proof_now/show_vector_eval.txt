@@ -1,0 +1,17 @@
+eval rows 14 | statuses {'ok': 14} | dollar key in any row: False
+   faithfulness           value 1.000 | judge calls 2 tries 2 tokens in 29013 out 7113 chat_s 58.8 wall 59.7 | embed calls 0
+   answer_correctness     value 0.004 | judge calls 3 tries 3 tokens in 13538 out 13666 chat_s 116.7 wall 117.9 | embed calls 0
+   context_recall_llm     value 0.000 | judge calls 1 tries 1 tokens in 24544 out 710 chat_s 10.7 wall 11.1 | embed calls 0
+eval_calls.jsonl: 8 lines | by kind, phase, score: {('embed', 'prime', None): 2, ('chat', 'cell', 'faithfulness'): 2, ('chat', 'cell', 'answer_correctness'): 3, ('chat', 'cell', 'context_recall_llm'): 1}
+   embed: phase prime question_id None score None | passage prefix 'passage: ' tokens [18] encode_s 0.236
+   embed: phase prime question_id None score None | passage prefix 'passage: ' tokens [209] encode_s 1.081
+   judge call for faithfulness         prompt 2800 chars | system given by the harness: '' | kept tokens in 4254 out 4410 | 32.8 s, ttft 30100 ms | models in modelUsage ['claude-haiku-4-5', 'claude-haiku-4-5-20251001'] with input [10, 1131]
+   judge call for faithfulness         prompt 77466 chars | system given by the harness: '' | kept tokens in 24759 out 2703 | 26.0 s, ttft 16000 ms | models in modelUsage ['claude-haiku-4-5', 'claude-haiku-4-5-20251001'] with input [10, 21635]
+   judge call for answer_correctness   prompt 2800 chars | system given by the harness: '' | kept tokens in 4256 out 7721 | 69.4 s, ttft 66079 ms | models in modelUsage ['claude-haiku-4-5', 'claude-haiku-4-5-20251001'] with input [10, 1131]
+   judge call for answer_correctness   prompt 1837 chars | system given by the harness: '' | kept tokens in 4046 out 2853 | 24.9 s, ttft 23299 ms | models in modelUsage ['claude-haiku-4-5', 'claude-haiku-4-5-20251001'] with input [4046, 921]
+   judge call for answer_correctness   prompt 6551 chars | system given by the harness: '' | kept tokens in 5236 out 3092 | 22.3 s, ttft 16434 ms | models in modelUsage ['claude-haiku-4-5', 'claude-haiku-4-5-20251001'] with input [10, 2112]
+   judge call for context_recall_llm   prompt 76608 chars | system given by the harness: '' | kept tokens in 24544 out 710 | 10.7 s, ttft 8029 ms | models in modelUsage ['claude-haiku-4-5', 'claude-haiku-4-5-20251001'] with input [10, 21420]
+eval_manifest: top-level judge_model None | judge_usage {'calls': 6, 'tokens_in': 67095, 'tokens_out': 21489, 'time_s': 186.15982890012674} | elapsed 192.18354229978286
+   scoring start 1: judge_model claude-haiku-4-5 calls 6 elapsed 191.61605539987795 | settings present: True | settings.workers 1 judge_max_tries 2 cells {'ok': 14} embedding {'requests': 2, 'texts': 2, 'tokens_in': 227, 'lock_wait_s': 8.998904377222061e-07, 'encode_s': 1.3175623000133783} ragas 0.4.3
+   scoring start 2: judge_model None calls 0 elapsed 0.5674868999049067 | settings present: True | settings.workers 1 judge_max_tries 2 cells {} embedding {'requests': 0, 'texts': 0, 'tokens_in': 0, 'lock_wait_s': 0.0, 'encode_s': 0.0} ragas 0.4.3
+earlier proof: scoring starts with settings: [False, True]

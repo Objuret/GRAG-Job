@@ -1,0 +1,34 @@
+checkout fbc2f22c38238562599c683a0523b25e2f7e0221 | status lines in code paths: 0 | started 2026-10-17T06:13:53Z
+vector | set=gold | 100 questions | char-budget=72000 | k=50 | serial | answers + RAGAS eval
+  ->  C:\Coding\exjobbet\GRAG-Job\output\k=chars\vector__gold100__cb72000__20261017T061242Z
+running - press q to abort
+
+vector: 38540 artifacts + 0 directory records
+embedder: loading nvidia/llama-nemotron-embed-1b-v2 @ 113abe4acafa on cpu (float32) — first use
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/146 [00:00<?, ?it/s]Loading weights:   1%|          | 1/146 [00:01<03:25,  1.42s/it]Loading weights:  43%|████▎     | 63/146 [00:01<00:01, 57.06it/s]Loading weights:  67%|██████▋   | 98/146 [00:03<00:01, 29.99it/s]Loading weights:  81%|████████  | 118/146 [00:04<00:01, 24.94it/s]Loading weights:  90%|████████▉ | 131/146 [00:05<00:00, 20.38it/s]Loading weights:  96%|█████████▌| 140/146 [00:06<00:00, 18.66it/s]Loading weights: 100%|██████████| 146/146 [00:06<00:00, 22.92it/s]
+embedder: ready in 29s (2048 dim, 8192-token context)
+ragas judge: claude-haiku-4-5-20251001 backend=claude-cli timeout=120s tries=1
+ragas embed: priming 200 text(s) in 200 batch(es) of up to 1
+ragas embed: primed in 200 forward pass(es)
+ragas: all 1400 cells ok
+ragas judge usage: 600 call(s), in=5126461 cached=0 out=335084 reasoning=0 tokens, request-time=3767.3s wall=4232.7s
+
+results  (vector, n=100)
+  context_precision_id       0.06
+  context_recall_id          0.24
+  context_precision_nonllm   0.19
+  context_recall_nonllm      0.17
+  semantic_similarity        0.33
+  string_similarity          0.11
+  bleu                       0.02
+  rouge                      0.10
+  chrf                       0.22
+  exact_match                0.00
+  string_presence            0.06
+  faithfulness               0.86
+  answer_correctness         0.22
+  context_recall_llm         0.45
+
+100/100 answered, 0 failed, 0 did not fill the 72000 char budget  ->  C:\Coding\exjobbet\GRAG-Job\output\k=chars\vector__gold100__cb72000__20261017T061242Z
+exit 0 | finished 2026-10-17T07:40:16Z

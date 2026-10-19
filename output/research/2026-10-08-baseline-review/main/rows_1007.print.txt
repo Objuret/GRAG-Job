@@ -1,0 +1,59 @@
+== the answer call: output tokens against the length of the answer text
+run | n | answer chars: median | tokens_out: median | tokens_out per answer char: median (min, max) | rows with reasoning_tokens > 0 | rows with attempts > 1
+  lucene 10-07 | 100 | 658 | 619 | 0.924 (0.378, 5.171) | 0 | 0
+  vector 10-07 | 100 | 741 | 798 | 0.957 (0.390, 16.213) | 0 | 0
+  lucene 08-14 | 100 | 744 | 1901 | 2.265 (0.000, 24.793) | 0 | 0
+  vector 08-14 | 100 | 840 | 2457 | 2.658 (0.924, 35.493) | 0 | 0
+
+== seconds per question, as stored (10-07 runs were answered six at once)
+run | search_time_s: median, 90%, max | answer time_s: median, 90%, max | request_s median | retry_s sum | row keys beyond the standard ones
+  lucene 10-07 | 0.045, 0.089, 0.160 | 11.3, 24.5, 141.6 | 11.3 | 0.0 | []
+  vector 10-07 | 0.045, 0.083, 0.145 | 14.8, 34.7, 89.5 | 14.8 | 0.0 | []
+  lucene 08-14 | 0.032, 0.235, 0.559 | 26.3, 74.9, 165.3 | 26.3 | 0.0 | []
+  vector 08-14 | 0.036, 0.117, 0.317 | 26.4, 95.8, 203.3 | 26.4 | 0.0 | []
+
+== delivered units per question and the cut piece
+  lucene 10-07 | whole units: min 18 median 86 max 479 | context chars: min 72000 max 72000 | rows with a cut piece: 100 | cut piece, full length in chars: median 3242 max 8118 | share of it delivered: median 0.41
+  vector 10-07 | whole units: min 47 median 279 max 431 | context chars: min 72000 max 72000 | rows with a cut piece: 100 | cut piece, full length in chars: median 280 max 7174 | share of it delivered: median 0.40
+  lucene 08-14 | whole units: min 18 median 86 max 479 | context chars: min 72000 max 72000 | rows with a cut piece: 100 | cut piece, full length in chars: median 3242 max 8118 | share of it delivered: median 0.42
+  vector 08-14 | whole units: min 37 median 269 max 436 | context chars: min 72000 max 72000 | rows with a cut piece: 100 | cut piece, full length in chars: median 209 max 7220 | share of it delivered: median 0.54
+
+== evaluation rows: n per score, stored values of semantic_similarity
+  lucene 10-07 | rows 1400 | statuses {'ok': 1400} | question types {'person': 22, 'content': 55, 'pr': 17, 'company': 5, 'url': 1}
+      semantic_similarity n=100: min 0.099  10% 0.177  median 0.316  90% 0.610  max 0.802  | values below 0: 0  below 0.1: 1
+      answer_correctness n=100: min 0.025  median 0.104  max 0.918
+      keys under components: {}
+  vector 10-07 | rows 1400 | statuses {'ok': 1400} | question types {'person': 22, 'content': 55, 'pr': 17, 'company': 5, 'url': 1}
+      semantic_similarity n=100: min 0.086  10% 0.154  median 0.335  90% 0.561  max 0.831  | values below 0: 0  below 0.1: 2
+      answer_correctness n=100: min 0.022  median 0.119  max 0.798
+      keys under components: {}
+  lucene 08-14 | rows 1400 | statuses {'ok': 1400} | question types {'content': 55, 'person': 22, 'pr': 17, 'company': 5, 'url': 1}
+      semantic_similarity n=100: min 0.079  10% 0.169  median 0.307  90% 0.571  max 0.761  | values below 0: 0  below 0.1: 2
+      answer_correctness n=100: min 0.020  median 0.110  max 0.753
+      keys under components: {}
+  vector 08-14 | rows 1400 | statuses {'ok': 1400} | question types {'person': 22, 'content': 55, 'pr': 17, 'company': 5, 'url': 1}
+      semantic_similarity n=100: min 0.057  10% 0.158  median 0.323  90% 0.554  max 0.736  | values below 0: 0  below 0.1: 2
+      answer_correctness n=100: min 0.014  median 0.136  max 0.620
+      keys under components: {}
+
+== manifests: what each says about itself
+  lucene 10-07 | run manifest keys: ['arm', 'build_stats', 'char_budget', 'code_version', 'environment', 'flags', 'generator_model', 'graph', 'inputs', 'interpreter_model', 'n_exhausted', 'n_failed', 'n_questions', 'n_ran', 'questions_file', 'retrieval_flags', 'timestamp', 'top_k']
+      code_version {'commit': 'a140636a35b9ddba479df317e81ee66044b62a2b', 'branch': 'artefact-v4', 'dirty': True} | python_executable None | packages {'bm25s': '0.2.14', 'PyStemmer': '3.1.0', 'numpy': '2.4.6', 'sentence-transformers': '6.0.1', 'torch': '2.14.0+cpu', 'transformers': '5.12.1', 'httpx': '0.28.1', 'ragas': '0.4.3', 'neo4j': '6.2.0'}
+      build_stats {"build_time_s": 3.029199699871242, "model": {"calls": 0, "tokens_in": 0, "cached_input_tokens": 0, "tokens_out": 0, "reasoning_tokens": 0, "time_s": 0.0, "attempts": 0, "request_s": 0.0, "wait_s": 0.0, "retry_s": 0.0}, "models": []}
+      lane None | workers None | legs 0 | index null
+      eval manifest keys: ['arm', 'judge_backend', 'judge_effort', 'judge_elapsed_s', 'judge_legs', 'judge_model', 'judge_usage', 'scorer', 'source_run', 'timestamp'] | judge_model claude-haiku-4-5 | judge_usage {"calls": 600, "tokens_in": 6047685, "cached_input_tokens": 0, "tokens_out": 1899500, "reasoning_tokens": 0, "time_s": 17308.37783350027, "attempts": 600, "request_s": 17308.228267199127, "wait_s": 0.0, "retry_s": 0.0} | elapsed 3432.327487599803 | legs 2
+  vector 10-07 | run manifest keys: ['arm', 'build_stats', 'char_budget', 'code_version', 'environment', 'flags', 'generator_model', 'graph', 'inputs', 'interpreter_model', 'n_exhausted', 'n_failed', 'n_questions', 'n_ran', 'questions_file', 'retrieval_flags', 'timestamp', 'top_k']
+      code_version {'commit': 'a140636a35b9ddba479df317e81ee66044b62a2b', 'branch': 'artefact-v4', 'dirty': True} | python_executable None | packages {'bm25s': '0.2.14', 'PyStemmer': '3.1.0', 'numpy': '2.4.6', 'sentence-transformers': '6.0.1', 'torch': '2.14.0+cpu', 'transformers': '5.12.1', 'httpx': '0.28.1', 'ragas': '0.4.3', 'neo4j': '6.2.0'}
+      build_stats {"build_time_s": 1708.9, "model": {"calls": 38540, "tokens_in": 2719968, "cached_input_tokens": 0, "tokens_out": 0, "reasoning_tokens": 0, "time_s": 1708.9, "attempts": 0, "request_s": 0.0, "wait_s": 0.0, "retry_s": 0.0}, "models": ["nvidia/llama-nemotron-embed-1b-v2"]}
+      lane None | workers None | legs 0 | index null
+      eval manifest keys: ['arm', 'judge_backend', 'judge_effort', 'judge_elapsed_s', 'judge_legs', 'judge_model', 'judge_usage', 'scorer', 'source_run', 'timestamp'] | judge_model claude-haiku-4-5 | judge_usage {"calls": 600, "tokens_in": 6726850, "cached_input_tokens": 0, "tokens_out": 2089186, "reasoning_tokens": 0, "time_s": 19596.629468603758, "attempts": 600, "request_s": 19596.396413300885, "wait_s": 0.0, "retry_s": 0.0} | elapsed 3846.101105599897 | legs 2
+  lucene 08-14 | run manifest keys: ['arm', 'build_stats', 'char_budget', 'code_version', 'environment', 'generator_model', 'graph', 'inputs', 'interpreter_model', 'n_exhausted', 'n_failed', 'n_questions', 'n_ran', 'questions_file', 'retrieval_flags', 'timestamp', 'top_k']
+      code_version {'commit': '4e79759e092d7b49f4c29c5bd8d06808eed893ea', 'branch': 'user-canon-record', 'dirty': True} | python_executable None | packages {'bm25s': '0.3.10', 'PyStemmer': '3.1.0', 'numpy': '2.4.6', 'httpx': '0.28.1', 'ragas': '0.4.3', 'neo4j': '6.2.0'}
+      build_stats {"build_time_s": 1.434378400008427, "model": {"calls": 0, "tokens_in": 0, "cached_input_tokens": 0, "tokens_out": 0, "reasoning_tokens": 0, "time_s": 0.0, "attempts": 0, "request_s": 0.0, "wait_s": 0.0, "retry_s": 0.0}, "models": []}
+      lane None | workers None | legs 0 | index null
+      eval manifest keys: ['arm', 'judge_backend', 'judge_effort', 'judge_elapsed_s', 'judge_legs', 'judge_model', 'judge_usage', 'scorer', 'source_run', 'timestamp'] | judge_model claude-haiku-4-5 | judge_usage {"calls": 616, "tokens_in": 26855347, "cached_input_tokens": 17356751, "tokens_out": 1679486, "reasoning_tokens": 0, "time_s": 1247.574807900004, "attempts": 616, "request_s": 16806.565139500002, "wait_s": 0, "retry_s": 0} | elapsed 1477.1954185000068 | legs 2
+  vector 08-14 | run manifest keys: ['arm', 'build_stats', 'char_budget', 'code_version', 'environment', 'generator_model', 'graph', 'inputs', 'interpreter_model', 'n_exhausted', 'n_failed', 'n_questions', 'n_ran', 'questions_file', 'retrieval_flags', 'timestamp', 'top_k']
+      code_version {'commit': '4e79759e092d7b49f4c29c5bd8d06808eed893ea', 'branch': 'user-canon-record', 'dirty': True} | python_executable None | packages {'bm25s': '0.2.14', 'PyStemmer': '3.1.0', 'numpy': '2.4.6', 'httpx': '0.28.1', 'ragas': '0.4.3', 'neo4j': '6.2.0'}
+      build_stats {"build_time_s": 213.1491383999819, "model": {"calls": 19, "tokens_in": 2719968, "cached_input_tokens": 0, "tokens_out": 0, "reasoning_tokens": 0, "time_s": 207.59734080010094, "attempts": 0, "request_s": 0.0, "wait_s": 0.0, "retry_s": 0.0}, "models": ["nvidia/llama-nemotron-embed-1b-v2"]}
+      lane None | workers None | legs 0 | index null
+      eval manifest keys: ['arm', 'judge_backend', 'judge_effort', 'judge_elapsed_s', 'judge_legs', 'judge_model', 'judge_usage', 'scorer', 'source_run', 'timestamp'] | judge_model claude-haiku-4-5 | judge_usage {"calls": 466, "tokens_in": 20741636, "cached_input_tokens": 13034170, "tokens_out": 1462935, "reasoning_tokens": 0, "time_s": 13979.316364099708, "attempts": 466, "request_s": 13979.192274499976, "wait_s": 0.0, "retry_s": 0.0} | elapsed 8315.732072700019 | legs 2

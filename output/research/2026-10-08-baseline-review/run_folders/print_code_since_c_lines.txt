@@ -1,0 +1,17 @@
+=== prod/eval/ragas.py: added lines only in C.vec's diff 3, only now 0
+   then |                         transport: dict | None = None, cost_usd: float = 0.0) -> None:
+   then |         LAST_JUDGE_USAGE.cost_usd += float(cost_usd or 0.0)
+   then |         transport, float(resp.get("cost_usd") or 0.0))
+=== prod/harness/chat.py: added lines only in C.vec's diff 4, only now 2
+   then |            "text": None, "usage": None, "cost_usd": None, "envelope": None, "stream": None,
+   then |                     cost = data.get("total_cost_usd")
+   then |                                cost_usd=cost, envelope=data,
+   then |                         "cost_usd": cost,
+   now  |            "text": None, "usage": None, "envelope": None, "stream": None,
+   now  |                                envelope=data,
+=== prod/harness/contract.py: added lines only in C.vec's diff 2, only now 0
+   then |     cost_usd: float = 0.0
+   then |         "cost_usd": float(d.get("cost_usd", 0.0) or 0.0),
+=== prod/harness/orchestrator.py: added lines only in C.vec's diff 2, only now 0
+   then |                         "cost_usd": float(resp.get("cost_usd") or 0.0),
+   then |         total.cost_usd += u.cost_usd

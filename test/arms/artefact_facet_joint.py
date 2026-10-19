@@ -9,6 +9,7 @@ from __future__ import annotations
 import ast
 from collections import defaultdict
 from dataclasses import dataclass
+from datetime import datetime, timezone
 import hashlib
 import json
 import os
@@ -224,12 +225,15 @@ def prepare_over_corpus(corpus, *, scope_scheduling='equal_depth') -> Prepared:
                     scope_scheduling=scope_scheduling)
 
 
-def _cached_stage(stage, system, user, validate, cache_dir, model=None):
+def _cached_stage(stage, system, user, validate, cache_dir, model=None, schema=None):
     """One transport attempt; failures and uncertain attempts cannot auto-retry. The model is
-    this module's interpreter unless the caller names another; it is part of the cache key."""
+    this module's interpreter unless the caller names another; it is part of the cache key.
+    A schema, when given, is what the lane forces the answer into, and is part of the key."""
     model = model or INTERPRET_MODEL
     signature = {'cache_version': 1, 'stage': stage, 'model': model,
                  'system': system, 'user': user, 'max_tries': 1}
+    if schema is not None:
+        signature['schema'] = schema
     key = _sha(json.dumps(signature, sort_keys=True, ensure_ascii=False))
     path = cache_dir / stage / (key + '.json')
     marker = path.with_suffix('.started.json')
@@ -243,7 +247,11 @@ def _cached_stage(stage, system, user, validate, cache_dir, model=None):
             except Exception:
                 raise RuntimeError(f'Facet interpreter invalid cached {stage}; key={key}') from None
             return parsed, ModelUsage(), {'stage': stage, 'key': key, 'cache_hit': True,
-                                          'saved_usage': saved['usage'], 'path': str(path)}
+                                          'saved_usage': saved['usage'], 'path': str(path),
+                                          'raw': saved['raw'],
+                                          'saved_elapsed_s': saved.get('elapsed_s'),
+                                          'saved_asked_at': saved.get('asked_at'),
+                                          'saved_num_turns': (saved.get('response') or {}).get('num_turns')}
         path.parent.mkdir(parents=True, exist_ok=True)
         try:
             with marker.open('x', encoding='utf-8') as stream:
@@ -251,28 +259,36 @@ def _cached_stage(stage, system, user, validate, cache_dir, model=None):
         except FileExistsError:
             raise RuntimeError(f'Facet interpreter uncertain {stage} attempt; key={key}') from None
         started = time.perf_counter()
+        asked_at = datetime.now(timezone.utc).isoformat()
         response = None
         try:
-            response = chat.post('/chat/completions', {
+            payload = {
                 'model': model, 'temperature': 0,
                 'max_tokens': S.MAX_TOKENS_G if stage == 'generate' else S.MAX_TOKENS_S,
                 'messages': [{'role': 'system', 'content': system}, {'role': 'user', 'content': user}],
-            }, timeout=480.0, max_tries=1)
+            }
+            if schema is not None:
+                payload['response_format'] = {'type': 'json_schema',
+                                              'json_schema': {'name': stage, 'schema': schema}}
+            response = chat.post('/chat/completions', payload, timeout=480.0, max_tries=1)
             raw = Q.extract_json(response['choices'][0]['message']['content'])
             parsed = validate(raw)
             usage = response.get('usage') or {}
             elapsed = time.perf_counter() - started
             _atomic_json(path, {'signature': signature, 'ok': True, 'raw': raw,
-                                'response': response, 'usage': usage, 'elapsed_s': elapsed})
+                                'response': response, 'usage': usage, 'elapsed_s': elapsed,
+                                'asked_at': asked_at})
         except Exception as exc:
             _atomic_json(path, {'signature': signature, 'ok': False, 'response': response,
                                 'error': f'{type(exc).__name__}: {exc}',
-                                'elapsed_s': time.perf_counter() - started})
+                                'elapsed_s': time.perf_counter() - started, 'asked_at': asked_at})
             raise RuntimeError(f'Facet interpreter {stage} failed; key={key}; no retry') from None
         used = ModelUsage(calls=1, tokens_in=int(usage.get('prompt_tokens', 0)),
                           tokens_out=int(usage.get('completion_tokens', 0)),
                           cached_input_tokens=int(usage.get('cached_input_tokens', 0)), time_s=elapsed)
-        return parsed, used, {'stage': stage, 'key': key, 'cache_hit': False, 'path': str(path)}
+        return parsed, used, {'stage': stage, 'key': key, 'cache_hit': False, 'path': str(path),
+                              'raw': raw, 'usage': usage, 'elapsed_s': elapsed,
+                              'asked_at': asked_at, 'num_turns': response.get('num_turns')}
 
 
 def _interpret(text, prepared):

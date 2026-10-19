@@ -131,16 +131,52 @@ def has_console():
     return bool(ctypes.windll.kernel32.GetConsoleWindow())
 
 
-@pytest.mark.skipif(not has_console(), reason='Ctrl-Break needs an attached Windows console (not mintty/Git Bash)')
-def test_bootstrap_maps_ctrl_break_to_keyboard_interrupt(tmp_path):
+@pytest.fixture
+def console():
+    """Ctrl-Break travels over a Windows console that has a window. A runner without one (Git
+    Bash, a tool shell: a console with no window, where the event is not delivered) is moved onto
+    the hidden console of a helper process for the length of the test and put back after, so the
+    test runs everywhere instead of being skipped (2026-10-08, "no skips allowed")."""
+    if os.name != 'nt' or has_console():
+        yield
+        return
+    import ctypes
+    import time
+    hidden = subprocess.STARTUPINFO()
+    hidden.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    hidden.wShowWindow = 0
+    helper = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(120)'],
+                              creationflags=subprocess.CREATE_NEW_CONSOLE, startupinfo=hidden)
+    kernel32 = ctypes.windll.kernel32
+    try:
+        kernel32.FreeConsole()
+        deadline = time.time() + 20
+        while not kernel32.AttachConsole(helper.pid):
+            assert time.time() < deadline, 'the helper console could not be attached'
+            time.sleep(0.1)
+        yield
+    finally:
+        kernel32.FreeConsole()
+        kernel32.AttachConsole(-1)
+        helper.kill()
+        helper.wait(timeout=20)
+
+
+def test_bootstrap_maps_ctrl_break_to_keyboard_interrupt(tmp_path, console):
     script = tmp_path / 'sleeper.py'
-    script.write_text('import time\ntry:\n    time.sleep(30)\nexcept KeyboardInterrupt:\n    print("interrupted", flush=True)\n', encoding='utf-8')
+    # the child sleeps in short steps: on Windows a Ctrl-Break does not wake one long
+    # time.sleep (measured 2026-10-08: "interrupted" came after 28 s of a 30 s sleep, at once
+    # with 0.1 s steps), so one long sleep would say nothing about the mapping
+    script.write_text('import time\ntry:\n    for _ in range(300):\n        time.sleep(0.1)\n'
+                      'except KeyboardInterrupt:\n    print("interrupted", flush=True)\n', encoding='utf-8')
     boot = ('import os, signal, sys; '
             'hasattr(signal, "SIGBREAK") and signal.signal(signal.SIGBREAK, signal.default_int_handler); '
             'sys.argv = sys.argv[1:]; __file__ = sys.argv[0]; sys.path.insert(0, os.path.dirname(__file__)); '
             'exec(compile(open(__file__, encoding="utf-8").read(), __file__, "exec"))')
+    own_group = ({'creationflags': subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == 'nt'
+                 else {'start_new_session': True})
     child = subprocess.Popen([sys.executable, '-c', boot, str(script)], stdout=subprocess.PIPE, text=True,
-                             creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+                             **own_group)
     import time
     time.sleep(2)
     K.interrupt(child)

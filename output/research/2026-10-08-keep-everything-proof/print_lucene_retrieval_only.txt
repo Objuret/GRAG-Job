@@ -1,0 +1,260 @@
+resource module not available on Windows
+lucene: 38540 artifacts + 0 directory records
+lucene: 38540 artifacts + 0 directory records
+lucene: 38540 artifacts + 0 directory records
+
+================ folder output\research\2026-10-08-keep-everything-proof\lucene
+  arm_outputs.jsonl                 82,660 bytes
+  code.95d3382b606e528b.diff       918,983 bytes
+  failures.jsonl                         0 bytes
+  run_manifest.json                 14,410 bytes
+
+================ the row (one question = one run)
+{
+ "id": "madeup::walkthrough::0",
+ "question": "str[127]",
+ "answered_at": "2026-10-08T10:03:20.647224+00:00",
+ "answer": "",
+ "contexts": [
+  "list[176] of",
+  "str[303]"
+ ],
+ "context_ids": [
+  "list[175] of",
+  "20270315-5-d02dd"
+ ],
+ "search_time_s": 0.029142800020053983,
+ "generator": {
+  "calls": 0,
+  "tokens_in": 0,
+  "cached_input_tokens": 0,
+  "tokens_out": 0,
+  "reasoning_tokens": 0,
+  "time_s": 0.0,
+  "attempts": 0,
+  "request_s": 0.0,
+  "wait_s": 0.0,
+  "retry_s": 0.0,
+  "cost_usd": 0.0
+ },
+ "retrieval": {
+  "calls": 0,
+  "tokens_in": 0,
+  "cached_input_tokens": 0,
+  "tokens_out": 0,
+  "reasoning_tokens": 0,
+  "time_s": 0.0,
+  "attempts": 0,
+  "request_s": 0.0,
+  "wait_s": 0.0,
+  "retry_s": 0.0,
+  "cost_usd": 0.0
+ },
+ "meta": {
+  "char_budget": {
+   "budget": 72000,
+   "chars": 72000,
+   "kept": 175,
+   "boundary": {
+    "id": "new_ef_aix_product_vision_document",
+    "chars_kept": 529,
+    "chars_full": 6320
+   },
+   "exhausted": false
+  },
+  "ranking": {
+   "n_units": 38540,
+   "n_ranked": 15202,
+   "scores": [
+    "list[176] of",
+    15.287446022033691
+   ],
+   "next_score": 5.247885227203369
+  }
+ },
+ "leg": 1,
+ "timing": {
+  "started_at": "2026-10-08T10:03:20.607594+00:00",
+  "finished_at": "2026-10-08T10:03:20.647224+00:00",
+  "wall_s": 0.03606799989938736,
+  "thread": "ThreadPoolExecutor-0_0"
+ },
+ "calls": "list[0]"
+}
+
+================ run_manifest.json
+{
+ "arm": "lucene",
+ "generator_model": null,
+ "interpreter_model": null,
+ "top_k": 50,
+ "questions_file": "str[98]",
+ "n_questions": 1,
+ "n_ran": 1,
+ "n_failed": 0,
+ "timestamp": "2026-10-08T10:03:20.960128+00:00",
+ "build_stats": {
+  "build_time_s": 1.5146266999654472,
+  "model": {
+   "calls": 0,
+   "tokens_in": 0,
+   "cached_input_tokens": 0,
+   "tokens_out": 0,
+   "reasoning_tokens": 0,
+   "time_s": 0.0,
+   "attempts": 0,
+   "request_s": 0.0,
+   "wait_s": 0.0,
+   "retry_s": 0.0,
+   "cost_usd": 0.0
+  },
+  "models": "list[0]"
+ },
+ "retrieval_flags": {
+  "HERB_BASELINE_METADATA": false
+ },
+ "char_budget": 72000,
+ "code_version": {
+  "commit": "a140636a35b9ddba479df317e81ee66044b62a2b",
+  "branch": "artefact-v4",
+  "dirty": true
+ },
+ "environment": {
+  "host": "Wiktop",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.7",
+  "python_executable": "str[52]",
+  "cpu": "str[51]",
+  "cpu_count": 16,
+  "ram_bytes": 16907755520,
+  "packages": {
+   "bm25s": "0.2.14",
+   "PyStemmer": "3.1.0",
+   "numpy": "2.4.6",
+   "sentence-transformers": "6.0.1",
+   "torch": "2.14.0+cpu",
+   "transformers": "5.12.1",
+   "httpx": "0.28.1",
+   "ragas": "0.4.3",
+   "neo4j": "6.2.0"
+  },
+  "embedder": {
+   "model": "nvidia/llama-nemotron-embed-1b-v2",
+   "revision": "113abe4acafa848e77ead9c0623205e511932348",
+   "device": "cpu",
+   "dtype": "float32"
+  }
+ },
+ "inputs": {
+  "questions_sha256": "str[64]",
+  "ids_sha256": "str[64]",
+  "corpus": {
+   "sha256": "str[64]",
+   "n_files": 33
+  }
+ },
+ "graph": null,
+ "n_exhausted": 0,
+ "flags": null,
+ "legs": [
+  "list[2] of",
+  {
+   "leg": 1,
+   "started_at": "2026-10-08T10:03:19.082278+00:00",
+   "finished_at": "2026-10-08T10:03:20.794566+00:00",
+   "wall_s": 1.712878500111401,
+   "process_cpu_s": 1.53125,
+   "workers": 1,
+   "argv": [
+    "list[2] of",
+    "str[57]"
+   ],
+   "pid": 64740,
+   "python_executable": "str[52]",
+   "ids_file": "str[93]",
+   "n_chosen": 1,
+   "n_todo": 1,
+   "n_answered": 1,
+   "n_unanswered_after": 0,
+   "aborted": null,
+   "prepare_s": 1.526520400075242,
+   "embedder_load_s": null,
+   "retrieval_only": true,
+   "evaluator": "gen",
+   "peak_memory_bytes": 169062400,
+   "code_version": {
+    "commit": "a140636a35b9ddba479df317e81ee66044b62a2b",
+    "branch": "artefact-v4",
+    "dirty": true
+   },
+   "code_state": {
+    "status": [
+     "list[40] of",
+     " M data/question_query_vecs.npz"
+    ],
+    "diff_sha256": "str[64]",
+    "untracked_sha256": {
+     "prod/harness/capture.py": "str[64]",
+     "prod/tests/test_capture.py": "str[64]",
+     "test/artefact/graph_layer.py": "str[64]",
+     "test/artefact/scope_filter.py": "str[64]",
+     "test/artefact/v4_db.py": "str[64]",
+     "test/graph/write_facet_layer.py": "str[64]",
+     "test/tests/test_artefact_v4_clouds.py": "str[64]",
+     "test/tests/test_graph_layer.py": "str[64]",
+     "test/tests/test_v4_walk.py": "str[64]"
+    },
+    "diff_file": "code.95d3382b606e528b.diff"
+   },
+   "flags": null,
+   "lane": null,
+   "index": {
+    "units": 38540,
+    "text_chars": 11304304,
+    "method": "lucene",
+    "k1": 0.9,
+    "b": 0.4,
+    "stopwords": "en",
+    "stemmer": "english",
+    "bm25s": "0.2.14",
+    "PyStemmer": "3.1.0",
+    "kept": "str[42]"
+   }
+  }
+ ],
+ "workers": 1,
+ "lane": null,
+ "generator": null,
+ "index": {
+  "units": 38540,
+  "text_chars": 11304304,
+  "method": "lucene",
+  "k1": 0.9,
+  "b": 0.4,
+  "stopwords": "en",
+  "stemmer": "english",
+  "bm25s": "0.2.14",
+  "PyStemmer": "3.1.0",
+  "kept": "str[42]"
+ },
+ "code_state": {
+  "status": [
+   "list[40] of",
+   " M data/question_query_vecs.npz"
+  ],
+  "diff_sha256": "str[64]",
+  "untracked_sha256": {
+   "prod/harness/capture.py": "str[64]",
+   "prod/tests/test_capture.py": "str[64]",
+   "test/artefact/graph_layer.py": "str[64]",
+   "test/artefact/scope_filter.py": "str[64]",
+   "test/artefact/v4_db.py": "str[64]",
+   "test/graph/write_facet_layer.py": "str[64]",
+   "test/tests/test_artefact_v4_clouds.py": "str[64]",
+   "test/tests/test_graph_layer.py": "str[64]",
+   "test/tests/test_v4_walk.py": "str[64]"
+  },
+  "diff_file": "code.95d3382b606e528b.diff"
+ },
+ "env": {}
+}

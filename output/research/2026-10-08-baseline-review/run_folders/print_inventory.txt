@@ -1,0 +1,1000 @@
+FILES PER FOLDER (bytes, rows, last written UTC)
+  A.luc  [A]  lucene__gold100__cb72000__20261007T211014Z
+      arm_outputs.jsonl                    7,789,632 B  100 rows   2026-10-07T21:14:47+00:00  rows
+      eval_failures.jsonl                          0 B  0 rows     2026-10-07T21:42:56+00:00  rows
+      eval_manifest.json                       1,622 B  1 object   2026-10-07T22:32:11+00:00  object
+      eval_results.jsonl                     255,506 B  1400 rows  2026-10-07T22:32:11+00:00  rows
+      failures.jsonl                               0 B  0 rows     2026-10-07T21:37:13+00:00  rows
+      run_manifest.json                        1,861 B  1 object   2026-10-07T21:14:48+00:00  object
+  A.vec  [A]  vector__gold100__cb72000__20261007T211515Z
+      arm_outputs.jsonl                    8,065,644 B  100 rows   2026-10-07T21:20:56+00:00  rows
+      eval_failures.jsonl                          0 B  0 rows     2026-10-07T22:38:26+00:00  rows
+      eval_manifest.json                       1,622 B  1 object   2026-10-07T23:34:24+00:00  object
+      eval_results.jsonl                     256,618 B  1400 rows  2026-10-07T23:34:24+00:00  rows
+      failures.jsonl                               0 B  0 rows     2026-10-07T22:32:26+00:00  rows
+      run_manifest.json                        1,912 B  1 object   2026-10-07T21:20:56+00:00  object
+  B.luc  [B]  lucene__gold100__cb72000__20260814T134547Z
+      arm_outputs.jsonl                    7,793,747 B  100 rows   2026-08-14T13:50:27+00:00  rows
+      eval_failures.jsonl                          0 B  0 rows     2026-08-14T14:51:45+00:00  rows
+      eval_manifest.json                       1,734 B  1 object   2026-08-14T17:27:23+00:00  object
+      eval_manifest.json.bak-preleg1             612 B             2026-08-14T17:27:23+00:00  other
+      eval_results.jsonl                     255,703 B  1400 rows  2026-08-14T14:54:07+00:00  rows
+      failures.jsonl                               0 B  0 rows     2026-08-14T14:51:42+00:00  rows
+      run_manifest.json                        1,556 B  1 object   2026-08-14T13:50:27+00:00  object
+  B.vec  [B]  vector__gold100__cb72000__20260814T145615Z
+      arm_outputs.jsonl                    8,057,220 B  100 rows   2026-08-14T15:02:35+00:00  rows
+      eval_failures.jsonl                          0 B  0 rows     2026-08-14T19:54:25+00:00  rows
+      eval_manifest.json                       1,701 B  1 object   2026-08-14T19:57:19+00:00  object
+      eval_results.jsonl                     256,822 B  1400 rows  2026-08-14T19:57:19+00:00  rows
+      failures.jsonl                               0 B  0 rows     2026-08-14T19:54:23+00:00  rows
+      run_manifest.json                        1,627 B  1 object   2026-08-14T15:02:36+00:00  object
+  C.luc  [C]  lucene
+      arm_outputs.jsonl                       82,660 B  1 rows     2026-10-08T10:03:20+00:00  rows
+      code.95d3382b606e528b.diff             918,983 B             2026-10-08T10:03:20+00:00  other
+      failures.jsonl                               0 B  0 rows     2026-10-08T10:03:20+00:00  rows
+      run_manifest.json                       14,410 B  1 object   2026-10-08T10:03:23+00:00  object
+  C.lucA  [C]  lucene__answer
+      arm_outputs.jsonl                      160,100 B  1 rows     2026-10-08T00:22:03+00:00  rows
+      code.leg1.diff                         882,579 B             2026-10-08T00:22:04+00:00  other
+      code.leg2.diff                         882,579 B             2026-10-08T00:22:10+00:00  other
+      failures.jsonl                               0 B  0 rows     2026-10-08T00:21:50+00:00  rows
+      run_manifest.json                       15,570 B  1 object   2026-10-08T00:22:10+00:00  object
+  C.vec  [C]  vector
+      arm_outputs.jsonl                       86,810 B  1 rows     2026-10-08T10:03:49+00:00  rows
+      code.95d3382b606e528b.diff             918,983 B             2026-10-08T10:03:50+00:00  other
+      failures.jsonl                               0 B  0 rows     2026-10-08T10:03:48+00:00  rows
+      run_manifest.json                       16,975 B  1 object   2026-10-08T10:03:54+00:00  object
+  C.vecAE  [C]  vector__answer__eval
+      arm_outputs.jsonl                      161,860 B  1 rows     2026-10-08T09:56:19+00:00  rows
+      code.be2d0944ae0197a7.diff             916,352 B             2026-10-08T09:56:19+00:00  other
+      eval_calls.jsonl                       216,100 B  8 rows     2026-10-08T09:59:27+00:00  rows
+      eval_failures.jsonl                          0 B  0 rows     2026-10-08T09:56:24+00:00  rows
+      eval_manifest.json                       5,646 B  1 object   2026-10-08T09:59:32+00:00  object
+      eval_results.jsonl                       8,623 B  14 rows    2026-10-08T09:59:27+00:00  rows
+      failures.jsonl                               0 B  0 rows     2026-10-08T09:56:06+00:00  rows
+      run_manifest.json                       18,892 B  1 object   2026-10-08T09:59:30+00:00  object
+  D.v4_100  [D]  artefact_v4__gold100__cb72000__20261007T041909Z
+      arm_outputs.jsonl                   22,777,752 B  100 rows   2026-10-07T04:23:35+00:00  rows
+      eval_failures.jsonl                          0 B  0 rows     2026-10-07T04:23:39+00:00  rows
+      eval_manifest.json                         582 B  1 object   2026-10-07T04:24:06+00:00  object
+      eval_results.jsonl                     180,307 B  1000 rows  2026-10-07T04:24:06+00:00  rows
+      failures.jsonl                               0 B  0 rows     2026-10-07T04:21:38+00:00  rows
+      run_manifest.json                        2,422 B  1 object   2026-10-07T04:23:36+00:00  object
+  D.v4_10  [D]  artefact_v4__10smoke__cb72000__20261008T021732Z
+      arm_outputs.jsonl                      983,969 B  10 rows    2026-10-08T02:19:06+00:00  rows
+      code.be2d0944ae0197a7.diff             916,352 B             2026-10-08T02:19:06+00:00  other
+      eval_calls.jsonl                             0 B             2026-10-08T02:19:09+00:00  not opened (gold rule)
+      eval_failures.jsonl                          0 B  0 rows     2026-10-08T02:19:09+00:00  rows
+      eval_manifest.json                       2,269 B  1 object   2026-10-08T02:19:13+00:00  object
+      eval_results.jsonl                      60,090 B  100 rows   2026-10-08T02:19:13+00:00  rows
+      failures.jsonl                               0 B  0 rows     2026-10-08T02:19:01+00:00  rows
+      run_manifest.json                       14,227 B  1 object   2026-10-08T02:19:07+00:00  object
+
+=== arm_outputs.jsonl   cell = present/not-null/not-zero of n rows ('-' = key path absent)
+  key path                                                         type                     A.luc          A.vec          B.luc          B.vec          C.luc         C.lucA          C.vec        C.vecAE       D.v4_100        D.v4_10
+  (n rows)                                                                                    100            100            100            100              1              1              1              1            100             10
+  answer                                                           str                100/100/100    100/100/100    100/100/100    100/100/100          1/1/0          1/1/1          1/1/0          1/1/1      100/100/0        10/10/0
+  answered_at                                                      str                100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  calls                                                            list                         -              -              -              -          1/1/0          1/1/1          1/1/1          1/1/1              -        10/10/0
+  calls[]                                                          dict                         -              -              -              -              -          1/1/1          1/1/1          1/1/1              -              -
+  calls[].attempts                                                 list                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].attempts[]                                               dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].attempts[].error                                         null                         -              -              -              -              -          1/0/0              -          1/0/0              -              -
+  calls[].attempts[].n                                             int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].attempts[].outcome                                       str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].attempts[].returncode                                    int                          -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  calls[].attempts[].seconds                                       float                        -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].attempts[].started_at                                    str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].attempts[].stderr                                        null                         -              -              -              -              -          1/0/0              -          1/0/0              -              -
+  calls[].attempts[].stdout                                        null                         -              -              -              -              -          1/0/0              -          1/0/0              -              -
+  calls[].batch                                                    int                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  calls[].cost_usd                                                 float                        -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].cwd                                                      str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].device                                                   str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  calls[].dtype                                                    str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  calls[].effort                                                   null                         -              -              -              -              -          1/0/0              -          1/0/0              -              -
+  calls[].encode_s                                                 float                        -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  calls[].envelope                                                 dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.api_error_status                                null                         -              -              -              -              -          1/0/0              -          1/0/0              -              -
+  calls[].envelope.duration_api_ms                                 int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.duration_ms                                     int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.fast_mode_state                                 str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.is_error                                        bool                         -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  calls[].envelope.modelUsage                                      dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.modelUsage.claude-haiku-4-5-20251001            dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.modelUsage.claude-haiku-4-5-20251001.cacheCreationInputTokens int                          -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  calls[].envelope.modelUsage.claude-haiku-4-5-20251001.cacheReadInputTokens int                          -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  calls[].envelope.modelUsage.claude-haiku-4-5-20251001.contextWindow int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.modelUsage.claude-haiku-4-5-20251001.costUSD    float                        -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.modelUsage.claude-haiku-4-5-20251001.inputTokens int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.modelUsage.claude-haiku-4-5-20251001.maxOutputTokens int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.modelUsage.claude-haiku-4-5-20251001.outputTokens int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.modelUsage.claude-haiku-4-5-20251001.webSearchRequests int                          -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  calls[].envelope.modelUsage.claude-sonnet-5                      dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.modelUsage.claude-sonnet-5.cacheCreationInputTokens int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.modelUsage.claude-sonnet-5.cacheReadInputTokens int                          -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  calls[].envelope.modelUsage.claude-sonnet-5.contextWindow        int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.modelUsage.claude-sonnet-5.costUSD              float                        -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.modelUsage.claude-sonnet-5.inputTokens          int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.modelUsage.claude-sonnet-5.maxOutputTokens      int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.modelUsage.claude-sonnet-5.outputTokens         int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.modelUsage.claude-sonnet-5.webSearchRequests    int                          -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  calls[].envelope.num_turns                                       int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.permission_denials                              list                         -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  calls[].envelope.result                                          str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.session_id                                      str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.stop_reason                                     str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.structured_output                               dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.structured_output.answer                        str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.subtype                                         str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.terminal_reason                                 str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.time_to_request_ms                              int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.total_cost_usd                                  float                        -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.ttft_ms                                         int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.ttft_stream_ms                                  int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.type                                            str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.usage                                           dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.usage.cache_creation                            dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.usage.cache_creation.ephemeral_1h_input_tokens  int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.usage.cache_creation.ephemeral_5m_input_tokens  int                          -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  calls[].envelope.usage.cache_creation_input_tokens               int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.usage.cache_read_input_tokens                   int                          -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  calls[].envelope.usage.inference_geo                             str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.usage.input_tokens                              int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.usage.iterations                                list                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.usage.iterations[]                              dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.usage.iterations[].cache_creation               dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.usage.iterations[].cache_creation.ephemeral_1h_input_tokens int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.usage.iterations[].cache_creation.ephemeral_5m_input_tokens int                          -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  calls[].envelope.usage.iterations[].cache_creation_input_tokens  int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.usage.iterations[].cache_read_input_tokens      int                          -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  calls[].envelope.usage.iterations[].input_tokens                 int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.usage.iterations[].output_tokens                int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.usage.iterations[].type                         str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.usage.output_tokens                             int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.usage.server_tool_use                           dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.usage.server_tool_use.web_fetch_requests        int                          -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  calls[].envelope.usage.server_tool_use.web_search_requests       int                          -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  calls[].envelope.usage.service_tier                              str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.usage.speed                                     str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].envelope.uuid                                            str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].error                                                    null                         -              -              -              -              -          1/0/0              -          1/0/0              -              -
+  calls[].exe                                                      str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].finished_at                                              str                          -              -              -              -              -          1/1/1          1/1/1          1/1/1              -              -
+  calls[].flags                                                    list                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].flags[]                                                  str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].input_type                                               str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  calls[].join_parts                                               bool                         -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  calls[].kind                                                     str                          -              -              -              -              -          1/1/1          1/1/1          1/1/1              -              -
+  calls[].lock_wait_s                                              float                        -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  calls[].max_tries                                                int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].model                                                    str                          -              -              -              -              -          1/1/1          1/1/1          1/1/1              -              -
+  calls[].n_texts                                                  int                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  calls[].ok                                                       bool                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].payload_dropped                                          list                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].payload_dropped[]                                        str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].prefix                                                   str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  calls[].prompt                                                   str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].revision                                                 str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  calls[].schema                                                   dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].schema.additionalProperties                              bool                         -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  calls[].schema.properties                                        dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].schema.properties.answer                                 dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].schema.properties.answer.type                            str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].schema.required                                          list                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].schema.required[]                                        str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].schema.type                                              str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].seq                                                      int                          -              -              -              -              -          1/1/0          1/1/0          1/1/1              -              -
+  calls[].started_at                                               str                          -              -              -              -              -          1/1/1          1/1/1          1/1/1              -              -
+  calls[].stderr                                                   str                          -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  calls[].stream                                                   null                         -              -              -              -              -          1/0/0              -          1/0/0              -              -
+  calls[].system                                                   str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].text                                                     str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].texts                                                    list                         -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  calls[].texts[]                                                  str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  calls[].timeout_s                                                float                        -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].tokens                                                   list                         -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  calls[].tokens[]                                                 int                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  calls[].tokens_in                                                int                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  calls[].usage                                                    dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].usage.cached_input_tokens                                int                          -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  calls[].usage.completion_tokens                                  int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  calls[].usage.prompt_tokens                                      int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  context_ids                                                      list               100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  context_ids[]                                                    str                100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  contexts                                                         list               100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  contexts[]                                                       str                100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  generator                                                        dict               100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  generator.attempts                                               int                100/100/100    100/100/100    100/100/100    100/100/100          1/1/0          1/1/1          1/1/0          1/1/1      100/100/0        10/10/0
+  generator.cached_input_tokens                                    int                  100/100/4      100/100/2     100/100/81     100/100/99          1/1/0          1/1/0          1/1/0          1/1/0      100/100/0        10/10/0
+  generator.calls                                                  int                100/100/100    100/100/100    100/100/100    100/100/100          1/1/0          1/1/1          1/1/0          1/1/1      100/100/0        10/10/0
+  generator.cost_usd                                               float                        -              -              -              -          1/1/0          1/1/1          1/1/0          1/1/1              -        10/10/0
+  generator.reasoning_tokens                                       int                  100/100/0      100/100/0      100/100/0      100/100/0          1/1/0          1/1/0          1/1/0          1/1/0      100/100/0        10/10/0
+  generator.request_s                                              float              100/100/100    100/100/100    100/100/100    100/100/100          1/1/0          1/1/1          1/1/0          1/1/1      100/100/0        10/10/0
+  generator.retry_s                                                float                100/100/0      100/100/0      100/100/0      100/100/0          1/1/0          1/1/0          1/1/0          1/1/0      100/100/0        10/10/0
+  generator.time_s                                                 float              100/100/100    100/100/100    100/100/100    100/100/100          1/1/0          1/1/1          1/1/0          1/1/1      100/100/0        10/10/0
+  generator.tokens_in                                              int                100/100/100    100/100/100     100/100/92    100/100/100          1/1/0          1/1/1          1/1/0          1/1/1      100/100/0        10/10/0
+  generator.tokens_out                                             int                100/100/100    100/100/100     100/100/92    100/100/100          1/1/0          1/1/1          1/1/0          1/1/1      100/100/0        10/10/0
+  generator.wait_s                                                 float                100/100/0      100/100/0      100/100/0      100/100/0          1/1/0          1/1/0          1/1/0          1/1/0      100/100/0        10/10/0
+  id                                                               str                100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  leg                                                              int                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -       10/10/10
+  meta                                                             dict               100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  meta.char_budget                                                 dict               100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  meta.char_budget.boundary                                        dict               100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  meta.char_budget.boundary.chars_full                             int                100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  meta.char_budget.boundary.chars_kept                             int                100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  meta.char_budget.boundary.id                                     str                100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  meta.char_budget.budget                                          int                100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  meta.char_budget.chars                                           int                100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  meta.char_budget.exhausted                                       bool                 100/100/0      100/100/0      100/100/0      100/100/0          1/1/0          1/1/0          1/1/0          1/1/0      100/100/0        10/10/0
+  meta.char_budget.kept                                            int                100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  meta.chunk_ids                                                   list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.chunk_ids[]                                                 list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.chunk_ids[][]                                               str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics                                                 dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.boundary_chunk_id_not_credited                  str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.chunks_with_a_lift                              dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.chunks_with_a_lift.near                         int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.chunks_with_a_lift.product                      int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.chunks_with_a_positive_tag_strength             int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.chunks_with_an_eligible_edge                    int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.credited_delivered_rows                         int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.delivered_rows_with_question_above_description  int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.delivered_strength_total                        float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.delivered_term_shares                           dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.delivered_term_shares.description               float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.delivered_term_shares.near                      float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.delivered_term_shares.product                   float                        -              -              -              -              -              -              -              -    100/100/100        10/10/9
+  meta.diagnostics.delivered_term_shares.tags                      float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.delivered_term_sums                             dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.delivered_term_sums.description                 float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.delivered_term_sums.near                        float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.delivered_term_sums.product                     float                        -              -              -              -              -              -              -              -    100/100/100        10/10/9
+  meta.diagnostics.delivered_term_sums.tags                        float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.delivered_winning_edge_is_a_same_thing_edge     list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.delivered_winning_edge_is_a_same_thing_edge[]   bool                         -              -              -              -              -              -              -              -     100/100/78        10/10/8
+  meta.diagnostics.largest_lift                                    dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.largest_lift.near                               float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.largest_lift.product                            float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.level_step                                      float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.levels_among_delivered_rows                     int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.phrases_standing_in_both_tag_lists              int                          -              -              -              -              -              -              -              -     100/100/74        10/10/8
+  meta.diagnostics.product_named_tags_left_out                     int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.query_tag_bulk                                  list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.query_tag_bulk[]                                float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.query_tag_centrality                            list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.query_tag_centrality[]                          float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.query_tag_description_cosine                    list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.query_tag_description_cosine[]                  float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.query_tag_spread                                list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.query_tag_spread[]                              float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.query_tags                                      int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.same_thing_edges_per_query_tag                  list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.same_thing_edges_per_query_tag[]                int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.same_thing_level                                float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.text_bulk                                       dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.text_bulk.description                           float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.text_bulk.question                              float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.text_spread                                     dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.text_spread.description                         float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.diagnostics.text_spread.question                            float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter                                                 dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.description_side_tags                           int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.embeddings                                      dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.embeddings.description_side_tags                dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.embeddings.description_side_tags.embedding      str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.embeddings.description_side_tags.tags           int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.embeddings.description_side_tags.text_chars     int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.embeddings.question                             dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.embeddings.question.embedding                   str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.embeddings.question.text_chars                  int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.embeddings.question_side_tags                   dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.embeddings.question_side_tags.embedding         str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.embeddings.question_side_tags.tags              int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.model                                           str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.question_side_tags                              int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.stages                                          list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.stages[]                                        dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.stages[].asks                                   int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.stages[].cache_hit                              bool                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.stages[].duplicate_tags_dropped                 int                          -              -              -              -              -              -              -              -      100/100/0        10/10/0
+  meta.interpreter.stages[].key                                    str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.interpreter.stages[].offline                                bool                         -              -              -              -              -              -              -              -      100/100/0       10/10/10
+  meta.interpreter.stages[].stage                                  str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance                                                  dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.corpus_argument                                  str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.counts                                           dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.counts.chunks                                    int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.counts.chunks_in_a_near_group                    int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.counts.chunks_without_an_edge                    int                          -              -              -              -              -              -              -              -      100/100/0        10/10/0
+  meta.provenance.counts.edges                                     int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.counts.eligible_edges                            int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.counts.eligible_graph_tags                       int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.counts.graph_tags                                int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.counts.near_groups                               int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.counts.places                                    int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.counts.products                                  int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.database                                         str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer                                      dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.edges                                int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.equal_gap                            list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.equal_gap[]                          float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.equal_gap_column                     str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.equal_gap_facets                     list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.equal_gap_facets[]                   str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.facets                               list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.facets[]                             str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.name                                 str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.pooled_flip_gap                      float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.pooled_flip_gap_column               str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.refits                               int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.rows_sha256                          str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.run_id                               str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.source_bands_sha256                  str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.source_dir                           str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.source_refits_sha256                 str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.source_scores_sha256                 str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.value_others                         str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.value_topic                          str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.facet_layer.written                              str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.interpreter_model                                str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.run_id                                           str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.same_thing_pairs                                 dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.same_thing_pairs.level                           float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.same_thing_pairs.median                          float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.same_thing_pairs.pairs                           int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.same_thing_pairs.point                           int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.source_sha256                                    dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.source_sha256.prod\harness\char_budget.py        str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.source_sha256.prod\harness\chat.py               str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.source_sha256.prod\harness\embed.py              str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.source_sha256.test\arms\artefact_facet_joint.py  str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.source_sha256.test\arms\artefact_v2.py           str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.source_sha256.test\arms\artefact_v3.py           str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.source_sha256.test\arms\artefact_v4.py           str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.source_sha256.test\artefact\graph_layer.py       str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.source_sha256.test\artefact\landing.py           str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.source_sha256.test\artefact\query_content.py     str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.source_sha256.test\artefact\querytagger.py       str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.source_sha256.test\artefact\v4_walk.py           str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.provenance.topic_on_the_edge_against_the_vectors_max_abs    float                        -              -              -              -              -              -              -              -      100/100/0        10/10/0
+  meta.ranking                                                     dict                         -              -              -              -          1/1/1              -          1/1/1              -    100/100/100       10/10/10
+  meta.ranking.delivered_chunk_ids                                 list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.ranking.delivered_chunk_ids[]                               str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.ranking.delivered_levels                                    list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.ranking.delivered_levels[]                                  int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.ranking.delivered_query_tags                                list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.ranking.delivered_query_tags[]                              int                          -              -              -              -              -              -              -              -     100/100/98       10/10/10
+  meta.ranking.delivered_strength                                  list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.ranking.delivered_strength[]                                float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.ranking.delivered_terms                                     dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.ranking.delivered_terms.description                         list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.ranking.delivered_terms.description[]                       float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.ranking.delivered_terms.near                                list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.ranking.delivered_terms.near[]                              float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.ranking.delivered_terms.product                             list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.ranking.delivered_terms.product[]                           float                        -              -              -              -              -              -              -              -    100/100/100        10/10/9
+  meta.ranking.delivered_terms.tags                                list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.ranking.delivered_terms.tags[]                              float                        -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.ranking.n_ranked                                            int                          -              -              -              -          1/1/1              -          1/1/1              -              -              -
+  meta.ranking.n_units                                             int                          -              -              -              -          1/1/1              -          1/1/1              -              -              -
+  meta.ranking.next_score                                          float                        -              -              -              -          1/1/1              -          1/1/1              -              -              -
+  meta.ranking.ordered_chunk_ids                                   list                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.ranking.ordered_chunk_ids[]                                 str                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.ranking.scores                                              list                         -              -              -              -          1/1/1              -          1/1/1              -              -              -
+  meta.ranking.scores[]                                            float                        -              -              -              -          1/1/1              -          1/1/1              -              -              -
+  meta.returned                                                    int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.scope                                                       dict                         -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.scope.chunks_cut                                            int                          -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.chunks_kept                                           int                          -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.chunks_under_the_products                             int                          -              -              -              -              -              -              -              -    100/100/100              -
+  meta.scope.delivered_under_the_products                          int                          -              -              -              -              -              -              -              -    100/100/100       10/10/10
+  meta.scope.gauged                                                dict                         -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.chunk_desc                                     dict                         -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.chunk_desc.clouds                              int                          -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.chunk_desc.hit_chunks                          int                          -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.chunk_desc.hit_scopes                          int                          -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.chunk_desc.largest                             list                         -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.chunk_desc.largest[]                           dict                         -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.chunk_desc.largest[].cloud                     str                          -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.chunk_desc.largest[].hit_chunks                int                          -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.chunk_desc.largest[].scopes                    list                         -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.chunk_desc.largest[].scopes[]                  str                          -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.chunk_desc.minorities                          list                         -              -              -              -              -              -              -              -              -        10/10/0
+  meta.scope.gauged.chunk_desc.stood_apart                         int                          -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.tags                                           dict                         -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.tags.clouds                                    int                          -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.tags.hit_chunks                                int                          -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.tags.hit_scopes                                int                          -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.tags.largest                                   list                         -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.tags.largest[]                                 dict                         -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.tags.largest[].cloud                           str                          -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.tags.largest[].hit_chunks                      int                          -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.tags.largest[].scopes                          list                         -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.tags.largest[].scopes[]                        str                          -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.tags.minorities                                list                         -              -              -              -              -              -              -              -              -        10/10/0
+  meta.scope.gauged.tags.stood_apart                               list                         -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.gauged.tags.stood_apart[]                             int                          -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.places                                                list                         -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.places[]                                              str                          -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.places_in_the_tree                                    list                         -              -              -              -              -              -              -              -    100/100/100              -
+  meta.scope.places_in_the_tree[]                                  str                          -              -              -              -              -              -              -              -    100/100/100              -
+  meta.scope.places_not_in_the_tree                                list                         -              -              -              -              -              -              -              -      100/100/0              -
+  meta.scope.places_returned                                       list                         -              -              -              -              -              -              -              -    100/100/100              -
+  meta.scope.places_returned[]                                     str                          -              -              -              -              -              -              -              -    100/100/100              -
+  meta.scope.reading                                               str                          -              -              -              -              -              -              -              -              -       10/10/10
+  meta.scope.step                                                  str                          -              -              -              -              -              -              -              -              -       10/10/10
+  question                                                         str                100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  retrieval                                                        dict               100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  retrieval.attempts                                               int                  100/100/0      100/100/0      100/100/0      100/100/0          1/1/0          1/1/0          1/1/1          1/1/1    100/100/100        10/10/0
+  retrieval.cached_input_tokens                                    int                  100/100/0      100/100/0      100/100/0      100/100/0          1/1/0          1/1/0          1/1/0          1/1/0     100/100/94        10/10/0
+  retrieval.calls                                                  int                  100/100/0      100/100/0      100/100/0      100/100/0          1/1/0          1/1/0          1/1/1          1/1/1    100/100/100        10/10/0
+  retrieval.cost_usd                                               float                        -              -              -              -          1/1/0          1/1/0          1/1/0          1/1/0              -        10/10/0
+  retrieval.reasoning_tokens                                       int                  100/100/0      100/100/0      100/100/0      100/100/0          1/1/0          1/1/0          1/1/0          1/1/0      100/100/0        10/10/0
+  retrieval.request_s                                              float                100/100/0      100/100/0      100/100/0      100/100/0          1/1/0          1/1/0          1/1/1          1/1/1    100/100/100        10/10/0
+  retrieval.retry_s                                                float                100/100/0      100/100/0      100/100/0      100/100/0          1/1/0          1/1/0          1/1/0          1/1/0      100/100/0        10/10/0
+  retrieval.time_s                                                 float                100/100/0      100/100/0      100/100/0      100/100/0          1/1/0          1/1/0          1/1/1          1/1/1    100/100/100        10/10/0
+  retrieval.tokens_in                                              int                  100/100/0      100/100/0      100/100/0      100/100/0          1/1/0          1/1/0          1/1/1          1/1/1    100/100/100        10/10/0
+  retrieval.tokens_out                                             int                  100/100/0      100/100/0      100/100/0      100/100/0          1/1/0          1/1/0          1/1/0          1/1/0    100/100/100        10/10/0
+  retrieval.wait_s                                                 float                100/100/0      100/100/0      100/100/0      100/100/0          1/1/0          1/1/0          1/1/0          1/1/0      100/100/0        10/10/0
+  search_time_s                                                    float              100/100/100    100/100/100    100/100/100    100/100/100          1/1/1          1/1/1          1/1/1          1/1/1    100/100/100       10/10/10
+  timing                                                           dict                         -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -       10/10/10
+  timing.finished_at                                               str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -       10/10/10
+  timing.started_at                                                str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -       10/10/10
+  timing.thread                                                    str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -       10/10/10
+  timing.wall_s                                                    float                        -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -       10/10/10
+
+=== eval_failures.jsonl   cell = present/not-null/not-zero of n rows ('-' = key path absent)
+  key path                                                         type                     A.luc          A.vec          B.luc          B.vec        C.vecAE       D.v4_100        D.v4_10
+  (n rows)                                                                                      0              0              0              0              0              0              0
+
+=== eval_manifest.json   cell = present/not-null/not-zero of n rows ('-' = key path absent)
+  key path                                                         type                     A.luc          A.vec          B.luc          B.vec        C.vecAE       D.v4_100        D.v4_10
+  (n rows)                                                                                      1              1              1              1              1              1              1
+  arm                                                              str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  judge_backend                                                    str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  judge_effort                                                     null                     1/0/0          1/0/0          1/0/0          1/0/0          1/0/0          1/0/0          1/0/0
+  judge_elapsed_s                                                  float                    1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  judge_legs                                                       list|null                1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/0/0          1/0/0
+  judge_legs[]                                                     dict                     1/1/1          1/1/1          1/1/1          1/1/1          1/1/1              -              -
+  judge_legs[].elapsed_s                                           float                    1/1/1          1/1/1          1/1/1          1/1/1          1/1/1              -              -
+  judge_legs[].judge_backend                                       str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1              -              -
+  judge_legs[].judge_model                                         null|str                 1/1/1          1/1/1          1/1/1          1/1/1          1/1/1              -              -
+  judge_legs[].recovered                                           str                          -              -          1/1/1              -              -              -              -
+  judge_legs[].settings                                            dict                         -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.argv                                       list                         -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.argv[]                                     str                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.calls_file                                 str                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.cells                                      dict                         -              -              -              -          1/1/0              -              -
+  judge_legs[].settings.embed_model                                str                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.embedding                                  dict                         -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.embedding.encode_s                         float                        -              -              -              -          1/1/0              -              -
+  judge_legs[].settings.embedding.lock_wait_s                      float                        -              -              -              -          1/1/0              -              -
+  judge_legs[].settings.embedding.requests                         int                          -              -              -              -          1/1/0              -              -
+  judge_legs[].settings.embedding.texts                            int                          -              -              -              -          1/1/0              -              -
+  judge_legs[].settings.embedding.tokens_in                        int                          -              -              -              -          1/1/0              -              -
+  judge_legs[].settings.finished_at                                str                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.interrupted                                null                         -              -              -              -          1/0/0              -              -
+  judge_legs[].settings.judge_backend                              str                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.judge_inflight                             int                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.judge_max_tries                            int                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.judge_model                                str                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.judge_timeout_s                            float                        -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.lane                                       dict                         -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.lane.cli_version                           str                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.lane.cwd                                   str                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.lane.env_set                               dict                         -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.lane.env_set.MEMPALACE_HOOKS_AUTO_SAVE     str                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.lane.exe                                   str                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.lane.fixed_flags                           list                         -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.lane.fixed_flags[]                         str                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.lane.max_tries_default                     int                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.max_consecutive_failed_questions           int                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.max_judge_context_chars                    int                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.pid                                        int                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.python_executable                          str                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.ragas                                      str                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.retrieval_only                             bool                         -              -              -              -          1/1/0              -              -
+  judge_legs[].settings.scores                                     list                         -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.scores[]                                   str                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.started_at                                 str                          -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.wall_s                                     float                        -              -              -              -          1/1/1              -              -
+  judge_legs[].settings.workers                                    int                          -              -              -              -          1/1/1              -              -
+  judge_legs[].timestamp                                           null|str                 1/1/1          1/1/1          1/1/1          1/1/1          1/1/1              -              -
+  judge_legs[].usage                                               dict                     1/1/1          1/1/1          1/1/1          1/1/1          1/1/1              -              -
+  judge_legs[].usage.attempts                                      int                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1              -              -
+  judge_legs[].usage.cached_input_tokens                           int                      1/1/0          1/1/0          1/1/1          1/1/1          1/1/0              -              -
+  judge_legs[].usage.calls                                         int                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1              -              -
+  judge_legs[].usage.cost_usd                                      float                        -              -              -              -          1/1/1              -              -
+  judge_legs[].usage.reasoning_tokens                              int                      1/1/0          1/1/0          1/1/0          1/1/0          1/1/0              -              -
+  judge_legs[].usage.request_s                                     float                    1/1/1          1/1/1          1/1/1          1/1/1          1/1/1              -              -
+  judge_legs[].usage.retry_s                                       float                    1/1/0          1/1/0          1/1/0          1/1/0          1/1/0              -              -
+  judge_legs[].usage.time_s                                        float                    1/1/1          1/1/1          1/1/1          1/1/1          1/1/1              -              -
+  judge_legs[].usage.tokens_in                                     int                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1              -              -
+  judge_legs[].usage.tokens_out                                    int                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1              -              -
+  judge_legs[].usage.wait_s                                        float                    1/1/0          1/1/0          1/1/0          1/1/0          1/1/0              -              -
+  judge_model                                                      null|str                 1/1/1          1/1/1          1/1/1          1/1/1          1/0/0          1/0/0          1/0/0
+  judge_settings                                                   dict                         -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.argv                                              list                         -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.argv[]                                            str                          -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.calls_file                                        str                          -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.cells                                             dict                         -              -              -              -          1/1/0              -          1/1/1
+  judge_settings.cells.ok                                          int                          -              -              -              -              -              -          1/1/1
+  judge_settings.embed_model                                       str                          -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.embedding                                         dict                         -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.embedding.encode_s                                float                        -              -              -              -          1/1/0              -          1/1/0
+  judge_settings.embedding.lock_wait_s                             float                        -              -              -              -          1/1/0              -          1/1/0
+  judge_settings.embedding.requests                                int                          -              -              -              -          1/1/0              -          1/1/0
+  judge_settings.embedding.texts                                   int                          -              -              -              -          1/1/0              -          1/1/0
+  judge_settings.embedding.tokens_in                               int                          -              -              -              -          1/1/0              -          1/1/0
+  judge_settings.finished_at                                       str                          -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.interrupted                                       null                         -              -              -              -          1/0/0              -          1/0/0
+  judge_settings.judge_backend                                     str                          -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.judge_inflight                                    int                          -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.judge_max_tries                                   int                          -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.judge_model                                       str                          -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.judge_timeout_s                                   float                        -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.lane                                              dict|null                    -              -              -              -          1/1/1              -          1/0/0
+  judge_settings.lane.cli_version                                  str                          -              -              -              -          1/1/1              -              -
+  judge_settings.lane.cwd                                          str                          -              -              -              -          1/1/1              -              -
+  judge_settings.lane.env_set                                      dict                         -              -              -              -          1/1/1              -              -
+  judge_settings.lane.env_set.MEMPALACE_HOOKS_AUTO_SAVE            str                          -              -              -              -          1/1/1              -              -
+  judge_settings.lane.exe                                          str                          -              -              -              -          1/1/1              -              -
+  judge_settings.lane.fixed_flags                                  list                         -              -              -              -          1/1/1              -              -
+  judge_settings.lane.fixed_flags[]                                str                          -              -              -              -          1/1/1              -              -
+  judge_settings.lane.max_tries_default                            int                          -              -              -              -          1/1/1              -              -
+  judge_settings.max_consecutive_failed_questions                  int                          -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.max_judge_context_chars                           int                          -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.pid                                               int                          -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.python_executable                                 str                          -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.ragas                                             str                          -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.retrieval_only                                    bool                         -              -              -              -          1/1/0              -          1/1/1
+  judge_settings.scores                                            list                         -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.scores[]                                          str                          -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.started_at                                        str                          -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.wall_s                                            float                        -              -              -              -          1/1/1              -          1/1/1
+  judge_settings.workers                                           int                          -              -              -              -          1/1/1              -          1/1/1
+  judge_usage                                                      dict                     1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  judge_usage.attempts                                             int                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/0          1/1/0
+  judge_usage.cached_input_tokens                                  int                      1/1/0          1/1/0          1/1/1          1/1/1          1/1/0          1/1/0          1/1/0
+  judge_usage.calls                                                int                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/0          1/1/0
+  judge_usage.cost_usd                                             float                        -              -              -              -          1/1/1              -          1/1/0
+  judge_usage.reasoning_tokens                                     int                      1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0
+  judge_usage.request_s                                            float                    1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/0          1/1/0
+  judge_usage.retry_s                                              float|int                1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0
+  judge_usage.time_s                                               float                    1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/0          1/1/0
+  judge_usage.tokens_in                                            int                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/0          1/1/0
+  judge_usage.tokens_out                                           int                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/0          1/1/0
+  judge_usage.wait_s                                               float|int                1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0
+  scorer                                                           str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  source_run                                                       str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  timestamp                                                        str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+
+=== eval_results.jsonl   cell = present/not-null/not-zero of n rows ('-' = key path absent)
+  key path                                                         type                     A.luc          A.vec          B.luc          B.vec        C.vecAE       D.v4_100        D.v4_10
+  (n rows)                                                                                   1400           1400           1400           1400             14           1000            100
+  arm                                                              str              1400/1400/1400  1400/1400/1400  1400/1400/1400  1400/1400/1400       14/14/14  1000/1000/1000    100/100/100
+  components                                                       dict               1400/1400/0    1400/1400/0    1400/1400/0    1400/1400/0       14/14/14    1000/1000/0    100/100/100
+  components.usage                                                 dict                         -              -              -              -       14/14/14              -    100/100/100
+  components.usage.cached_input_tokens                             int                          -              -              -              -        14/14/0              -      100/100/0
+  components.usage.chat_attempts                                   int                          -              -              -              -        14/14/3              -      100/100/0
+  components.usage.chat_calls                                      int                          -              -              -              -        14/14/3              -      100/100/0
+  components.usage.chat_s                                          float                        -              -              -              -        14/14/3              -      100/100/0
+  components.usage.cost_usd                                        float                        -              -              -              -        14/14/3              -      100/100/0
+  components.usage.embed_calls                                     int                          -              -              -              -        14/14/0              -      100/100/0
+  components.usage.embed_s                                         float                        -              -              -              -        14/14/0              -      100/100/0
+  components.usage.embed_texts                                     int                          -              -              -              -        14/14/0              -      100/100/0
+  components.usage.embed_tokens                                    int                          -              -              -              -        14/14/0              -      100/100/0
+  components.usage.eval_leg                                        str                          -              -              -              -       14/14/14              -    100/100/100
+  components.usage.finished_at                                     str                          -              -              -              -       14/14/14              -    100/100/100
+  components.usage.started_at                                      str                          -              -              -              -       14/14/14              -    100/100/100
+  components.usage.thread                                          str                          -              -              -              -       14/14/14              -    100/100/100
+  components.usage.tokens_in                                       int                          -              -              -              -        14/14/3              -      100/100/0
+  components.usage.tokens_out                                      int                          -              -              -              -        14/14/3              -      100/100/0
+  components.usage.wall_s                                          float                        -              -              -              -       14/14/14              -    100/100/100
+  human_label                                                      null                  1400/0/0       1400/0/0       1400/0/0       1400/0/0         14/0/0       1000/0/0        100/0/0
+  metric                                                           str              1400/1400/1400  1400/1400/1400  1400/1400/1400  1400/1400/1400       14/14/14  1000/1000/1000    100/100/100
+  question_id                                                      str              1400/1400/1400  1400/1400/1400  1400/1400/1400  1400/1400/1400       14/14/14  1000/1000/1000    100/100/100
+  status                                                           str              1400/1400/1400  1400/1400/1400  1400/1400/1400  1400/1400/1400       14/14/14  1000/1000/1000    100/100/100
+  type                                                             str              1400/1400/1400  1400/1400/1400  1400/1400/1400  1400/1400/1400       14/14/14  1000/1000/1000    100/100/100
+  value                                                            float            1400/1400/1014  1400/1400/1099  1400/1400/1012  1400/1400/1113        14/14/7  1000/1000/268     100/100/18
+
+=== failures.jsonl   cell = present/not-null/not-zero of n rows ('-' = key path absent)
+  key path                                                         type                     A.luc          A.vec          B.luc          B.vec          C.luc         C.lucA          C.vec        C.vecAE       D.v4_100        D.v4_10
+  (n rows)                                                                                      0              0              0              0              0              0              0              0              0              0
+
+=== run_manifest.json   cell = present/not-null/not-zero of n rows ('-' = key path absent)
+  key path                                                         type                     A.luc          A.vec          B.luc          B.vec          C.luc         C.lucA          C.vec        C.vecAE       D.v4_100        D.v4_10
+  (n rows)                                                                                      1              1              1              1              1              1              1              1              1              1
+  arm                                                              str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  build_stats                                                      dict                     1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  build_stats.build_time_s                                         float                    1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  build_stats.model                                                dict                     1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  build_stats.model.attempts                                       int                      1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0
+  build_stats.model.cached_input_tokens                            int                      1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0
+  build_stats.model.calls                                          int                      1/1/0          1/1/1          1/1/0          1/1/1          1/1/0          1/1/0          1/1/1          1/1/1          1/1/0          1/1/0
+  build_stats.model.cost_usd                                       float                        -              -              -              -          1/1/0          1/1/0          1/1/0          1/1/0              -          1/1/0
+  build_stats.model.reasoning_tokens                               int                      1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0
+  build_stats.model.request_s                                      float                    1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0
+  build_stats.model.retry_s                                        float                    1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0
+  build_stats.model.time_s                                         float                    1/1/0          1/1/1          1/1/0          1/1/1          1/1/0          1/1/0          1/1/1          1/1/1          1/1/0          1/1/0
+  build_stats.model.tokens_in                                      int                      1/1/0          1/1/1          1/1/0          1/1/1          1/1/0          1/1/0          1/1/1          1/1/1          1/1/0          1/1/0
+  build_stats.model.tokens_out                                     int                      1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0
+  build_stats.model.wait_s                                         float                    1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0
+  build_stats.models                                               list                     1/1/0          1/1/1          1/1/0          1/1/1          1/1/0          1/1/0          1/1/1          1/1/1          1/1/1          1/1/1
+  build_stats.models[]                                             str                          -          1/1/1              -          1/1/1              -              -          1/1/1          1/1/1          1/1/1          1/1/1
+  char_budget                                                      int                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  code_state                                                       dict                         -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  code_state.diff_file                                             str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  code_state.diff_sha256                                           str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  code_state.status                                                list                         -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  code_state.status[]                                              str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  code_state.untracked_sha256                                      dict                         -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  code_state.untracked_sha256.prod/harness/capture.py              str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  code_state.untracked_sha256.prod/tests/test_capture.py           str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  code_state.untracked_sha256.test/artefact/graph_layer.py         str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  code_state.untracked_sha256.test/artefact/scope_filter.py        str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  code_state.untracked_sha256.test/artefact/v4_db.py               str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  code_state.untracked_sha256.test/graph/write_facet_layer.py      str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  code_state.untracked_sha256.test/tests/test_artefact_v4_clouds.py str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  code_state.untracked_sha256.test/tests/test_graph_layer.py       str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  code_state.untracked_sha256.test/tests/test_v4_walk.py           str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  code_version                                                     dict                     1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  code_version.branch                                              str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  code_version.commit                                              str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  code_version.dirty                                               bool                     1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  env                                                              dict                         -              -              -              -          1/1/0          1/1/0          1/1/0          1/1/0              -          1/1/1
+  env.HERB_V4_CLUSTER_PLACES                                       str                          -              -              -              -              -              -              -              -              -          1/1/1
+  env.HERB_V4_CLUSTER_READING                                      str                          -              -              -              -              -              -              -              -              -          1/1/1
+  env.HERB_V4_OFFLINE                                              str                          -              -              -              -              -              -              -              -              -          1/1/1
+  env.HERB_V4_SCOPE_STEP                                           str                          -              -              -              -              -              -              -              -              -          1/1/1
+  env.NEO4J_PASSWORD                                               str                          -              -              -              -              -              -              -              -              -          1/1/1
+  environment                                                      dict                     1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.cpu                                                  str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  environment.cpu_count                                            int                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  environment.embedder                                             dict                     1/1/1          1/1/1              -              -          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.embedder.device                                      str                      1/1/1          1/1/1              -              -          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.embedder.dtype                                       str                      1/1/1          1/1/1              -              -          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.embedder.model                                       str                      1/1/1          1/1/1              -              -          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.embedder.revision                                    str                      1/1/1          1/1/1              -              -          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.host                                                 str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.packages                                             dict                     1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.packages.PyStemmer                                   str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.packages.bm25s                                       str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.packages.httpx                                       str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.packages.neo4j                                       str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.packages.numpy                                       str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.packages.ragas                                       str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.packages.sentence-transformers                       str                      1/1/1          1/1/1              -              -          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.packages.torch                                       str                      1/1/1          1/1/1              -              -          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.packages.transformers                                str                      1/1/1          1/1/1              -              -          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.platform                                             str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.python                                               str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  environment.python_executable                                    str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  environment.ram_bytes                                            int                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  flags                                                            dict|null                1/0/0          1/0/0              -              -          1/0/0          1/0/0          1/0/0          1/0/0          1/0/0          1/1/1
+  flags.HERB_V4_CLUSTER_PLACES                                     str                          -              -              -              -              -              -              -              -              -          1/1/1
+  flags.HERB_V4_CLUSTER_READING                                    str                          -              -              -              -              -              -              -              -              -          1/1/1
+  flags.HERB_V4_OFFLINE                                            str                          -              -              -              -              -              -              -              -              -          1/1/1
+  flags.HERB_V4_SCOPE_STEP                                         str                          -              -              -              -              -              -              -              -              -          1/1/1
+  generator                                                        dict|null                    -              -              -              -          1/0/0          1/1/1          1/0/0          1/1/1              -          1/0/0
+  generator.model                                                  str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  generator.payload                                                dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  generator.payload.chat_template_kwargs                           dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  generator.payload.chat_template_kwargs.enable_thinking           bool                         -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  generator.payload.max_tokens                                     int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  generator.payload.min_tokens                                     int                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  generator.payload.temperature                                    int                          -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  generator.schema                                                 dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  generator.schema.additionalProperties                            bool                         -              -              -              -              -          1/1/0              -          1/1/0              -              -
+  generator.schema.properties                                      dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  generator.schema.properties.answer                               dict                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  generator.schema.properties.answer.type                          str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  generator.schema.required                                        list                         -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  generator.schema.required[]                                      str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  generator.schema.type                                            str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  generator.system                                                 str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  generator.timeout_s                                              float                        -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  generator.user_template                                          str                          -              -              -              -              -          1/1/1              -          1/1/1              -              -
+  generator_model                                                  null|str                 1/1/1          1/1/1          1/1/1          1/1/1          1/0/0          1/1/1          1/0/0          1/1/1          1/0/0          1/0/0
+  graph                                                            dict|null                1/0/0          1/0/0          1/0/0          1/0/0          1/0/0          1/0/0          1/0/0          1/0/0          1/1/1          1/1/1
+  graph.build_timestamp                                            str                          -              -              -              -              -              -              -              -          1/1/1          1/1/1
+  graph.database                                                   str                          -              -              -              -              -              -              -              -          1/1/1          1/1/1
+  graph.graph_census_sha256                                        str                          -              -              -              -              -              -              -              -          1/1/1          1/1/1
+  graph.graph_version                                              str                          -              -              -              -              -              -              -              -          1/1/1          1/1/1
+  graph.removed_tags_sha256                                        null                         -              -              -              -              -              -              -              -          1/0/0          1/0/0
+  graph.source_database                                            str                          -              -              -              -              -              -              -              -          1/1/1          1/1/1
+  index                                                            dict|null                    -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/0/0
+  index.PyStemmer                                                  str                          -              -              -              -          1/1/1          1/1/1              -              -              -              -
+  index.b                                                          float                        -              -              -              -          1/1/1          1/1/1              -              -              -              -
+  index.bm25s                                                      str                          -              -              -              -          1/1/1          1/1/1              -              -              -              -
+  index.cache_cost_note                                            dict                         -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.cache_cost_note.build_time_s                               float                        -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.cache_cost_note.calls                                      int                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.cache_cost_note.device                                     str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.cache_cost_note.dtype                                      str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.cache_cost_note.model                                      str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.cache_cost_note.replaces                                   str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.cache_cost_note.revision                                   str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.cache_cost_note.source                                     str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.cache_cost_note.tokens_in                                  int                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.cache_cost_note.tokens_out                                 int                          -              -              -              -              -              -          1/1/0          1/1/0              -              -
+  index.cache_file                                                 str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.cache_file_bytes                                           int                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.cache_file_sha256                                          str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.embedder_warm_s                                            float                        -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.k1                                                         float                        -              -              -              -          1/1/1          1/1/1              -              -              -              -
+  index.kept                                                       str                          -              -              -              -          1/1/1          1/1/1              -              -              -              -
+  index.matrix_bytes                                               int                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.matrix_dtype                                               str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.matrix_shape                                               list                         -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.matrix_shape[]                                             int                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.method                                                     str                          -              -              -              -          1/1/1          1/1/1              -              -              -              -
+  index.question_embedding                                         str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  index.stemmer                                                    str                          -              -              -              -          1/1/1          1/1/1              -              -              -              -
+  index.stopwords                                                  str                          -              -              -              -          1/1/1          1/1/1              -              -              -              -
+  index.text_chars                                                 int                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -              -
+  index.units                                                      int                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -              -
+  inputs                                                           dict                     1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  inputs.corpus                                                    dict                     1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  inputs.corpus.n_files                                            int                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  inputs.corpus.sha256                                             str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  inputs.ids_sha256                                                str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  inputs.questions_sha256                                          str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  interpreter_model                                                null|str                 1/0/0          1/0/0          1/0/0          1/0/0          1/0/0          1/0/0          1/0/0          1/0/0          1/1/1          1/1/1
+  lane                                                             dict|null                    -              -              -              -          1/0/0          1/1/1          1/0/0          1/1/1              -          1/1/1
+  lane.cli_version                                                 str                          -              -              -              -              -          1/1/1              -          1/1/1              -          1/1/1
+  lane.cwd                                                         str                          -              -              -              -              -          1/1/1              -          1/1/1              -          1/1/1
+  lane.env_set                                                     dict                         -              -              -              -              -          1/1/1              -          1/1/1              -          1/1/1
+  lane.env_set.MEMPALACE_HOOKS_AUTO_SAVE                           str                          -              -              -              -              -          1/1/1              -          1/1/1              -          1/1/1
+  lane.exe                                                         str                          -              -              -              -              -          1/1/1              -          1/1/1              -          1/1/1
+  lane.fixed_flags                                                 list                         -              -              -              -              -          1/1/1              -          1/1/1              -          1/1/1
+  lane.fixed_flags[]                                               str                          -              -              -              -              -          1/1/1              -          1/1/1              -          1/1/1
+  lane.max_tries_default                                           int                          -              -              -              -              -          1/1/1              -          1/1/1              -          1/1/1
+  legs                                                             list                         -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[]                                                           dict                         -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].aborted                                                   null                         -              -              -              -          1/0/0          1/0/0          1/0/0          1/0/0              -          1/0/0
+  legs[].argv                                                      list                         -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].argv[]                                                    str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_state                                                dict                         -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_state.diff_file                                      str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_state.diff_sha256                                    str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_state.status                                         list                         -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_state.status[]                                       str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_state.untracked_sha256                               dict                         -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_state.untracked_sha256.prod/harness/capture.py       str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_state.untracked_sha256.prod/tests/test_capture.py    str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_state.untracked_sha256.test/artefact/graph_layer.py  str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_state.untracked_sha256.test/artefact/scope_filter.py str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_state.untracked_sha256.test/artefact/v4_db.py        str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_state.untracked_sha256.test/graph/write_facet_layer.py str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_state.untracked_sha256.test/tests/test_artefact_v4_clouds.py str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_state.untracked_sha256.test/tests/test_graph_layer.py str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_state.untracked_sha256.test/tests/test_v4_walk.py    str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_version                                              dict                         -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_version.branch                                       str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_version.commit                                       str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].code_version.dirty                                        bool                         -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].embedder_load_s                                           float|null                   -              -              -              -          1/0/0          1/0/0          1/1/1          1/1/1              -          1/0/0
+  legs[].evaluator                                                 str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].finished_at                                               str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].flags                                                     dict|null                    -              -              -              -          1/0/0          1/0/0          1/0/0          1/0/0              -          1/1/1
+  legs[].flags.HERB_V4_CLUSTER_PLACES                              str                          -              -              -              -              -              -              -              -              -          1/1/1
+  legs[].flags.HERB_V4_CLUSTER_READING                             str                          -              -              -              -              -              -              -              -              -          1/1/1
+  legs[].flags.HERB_V4_OFFLINE                                     str                          -              -              -              -              -              -              -              -              -          1/1/1
+  legs[].flags.HERB_V4_SCOPE_STEP                                  str                          -              -              -              -              -              -              -              -              -          1/1/1
+  legs[].ids_file                                                  str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].index                                                     dict|null                    -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/0/0
+  legs[].index.PyStemmer                                           str                          -              -              -              -          1/1/1          1/1/1              -              -              -              -
+  legs[].index.b                                                   float                        -              -              -              -          1/1/1          1/1/1              -              -              -              -
+  legs[].index.bm25s                                               str                          -              -              -              -          1/1/1          1/1/1              -              -              -              -
+  legs[].index.cache_cost_note                                     dict                         -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.cache_cost_note.build_time_s                        float                        -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.cache_cost_note.calls                               int                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.cache_cost_note.device                              str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.cache_cost_note.dtype                               str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.cache_cost_note.model                               str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.cache_cost_note.replaces                            str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.cache_cost_note.revision                            str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.cache_cost_note.source                              str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.cache_cost_note.tokens_in                           int                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.cache_cost_note.tokens_out                          int                          -              -              -              -              -              -          1/1/0          1/1/0              -              -
+  legs[].index.cache_file                                          str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.cache_file_bytes                                    int                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.cache_file_sha256                                   str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.embedder_warm_s                                     float                        -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.k1                                                  float                        -              -              -              -          1/1/1          1/1/1              -              -              -              -
+  legs[].index.kept                                                str                          -              -              -              -          1/1/1          1/1/1              -              -              -              -
+  legs[].index.matrix_bytes                                        int                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.matrix_dtype                                        str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.matrix_shape                                        list                         -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.matrix_shape[]                                      int                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.method                                              str                          -              -              -              -          1/1/1          1/1/1              -              -              -              -
+  legs[].index.question_embedding                                  str                          -              -              -              -              -              -          1/1/1          1/1/1              -              -
+  legs[].index.stemmer                                             str                          -              -              -              -          1/1/1          1/1/1              -              -              -              -
+  legs[].index.stopwords                                           str                          -              -              -              -          1/1/1          1/1/1              -              -              -              -
+  legs[].index.text_chars                                          int                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -              -
+  legs[].index.units                                               int                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -              -
+  legs[].lane                                                      dict|null                    -              -              -              -          1/0/0          1/1/1          1/0/0          1/1/1              -          1/1/1
+  legs[].lane.cli_version                                          str                          -              -              -              -              -          1/1/1              -          1/1/1              -          1/1/1
+  legs[].lane.cwd                                                  str                          -              -              -              -              -          1/1/1              -          1/1/1              -          1/1/1
+  legs[].lane.env_set                                              dict                         -              -              -              -              -          1/1/1              -          1/1/1              -          1/1/1
+  legs[].lane.env_set.MEMPALACE_HOOKS_AUTO_SAVE                    str                          -              -              -              -              -          1/1/1              -          1/1/1              -          1/1/1
+  legs[].lane.exe                                                  str                          -              -              -              -              -          1/1/1              -          1/1/1              -          1/1/1
+  legs[].lane.fixed_flags                                          list                         -              -              -              -              -          1/1/1              -          1/1/1              -          1/1/1
+  legs[].lane.fixed_flags[]                                        str                          -              -              -              -              -          1/1/1              -          1/1/1              -          1/1/1
+  legs[].lane.max_tries_default                                    int                          -              -              -              -              -          1/1/1              -          1/1/1              -          1/1/1
+  legs[].leg                                                       int                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].n_answered                                                int                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].n_chosen                                                  int                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].n_todo                                                    int                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].n_unanswered_after                                        int                          -              -              -              -          1/1/0          1/1/0          1/1/0          1/1/0              -          1/1/0
+  legs[].peak_memory_bytes                                         int                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].pid                                                       int                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].prepare_s                                                 float                        -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].process_cpu_s                                             float                        -              -              -              -          1/1/1              -          1/1/1              -              -              -
+  legs[].python_executable                                         str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].retrieval_only                                            bool                         -              -              -              -          1/1/1          1/1/0          1/1/1          1/1/0              -          1/1/1
+  legs[].started_at                                                str                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].wall_s                                                    float                        -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  legs[].workers                                                   int                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+  n_exhausted                                                      int                      1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0
+  n_failed                                                         int                      1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0
+  n_questions                                                      int                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  n_ran                                                            int                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  questions_file                                                   str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  retrieval_flags                                                  dict                     1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  retrieval_flags.HERB_BASELINE_METADATA                           bool                     1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0          1/1/0              -              -
+  retrieval_flags.cloud_groups                                     str                          -              -              -              -              -              -              -              -              -          1/1/1
+  retrieval_flags.cloud_levels                                     str                          -              -              -              -              -              -              -              -              -          1/1/1
+  retrieval_flags.cloud_places                                     str                          -              -              -              -              -              -              -              -              -          1/1/1
+  retrieval_flags.cloud_shape                                      str                          -              -              -              -              -              -              -              -              -          1/1/1
+  retrieval_flags.cluster                                          str                          -              -              -              -              -              -              -              -              -          1/1/1
+  retrieval_flags.cos_noise                                        float                        -              -              -              -              -              -              -              -          1/1/1          1/1/1
+  retrieval_flags.hit_stages                                       str                          -              -              -              -              -              -              -              -              -          1/1/1
+  retrieval_flags.interpreter_model                                str                          -              -              -              -              -              -              -              -          1/1/1          1/1/1
+  retrieval_flags.level_places                                     str                          -              -              -              -              -              -              -              -              -          1/1/1
+  retrieval_flags.offline                                          str                          -              -              -              -              -              -              -              -          1/1/1          1/1/1
+  retrieval_flags.offline_at_prepare                               bool                         -              -              -              -              -              -              -              -          1/1/0          1/1/1
+  retrieval_flags.scan_scatters                                    int                          -              -              -              -              -              -              -              -              -          1/1/1
+  retrieval_flags.scan_seed                                        int                          -              -              -              -              -              -              -              -              -          1/1/1
+  retrieval_flags.scope_settings_at_prepare                        dict                         -              -              -              -              -              -              -              -              -          1/1/1
+  retrieval_flags.scope_settings_at_prepare.places                 list                         -              -              -              -              -              -              -              -              -          1/1/1
+  retrieval_flags.scope_settings_at_prepare.places[]               str                          -              -              -              -              -              -              -              -              -          1/1/1
+  retrieval_flags.scope_settings_at_prepare.reading                str                          -              -              -              -              -              -              -              -              -          1/1/1
+  retrieval_flags.scope_step                                       str                          -              -              -              -              -              -              -              -              -          1/1/1
+  retrieval_flags.scope_step_at_prepare                            str                          -              -              -              -              -              -              -              -              -          1/1/1
+  timestamp                                                        str                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  top_k                                                            int                      1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1          1/1/1
+  workers                                                          int                          -              -              -              -          1/1/1          1/1/1          1/1/1          1/1/1              -          1/1/1
+
+=== eval_manifest.json.bak-preleg1   cell = present/not-null/not-zero of n rows ('-' = key path absent)
+  key path                                                         type                     B.luc
+  (n rows)                                                                                      x
+
+=== code.*.diff   cell = present/not-null/not-zero of n rows ('-' = key path absent)
+  key path                                                         type                     C.luc         C.lucA          C.vec        C.vecAE        D.v4_10
+  (n rows)                                                                                      x            x+x              x              x              x
+
+=== eval_calls.jsonl   cell = present/not-null/not-zero of n rows ('-' = key path absent)
+  key path                                                         type                   C.vecAE        D.v4_10
+  (n rows)                                                                                      8              x
+  arm                                                              str                      8/8/8              -
+  attempts                                                         list                     6/6/6              -
+  attempts[]                                                       dict                     6/6/6              -
+  attempts[].error                                                 null                     6/0/0              -
+  attempts[].n                                                     int                      6/6/6              -
+  attempts[].outcome                                               str                      6/6/6              -
+  attempts[].returncode                                            int                      6/6/0              -
+  attempts[].seconds                                               float                    6/6/6              -
+  attempts[].started_at                                            str                      6/6/6              -
+  attempts[].stderr                                                null                     6/0/0              -
+  attempts[].stdout                                                null                     6/0/0              -
+  batch                                                            int                      2/2/2              -
+  cost_usd                                                         float                    6/6/6              -
+  cwd                                                              str                      6/6/6              -
+  device                                                           str                      2/2/2              -
+  dtype                                                            str                      2/2/2              -
+  effort                                                           null                     6/0/0              -
+  encode_s                                                         float                    2/2/2              -
+  envelope                                                         dict                     6/6/6              -
+  envelope.api_error_status                                        null                     6/0/0              -
+  envelope.duration_api_ms                                         int                      6/6/6              -
+  envelope.duration_ms                                             int                      6/6/6              -
+  envelope.fast_mode_state                                         str                      6/6/6              -
+  envelope.is_error                                                bool                     6/6/0              -
+  envelope.modelUsage                                              dict                     6/6/6              -
+  envelope.modelUsage.claude-haiku-4-5                             dict                     6/6/6              -
+  envelope.modelUsage.claude-haiku-4-5-20251001                    dict                     6/6/6              -
+  envelope.modelUsage.claude-haiku-4-5-20251001.cacheCreationInputTokens int                      6/6/0              -
+  envelope.modelUsage.claude-haiku-4-5-20251001.cacheReadInputTokens int                      6/6/0              -
+  envelope.modelUsage.claude-haiku-4-5-20251001.contextWindow      int                      6/6/6              -
+  envelope.modelUsage.claude-haiku-4-5-20251001.costUSD            float                    6/6/6              -
+  envelope.modelUsage.claude-haiku-4-5-20251001.inputTokens        int                      6/6/6              -
+  envelope.modelUsage.claude-haiku-4-5-20251001.maxOutputTokens    int                      6/6/6              -
+  envelope.modelUsage.claude-haiku-4-5-20251001.outputTokens       int                      6/6/6              -
+  envelope.modelUsage.claude-haiku-4-5-20251001.webSearchRequests  int                      6/6/0              -
+  envelope.modelUsage.claude-haiku-4-5.cacheCreationInputTokens    int                      6/6/5              -
+  envelope.modelUsage.claude-haiku-4-5.cacheReadInputTokens        int                      6/6/0              -
+  envelope.modelUsage.claude-haiku-4-5.contextWindow               int                      6/6/6              -
+  envelope.modelUsage.claude-haiku-4-5.costUSD                     float                    6/6/6              -
+  envelope.modelUsage.claude-haiku-4-5.inputTokens                 int                      6/6/6              -
+  envelope.modelUsage.claude-haiku-4-5.maxOutputTokens             int                      6/6/6              -
+  envelope.modelUsage.claude-haiku-4-5.outputTokens                int                      6/6/6              -
+  envelope.modelUsage.claude-haiku-4-5.webSearchRequests           int                      6/6/0              -
+  envelope.num_turns                                               int                      6/6/6              -
+  envelope.permission_denials                                      list                     6/6/0              -
+  envelope.result                                                  str                      6/6/6              -
+  envelope.session_id                                              str                      6/6/6              -
+  envelope.stop_reason                                             str                      6/6/6              -
+  envelope.subtype                                                 str                      6/6/6              -
+  envelope.terminal_reason                                         str                      6/6/6              -
+  envelope.time_to_request_ms                                      int                      6/6/6              -
+  envelope.total_cost_usd                                          float                    6/6/6              -
+  envelope.ttft_ms                                                 int                      6/6/6              -
+  envelope.ttft_stream_ms                                          int                      6/6/6              -
+  envelope.type                                                    str                      6/6/6              -
+  envelope.usage                                                   dict                     6/6/6              -
+  envelope.usage.cache_creation                                    dict                     6/6/6              -
+  envelope.usage.cache_creation.ephemeral_1h_input_tokens          int                      6/6/5              -
+  envelope.usage.cache_creation.ephemeral_5m_input_tokens          int                      6/6/0              -
+  envelope.usage.cache_creation_input_tokens                       int                      6/6/5              -
+  envelope.usage.cache_read_input_tokens                           int                      6/6/0              -
+  envelope.usage.inference_geo                                     str                      6/6/6              -
+  envelope.usage.input_tokens                                      int                      6/6/6              -
+  envelope.usage.iterations                                        list                     6/6/6              -
+  envelope.usage.iterations[]                                      dict                     6/6/6              -
+  envelope.usage.iterations[].cache_creation                       dict                     6/6/6              -
+  envelope.usage.iterations[].cache_creation.ephemeral_1h_input_tokens int                      6/6/5              -
+  envelope.usage.iterations[].cache_creation.ephemeral_5m_input_tokens int                      6/6/0              -
+  envelope.usage.iterations[].cache_creation_input_tokens          int                      6/6/5              -
+  envelope.usage.iterations[].cache_read_input_tokens              int                      6/6/0              -
+  envelope.usage.iterations[].input_tokens                         int                      6/6/6              -
+  envelope.usage.iterations[].output_tokens                        int                      6/6/6              -
+  envelope.usage.iterations[].type                                 str                      6/6/6              -
+  envelope.usage.output_tokens                                     int                      6/6/6              -
+  envelope.usage.server_tool_use                                   dict                     6/6/6              -
+  envelope.usage.server_tool_use.web_fetch_requests                int                      6/6/0              -
+  envelope.usage.server_tool_use.web_search_requests               int                      6/6/0              -
+  envelope.usage.service_tier                                      str                      6/6/6              -
+  envelope.usage.speed                                             str                      6/6/6              -
+  envelope.uuid                                                    str                      6/6/6              -
+  error                                                            null                     6/0/0              -
+  eval_leg                                                         str                      8/8/8              -
+  exe                                                              str                      6/6/6              -
+  finished_at                                                      str                      8/8/8              -
+  flags                                                            list                     6/6/6              -
+  flags[]                                                          str                      6/6/6              -
+  input_type                                                       str                      2/2/2              -
+  join_parts                                                       bool                     6/6/0              -
+  kind                                                             str                      8/8/8              -
+  lock_wait_s                                                      float                    2/2/2              -
+  max_tries                                                        int                      6/6/6              -
+  model                                                            str                      8/8/8              -
+  n_texts                                                          int                      2/2/2              -
+  ok                                                               bool                     6/6/6              -
+  payload_dropped                                                  list                     6/6/0              -
+  phase                                                            str                      8/8/8              -
+  prefix                                                           str                      2/2/2              -
+  prompt                                                           str                      6/6/6              -
+  question_id                                                      null|str                 8/6/6              -
+  revision                                                         str                      2/2/2              -
+  schema                                                           null                     6/0/0              -
+  score                                                            null|str                 8/6/6              -
+  seq                                                              int                      8/8/4              -
+  started_at                                                       str                      8/8/8              -
+  stderr                                                           str                      6/6/0              -
+  stream                                                           null                     6/0/0              -
+  system                                                           str                      6/6/0              -
+  text                                                             str                      6/6/6              -
+  texts                                                            list                     2/2/2              -
+  texts[]                                                          str                      2/2/2              -
+  timeout_s                                                        float                    6/6/6              -
+  tokens                                                           list                     2/2/2              -
+  tokens[]                                                         int                      2/2/2              -
+  tokens_in                                                        int                      2/2/2              -
+  type                                                             str                      6/6/6              -
+  usage                                                            dict                     6/6/6              -
+  usage.cached_input_tokens                                        int                      6/6/0              -
+  usage.completion_tokens                                          int                      6/6/6              -
+  usage.prompt_tokens                                              int                      6/6/6              -

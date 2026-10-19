@@ -1,0 +1,47 @@
+
+============================================================
+  Results for: "i dont see any costs anywhere tho isnt that the tradeoff more less expensive slow fast"
+  Wing: grag-job
+============================================================
+
+  [1] grag-job / technical
+      Source: 35c6be4d-c200-4b52-8a7f-f48fbb9b56e7.jsonl
+      Match:  cosine_sim=0.379  bm25=3.671
+
+      /cost, the status line, the SDK total_cost_usd, --max-budget-usd, and the OpenTelemetry cost metric and events — which remain USD estimates, not an invoice (the per-Mtok price labels in /model stay at list). \"overrides\" maps a model ID to its USD-per-million-token rates (input, output, cacheRead, cacheWrite — all four required, each 0 to 10000; cacheWrite prices both 5-minute and 1-hour cache writes). A matching row is charged exactly as written; fast-mode and US-data-residency surcharges are not added on top. A key Claude Code itself uses for a built-in model — its ID such as \"claude-sonnet-4-6\", or its first-party, Bedrock (any or no region prefix), Vertex or Foundry ID — covers every dated and provider form of that model; any other key — a gateway model alias, or a spelling Claude
+
+  --------------------------------------------------------
+  [2] grag-job / architecture
+      Source: b5d8c1e0-3bba-4bde-b799-20d1795af8ff.jsonl
+      Match:  cosine_sim=0.472  bm25=2.465
+
+      But I want to be very explicit about the tradeoff:
+
+  --------------------------------------------------------
+  [3] grag-job / decisions
+      Source: no-cost-estimates.md
+      Match:  cosine_sim=0.528  bm25=1.693
+
+      Cost (time or money) must carry ZERO weight in my own reasoning, recommendations, or option-comparisons. It is the user's factor alone, not mine. Don't frame paths as "cheap"/"expensive", don't let throughput/rate-limits/API-spend tilt which approach I recommend, and don't keep dragging cost back into the discussion. (User, emphatically: "YOU do not care about cost here, 0 fucks given… only for me.")
+
+  --------------------------------------------------------
+  [4] grag-job / decisions
+      Source: no-cost-estimates.md
+      Match:  cosine_sim=0.368  bm25=2.2
+
+      Don't apply scarcity/selectivity logic to operations that have no real cost either. If something is free to run (deterministic math, no LLM/judge/generator/network), the default is run ALL of it — a result column you ignore costs nothing, one you never computed you can't look at later. Gate/select only what actually spends (LLM/judge/generator calls). Concrete instance: treated the ~12 non-LLM RAGAS metrics as something to be economical about and proposed leaving "weak" ones off — wrong; weak-signal is an analysis-time concern (don't lead conclusions with BLEU), NOT a run-time one (compute it anyway, it's free).
+
+  --------------------------------------------------------
+  [5] grag-job / technical
+      Source: 987dba72-3d36-431b-91f0-f3e7804a807d.jsonl
+      Match:  cosine_sim=0.368  bm25=1.326
+
+      0f27eb198d402.cost.json` |
+      | vector arm, metadata-off scope | 2,719,968 tokens | `…a43c8c706908de3a.cost.json` |
+      
+      The vector arm is ~30× the tag side and is the whole cost. **My own arithmetic, not published** (~1.2 GFLOP/token at 0.6B; 200–350 GFLOP/s sustained fp32 GEMM on Raptor Lake-P): graph side ≈ 30 min, vector corpus ≈ 3–4 h, everything ≈ 4–5 h one-time. Halve for a 300M model. Query time is a non-issue — 5 embeds × 100 questions of short text, seconds.
+      
+      At this size **ONNX Runtime is worth it for a reason other than speed**: it drops the torch dependency entirely, sidestepping the 2.3.1/5.12.1 conflict, and gives a more stable numeric path across machines. Quantisation is not worth it — you would trade retrieval quality for minutes on a job you run once. I delegated the published
+
+  --------------------------------------------------------
+

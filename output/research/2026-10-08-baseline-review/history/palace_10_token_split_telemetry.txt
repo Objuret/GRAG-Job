@@ -1,0 +1,132 @@
+
+============================================================
+  Results for: "token in out telemetry backfill split generator retrieval per question"
+  Wing: grag-job
+============================================================
+
+  [1] grag-job / technical
+      Source: ad4af0a8-2d08-4823-9c8c-113d0685e595.jsonl
+      Match:  cosine_sim=0.54  bm25=8.271
+
+      > and it will also give us all the separated in and out tokens now?
+      also, is how the arm works logical? does this work?
+      Two straight answers.
+      
+      **Tokens: separated by role, not by direction.** Every question's row in `arm_outputs.jsonl` carries two separate meters: `retrieval` (the 2 interpreter calls + the grounding embed — calls/tokens/time) and `generator` (the answer call — calls/tokens/time). That's the same split lucene/vector record (theirs just has retrieval≈0). But each meter is a **single total** — v3's `ModelUsage` never splits prompt-vs-completion tokens, for any arm; the generator reads NIM's `total_tokens` only. NIM does return `prompt_tokens`/`completion_tokens`, so if you want the in/out split I can add two fields to `ModelUsage` (old records stay loadable — defaults fill in
+
+  --------------------------------------------------------
+  [2] grag-job / general
+      Source: user_turns.md
+      Match:  cosine_sim=0.462  bm25=2.668
+
+      vity`
+      `number → Concreteness`
+      
+      ---
+      
+      # Data schema
+      
+      Create durable JSONL/schema support for at least:
+      
+      * tag;
+      * chunk ID;
+      * chunk text;
+      * source/document/thread/file ID;
+      * record kind;
+      * facet;
+      * ordinal label;
+      * pairwise label;
+      * paired edge/chunk ID;
+      * rationale;
+      * provenance;
+      * judge/model;
+      * rubric version;
+      * prompt/version;
+      * confidence/agreement;
+      * repeated judgement ID;
+      * reversed-pair ID;
+      * timestamps;
+      * training split.
+      
+      Keep source data and generated supervision reproducible.
+      
+      ---
+      
+      # Corpus/token analysis
+      
+      Measure token lengths for all 4,808 chunks with the chosen tokenizer.
+      
+      Report:
+      
+      * median;
+      * p90;
+      * p95;
+      * p99;
+      * max;
+      * counts and percentages above:
+      
+        * 256
+        * 512
+        * 768
+        * 1024
+        * 1680
+      
+      Use those measurements to choose the actual sequence-length strategy.
+
+  --------------------------------------------------------
+  [3] grag-job / planning
+      Source: b538c568-82a3-442b-884a-ed012faf0d99.jsonl
+      Match:  cosine_sim=0.483  bm25=2.222
+
+      t chunk's tag score. A chunk reached through several picked tags, or through the same tag from both branches, accumulates.
+      9. Each chunk's text score is the cosine of the question to its description plus the cosine of the generated description to its description.
+      10. Each chunk's total is tag score plus text score, added as they are. All 4,808 chunks are ordered by that total, highest first, chunk id breaking exact ties. Nothing is cut.
+      11. The harness takes that order from the top, resolves each chunk's source text through its pointer, and fills 72,000 characters. Whole chunks are kept; the one that crosses the line is cut mid-text and its ids are not counted. With generation on, the question and those texts go to the generator.
+      12. The run folder records the settings, the interpretation
+
+  --------------------------------------------------------
+  [4] grag-job / general
+      Source: user_turns.jsonl
+      Match:  cosine_sim=0.474  bm25=1.341
+
+      tty sure \"separate strengths\" is the answer there, i am not even sure what you mean with a split"}
+      {"iso_timestamp": "2026-09-05T23:21:24.297Z", "session_file": "9128f289-e0f8-407f-a4fe-b557827efcf5.jsonl", "session_id": "9128f289-e0f8-407f-a4fe-b557827efcf5", "uuid": "4eaf2eef-8c07-4bdf-8318-023d034240ec", "cwd": "c:\\Coding\\exjobbet\\GRAG-Job", "git_branch": "user-canon-record", "char_len": 45, "is_paste": false, "text": "tagger? how the fuck did THAT end up in here?"}
+
+  --------------------------------------------------------
+  [5] grag-job / general
+      Source: user_turns.jsonl
+      Match:  cosine_sim=0.465  bm25=0.509
+
+      e truly after here, is a semantic relationship, something that separates \"depending on\".. think with me here"}
+      {"iso_timestamp": "2026-09-05T23:09:38.284Z", "session_file": "9128f289-e0f8-407f-a4fe-b557827efcf5.jsonl", "session_id": "9128f289-e0f8-407f-a4fe-b557827efcf5", "uuid": "f63b0d81-7139-4221-a2b2-a61d8b4af59b", "cwd": "c:\\Coding\\exjobbet\\GRAG-Job", "git_branch": "user-canon-record", "char_len": 99, "is_paste": false, "text": "pretty sure \"separate strengths\" is the answer there, i am not even sure what you mean with a split"}
+
+  --------------------------------------------------------
+  [6] grag-job / general
+      Source: user_turns.md
+      Match:  cosine_sim=0.448  bm25=0.655
+
+      thing you actually care about.
+      
+      ### What I would feed it
+      
+      Not Haiku's explanation.
+      
+      The actual pair:
+      
+      ```text
+      [CLS]
+      TAG: database migration
+      [SEP]
+      TEXT:
+      The migration is scheduled for Friday...
+      [SEP]
+      ```
+      
+      DeBERTa is a cross-encoder, so the tag and chunk jointly attend to each other. That's exactly what we want: the representation is about the **relationship between these two particular objects**.
+      
+      I would use the actual chunk text, not the chunk description, unless the chunk-length distribution shows that this is impractical.
+      
+      Before writing any truncation/windowing machinery I'd literally measure your 4,808 chunks in tokens. The model accepts up to 1,680 tokens. If 97% fit, there is no reason to design a complicated long-document solution for the other 3%.
+
+  --------------------------------------------------------
+

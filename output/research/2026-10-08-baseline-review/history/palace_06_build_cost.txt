@@ -1,0 +1,67 @@
+
+============================================================
+  Results for: "build cost graph build tokens time"
+  Wing: grag-job
+============================================================
+
+  [1] grag-job / technical
+      Source: eceb6d17-22c2-4938-a054-1a2a8fc3f569.jsonl
+      Match:  cosine_sim=0.438  bm25=3.808
+
+      > a minute each?.. thats.. thats really slow..
+      It is, and it's the output size, not the model thinking. A 34-tag chunk means 136 answers, about 11,000 tokens out, and Haiku streams a couple of hundred tokens a second. So a minute is the writing time. The 28,000 tokens of preamble going in on every call is the CLI lane's overhead and it's cost, not time.
+      
+      For the whole graph it's about 4,900 calls. Serial that's 80 hours; the harness already runs 30 workers in parallel for the arms, so around three hours in practice. Fine for a one-off pass.
+
+  --------------------------------------------------------
+  [2] grag-job / technical
+      Source: v2-mapping-key.md
+      Match:  cosine_sim=0.423  bm25=2.704
+
+      Related: [[v2-graph-spine]], [[retriever-routing-model]], [[ai-cost-boundary]], [[design-before-build]].
+
+  --------------------------------------------------------
+  [3] grag-job / technical
+      Source: 6c806933-883b-46c5-aec7-22468ef6b7f2.jsonl
+      Match:  cosine_sim=0.45  bm25=2.144
+
+      normalisation prepared for it.
+      
+      The measured side: the 08-20 pointer script runs over the corpus in seconds at build, so per query it would be under a second. Not a cost problem. The conceptual cost is the only one: the landing step lives outside the graph.
+
+  --------------------------------------------------------
+  [4] grag-job / architecture
+      Source: ai-cost-boundary.md
+      Match:  cosine_sim=0.458  bm25=1.574
+
+      **How to apply:**
+      - Never propose embedding or LLM-interpreting data that is already exact (e.g. hard-field value vocabularies — proposed and killed 2026-06-12).
+      - Budget knobs live in the tagger contract: chunk count = LLM calls; tags-per-chunk = embeddings. Treat "sane tag count per chunk" as a cost decision, not only a quality one.
+      - Nodes-vs-attributes / graph-size questions on the deterministic side are graph-hygiene questions, not cost questions — don't conflate.
+      - Distinct from [[no-cost-estimates]]: that bans $/time framings at the user; this is a design principle about where per-item cost exists at all.
+
+  --------------------------------------------------------
+  [5] grag-job / decisions
+      Source: no-cost-estimates.md
+      Match:  cosine_sim=0.427  bm25=1.133
+
+      Cost (time or money) must carry ZERO weight in my own reasoning, recommendations, or option-comparisons. It is the user's factor alone, not mine. Don't frame paths as "cheap"/"expensive", don't let throughput/rate-limits/API-spend tilt which approach I recommend, and don't keep dragging cost back into the discussion. (User, emphatically: "YOU do not care about cost here, 0 fucks given… only for me.")
+
+  --------------------------------------------------------
+  [6] grag-job / technical
+      Source: eceb6d17-22c2-4938-a054-1a2a8fc3f569.jsonl
+      Match:  cosine_sim=0.436  bm25=0.0
+
+      * — Yes. It's being pursued as an objective through the GraphQL implementation.
+        - **v3** — No. It is only mentioned as an objective; no concrete efficiency measures are being taken in this discussion.
+      - **concreteness** — This is somewhat abstract—it's a general performance goal rather than a specific implementation.
+        - **v4** — General. No metrics or benchmarks are provided, only the goal itself.
+        - **v3** — General. No metrics, benchmarks, targets, or current efficiency figures are provided.
+      
+      ### product-planning
+      - **temporal** — Yes, this meeting represents current product planning activities that inform the team's sprint work.
+        - **v4** — No. It's a category label unchanged by timing.
+        - **v3** — No. This is a metadata category label whose meaning is independent of when the text
+
+  --------------------------------------------------------
+

@@ -1,0 +1,119 @@
+
+============================================================
+  Results for: "tokens in out times build cost every run"
+  Wing: grag-job
+============================================================
+
+  [1] grag-job / planning
+      Source: 622d2867-c13c-4ee8-bdd0-f55bb756d2f9.jsonl
+      Match:  cosine_sim=0.47  bm25=2.002
+
+      o = 2,862 chars; 48-tag chunk = 3,426 chars; 72.3 chars per tag row on average. cl100k proxy (not Claude's tokenizer): 1,453 tokens vs budget 1,664 for 40 tags; 1,738 vs 1,984 for 48. 12-13% headroom on a proxy. Moot given finding 4 — the budget never reaches the model.
+      
+      **7. Cost arithmetic (item 7), 5 random chunks via `read_chunks`.**
+      Measured 3.27 chars/token (cl100k proxy; per sample 2.76-3.79) against the script's 4 (`:154`); the estimate also omits the tag JSON (1,314,767 chars over the corpus) and the `Chunk:/Tags:` wrapper. Input: script 6.06M tokens; proxy ≈ 7.6M. Output: script 62,028×40 = 2.48M; proxy 36.3/tag ≈ 2.25M. The dollar line prices at API rates while `chat.py:1-4` says the only lane is the subscription CLI: 4,872 serial calls, `timeout=480` each (`artefact_v2.py:944`)
+
+  --------------------------------------------------------
+  [2] grag-job / planning
+      Source: 97d07f1f-10b9-4178-a982-6cfe6979740f.jsonl
+      Match:  cosine_sim=0.47  bm25=2.002
+
+      o = 2,862 chars; 48-tag chunk = 3,426 chars; 72.3 chars per tag row on average. cl100k proxy (not Claude's tokenizer): 1,453 tokens vs budget 1,664 for 40 tags; 1,738 vs 1,984 for 48. 12-13% headroom on a proxy. Moot given finding 4 — the budget never reaches the model.
+      
+      **7. Cost arithmetic (item 7), 5 random chunks via `read_chunks`.**
+      Measured 3.27 chars/token (cl100k proxy; per sample 2.76-3.79) against the script's 4 (`:154`); the estimate also omits the tag JSON (1,314,767 chars over the corpus) and the `Chunk:/Tags:` wrapper. Input: script 6.06M tokens; proxy ≈ 7.6M. Output: script 62,028×40 = 2.48M; proxy 36.3/tag ≈ 2.25M. The dollar line prices at API rates while `chat.py:1-4` says the only lane is the subscription CLI: 4,872 serial calls, `timeout=480` each (`artefact_v2.py:944`)
+
+  --------------------------------------------------------
+  [3] grag-job / planning
+      Source: 5802c26c-66c9-4f04-8ed0-cd31a06d0ecb.jsonl
+      Match:  cosine_sim=0.493  bm25=1.004
+
+      `temperature` or `max_tokens`; `finish_reason` is hard-coded to `"stop"`. Every number written is one sampled draw, `--fresh` gives a different layer, and the token budget I computed never reaches the model. Repeatability can only be measured, not assumed.
+      
+      **The dollar figure is the wrong unit.** The lane is the subscription CLI, not the API, so the cost is 4,872 serial calls at up to 480s timeout each with six retries — subscription window and wall time, not $19.64. The smoke is 153 calls.
+      
+      **Two abort paths with no handler:** a `None` inside the model's number list raises `TypeError` straight through, and a tag echoed in different case fails validation, retries once with the same payload, then aborts the whole pass. Cache survives, so a rerun resumes.
+      
+      **Confirmed fine:** unique (chunk
+
+  --------------------------------------------------------
+  [4] grag-job / planning
+      Source: 622d2867-c13c-4ee8-bdd0-f55bb756d2f9.jsonl
+      Match:  cosine_sim=0.493  bm25=1.004
+
+      `temperature` or `max_tokens`; `finish_reason` is hard-coded to `"stop"`. Every number written is one sampled draw, `--fresh` gives a different layer, and the token budget I computed never reaches the model. Repeatability can only be measured, not assumed.
+      
+      **The dollar figure is the wrong unit.** The lane is the subscription CLI, not the API, so the cost is 4,872 serial calls at up to 480s timeout each with six retries — subscription window and wall time, not $19.64. The smoke is 153 calls.
+      
+      **Two abort paths with no handler:** a `None` inside the model's number list raises `TypeError` straight through, and a tag echoed in different case fails validation, retries once with the same payload, then aborts the whole pass. Cache survives, so a rerun resumes.
+      
+      **Confirmed fine:** unique (chunk
+
+  --------------------------------------------------------
+  [5] grag-job / planning
+      Source: 66ec8afa-de35-43da-bc25-943980f84acf.jsonl
+      Match:  cosine_sim=0.493  bm25=1.004
+
+      `temperature` or `max_tokens`; `finish_reason` is hard-coded to `"stop"`. Every number written is one sampled draw, `--fresh` gives a different layer, and the token budget I computed never reaches the model. Repeatability can only be measured, not assumed.
+      
+      **The dollar figure is the wrong unit.** The lane is the subscription CLI, not the API, so the cost is 4,872 serial calls at up to 480s timeout each with six retries — subscription window and wall time, not $19.64. The smoke is 153 calls.
+      
+      **Two abort paths with no handler:** a `None` inside the model's number list raises `TypeError` straight through, and a tag echoed in different case fails validation, retries once with the same payload, then aborts the whole pass. Cache survives, so a rerun resumes.
+      
+      **Confirmed fine:** unique (chunk
+
+  --------------------------------------------------------
+  [6] grag-job / planning
+      Source: 97d07f1f-10b9-4178-a982-6cfe6979740f.jsonl
+      Match:  cosine_sim=0.493  bm25=1.004
+
+      `temperature` or `max_tokens`; `finish_reason` is hard-coded to `"stop"`. Every number written is one sampled draw, `--fresh` gives a different layer, and the token budget I computed never reaches the model. Repeatability can only be measured, not assumed.
+      
+      **The dollar figure is the wrong unit.** The lane is the subscription CLI, not the API, so the cost is 4,872 serial calls at up to 480s timeout each with six retries — subscription window and wall time, not $19.64. The smoke is 153 calls.
+      
+      **Two abort paths with no handler:** a `None` inside the model's number list raises `TypeError` straight through, and a tag echoed in different case fails validation, retries once with the same payload, then aborts the whole pass. Cache survives, so a rerun resumes.
+      
+      **Confirmed fine:** unique (chunk
+
+  --------------------------------------------------------
+  [7] grag-job / planning
+      Source: 9d6b85ba-f5b1-4679-b762-126693a10a56.jsonl
+      Match:  cosine_sim=0.493  bm25=1.004
+
+      `temperature` or `max_tokens`; `finish_reason` is hard-coded to `"stop"`. Every number written is one sampled draw, `--fresh` gives a different layer, and the token budget I computed never reaches the model. Repeatability can only be measured, not assumed.
+      
+      **The dollar figure is the wrong unit.** The lane is the subscription CLI, not the API, so the cost is 4,872 serial calls at up to 480s timeout each with six retries — subscription window and wall time, not $19.64. The smoke is 153 calls.
+      
+      **Two abort paths with no handler:** a `None` inside the model's number list raises `TypeError` straight through, and a tag echoed in different case fails validation, retries once with the same payload, then aborts the whole pass. Cache survives, so a rerun resumes.
+      
+      **Confirmed fine:** unique (chunk
+
+  --------------------------------------------------------
+  [8] grag-job / general
+      Source: user_turns.md
+      Match:  cosine_sim=0.48  bm25=0.323
+
+      the pc exactly when that happens..
+      
+      ## 2026-09-17 18:51 · 8b5001ac-9de4-4335-a7c5-580428e6fc11.jsonl
+      
+      current status:
+      "
+      Loading weights: 100% 146/146 [00:02<00:00, 62.84it/s]
+      tokenizer_config.json: 100% 50.5k/50.5k [00:00<00:00, 126MB/s]
+      tokenizer.json: 100% 9.09M/9.09M [00:00<00:00, 28.2MB/s]
+      special_tokens_map.json: 100% 449/449 [00:00<00:00, 2.09MB/s]
+      config.json: 100% 313/313 [00:00<00:00, 1.30MB/s]
+        model ready in 51s (2048 dim, 8192-token context)
+        673 batches, 11.7 strings a batch
+        [512/7904] 14.3 strings/s | 8.6 min left
+        [1024/7904] 9.1 strings/s | 12.7 min left
+        [1536/7904] 5.8 strings/s | 18.3 min left
+        [2048/7904] 4.4 strings/s | 22.1 min left
+        [2560/7904] 3.8 strings/s | 23.7 min left
+      "
+      
+      ## 2026-09-17 18:52 · 8b5001ac-9de4-4335-a7c5-580428e6fc11.jsonl
+
+  --------------------------------------------------------
+

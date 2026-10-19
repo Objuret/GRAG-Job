@@ -1,0 +1,6 @@
+<stdin>:7: DeprecationWarning: Importing AnswerCorrectness from 'ragas.metrics' is deprecated and will be removed in v1.0. Please use 'ragas.metrics.collections' instead. Example: from ragas.metrics.collections import AnswerCorrectness
+ragas 0.4.3 | AnswerCorrectness default weights: [0.75, 0.25]
+lucene 10-07: judged part of answer_correctness: exactly 0 on 58 of 100 questions | below 0.05 on 58 | median 0.000 | max 0.957 | smallest 0.0000 (a value under 0 would mean the two stored values do not come from the same embedding)
+    on the questions where the judged part is 0, answer_correctness runs from 0.025 to 0.134
+vector 10-07: judged part of answer_correctness: exactly 0 on 51 of 100 questions | below 0.05 on 51 | median 0.000 | max 0.857 | smallest 0.0000 (a value under 0 would mean the two stored values do not come from the same embedding)
+    on the questions where the judged part is 0, answer_correctness runs from 0.022 to 0.125

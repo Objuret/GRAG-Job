@@ -1,0 +1,132 @@
+2026-06-18 4da9c5b v3/contract.py: 0 fields — feat: update graphify-out (213 files)
+          # truth-free view handed to a pipeline: id + question text ONLY.
+          # the oracle (answer + citations) is withheld here — this IS the quarantine.
+          # full view handed to an evaluator: id, text, type, answerable,
+          # ground_truth, citations — hydrated from raw by the orchestrator.
+          # what every arm emits per question:
+          #   question_id, answer, retrieved_contexts, retrieved_ids, meta
+          # answer -> used by HERB + RAGAS; retrieved_contexts/ids -> used by RAGAS.
+          # one raw record per (question x metric x arm) — tidy long format:
+          #   question_id, type, arm, metric, value, status, components, human_label
+          # kept raw so analysis can do paired tests / CIs / per-type splits.
+          # provenance for one run: arm, evaluator, generator_model, judge_model,
+          # top_k, seed, git_sha, timestamp — for reproducibility.
+          # what an evaluator returns: manifest + list[MetricScore]
+          # (+ an aggregate that is recomputable from the records).
+          # implemented by every arm in pipelines/; driven by the orchestrator.
+              # build/connect the arm's retrieval once over the corpus
+              # -> PipelineOutput. `generate` is the SHARED generator injected by the
+              # orchestrator so generation is identical across arms (fairness control).
+          # implemented by eval/herb.py and eval/ragas.py; driven by the orchestrator.
+              # -> Report (a MetricScore per question/metric)
+2026-06-20 1d43959 v3/contract.py: 33 fields — update v3/contract.py v3/data/gold100.jsonl ( 2 files changed, 138 insertions(+), 54 deletions(-))
+    + QuestionWithTruth.id, QuestionWithTruth.question, QuestionWithTruth.type, QuestionWithTruth.answerable, QuestionWithTruth.ground_truth, QuestionWithTruth.citations, ArmOutput.answer, ArmOutput.contexts, ArmOutput.context_ids, ArmOutput.search_time_s, ArmOutput.model_calls, ArmOutput.model_tokens, ArmOutput.model_time_s, BuildStats.build_time_s, BuildStats.model_calls, BuildStats.model_tokens, BuildStats.model_time_s, BuildStats.models, EvalResult.question_id, EvalResult.type, EvalResult.arm, EvalResult.metric, EvalResult.value, EvalResult.status, EvalResult.components, EvalResult.human_label, RunConfig.arm, RunConfig.evaluator, RunConfig.generator_model, RunConfig.judge_model, RunConfig.top_k, RunConfig.seed, RunConfig.timestamp
+2026-06-21 a45292f v3/contract.py: 33 fields — v3: implement lucene (BM25) arm + adopt shared contract
+2026-06-23 0733a9d v3/contract.py: 37 fields — feat: update graphify-out (76 files)
+    + ModelUsage.calls, ModelUsage.tokens, ModelUsage.time_s, ArmOutput.generator, ArmOutput.retrieval, BuildStats.model, RunManifest.arm, RunManifest.generator_model, RunManifest.top_k, RunManifest.questions_file, RunManifest.n_questions, RunManifest.timestamp, RunManifest.build_stats, EvalManifest.scorer, EvalManifest.judge_model, EvalManifest.source_run, EvalManifest.arm, EvalManifest.timestamp
+    - ArmOutput.model_calls, ArmOutput.model_time_s, ArmOutput.model_tokens, BuildStats.model_calls, BuildStats.model_time_s, BuildStats.model_tokens, QuestionWithTruth.answerable, RunConfig.arm, RunConfig.evaluator, RunConfig.generator_model, RunConfig.judge_model, RunConfig.seed, RunConfig.timestamp, RunConfig.top_k
+2026-06-28 8a640bf v3/contract.py: 39 fields — feat: update graphify-out (533 files)
+    + RunManifest.n_ran, RunManifest.n_failed
+2026-07-15 ec0c1c6 v3/contract.py: 40 fields — update v3/artefact/tag.py v3/backfill_token_split.py v3/contract.py ( 12 files changed, 289 insertions(+), 136 deletions(-))
+    + ModelUsage.tokens_in, ModelUsage.tokens_out
+    - ModelUsage.tokens
+2026-07-15 c1a68d1 v3/contract.py: 41 fields — artefact_v1: three fused rankings (tag/desc/scope), sphere grounding, plan logging
+    + ArmOutput.meta
+2026-07-20 14dd887 v3/contract.py: 47 fields — model calls: one CLI lane for claude/gpt/gemini judges + a claude generator
+    + ModelUsage.cached_input_tokens, ModelUsage.reasoning_tokens, EvalManifest.judge_backend, EvalManifest.judge_effort, EvalManifest.judge_usage, EvalManifest.judge_elapsed_s
+2026-07-23 5006fed v3/contract.py: 49 fields — v3: normalized combine + tunable modifiers, caches, hybrid lucene+vector arm
+    + RunManifest.interpreter_model, RunManifest.retrieval_flags
+2026-08-13 8e33b2d v3/contract.py: 51 fields — runs record which graph they queried
+    + RunManifest.char_budget, RunManifest.graph
+2026-08-14 169f64a v3/contract.py: 60 fields — the cap is chars now, and runs say what they cost
+    + ModelUsage.attempts, ModelUsage.request_s, ModelUsage.wait_s, ModelUsage.retry_s, RunManifest.code_version, RunManifest.environment, RunManifest.inputs, RunManifest.n_exhausted, EvalManifest.judge_legs
+2026-09-05 44470b0 prod/harness/contract.py: 60 fields — the repo is code, his words, and the machines
+2026-09-05 44470b0 v3/contract.py: (file absent / deleted) — the repo is code, his words, and the machines
+2026-10-05 e0c2df6 prod/harness/contract.py: 61 fields — artefact v3 and v4, facet tools and docs since 09-05
+    + QuestionWithTruth.id, QuestionWithTruth.question, QuestionWithTruth.type, QuestionWithTruth.ground_truth, QuestionWithTruth.citations, ModelUsage.calls, ModelUsage.tokens_in, ModelUsage.cached_input_tokens, ModelUsage.tokens_out, ModelUsage.reasoning_tokens, ModelUsage.time_s, ModelUsage.attempts, ModelUsage.request_s, ModelUsage.wait_s, ModelUsage.retry_s, ArmOutput.answer, ArmOutput.contexts, ArmOutput.context_ids, ArmOutput.search_time_s, ArmOutput.generator, ArmOutput.retrieval, ArmOutput.meta, BuildStats.build_time_s, BuildStats.model, BuildStats.models, EvalResult.question_id, EvalResult.type, EvalResult.arm, EvalResult.metric, EvalResult.value, EvalResult.status, EvalResult.components, EvalResult.human_label, RunManifest.arm, RunManifest.generator_model, RunManifest.interpreter_model, RunManifest.top_k, RunManifest.questions_file, RunManifest.n_questions, RunManifest.n_ran, RunManifest.n_failed, RunManifest.timestamp, RunManifest.build_stats, RunManifest.retrieval_flags, RunManifest.char_budget, RunManifest.code_version, RunManifest.environment, RunManifest.inputs, RunManifest.graph, RunManifest.n_exhausted, RunManifest.flags, EvalManifest.scorer, EvalManifest.judge_model, EvalManifest.source_run, EvalManifest.arm, EvalManifest.timestamp, EvalManifest.judge_backend, EvalManifest.judge_effort, EvalManifest.judge_usage, EvalManifest.judge_elapsed_s, EvalManifest.judge_legs
+
+=== field | type (last seen) | first commit | last commit | removed by | in working tree
+QuestionWithTruth.id | str | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+QuestionWithTruth.question | str | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+QuestionWithTruth.type | str | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+QuestionWithTruth.answerable | bool | 1d43959 2026-06-20 | a45292f 2026-06-21 | 0733a9d 2026-06-23 | NO
+QuestionWithTruth.ground_truth | list[str] | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+QuestionWithTruth.citations | list[str] | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+ArmOutput.answer | str | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+ArmOutput.contexts | list[str] | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+ArmOutput.context_ids | list[str] | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+ArmOutput.search_time_s | float | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+ArmOutput.model_calls | int | 1d43959 2026-06-20 | a45292f 2026-06-21 | 0733a9d 2026-06-23 | NO
+ArmOutput.model_tokens | int | 1d43959 2026-06-20 | a45292f 2026-06-21 | 0733a9d 2026-06-23 | NO
+ArmOutput.model_time_s | float | 1d43959 2026-06-20 | a45292f 2026-06-21 | 0733a9d 2026-06-23 | NO
+BuildStats.build_time_s | float | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+BuildStats.model_calls | int | 1d43959 2026-06-20 | a45292f 2026-06-21 | 0733a9d 2026-06-23 | NO
+BuildStats.model_tokens | int | 1d43959 2026-06-20 | a45292f 2026-06-21 | 0733a9d 2026-06-23 | NO
+BuildStats.model_time_s | float | 1d43959 2026-06-20 | a45292f 2026-06-21 | 0733a9d 2026-06-23 | NO
+BuildStats.models | list[str] | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+EvalResult.question_id | str | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+EvalResult.type | str | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+EvalResult.arm | str | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+EvalResult.metric | str | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+EvalResult.value | float | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+EvalResult.status | str | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+EvalResult.components | dict | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+EvalResult.human_label | str | None | 1d43959 2026-06-20 | e0c2df6 2026-10-05 |  | yes
+RunConfig.arm | str | 1d43959 2026-06-20 | a45292f 2026-06-21 | 0733a9d 2026-06-23 | NO
+RunConfig.evaluator | str | 1d43959 2026-06-20 | a45292f 2026-06-21 | 0733a9d 2026-06-23 | NO
+RunConfig.generator_model | str | 1d43959 2026-06-20 | a45292f 2026-06-21 | 0733a9d 2026-06-23 | NO
+RunConfig.judge_model | str | None | 1d43959 2026-06-20 | a45292f 2026-06-21 | 0733a9d 2026-06-23 | NO
+RunConfig.top_k | int | 1d43959 2026-06-20 | a45292f 2026-06-21 | 0733a9d 2026-06-23 | NO
+RunConfig.seed | int | 1d43959 2026-06-20 | a45292f 2026-06-21 | 0733a9d 2026-06-23 | NO
+RunConfig.timestamp | str | 1d43959 2026-06-20 | a45292f 2026-06-21 | 0733a9d 2026-06-23 | NO
+ModelUsage.calls | int | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+ModelUsage.tokens | int | 0733a9d 2026-06-23 | 8a640bf 2026-06-28 | ec0c1c6 2026-07-15 | NO
+ModelUsage.time_s | float | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+ArmOutput.generator | ModelUsage | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+ArmOutput.retrieval | ModelUsage | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+BuildStats.model | ModelUsage | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+RunManifest.arm | str | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+RunManifest.generator_model | str | None | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+RunManifest.top_k | int | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+RunManifest.questions_file | str | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+RunManifest.n_questions | int | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+RunManifest.timestamp | str | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+RunManifest.build_stats | BuildStats | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+EvalManifest.scorer | str | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+EvalManifest.judge_model | str | None | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+EvalManifest.source_run | str | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+EvalManifest.arm | str | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+EvalManifest.timestamp | str | 0733a9d 2026-06-23 | e0c2df6 2026-10-05 |  | yes
+RunManifest.n_ran | int | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+RunManifest.n_failed | int | 8a640bf 2026-06-28 | e0c2df6 2026-10-05 |  | yes
+ModelUsage.tokens_in | int | ec0c1c6 2026-07-15 | e0c2df6 2026-10-05 |  | yes
+ModelUsage.tokens_out | int | ec0c1c6 2026-07-15 | e0c2df6 2026-10-05 |  | yes
+ArmOutput.meta | dict | None | c1a68d1 2026-07-15 | e0c2df6 2026-10-05 |  | yes
+ModelUsage.cached_input_tokens | int | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+ModelUsage.reasoning_tokens | int | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+EvalManifest.judge_backend | str | None | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+EvalManifest.judge_effort | str | None | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+EvalManifest.judge_usage | ModelUsage | None | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+EvalManifest.judge_elapsed_s | float | None | 14dd887 2026-07-20 | e0c2df6 2026-10-05 |  | yes
+RunManifest.interpreter_model | str | None | 5006fed 2026-07-23 | e0c2df6 2026-10-05 |  | yes
+RunManifest.retrieval_flags | dict | None | 5006fed 2026-07-23 | e0c2df6 2026-10-05 |  | yes
+RunManifest.char_budget | int | None | 8e33b2d 2026-08-13 | e0c2df6 2026-10-05 |  | yes
+RunManifest.graph | dict | None | 8e33b2d 2026-08-13 | e0c2df6 2026-10-05 |  | yes
+ModelUsage.attempts | int | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+ModelUsage.request_s | float | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+ModelUsage.wait_s | float | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+ModelUsage.retry_s | float | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+RunManifest.code_version | dict | None | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+RunManifest.environment | dict | None | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+RunManifest.inputs | dict | None | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+RunManifest.n_exhausted | int | None | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+EvalManifest.judge_legs | list | None | 169f64a 2026-08-14 | e0c2df6 2026-10-05 |  | yes
+RunManifest.flags | dict | None | e0c2df6 2026-10-05 | e0c2df6 2026-10-05 |  | yes
+RunManifest.legs | list | None | working tree only — | — — |  | yes
+RunManifest.workers | int | None | working tree only — | — — |  | yes
+RunManifest.lane | dict | None | working tree only — | — — |  | yes
+RunManifest.generator | dict | None | working tree only — | — — |  | yes
+RunManifest.index | dict | None | working tree only — | — — |  | yes
+RunManifest.code_state | dict | None | working tree only — | — — |  | yes
+RunManifest.env | dict | None | working tree only — | — — |  | yes
+EvalManifest.judge_settings | dict | None | working tree only — | — — |  | yes

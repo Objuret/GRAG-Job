@@ -1,0 +1,23 @@
+=== 2026-07-16T07:43Z · session 3b7c153b · 166 chars
+and now we get the full metrics from any type of run? remember that the data about the builds ETC is important for traeability, reproducibility etc, academic purposes
+
+=== 2026-07-29T18:14Z · session 579f6380 · 156 chars
+Dude, your dates and times are ALWAYS wrong, please stop from trying to measure time, it's genuinely terrible and just builds a false narrative in YOUR mind
+
+=== 2026-09-01T02:07Z · session 987dba72 · 608 chars
+"The reasoning is right but the file isn't in this arm's path. build_tag_clusters.py is used by v1, v2 and volmax — artefact_composed doesn't reference it at all. It clusters per query, and the five routings already weight by value, which is why they anchored differently.
+
+The presence observation holds though — all 62,028 edges carry all five facets, so presence-weighting is uniform by construction.
+
+So that change is the right one if we go to build-time clusters. That's the fork you haven't settled: cluster once at build time and re-weight per query, or cluster per query. Right now it's the second."
+
+=== 2026-09-11T21:03Z · session cec0749e · 354 chars
+are you in some sorts of illusion that you are fetching and reading for MY sake? that actually want your derived garbage outputs about these things?.. they are my fucking builds, YOU need to read them, because YOU need to understand what you are working with.. nothing else, and yes, reason about them etc, how else are you to be any help in this matter?
+
+=== 2026-09-27T13:05Z · session b538c568 · 61 chars
+Tell me specifically what is NOT in any of the current builds
+
+=== 2026-10-07T22:42Z · session c66705a4 · 101 chars
+what i am talking about are "times, tokens, runtime, build cost" etc etc etc, ALL FUCKING DATAMETRICS
+
+--- 6 turns matched 'build ?(cost|time|data|stat|info|record|meta)|\\bbuilds\\b|graph build|building the graph|rebuild.*(cost|time|token)|index(ing)? (cost|time)'
