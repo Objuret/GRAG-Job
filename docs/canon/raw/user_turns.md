@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2234 turns, chronological. Verbatim text; no edits.
+2245 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -17737,4 +17737,50 @@ is there a single fucking reason you refuse to just fucking commit and push shit
 just make a fucking new branch and DO it
 commit ALL of it
 not just fucking spots like you do for some fucked up reason
+
+## 2026-10-19 07:15 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
+
+ok, lets carry on yhten, whats next?
+
+## 2026-10-19 07:16 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
+
+new value? what?
+
+## 2026-10-19 07:26 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
+
+you do realize how retarded solution that is tho?
+
+## 2026-10-19 07:29 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
+
+but what we DO need is for the facet ranking to not interfere with the clustering i guess, or the other way around, how do we use them?
+
+## 2026-10-19 07:32 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
+
+ok, but that kinda works tho, but only for the chunk part, not the facet part?
+
+## 2026-10-19 07:34 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
+
+you dont seem to get it.. HOW THE FUCK DOES THE RANKING FROM THE FACETS ADJUST ANYTHING? what is it BASED on?
+
+## 2026-10-19 07:35 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
+
+ehat i am saying is, i am thinking you have converted them to either a number, or just made arbitrary decisions for them
+
+## 2026-10-19 07:36 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
+
+and you never stopped to think that perhaps how YOU converted the ranks was the fucking issue?
+
+## 2026-10-19 07:38 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
+
+oh, wait. how about they get a RELATIVE increase in importance, based on their relative rank compared to that chunk, based on the chosen facet?
+
+as in, the chunks are chosen first based on similarity, then that "most similar" IS a rank, and then that rank list is compared to the facets and is adjusted for relative rank.. you understand?
+
+## 2026-10-19 07:45 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
+
+well thats the fucking point, that i goes both ways..?
+
+## 2026-10-19 07:45 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
+
+construct and gold10smoketest it
 

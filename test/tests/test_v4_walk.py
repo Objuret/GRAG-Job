@@ -39,21 +39,12 @@ def test_the_layer_holds_the_eligible_edges_and_what_does_not_depend_on_the_ques
     assert layer['edges'].tolist() == np.flatnonzero(eligible).tolist()
     assert layer['edge_tag'].tolist() == t['edge_tag'][eligible].tolist()
     assert layer['raw'][:, 0].tolist() == t['edge_topic'][eligible].tolist()
-    assert layer['raw'].shape == layer['pos'].shape == (int(eligible.sum()), 5)
-    assert ((layer['pos'] > 0) & (layer['pos'] <= 1)).all()
+    assert layer['raw'].shape == (int(eligible.sum()), 5)
     assert layer['n_c'].tolist() == np.bincount(t['edge_chunk'][eligible], minlength=40).tolist()
     assert layer['n_c'][9] == 0
     # each chunk's place in chunk-id order and its record kind
     assert [t['chunk_ids'][i] for i in np.argsort(layer['id_rank'])] == sorted(t['chunk_ids'])
     assert [layer['kind_names'][k] for k in layer['kind']] == t['chunk_kinds']
-    # places premade over the whole graph are kept as given, for the eligible edges
-    premade = np.random.default_rng(1).uniform(size=(t['edge_tag'].size, 5))
-    given = WK.build_layer(t['chunk_ids'], t['chunk_kinds'], t['eligible'], t['edge_tag'],
-                           t['edge_chunk'], t['edge_topic'], t['edge_facets'], pos=premade)
-    assert given['pos'].tolist() == premade[eligible].tolist()
-    with pytest.raises(ValueError, match='five premade places per edge'):
-        WK.build_layer(t['chunk_ids'], t['chunk_kinds'], t['eligible'], t['edge_tag'],
-                       t['edge_chunk'], t['edge_topic'], t['edge_facets'], pos=premade[:, :4])
     with pytest.raises(ValueError, match='No edge carries an eligible graph tag'):
         layer_of({**t, 'eligible': np.zeros(30, dtype=bool)})
     with pytest.raises(ValueError, match='four facet values per edge'):
@@ -123,7 +114,7 @@ def test_each_sides_cloud_is_its_near_group_and_the_clouds_order_the_border():
     t_near = np.array([.95, .93, .91, .60, .58, .57, .55, .54, .53, .52, .5, .5])
     d_near = np.array([.80, .20, .82, .81, .30, .25, .22, .21, .20, .19, .5, .5])
     scope_of = np.repeat(np.arange(6), 2)
-    got = WK.cloud_combo(layer, cosines, d_near, np.arange(10), scope_of, tags_near=t_near)
+    got = WK.cloud_combo(layer, t_near[None, :], d_near, np.arange(10), scope_of)
     # each cloud is the chunks before its knee, as many as the values show: three here, no number given
     assert got['level']['tags'].tolist() == [1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 0, 0]
     assert got['level']['description'].tolist() == [1, 2, 1, 1, 2, 2, 2, 2, 2, 2, 0, 0]
@@ -133,10 +124,16 @@ def test_each_sides_cloud_is_its_near_group_and_the_clouds_order_the_border():
     assert got['record'] == {'chunks': 10, 'clouds': {'tags': 3, 'description': 3},
                              'chunks_on_each_step': {2: 2, 3: 2, 4: 6}, 'scope_gauged_from_chunks': 4,
                              'scopes_taken': [0, 1], 'chunks_in_scope': 4}
-    # the step first, then in scope first, then the two standings added
+    # the step first, then in scope first, then the middle of the two sides' ranks
     assert got['order'] == [0, 2, 3, 1, 4, 5, 6, 7, 8, 9]
+    assert got['rank']['description'][:10].tolist() == [3, 8.5, 1, 2, 4, 5, 6, 7, 8.5, 10]
+    assert got['middle_rank'][[1, 3]].tolist() == [5.25, 3.]
+    # a tags side's place made otherwise orders inside a step and leaves the clouds as they are
+    placed = WK.cloud_combo(layer, t_near[None, :], d_near, np.arange(10), scope_of,
+                            tags_place=np.r_[np.arange(10, 0, -1), 0, 0].astype(float))
+    assert placed['step'].tolist() == got['step'].tolist() and placed['order'][:2] == [2, 0]
     # a side whose closeness does not bend has no cloud: the other side's cloud alone is lowest
-    flat = WK.cloud_combo(layer, cosines, np.full(12, .2), np.arange(10), scope_of, tags_near=t_near)
+    flat = WK.cloud_combo(layer, t_near[None, :], np.full(12, .2), np.arange(10), scope_of)
     assert flat['step'][:10].tolist() == [3, 3, 3] + [4] * 7
     assert flat['record']['clouds'] == {'tags': 3, 'description': 0}
     with pytest.raises(ValueError, match='one finite description closeness per chunk'):
@@ -147,38 +144,33 @@ def test_each_sides_cloud_is_its_near_group_and_the_clouds_order_the_border():
         WK.cloud_combo(layer, cosines, d_near, np.array([0, 0, 1]), scope_of)
 
 
-def test_the_query_facets_influence_the_tag_relationship_and_force_nothing():
-    # four chunks, one edge each, all through eligible graph tags 0-3; one query tag
-    pos = np.array([[0., .9, .5, .5, .5], [0., .1, .5, .5, .5], [0., .5, .5, .5, .5], [0., .5, .5, .5, .5]])
-    layer = {'chunks': 4, 'edge_tag': np.arange(4), 'edge_chunk': np.arange(4), 'pos': pos,
-             'eligible': np.ones(4, dtype=bool)}
-    rows = np.array([[.80, .81, .50, .20]])
-    plain, edge, query_tag = WK.facet_influenced_nearness(layer, rows, np.zeros((1, 4)))
-    # with every weight 0 the nearness is the closeness as it is
-    assert plain.tolist() == pytest.approx(rows[0].tolist()) and edge.tolist() == [0, 1, 2, 3]
-    assert query_tag.tolist() == [0, 0, 0, 0]
-    # temporal matters fully: chunk 0 stands high in temporal, chunk 1 low; both move by their
-    # place, in the query tag's own spread of closeness; the ones in the middle do not move
-    moved, _, _ = WK.facet_influenced_nearness(layer, rows, np.array([[1., 0., 0., 0.]]))
-    assert moved[0] > rows[0, 0] and moved[1] < rows[0, 1] and moved[2:].tolist() == pytest.approx([.5, .2])
-    # the influence did not have to change the order of 2 and 3, and it did not
-    assert moved[2] > moved[3]
-    # a border's edges carrying the whole graph's middle and spread of places, and the query tag's
-    # spread over the whole graph's tags, move as they do over the whole graph
-    whole = WK.influenced_edge_values(layer, rows, np.array([[1., 0., 0., 0.]]))
-    place = pos[:, 1:]
-    middle = np.median(place, axis=0)
-    spread = WK.MAD_TO_SPREAD * np.median(np.abs(place - middle), axis=0)
-    close = WK.MAD_TO_SPREAD * np.median(np.abs(rows[0] - np.median(rows[0])))
-    border = {'chunks': 2, 'edge_tag': np.arange(2), 'edge_chunk': np.arange(2), 'pos': pos[:2],
-              'eligible': np.ones(2, dtype=bool), 'place_middle': middle, 'place_spread': spread}
-    part = WK.influenced_edge_values(border, rows[:, :2], np.array([[1., 0., 0., 0.]]),
-                                     close_spread=[close])
-    assert part[0].tolist() == pytest.approx(whole[0, :2].tolist())
-    with pytest.raises(ValueError, match='one spread of closeness per query tag'):
-        WK.influenced_edge_values(border, rows[:, :2], np.zeros((1, 4)), close_spread=[1., 2.])
-    with pytest.raises(ValueError, match='four facet weights from 0 to 1'):
-        WK.facet_influenced_nearness(layer, rows, np.array([[2., 0., 0., 0.]]))
+def test_the_facet_ranks_each_query_tags_chunks_again_and_a_chunk_stands_midway():
+    # four chunks, one edge each, through graph tags 0-3; by closeness to the query tag 0 > 1 > 2
+    # > 3; by the net's temporal value 2 > 0 > 1 > 3
+    facets = np.zeros((4, 4))
+    facets[:, 0] = [.5, .2, .9, .1]
+    layer = {'chunks': 4, 'eligible': np.ones(4, dtype=bool), 'edge_tag': np.arange(4),
+             'edge_chunk': np.arange(4), 'raw': np.column_stack([np.zeros(4), facets]),
+             'id_rank': np.arange(4)}
+    rows = np.array([[.9, .8, .7, .6]])
+    got = WK.facet_relative_places(layer, rows, [0], np.arange(4))
+    # both ways: chunk 2 rises by half the gap (3rd by closeness, 1st by the facet), chunk 1 falls
+    assert got['closeness_rank'].tolist() == [1, 2, 3, 4] and got['facet_rank'].tolist() == [2, 3, 1, 4]
+    assert got['place'].tolist() == [1, 3, 2, 4] and got['place_by_closeness'].tolist() == [1, 2, 3, 4]
+    assert got['query_tag'].tolist() == [0] * 4 and got['edge'].tolist() == [0, 1, 2, 3]
+    # where the facet does not matter for the tag, closeness alone
+    assert WK.facet_relative_places(layer, rows, [-1], np.arange(4))['place'].tolist() == [1, 2, 3, 4]
+    # a second query tag that puts chunk 3 first: each chunk takes the best place a query tag gives it
+    two = WK.facet_relative_places(layer, np.array([[.9, .8, .7, .6], [.1, .2, .3, .95]]), [0, -1],
+                                   np.arange(4))
+    assert two['place'].tolist() == [1, 3, 2, 1] and two['query_tag'].tolist() == [0, 0, 0, 1]
+    # only the border's chunks are ranked; two chunks that swap ranks stand level, and a level
+    # goes to closeness
+    part = WK.facet_relative_places(layer, rows, [0], np.array([1, 2]))
+    assert part['facet_rank'][[1, 2]].tolist() == [2, 1] and part['place'][[1, 2]].tolist() == [1, 2]
+    assert np.isinf(part['place'][[0, 3]]).all()
+    with pytest.raises(ValueError, match='one named facet, or -1, per query tag'):
+        WK.facet_relative_places(layer, rows, [4], np.arange(4))
 
 
 def test_the_knee_and_the_levels_it_reads_off_a_list():
@@ -211,20 +203,15 @@ def test_a_channels_messages_fall_into_conversations_at_its_long_gaps():
 def test_the_best_edge_of_each_chunk():
     best, edge = WK.best_edges([.3, .9, .9, .1], [0, 0, 0, 2], 3)
     assert best[0] == .9 and edge.tolist() == [1, -1, 3] and np.isnan(best[1])
-    # each value's average rank over the rows, ties sharing a rank
-    assert WK.positions(np.array([[1.], [3.], [3.], [2.]]))[:, 0].tolist() == [.25, .875, .875, .5]
 
 
 def test_a_chunks_profile_over_the_query_tags_is_its_strongest_edge_for_each():
     layer, cosines = two_sides()
-    layer = {**layer, 'pos': np.column_stack([np.zeros(12), np.full((12, 4), .5)])}
-    on_edge = WK.influenced_edge_values(layer, cosines, np.zeros((2, 4)))
-    # with every facet weight 0 an edge's weight is the tag's closeness as it is
-    np.testing.assert_allclose(on_edge, cosines)
+    on_edge = cosines[:, layer['edge_tag']]
     profiles = WK.query_tag_profiles(layer, on_edge)
     assert profiles.shape == (12, 2) and profiles[1].tolist() == pytest.approx([.3, .9])
     # a chunk with no eligible edge has no profile
-    no_edge = {**layer, 'edge_tag': np.arange(11), 'edge_chunk': np.arange(11), 'pos': layer['pos'][:11]}
+    no_edge = {**layer, 'edge_tag': np.arange(11), 'edge_chunk': np.arange(11)}
     assert np.isnan(WK.query_tag_profiles(no_edge, on_edge[:, :11])[11]).all()
 
 

@@ -1,0 +1,1250 @@
+diff --git a/test/arms/artefact_v4.py b/test/arms/artefact_v4.py
+index 4c83eb0..d8e1c3a 100644
+--- a/test/arms/artefact_v4.py
++++ b/test/arms/artefact_v4.py
+@@ -19,14 +19,16 @@ Per question:
+      aside (`border_of`). The chunks outside the border are out of the pool. No model call.
+   3. The tags side: each chunk's closest tag to a query tag (`v4_walk.tags_nearness`). The
+      query tags are embedded in the query role, as the graph's tags are.
+-  4. The facets (his 2026-10-19 "go", `v4_walk.facet_influenced_nearness`): per query tag, the
+-     facet the first call named for it weighs fully where the first call said it matters for the
+-     tag, and no facet weighs where it said not; an edge's weight for that query tag is the tag's
+-     closeness plus that weight times where the edge stands in the named facet's ranking (its
+-     place among the graph's eligible edges, premade by the facet net's values in
+-     `test/graph/build_edge_places.py`, less the middle place, over the places' spread), counted in
+-     the query tag's own spread of closeness over the graph's tags. The facet net ranks the edges
+-     and is not read on the question side. Nothing forces the order.
++  4. The facets, ranks against ranks (his 2026-10-19 "the chunks are chosen first based on
++     similarity, then that "most similar" IS a rank, and then that rank list is compared to the
++     facets and is adjusted for relative rank", "that i goes both ways", "construct and
++     gold10smoketest it"; `v4_walk.facet_relative_places`): per query tag, the border's chunks
++     ranked by their closeness to it, each through its closest tag, and ranked again, among the
++     same chunks, by the facet net's value of that edge in the facet the first call named for the
++     query tag; a chunk stands midway between its two ranks, lifted or lowered by half the gap;
++     where the first call said the facet does not matter for the tag, closeness alone. Each chunk
++     takes the best place any query tag gives it (the agent's choice). The facets touch no
++     closeness: the clouds and the 4-combo read closeness alone.
+   5. The chunk side: the chunk descriptions' closeness to the question with the border's names
+      taken out (`_without_names`: inside the border the name tells nothing), embedded in the
+      query role as the chunk descriptions are.
+@@ -36,8 +38,9 @@ Per question:
+      among the values above the median (the agent's choice), so a cloud holds at most half the
+      border; a chunk's step is 2 in both clouds, 3 in one, 4 in neither; the parents holding the
+      majority of the chunks in a cloud are the scope, whose chunks come first inside a step of the
+-     clouds' order. The chunks in both clouds (with none, those of the lowest step) are the
+-     chosen chunks.
++     clouds' order; then the two sides' ranks counted equally (the tags side's place from step 4,
++     the description side's closeness; the agent's choice, ranks against ranks). The chunks in
++     both clouds (with none, those of the lowest step) are the chosen chunks.
+   7. The 4-combo (his 2026-10-17 "time, scope, entities, chunknearness?", "that IS the 4-combo",
+      "well then, build it!"; `v4_walk.storyline`, the graph asked per question in
+      `STORYLINE_CYPHER`): each other chunk of the clouds is tied to each chosen chunk by scope
+@@ -61,8 +64,8 @@ Per question:
+   9. The harness's cut at the character budget is applied to what is handed over.
+ Everything the order is made of is asked of the graph for each question (his 2026-10-07 "it MUST
+ be asked of the DB", `_ask_graph`): the border's chunks with their pointers, the eligible tags on
+-them with their edges' facet values and premade places, every closeness (the graph's own cosine
+-of its stored vectors and the query side's), the people of the border's products and the
++them with their edges' facet values, every closeness (the graph's own cosine of its stored
++vectors and the query side's), the people of the border's products and the
+ 4-combo's ties. The start of a run only checks and counts the graph (`prepare_over_corpus`).
+ Each delivered chunk keeps, as pointers, the query tag and graph tag of the edge that gave its
+ closeness through the tags as the order used it, its nearness on each side, how it is tied to
+@@ -117,7 +120,7 @@ POOL = ('c.desc_emb IS NOT NULL AND (c)-[:product]->() '
+ PRODUCT_CYPHER = 'MATCH (p:Product) RETURN p.name AS name ORDER BY name'
+ 
+ # Every pool edge with its five facet values: read once at start to check the facet layer whole
+-# (`graph_layer.read`), and by `test/graph/build_edge_places.py`; the retrieval does not use it.
++# (`graph_layer.read`); the retrieval does not use it.
+ EDGE_CYPHER = '''
+ MATCH (c:Chunk)-[r:HAS_TAG]->(t:Tag)
+ WHERE r.run_id = $run AND c.desc_emb IS NOT NULL AND t.emb IS NOT NULL AND (c)-[:product]->()
+@@ -137,19 +140,17 @@ WITH chunks, count(r) AS edges, count(DISTINCT t) AS graph_tags,
+      count(DISTINCT CASE WHEN NOT toLower(t.name) IN $products THEN t END) AS eligible_graph_tags,
+      count(DISTINCT CASE WHEN toLower(t.name) IN $products THEN t END) AS product_named_tags,
+      count(DISTINCT CASE WHEN NOT toLower(t.name) IN $products THEN c END) AS chunks_with_an_eligible_edge,
+-     count(r.w_pos) AS edges_with_a_place,
+      max(abs(r.w_facets[0] - (2 * vector.similarity.cosine(c.desc_emb, t.emb) - 1))) AS topic_apart
+ RETURN chunks, edges, graph_tags, eligible_edges, eligible_graph_tags, product_named_tags,
+-       chunks_with_an_eligible_edge, edges_with_a_place, topic_apart
++       chunks_with_an_eligible_edge, topic_apart
+ '''
+ DIM_CYPHER = 'MATCH (t:Tag) WHERE t.emb IS NOT NULL RETURN size(t.emb) AS dim LIMIT 1'
+ POOL_IDS_CYPHER = f'MATCH (c:Chunk) WHERE {POOL} RETURN c.chunk_id AS chunk ORDER BY chunk'
+ 
+ # Per question, for the chunks of the border: each chunk's record pointer, product, channels and
+ # parent, and its description's closeness to each of the query side's texts; each eligible graph
+-# tag on those chunks with its closeness to each query tag and its edges' five values and
+-# premade places (`test/graph/build_edge_places.py`). The closeness is the graph's own cosine
+-# (vector.similarity.cosine gives (1 + cosine) / 2).
++# tag on those chunks with its closeness to each query tag and its edges' five values. The
++# closeness is the graph's own cosine (vector.similarity.cosine gives (1 + cosine) / 2).
+ QUESTION_CHUNKS_CYPHER = '''
+ UNWIND $chunks AS cid
+ MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk {chunk_id: cid})-[:product]->(p:Product)
+@@ -164,29 +165,11 @@ QUESTION_TAGS_CYPHER = '''
+ UNWIND $chunks AS cid
+ MATCH (c:Chunk {chunk_id: cid})-[r:HAS_TAG]->(t:Tag)
+ WHERE r.run_id = $run AND t.emb IS NOT NULL AND NOT toLower(t.name) IN $products
+-WITH t, collect({chunk: cid, values: r.w_facets, places: r.w_pos}) AS edges
++WITH t, collect({chunk: cid, values: r.w_facets}) AS edges
+ RETURN t.name AS tag, edges,
+        [v IN $vectors | 2 * vector.similarity.cosine(t.emb, v) - 1] AS closeness
+ ORDER BY tag
+ '''
+-# Per question, only when a facet weight is above 0: per query tag the middle and the spread of
+-# its closeness over every eligible graph tag (the unit the facets' influence is counted in).
+-TAG_SPREAD_CYPHER = '''
+-MATCH (t:Tag) WHERE t.emb IS NOT NULL AND NOT toLower(t.name) IN $products
+-  AND EXISTS { MATCH (t)<-[r:HAS_TAG]-(c:Chunk)
+-               WHERE r.run_id = $run AND c.desc_emb IS NOT NULL AND (c)-[:product]->() }
+-UNWIND range(0, size($vectors) - 1) AS q
+-WITH q, 2 * vector.similarity.cosine(t.emb, $vectors[q]) - 1 AS x
+-WITH q, collect(x) AS xs, percentileCont(x, 0.5) AS middle
+-UNWIND xs AS x
+-WITH q, percentileCont(abs(x - middle), 0.5) AS distance
+-RETURN q, distance ORDER BY q
+-'''
+-LAYER_VALUES_CYPHER = '''
+-MATCH (l:FacetLayer {run_id: $run})
+-RETURN l.place_middle AS middle, l.place_spread AS spread
+-'''
+-
+ # The graph's people: which employees post in which channel of a product, and which sit in its
+ # meetings, read through the chunks they are tied to (`test/graph/build_person_edges.py`; his
+ # 2026-10-17 "persons edges shouldnt go to scope directly, but to chunks instead"), asked per
+@@ -275,8 +258,8 @@ RETRIEVAL_FLAGS = {
+     'retrieval': (
+         'Everything the order is made of is asked of the graph for each question (`_ask_graph`): '
+         "the border's chunks with their pointers, the eligible tags on them with their edges' "
+-        'facet values and premade places (test/graph/build_edge_places.py), every closeness as '
+-        "the graph's cosine of its stored vectors and the query side's, the people of the "
++        "facet values, every closeness as the graph's cosine of its stored vectors and the query "
++        "side's, the people of the "
+         "border's products and the 4-combo's ties; the start of a run only checks and counts the "
+         'graph. '
+         'The border (`name_border`, asked of the graph per question): the products, channels, '
+@@ -287,21 +270,20 @@ RETRIEVAL_FLAGS = {
+         'company through its customers); names of one kind add up, kinds narrow each other from the widest area down, '
+         'and a kind that would leave nothing is set aside (`border_of`); no name, nothing cut; the '
+         'chunks outside the border are out of the pool. Inside it (`v4_walk.cloud_combo`): '
+-        'each chunk\'s closest eligible tag to a query tag, with the query\'s facets as an influence '
+-        'on the tag relationship (`v4_walk.facet_influenced_nearness`: per query tag, the facet the '
+-        'first call named for it weighs fully where the first call said it matters for the tag, and '
+-        'none where it said not; an edge\'s weight for that query tag is the tag\'s closeness plus '
+-        'that weight times where the edge stands in the facet\'s ranking among the graph\'s eligible '
+-        'edges, in the query tag\'s own spread of closeness over the graph\'s tags; the facet net '
+-        'ranks the edges and is not read on the question side), and the chunk descriptions\' '
+-        "closeness to the question with the border's names taken out; each side's cloud is the chunks before the knee of its closeness sorted "
++        'each chunk\'s closest eligible tag to a query tag and the chunk descriptions\' closeness to '
++        "the question with the border's names taken out, closeness alone; each side's cloud is the "
++        'chunks before the knee of its closeness sorted '
+         'from the nearest (`v4_walk.levels_of`), the knee looked for among the values above the '
+         'median, so a cloud holds at most half the border; a '
+         "chunk's step is 2 in both clouds, 3 in one, 4 in neither; the parents holding the majority "
+         "of the chunks in a cloud are the scope, whose chunks come first inside a step of the clouds' "
+-        'order, then the two standings added. The chunks in both clouds (with none, those of the '
+-        'lowest step) are the '
+-        'chosen chunks. The 4-combo (`v4_walk.storyline`, the graph asked per question in '
++        "order, then the two sides' ranks counted equally: the description side's by closeness, the "
++        "tags side's place by the facets, ranks against ranks (`v4_walk.facet_relative_places`: per "
++        "query tag, the border's chunks ranked by closeness and again, among the same chunks, by the "
++        "facet net's value of the same edge in the facet the first call named for the query tag; a "
++        'chunk stands midway between its two ranks; where the facet does not matter for the tag, '
++        'closeness alone; each chunk takes the best place any query tag gives it). The chunks in '
++        'both clouds (with none, those of the lowest step) are the chosen chunks. The 4-combo (`v4_walk.storyline`, the graph asked per question in '
+         '`STORYLINE_CYPHER`): every other chunk of the clouds is tied to each chosen chunk by scope '
+         '(the same parent), entities (a person tied to both, through the person-to-chunk edges), '
+         'time (the smallest gap between a record of the one and a record of the other, from the '
+@@ -352,9 +334,6 @@ FIELDS = {
+                 'eligible_edges': 'Edges that carry such a tag.',
+                 'product_named_tags': "Tags that are a product's name and are never compared.",
+                 'chunks_with_an_eligible_edge': 'Chunks of the pool that carry an eligible tag.',
+-                'edges_with_a_place': "Edges that carry their premade places in the facets' "
+-                                      'rankings (w_pos, test/graph/build_edge_places.py); the run '
+-                                      'starts only when every eligible edge does.',
+                 'named_structure_nodes': whole('Per kind of structure node (Product, Channel, '
+                                                'Employee, Customer, Company), how many carry '
+                                                'name_keys the question is matched against.'),
+@@ -451,22 +430,22 @@ FIELDS = {
+                                 'transcript.',
+                 'chunks_in_scope': 'Chunks of the border under those parents.',
+             }),
+-            'facets': sub("The query's facets as an influence on the tag relationship: per "
+-                          "query tag, the facet the first call named for it weighs fully where the "
+-                          "first call said it matters for the tag, and none where it said not; an "
+-                          "edge's weight for that query tag is the tag's closeness plus that "
+-                          "weight times where the edge stands in the facet's ranking among the "
+-                          "graph's eligible edges, in the query tag's own spread of closeness.", {
++            'facets': sub("The query's facets as ranks against ranks: per query tag, the "
++                          "border's chunks ranked by closeness and again, among the same chunks, by "
++                          "the facet net's value of the same edge in the facet the first call named; "
++                          'a chunk stands midway between its two ranks; each chunk takes the best '
++                          'place any query tag gives it.', {
+                 'per_query_tag': sub('One entry a query tag, in the order of the two tag lists (a '
+                                      'phrase written in both lists stands twice).', {
+                     'phrase': 'The query tag as the first call wrote it.',
+                     'facet': 'The one facet the first call named as mattering most for it.',
+                     'matters': 'Whether the first call said that facet matters for it at all; '
+-                               'only then does the facet weigh.',
++                               'only then does the facet rank its chunks.',
+                 }),
+-                'query_tags_with_a_weight': 'How many query tags have a facet that weighs.',
+-                'chunks_whose_nearness_changed': "Chunks of the border whose nearness through "
+-                                                 'their tags the facets changed.',
++                'query_tags_with_a_facet': 'How many query tags have a facet that ranks.',
++                'chunks_whose_place_changed': "Chunks of the border whose tags side's place the "
++                                              'facets changed, against their place by closeness '
++                                              'alone.',
+             }),
+             'storyline': sub("The 4-combo: the chosen chunks (those in both clouds; with none, "
+                              "those of the lowest step) and how the other chunks of the clouds are "
+@@ -507,12 +486,20 @@ FIELDS = {
+             'delivered_description_level': "1 when it is in the description side's cloud, 2 when "
+                                            'it is not.',
+             'delivered_in_scope': 'Whether it sits under a parent of the scope.',
+-            'delivered_value': "The two sides' standings added: each nearness less its middle "
+-                               "over its spread, over the border's chunks.",
+-            'delivered_tags_nearness': 'Its closeness through its tags as the order used it: its '
+-                                       'strongest edge to a query tag after the facets\' influence '
+-                                       '(the cosine of its closest tag where every facet weight '
+-                                       'is 0).',
++            'delivered_middle_rank': "The middle of its two ranks over the border, the tags "
++                                     "side's and the description side's: the order inside a step.",
++            'delivered_tags_rank': "Its tags side's rank over the border, from its place.",
++            'delivered_description_rank': "Its description side's rank over the border, by "
++                                          'closeness.',
++            'delivered_tags_place': "Its tags side's place: the best place a query tag gives it.",
++            'delivered_closeness_rank': 'Under that query tag, its rank by closeness among the '
++                                        "border's chunks.",
++            'delivered_facet_rank': 'Under that query tag, its rank by the named facet among the '
++                                    "border's chunks (its rank by closeness where the facet does "
++                                    'not matter for the tag).',
++            'delivered_named_facet': 'The facet the first call named for that query tag; empty '
++                                     'where the first call said it does not matter.',
++            'delivered_tags_nearness': 'The cosine of its closest tag to a query tag.',
+             'delivered_description_nearness': "The cosine of its description to the question "
+                                               'without the names.',
+             'delivered_query_description_nearness': "The cosine of its description to the "
+@@ -520,15 +507,12 @@ FIELDS = {
+                                                     'enter the order.',
+             'delivered_question_nearness': 'The cosine of its description to the question as '
+                                            'asked. It does not enter the order.',
+-            'delivered_query_tags': 'The query tag of the edge that gave that closeness, counted '
+-                                    'from 0 over the two tag lists; -1 for a chunk with no '
+-                                    'eligible tag.',
+-            'delivered_graph_tags': "That edge's graph tag, by name; empty for such a chunk.",
++            'delivered_query_tags': 'The query tag that gave its place, counted from 0 over the '
++                                    'two tag lists; -1 for a chunk with no eligible tag.',
++            'delivered_graph_tags': "The graph tag of its closest edge to that query tag, by name; "
++                                    'empty for such a chunk.',
+             'delivered_query_tag_phrases': 'That query tag as the first call wrote it; empty '
+                                            'for such a chunk.',
+-            'delivered_tags_nearness_as_found': "The cosine of its closest tag to a query tag "
+-                                                "before the facets' influence; "
+-                                                "delivered_tags_nearness is the one after it.",
+             'delivered_chosen': 'Whether it is one of the chosen chunks.',
+             'delivered_storyline_strength': 'How strongly it is tied to the chosen chunks: the '
+                                             'ways it is tied, added over the chosen chunks. The '
+@@ -593,8 +577,6 @@ FIELDS = {
+             'delivered_on_each_step': whole('How many of the delivered chunks stand on each '
+                                             'step.'),
+             'delivered_in_scope': 'How many of the delivered chunks are in scope.',
+-            'delivered_dealt_another_closeness': "How many of the delivered chunks the facets' "
+-                                                 'influence gave another nearness.',
+         }),
+         'chunk_ids': 'The record ids behind each delivered text, one list a text.',
+         'returned': 'How many texts were handed over, the one cut at the budget counted.',
+@@ -664,7 +646,7 @@ class Prepared:
+ class Asked:
+     """What the graph gave for one question (`_ask_graph`): the border's chunks with their pointer,
+     product and channels, the eligible graph tags on them with their edges as a layer
+-    (`v4_walk.build_layer`, the places premade), the query tags' closeness to those tags, the
++    (`v4_walk.build_layer`), the query tags' closeness to those tags, the
+     chunk descriptions' closeness to the question without the names, the question and the
+     description, and the people of the border's products."""
+     chunk_rows: tuple
+@@ -967,8 +949,8 @@ def prepare_over_corpus(corpus) -> Prepared:
+     MUST be asked of the DB"; every question asks the graph for its own, `_ask_graph`). The edges'
+     facet values are read whole once to check they are the ones the FacetLayer node was written
+     with (`graph_layer.read`); the topic value on each edge is checked against the cosine of its
+-    two vectors in the graph; and the premade places and facet levels, the structure names, the
+-    customer edges, the chunks' times and every pool product's people must be in the graph. A
++    two vectors in the graph; and the structure names, the customer edges, the chunks' times and
++    every pool product's people must be in the graph. A
+     graph tag that is a product's name is structure, not a tag to match: the products' names
+     are kept to leave those tags out."""
+     started = time.perf_counter()
+@@ -991,8 +973,6 @@ def prepare_over_corpus(corpus) -> Prepared:
+             counts = session.execute_read(lambda tx: tx.run(
+                 COUNTS_CYPHER, run=RUN_ID, products=folded).single().data())
+             dim = session.execute_read(lambda tx: tx.run(DIM_CYPHER).single()['dim'])
+-            values = session.execute_read(lambda tx: tx.run(LAYER_VALUES_CYPHER,
+-                                                            run=RUN_ID).single().data())
+             pool_products = session.execute_read(lambda tx: tx.run(
+                 PERSON_PRODUCTS_CYPHER, run=RUN_ID).single()['products'])
+             persons = product_persons(
+@@ -1011,10 +991,6 @@ def prepare_over_corpus(corpus) -> Prepared:
+     if counts['topic_apart'] > TOPIC_TOLERANCE:
+         raise ValueError('The topic value on an edge differs from the cosine of its vectors '
+                          f'by {counts["topic_apart"]:.2g}: the layer was written from other vectors')
+-    if (counts['edges_with_a_place'] != counts['eligible_edges'] or not values['middle']
+-            or not values['spread']):
+-        raise ValueError('The premade facet places are missing or stale: run '
+-                         'test/graph/build_edge_places.py write')
+     if not timed['with_a_time'] or timed['old_spans']:
+         raise ValueError("The chunks do not carry their records' own times: run "
+                          'test/graph/build_chunk_times.py write')
+@@ -1044,7 +1020,6 @@ def prepare_over_corpus(corpus) -> Prepared:
+                    'eligible_edges': int(counts['eligible_edges']),
+                    'product_named_tags': int(counts['product_named_tags']),
+                    'chunks_with_an_eligible_edge': int(counts['chunks_with_an_eligible_edge']),
+-                   'edges_with_a_place': int(counts['edges_with_a_place']),
+                    'named_structure_nodes': named,
+                    'customer_chunk_edges': int(customer_edges),
+                    'channels_apart': sum(len(p['apart']) for p in persons.values()),
+@@ -1188,9 +1163,8 @@ def _ask_graph(chunk_ids, tag_vectors, text_vectors, prepared):
+     asked of the DB"; `QUESTION_CHUNKS_CYPHER`, `QUESTION_TAGS_CYPHER`): the border's chunks with
+     their record pointer, product and channels, and their descriptions' closeness to each text
+     vector; the eligible graph tags on them with each tag's closeness to each query tag vector and
+-    its edges' five values and premade places, in the order of chunk id and tag; the people of the
+-    border's products (`product_persons`); the places' premade middle and spread. Returns an
+-    `Asked`."""
++    its edges' five values, in the order of chunk id and tag; the people of the border's products
++    (`product_persons`). Returns an `Asked`."""
+     chunk_ids = list(chunk_ids)
+     with _graph().session(database=DATABASE, default_access_mode='READ') as session:
+         chunk_rows = session.execute_read(lambda tx: [dict(r) for r in tx.run(
+@@ -1204,8 +1178,6 @@ def _ask_graph(chunk_ids, tag_vectors, text_vectors, prepared):
+                 CHANNEL_PEOPLE_CYPHER, products=products)]),
+             session.execute_read(lambda tx: [dict(r) for r in tx.run(
+                 MEETING_PEOPLE_CYPHER, products=products)]))
+-        values = session.execute_read(lambda tx: tx.run(LAYER_VALUES_CYPHER,
+-                                                        run=RUN_ID).single().data())
+     ids = tuple(str(r['chunkId']) for r in chunk_rows)
+     if sorted(ids) != sorted(set(chunk_ids)):
+         raise ValueError('The graph gave other chunks than the border holds')
+@@ -1214,19 +1186,16 @@ def _ask_graph(chunk_ids, tag_vectors, text_vectors, prepared):
+         raise ValueError(f'The graph names no channel and no meeting for {missing}')
+     at = {c: i for i, c in enumerate(ids)}
+     graph_tags = tuple(str(r['tag']) for r in tag_rows)
+-    edges = sorted((str(e['chunk']), t, e['values'], e['places'])
++    edges = sorted((str(e['chunk']), t, e['values'])
+                    for t, row in enumerate(tag_rows) for e in row['edges'])
+     if not edges:
+         raise ValueError('No chunk of the border carries an eligible tag')
+-    edge_values = np.asarray([v for _, _, v, _ in edges], dtype=np.float64)
++    edge_values = np.asarray([v for _, _, v in edges], dtype=np.float64)
+     layer = WK.build_layer(ids, [str(r['kind'] or '') for r in chunk_rows],
+                            np.ones(len(graph_tags), dtype=bool),
+-                           np.array([t for _, t, _, _ in edges], dtype=np.int64),
+-                           np.array([at[c] for c, _, _, _ in edges], dtype=np.int64),
+-                           edge_values[:, 0], edge_values[:, 1:],
+-                           pos=np.asarray([p for _, _, _, p in edges], dtype=np.float64))
+-    layer = {**layer, 'place_middle': np.asarray(values['middle'], dtype=np.float64),
+-             'place_spread': np.asarray(values['spread'], dtype=np.float64)}
++                           np.array([t for _, t, _ in edges], dtype=np.int64),
++                           np.array([at[c] for c, _, _ in edges], dtype=np.int64),
++                           edge_values[:, 0], edge_values[:, 1:])
+     rows = tuple({'chunkId': str(r['chunkId']), 'kind': r['kind'], 'parent': r['parent'],
+                   'ordinal': r['ordinal'], 'locator': r['locator'], 'relpath': r['relpath'],
+                   'sha256': r['sha256'], 'product': str(r['product']),
+@@ -1238,17 +1207,6 @@ def _ask_graph(chunk_ids, tag_vectors, text_vectors, prepared):
+                  persons=persons)
+ 
+ 
+-def _tag_spread(tag_vectors, prepared):
+-    """Per query tag the spread of its closeness over every eligible graph tag, asked of the graph
+-    (`TAG_SPREAD_CYPHER`: the median distance from the middle, times 1.4826): the unit the facets'
+-    influence is counted in (`v4_walk.influenced_edge_values`)."""
+-    with _graph().session(database=DATABASE, default_access_mode='READ') as session:
+-        rows = session.execute_read(lambda tx: [dict(r) for r in tx.run(
+-            TAG_SPREAD_CYPHER, run=RUN_ID, products=list(prepared.products),
+-            vectors=_floats(tag_vectors))])
+-    return WK.MAD_TO_SPREAD * np.asarray([r['distance'] for r in rows], dtype=np.float64)
+-
+-
+ def _pool_ids():
+     """Every chunk of the pool, asked of the graph: the border when no name stands in a question."""
+     with _graph().session(database=DATABASE, default_access_mode='READ') as session:
+@@ -1311,26 +1269,22 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
+     parents = sorted({str(row['parent']) for row in asked.chunk_rows})
+     at = {name: i for i, name in enumerate(parents)}
+     parent_of = np.array([at[str(row['parent'])] for row in asked.chunk_rows], dtype=np.int64)
+-    # The query's facets weigh the tag relationship, per query tag: the facet the first call
+-    # named for it weighs fully where it said the facet matters for the tag, none where it said
+-    # not. Where nothing weighs, the influence is 0 and its unit, the query tags' spread over the
+-    # graph's tags, is not asked for.
+-    found_near, _ = WK.tags_nearness(layer, query_rows)
++    # The query's facets, ranks against ranks: per query tag its chunks by closeness and by the
++    # facet the first call named for it, where it said the facet matters for the tag; the clouds
++    # are read off closeness alone and the places order inside them.
+     written = (*query.tags, *query.query_tags)
+-    weights = np.array([[1. if t.matters and f == t.facet_index else 0.
+-                         for f in range(len(WK.RANKING_FACETS))] for t in written])
+-    close_spread = (_tag_spread(tag_vectors, prepared) if weights.any()
+-                    else np.zeros(len(written)))
+-    dealt, dealt_edge, dealt_query_tag = WK.facet_influenced_nearness(
+-        layer, query_rows, weights, close_spread=close_spread)
++    facet_of = np.array([t.facet_index if t.matters else -1 for t in written], dtype=np.int64)
++    placed = WK.facet_relative_places(layer, query_rows, facet_of, inside)
+     facets_said = {
+         'per_query_tag': [{'phrase': t.text, 'facet': t.facet, 'matters': t.matters}
+                           for t in written],
+-        'query_tags_with_a_weight': int(weights.any(axis=1).sum()),
+-        'chunks_whose_nearness_changed': int(sum(1 for i in inside if dealt[i] != found_near[i]))}
+-    combo = WK.cloud_combo(layer, query_rows, d_bare, inside, parent_of, tags_near=dealt)
+-    # the pointers a row keeps name the edge and query tag that gave the closeness the order used
+-    combo = {**combo, 'edge': dealt_edge, 'query_tag': dealt_query_tag}
++        'query_tags_with_a_facet': int((facet_of >= 0).sum()),
++        'chunks_whose_place_changed': int(sum(1 for i in inside
++                                              if placed['place'][i] != placed['place_by_closeness'][i]))}
++    combo = WK.cloud_combo(layer, query_rows, d_bare, inside, parent_of, tags_place=placed['place'])
++    # the pointers a row keeps name the query tag that gave the place and its closest edge
++    combo = {**combo, 'edge': placed['edge'], 'query_tag': placed['query_tag'], 'placed': placed,
++             'facet_of': facet_of}
+     gauged = combo['record']
+     gauged['scopes_taken'] = [parents[s] for s in gauged['scopes_taken']]
+     # The 4-combo: the chunks of both clouds (with none, of the lowest step) are the chosen chunks;
+@@ -1344,8 +1298,7 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
+     pairs = _storyline_pairs([asked.chunk_ids[i] for i in chosen],
+                              [asked.chunk_ids[i] for i in others])
+     at_chunk = {c: i for i, c in enumerate(asked.chunk_ids)}
+-    profiles = WK.query_tag_profiles(layer, WK.influenced_edge_values(
+-        layer, query_rows, weights, close_spread=close_spread))
++    profiles = WK.query_tag_profiles(layer, query_rows[:, layer['edge_tag']])
+     story = WK.storyline(
+         len(asked.chunk_ids), chosen, [at_chunk[p['start']] for p in pairs],
+         [at_chunk[p['chunk']] for p in pairs], [bool(p['same_parent']) for p in pairs],
+@@ -1366,7 +1319,7 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
+     scope['delivered_under_the_names'] = len(delivered) if border else 0
+     diagnostics, ranking = _combo_record(qid, combo, asked, query, order, delivered, scope, said,
+                                          boundary, query_rows, tags, question_side,
+-                                         d_description, d_question, found_near)
++                                         d_description, d_question)
+     chosen_set = set(chosen.tolist())
+     ranking['delivered_chosen'] = [i in chosen_set for i in delivered]
+     ranking['delivered_storyline_strength'] = [int(story['strength'][i]) for i in delivered]
+@@ -1402,13 +1355,13 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
+ 
+ 
+ def _combo_record(qid, combo, asked, query, order, delivered, scope, said, boundary, rows, tags,
+-                  question_side, d_description, d_question, found_near=None):
++                  question_side, d_description, d_question):
+     """What a row keeps of the step as it stands (`v4_walk.cloud_combo`,
+-    `facet_influenced_nearness`): per delivered chunk its step, its level and nearness on each
+-    side, whether it is in scope, the query tag (as written) and graph tag of the edge that gave
+-    its nearness through the tags, and its closeness before the facets' influence beside the one
+-    after. The first call's description and the question as asked do not enter the order; their
+-    nearness is kept beside it."""
++    `facet_relative_places`): per delivered chunk its step, its level and nearness on each side,
++    whether it is in scope, its ranks, the query tag (as written) that gave its tags side's place
++    with its two ranks under it and the facet named for it, and the graph tag of its closest edge
++    to that query tag. The first call's description and the question as asked do not enter the
++    order; their nearness is kept beside it."""
+     layer = asked.layer
+     steps = [int(combo['step'][i]) for i in delivered]
+     edges = [int(combo['edge'][i]) for i in delivered]
+@@ -1434,7 +1387,15 @@ def _combo_record(qid, combo, asked, query, order, delivered, scope, said, bound
+                'delivered_description_level': [int(combo['level']['description'][i])
+                                                for i in delivered],
+                'delivered_in_scope': [bool(combo['in_scope'][i]) for i in delivered],
+-               'delivered_value': [float(combo['value'][i]) for i in delivered],
++               'delivered_middle_rank': [float(combo['middle_rank'][i]) for i in delivered],
++               'delivered_tags_rank': [float(combo['rank']['tags'][i]) for i in delivered],
++               'delivered_description_rank': [float(combo['rank']['description'][i])
++                                              for i in delivered],
++               'delivered_tags_place': [float(combo['placed']['place'][i]) for i in delivered],
++               'delivered_closeness_rank': [float(combo['placed']['closeness_rank'][i])
++                                            for i in delivered],
++               'delivered_facet_rank': [float(combo['placed']['facet_rank'][i])
++                                        for i in delivered],
+                'delivered_tags_nearness': [float(combo['tags_nearness'][i]) for i in delivered],
+                'delivered_description_nearness': [float(combo['description_nearness'][i])
+                                                   for i in delivered],
+@@ -1448,8 +1409,9 @@ def _combo_record(qid, combo, asked, query, order, delivered, scope, said, bound
+     ranking['delivered_query_tag_phrases'] = [phrases[int(combo['query_tag'][i])]
+                                               if int(combo['query_tag'][i]) >= 0 else None
+                                               for i in delivered]
+-    if found_near is not None:
+-        ranking['delivered_tags_nearness_as_found'] = [float(found_near[i]) for i in delivered]
+-        diagnostics['delivered_dealt_another_closeness'] = sum(
+-            1 for i in delivered if combo['tags_nearness'][i] != found_near[i])
++    written = (*query.tags, *query.query_tags)
++    ranking['delivered_named_facet'] = [
++        written[int(combo['query_tag'][i])].facet
++        if int(combo['query_tag'][i]) >= 0 and combo['facet_of'][int(combo['query_tag'][i])] >= 0
++        else None for i in delivered]
+     return diagnostics, ranking
+diff --git a/test/artefact/v4_walk.py b/test/artefact/v4_walk.py
+index db8d898..c64cce2 100644
+--- a/test/artefact/v4_walk.py
++++ b/test/artefact/v4_walk.py
+@@ -1,11 +1,12 @@
+ """artefact_v4's arithmetic: arrays in, arrays out.
+ 
+ `build_layer` holds what does not depend on the question. Per question: `tags_nearness` is each
+-chunk's closest tag to a query tag; `facet_influenced_nearness` is the same with the query's
+-facets as an influence on the tag relationship; `cloud_combo` finds the tags' side's
+-cloud and the chunk descriptions' side's cloud, each the chunks before the knee of its own
+-closeness, a chunk's step is its two levels added (in a cloud or not), and the scope gauged after
+-that (`majority_scopes`) puts its chunks first inside a step.
++chunk's closest tag to a query tag; `facet_relative_places` ranks each query tag's chunks by
++closeness and again by the facet named for it, a chunk standing midway between the two;
++`cloud_combo` finds the tags' side's cloud and the chunk descriptions' side's cloud from closeness
++alone, each the chunks before the knee of its own closeness, a chunk's step is its two levels added
++(in a cloud or not), the scope gauged after that (`majority_scopes`) puts its chunks first inside a
++step, and inside a step the two sides' ranks decide.
+ `storyline` is the 4-combo: how strongly each chunk of the clouds is tied to the chosen chunks by
+ scope, entities, time and nearness in what the query asks about (`query_tag_profiles`), and
+ `storyline_order` puts the chosen chunks first, the rest of the clouds by that strength, and what
+@@ -20,7 +21,6 @@ from scipy.stats import rankdata
+ 
+ FACETS = ('topic', 'temporal', 'why', 'activity', 'concreteness')
+ RANKING_FACETS = FACETS[1:]
+-MAD_TO_SPREAD = 1.4826
+ CLUSTER_BINS = 1500      # the resolution of the clustering on the line: a cut falls on a bin edge
+ 
+ 
+@@ -45,24 +45,12 @@ def best_edges(value, edge_chunk, n_chunks):
+     return best, edge
+ 
+ 
+-def positions(values):
+-    """Per column: each value's average rank (1 the smallest, ties sharing a rank) over the
+-    number of rows."""
+-    values = np.asarray(values, dtype=np.float64)
+-    if values.ndim != 2 or not values.shape[0] or not np.isfinite(values).all():
+-        raise ValueError('Expected a nonempty table of finite values, one row per edge')
+-    ranks = [rankdata(values[:, k], method='average') for k in range(values.shape[1])]
+-    return np.column_stack(ranks) / values.shape[0]
+-
+-
+-def build_layer(chunk_ids, chunk_kinds, eligible, edge_tag, edge_chunk, edge_topic, edge_facets,
+-                pos=None):
+-    """The edges of the eligible graph tags with their five values and their positions, each
+-    chunk's edge count and record kind, and each chunk's place in chunk-id order.
++def build_layer(chunk_ids, chunk_kinds, eligible, edge_tag, edge_chunk, edge_topic, edge_facets):
++    """The edges of the eligible graph tags with their five values, each chunk's edge count and
++    record kind, and each chunk's place in chunk-id order.
+ 
+     eligible per graph tag; edge_tag, edge_chunk, edge_topic per edge and edge_facets (edges, 4)
+-    in RANKING_FACETS order, the higher the more; pos, when given, the edges' places as premade
+-    over the whole graph (edges, 5), else their places among the edges given (`positions`)."""
++    in RANKING_FACETS order, the higher the more."""
+     chunk_ids = [str(c) for c in chunk_ids]
+     n = len(chunk_ids)
+     eligible = np.asarray(eligible, dtype=bool)
+@@ -86,13 +74,8 @@ def build_layer(chunk_ids, chunk_kinds, eligible, edge_tag, edge_chunk, edge_top
+     kind_names = sorted(set(kinds))
+     id_rank = np.empty(n, dtype=np.int64)
+     id_rank[sorted(range(n), key=lambda i: chunk_ids[i])] = np.arange(n)
+-    if pos is not None:
+-        pos = np.asarray(pos, dtype=np.float64)
+-        if pos.shape != (edge_tag.size, len(FACETS)):
+-            raise ValueError('Expected five premade places per edge')
+     return {'chunk_ids': chunk_ids, 'chunks': n, 'eligible': eligible, 'edges': sel,
+             'edge_tag': edge_tag[sel], 'edge_chunk': edge_chunk[sel], 'raw': raw,
+-            'pos': positions(raw) if pos is None else pos[sel],
+             'n_c': np.bincount(edge_chunk[sel], minlength=n).astype(np.int64),
+             'id_rank': id_rank, 'kind_names': kind_names,
+             'kind': np.array([kind_names.index(k) for k in kinds], dtype=np.int64)}
+@@ -206,36 +189,11 @@ def levels_of(values):
+     return level, len(ends)
+ 
+ 
+-def influenced_edge_values(layer, cosines, weights, close_spread=None):
+-    """Per query tag and eligible edge, the edge's weight with the query's facets as an influence
+-    (`facet_influenced_nearness`): the tag's closeness to the query tag plus, per facet, the query
+-    tag's weight for it times where the edge stands in the facet's ranking, in units of the query
+-    tag's own spread of closeness over the graph's tags. Where the edge stands is its place less
+-    the middle place over the spread of places, over the whole graph when the layer carries them
+-    (`place_middle`, `place_spread`), else over its own edges; close_spread, when given, is each
+-    query tag's spread over the whole graph's tags, else it is taken over the layer's tags.
+-    Returns (query tags, edges)."""
+-    rows = np.asarray(cosines, dtype=np.float64)
+-    weights = np.asarray(weights, dtype=np.float64)
+-    place = layer['pos'][:, 1:]
+-    middle = layer['place_middle'] if 'place_middle' in layer else np.median(place, axis=0)
+-    spread_place = (layer['place_spread'] if 'place_spread' in layer
+-                    else MAD_TO_SPREAD * np.median(np.abs(place - middle), axis=0))
+-    stands = np.where(spread_place > 0, (place - middle) / np.where(spread_place > 0, spread_place, 1.), 0.)
+-    if close_spread is None:
+-        eligible = layer['eligible']
+-        close_spread = [MAD_TO_SPREAD * float(np.median(np.abs(r[eligible] - np.median(r[eligible]))))
+-                        for r in rows]
+-    close_spread = np.asarray(close_spread, dtype=np.float64)
+-    if close_spread.shape != (rows.shape[0],):
+-        raise ValueError('Expected one spread of closeness per query tag')
+-    return rows[:, layer['edge_tag']] + close_spread[:, None] * (weights @ stands.T)
+-
+-
+ def query_tag_profiles(layer, on_edge):
+-    """Per chunk and query tag, the weight of the chunk's strongest edge for that query tag
+-    (`influenced_edge_values`): the chunk's closeness to each thing the query asks about. nan for a
+-    chunk with no eligible edge. Returns (chunks, query tags)."""
++    """Per chunk and query tag, the closeness of the chunk's strongest edge for that query tag
++    (on_edge: (query tags, edges), each edge's graph tag's closeness to the query tag): the chunk's
++    closeness to each thing the query asks about. nan for a chunk with no eligible edge. Returns
++    (chunks, query tags)."""
+     on_edge = np.asarray(on_edge, dtype=np.float64)
+     out = np.full((layer['chunks'], on_edge.shape[0]), -np.inf)
+     np.maximum.at(out, layer['edge_chunk'], on_edge.T)
+@@ -335,38 +293,66 @@ def storyline_order(combo_order, start, strength, region):
+     return first + tied + rest
+ 
+ 
+-def facet_influenced_nearness(layer, cosines, weights, close_spread=None):
+-    """The query's facets as an influence on the tag relationship, not an order (his 2026-10-15
+-    "they are supposed to influence the already existing relationship for chunks and tags",
+-    2026-10-16 "YOU CANNOT FORCE THEM TO TRY AND CHANGE THE FUCKING ORDERS"; 2026-08-31 "the
+-    facetweights from the QUERY, determines how many fucks the retrieval take to each tag's
+-    facets"; 2026-09-18 "the main weight on a tag is the topic one, and the others adjust that
+-    weight").
+-
+-    An edge's weight for a query tag is the tag's closeness to it, the existing relationship.
+-    The facets add to it: for each facet, the query tag's weight for that facet (0 when the facet
+-    does not matter for the tag, up to 1) times where the edge stands in that facet's ranking
+-    (its place less the middle, over the spread of places), in units of that query tag's own
+-    spread of closeness over the graph's tags. With every weight 0 nothing changes. A chunk's
+-    nearness through its tags is its strongest edge to any query tag after the influence.
+-
+-    cosines: (query tags, graph tags); weights: (query tags, 4) in RANKING_FACETS order, each 0 to
+-    1. Returns per chunk the nearness, the edge and the query tag that carry it (-1 with no
+-    eligible edge; such a chunk stands with the farthest)."""
++def facet_relative_places(layer, cosines, facet_of, inside):
++    """The query's facets as ranks against ranks (his 2026-10-19 "the chunks are chosen first based
++    on similarity, then that "most similar" IS a rank, and then that rank list is compared to the
++    facets and is adjusted for relative rank", "that i goes both ways"; the facet net was trained
++    to say which of two tag-chunk pairs is the more relevant in one facet).
++
++    Per query tag: the border's chunks ranked by their closeness to it, each through its closest
++    eligible tag, and ranked again, among the same chunks, by the net's value of that same edge in
++    the facet the first call named for the query tag. A chunk stands midway between its two ranks:
++    the facet lifts it by half the gap when it ranks it higher, lowers it by half when lower (half
++    is the one share no number has to give); equals by closeness, then chunk id. Where the first
++    call said the facet does not matter for the tag, closeness alone. A chunk with no eligible edge
++    stands last on both. Each chunk then takes the best place any query tag gives it (taking the
++    best, counting no tags, is the agent's choice); every query tag's list holds the same chunks.
++
++    cosines: (query tags, graph tags); facet_of: per query tag the index of its named facet in
++    RANKING_FACETS, -1 where it does not matter; inside: the border's chunk indices. Returns per
++    chunk (inf outside the border) its place, 1 the first, the query tag and the edge that give it,
++    its rank by closeness and by the facet under that query tag, and its place by closeness alone."""
+     rows = np.asarray(cosines, dtype=np.float64)
+-    weights = np.asarray(weights, dtype=np.float64)
+-    if rows.ndim != 2 or rows.shape[1] != layer['eligible'].size:
++    facet_of = np.asarray(facet_of, dtype=np.int64)
++    inside = np.asarray(inside, dtype=np.int64)
++    n = layer['chunks']
++    if rows.ndim != 2 or not rows.shape[0] or rows.shape[1] != layer['eligible'].size:
+         raise ValueError('Expected one cosine row over the graph tags per query tag')
+-    if weights.shape != (rows.shape[0], len(RANKING_FACETS)) or (weights < 0).any() or (weights > 1).any():
+-        raise ValueError('Expected four facet weights from 0 to 1 per query tag')
+-    tag_e, chunk_e, n = layer['edge_tag'], layer['edge_chunk'], layer['chunks']
+-    on_edge = influenced_edge_values(layer, rows, weights, close_spread)
+-    best_q = on_edge.argmax(axis=0)
+-    value = on_edge[best_q, np.arange(tag_e.size)]
+-    near, edge = best_edges(value, chunk_e, n)
+-    has = edge >= 0
+-    query_tag = np.where(has, best_q[np.maximum(edge, 0)], -1)
+-    return np.where(has, near, near[has].min()), edge, query_tag
++    if facet_of.shape != (rows.shape[0],) or (facet_of < -1).any() \
++            or (facet_of >= len(RANKING_FACETS)).any():
++        raise ValueError('Expected one named facet, or -1, per query tag')
++    if inside.ndim != 1 or not inside.size or inside.min() < 0 or inside.max() >= n \
++            or np.unique(inside).size != inside.size:
++        raise ValueError('Expected the distinct chunks of the border')
++    tag_e, chunk_e, values = layer['edge_tag'], layer['edge_chunk'], layer['raw'][:, 1:]
++    q_count, m = rows.shape[0], inside.size
++    place = np.full((q_count, n), np.inf)
++    plain = np.full((q_count, n), np.inf)
++    by_closeness = np.full((q_count, n), np.nan)
++    by_facet = np.full((q_count, n), np.nan)
++    carried = np.full((q_count, n), -1, dtype=np.int64)
++    ids = layer['id_rank'][inside]
++    for q in range(q_count):
++        near, edge = best_edges(rows[q, tag_e], chunk_e, n)
++        near, edge = near[inside], edge[inside]
++        has = edge >= 0
++        last = float(has.sum() + 1)
++        s = np.full(m, last)
++        s[has] = rankdata(-near[has], method='average')
++        f = s
++        if facet_of[q] >= 0:
++            f = np.full(m, last)
++            f[has] = rankdata(-values[edge[has], facet_of[q]], method='average')
++        mid = (s + f) / 2.
++        place[q, inside[np.lexsort((ids, s, mid))]] = np.arange(1, m + 1)
++        plain[q, inside[np.lexsort((ids, s))]] = np.arange(1, m + 1)
++        by_closeness[q, inside], by_facet[q, inside], carried[q, inside] = s, f, edge
++    best = np.argmin(place, axis=0)
++    at = np.arange(n)
++    query_tag = np.where(np.isfinite(place[best, at]), best, -1)
++    return {'place': place[best, at], 'query_tag': query_tag, 'edge': carried[best, at],
++            'closeness_rank': by_closeness[best, at], 'facet_rank': by_facet[best, at],
++            'place_by_closeness': plain.min(axis=0)}
+ 
+ 
+ def majority_scopes(hits, scope_of):
+@@ -393,7 +379,7 @@ def majority_scopes(hits, scope_of):
+     return sorted(int(s) for s, count in zip(scopes, held) if count >= last)
+ 
+ 
+-def cloud_combo(layer, cosines, d_near, inside, scope_of, tags_near=None):
++def cloud_combo(layer, cosines, d_near, inside, scope_of, tags_place=None):
+     """The chunk cloud and the tags' cloud together, over the chunks of a border (his 2026-10-12
+     "the combo should fucking work.. So, if we use the chunk-cloud, see if you can find a way to
+     combo or lift with the tags", his 2026-10-10 "overlapping clouds for each step"). No
+@@ -411,13 +397,15 @@ def cloud_combo(layer, cosines, d_near, inside, scope_of, tags_near=None):
+     The scope    gauged after the steps, from the chunks in at least one cloud (with none, every
+                  chunk): the scopes holding the majority of those chunks (`majority_scopes`). It
+                  is weight and not a cut: inside a step the chunks in scope come first.
+-    The order    the step, then in scope first, then the two sides' standings added (each
+-                 nearness less its middle over its spread, over the border), then chunk id.
+-
+-    inside: the border's chunk indices; scope_of: per chunk the number of its scope; tags_near:
+-    the tags side's closeness per chunk when it was made otherwise (`facet_influenced_nearness`),
+-    the closest tag's closeness when not given. Returns the order (the border's chunks only), what
+-    lies behind it per chunk, and the record."""
++    The order    the step, then in scope first, then the two sides' ranks over the border
++                 counted equally (each chunk at the middle of its tags side's rank and its
++                 description side's rank; ranks against ranks, no cosine added to a rank), then
++                 chunk id.
++
++    inside: the border's chunk indices; scope_of: per chunk the number of its scope; tags_place:
++    the tags side's place per chunk when it was made otherwise (`facet_relative_places`), its
++    closeness when not given. The clouds are read off the closeness alone either way. Returns the
++    order (the border's chunks only), what lies behind it per chunk, and the record."""
+     n = layer['chunks']
+     d_near = np.asarray(d_near, dtype=np.float64)
+     inside = np.asarray(inside, dtype=np.int64)
+@@ -431,22 +419,22 @@ def cloud_combo(layer, cosines, d_near, inside, scope_of, tags_near=None):
+         raise ValueError('Expected the distinct chunks of the border')
+     rows = np.asarray(cosines, dtype=np.float64)
+     t_near, t_edge = tags_nearness(layer, rows)
+-    if tags_near is not None:
+-        t_near = np.asarray(tags_near, dtype=np.float64)
+-        if t_near.shape != (n,) or not np.isfinite(t_near).all():
+-            raise ValueError("Expected one finite tags' closeness per chunk")
++    if tags_place is not None:
++        tags_place = np.asarray(tags_place, dtype=np.float64)
++        if tags_place.shape != (n,) or not np.isfinite(tags_place[inside]).all():
++            raise ValueError("Expected one finite tags' place per chunk of the border")
+     query_tag = np.where(t_edge >= 0, rows[:, layer['edge_tag']].argmax(axis=0)[np.maximum(t_edge, 0)], -1)
+     sides = {'tags': t_near, 'description': d_near}
+     level = {name: np.zeros(n, dtype=np.int64) for name in sides}
+-    value = np.zeros(n)
+     for name, x in sides.items():
+-        here = x[inside]
+-        lv, _ = levels_of(here)
++        lv, _ = levels_of(x[inside])
+         level[name][inside] = np.where(lv >= 1, 1, 2)
+-        bulk = float(np.median(here))
+-        spread = MAD_TO_SPREAD * float(np.median(np.abs(here - bulk)))
+-        if spread > 0.:                        # a side whose values do not spread says nothing
+-            value[inside] += (here - bulk) / spread
++    rank = {name: np.full(n, np.nan) for name in sides}
++    rank['tags'][inside] = rankdata(tags_place[inside] if tags_place is not None
++                                    else -t_near[inside], method='average')
++    rank['description'][inside] = rankdata(-d_near[inside], method='average')
++    middle = np.full(n, np.nan)
++    middle[inside] = (rank['tags'][inside] + rank['description'][inside]) / 2.
+     step = np.zeros(n, dtype=np.int64)
+     step[inside] = level['tags'][inside] + level['description'][inside]
+     lowest = int(step[inside].min())
+@@ -456,7 +444,7 @@ def cloud_combo(layer, cosines, d_near, inside, scope_of, tags_near=None):
+     taken = majority_scopes(hits[inside], scope_of[inside])
+     in_scope = np.zeros(n, dtype=bool)
+     in_scope[inside] = np.isin(scope_of[inside], taken)
+-    by = np.lexsort((layer['id_rank'][inside], -value[inside], ~in_scope[inside], step[inside]))
++    by = np.lexsort((layer['id_rank'][inside], middle[inside], ~in_scope[inside], step[inside]))
+     steps, counts = np.unique(step[inside], return_counts=True)
+     record = {'chunks': int(inside.size),
+               'clouds': {name: int((level[name][inside] == 1).sum()) for name in sides},
+@@ -465,7 +453,7 @@ def cloud_combo(layer, cosines, d_near, inside, scope_of, tags_near=None):
+               'scopes_taken': taken, 'chunks_in_scope': int(in_scope.sum())}
+     return {'order': inside[by].tolist(), 'tags_nearness': t_near, 'description_nearness': d_near,
+             'edge': t_edge, 'query_tag': query_tag, 'level': level, 'step': step,
+-            'in_scope': in_scope, 'value': value, 'record': record}
++            'in_scope': in_scope, 'rank': rank, 'middle_rank': middle, 'record': record}
+ 
+ 
+ def conversations(times):
+diff --git a/test/graph/build_edge_places.py b/test/graph/build_edge_places.py
+deleted file mode 100644
+index 74c0b61..0000000
+--- a/test/graph/build_edge_places.py
++++ /dev/null
+@@ -1,114 +0,0 @@
+-"""The facet layer's question-independent values, premade in the graph so the arm can ask for them
+-per question (his 2026-08-11 "everything that doesnt need to be ran in querytime should be
+-premade!"; 2026-10-07 "it MUST be asked of the DB").
+-
+-Over the eligible pool edges (a HAS_TAG edge of the run whose tag is not a product's name, into a
+-chunk of the pool), as `artefact_v4` reads them:
+-    w_pos           on each eligible edge: its place in each of the five facets' rankings
+-                    (`v4_walk.positions`: the average rank over the number of edges)
+-    place_middle    on the FacetLayer node: per ranking facet the middle place
+-    place_spread    on the FacetLayer node: per ranking facet the spread of the places (the median
+-                    distance from the middle times 1.4826)
+-No model call.
+-
+-    write    computes the values from the graph's edges and sets them (facet_floors, which an
+-             earlier version set on the node and nothing reads, is taken off)
+-    verify   counts the edges that carry w_pos and shows the node's values
+-    remove   takes them off
+-
+-    NEO4J_DATABASE=herb-eval-volmax .venv/Scripts/python.exe test/graph/build_edge_places.py write
+-"""
+-from __future__ import annotations
+-
+-import argparse
+-import os
+-import sys
+-from pathlib import Path
+-
+-import numpy as np
+-
+-ROOT = Path(__file__).resolve().parents[2]
+-for p in (ROOT / 'prod', ROOT / 'test'):
+-    if str(p) not in sys.path:
+-        sys.path.insert(0, str(p))
+-
+-from artefact import graph_layer as GL  # noqa: E402
+-from artefact import v4_walk as WK  # noqa: E402
+-from arms.artefact_v4 import EDGE_CYPHER, LAYER_CYPHER, PRODUCT_CYPHER, RUN_ID  # noqa: E402
+-from graph.db import _driver  # noqa: E402
+-
+-DATABASE = os.environ.get('NEO4J_DATABASE', 'herb-eval-volmax')
+-BATCH = 2000
+-
+-
+-def placed(endpoints, values, product_names):
+-    """The eligible edges (a tag that is not a product's name, case left aside) as (tag, chunk id),
+-    their places over those edges, and the node's two values. values: per edge its five facet
+-    values, topic first."""
+-    folded = {str(name).lower() for name in product_names}
+-    eligible = np.array([str(tag).lower() not in folded for tag, _ in endpoints], dtype=bool)
+-    raw = np.asarray(values, dtype=np.float64)[eligible]
+-    pos = WK.positions(raw)
+-    place = pos[:, 1:]
+-    middle = np.median(place, axis=0)
+-    spread = WK.MAD_TO_SPREAD * np.median(np.abs(place - middle), axis=0)
+-    kept = [e for e, ok in zip(endpoints, eligible) if ok]
+-    return kept, pos, {'place_middle': [float(x) for x in middle],
+-                       'place_spread': [float(x) for x in spread]}
+-
+-
+-def places(session):
+-    """The graph's edges, checked whole against the FacetLayer node (`graph_layer.read`), placed."""
+-    edges = [dict(r) for r in session.run(EDGE_CYPHER, run=RUN_ID)]
+-    node = [dict(r) for r in session.run(LAYER_CYPHER, run=RUN_ID)]
+-    layer = GL.read(edges, node)
+-    return placed(layer.endpoints, layer.values, [r['name'] for r in session.run(PRODUCT_CYPHER)])
+-
+-
+-def write(session):
+-    endpoints, pos, node = places(session)
+-    rows = [{'tag': t, 'chunk': c, 'pos': [float(x) for x in p]} for (t, c), p in zip(endpoints, pos)]
+-    for start in range(0, len(rows), BATCH):
+-        session.run('UNWIND $rows AS row MATCH (c:Chunk {chunk_id: row.chunk})-[r:HAS_TAG]->'
+-                    '(t:Tag {name: row.tag}) WHERE r.run_id = $run SET r.w_pos = row.pos',
+-                    rows=rows[start:start + BATCH], run=RUN_ID)
+-    session.run('MATCH (l:FacetLayer {run_id: $run}) SET l.place_middle = $middle, '
+-                'l.place_spread = $spread REMOVE l.facet_floors', run=RUN_ID,
+-                middle=node['place_middle'], spread=node['place_spread'])
+-    print(f'write: w_pos on {len(rows)} eligible edges; place_middle and place_spread on the '
+-          f'FacetLayer node of {DATABASE}')
+-    verify(session)
+-
+-
+-def verify(session):
+-    n = session.run('MATCH ()-[r:HAS_TAG]->() WHERE r.run_id = $run AND r.w_pos IS NOT NULL '
+-                    'RETURN count(r) AS n', run=RUN_ID).single()['n']
+-    node = session.run('MATCH (l:FacetLayer {run_id: $run}) RETURN l.place_middle AS middle, '
+-                       'l.place_spread AS spread, l.facet_floors IS NOT NULL AS old_floors',
+-                       run=RUN_ID).single()
+-    print(f'verify: {n} edges carry w_pos; middle {node["middle"]}; spread {node["spread"]}; '
+-          f'the old facet_floors still on the node: {node["old_floors"]}')
+-
+-
+-def remove(session):
+-    n = session.run('MATCH ()-[r:HAS_TAG]->() WHERE r.w_pos IS NOT NULL REMOVE r.w_pos '
+-                    'RETURN count(r) AS n').single()['n']
+-    session.run('MATCH (l:FacetLayer) REMOVE l.facet_floors, l.place_middle, l.place_spread')
+-    print(f'remove: w_pos taken off {n} edges, and the node\'s values off the FacetLayer node')
+-
+-
+-def main(argv=None):
+-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+-    ap.add_argument('step', choices=('write', 'verify', 'remove'))
+-    args = ap.parse_args(argv)
+-    driver = _driver()
+-    try:
+-        with driver.session(database=DATABASE) as session:
+-            {'write': write, 'verify': verify, 'remove': remove}[args.step](session)
+-    finally:
+-        driver.close()
+-    return 0
+-
+-
+-if __name__ == '__main__':
+-    sys.exit(main())
+diff --git a/test/tests/test_artefact_v4.py b/test/tests/test_artefact_v4.py
+index 3637cdb..5b1f8ff 100644
+--- a/test/tests/test_artefact_v4.py
++++ b/test/tests/test_artefact_v4.py
+@@ -185,14 +185,9 @@ class Toy:
+                  [self.chunk_ids[i] for i in np.flatnonzero(self.product == p)])
+                 for p, name in enumerate('ABC') if V._plain(name) in V._plain(question)]
+ 
+-    def spread(self):
+-        rows, eligible = self.cosines['tags'], self.layer['eligible']
+-        return np.array([WK.MAD_TO_SPREAD * float(np.median(np.abs(r[eligible] - np.median(r[eligible]))))
+-                         for r in rows])
+-
+     def asked(self, chunk_ids, bare):
+         """What the graph gives for these chunks (`V._ask_graph`): the toy's edges among them in
+-        chunk and tag order, with their places, and the places' middle and spread over the toy."""
++        chunk and tag order, with their five values."""
+         idx = sorted(self.chunk_ids.index(c) for c in chunk_ids)
+         layer = self.layer
+         keep = np.isin(layer['edge_chunk'], idx)
+@@ -203,11 +198,7 @@ class Toy:
+                                np.ones(len(tags), dtype=bool),
+                                np.array([at_tag[t] for t in layer['edge_tag'][keep]]),
+                                np.array([at_chunk[c] for c in layer['edge_chunk'][keep]]),
+-                               raw[:, 0], raw[:, 1:], pos=layer['pos'][keep])
+-        place = layer['pos'][:, 1:]
+-        middle = np.median(place, axis=0)
+-        local = {**local, 'place_middle': middle,
+-                 'place_spread': WK.MAD_TO_SPREAD * np.median(np.abs(place - middle), axis=0)}
++                               raw[:, 0], raw[:, 1:])
+         return V.Asked(chunk_rows=tuple({'chunkId': self.chunk_ids[i], 'parent': f'P{i % 4}'}
+                                         for i in idx),
+                        chunk_ids=tuple(self.chunk_ids[i] for i in idx),
+@@ -235,7 +226,6 @@ def toy_graph(monkeypatch, toy, without_the_name, texts=None):
+     monkeypatch.setattr(V, '_ask_graph', ask)
+     monkeypatch.setattr(V, '_name_matches', toy.names)
+     monkeypatch.setattr(V, '_pool_ids', lambda: list(toy.chunk_ids))
+-    monkeypatch.setattr(V, '_tag_spread', lambda tag_vectors, held: toy.spread())
+ 
+ 
+ def test_the_border_the_question_names_and_the_two_clouds_order_it(monkeypatch):
+@@ -265,7 +255,9 @@ def test_the_border_the_question_names_and_the_two_clouds_order_it(monkeypatch):
+     # the question is embedded as asked and with the border's name taken out
+     assert texts == [asked, bare]
+     inside = np.flatnonzero(toy.product == 1)
+-    combo = WK.cloud_combo(toy.layer, toy.cosines['tags'], without_the_name, inside, toy.parent_of)
++    placed = WK.facet_relative_places(toy.layer, toy.cosines['tags'], [-1, -1, -1], inside)
++    combo = WK.cloud_combo(toy.layer, toy.cosines['tags'], without_the_name, inside, toy.parent_of,
++                           tags_place=placed['place'])
+     ranking, scope = out.meta['ranking'], out.meta['scope']
+     # the border is the named product, asked of the graph; inside it the order is the two clouds'
+     # with the scope, the same as over the whole toy
+@@ -277,8 +269,8 @@ def test_the_border_the_question_names_and_the_two_clouds_order_it(monkeypatch):
+     assert scope['chunks_under_the_names'] == 10 and scope['delivered_under_the_names'] == 5
+     assert scope['combo'] == {**combo['record'],
+                               'scopes_taken': [f'P{s}' for s in combo['record']['scopes_taken']]}
+-    assert scope['facets']['query_tags_with_a_weight'] == 0   # no named facet matters
+-    assert scope['facets']['chunks_whose_nearness_changed'] == 0
++    assert scope['facets']['query_tags_with_a_facet'] == 0   # no named facet matters
++    assert scope['facets']['chunks_whose_place_changed'] == 0
+     delivered = combo['order'][:5]
+     assert ranking['delivered_step'] == [int(combo['step'][i]) for i in delivered]
+     assert ranking['delivered_step'] == sorted(ranking['delivered_step'])
+@@ -289,7 +281,8 @@ def test_the_border_the_question_names_and_the_two_clouds_order_it(monkeypatch):
+     assert ranking['delivered_query_description_nearness'] == [float(toy.cosines['description'][i])
+                                                               for i in delivered]
+     assert ranking['delivered_graph_tags'] == [
+-        toy.graph_tags[int(toy.layer['edge_tag'][combo['edge'][i]])] for i in delivered]
++        toy.graph_tags[int(toy.layer['edge_tag'][placed['edge'][i]])] for i in delivered]
++    assert ranking['delivered_named_facet'] == [None] * 5
+     diagnostics = out.meta['diagnostics']
+     assert diagnostics['query_tags'] == 3
+     assert sum(diagnostics['delivered_on_each_step'].values()) == 5
+@@ -299,8 +292,9 @@ def test_the_border_the_question_names_and_the_two_clouds_order_it(monkeypatch):
+     # a question that holds no name of the graph: the whole pool, nothing taken out
+     del texts[:]
+     out = V.answer_one_question(('q', QUESTION), held, None, 50, 100)
++    every = WK.facet_relative_places(toy.layer, toy.cosines['tags'], [-1, -1, -1], np.arange(30))
+     whole = WK.cloud_combo(toy.layer, toy.cosines['tags'], toy.cosines['question'], np.arange(30),
+-                           toy.parent_of)
++                           toy.parent_of, tags_place=every['place'])
+     assert texts == [QUESTION, QUESTION] and out.meta['scope']['nothing_cut']
+     assert out.meta['scope']['names_in_the_question'] == []
+     assert out.meta['ranking']['ordered_chunk_ids'] == [ids[i] for i in whole['order']]
+@@ -456,12 +450,12 @@ def test_the_facets_weigh_the_tags_and_the_own_work_is_handed_over(monkeypatch):
+     out = V.answer_one_question(('q', asked), held, None, 50, 100)
+     inside = np.flatnonzero(toy.product == 1)
+     rows = toy.cosines['tags']
+-    found, _ = WK.tags_nearness(toy.layer, rows)
+-    weights = np.array([[1., 0., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 0.]])
+-    dealt, edge, query_tag = WK.facet_influenced_nearness(toy.layer, rows, weights)
+-    combo = WK.cloud_combo(toy.layer, rows, without_the_name, inside, toy.parent_of, tags_near=dealt)
+-    # the query's facets weigh the tag relationship, over the whole graph's places and tags, and
+-    # the order follows; what is handed over is the arm's own
++    # temporal for the first query tag, activity for the second, none for the third
++    placed = WK.facet_relative_places(toy.layer, rows, [0, 2, -1], inside)
++    combo = WK.cloud_combo(toy.layer, rows, without_the_name, inside, toy.parent_of,
++                           tags_place=placed['place'])
++    # each query tag's chunks ranked by closeness and by its facet, among the border's chunks only,
++    # and the order follows; what is handed over is the arm's own
+     assert seen == {'order': [ids[i] for i in combo['order']], 'budget': 100}
+     ranking, scope = out.meta['ranking'], out.meta['scope']
+     delivered = combo['order'][1:3]
+@@ -469,21 +463,26 @@ def test_the_facets_weigh_the_tags_and_the_own_work_is_handed_over(monkeypatch):
+     assert ranking['delivered_chunk_ids'] == [ids[i] for i in delivered]
+     assert ranking['delivered_step'] == [int(combo['step'][i]) for i in delivered]
+     assert ranking['delivered_records_not_handed_over'] == [3, 0]
+-    # each delivered chunk keeps, as pointers, the query tag and graph tag of the edge that gave
+-    # the closeness the order used, and its closeness before the facets beside the one after
+-    phrases = ['one', 'two', 'three']
++    # each delivered chunk keeps, as pointers, the query tag that gave its place, its two ranks
++    # under it, the facet named for it, and the graph tag of its closest edge to it
++    phrases, named = ['one', 'two', 'three'], ['temporal', 'activity', None]
++    query_tag = placed['query_tag']
+     assert ranking['delivered_query_tag_phrases'] == [phrases[int(query_tag[i])] for i in delivered]
+-    assert ranking['delivered_graph_tags'] == [toy.graph_tags[int(toy.layer['edge_tag'][edge[i]])]
+-                                               for i in delivered]
+-    assert ranking['delivered_tags_nearness'] == [float(dealt[i]) for i in delivered]
+-    assert ranking['delivered_tags_nearness_as_found'] == [float(found[i]) for i in delivered]
++    assert ranking['delivered_named_facet'] == [named[int(query_tag[i])] for i in delivered]
++    assert ranking['delivered_graph_tags'] == [
++        toy.graph_tags[int(toy.layer['edge_tag'][placed['edge'][i]])] for i in delivered]
++    assert ranking['delivered_tags_place'] == [float(placed['place'][i]) for i in delivered]
++    assert ranking['delivered_closeness_rank'] == [float(placed['closeness_rank'][i]) for i in delivered]
++    assert ranking['delivered_facet_rank'] == [float(placed['facet_rank'][i]) for i in delivered]
++    assert ranking['delivered_middle_rank'] == [float(combo['middle_rank'][i]) for i in delivered]
++    assert ranking['delivered_tags_nearness'] == [float(combo['tags_nearness'][i]) for i in delivered]
+     facets = scope['facets']
+     assert facets['per_query_tag'] == [{'phrase': 'one', 'facet': 'temporal', 'matters': True},
+                                        {'phrase': 'two', 'facet': 'activity', 'matters': True},
+                                        {'phrase': 'three', 'facet': 'why', 'matters': False}]
+-    assert facets['query_tags_with_a_weight'] == 2
+-    assert facets['chunks_whose_nearness_changed'] == int(sum(dealt[i] != found[i] for i in inside))
+-    assert facets['chunks_whose_nearness_changed'] > 0          # the facets act
++    assert facets['query_tags_with_a_facet'] == 2
++    changed = int(sum(placed['place'][i] != placed['place_by_closeness'][i] for i in inside))
++    assert facets['chunks_whose_place_changed'] == changed and changed > 0   # the facets act
+     assert scope['delivered_under_the_names'] == 2
+     assert out.meta['handed_over'] == record
+     assert out.contexts == ['one', 'two', 'thr'] and out.context_ids == ['a', 'b']
+@@ -520,17 +519,21 @@ def test_the_4combo_orders_the_border_by_how_strongly_each_chunk_is_tied_to_the_
+     monkeypatch.setattr(V, '_interpret', lambda text, p: (
+         Q.parse(text, answer('one', 'two', asked=('three',))), ModelUsage(), []))
+     monkeypatch.setattr(V, '_hand_over', hand_over)
+-    # the tags' side as set above, over the border's chunks in the graph's order (chunk id)
+-    monkeypatch.setattr(WK, 'facet_influenced_nearness', lambda layer, rows, weights, close_spread=None: (
+-        t_near[inside], WK.tags_nearness(layer, rows)[1], np.zeros(layer['chunks'], dtype=int)))
++    # the tags' side's closeness as set above, by chunk id; no named facet matters, so each query
++    # tag's chunks stand by the toy's closeness inside the clouds
++    near_of = {ids[i]: t_near[i] for i in range(30)}
++    true_nearness = WK.tags_nearness
++    monkeypatch.setattr(WK, 'tags_nearness', lambda layer, rows: (
++        np.array([near_of[c] for c in layer['chunk_ids']]), true_nearness(layer, rows)[1]))
++    placed = WK.facet_relative_places(toy.layer, toy.cosines['tags'], [-1, -1, -1], inside)
+     combo = WK.cloud_combo(toy.layer, toy.cosines['tags'], without_the_name, inside, toy.parent_of,
+-                           tags_near=t_near)
++                           tags_place=placed['place'])
+     steps = combo['step'][inside]
+     chosen = [int(i) for i in combo['order'] if combo['step'][i] == steps.min()]
+     in_a_cloud = (combo['level']['tags'] == 1) | (combo['level']['description'] == 1)
+     others = [int(i) for i in combo['order'] if in_a_cloud[i] and int(i) not in chosen]
+     outside = [int(i) for i in combo['order'] if not in_a_cloud[i] and int(i) not in chosen]
+-    assert [i for i in chosen] == [1, 7] and sorted(others) == [4, 10] and len(outside) == 6
++    assert sorted(chosen) == [1, 7] and sorted(others) == [4, 10] and len(outside) == 6
+     last, second_last = others[-1], others[-2]
+ 
+     def pairs(chosen_ids, chunk_ids):
+@@ -552,7 +555,7 @@ def test_the_4combo_orders_the_border_by_how_strongly_each_chunk_is_tied_to_the_
+                         lambda layer, on_edge: np.full((layer['chunks'], 3), np.nan))
+     out = V.answer_one_question(('q', asked), held, None, 50, 100)
+     # the graph is asked once, for the chosen chunks against the other chunks of the clouds
+-    assert asked_of_the_graph == [([ids[i] for i in chosen], [ids[i] for i in others])]
++    assert asked_of_the_graph == [([ids[i] for i in sorted(chosen)], [ids[i] for i in others])]
+     # the chosen chunks first, then the more strongly tied, then the rest of the clouds in the
+     # clouds' order, then everything outside the clouds as the clouds order it
+     want = (chosen + [last, second_last] + [i for i in others if i not in (last, second_last)]
+@@ -560,7 +563,7 @@ def test_the_4combo_orders_the_border_by_how_strongly_each_chunk_is_tied_to_the_
+     assert seen['order'] == [ids[i] for i in want]
+     assert out.meta['ranking']['ordered_chunk_ids'] == [ids[i] for i in want]
+     story = out.meta['scope']['storyline']
+-    assert story['chosen_chunk_ids'] == [ids[i] for i in chosen]
++    assert story['chosen_chunk_ids'] == [ids[i] for i in sorted(chosen)]
+     assert story['chunks_reached'] == 2 and story['time_near_up_to_seconds'] is None
+     assert story['chunks_in_the_clouds'] == len(set(chosen) | set(others))
+     ranking = out.meta['ranking']
+diff --git a/test/tests/test_build_edge_places.py b/test/tests/test_build_edge_places.py
+deleted file mode 100644
+index 9f40b24..0000000
+--- a/test/tests/test_build_edge_places.py
++++ /dev/null
+@@ -1,22 +0,0 @@
+-"""What `build_edge_places` premakes from the graph's edges."""
+-import numpy as np
+-
+-from artefact import v4_walk as WK
+-from graph.build_edge_places import placed
+-
+-
+-def test_the_places_middle_and_spread_are_those_of_the_eligible_edges():
+-    rng = np.random.default_rng(4)
+-    endpoints = [('Alpha', 'c1'), ('beta', 'c1'), ('ALPHA', 'c2')] + [(f't{i}', f'c{i % 7}')
+-                                                                    for i in range(60)]
+-    values = rng.normal(size=(len(endpoints), 5))
+-    kept, pos, node = placed(endpoints, values, ['alpha', 'Gamma'])
+-    # a tag that is a product's name, case left aside, is not placed
+-    assert kept == endpoints[1:2] + endpoints[3:]
+-    raw = values[[1] + list(range(3, len(endpoints)))]
+-    assert pos.tolist() == WK.positions(raw).tolist()
+-    assert set(node) == {'place_middle', 'place_spread'}
+-    middle = np.median(pos[:, 1:], axis=0)
+-    assert node['place_middle'] == middle.tolist()
+-    assert node['place_spread'] == (WK.MAD_TO_SPREAD
+-                                    * np.median(np.abs(pos[:, 1:] - middle), axis=0)).tolist()
+diff --git a/test/tests/test_v4_walk.py b/test/tests/test_v4_walk.py
+index e7023ae..bb2cdba 100644
+--- a/test/tests/test_v4_walk.py
++++ b/test/tests/test_v4_walk.py
+@@ -39,21 +39,12 @@ def test_the_layer_holds_the_eligible_edges_and_what_does_not_depend_on_the_ques
+     assert layer['edges'].tolist() == np.flatnonzero(eligible).tolist()
+     assert layer['edge_tag'].tolist() == t['edge_tag'][eligible].tolist()
+     assert layer['raw'][:, 0].tolist() == t['edge_topic'][eligible].tolist()
+-    assert layer['raw'].shape == layer['pos'].shape == (int(eligible.sum()), 5)
+-    assert ((layer['pos'] > 0) & (layer['pos'] <= 1)).all()
++    assert layer['raw'].shape == (int(eligible.sum()), 5)
+     assert layer['n_c'].tolist() == np.bincount(t['edge_chunk'][eligible], minlength=40).tolist()
+     assert layer['n_c'][9] == 0
+     # each chunk's place in chunk-id order and its record kind
+     assert [t['chunk_ids'][i] for i in np.argsort(layer['id_rank'])] == sorted(t['chunk_ids'])
+     assert [layer['kind_names'][k] for k in layer['kind']] == t['chunk_kinds']
+-    # places premade over the whole graph are kept as given, for the eligible edges
+-    premade = np.random.default_rng(1).uniform(size=(t['edge_tag'].size, 5))
+-    given = WK.build_layer(t['chunk_ids'], t['chunk_kinds'], t['eligible'], t['edge_tag'],
+-                           t['edge_chunk'], t['edge_topic'], t['edge_facets'], pos=premade)
+-    assert given['pos'].tolist() == premade[eligible].tolist()
+-    with pytest.raises(ValueError, match='five premade places per edge'):
+-        WK.build_layer(t['chunk_ids'], t['chunk_kinds'], t['eligible'], t['edge_tag'],
+-                       t['edge_chunk'], t['edge_topic'], t['edge_facets'], pos=premade[:, :4])
+     with pytest.raises(ValueError, match='No edge carries an eligible graph tag'):
+         layer_of({**t, 'eligible': np.zeros(30, dtype=bool)})
+     with pytest.raises(ValueError, match='four facet values per edge'):
+@@ -123,7 +114,7 @@ def test_each_sides_cloud_is_its_near_group_and_the_clouds_order_the_border():
+     t_near = np.array([.95, .93, .91, .60, .58, .57, .55, .54, .53, .52, .5, .5])
+     d_near = np.array([.80, .20, .82, .81, .30, .25, .22, .21, .20, .19, .5, .5])
+     scope_of = np.repeat(np.arange(6), 2)
+-    got = WK.cloud_combo(layer, cosines, d_near, np.arange(10), scope_of, tags_near=t_near)
++    got = WK.cloud_combo(layer, t_near[None, :], d_near, np.arange(10), scope_of)
+     # each cloud is the chunks before its knee, as many as the values show: three here, no number given
+     assert got['level']['tags'].tolist() == [1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 0, 0]
+     assert got['level']['description'].tolist() == [1, 2, 1, 1, 2, 2, 2, 2, 2, 2, 0, 0]
+@@ -133,10 +124,16 @@ def test_each_sides_cloud_is_its_near_group_and_the_clouds_order_the_border():
+     assert got['record'] == {'chunks': 10, 'clouds': {'tags': 3, 'description': 3},
+                              'chunks_on_each_step': {2: 2, 3: 2, 4: 6}, 'scope_gauged_from_chunks': 4,
+                              'scopes_taken': [0, 1], 'chunks_in_scope': 4}
+-    # the step first, then in scope first, then the two standings added
++    # the step first, then in scope first, then the middle of the two sides' ranks
+     assert got['order'] == [0, 2, 3, 1, 4, 5, 6, 7, 8, 9]
++    assert got['rank']['description'][:10].tolist() == [3, 8.5, 1, 2, 4, 5, 6, 7, 8.5, 10]
++    assert got['middle_rank'][[1, 3]].tolist() == [5.25, 3.]
++    # a tags side's place made otherwise orders inside a step and leaves the clouds as they are
++    placed = WK.cloud_combo(layer, t_near[None, :], d_near, np.arange(10), scope_of,
++                            tags_place=np.r_[np.arange(10, 0, -1), 0, 0].astype(float))
++    assert placed['step'].tolist() == got['step'].tolist() and placed['order'][:2] == [2, 0]
+     # a side whose closeness does not bend has no cloud: the other side's cloud alone is lowest
+-    flat = WK.cloud_combo(layer, cosines, np.full(12, .2), np.arange(10), scope_of, tags_near=t_near)
++    flat = WK.cloud_combo(layer, t_near[None, :], np.full(12, .2), np.arange(10), scope_of)
+     assert flat['step'][:10].tolist() == [3, 3, 3] + [4] * 7
+     assert flat['record']['clouds'] == {'tags': 3, 'description': 0}
+     with pytest.raises(ValueError, match='one finite description closeness per chunk'):
+@@ -147,38 +144,33 @@ def test_each_sides_cloud_is_its_near_group_and_the_clouds_order_the_border():
+         WK.cloud_combo(layer, cosines, d_near, np.array([0, 0, 1]), scope_of)
+ 
+ 
+-def test_the_query_facets_influence_the_tag_relationship_and_force_nothing():
+-    # four chunks, one edge each, all through eligible graph tags 0-3; one query tag
+-    pos = np.array([[0., .9, .5, .5, .5], [0., .1, .5, .5, .5], [0., .5, .5, .5, .5], [0., .5, .5, .5, .5]])
+-    layer = {'chunks': 4, 'edge_tag': np.arange(4), 'edge_chunk': np.arange(4), 'pos': pos,
+-             'eligible': np.ones(4, dtype=bool)}
+-    rows = np.array([[.80, .81, .50, .20]])
+-    plain, edge, query_tag = WK.facet_influenced_nearness(layer, rows, np.zeros((1, 4)))
+-    # with every weight 0 the nearness is the closeness as it is
+-    assert plain.tolist() == pytest.approx(rows[0].tolist()) and edge.tolist() == [0, 1, 2, 3]
+-    assert query_tag.tolist() == [0, 0, 0, 0]
+-    # temporal matters fully: chunk 0 stands high in temporal, chunk 1 low; both move by their
+-    # place, in the query tag's own spread of closeness; the ones in the middle do not move
+-    moved, _, _ = WK.facet_influenced_nearness(layer, rows, np.array([[1., 0., 0., 0.]]))
+-    assert moved[0] > rows[0, 0] and moved[1] < rows[0, 1] and moved[2:].tolist() == pytest.approx([.5, .2])
+-    # the influence did not have to change the order of 2 and 3, and it did not
+-    assert moved[2] > moved[3]
+-    # a border's edges carrying the whole graph's middle and spread of places, and the query tag's
+-    # spread over the whole graph's tags, move as they do over the whole graph
+-    whole = WK.influenced_edge_values(layer, rows, np.array([[1., 0., 0., 0.]]))
+-    place = pos[:, 1:]
+-    middle = np.median(place, axis=0)
+-    spread = WK.MAD_TO_SPREAD * np.median(np.abs(place - middle), axis=0)
+-    close = WK.MAD_TO_SPREAD * np.median(np.abs(rows[0] - np.median(rows[0])))
+-    border = {'chunks': 2, 'edge_tag': np.arange(2), 'edge_chunk': np.arange(2), 'pos': pos[:2],
+-              'eligible': np.ones(2, dtype=bool), 'place_middle': middle, 'place_spread': spread}
+-    part = WK.influenced_edge_values(border, rows[:, :2], np.array([[1., 0., 0., 0.]]),
+-                                     close_spread=[close])
+-    assert part[0].tolist() == pytest.approx(whole[0, :2].tolist())
+-    with pytest.raises(ValueError, match='one spread of closeness per query tag'):
+-        WK.influenced_edge_values(border, rows[:, :2], np.zeros((1, 4)), close_spread=[1., 2.])
+-    with pytest.raises(ValueError, match='four facet weights from 0 to 1'):
+-        WK.facet_influenced_nearness(layer, rows, np.array([[2., 0., 0., 0.]]))
++def test_the_facet_ranks_each_query_tags_chunks_again_and_a_chunk_stands_midway():
++    # four chunks, one edge each, through graph tags 0-3; by closeness to the query tag 0 > 1 > 2
++    # > 3; by the net's temporal value 2 > 0 > 1 > 3
++    facets = np.zeros((4, 4))
++    facets[:, 0] = [.5, .2, .9, .1]
++    layer = {'chunks': 4, 'eligible': np.ones(4, dtype=bool), 'edge_tag': np.arange(4),
++             'edge_chunk': np.arange(4), 'raw': np.column_stack([np.zeros(4), facets]),
++             'id_rank': np.arange(4)}
++    rows = np.array([[.9, .8, .7, .6]])
++    got = WK.facet_relative_places(layer, rows, [0], np.arange(4))
++    # both ways: chunk 2 rises by half the gap (3rd by closeness, 1st by the facet), chunk 1 falls
++    assert got['closeness_rank'].tolist() == [1, 2, 3, 4] and got['facet_rank'].tolist() == [2, 3, 1, 4]
++    assert got['place'].tolist() == [1, 3, 2, 4] and got['place_by_closeness'].tolist() == [1, 2, 3, 4]
++    assert got['query_tag'].tolist() == [0] * 4 and got['edge'].tolist() == [0, 1, 2, 3]
++    # where the facet does not matter for the tag, closeness alone
++    assert WK.facet_relative_places(layer, rows, [-1], np.arange(4))['place'].tolist() == [1, 2, 3, 4]
++    # a second query tag that puts chunk 3 first: each chunk takes the best place a query tag gives it
++    two = WK.facet_relative_places(layer, np.array([[.9, .8, .7, .6], [.1, .2, .3, .95]]), [0, -1],
++                                   np.arange(4))
++    assert two['place'].tolist() == [1, 3, 2, 1] and two['query_tag'].tolist() == [0, 0, 0, 1]
++    # only the border's chunks are ranked; two chunks that swap ranks stand level, and a level
++    # goes to closeness
++    part = WK.facet_relative_places(layer, rows, [0], np.array([1, 2]))
++    assert part['facet_rank'][[1, 2]].tolist() == [2, 1] and part['place'][[1, 2]].tolist() == [1, 2]
++    assert np.isinf(part['place'][[0, 3]]).all()
++    with pytest.raises(ValueError, match='one named facet, or -1, per query tag'):
++        WK.facet_relative_places(layer, rows, [4], np.arange(4))
+ 
+ 
+ def test_the_knee_and_the_levels_it_reads_off_a_list():
+@@ -211,20 +203,15 @@ def test_a_channels_messages_fall_into_conversations_at_its_long_gaps():
+ def test_the_best_edge_of_each_chunk():
+     best, edge = WK.best_edges([.3, .9, .9, .1], [0, 0, 0, 2], 3)
+     assert best[0] == .9 and edge.tolist() == [1, -1, 3] and np.isnan(best[1])
+-    # each value's average rank over the rows, ties sharing a rank
+-    assert WK.positions(np.array([[1.], [3.], [3.], [2.]]))[:, 0].tolist() == [.25, .875, .875, .5]
+ 
+ 
+ def test_a_chunks_profile_over_the_query_tags_is_its_strongest_edge_for_each():
+     layer, cosines = two_sides()
+-    layer = {**layer, 'pos': np.column_stack([np.zeros(12), np.full((12, 4), .5)])}
+-    on_edge = WK.influenced_edge_values(layer, cosines, np.zeros((2, 4)))
+-    # with every facet weight 0 an edge's weight is the tag's closeness as it is
+-    np.testing.assert_allclose(on_edge, cosines)
++    on_edge = cosines[:, layer['edge_tag']]
+     profiles = WK.query_tag_profiles(layer, on_edge)
+     assert profiles.shape == (12, 2) and profiles[1].tolist() == pytest.approx([.3, .9])
+     # a chunk with no eligible edge has no profile
+-    no_edge = {**layer, 'edge_tag': np.arange(11), 'edge_chunk': np.arange(11), 'pos': layer['pos'][:11]}
++    no_edge = {**layer, 'edge_tag': np.arange(11), 'edge_chunk': np.arange(11)}
+     assert np.isnan(WK.query_tag_profiles(no_edge, on_edge[:, :11])[11]).all()
+ 
+ 

@@ -31,9 +31,10 @@ numbers are in the run folders and under `output/research/`.
   no cut; `cloud_combo` makes the two clouds inside it, each
   side's cloud the chunks before the knee of the upper half of its own closeness (the median is the
   agent's choice), and the chunks
-  in both clouds are the chosen chunks, `facet_influenced_nearness` lets the query's facets weigh
-  the tag relationship (per query tag, the facet the first call names for it, where the first call
-  says that facet matters for the tag), `storyline` is the 4-combo that orders the rest of the clouds by how
+  in both clouds are the chosen chunks (the clouds read closeness alone), `facet_relative_places`
+  ranks each query tag's chunks by closeness and again by the facet the first call names for it,
+  a chunk standing midway between the two ranks, and inside a step the tags side's rank and the
+  description side's rank count equally, `storyline` is the 4-combo that orders the rest of the clouds by how
   strongly it is tied to the chosen chunks (the graph asked per question, `STORYLINE_CYPHER`) and
   lifts nothing from below the clouds, `_hand_over` leaves out channels apart and other projects'
   pull requests by the graph's people (`product_persons`, read through the person-to-chunk edges)
@@ -44,8 +45,6 @@ numbers are in the run folders and under `output/research/`.
   model request, the first call), `test/graph/build_person_edges.py` (the person-to-chunk edges),
   `test/graph/build_chunk_times.py` (each chunk's records' own times, `times`; the 4-combo's gap
   in time is the smallest gap between a record of one chunk and a record of the other),
-  `test/graph/build_edge_places.py` (each eligible edge's place in the facets' rankings, `w_pos`,
-  and the places' middle and spread on the FacetLayer node),
   `test/graph/build_structure_names.py` (each structure node's `name` and `name_keys`, read through
   its pointer), `test/graph/build_customer_edges.py` (customer-to-chunk edges where a record carries
   the customer's id). No count of clusters is given in the arm's order: every near group is read
@@ -280,8 +279,10 @@ eftersom samma taggnamn kan ha olika analytisk funktion beroende på kontext."*
 - temporal — *"its not just about time or dates, its about the relation of time, now, then, soon, before"* (2026-09-15)
 - *"this is about a fucking tag-chunk relationship, how does 'entities' possibly fit there?"* (2026-09-08) — entities is not a facet.
 - *"What fucking values, we did a ranking on them, check if the RANKING is meaningful"* (2026-10-14) · *"its a RANKING system.. so, jsut fucking try using the actual rank relationships?"* (2026-10-15) — the facet layer is read as a ranking.
-- *"the facets were never supposed to carry the whole weight themselves, they are supposed to influence the already existing relationship for chunks and tags so to speak"* (2026-10-15) · *"we somehow need to put the relative relation there too, not just "yeah, its the most important facet of all the tags here" but what if it's still quite fucking unimportant"* (2026-10-16) · *"YOU CANNOT FORCE THEM TO TRY AND CHANGE THE FUCKING ORDERS"* (2026-10-16) · *"take 10.. with and without facets"* (2026-10-15) — built as `v4_walk.facet_influenced_nearness`; an edge's weight is the tag's closeness plus the query tag's facet weight times where the edge stands in that facet's ranking (the facet net's values as places among the graph's eligible edges), the order follows. The size of that influence (the edge's standing counted in the query tag's own spread of closeness) is the agent's.
-- *"go"* (2026-10-19, on: the facet weight per query tag, not one per question; the facet net only ranks the edges and is not read on the question side, where its numbers stand on nothing; the first call names, per tag, the facet that matters most for it and says whether that facet matters for the tag at all, and only then does it weigh) — built that day.
+- *"the facets were never supposed to carry the whole weight themselves, they are supposed to influence the already existing relationship for chunks and tags so to speak"* (2026-10-15) · *"we somehow need to put the relative relation there too, not just "yeah, its the most important facet of all the tags here" but what if it's still quite fucking unimportant"* (2026-10-16) · *"YOU CANNOT FORCE THEM TO TRY AND CHANGE THE FUCKING ORDERS"* (2026-10-16) · *"take 10.. with and without facets"* (2026-10-15) — built first as a nudge on closeness (places over the whole graph turned into a size and added to the cosine); replaced on 2026-10-19, see below.
+- *"go"* (2026-10-19, on: the facet per query tag, not one per question; the facet net is not read on the question side, where its numbers stand on nothing; the first call names, per tag, the facet that matters most for it and says whether that facet matters for the tag at all) — built that day.
+- *"i am thinking you have converted them to either a number, or just made arbitrary decisions for them"* · *"and you never stopped to think that perhaps how YOU converted the ranks was the fucking issue?"* (2026-10-19) — the facets' ranks are compared as ranks, never turned into a size and added to a cosine.
+- *"how about they get a RELATIVE increase in importance, based on their relative rank compared to that chunk, based on the chosen facet? as in, the chunks are chosen first based on similarity, then that "most similar" IS a rank, and then that rank list is compared to the facets and is adjusted for relative rank"* · *"well thats the fucking point, that i goes both ways..?"* · *"construct and gold10smoketest it"* (2026-10-19) — built that day as `v4_walk.facet_relative_places`: per query tag, the border's chunks ranked by closeness and again, among the same chunks, by the net's value of the same edge in the named facet; a chunk stands midway between its two ranks (half the gap, either way); each chunk takes the best place any query tag gives it (the agent's choice); the clouds and the 4-combo read closeness alone.
 - *"we will NOT use your random made up 'check words'"* (2026-09-08) · *"NEARNESS, we cant fucking use explicit shit"* (2026-09-09) · *"Well that was fucking not the concept"* (2026-09-14, on word counts as facet values)
 
 ## Update

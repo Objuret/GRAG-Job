@@ -185,14 +185,9 @@ class Toy:
                  [self.chunk_ids[i] for i in np.flatnonzero(self.product == p)])
                 for p, name in enumerate('ABC') if V._plain(name) in V._plain(question)]
 
-    def spread(self):
-        rows, eligible = self.cosines['tags'], self.layer['eligible']
-        return np.array([WK.MAD_TO_SPREAD * float(np.median(np.abs(r[eligible] - np.median(r[eligible]))))
-                         for r in rows])
-
     def asked(self, chunk_ids, bare):
         """What the graph gives for these chunks (`V._ask_graph`): the toy's edges among them in
-        chunk and tag order, with their places, and the places' middle and spread over the toy."""
+        chunk and tag order, with their five values."""
         idx = sorted(self.chunk_ids.index(c) for c in chunk_ids)
         layer = self.layer
         keep = np.isin(layer['edge_chunk'], idx)
@@ -203,11 +198,7 @@ class Toy:
                                np.ones(len(tags), dtype=bool),
                                np.array([at_tag[t] for t in layer['edge_tag'][keep]]),
                                np.array([at_chunk[c] for c in layer['edge_chunk'][keep]]),
-                               raw[:, 0], raw[:, 1:], pos=layer['pos'][keep])
-        place = layer['pos'][:, 1:]
-        middle = np.median(place, axis=0)
-        local = {**local, 'place_middle': middle,
-                 'place_spread': WK.MAD_TO_SPREAD * np.median(np.abs(place - middle), axis=0)}
+                               raw[:, 0], raw[:, 1:])
         return V.Asked(chunk_rows=tuple({'chunkId': self.chunk_ids[i], 'parent': f'P{i % 4}'}
                                         for i in idx),
                        chunk_ids=tuple(self.chunk_ids[i] for i in idx),
@@ -235,7 +226,6 @@ def toy_graph(monkeypatch, toy, without_the_name, texts=None):
     monkeypatch.setattr(V, '_ask_graph', ask)
     monkeypatch.setattr(V, '_name_matches', toy.names)
     monkeypatch.setattr(V, '_pool_ids', lambda: list(toy.chunk_ids))
-    monkeypatch.setattr(V, '_tag_spread', lambda tag_vectors, held: toy.spread())
 
 
 def test_the_border_the_question_names_and_the_two_clouds_order_it(monkeypatch):
@@ -265,7 +255,9 @@ def test_the_border_the_question_names_and_the_two_clouds_order_it(monkeypatch):
     # the question is embedded as asked and with the border's name taken out
     assert texts == [asked, bare]
     inside = np.flatnonzero(toy.product == 1)
-    combo = WK.cloud_combo(toy.layer, toy.cosines['tags'], without_the_name, inside, toy.parent_of)
+    placed = WK.facet_relative_places(toy.layer, toy.cosines['tags'], [-1, -1, -1], inside)
+    combo = WK.cloud_combo(toy.layer, toy.cosines['tags'], without_the_name, inside, toy.parent_of,
+                           tags_place=placed['place'])
     ranking, scope = out.meta['ranking'], out.meta['scope']
     # the border is the named product, asked of the graph; inside it the order is the two clouds'
     # with the scope, the same as over the whole toy
@@ -277,8 +269,8 @@ def test_the_border_the_question_names_and_the_two_clouds_order_it(monkeypatch):
     assert scope['chunks_under_the_names'] == 10 and scope['delivered_under_the_names'] == 5
     assert scope['combo'] == {**combo['record'],
                               'scopes_taken': [f'P{s}' for s in combo['record']['scopes_taken']]}
-    assert scope['facets']['query_tags_with_a_weight'] == 0   # no named facet matters
-    assert scope['facets']['chunks_whose_nearness_changed'] == 0
+    assert scope['facets']['query_tags_with_a_facet'] == 0   # no named facet matters
+    assert scope['facets']['chunks_whose_place_changed'] == 0
     delivered = combo['order'][:5]
     assert ranking['delivered_step'] == [int(combo['step'][i]) for i in delivered]
     assert ranking['delivered_step'] == sorted(ranking['delivered_step'])
@@ -289,7 +281,8 @@ def test_the_border_the_question_names_and_the_two_clouds_order_it(monkeypatch):
     assert ranking['delivered_query_description_nearness'] == [float(toy.cosines['description'][i])
                                                               for i in delivered]
     assert ranking['delivered_graph_tags'] == [
-        toy.graph_tags[int(toy.layer['edge_tag'][combo['edge'][i]])] for i in delivered]
+        toy.graph_tags[int(toy.layer['edge_tag'][placed['edge'][i]])] for i in delivered]
+    assert ranking['delivered_named_facet'] == [None] * 5
     diagnostics = out.meta['diagnostics']
     assert diagnostics['query_tags'] == 3
     assert sum(diagnostics['delivered_on_each_step'].values()) == 5
@@ -299,8 +292,9 @@ def test_the_border_the_question_names_and_the_two_clouds_order_it(monkeypatch):
     # a question that holds no name of the graph: the whole pool, nothing taken out
     del texts[:]
     out = V.answer_one_question(('q', QUESTION), held, None, 50, 100)
+    every = WK.facet_relative_places(toy.layer, toy.cosines['tags'], [-1, -1, -1], np.arange(30))
     whole = WK.cloud_combo(toy.layer, toy.cosines['tags'], toy.cosines['question'], np.arange(30),
-                           toy.parent_of)
+                           toy.parent_of, tags_place=every['place'])
     assert texts == [QUESTION, QUESTION] and out.meta['scope']['nothing_cut']
     assert out.meta['scope']['names_in_the_question'] == []
     assert out.meta['ranking']['ordered_chunk_ids'] == [ids[i] for i in whole['order']]
@@ -456,12 +450,12 @@ def test_the_facets_weigh_the_tags_and_the_own_work_is_handed_over(monkeypatch):
     out = V.answer_one_question(('q', asked), held, None, 50, 100)
     inside = np.flatnonzero(toy.product == 1)
     rows = toy.cosines['tags']
-    found, _ = WK.tags_nearness(toy.layer, rows)
-    weights = np.array([[1., 0., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 0.]])
-    dealt, edge, query_tag = WK.facet_influenced_nearness(toy.layer, rows, weights)
-    combo = WK.cloud_combo(toy.layer, rows, without_the_name, inside, toy.parent_of, tags_near=dealt)
-    # the query's facets weigh the tag relationship, over the whole graph's places and tags, and
-    # the order follows; what is handed over is the arm's own
+    # temporal for the first query tag, activity for the second, none for the third
+    placed = WK.facet_relative_places(toy.layer, rows, [0, 2, -1], inside)
+    combo = WK.cloud_combo(toy.layer, rows, without_the_name, inside, toy.parent_of,
+                           tags_place=placed['place'])
+    # each query tag's chunks ranked by closeness and by its facet, among the border's chunks only,
+    # and the order follows; what is handed over is the arm's own
     assert seen == {'order': [ids[i] for i in combo['order']], 'budget': 100}
     ranking, scope = out.meta['ranking'], out.meta['scope']
     delivered = combo['order'][1:3]
@@ -469,21 +463,26 @@ def test_the_facets_weigh_the_tags_and_the_own_work_is_handed_over(monkeypatch):
     assert ranking['delivered_chunk_ids'] == [ids[i] for i in delivered]
     assert ranking['delivered_step'] == [int(combo['step'][i]) for i in delivered]
     assert ranking['delivered_records_not_handed_over'] == [3, 0]
-    # each delivered chunk keeps, as pointers, the query tag and graph tag of the edge that gave
-    # the closeness the order used, and its closeness before the facets beside the one after
-    phrases = ['one', 'two', 'three']
+    # each delivered chunk keeps, as pointers, the query tag that gave its place, its two ranks
+    # under it, the facet named for it, and the graph tag of its closest edge to it
+    phrases, named = ['one', 'two', 'three'], ['temporal', 'activity', None]
+    query_tag = placed['query_tag']
     assert ranking['delivered_query_tag_phrases'] == [phrases[int(query_tag[i])] for i in delivered]
-    assert ranking['delivered_graph_tags'] == [toy.graph_tags[int(toy.layer['edge_tag'][edge[i]])]
-                                               for i in delivered]
-    assert ranking['delivered_tags_nearness'] == [float(dealt[i]) for i in delivered]
-    assert ranking['delivered_tags_nearness_as_found'] == [float(found[i]) for i in delivered]
+    assert ranking['delivered_named_facet'] == [named[int(query_tag[i])] for i in delivered]
+    assert ranking['delivered_graph_tags'] == [
+        toy.graph_tags[int(toy.layer['edge_tag'][placed['edge'][i]])] for i in delivered]
+    assert ranking['delivered_tags_place'] == [float(placed['place'][i]) for i in delivered]
+    assert ranking['delivered_closeness_rank'] == [float(placed['closeness_rank'][i]) for i in delivered]
+    assert ranking['delivered_facet_rank'] == [float(placed['facet_rank'][i]) for i in delivered]
+    assert ranking['delivered_middle_rank'] == [float(combo['middle_rank'][i]) for i in delivered]
+    assert ranking['delivered_tags_nearness'] == [float(combo['tags_nearness'][i]) for i in delivered]
     facets = scope['facets']
     assert facets['per_query_tag'] == [{'phrase': 'one', 'facet': 'temporal', 'matters': True},
                                        {'phrase': 'two', 'facet': 'activity', 'matters': True},
                                        {'phrase': 'three', 'facet': 'why', 'matters': False}]
-    assert facets['query_tags_with_a_weight'] == 2
-    assert facets['chunks_whose_nearness_changed'] == int(sum(dealt[i] != found[i] for i in inside))
-    assert facets['chunks_whose_nearness_changed'] > 0          # the facets act
+    assert facets['query_tags_with_a_facet'] == 2
+    changed = int(sum(placed['place'][i] != placed['place_by_closeness'][i] for i in inside))
+    assert facets['chunks_whose_place_changed'] == changed and changed > 0   # the facets act
     assert scope['delivered_under_the_names'] == 2
     assert out.meta['handed_over'] == record
     assert out.contexts == ['one', 'two', 'thr'] and out.context_ids == ['a', 'b']
@@ -520,17 +519,21 @@ def test_the_4combo_orders_the_border_by_how_strongly_each_chunk_is_tied_to_the_
     monkeypatch.setattr(V, '_interpret', lambda text, p: (
         Q.parse(text, answer('one', 'two', asked=('three',))), ModelUsage(), []))
     monkeypatch.setattr(V, '_hand_over', hand_over)
-    # the tags' side as set above, over the border's chunks in the graph's order (chunk id)
-    monkeypatch.setattr(WK, 'facet_influenced_nearness', lambda layer, rows, weights, close_spread=None: (
-        t_near[inside], WK.tags_nearness(layer, rows)[1], np.zeros(layer['chunks'], dtype=int)))
+    # the tags' side's closeness as set above, by chunk id; no named facet matters, so each query
+    # tag's chunks stand by the toy's closeness inside the clouds
+    near_of = {ids[i]: t_near[i] for i in range(30)}
+    true_nearness = WK.tags_nearness
+    monkeypatch.setattr(WK, 'tags_nearness', lambda layer, rows: (
+        np.array([near_of[c] for c in layer['chunk_ids']]), true_nearness(layer, rows)[1]))
+    placed = WK.facet_relative_places(toy.layer, toy.cosines['tags'], [-1, -1, -1], inside)
     combo = WK.cloud_combo(toy.layer, toy.cosines['tags'], without_the_name, inside, toy.parent_of,
-                           tags_near=t_near)
+                           tags_place=placed['place'])
     steps = combo['step'][inside]
     chosen = [int(i) for i in combo['order'] if combo['step'][i] == steps.min()]
     in_a_cloud = (combo['level']['tags'] == 1) | (combo['level']['description'] == 1)
     others = [int(i) for i in combo['order'] if in_a_cloud[i] and int(i) not in chosen]
     outside = [int(i) for i in combo['order'] if not in_a_cloud[i] and int(i) not in chosen]
-    assert [i for i in chosen] == [1, 7] and sorted(others) == [4, 10] and len(outside) == 6
+    assert sorted(chosen) == [1, 7] and sorted(others) == [4, 10] and len(outside) == 6
     last, second_last = others[-1], others[-2]
 
     def pairs(chosen_ids, chunk_ids):
@@ -552,7 +555,7 @@ def test_the_4combo_orders_the_border_by_how_strongly_each_chunk_is_tied_to_the_
                         lambda layer, on_edge: np.full((layer['chunks'], 3), np.nan))
     out = V.answer_one_question(('q', asked), held, None, 50, 100)
     # the graph is asked once, for the chosen chunks against the other chunks of the clouds
-    assert asked_of_the_graph == [([ids[i] for i in chosen], [ids[i] for i in others])]
+    assert asked_of_the_graph == [([ids[i] for i in sorted(chosen)], [ids[i] for i in others])]
     # the chosen chunks first, then the more strongly tied, then the rest of the clouds in the
     # clouds' order, then everything outside the clouds as the clouds order it
     want = (chosen + [last, second_last] + [i for i in others if i not in (last, second_last)]
@@ -560,7 +563,7 @@ def test_the_4combo_orders_the_border_by_how_strongly_each_chunk_is_tied_to_the_
     assert seen['order'] == [ids[i] for i in want]
     assert out.meta['ranking']['ordered_chunk_ids'] == [ids[i] for i in want]
     story = out.meta['scope']['storyline']
-    assert story['chosen_chunk_ids'] == [ids[i] for i in chosen]
+    assert story['chosen_chunk_ids'] == [ids[i] for i in sorted(chosen)]
     assert story['chunks_reached'] == 2 and story['time_near_up_to_seconds'] is None
     assert story['chunks_in_the_clouds'] == len(set(chosen) | set(others))
     ranking = out.meta['ranking']

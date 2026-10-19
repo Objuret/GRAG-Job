@@ -1,0 +1,6 @@
+query tags with a facet that ranks: 1017; chunks whose place the facets changed: 12732, on 99 questions
+ranks against the nudge: order differs on 99, what is handed over on 98, the chosen chunks on 41 of 100
+ranks against no facets: order differs on 98, what is handed over on 97, the chosen chunks on 0 of 100
+context_recall_id ranks: 0.6274 over 100
+context_recall_id nudge: 0.6367 over 100
+context_recall_id no facets: 0.6380 over 100
