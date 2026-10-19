@@ -1,0 +1,3 @@
+items 95576, moved 91085; largest move median 125.8, max 280.0
+tag-cloud chunks changed 362 of 2041; chosen chunks differ on 67; delivered set the same on 17; 176 chunks swapped across the cut
+context_recall_id: facets on 0.6233, off 0.6256
