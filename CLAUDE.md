@@ -84,8 +84,9 @@ numbers are in the run folders and under `output/research/`.
 - Runs: `ls output/k=chars`. The two baselines on the hundred:
   `lucene__gold100__cb72000__20261008T234209Z` and `vector__gold100__cb72000__20261017T061242Z`
   (commit `fbc2f22` from a clean checkout, one question at a time; each folder's `FIELDS.md` says
-  what it holds; lucene's `corrections.json` says what was corrected). Across arms only
-  `context_recall_id` compares; `context_precision_id` and the nonllm pair are within-arm.
+  what it holds; lucene's `corrections.json` says what was corrected). Across arms
+  `context_recall_id` and `context_precision_id` compare (both count record ids); the nonllm
+  pair is within-arm (counted per delivered text).
 - A run: `python prod/run.py --arm artefact_v4 --set gold|10smoke --char-budget 72000 --workers 6
   --out <folder>`; the same command into the same folder resumes. `--retrieval-only` makes no
   answer and no judging; `--flag HERB_V4_OFFLINE=on` refuses any model call.

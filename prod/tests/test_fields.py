@@ -156,8 +156,7 @@ class WordsTests(unittest.TestCase):
             self.assertTrue(sentence and source and here and needs, name)
             self.assertIsInstance(across, bool, name)
         within = {m for m, v in fields.SCORES.items() if not v[4]}
-        self.assertEqual(within, {"context_precision_id", "context_precision_nonllm",
-                                  "context_recall_nonllm"})
+        self.assertEqual(within, {"context_precision_nonllm", "context_recall_nonllm"})
 
     def test_vector_gives_words_for_everything_it_writes(self):
         prepared = vector.Prepared(matrix=np.eye(3, dtype=np.float32), ids=["d0", "d1", "d2"],

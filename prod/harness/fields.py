@@ -500,7 +500,7 @@ SCORES = {
         "Calculates context precision by directly comparing retrieved context IDs with reference "
         "context IDs. The score represents what proportion of the retrieved context IDs are "
         "actually relevant (present in reference).", "class IDBasedContextPrecision",
-        "context_ids against the ids of the question's gold records.", "nothing", False),
+        "context_ids against the ids of the question's gold records.", "nothing", True),
     "context_recall_nonllm": (
         "`NonLLMContextRecall` metric is computed using `retrieved_contexts` and "
         "`reference_contexts` [...] This metrics uses non-LLM string comparison metrics to "
@@ -804,9 +804,10 @@ def render(folder=None, arm: str | None = None, stamp_files: bool = False) -> st
     for name, (ragas, source, here, needs, across) in SCORES.items():
         out.append(f"| `{name}` | \"{ragas}\" (RAGAS, {source}) Here: {here} | {needs} | "
                    f"{'yes' if across else 'no, within one arm only'} |")
-    out += ["", "\"No, within one arm only\": the score is counted per delivered unit, and arms "
-            "deliver units of different size (one record, or a chunk of several records), so the "
-            "same delivered records give different values.", "",
+    out += ["", "\"No, within one arm only\": the score is counted per delivered text, and arms "
+            "deliver texts of different size (one record, or a chunk of several records), so the "
+            "same delivered records give different values. The id scores count record ids, the "
+            "same for every arm.", "",
             "No stored score is called a hit rate. Whether a question got any gold record at all "
             "can be read from `context_recall_id` being above 0.", "",
             "## Easy to read wrongly", "",
