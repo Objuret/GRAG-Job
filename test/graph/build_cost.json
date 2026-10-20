@@ -1,6 +1,6 @@
 {
   "graph": "herb-eval-volmax",
-  "collected": "2026-10-20, from the build records named in each step. Every number is as a record gives it; a sum is over per-call or per-shard records. Nothing is estimated. Money is not given.",
+  "collected": "2026-10-20, from the build records named in each step. Every number is as a record gives it; a sum is over per-call or per-shard records. Nothing is estimated, except the chunks' token estimate (steps[chunks].size.token_estimate_of_those_chunks), which the chunker itself wrote. Money is not given. Every number was recounted from its record on 2026-10-20 (test/graph/build_cost_check.json); notes says how some of them are made.",
   "seconds_kinds": {
     "summed_per_call": "the seconds of each call added up (calls ran side by side, so this is more than the time it took)",
     "elapsed": "start to end of the step as its record gives it",
@@ -40,7 +40,7 @@
         "score_tags": {"calls": 4869, "tokens_in": 9946291, "tokens_out": 7267398, "seconds_summed_per_call": 32816.8, "in_the_graph": "no: the facet values were replaced by the facet layer"}
       },
       "records": ["git bcc3156: backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip (io.jsonl, recovery_io.jsonl, errors.jsonl, run.json, analysis_final.md)",
-                  "git 399ee32: backend/tagging/pipeline.py (main run); git 415148d: the recovery's version"],
+                  "git 415148d: backend/tagging/pipeline.py (the code of the main run and of the recovery: committed after the run; the main run's logs print strings only this version has)"],
       "not_recorded": "cached input tokens; the 48 first attempts that failed before a retry; request start times"
     },
     {
@@ -53,7 +53,7 @@
       "records": ["output/graph_build/herb-eval-v2/step_copy.json, step_cleanup.json",
                   "output/graph_build/herb-eval-volmax/build_manifest.json, step_entities.json, step_entity_plan.json, step_copy.json",
                   "docs/canon/raw/user_turns_all.md, the pasted console print of 2026-08-16 21:21"],
-      "not_recorded": "how herb-eval went from 229,249 to 67,913 tag edges; the elapsed time of the crashed first volmax attempt"
+      "not_recorded": "how herb-eval went from 229,249 to 67,913 tag edges; the elapsed time of the crashed first volmax attempt; how the graph went from 15,605 tags and 62,443 tag edges after the volmax copy to 16,714 tags and 62,028 tag edges on 2026-10-08: no step's record covers that change"
     },
     {
       "id": "embeddings",
@@ -86,6 +86,7 @@
       "records": ["output/facet_pairs/answers/{control,heldout,train}/*.json, answers/manifest.*.json, logs/, PROGRESS.md",
                   "output/facet_pairs/bakeoff/cache/*.meta.json, bakeoff/results/summary.json",
                   "output/facet_pairs/fullcache/*.meta.json, fullcache/shard0..7/*.meta.json",
+                  "output/facet_pairs/bakeoff/cache/*.npz, output/facet_pairs/fullcache/*.npz, fullcache/shard0..7/*.npz (the encoder caches themselves)",
                   "output/facet_pairs/rounds/round1.log, rounds/round1/eval.json",
                   "output/facet_pairs/logs/bootstrap_rerun_local.log, rounds/round1/bootstrap/meta.json",
                   "output/tag_vector_backup/herb-eval-volmax__as-stored-20261008/write_facet_layer_2.log"],
@@ -109,6 +110,444 @@
     {"what": "the graph's vectors before 2026-10-08, made by the hosted NIM service", "not_recorded": "when and at what cost"},
     {"what": "passage-mode local embeddings of 2026-10-07 (tags 16,714 texts, 120,328 tokens, 441.3 s; descriptions 4,869 texts, 356,724 tokens, 288.3 s; GTX 1080 Ti)", "records": ["output/embed_local/20261007_rev113abe4acafa_float32/MANIFEST.json"]},
     {"what": "facet work before round 1: stage 0 (4,492 s), score probe (2,247 s), round-0 training (1,313.7, 1,319.8 and 1,301.2 s), round-0 evaluation (219 s), round-0 scoring desktop half (3,024 s)", "records": ["output/facet_pairs/logs/", "output/facet_pairs/model/round0_history.json", "output/facet_pairs/PROGRESS.md"]},
-    {"what": "facet smoke and Haiku check calls (3 calls, 102,273 in, 113 out, 37.9 s; 30 calls, about 900k in, 70k out, 148 s)", "records": ["output/facet_pairs/smoke_answers/", "output/facet_pairs/PROGRESS.md"]}
+    {"what": "facet smoke and Haiku check calls (3 calls, 102,273 in, 113 out, 37.9 s summed per call; 30 calls, 900,483 in, 69,786 out, 1,101.3 s summed per call, 148 s elapsed)", "records": ["output/facet_pairs/smoke_answers/", "output/facet_pairs/PROGRESS.md"]}
+  ],
+  "notes": [
+    {
+      "path": "steps[descriptions_and_tags].whole_run.main.seconds_elapsed",
+      "note": "from run.json's created_at to the last stamp of io.jsonl, two files; from the first call's start it is 13,615.8 s"
+    },
+    {
+      "path": "steps[descriptions_and_tags].whole_run.main.seconds_summed_per_call",
+      "note": "holds the 17 records that failed after their retries (201.0 s) and, for each of the 48 retried calls, the failed first try and its 2 s pause (547.1 s in all), since a call's duration is measured from before its first try; only those first tries' tokens are missing"
+    },
+    {
+      "path": "steps[descriptions_and_tags].the_4869_chunks_of_this_graph",
+      "note": "this subset adds the recovery's calls; the whole-run and per-pass numbers do not; the subset is exactly the graph's chunk set"
+    },
+    {
+      "path": "steps[graph_copies].seconds.volmax_copy_from_its_console_print",
+      "note": "the sum of three progress bars (44 + 135 + 14 s) of the first volmax attempt, which crashed after the copy"
+    },
+    {
+      "path": "steps[embeddings].parts.tags_with_underscores_in_readable_form.seconds_elapsed",
+      "note": "the requests' time only; the run's log gives 52 s, of which 33 s is the model's load"
+    },
+    {
+      "path": "steps[facet_layer].parts.opus_judgements.calls",
+      "note": "counted from the answer files; the three manifests add up to 1,648, since the held-out manifest counts only the resumed run"
+    },
+    {
+      "path": "steps[facet_layer].parts.encoder_bake_off.seconds_elapsed",
+      "note": "the sum of the per-encoder seconds; the parts ran one after another and their stamps span about 3,345 s"
+    },
+    {
+      "path": "steps[facet_layer].parts.encoder_cache.seconds_elapsed",
+      "note": "the sum of the per-shard seconds; the parts ran one after another and their stamps span about 3,726 s"
+    },
+    {
+      "path": "steps[facet_layer].parts.write.backup_seconds",
+      "note": "no record gives this number: it is the backup manifest's written time (20:51:42Z) minus the command's start in the session transcript"
+    },
+    {
+      "path": "steps[facet_layer].parts.encoder_cache.device and steps[facet_layer].parts.bootstrap_refits.device",
+      "note": "no record names the machine; it is read from the encoder cache's torch version against docs/ENVIRONMENT.md"
+    }
+  ],
+  "left_out": [
+    {
+      "step": "descriptions_and_tags",
+      "what": "per-pass elapsed, first call start (ts - duration_ms) to last end, io.jsonl",
+      "values": {
+        "extract": 4224.8,
+        "score_tags": 9183.6,
+        "describe": 25.5,
+        "score": 123.3
+      },
+      "unit": "s",
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "descriptions_and_tags",
+      "what": "the recovery's elapsed and its passes (recovery_io.jsonl)",
+      "values": {
+        "all": 487.0,
+        "extract": 19.9,
+        "score_tags": 45.3,
+        "score": 35.7,
+        "score_recovery": 4.6
+      },
+      "unit": "s",
+      "note": "score_recovery ran about 6 min after the rest (05:47:53Z)",
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "descriptions_and_tags",
+      "what": "the recovery by pass (calls, tokens in, tokens out, seconds summed)",
+      "values": {
+        "extract": [
+          26,
+          44008,
+          9158,
+          73.1
+        ],
+        "score_tags": [
+          26,
+          53241,
+          37542,
+          167.7
+        ],
+        "score": [
+          7,
+          130756,
+          31445,
+          120.7
+        ],
+        "score_recovery": [
+          17,
+          17915,
+          884,
+          15.8
+        ]
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "descriptions_and_tags",
+      "what": "the 4,869-chunk subset leaves out the recovery's score_recovery calls on 14 of its chunks",
+      "values": {
+        "calls": 14,
+        "tokens_in": 14752,
+        "tokens_out": 728,
+        "seconds_summed_per_call": 13.0
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "descriptions_and_tags",
+      "what": "failures of the main run",
+      "values": {
+        "rate_limit_records_after_retry": 17,
+        "their_seconds": 201.0,
+        "errors_jsonl_lines": 33,
+        "extract_pydantic_failures": 9,
+        "score_pydantic_failures": 7,
+        "max_tokens_stops": 7
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "descriptions_and_tags",
+      "what": "time of the 48 retried calls (inside duration_ms, measured from before attempt 1, with a 2 s pause each)",
+      "values": {
+        "records": 48,
+        "seconds": 547.1
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "descriptions_and_tags",
+      "what": "elapsed from the first call's start instead of run.json created_at",
+      "values": {
+        "seconds": 13615.8
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "chunks",
+      "what": "token_estimate of all 5,843 chunks (run.json chunk_ids)",
+      "values": {
+        "token_estimate": 4406995
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "graph_copies",
+      "what": "herb-eval-v2's own steps in the same folder, not carried into volmax (volmax copied only Chunk, Tag and HAS_TAG from v2)",
+      "values": {
+        "step_entities_elapsed_s": 17.4,
+        "step_relations_elapsed_s": 6.9,
+        "build_manifest_elapsed_s": {
+          "2026-08-12T20:38:00Z": 30.9,
+          "2026-08-13T22:21:07Z": 33.9,
+          "2026-08-14T00:25:22Z": 35.4
+        }
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "graph_copies",
+      "what": "the crashed first volmax attempt: start and paste stamps",
+      "values": {
+        "start": "2026-08-16T21:13:39Z",
+        "pasted": "2026-08-16T21:21:44Z",
+        "copy_bars_s": [
+          44,
+          135,
+          14
+        ]
+      },
+      "note": "no end stamp; the attempt lasted at most 485 s",
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "embeddings",
+      "what": "the readable-names run's elapsed and model load (readable_names.log)",
+      "values": {
+        "elapsed_s": 52,
+        "model_load_s": 33,
+        "transcript_span_s": 68.4
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "embeddings",
+      "what": "model load inside the desktop seconds (logs: 'ready in 5s')",
+      "values": {
+        "tags_s": 5,
+        "descriptions_s": 5
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "embeddings",
+      "what": "the laptop CPU run of the same tags (tags_query_laptop_cpu.log, MANIFEST laptop_checks), stopped after 4,000 of 16,714",
+      "values": {
+        "texts": 4000,
+        "rate_at_4000_texts_per_s": 2.5,
+        "cosine_to_desktop_rows": 1.0
+      },
+      "note": "no end line, no token count; at 2.5 texts/s 4,000 texts is about 1,600 s",
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "embeddings",
+      "what": "the write commands' spans in the transcript",
+      "values": {
+        "write_tag_vectors_s": 174.0,
+        "write_desc_vectors_s": 77.1
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "facet_layer",
+      "what": "the paused held-out run (round0.log; answers stamped before 19:25:19Z), inside the 1,720-call totals but not in the elapsed",
+      "values": {
+        "calls": 72,
+        "tokens_in": 2441986,
+        "tokens_out": 2718,
+        "seconds_summed_per_call": 1185.4,
+        "first_answer": "2026-09-18T19:12:41Z",
+        "last_answer": "2026-09-18T19:14:54Z"
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "facet_layer",
+      "what": "the Opus judge runs one by one (calls, tokens in, tokens out, seconds summed, elapsed from the done line)",
+      "values": {
+        "control": [
+          420,
+          14256990,
+          15982,
+          5101.1,
+          642.9
+        ],
+        "heldout_all": [
+          800,
+          27167652,
+          30525,
+          9971.6,
+          null
+        ],
+        "heldout_resumed": [
+          728,
+          24725666,
+          27807,
+          8786.2,
+          1105.8
+        ],
+        "train": [
+          500,
+          16981038,
+          19089,
+          6479.9,
+          815.7
+        ]
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "facet_layer",
+      "what": "the first write of the same layer, replaced by write_facet_layer_2 after the description vectors were rewritten",
+      "values": {
+        "done_s": 55,
+        "transcript_span_s": 56.5,
+        "rows_sha256": "ff6da9dff887627e..."
+      },
+      "record": "output/tag_vector_backup/herb-eval-volmax__as-stored-20261008/write_facet_layer.log (the folder the step cites)",
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "facet_layer",
+      "what": "the command that ran backup and the second write",
+      "values": {
+        "transcript_span_s": 104.7
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "facet_layer",
+      "what": "parts inside round 1's 979.4 s (eval.json wall_s)",
+      "values": {
+        "probe_s": 789.4,
+        "bootstrap_B10000_s": 4.6,
+        "scoring_s": 1.0
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "facet_layer",
+      "what": "the bands-only bootstrap rerun that rewrote meta.json and BANDS.md",
+      "values": {
+        "wall_s": 4.4,
+        "written": "2026-09-21T01:24:37Z"
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "facet_layer",
+      "what": "the bake-off's laptop proof caches (bakeoff/cache_proof, cpu)",
+      "values": {
+        "edges": 14,
+        "gte_s": 43.5,
+        "deberta_small_s": 31.3
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "facet_layer",
+      "what": "the merged full-cache meta carries shard0's rate and count",
+      "values": {
+        "seconds_per_1000_edges_in_meta": 58.7,
+        "edges_this_run_in_meta": 7517,
+        "rate_over_61018_edges": 58.2
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "later_edges_and_fields",
+      "what": "separate person-edge commands after the write",
+      "values": {
+        "compare_s": 11.6,
+        "verify_s": 7.6
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "later_edges_and_fields",
+      "what": "the first chunk-times build (time spans) of 2026-10-17, replaced on 2026-10-19",
+      "values": {
+        "command": "2026-10-17T21:04:33.892Z",
+        "span_s": 27.0,
+        "chunks": 4747
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "later_edges_and_fields",
+      "what": "other counts the runs printed",
+      "values": {
+        "employees": 512,
+        "chunks_with_person_edges": 4646,
+        "person_edges_backed_up": 3894,
+        "customers": 120,
+        "distinct_match_keys": 1185
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "between graph_copies and embeddings",
+      "what": "the graph changed between the volmax copy and the 2026-10-08 writes; no step covers it",
+      "values": {
+        "tags_after_copy": 15605,
+        "tags_on_2026_10_08": 16714,
+        "edges_after_copy": 62443,
+        "run_edges_on_2026_10_08": 62028
+      },
+      "record": "herb-eval-volmax step_copy.json; write_tag_vectors.log; write_facet_layer_2.log; facet_weight_backup manifests (62,028 from 2026-08-31)",
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "superseded",
+      "what": "the 2026-10-07 manifest's other parts (not the graph's)",
+      "values": {
+        "questions": [
+          1514,
+          34670,
+          43.0
+        ],
+        "corpus": [
+          38540,
+          2719968,
+          1708.9
+        ]
+      },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "superseded",
+      "what": "round-0 training began a fourth epoch (round0_train.log ends at A4 step 75/847), not in round0_history.json",
+      "values": {},
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "superseded",
+      "what": "the round-0 scoring Colab half (31,764 edges) has no time in PROGRESS.md",
+      "values": {
+        "edges": 31764
+      },
+      "added_to_no_number_above": true
+    }
+  ],
+  "corrections": [
+    {
+      "made_at": "2026-10-20",
+      "ordered_by": "\"make sure 1-8 is done and correct for the folders/data we have right now\" (2026-10-20)",
+      "rule": "a number or a claim that the recount found different from its record is set to what the record gives; an approximate number is set to the exact one its record gives; what the records give and this file left out is added under left_out and added to no number; how a number is made, where its label does not say, is added under notes",
+      "check": "test/graph/build_cost_check.json: 158 numbers and claims, 155 the same as their record, 1 different, 2 that only the graph holds",
+      "changes": [
+        {
+          "path": "collected",
+          "before": "Every number is as a record gives it; a sum is over per-call or per-shard records. Nothing is estimated. Money is not given.",
+          "after": "Every number is as a record gives it; a sum is over per-call or per-shard records. Nothing is estimated, except the chunks' token estimate (steps[chunks].size.token_estimate_of_those_chunks), which the chunker itself wrote. Money is not given. Every number was recounted from its record on 2026-10-20 (test/graph/build_cost_check.json); notes says how some of them are made."
+        },
+        {
+          "path": "steps[descriptions_and_tags].records[1]",
+          "before": "\"git 399ee32: backend/tagging/pipeline.py (main run); git 415148d: the recovery's version\"",
+          "after": "\"git 415148d: backend/tagging/pipeline.py (the code of the main run and of the recovery: committed after the run; the main run's logs print strings only this version has)\""
+        },
+        {
+          "path": "steps[facet_layer].records",
+          "before": "\"output/facet_pairs/fullcache/*.meta.json, fullcache/shard0..7/*.meta.json\",",
+          "after": "\"output/facet_pairs/fullcache/*.meta.json, fullcache/shard0..7/*.meta.json\",\n                  \"output/facet_pairs/bakeoff/cache/*.npz, output/facet_pairs/fullcache/*.npz, fullcache/shard0..7/*.npz (the encoder caches themselves)\","
+        },
+        {
+          "path": "steps[graph_copies].not_recorded",
+          "before": "\"not_recorded\": \"how herb-eval went from 229,249 to 67,913 tag edges; the elapsed time of the crashed first volmax attempt\"",
+          "after": "\"not_recorded\": \"how herb-eval went from 229,249 to 67,913 tag edges; the elapsed time of the crashed first volmax attempt; how the graph went from 15,605 tags and 62,443 tag edges after the volmax copy to 16,714 tags and 62,028 tag edges on 2026-10-08: no step's record covers that change\""
+        },
+        {
+          "path": "superseded[3].what",
+          "before": "30 calls, about 900k in, 70k out, 148 s)",
+          "after": "30 calls, 900,483 in, 69,786 out, 1,101.3 s summed per call, 148 s elapsed)"
+        },
+        {
+          "path": "superseded[3].what",
+          "before": "\"what\": \"facet smoke and Haiku check calls (3 calls, 102,273 in, 113 out, 37.9 s;",
+          "after": "\"what\": \"facet smoke and Haiku check calls (3 calls, 102,273 in, 113 out, 37.9 s summed per call;"
+        }
+      ]
+    }
   ]
 }

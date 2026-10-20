@@ -53,6 +53,13 @@ Generator = Callable[[str, list], object]
 # cut at the budget
 UNIT_IS_ONE_RECORD = True
 
+# what was left out of the data this arm rests on, and on whose word (harness.fields, FIELDS.md)
+LEFT_OUT = [
+    "The directory files: the corpus's three directory files (people, teams, customers) are not "
+    "embedded beside the product records (retrieval_flags.HERB_BASELINE_METADATA off). No rule in "
+    "his words is recorded.",
+]
+
 # the words for what only this arm writes into a run folder (harness.fields, FIELDS.md)
 FIELDS = {
     "meta": sub("What the arm recorded about this question's ranking.", {
@@ -84,7 +91,11 @@ FIELDS = {
         "cache_file_bytes": "Its size.",
         "cache_file_sha256": "Its sha256, which identifies the vectors.",
         "cache_cost_note": whole("What making those vectors cost and on which machine, as noted "
-                                 "beside the stored file when it was made."),
+                                 "beside the stored file when it was made: calls (requests to the "
+                                 "embedder), batch (texts in a request), tokens, build_time_s and "
+                                 "how it was read (build_time_note), max_seq_length (the most "
+                                 "tokens a text may have) and how many units were longer, the "
+                                 "device, the machine and the software."),
         "embedder_warm_s": "Seconds the embedder took for one empty request before the first "
                            "question, so that no question pays for its loading.",
         "question_embedding": "When and how a question is embedded.",
@@ -181,14 +192,22 @@ def _cache_path(ids: list, texts: list) -> Path:
     return CACHE_DIR / f"{EMBED_MODEL.split('/')[-1]}_{h.hexdigest()[:16]}.npz"
 
 
-def _build_entry(calls, tokens_in, tokens_out, seconds, device) -> dict:
+def _build_entry(calls, tokens_in, tokens_out, seconds, device, not_recorded=None) -> dict:
     """The embedder's one entry in build_stats. Its requests run one after the other, so their
-    seconds added are the start to end of its work."""
+    seconds added are the start to end of its work. `not_recorded` carries how the stored file's
+    own note says its seconds were read, where no timer covered all of it."""
     return {"kind": "embed", "model": EMBED_MODEL,
             "what": "every unit of the corpus embedded in passage mode, for the stored vectors",
             "calls": calls, "tokens_in": tokens_in, "tokens_out": tokens_out,
             "seconds_summed_per_call": None, "seconds_elapsed": seconds, "device": device,
-            "not_recorded": None}
+            "not_recorded": not_recorded}
+
+
+def _seconds_note(note: dict) -> str | None:
+    """What the stored file's cost note says of how its seconds were read, when no one timer
+    covered the whole making of it."""
+    said = note.get("build_time_note")
+    return None if not said else f"no one timer covered all of it; the cost note says: {said}"
 
 
 def build_dense_index(corpus, batch: int = EMBED_BATCH) -> Prepared:
@@ -218,7 +237,7 @@ def build_dense_index(corpus, batch: int = EMBED_BATCH) -> Prepared:
             build_stats=BuildStats(
                 build_time_s=bt,
                 models=[_build_entry(calls, tokens_in, tokens_out, model_s,
-                                     note.get("device"))]),
+                                     note.get("device"), _seconds_note(note))]),
             cache_file=str(cache),
         )
 

@@ -315,6 +315,26 @@ RETRIEVAL_FLAGS = {
         'handing over is the agent\'s find, read off the benchmark\'s own account of the distraction '
         'it holds (arXiv 2506.23139), not his concept; it never reads the question.'),
 }
+# What was left out of the data this arm rests on, and on whose word (harness.fields, FIELDS.md):
+# his words quoted with their time, or that no rule of his is recorded.
+LEFT_OUT = [
+    "The graph: the 974 chunks of the benchmark's question, unanswerable-question and "
+    "product-profile sections were dropped from the graph on 2026-05-19 (5,843 chunks made, 4,869 "
+    "kept). No rule in his words is recorded; his messages of those days are not in the canon.",
+    "The pool: the 61 chunks of the three metadata files (employee.json, salesforce_team.json, "
+    "customers_data.json) are out of the pool (4,869 chunks in the graph, 4,808 in the pool). His "
+    "words: \"eh.. vector and lucene sure as fuck shoulw never use the artefact or the graph DB, "
+    "and there is a fucking reason thoes 3 files or off for the artefact\" (2026-09-13T01:00:57Z) "
+    "· \"just dont use those chunks, ffs, and yeah, i did ask for their fucking removal a million "
+    "times but whatever\" (2026-09-13T01:10:35Z).",
+    "The tags: 4,111 tags and their 5,470 edges were removed from the graph copy herb-eval-v2 on "
+    "2026-08-12 (output/graph_build/herb-eval-v2/step_cleanup.json, with its predicate). His "
+    "words: \"ok, so, lets do this then, draft a new design based on these thoughts and "
+    "herb-eval, including removing the pr-titles and url's\" (2026-08-12T19:14:05Z) · \"well "
+    "then, if you feel this is the way, construct another db using this, aka use the current as "
+    "template and \"fix it\" and add these things, right?\" (2026-08-12T19:52:05Z). Which tags fall "
+    "in the removed classes is the agent's rule, written in the predicate.",
+]
 # The words for what only this arm writes into a run folder (harness.fields, FIELDS.md).
 FIELDS = {
     'meta': sub("What the arm recorded about this question's retrieval.", {
@@ -327,7 +347,13 @@ FIELDS = {
                                'reads the graph, not that corpus.',
             'interpreter_model': 'The model of the first call.',
             'facet_layer': whole("The graph's FacetLayer node as it stood: what the facet values "
-                                 'on the tag-to-chunk edges were made from.'),
+                                 'on the tag-to-chunk edges were made from: its name and run, '
+                                 'the four facets with their retrain flip gaps (equal_gap) and '
+                                 'the pooled one (pooled_flip_gap), on the scale of the facet '
+                                 "values on the edges and read from the bootstrap's BANDS.md "
+                                 '(the columns named), how many refits the values are the mean '
+                                 'of, how many edges carry them, when it was written, and the '
+                                 'sha256 of its source files.'),
             'topic_on_the_edge_against_the_vectors_max_abs':
                 "The largest difference, over the edges, between the topic value on the edge "
                 "and the cosine of the tag's vector and the chunk description's vector.",
@@ -508,13 +534,17 @@ FIELDS = {
                                            'it is not.',
             'delivered_in_scope': 'Whether it sits under a parent of the scope.',
             'delivered_middle_rank': "The middle of its two ranks over the border, the tags "
-                                     "side's and the description side's: the order inside a step.",
-            'delivered_tags_rank': "Its tags side's rank over the border, from its place.",
+                                     "side's and the description side's: the order inside a step. "
+                                     'Every rank here counts from 1, the best; equal values share '
+                                     'the mean of their places, so a rank can be a fraction.',
+            'delivered_tags_rank': "Its tags side's rank over the border, from its place (from 1).",
             'delivered_description_rank': "Its description side's rank over the border, by "
-                                          'closeness.',
-            'delivered_tags_place': "Its tags side's place: the best place a query tag gives it.",
+                                          'closeness (from 1).',
+            'delivered_tags_place': "Its tags side's place: the best place a query tag gives it "
+                                    '(from 1).',
             'delivered_closeness_rank': 'Under that query tag, its rank by closeness among the '
-                                        "border's chunks.",
+                                        "border's chunks (from 1; a chunk with no edge to the tag "
+                                        'stands after every chunk that has one).',
             'delivered_standing': "Its closest edge's standing in the named facet against the "
                                   "same graph tag's other edges on chunks of its kind: 1 above, "
                                   '0 the same or no facet, -1 below; it moves the chunk one level '
@@ -613,7 +643,10 @@ FIELDS = {
                             'or device, its calls, tokens in and out and seconds where the '
                             "step's own record gives them, the records it is read from, and "
                             'what those records do not give. Collected from the records into '
-                            '`test/graph/build_cost.json`; nothing in it is estimated.'),
+                            '`test/graph/build_cost.json`; nothing in it is estimated except the '
+                            "chunks' token estimate, which the chunker itself wrote. Every number "
+                            'in it was recounted from its record on 2026-10-20 '
+                            '(`test/graph/build_cost_check.json`).'),
         'build_cost_file_sha256': 'The sha256 of that file, its line ends as git holds them (LF), '
                                   'which identifies the build cost given.',
         'first_call': 'When and how the first call is made.',
@@ -966,14 +999,14 @@ def build_stats_from_cost(cost):
         {'kind': 'encoder', 'model': f"{bake['encoders']} candidate encoders",
          'what': f"the encoder bake-off on {bake['edges']} edges, which chose the encoder; not in "
                  'the values',
-         'calls': None, 'tokens_in': None, 'tokens_out': None,
+         'calls': None, 'tokens_in': None, 'tokens_out': 0,
          'seconds_summed_per_call': None, 'seconds_elapsed': bake['seconds_elapsed'],
          'device': bake['device'],
          'not_recorded': 'the tokens; the candidates are named in the bake-off\'s own results'},
         {'kind': 'encoder', 'model': cache['model'].split(', ', 1)[0],
          'what': f"the encoder cache: every one of the {cache['edges']} tag-to-chunk edges "
                  f"encoded for the facet head ({cache['model'].split(', ', 1)[1]})",
-         'calls': None, 'tokens_in': None, 'tokens_out': None,
+         'calls': None, 'tokens_in': None, 'tokens_out': 0,
          'seconds_summed_per_call': None, 'seconds_elapsed': cache['seconds_elapsed'],
          'device': cache['device'], 'not_recorded': facet_gaps[2]},
     ]

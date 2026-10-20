@@ -52,9 +52,11 @@ ATTEMPT = {
     "outcome": "ok (it answered), exit (the program ended with an error), bad_envelope (its reply "
                "could not be read), or timeout (cut at timeout_s).",
     "returncode": "The program's exit code; empty for a timeout.",
-    "error": "The error of a try that did not answer.",
-    "stdout": "What the program printed, kept for a try that did not answer.",
-    "stderr": "What the program printed as errors, kept for a try that did not answer.",
+    "error": "The error of a try that did not answer; empty for the try that answered.",
+    "stdout": "What the program printed, kept for a try that did not answer; empty for the try "
+              "that answered, whose reply is in text and envelope.",
+    "stderr": "What the program printed as errors, kept for a try that did not answer; empty for "
+              "the try that answered, and empty when the program printed nothing.",
     "backoff_s": "The pause after a try that did not answer, before the next one.",
     "machine_asleep": "Only where a correction marked the try: the machine slept under it. See "
                       "corrections.json.",
@@ -65,7 +67,8 @@ CALL = {
     "seq": "The call's place among the calls of this question or score cell, from 0.",
     "model": "The model that was asked, by its id.",
     "exe": "The Claude program that made the call.",
-    "flags": "The arguments the program was started with, without the system text and the schema.",
+    "flags": "The arguments the program was started with, without the system text and the schema. "
+             "The empty argument after --tools is the empty tool list: the call has no tool.",
     "system": "The system text sent with the call; empty when the caller gave none.",
     "schema": whole("The JSON schema the reply had to follow, when the caller gave one."),
     "prompt": "The text sent as the user's message, exactly as sent.",
@@ -81,25 +84,33 @@ CALL = {
                  "shell did not reach it.",
     "applied": whole("What the caller asked for and the call carried, one entry per setting."),
     "not_applied": whole("What the caller asked for and the call could not carry, each with the "
-                         "reason."),
+                         "reason; empty when the call carried all of it."),
     "payload_dropped": "The names of the settings in not_applied.",
     "started_at": "When the call started (UTC).",
     "finished_at": "When the call ended (UTC).",
     "attempts": sub("Every try of the call, in order.", ATTEMPT),
     "ok": "Whether the call ended with an answer.",
-    "text": "The reply's text. For an answer call it is the JSON that holds the answer.",
-    "usage": sub("The tokens of the try that answered.", {
+    "text": "The reply's text. For an answer call it is the JSON that holds the answer. Empty for "
+            "a call that gave up: no try answered.",
+    "usage": sub("The tokens of the try that answered; empty for a call that gave up.", {
         "prompt_tokens": "Tokens sent: fresh input, plus what was written to the prompt cache, "
                          "plus what was read from it.",
         "completion_tokens": "Tokens the model wrote.",
         "cached_input_tokens": "The part of prompt_tokens read from the prompt cache.",
     }),
-    "envelope": whole("The Claude program's whole reply as it printed it: its own times "
-                      "(duration_ms for the whole program run, duration_api_ms for the time spent "
-                      "with the model, ttft_ms until the first token), its own token counts, the "
-                      "models it used, its session id, how many turns it took."),
+    "envelope": whole("The Claude program's whole reply as it printed it, each part as the "
+                      "program gives it: its own times in milliseconds (duration_ms for the whole "
+                      "program run, duration_api_ms for the time spent with the model, ttft_ms "
+                      "until the first token, ttft_stream_ms and time_to_request_ms), its own "
+                      "token counts, the models it used with their context window in tokens "
+                      "(contextWindow), its own price in US dollars (total_cost_usd, costUSD; no "
+                      "number of this harness uses it), its counts of web requests (0: the call "
+                      "has no tool), its session id, how many turns it took, and its error "
+                      "fields, which are empty when the call had no error (api_error_status, "
+                      "permission_denials). Empty for a call that gave up: no reply was read."),
     "stream": "The raw stream of a reply joined from parts; empty otherwise.",
-    "stderr": "What the program printed as errors in the try that answered.",
+    "stderr": "What the program printed as errors in the try that answered; empty when it "
+              "printed nothing, and for a call that gave up.",
     "error": "The last error of a call that gave up; empty otherwise.",
     "role": "answer: the call that wrote the answer. Not there on the arm's own calls.",
 }
@@ -147,20 +158,23 @@ CODE_STATE = {
     "diff_sha256": "The sha256 of the difference between the code and the commit. When nothing "
                    "differs it is the sha256 of nothing.",
     "diff_file": "The file in this folder that holds that difference; there only when there is one.",
-    "untracked_sha256": whole("The sha256 of each code file git did not know."),
+    "untracked_sha256": whole("The sha256 of each code file git did not know; empty when git "
+                              "knew every code file."),
 }
 
 LANE = {
     "exe": "The Claude program used for every model call.",
     "cli_version": "Its version.",
     "cwd": "The folder it is started in.",
-    "fixed_flags": "The arguments every call is started with.",
+    "fixed_flags": "The arguments every call is started with. The empty argument after --tools is "
+                   "the empty tool list: no call has a tool.",
     "system_prompt": "How the system text is passed.",
     "stdin": "How the prompt is handed over.",
     "env_set": whole("The environment variables set on every call, by name."),
     "login": "How the program logs in.",
     "config_settings": whole("The settings file the harness puts in the program's own config "
-                             "folder."),
+                             "folder; cleanupPeriodDays is how many days the program keeps its "
+                             "own transcripts of the calls."),
     "env_per_call": "The switches a call sets only when it asks for them, and that are taken away "
                     "when it does not.",
     "per_call": "Where to find what each single call carried.",
@@ -174,8 +188,11 @@ LANE = {
 }
 
 CORRECTION = whole("Only where a stored number was corrected after the run: the rule, the value "
-                   "as recorded and the corrected value. The folder's corrections.json tells the "
-                   "whole of it, and the files as recorded stand beside the corrected ones.")
+                   "as recorded and the corrected value, the seconds taken out (taken_out_s), and "
+                   "in the sleep correction each slept try with its number within the call (from "
+                   "1), its start, its seconds and its timeout in seconds. The folder's "
+                   "corrections.json tells the whole of it, and the files as recorded stand beside "
+                   "the corrected ones.")
 
 RETRIEVAL_ENTRY = {
     "kind": "chat: a language model. embed: the embedder.",
@@ -203,16 +220,23 @@ BUILD_MODEL = {
             "tag-to-chunk edges for the facet values, or the candidates tried for that.",
     "model": "The model, by its id or name.",
     "what": "What the model did in the build.",
-    "calls": "How many calls or requests its records count; empty when they count none.",
-    "tokens_in": "Tokens sent, as the records give them; empty when they do not.",
-    "tokens_out": "Tokens written; empty when the records do not give them.",
-    "seconds_summed_per_call": "The seconds of each call added up. Calls that ran side by side "
-                               "make this more than the time it took. Empty when the records do "
-                               "not give it.",
-    "seconds_elapsed": "Start to end of the model's work, as its records give it; empty when they "
-                       "do not.",
+    "calls": "How many calls or requests its records count, added over the model's parts where "
+             "it worked in several (for a graph, index.build_cost holds each part); empty when "
+             "they count none.",
+    "tokens_in": "Tokens sent, as the records give them, added over the model's parts in the "
+                 "same way; empty when they do not give them.",
+    "tokens_out": "Tokens written, added over the model's parts in the same way; 0 for the "
+                  "embedder and the encoders, which write none; empty when the records do not "
+                  "give them.",
+    "seconds_summed_per_call": "The seconds of each call added up, over the model's parts in the "
+                               "same way. Calls that ran side by side make this more than the "
+                               "time it took. Empty when the records do not give it.",
+    "seconds_elapsed": "Start to end of the model's work, as its records give it, added over its "
+                       "parts where they ran one after the other; empty when they do not give "
+                       "it.",
     "device": "Where it ran.",
-    "not_recorded": "What the records do not give for this model.",
+    "not_recorded": "What the records do not give for this model; empty when they leave nothing "
+                    "out.",
 }
 
 GRAPH = {
@@ -223,7 +247,8 @@ GRAPH = {
                      "are in the arm's index (build_cost).",
     "graph_census_sha256": "The census hash the last build record gives, of the graph as that "
                            "build left it.",
-    "removed_tags_sha256": "The hash of the tags the build record says were removed.",
+    "removed_tags_sha256": "The hash of the tags the build record says were removed; empty when "
+                           "the build record gives none.",
     "build_timestamp": "When the last build record was written (UTC).",
     "source_database": "The database the last build copied from.",
     "census": sub("The graph as counted in it when this manifest was written. It counts and "
@@ -330,7 +355,8 @@ MANIFEST = {
         "models": sub("One entry per model that worked on the build, in the order of the build; "
                       "two models are never added together. Empty for an index built without a "
                       "model.", BUILD_MODEL),
-        "not_recorded": "What the build records do not give, step by step.",
+        "not_recorded": "What the build records do not give, step by step; empty when nothing is "
+                        "noted.",
         "as_the_arm_gave_it": whole("Only for an older arm that gave one sum for none or several "
                                     "models: that sum and the names, as given."),
     }),
@@ -447,7 +473,9 @@ SETTINGS = {
     "ragas": "The version of RAGAS, the library that writes the judge's prompts and computes the "
              "scores.",
     "embed_model": "The embedding model the scores use.",
-    "ragas_run_config": whole("RAGAS's own run settings as handed to it."),
+    "ragas_run_config": whole("RAGAS's own run settings as handed to it, in RAGAS's own units: "
+                              "timeout and max_wait in seconds, max_retries and max_workers as "
+                              "counts."),
     "ragas_do_not_track": "Whether RAGAS's usage reporting to its makers was switched off.",
     "lane": sub("How every judge call was made.", LANE),
     "calls_file": "The file that keeps every judge call and embedder request.",
@@ -489,8 +517,10 @@ EVAL_CALL = {
     "arm": "The retrieval method.",
     "question_id": "The question the call was made for; empty for the embeddings made once "
                    "before the cells.",
-    "type": "The question's kind in the benchmark.",
-    "score": "The score the call was made for.",
+    "type": "The question's kind in the benchmark; not there for the embeddings made once before "
+            "the cells.",
+    "score": "The score the call was made for; empty for the embeddings made once before the "
+             "cells (phase prime), which serve several scores.",
     "phase": "cell: made for one question and one score. prime: embeddings made once, before the "
              "cells.",
     **RECORD,
@@ -521,23 +551,37 @@ CORRECTION_ENTRY = {
     "what_happened": "What was wrong in the stored numbers.",
     "rule": whole("The rule that decided which numbers were corrected, and how."),
     "not_changed_and_worth_knowing": "What the correction left as recorded and a reader should know.",
-    "slept_tries": whole("Only in the sleep correction: the tries the rule found, each with what "
-                         "was recorded for it."),
-    "changes": whole("Every changed value: where it is, the value before and the corrected "
-                     "value."),
+    "slept_tries": whole("Only in the sleep correction: the tries the rule found, each with its "
+                         "question, its row (the line of arm_outputs.jsonl, counted from 0), its "
+                         "try (its number within the call, from 1), its start (UTC), its recorded "
+                         "seconds, its timeout in seconds, the seconds of low power the machine "
+                         "logged inside it, whether a whole reply had come back, and that reply's "
+                         "tokens."),
+    "changes": whole("Every changed value: where it is, the value before and the corrected value, "
+                     "and what was taken out (taken_out: seconds in the sleep correction; in the "
+                     "clean-up correction the embedder's seconds and the seconds of refused first "
+                     "calls). The value before is empty where the field was not there before the "
+                     "correction. A copied value keeps its empty parts; its own field's words say "
+                     "why they are empty."),
     "checks": whole("Only in the clean-up correction: what was checked against the call records "
                     "and the graph, whether it held, and how many places were looked at."),
     "judge_calls_with_logged_low_power_time_inside_them": whole("Only in the sleep correction: "
                                                                "judge calls the machine's own "
-                                                               "sleep record touches; not changed."),
+                                                               "sleep record touches, not changed; "
+                                                               "each try as [its number from 1, "
+                                                               "its outcome, its seconds]."),
     "low_power_intervals_the_machine_logged": whole("Only in the sleep correction: the machine's "
-                                                    "own record of when it slept."),
+                                                    "own record of when it slept: start and end "
+                                                    "(UTC), seconds, and what the machine said."),
     "files": whole("The sha256 of each corrected file, before and after the correction, and "
                    "where the file from before is kept. The sleep correction's are of the bytes "
                    "on the disk that ran it; the clean-up correction's are of the files with the "
                    "line ends git holds (LF), as line_ends says."),
     "evidence": "The file that holds the machine's own record.",
     "script": "The script that made the correction.",
+    "code": whole("Only in the clean-up correction: the code the script ran on, which it imports "
+                  "its harness and arms from: the commit, whether anything differed from it, and "
+                  "what."),
 }
 
 CORRECTIONS = {
@@ -654,6 +698,26 @@ SCORES = {
 }
 
 _ARM_OWNED = ("meta", "index", "retrieval_flags")
+
+# What was left out of the data the runs rest on, and on whose word: his words quoted with their
+# time, or that no rule of his is recorded. An arm adds its own in its LEFT_OUT.
+LEFT_OUT = [
+    "The questions: every run answers the 100 questions of data/gold100.jsonl "
+    "(inputs.ids_sha256). How these 100 were chosen from the benchmark's questions: no rule in "
+    "his words is recorded. The set was first added on 2026-05-19 (commit 0b98b12, \"Scale gold "
+    "set to n=100 (balanced) + statistically robust result\"); his messages from 2026-05-15 to "
+    "2026-05-27 are not in the canon, because that work was done in Cursor.",
+]
+
+
+def arm_left_out(arm: str | None) -> list:
+    """What an arm says was left out of the data it rests on; empty when it says nothing."""
+    if not arm:
+        return []
+    try:
+        return list(getattr(importlib.import_module(f"arms.{arm}"), "LEFT_OUT", None) or [])
+    except ImportError:
+        return []
 
 
 def arm_fields(arm: str | None) -> dict:
@@ -886,6 +950,82 @@ def _table(fields: dict, shared: list, prefix: str = "", skip=()) -> list:
     return lines
 
 
+def _json_type(value) -> str:
+    if value is None:
+        return "null"
+    if isinstance(value, bool):
+        return "boolean"
+    if isinstance(value, int):
+        return "integer"
+    if isinstance(value, float):
+        return "number"
+    if isinstance(value, str):
+        return "string"
+    return "array" if isinstance(value, list) else "object"
+
+
+def _typed(value, fields: dict, path: str, out: dict, record: int) -> None:
+    """Every described field under value: the JSON types it holds, the records that hold it and
+    the records that hold it empty (null, "", [] or {}). A field described as a whole is counted
+    as one field; nothing below it is walked."""
+    if isinstance(value, list):
+        for item in value:
+            _typed(item, fields, path, out, record)
+        return
+    if not isinstance(value, dict):
+        return
+    for key, below in value.items():
+        here = f"{path}.{key}" if path else key
+        entry = fields.get(key)
+        if entry is None:
+            continue
+        seen = out.setdefault(here, {"types": set(), "records": set(), "empty": set()})
+        seen["types"].add(_json_type(below))
+        seen["records"].add(record)
+        if below is None or below == "" or below == [] or below == {}:
+            seen["empty"].add(record)
+        if isinstance(entry, tuple) and entry[1] is not None and isinstance(below, (dict, list)):
+            if isinstance(below, list):
+                for item in below:
+                    if isinstance(item, (dict, list)):
+                        _typed(item, entry[1], here, out, record)
+                    else:
+                        seen["types"].add("array of " + _json_type(item))
+            else:
+                _typed(below, entry[1], here, out, record)
+
+
+def _types_section(d: Path, spec: dict) -> list:
+    """The fields as they stand in this folder, counted from its files: for every described field
+    the JSON types it holds, in how many records, and in how many it is empty."""
+    out = ["## The fields as they stand in this folder", "",
+           "Counted from the files themselves when this was written. A record is a line of a "
+           ".jsonl file, or the whole of a .json file. Empty is null, an empty text, an empty "
+           "list or an empty object; the field's words say when and why it is empty.", ""]
+    for p in sorted(d.iterdir()):
+        pattern = _match(p.name) if p.is_file() else None
+        fields = spec.get(pattern) if pattern else None
+        if fields is None or ".as_recorded." in p.name or p.suffix not in (".jsonl", ".json"):
+            continue
+        records = (_lines(p) if p.suffix == ".jsonl" else [_json(p)])
+        seen = {}
+        for n, record in enumerate(records):
+            _typed(record, fields, "", seen, n)
+        if not records:
+            out += [f"### `{p.name}` (0 records)", "", "The file holds no record.", ""]
+            continue
+        if not seen:
+            continue
+        out += [f"### `{p.name}` ({len(records)} records)", "",
+                "| Field | Types | Records that hold it | Of those, empty |", "|---|---|---|---|"]
+        for path in sorted(seen):
+            s = seen[path]
+            out.append(f"| `{path}` | {', '.join(sorted(s['types']))} | {len(s['records'])} | "
+                       f"{len(s['empty'])} |")
+        out.append("")
+    return out
+
+
 def render(folder=None, arm: str | None = None, stamp_files: bool = False) -> str:
     """The text of FIELDS.md, for a run folder when one is given."""
     d = Path(folder) if folder else None
@@ -922,8 +1062,12 @@ def render(folder=None, arm: str | None = None, stamp_files: bool = False) -> st
         if d and not names and pattern != "FIELDS.md":
             continue
         out.append(f"| `{'`, `'.join(names) if names else pattern}` | {text} | {join} |")
-    out += ["", "Times are seconds (`_s`) or UTC stamps (`_at`). Sizes are tokens, characters "
-            "(`chars`) or bytes. Scores run from 0 to 1 and higher is more.", "",
+    out += ["", "Times are seconds (`_s`), milliseconds (`_ms`) or UTC stamps (`_at`; every other "
+            "time text carries its own zone). Sizes are tokens, characters (`chars`) or bytes. A count (calls, attempts, requests, texts, records, edges, refits, and the "
+            "like) is a plain number of the things it names. A price (`usd`, `USD`) is the "
+            "Claude program's own, in US dollars; no number of this harness uses it. The "
+            "evaluation's scores run from 0 to 1 and higher is more; a score an arm ranks by "
+            "says its own scale.", "",
             "## The scores", "",
             "The scores are computed by RAGAS. The quoted sentence of each is RAGAS's own, from "
             "the place named; \"Here\" says what goes into it in this folder.", "",
@@ -937,6 +1081,9 @@ def render(folder=None, arm: str | None = None, stamp_files: bool = False) -> st
             "same for every arm.", "",
             "No stored score is called a hit rate. Whether a question got any gold record at all "
             "can be read from `context_recall_id` being above 0.", "",
+            "## What was left out, and on whose word", ""]
+    out += [f"- {line}" for line in LEFT_OUT + arm_left_out(arm)]
+    out += ["",
             "## Easy to read wrongly", "",
             "- `top_k` in the manifest is not used by a run with a character budget.",
             "- `generator.payload` is what the harness asked for. `applied` and `not_applied` are "
@@ -997,6 +1144,7 @@ def render(folder=None, arm: str | None = None, stamp_files: bool = False) -> st
         out += [f"- `{g}`" for g in gaps]
         if gaps:
             out.append("")
+        out += _types_section(d, spec)
     out += ["---", f"Written from `prod/harness/fields.py`, sha256 `{source_sha256()}`."]
     if d and stamp_files:
         # with the line ends git holds (LF): the harness writes CR LF on Windows, git keeps LF,

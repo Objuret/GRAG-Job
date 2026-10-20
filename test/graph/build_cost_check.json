@@ -1,0 +1,1638 @@
+{
+ "what": "every number and claim of test/graph/build_cost.json, as it stood at commit 0c082a3 (the copy in the final artefact run's manifest), recounted from the record it names",
+ "made_at": "2026-10-20",
+ "how": "each value recomputed from its record (files, git blobs, logs, manifests); the graph itself was not queried; no question or answer text was read",
+ "summary": {
+  "numbers_and_claims_checked": 158,
+  "by_verdict": {
+   "same": 155,
+   "not checkable": 2,
+   "differs": 1
+  }
+ },
+ "checked": [
+  {
+   "path": "steps[0].calls",
+   "value_in_file": 0,
+   "value_recomputed": 0,
+   "record": "git 28c95aa v1/backend/indexing/chunker.py, preflight.py, run_preflight.py",
+   "how": "chunker.py docstring 'No LLM'; none of the three imports a model client",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[0].tokens_in",
+   "value_in_file": 0,
+   "value_recomputed": 0,
+   "record": "same as calls",
+   "how": "no model client in the chunking code",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[0].tokens_out",
+   "value_in_file": 0,
+   "value_recomputed": 0,
+   "record": "same as calls",
+   "how": "no model client in the chunking code",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[0].seconds",
+   "value_in_file": null,
+   "value_recomputed": null,
+   "record": "git 28c95aa v1/docs/backend/status.md; herb-eval-v2 step_copy.json",
+   "how": "no named record gives a time for the chunking or the load",
+   "verdict": "same",
+   "note": "null agrees with the records: none gives the time"
+  },
+  {
+   "path": "steps[0].size.chunks_in_this_graph",
+   "value_in_file": 4869,
+   "value_recomputed": 4869,
+   "record": "output/graph_build/herb-eval-v2/step_copy.json; git bcc3156 snapshot zip run.json",
+   "how": "step_copy.json source_before.labels.Chunk = 4869; run.json chunk_ids minus the 974 dropped kinds = 4869",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[0].size.token_estimate_of_those_chunks",
+   "value_in_file": 3850319,
+   "value_recomputed": 3850319,
+   "record": "output/graph_build/herb-eval-v2/step_copy.json (token_estimate_sum)",
+   "how": "source_before.checksums.token_estimate_sum = 3850319; also the sum of token_estimate over the 4,869 kept chunks in run.json chunk_ids = 3850319",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[0].what (5,843 chunks written)",
+   "value_in_file": 5843,
+   "value_recomputed": 5843,
+   "record": "git 28c95aa v1/docs/backend/status.md line 38; git bcc3156 snapshot zip run.json",
+   "how": "status.md: 'wrote 5843 chunks'; run.json analysis.n_chunks = 5843",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[0].what (4,869 kept)",
+   "value_in_file": 4869,
+   "value_recomputed": 4869,
+   "record": "git 28c95aa v1/docs/backend/status.md line 69",
+   "how": "'4,869 safe chunks'",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[0].what (974 dropped on 2026-05-19)",
+   "value_in_file": 974,
+   "value_recomputed": 974,
+   "record": "git 28c95aa v1/docs/backend/status.md lines 27, 69; git bcc3156 snapshot zip run.json",
+   "how": "status.md: '2026-05-19: ... 974 excluded chunks'; run.json kinds qa_record 776 + qa_record_part 125 + unanswerable_question_batch 43 + product_profile 30 = 974",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[0].date",
+   "value_in_file": "2026-05-13",
+   "value_recomputed": "2026-05-13",
+   "record": "git 399ee32 backend/docs/status.md line 53 (2026-05-13 21:16 +0200)",
+   "how": "'2026-05-13: cleaned the herb database back to fresh HERB chunking artefacts only', beside 'wrote 5843 chunks'",
+   "verdict": "same",
+   "note": "the date stands in 399ee32's status.md; 28c95aa's copy gives the chunk count without the date line"
+  },
+  {
+   "path": "steps[0].records[2] (Chunk.created_at 2026-05-13T15:56:30Z to 15:56:36Z)",
+   "value_in_file": "2026-05-13T15:56:30Z..15:56:36Z",
+   "value_recomputed": null,
+   "record": "the graph's Chunk nodes",
+   "how": "no file carries the values (herb-eval-v2 step_copy.json only counts created_at on 4,869 chunks); the database was not queried, by instruction",
+   "verdict": "not checkable"
+  },
+  {
+   "path": "steps[1].date",
+   "value_in_file": "2026-05-14",
+   "value_recomputed": "2026-05-14",
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "first and last ts 2026-05-14T00:23:48Z .. 04:10:42Z",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].where (claude-haiku-4-5)",
+   "value_in_file": "claude-haiku-4-5",
+   "value_recomputed": "claude-haiku-4-5",
+   "record": "git bcc3156 snapshot zip io.jsonl, git bcc3156 snapshot zip recovery_io.jsonl",
+   "how": "model field on all 11,726 + 76 records",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].where (snapshot claude-haiku-4-5-20251001)",
+   "value_in_file": "claude-haiku-4-5-20251001",
+   "value_recomputed": "claude-haiku-4-5-20251001",
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "named in the API's message of the 17 rate-limit error records ('model: claude-haiku-4-5-20251001')",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].where (anthropic)",
+   "value_in_file": "anthropic",
+   "value_recomputed": "anthropic",
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "provider field on every record",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].where (forced tool use)",
+   "value_in_file": "forced tool use",
+   "value_recomputed": "tool_choice {'type': 'tool'}",
+   "record": "git 415148d (and 399ee32) backend/tagging/pipeline.py",
+   "how": "_raw_call sets tool_choice to the one tool; stop_reason tool_use on 11,702 records, max_tokens on 7",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].where (temperature 0.3)",
+   "value_in_file": 0.3,
+   "value_recomputed": 0.3,
+   "record": "git 415148d (and 399ee32) backend/tagging/pipeline.py",
+   "how": "temperature=0.3",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].where (4 at a time)",
+   "value_in_file": 4,
+   "value_recomputed": 4,
+   "record": "git bcc3156 snapshot zip run.json; pipeline.py CONCURRENCY = 4; recovery.py uses the same ClaudeCaller",
+   "how": "run.json concurrency = 4",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.main.records",
+   "value_in_file": 11726,
+   "value_recomputed": 11726,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "lines in io.jsonl",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.main.calls_with_usage",
+   "value_in_file": 11709,
+   "value_recomputed": 11709,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "records with a usage field (17 error records have none)",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.main.tokens_in",
+   "value_in_file": 22736735,
+   "value_recomputed": 22736735,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "sum of usage.prompt_tokens",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.main.tokens_out",
+   "value_in_file": 9996111,
+   "value_recomputed": 9996111,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "sum of usage.completion_tokens",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.main.seconds_summed_per_call",
+   "value_in_file": 54180.2,
+   "value_recomputed": 54180.191,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "sum of duration_ms over all 11,726 records / 1000",
+   "verdict": "same",
+   "note": "the sum holds the 17 failed records (201.0 s); over the 11,709 calls with usage it is 53,979.2 s. A retried record's duration_ms is measured from before its first attempt, so it also holds the failed first attempt and the 2 s pause (pipeline.py: t0 is set before the attempt loop)"
+  },
+  {
+   "path": "steps[1].whole_run.main.seconds_elapsed",
+   "value_in_file": 13644.6,
+   "value_recomputed": 13644.605,
+   "record": "git bcc3156 snapshot zip run.json (created_at) and git bcc3156 snapshot zip io.jsonl (last ts)",
+   "how": "2026-05-14T00:23:17.428Z (run.json created_at) to 04:10:42.034Z (last ts; ts is written after a call returns)",
+   "verdict": "same",
+   "note": "a difference of stamps from two files; from the first call's start (ts minus duration_ms) to the last end it is 13,615.8 s"
+  },
+  {
+   "path": "steps[1].whole_run.recovery.calls",
+   "value_in_file": 76,
+   "value_recomputed": 76,
+   "record": "git bcc3156 snapshot zip recovery_io.jsonl",
+   "how": "lines, all with usage",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.recovery.tokens_in",
+   "value_in_file": 245920,
+   "value_recomputed": 245920,
+   "record": "git bcc3156 snapshot zip recovery_io.jsonl",
+   "how": "sum of usage.prompt_tokens",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.recovery.tokens_out",
+   "value_in_file": 79029,
+   "value_recomputed": 79029,
+   "record": "git bcc3156 snapshot zip recovery_io.jsonl",
+   "how": "sum of usage.completion_tokens",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.recovery.seconds_summed_per_call",
+   "value_in_file": 377.3,
+   "value_recomputed": 377.314,
+   "record": "git bcc3156 snapshot zip recovery_io.jsonl",
+   "how": "sum of duration_ms / 1000",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.by_pass.extract.records",
+   "value_in_file": 5843,
+   "value_recomputed": 5843,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "records of stage extract",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.by_pass.extract.tokens_in",
+   "value_in_file": 9854855,
+   "value_recomputed": 9854855,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "sum of usage.prompt_tokens, stage extract",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.by_pass.extract.tokens_out",
+   "value_in_file": 1841463,
+   "value_recomputed": 1841463,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "sum of usage.completion_tokens, stage extract",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.by_pass.extract.seconds_summed_per_call",
+   "value_in_file": 16896.2,
+   "value_recomputed": 16896.164,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "sum of duration_ms / 1000, stage extract",
+   "verdict": "same",
+   "note": "holds the 17 failed extract records' 201.0 s"
+  },
+  {
+   "path": "steps[1].whole_run.by_pass.score_tags.calls",
+   "value_in_file": 5817,
+   "value_recomputed": 5817,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "records of stage score_tags",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.by_pass.score_tags.tokens_in",
+   "value_in_file": 11889245,
+   "value_recomputed": 11889245,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "sum of usage.prompt_tokens, stage score_tags",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.by_pass.score_tags.tokens_out",
+   "value_in_file": 8033494,
+   "value_recomputed": 8033494,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "sum of usage.completion_tokens, stage score_tags",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.by_pass.score_tags.seconds_summed_per_call",
+   "value_in_file": 36718.1,
+   "value_recomputed": 36718.067,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "sum of duration_ms / 1000, stage score_tags",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.by_pass.describe.calls",
+   "value_in_file": 33,
+   "value_recomputed": 33,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "records of stage describe",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.by_pass.describe.tokens_in",
+   "value_in_file": 492482,
+   "value_recomputed": 492482,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "sum of usage.prompt_tokens, stage describe",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.by_pass.describe.tokens_out",
+   "value_in_file": 6252,
+   "value_recomputed": 6252,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "sum of usage.completion_tokens, stage describe",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.by_pass.describe.seconds_summed_per_call",
+   "value_in_file": 99.4,
+   "value_recomputed": 99.353,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "sum of duration_ms / 1000, stage describe",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.by_pass.score.calls",
+   "value_in_file": 33,
+   "value_recomputed": 33,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "records of stage score",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.by_pass.score.tokens_in",
+   "value_in_file": 500153,
+   "value_recomputed": 500153,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "sum of usage.prompt_tokens, stage score",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.by_pass.score.tokens_out",
+   "value_in_file": 114902,
+   "value_recomputed": 114902,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "sum of usage.completion_tokens, stage score",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].whole_run.by_pass.score.seconds_summed_per_call",
+   "value_in_file": 466.6,
+   "value_recomputed": 466.607,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "sum of duration_ms / 1000, stage score",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].the_4869_chunks_of_this_graph.extract.records",
+   "value_in_file": 4892,
+   "value_recomputed": 4892,
+   "record": "git bcc3156 snapshot zip io.jsonl + git bcc3156 snapshot zip recovery_io.jsonl",
+   "how": "chunk set = run.json chunk_ids without the kinds qa_record, qa_record_part, unanswerable_question_batch, product_profile (4,869 ids; equal to the 4,869 ids of output/embed_local/20261007_rev113abe4acafa_float32/descriptions.jsonl, sha256 e3b840dd..., the input of the graph's description vectors); io.jsonl 4,869 + recovery_io.jsonl 23",
+   "verdict": "same",
+   "note": "the subset adds the recovery's calls, the whole_run.main/by_pass numbers do not"
+  },
+  {
+   "path": "steps[1].the_4869_chunks_of_this_graph.extract.calls_with_usage",
+   "value_in_file": 4878,
+   "value_recomputed": 4878,
+   "record": "git bcc3156 snapshot zip io.jsonl + git bcc3156 snapshot zip recovery_io.jsonl",
+   "how": "4,855 + 23 (14 failed records have no usage)",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].the_4869_chunks_of_this_graph.extract.tokens_in",
+   "value_in_file": 8190926,
+   "value_recomputed": 8190926,
+   "record": "git bcc3156 snapshot zip io.jsonl + git bcc3156 snapshot zip recovery_io.jsonl",
+   "how": "8,152,429 + 38,497",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].the_4869_chunks_of_this_graph.extract.tokens_out",
+   "value_in_file": 1673729,
+   "value_recomputed": 1673729,
+   "record": "git bcc3156 snapshot zip io.jsonl + git bcc3156 snapshot zip recovery_io.jsonl",
+   "how": "1,665,120 + 8,609",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].the_4869_chunks_of_this_graph.extract.seconds_summed_per_call",
+   "value_in_file": 14691.8,
+   "value_recomputed": 14691.805,
+   "record": "git bcc3156 snapshot zip io.jsonl + git bcc3156 snapshot zip recovery_io.jsonl",
+   "how": "14,624.802 + 67.003 (holds the 14 failed records' 169.4 s)",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].the_4869_chunks_of_this_graph.score_tags.calls",
+   "value_in_file": 4869,
+   "value_recomputed": 4869,
+   "record": "git bcc3156 snapshot zip io.jsonl + git bcc3156 snapshot zip recovery_io.jsonl",
+   "how": "chunk set = run.json chunk_ids without the kinds qa_record, qa_record_part, unanswerable_question_batch, product_profile (4,869 ids; equal to the 4,869 ids of output/embed_local/20261007_rev113abe4acafa_float32/descriptions.jsonl, sha256 e3b840dd..., the input of the graph's description vectors); io.jsonl 4,846 + recovery_io.jsonl 23",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].the_4869_chunks_of_this_graph.score_tags.tokens_in",
+   "value_in_file": 9946291,
+   "value_recomputed": 9946291,
+   "record": "git bcc3156 snapshot zip io.jsonl + git bcc3156 snapshot zip recovery_io.jsonl",
+   "how": "9,899,438 + 46,853",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].the_4869_chunks_of_this_graph.score_tags.tokens_out",
+   "value_in_file": 7267398,
+   "value_recomputed": 7267398,
+   "record": "git bcc3156 snapshot zip io.jsonl + git bcc3156 snapshot zip recovery_io.jsonl",
+   "how": "7,232,452 + 34,946",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].the_4869_chunks_of_this_graph.score_tags.seconds_summed_per_call",
+   "value_in_file": 32816.8,
+   "value_recomputed": 32816.818,
+   "record": "git bcc3156 snapshot zip io.jsonl + git bcc3156 snapshot zip recovery_io.jsonl",
+   "how": "32,667.128 + 149.690",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].not_recorded (the 48 first attempts that failed before a retry)",
+   "value_in_file": 48,
+   "value_recomputed": 48,
+   "record": "git bcc3156 snapshot zip io.jsonl",
+   "how": "48 extract records carry attempt 2 and no target has an attempt-1 record (31 succeeded on the retry, 17 failed again)",
+   "verdict": "same",
+   "note": "partly recorded: their tokens are not, but their time is inside the retried records' duration_ms (547.1 s for the 48, each with a 2 s pause)"
+  },
+  {
+   "path": "steps[1].not_recorded (cached input tokens)",
+   "value_in_file": "not recorded",
+   "value_recomputed": "not recorded",
+   "record": "git bcc3156 snapshot zip io.jsonl; pipeline.py",
+   "how": "usage holds prompt_tokens, completion_tokens, total_tokens only; the pipeline copies only input_tokens and output_tokens",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[1].not_recorded (request start times)",
+   "value_in_file": "not recorded",
+   "value_recomputed": "derivable",
+   "record": "git bcc3156 snapshot zip io.jsonl; pipeline.py",
+   "how": "ts is stamped after the call returns and duration_ms is beside it, so a start is ts minus duration_ms",
+   "verdict": "same",
+   "note": "no start field, but each start can be computed from the record"
+  },
+  {
+   "path": "steps[1].records[1] (git 399ee32: backend/tagging/pipeline.py (main run))",
+   "value_in_file": "399ee32",
+   "value_recomputed": "415148d",
+   "record": "git 399ee32 and 415148d backend/tagging/pipeline.py; snapshot extract.log, score.log, io.jsonl",
+   "how": "399ee32's pipeline has no score_tags pass and its score pass is one call per chunk; io.jsonl has 5,817 score_tags records and 33 per-file score records, and the snapshot's logs print 'extract: 5817/5843 chunks succeeded (two-pass)' and 'score: wrote w_chunk_file for 4266/5817 chunks across 33 files (batched)', strings only 415148d's pipeline prints (its lines 948 and 1118); recovery.py imports ScoreTagsOut, which 399ee32 lacks",
+   "verdict": "differs",
+   "note": "not a number; the main run was written by the code committed as 415148d (2026-05-14 08:15 +0200, after the run), not by 399ee32"
+  },
+  {
+   "path": "steps[2].calls / tokens_in / tokens_out",
+   "value_in_file": 0,
+   "value_recomputed": 0,
+   "record": "the console print; git 44470b0 test/graph/build_corpus_graph.py",
+   "how": "only Neo4j work in the records; the script imports no model client (the 2026-08-16 version, v3/build_corpus_graph.py, is not in git)",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[2].date",
+   "value_in_file": "2026-08-12 and 2026-08-16",
+   "value_recomputed": "2026-08-12 and 2026-08-16",
+   "record": "herb-eval-v2 step_copy.json / step_cleanup.json; herb-eval-volmax records",
+   "how": "timestamps 2026-08-12T20:36:02Z, 20:36:45Z; volmax 2026-08-16T21:10:00Z .. 21:46:16Z",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[2].seconds.herb_eval_v2_copy_elapsed",
+   "value_in_file": 1018.9,
+   "value_recomputed": 1018.9,
+   "record": "output/graph_build/herb-eval-v2/step_copy.json",
+   "how": "elapsed_s",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[2].seconds.herb_eval_v2_cleanup_elapsed",
+   "value_in_file": 9.1,
+   "value_recomputed": 9.1,
+   "record": "output/graph_build/herb-eval-v2/step_cleanup.json",
+   "how": "elapsed_s",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[2].seconds.volmax_copy_from_its_console_print",
+   "value_in_file": 193,
+   "value_recomputed": 193,
+   "record": "docs/canon/raw/user_turns_all.md, paste of 2026-08-16 21:21 (jsonl iso_timestamp 2026-08-16T21:21:44.421Z, 4,075 chars)",
+   "how": "progress bars 'copy chunks [00:44]' + 'copy tags [02:15]' + 'copy semantic edges [00:14]' = 44 + 135 + 14",
+   "verdict": "same",
+   "note": "a sum of three bars rounded to whole seconds; the print is the crashed first attempt (it ends in Neo.ClientError.Schema.IndexAlreadyExists after the copy); the resumed run skipped the copy (step_copy.json 'copied': null)"
+  },
+  {
+   "path": "steps[2].seconds.volmax_entities_elapsed",
+   "value_in_file": 42.3,
+   "value_recomputed": 42.3,
+   "record": "output/graph_build/herb-eval-volmax/step_entities.json (and build_manifest.json)",
+   "how": "elapsed_s",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[2].seconds.volmax_entity_plan_elapsed",
+   "value_in_file": 6.8,
+   "value_recomputed": 6.8,
+   "record": "output/graph_build/herb-eval-volmax/step_entity_plan.json",
+   "how": "elapsed_s",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[2].what (4,111 tags removed)",
+   "value_in_file": 4111,
+   "value_recomputed": 4111,
+   "record": "output/graph_build/herb-eval-v2/step_cleanup.json",
+   "how": "deleted_nodes = impact.tags = 4111",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[2].what (5,470 edges removed)",
+   "value_in_file": 5470,
+   "value_recomputed": 5470,
+   "record": "output/graph_build/herb-eval-v2/step_cleanup.json",
+   "how": "deleted_rels = impact.edges = 5470",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[2].not_recorded (herb-eval from 229,249 ...)",
+   "value_in_file": 229249,
+   "value_recomputed": 229249,
+   "record": "git 28c95aa v1/docs/backend/status.md line 69; snapshot neo4j_edges_post_recovery.jsonl",
+   "how": "status.md: '229,249 safe HAS_TAG edges'; recomputed: per-facet edge lines on the 4,869 kept chunks in neo4j_edges_post_recovery.jsonl = 229,249 (94,651 distinct chunk-tag pairs)",
+   "verdict": "same",
+   "note": "not in the step's named records; status.md and the snapshot hold it"
+  },
+  {
+   "path": "steps[2].not_recorded (... to 67,913 tag edges)",
+   "value_in_file": 67913,
+   "value_recomputed": 67913,
+   "record": "output/graph_build/herb-eval-v2/step_copy.json",
+   "how": "source_before.rels.HAS_TAG = 67913",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[2].not_recorded (elapsed of the crashed first volmax attempt)",
+   "value_in_file": "not recorded",
+   "value_recomputed": "not recorded (bounded)",
+   "record": "herb-eval-volmax/build_manifest_20260816T211339Z.json; the canon paste",
+   "how": "start 21:13:39Z ('build in progress'), crash after the 193 s copy, pasted 21:21:44Z: no end stamp",
+   "verdict": "same",
+   "note": "its copy part (193 s) is recorded and is the number above"
+  },
+  {
+   "path": "steps[3].date",
+   "value_in_file": "2026-10-08",
+   "value_recomputed": "2026-10-08",
+   "record": "output/embed_local/20261008_rev113abe4acafa_float32/MANIFEST.json",
+   "how": "made_utc 2026-10-08T15:52:18Z, 17:40:34Z, 20:36:38Z",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[3].where (revision 113abe4acafa848e77ead9c0623205e511932348)",
+   "value_in_file": "113abe4acafa848e77ead9c0623205e511932348",
+   "value_recomputed": "113abe4acafa848e77ead9c0623205e511932348",
+   "record": "output/embed_local/20261008_rev113abe4acafa_float32/tags_query.manifest.json, descriptions_query.manifest.json",
+   "how": "revision",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[3].where (float32)",
+   "value_in_file": "float32",
+   "value_recomputed": "float32",
+   "record": "output/embed_local/20261008_rev113abe4acafa_float32/manifests",
+   "how": "dtype",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[3].where (prefix 'query: ')",
+   "value_in_file": "query: ",
+   "value_recomputed": "query: ",
+   "record": "output/embed_local/20261008_rev113abe4acafa_float32/manifests",
+   "how": "prefix / mode query",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[3].where (batch 1)",
+   "value_in_file": 1,
+   "value_recomputed": 1,
+   "record": "output/embed_local/20261008_rev113abe4acafa_float32/manifests",
+   "how": "batch",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[3].parts.tags.texts",
+   "value_in_file": 16714,
+   "value_recomputed": 16714,
+   "record": "output/embed_local/20261008_rev113abe4acafa_float32/tags_query.manifest.json",
+   "how": "n = texts_embedded_this_call = 16714",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[3].parts.tags.tokens_in",
+   "value_in_file": 103614,
+   "value_recomputed": 103614,
+   "record": "output/embed_local/20261008_rev113abe4acafa_float32/tags_query.manifest.json",
+   "how": "tokens_in",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[3].parts.tags.seconds_elapsed",
+   "value_in_file": 511.5,
+   "value_recomputed": 511.5,
+   "record": "output/embed_local/20261008_rev113abe4acafa_float32/tags_query.manifest.json; tags_query_desktop.log",
+   "how": "seconds_this_call; the log's 'done ... 511.5s'",
+   "verdict": "same",
+   "note": "measured from before the first batch, so it holds the 5 s model load"
+  },
+  {
+   "path": "steps[3].parts.tags.device",
+   "value_in_file": "desktop, cuda, GeForce GTX 1080 Ti",
+   "value_recomputed": "cuda, NVIDIA GeForce GTX 1080 Ti, host FRÄSH",
+   "record": "output/embed_local/20261008_rev113abe4acafa_float32/tags_query.manifest.json; docs/ENVIRONMENT.md",
+   "how": "device_name; torch 2.6.0+cu124 is the desktop venv's, the laptop has no GPU",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[3].parts.tags_with_underscores_in_readable_form.texts",
+   "value_in_file": 63,
+   "value_recomputed": 63,
+   "record": "output/embed_local/20261008_rev113abe4acafa_float32/MANIFEST.json (readable_names); readable_names.log",
+   "how": "rows_replaced = 63",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[3].parts.tags_with_underscores_in_readable_form.tokens_in",
+   "value_in_file": 583,
+   "value_recomputed": 583,
+   "record": "output/embed_local/20261008_rev113abe4acafa_float32/MANIFEST.json; readable_names.log",
+   "how": "tokens_in 583",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[3].parts.tags_with_underscores_in_readable_form.seconds_elapsed",
+   "value_in_file": 19.2,
+   "value_recomputed": 19.2,
+   "record": "output/embed_local/20261008_rev113abe4acafa_float32/MANIFEST.json (readable_names.seconds)",
+   "how": "the 'seconds' that embed._embed returns",
+   "verdict": "same",
+   "note": "19.2 s is the request time alone; the same run's readable_names.log says 'embedded 63 readable names ... in 52s' from before the 33 s model load ('ready in 33s'), so the elapsed of that part is 52 s"
+  },
+  {
+   "path": "steps[3].parts.tags_with_underscores_in_readable_form.device",
+   "value_in_file": "laptop CPU",
+   "value_recomputed": "cpu",
+   "record": "output/embed_local/20261008_rev113abe4acafa_float32/MANIFEST.json",
+   "how": "device 'cpu'; no host field; the script runs from the laptop repo's .venv",
+   "verdict": "same",
+   "note": "cpu is direct, laptop is inferred"
+  },
+  {
+   "path": "steps[3].parts.descriptions.texts",
+   "value_in_file": 4869,
+   "value_recomputed": 4869,
+   "record": "output/embed_local/20261008_rev113abe4acafa_float32/descriptions_query.manifest.json",
+   "how": "n = texts_embedded_this_call",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[3].parts.descriptions.tokens_in",
+   "value_in_file": 351855,
+   "value_recomputed": 351855,
+   "record": "output/embed_local/20261008_rev113abe4acafa_float32/descriptions_query.manifest.json",
+   "how": "tokens_in",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[3].parts.descriptions.seconds_elapsed",
+   "value_in_file": 287.5,
+   "value_recomputed": 287.5,
+   "record": "output/embed_local/20261008_rev113abe4acafa_float32/descriptions_query.manifest.json; descriptions_query_desktop.log",
+   "how": "seconds_this_call",
+   "verdict": "same",
+   "note": "holds the 5 s model load"
+  },
+  {
+   "path": "steps[3].parts.descriptions.device",
+   "value_in_file": "desktop, cuda, GeForce GTX 1080 Ti",
+   "value_recomputed": "cuda, NVIDIA GeForce GTX 1080 Ti, host FRÄSH",
+   "record": "output/embed_local/20261008_rev113abe4acafa_float32/descriptions_query.manifest.json",
+   "how": "device_name",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[3].parts.write_tag_vectors.seconds_elapsed",
+   "value_in_file": 173,
+   "value_recomputed": 173,
+   "record": "output/tag_vector_backup/herb-eval-volmax__as-stored-20261008/write_tag_vectors.log",
+   "how": "'done (173s).'",
+   "verdict": "same",
+   "note": "the transcript's span of that command is 174.0 s (2026-10-08T18:07:38.850Z to 18:10:32.848Z)"
+  },
+  {
+   "path": "steps[3].parts.write_description_vectors.seconds_elapsed",
+   "value_in_file": 73,
+   "value_recomputed": 73,
+   "record": "output/tag_vector_backup/herb-eval-volmax__as-stored-20261008/write_desc_vectors.log",
+   "how": "'done (73s).'",
+   "verdict": "same",
+   "note": "the transcript's span is 77.1 s (20:49:46.828Z to 20:51:03.922Z)"
+  },
+  {
+   "path": "steps[3].not_recorded (arm's pool: 16,654 tags)",
+   "value_in_file": 16654,
+   "value_recomputed": 16654,
+   "record": "output/facet_pairs/rounds/round1/edges.jsonl",
+   "how": "distinct tags on the 61,018 pool edges",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[3].not_recorded (arm's pool: 4,808 chunks)",
+   "value_in_file": 4808,
+   "value_recomputed": 4808,
+   "record": "output/facet_pairs/rounds/round1/edges.jsonl; herb-eval-volmax step_copy.json",
+   "how": "distinct chunks on the pool edges; also index_coverage.chunk_product = 4808 (4,869 minus the 61 metadata chunks)",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].what (61,018 tag-to-chunk edges)",
+   "value_in_file": 61018,
+   "value_recomputed": 61018,
+   "record": "output/tag_vector_backup/herb-eval-volmax__as-stored-20261008/write_facet_layer_2.log",
+   "how": "layer_rows = edges = 61018",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].what (24 bootstrap refits)",
+   "value_in_file": 24,
+   "value_recomputed": 24,
+   "record": "output/tag_vector_backup/herb-eval-volmax__as-stored-20261008/write_facet_layer_2.log; output/facet_pairs/rounds/round1/bootstrap/meta.json",
+   "how": "layer node refits 24; meta draws 24",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].what (four facet values; topic the cosine at the write)",
+   "value_in_file": "temporal, why, activity, concreteness; topic = cosine",
+   "value_recomputed": "same",
+   "record": "output/tag_vector_backup/herb-eval-volmax__as-stored-20261008/write_facet_layer_2.log",
+   "how": "layer node facets and value_topic 'cos(tag vector, chunk description vector)'",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].date (2026-09-18 to 2026-10-08)",
+   "value_in_file": "2026-09-18 to 2026-10-08",
+   "value_recomputed": "2026-09-18 to 2026-10-08",
+   "record": "output/facet_pairs/answers/manifest.control.0of1.json; write_facet_layer_2.log",
+   "how": "first judge call 2026-09-18T12:46Z; the write on 2026-10-08",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].date (layer written 2026-10-08T20:52:59Z)",
+   "value_in_file": "2026-10-08T20:52:59Z",
+   "value_recomputed": null,
+   "record": "the graph's Layer node",
+   "how": "no file carries the stamp (only build_cost.json and its copy in the final run's manifest); the database was not queried",
+   "verdict": "not checkable",
+   "note": "consistent with the command that ran backup and write: 2026-10-08T20:51:29.985Z to 20:53:14.689Z (transcript 2c136d38), and with the log's mtime 20:53:14Z"
+  },
+  {
+   "path": "steps[4].parts.opus_judgements.model",
+   "value_in_file": "claude-opus-5, effort high, headless lane, 8 at a time",
+   "value_recomputed": "claude-opus-5, high, harness chat.post, workers 8",
+   "record": "output/facet_pairs/answers/*/*.json; answers/manifest.*.json; test/graph/facet_pairs_judge.py",
+   "how": "model and effort on all 1,720 answers; workers 8 in all three manifests; the judge calls harness.chat.post",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].parts.opus_judgements.calls",
+   "value_in_file": 1720,
+   "value_recomputed": 1720,
+   "record": "output/facet_pairs/answers/{control,heldout,train}/*.json",
+   "how": "files: control 420 + heldout 800 + train 500, each tries 1",
+   "verdict": "same",
+   "note": "the three manifests' totals add to only 1,648 calls: the held-out manifest counts the resumed run (728), not the paused first run (72)"
+  },
+  {
+   "path": "steps[4].parts.opus_judgements.tokens_in",
+   "value_in_file": 58405680,
+   "value_recomputed": 58405680,
+   "record": "output/facet_pairs/answers/*/*.json",
+   "how": "sum of usage.tokens_in over the 1,720 files",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].parts.opus_judgements.tokens_out",
+   "value_in_file": 65596,
+   "value_recomputed": 65596,
+   "record": "output/facet_pairs/answers/*/*.json",
+   "how": "sum of usage.tokens_out",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].parts.opus_judgements.seconds_summed_per_call",
+   "value_in_file": 21552.5,
+   "value_recomputed": 21552.47,
+   "record": "output/facet_pairs/answers/*/*.json",
+   "how": "sum of wall_s",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].parts.opus_judgements.seconds_elapsed_recorded",
+   "value_in_file": 2564.4,
+   "value_recomputed": 2564.4,
+   "record": "output/facet_pairs/logs/control.log, logs/round0b.log",
+   "how": "done lines 642.9 (control) + 1,105.8 (held-out, resumed) + 815.7 (train)",
+   "verdict": "same",
+   "note": "the manifests' start-to-last_update spans add to 2,560 s; the paused first held-out run (round0.log) has no done line"
+  },
+  {
+   "path": "steps[4].parts.opus_judgements.fitted_on (control and train, 920 calls)",
+   "value_in_file": 920,
+   "value_recomputed": 920,
+   "record": "output/facet_pairs/logs/round0_train.log; rounds/round1/eval.json",
+   "how": "'answer rows 920 | sets control,train', judge observations 4,600 = fit 3,385 + validation 1,215; round 1 uses fit_obs 3385 and val_obs 1215",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].parts.opus_judgements.fitted_on (the 800 held-out calls only evaluated)",
+   "value_in_file": 800,
+   "value_recomputed": 800,
+   "record": "output/facet_pairs/answers/heldout; logs/round0_eval.log; rounds/round1/bootstrap/meta.json",
+   "how": "800 held-out files; held-out observations 4,000 with 3,000 first presentations (round 1 heldout_obs 3000); meta: 'no held-out chunk or pair entered any fit'",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].parts.encoder_bake_off.device",
+   "value_in_file": "Colab, cuda",
+   "value_recomputed": "cuda (torch 2.11.0+cu128); Colab T4",
+   "record": "output/facet_pairs/bakeoff/cache/*.meta.json; PROGRESS.md",
+   "how": "meta device; PROGRESS.md 'His Colab run: four caches ... (T4: ...)'",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].parts.encoder_bake_off.edges",
+   "value_in_file": 5469,
+   "value_recomputed": 5469,
+   "record": "output/facet_pairs/bakeoff/cache/*.meta.json; bakeoff/edges.meta.json",
+   "how": "edges in each meta; n_edges",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].parts.encoder_bake_off.encoders",
+   "value_in_file": 4,
+   "value_recomputed": 4,
+   "record": "output/facet_pairs/bakeoff/cache/*.meta.json",
+   "how": "four metas",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].parts.encoder_bake_off.seconds_elapsed",
+   "value_in_file": 3227.0,
+   "value_recomputed": 3227.0,
+   "record": "output/facet_pairs/bakeoff/cache/*.meta.json",
+   "how": "430.3 + 792.8 + 728.4 + 1,275.5 (each meta's seconds)",
+   "verdict": "same",
+   "note": "a sum of the four encoders' own seconds; they ran one after another and the metas' stamps span about 3,345 s (12:54:04Z to 13:49:49Z)"
+  },
+  {
+   "path": "steps[4].parts.encoder_bake_off.report_seconds_on_the_laptop",
+   "value_in_file": 2069.2,
+   "value_recomputed": 2069.2,
+   "record": "output/facet_pairs/bakeoff/results/summary.json",
+   "how": "candidates' wall_s 676.1 + 452.6 + 441.8 + 498.7",
+   "verdict": "same",
+   "note": "PROGRESS.md: 'Report on the laptop: 35 min'"
+  },
+  {
+   "path": "steps[4].parts.encoder_cache.model",
+   "value_in_file": "Alibaba-NLP/gte-reranker-modernbert-base, fp32, fp16 stored",
+   "value_recomputed": "same",
+   "record": "output/facet_pairs/fullcache/*.meta.json",
+   "how": "model; dtype 'float32 compute, float16 storage'",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].parts.encoder_cache.device",
+   "value_in_file": "desktop, cuda, GeForce GTX 1080 Ti",
+   "value_recomputed": "cuda, torch 2.6.0+cu124 (no host, no GPU name)",
+   "record": "output/facet_pairs/fullcache/*.meta.json, shard*/; docs/ENVIRONMENT.md",
+   "how": "the desktop venv's torch is 2.6.0+cu124; Colab ran 2.11.0+cu128",
+   "verdict": "same",
+   "note": "indirect: no meta names the machine; PROGRESS.md's last word on the full pass is 'waiting on his Colab run'"
+  },
+  {
+   "path": "steps[4].parts.encoder_cache.edges",
+   "value_in_file": 61018,
+   "value_recomputed": 61018,
+   "record": "output/facet_pairs/fullcache/*.meta.json, shard0..7",
+   "how": "meta edges; shard edges add to 61,018",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].parts.encoder_cache.seconds_elapsed",
+   "value_in_file": 3549.5,
+   "value_recomputed": 3549.5,
+   "record": "output/facet_pairs/fullcache/shard0..7/*.meta.json",
+   "how": "441.5 + 451.8 + 432.7 + 458.5 + 468.1 + 417.7 + 432.6 + 446.6 (= merged meta seconds)",
+   "verdict": "same",
+   "note": "a sum of the eight shards' seconds; they ran one after another and their stamps span about 3,726 s (about 18:49:16Z to 19:51:22Z)"
+  },
+  {
+   "path": "steps[4].parts.head_selection_training_scoring.device",
+   "value_in_file": "laptop CPU",
+   "value_recomputed": "laptop CPU",
+   "record": "output/facet_pairs/PROGRESS.md",
+   "how": "'ROUND 1 on the full cache — 2026-09-19, laptop CPU, no GPU'",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].parts.head_selection_training_scoring.combinations_fitted",
+   "value_in_file": 27,
+   "value_recomputed": 27,
+   "record": "output/facet_pairs/rounds/round1.log",
+   "how": "27 (variant, head) lines: 9 variants x 3 heads",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].parts.head_selection_training_scoring.seconds_elapsed",
+   "value_in_file": 979.4,
+   "value_recomputed": 979.4,
+   "record": "output/facet_pairs/rounds/round1.log; rounds/round1/eval.json",
+   "how": "'done | 979.4s'; wall_s.round 979.4",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].parts.bootstrap_refits.device",
+   "value_in_file": "laptop",
+   "value_recomputed": "laptop (indirect)",
+   "record": "output/facet_pairs/logs/bootstrap_rerun_local.log",
+   "how": "the log's name says local and it sits in the laptop repo; no host field",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].parts.bootstrap_refits.refits",
+   "value_in_file": 24,
+   "value_recomputed": 24,
+   "record": "output/facet_pairs/logs/bootstrap_rerun_local.log; rounds/round1/bootstrap/meta.json",
+   "how": "'draw 24/24'; draws 24",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].parts.bootstrap_refits.seconds_elapsed",
+   "value_in_file": 99.0,
+   "value_recomputed": 99.0,
+   "record": "output/facet_pairs/logs/bootstrap_rerun_local.log",
+   "how": "'done | 99.0s'",
+   "verdict": "same",
+   "note": "rounds/round1/bootstrap/meta.json says wall_s 4.4: a later bands-only rerun (2026-09-21T01:24:37Z) rewrote meta.json and BANDS.md"
+  },
+  {
+   "path": "steps[4].parts.write.seconds_elapsed",
+   "value_in_file": 91,
+   "value_recomputed": 91,
+   "record": "output/tag_vector_backup/herb-eval-volmax__as-stored-20261008/write_facet_layer_2.log",
+   "how": "'done (91s).'",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].parts.write.backup_seconds",
+   "value_in_file": 12,
+   "value_recomputed": 12.0,
+   "record": "output/facet_weight_backup/herb-eval-volmax__pilot_full_herb/manifest.json; session transcript 2c136d38 (2026-10-08)",
+   "how": "backup 'written' 2026-10-08T20:51:42Z minus the start of the command that ran backup and write, 20:51:29.985Z",
+   "verdict": "same",
+   "note": "not a number a record gives: a difference of two stamps, from records the step does not name (the backup sha f7d0bd61... is the one the write log checks)"
+  },
+  {
+   "path": "steps[4].not_recorded (cached input tokens of the judge calls)",
+   "value_in_file": "not recorded",
+   "value_recomputed": "not recorded",
+   "record": "output/facet_pairs/answers/*/*.json",
+   "how": "usage holds tokens_in and tokens_out only",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].not_recorded (elapsed of the paused held-out run)",
+   "value_in_file": "not recorded",
+   "value_recomputed": "not recorded (bounded)",
+   "record": "output/facet_pairs/logs/round0.log; answers/heldout",
+   "how": "72 call lines, no done line; answers stamped 19:12:41Z to 19:14:54Z, round0.bat written 19:12:16Z",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[4].not_recorded (the encoder cache's total tokens)",
+   "value_in_file": "not recorded",
+   "value_recomputed": "not recorded",
+   "record": "output/facet_pairs/fullcache/*.meta.json",
+   "how": "only longest_joint_input_tokens (1,694)",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[5].calls / tokens_in / tokens_out",
+   "value_in_file": 0,
+   "value_recomputed": 0,
+   "record": "test/graph/build_*.py",
+   "how": "the four scripts import only the Neo4j driver and arm helpers",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[5].where (laptop)",
+   "value_in_file": "laptop",
+   "value_recomputed": "C:\\Coding\\exjobbet\\GRAG-Job",
+   "record": "the transcripts' cwd; docs/ENVIRONMENT.md",
+   "how": "the laptop's repo path",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[5].date",
+   "value_in_file": "2026-10-17 and 2026-10-19",
+   "value_recomputed": "2026-10-17 and 2026-10-19",
+   "record": "the transcripts",
+   "how": "command stamps",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[5].what (person-to-chunk edges 26,950)",
+   "value_in_file": 26950,
+   "value_recomputed": 26950,
+   "record": "output/research/2026-10-17-person-edges/edges_verify.log; session transcript d06e4612 (= 535ac183), command of 2026-10-17T02:28:57.604Z",
+   "how": "'verify: 26950 edges (:Employee)-[:chunk]->(:Chunk), 512 employees, 4646 chunks'; write printed 26950 pairs",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[5].what (structure nodes 992)",
+   "value_in_file": 992,
+   "value_recomputed": 992,
+   "record": "session transcript 1726312f, command of 2026-10-19T01:20:33.004Z",
+   "how": "'write: name and name_keys set on 992 nodes'; verify Product 30 + Channel 302 + Employee 530 + Customer 120 + Company 10",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[5].what (1,642 keys)",
+   "value_in_file": 1642,
+   "value_recomputed": 1642,
+   "record": "session transcript 1726312f, command of 2026-10-19T01:20:33.004Z",
+   "how": "'match keys: 1642, distinct 1185'",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[5].what (customer-to-chunk edges 1,043)",
+   "value_in_file": 1043,
+   "value_recomputed": 1043,
+   "record": "session transcript 1726312f, command of 2026-10-19T01:20:33.004Z",
+   "how": "'write: 1043 customer-chunk pairs'; verify 1043 edges, 120 customers",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[5].what (4,747 chunks)",
+   "value_in_file": 4747,
+   "value_recomputed": 4747,
+   "record": "session transcript 1726312f, command of 2026-10-19T03:06:09.968Z",
+   "how": "'write: times set on 4747 chunks'; verify 4747",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[5].what (38,377 times)",
+   "value_in_file": 38377,
+   "value_recomputed": 38377,
+   "record": "session transcript 1726312f, command of 2026-10-19T03:06:09.968Z",
+   "how": "verify: '38377 times in all'",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[5].seconds.person_edges_tool_span",
+   "value_in_file": 35.2,
+   "value_recomputed": 35.209,
+   "record": "session transcript d06e4612 (= 535ac183), command of 2026-10-17T02:28:57.604Z",
+   "how": "tool_use 02:28:57.604Z to tool_result 02:29:32.813Z; steps backup and write (write calls verify)",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[5].seconds.structure_names_and_customer_edges_tool_span",
+   "value_in_file": 67.0,
+   "value_recomputed": 66.975,
+   "record": "session transcript 1726312f, command of 2026-10-19T01:20:33.004Z",
+   "how": "01:20:33.004Z to 01:21:39.979Z; both writes, each calls verify",
+   "verdict": "same"
+  },
+  {
+   "path": "steps[5].seconds.chunk_times_tool_span",
+   "value_in_file": 9.5,
+   "value_recomputed": 9.546,
+   "record": "session transcript 1726312f, command of 2026-10-19T03:06:09.968Z",
+   "how": "03:06:09.968Z to 03:06:19.514Z; write (calls verify)",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[1].what (tags 16,714 texts)",
+   "value_in_file": 16714,
+   "value_recomputed": 16714,
+   "record": "output/embed_local/20261007_rev113abe4acafa_float32/MANIFEST.json",
+   "how": "desktop.tags.n",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[1].what (tags 120,328 tokens)",
+   "value_in_file": 120328,
+   "value_recomputed": 120328,
+   "record": "output/embed_local/20261007_rev113abe4acafa_float32/MANIFEST.json",
+   "how": "desktop.tags.tokens_in",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[1].what (tags 441.3 s)",
+   "value_in_file": 441.3,
+   "value_recomputed": 441.3,
+   "record": "output/embed_local/20261007_rev113abe4acafa_float32/MANIFEST.json",
+   "how": "desktop.tags.seconds_this_call",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[1].what (descriptions 4,869 texts)",
+   "value_in_file": 4869,
+   "value_recomputed": 4869,
+   "record": "output/embed_local/20261007_rev113abe4acafa_float32/MANIFEST.json",
+   "how": "desktop.descriptions.n",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[1].what (descriptions 356,724 tokens)",
+   "value_in_file": 356724,
+   "value_recomputed": 356724,
+   "record": "output/embed_local/20261007_rev113abe4acafa_float32/MANIFEST.json",
+   "how": "desktop.descriptions.tokens_in",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[1].what (descriptions 288.3 s)",
+   "value_in_file": 288.3,
+   "value_recomputed": 288.3,
+   "record": "output/embed_local/20261007_rev113abe4acafa_float32/MANIFEST.json",
+   "how": "desktop.descriptions.seconds_this_call",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[1].what (GTX 1080 Ti)",
+   "value_in_file": "GTX 1080 Ti",
+   "value_recomputed": "NVIDIA GeForce GTX 1080 Ti",
+   "record": "output/embed_local/20261007_rev113abe4acafa_float32/MANIFEST.json",
+   "how": "device_name",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[1].what (2026-10-07)",
+   "value_in_file": "2026-10-07",
+   "value_recomputed": "2026-10-07",
+   "record": "output/embed_local/20261007_rev113abe4acafa_float32/MANIFEST.json",
+   "how": "made_utc 2026-10-07T19:50:13Z, 19:57:45Z",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[2].what (stage 0 4,492 s)",
+   "value_in_file": 4492,
+   "value_recomputed": 4492,
+   "record": "output/facet_pairs/logs/stage0.log",
+   "how": "'done | 4492s'",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[2].what (score probe 2,247 s)",
+   "value_in_file": 2247,
+   "value_recomputed": 2247,
+   "record": "output/facet_pairs/logs/score_probe.log; logs/probe_scores_meta.json",
+   "how": "'| 2247s'; wall_s 2246.7",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[2].what (round-0 training epoch 1)",
+   "value_in_file": 1313.7,
+   "value_recomputed": 1313.7,
+   "record": "output/facet_pairs/model/round0_history.json",
+   "how": "[0].seconds (phase A, epoch 1)",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[2].what (round-0 training epoch 2)",
+   "value_in_file": 1319.8,
+   "value_recomputed": 1319.8,
+   "record": "output/facet_pairs/model/round0_history.json",
+   "how": "[1].seconds (phase A, epoch 2)",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[2].what (round-0 training epoch 3)",
+   "value_in_file": 1301.2,
+   "value_recomputed": 1301.2,
+   "record": "output/facet_pairs/model/round0_history.json",
+   "how": "[2].seconds (phase A, epoch 3)",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[2].what (round-0 evaluation 219 s)",
+   "value_in_file": 219,
+   "value_recomputed": 219,
+   "record": "output/facet_pairs/logs/round0_eval.log",
+   "how": "'scored 4000 held-out observations | 219s'",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[2].what (round-0 scoring desktop half 3,024 s)",
+   "value_in_file": 3024,
+   "value_recomputed": 3024,
+   "record": "output/facet_pairs/PROGRESS.md",
+   "how": "'shard 1of2 on the desktop (29,254 edges, 3,024 s)'",
+   "verdict": "same",
+   "note": "the desktop's own log (A:\\exjobbet\\facet_pairs\\out\\score0.log) is not on this machine"
+  },
+  {
+   "path": "superseded[3].what (smoke 3 calls)",
+   "value_in_file": 3,
+   "value_recomputed": 3,
+   "record": "output/facet_pairs/smoke_answers/manifest.control.0of1.json; smoke_answers/control/*.json",
+   "how": "totals.calls; 3 answer files",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[3].what (smoke 102,273 in)",
+   "value_in_file": 102273,
+   "value_recomputed": 102273,
+   "record": "output/facet_pairs/smoke_answers/manifest.control.0of1.json; smoke_answers/control/*.json",
+   "how": "totals.tokens_in = sum over the files",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[3].what (smoke 113 out)",
+   "value_in_file": 113,
+   "value_recomputed": 113,
+   "record": "output/facet_pairs/smoke_answers/manifest.control.0of1.json; smoke_answers/control/*.json",
+   "how": "totals.tokens_out",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[3].what (smoke 37.9 s)",
+   "value_in_file": 37.9,
+   "value_recomputed": 37.9,
+   "record": "output/facet_pairs/smoke_answers/manifest.control.0of1.json; smoke_answers/control/*.json",
+   "how": "totals.wall_s (summed per call, 3 workers)",
+   "verdict": "same",
+   "note": "a per-call sum; start 12:38:13Z to last_update 12:38:27Z is 14 s"
+  },
+  {
+   "path": "superseded[3].what (Haiku 30 calls)",
+   "value_in_file": 30,
+   "value_recomputed": 30,
+   "record": "output/facet_pairs/haiku_check/answers/manifest.pairs.0of1.json; PROGRESS.md line 259",
+   "how": "totals.calls; 30 answer files",
+   "verdict": "same"
+  },
+  {
+   "path": "superseded[3].what (Haiku about 900k in)",
+   "value_in_file": "about 900k",
+   "value_recomputed": 900483,
+   "record": "output/facet_pairs/haiku_check/answers/manifest.pairs.0of1.json; PROGRESS.md line 259",
+   "how": "totals.tokens_in 900,483; PROGRESS.md '900k tokens in'",
+   "verdict": "same",
+   "note": "rounded, as PROGRESS.md gives it"
+  },
+  {
+   "path": "superseded[3].what (Haiku 70k out)",
+   "value_in_file": "70k",
+   "value_recomputed": 69786,
+   "record": "output/facet_pairs/haiku_check/answers/manifest.pairs.0of1.json; PROGRESS.md line 259",
+   "how": "totals.tokens_out 69,786; PROGRESS.md '70k out'",
+   "verdict": "same",
+   "note": "rounded, as PROGRESS.md gives it"
+  },
+  {
+   "path": "superseded[3].what (Haiku 148 s)",
+   "value_in_file": 148,
+   "value_recomputed": 148,
+   "record": "output/facet_pairs/haiku_check/answers/manifest.pairs.0of1.json; PROGRESS.md line 259",
+   "how": "PROGRESS.md '148 s'; manifest start 09:13:29Z to last_update 09:15:56Z = 147 s",
+   "verdict": "same",
+   "note": "an elapsed figure, while the smoke's 37.9 s in the same sentence is a per-call sum; the Haiku per-call sum is 1,101.3 s"
+  }
+ ],
+ "left_out": [
+  {
+   "step": "descriptions_and_tags",
+   "what": "per-pass elapsed, first call start (ts - duration_ms) to last end, io.jsonl",
+   "values": {
+    "extract": 4224.8,
+    "score_tags": 9183.6,
+    "describe": 25.5,
+    "score": 123.3
+   },
+   "unit": "s"
+  },
+  {
+   "step": "descriptions_and_tags",
+   "what": "the recovery's elapsed and its passes (recovery_io.jsonl)",
+   "values": {
+    "all": 487.0,
+    "extract": 19.9,
+    "score_tags": 45.3,
+    "score": 35.7,
+    "score_recovery": 4.6
+   },
+   "unit": "s",
+   "note": "score_recovery ran about 6 min after the rest (05:47:53Z)"
+  },
+  {
+   "step": "descriptions_and_tags",
+   "what": "the recovery by pass (calls, tokens in, tokens out, seconds summed)",
+   "values": {
+    "extract": [
+     26,
+     44008,
+     9158,
+     73.1
+    ],
+    "score_tags": [
+     26,
+     53241,
+     37542,
+     167.7
+    ],
+    "score": [
+     7,
+     130756,
+     31445,
+     120.7
+    ],
+    "score_recovery": [
+     17,
+     17915,
+     884,
+     15.8
+    ]
+   }
+  },
+  {
+   "step": "descriptions_and_tags",
+   "what": "the 4,869-chunk subset leaves out the recovery's score_recovery calls on 14 of its chunks",
+   "values": {
+    "calls": 14,
+    "tokens_in": 14752,
+    "tokens_out": 728,
+    "seconds_summed_per_call": 13.0
+   }
+  },
+  {
+   "step": "descriptions_and_tags",
+   "what": "failures of the main run",
+   "values": {
+    "rate_limit_records_after_retry": 17,
+    "their_seconds": 201.0,
+    "errors_jsonl_lines": 33,
+    "extract_pydantic_failures": 9,
+    "score_pydantic_failures": 7,
+    "max_tokens_stops": 7
+   }
+  },
+  {
+   "step": "descriptions_and_tags",
+   "what": "time of the 48 retried calls (inside duration_ms, measured from before attempt 1, with a 2 s pause each)",
+   "values": {
+    "records": 48,
+    "seconds": 547.1
+   }
+  },
+  {
+   "step": "descriptions_and_tags",
+   "what": "elapsed from the first call's start instead of run.json created_at",
+   "values": {
+    "seconds": 13615.8
+   }
+  },
+  {
+   "step": "chunks",
+   "what": "token_estimate of all 5,843 chunks (run.json chunk_ids)",
+   "values": {
+    "token_estimate": 4406995
+   }
+  },
+  {
+   "step": "graph_copies",
+   "what": "herb-eval-v2's own steps in the same folder, not carried into volmax (volmax copied only Chunk, Tag and HAS_TAG from v2)",
+   "values": {
+    "step_entities_elapsed_s": 17.4,
+    "step_relations_elapsed_s": 6.9,
+    "build_manifest_elapsed_s": {
+     "2026-08-12T20:38:00Z": 30.9,
+     "2026-08-13T22:21:07Z": 33.9,
+     "2026-08-14T00:25:22Z": 35.4
+    }
+   }
+  },
+  {
+   "step": "graph_copies",
+   "what": "the crashed first volmax attempt: start and paste stamps",
+   "values": {
+    "start": "2026-08-16T21:13:39Z",
+    "pasted": "2026-08-16T21:21:44Z",
+    "copy_bars_s": [
+     44,
+     135,
+     14
+    ]
+   },
+   "note": "no end stamp; the attempt lasted at most 485 s"
+  },
+  {
+   "step": "embeddings",
+   "what": "the readable-names run's elapsed and model load (readable_names.log)",
+   "values": {
+    "elapsed_s": 52,
+    "model_load_s": 33,
+    "transcript_span_s": 68.4
+   }
+  },
+  {
+   "step": "embeddings",
+   "what": "model load inside the desktop seconds (logs: 'ready in 5s')",
+   "values": {
+    "tags_s": 5,
+    "descriptions_s": 5
+   }
+  },
+  {
+   "step": "embeddings",
+   "what": "the laptop CPU run of the same tags (tags_query_laptop_cpu.log, MANIFEST laptop_checks), stopped after 4,000 of 16,714",
+   "values": {
+    "texts": 4000,
+    "rate_at_4000_texts_per_s": 2.5,
+    "cosine_to_desktop_rows": 1.0
+   },
+   "note": "no end line, no token count; at 2.5 texts/s 4,000 texts is about 1,600 s"
+  },
+  {
+   "step": "embeddings",
+   "what": "the write commands' spans in the transcript",
+   "values": {
+    "write_tag_vectors_s": 174.0,
+    "write_desc_vectors_s": 77.1
+   }
+  },
+  {
+   "step": "facet_layer",
+   "what": "the paused held-out run (round0.log; answers stamped before 19:25:19Z), inside the 1,720-call totals but not in the elapsed",
+   "values": {
+    "calls": 72,
+    "tokens_in": 2441986,
+    "tokens_out": 2718,
+    "seconds_summed_per_call": 1185.4,
+    "first_answer": "2026-09-18T19:12:41Z",
+    "last_answer": "2026-09-18T19:14:54Z"
+   }
+  },
+  {
+   "step": "facet_layer",
+   "what": "the Opus judge runs one by one (calls, tokens in, tokens out, seconds summed, elapsed from the done line)",
+   "values": {
+    "control": [
+     420,
+     14256990,
+     15982,
+     5101.1,
+     642.9
+    ],
+    "heldout_all": [
+     800,
+     27167652,
+     30525,
+     9971.6,
+     null
+    ],
+    "heldout_resumed": [
+     728,
+     24725666,
+     27807,
+     8786.2,
+     1105.8
+    ],
+    "train": [
+     500,
+     16981038,
+     19089,
+     6479.9,
+     815.7
+    ]
+   }
+  },
+  {
+   "step": "facet_layer",
+   "what": "the first write of the same layer, replaced by write_facet_layer_2 after the description vectors were rewritten",
+   "values": {
+    "done_s": 55,
+    "transcript_span_s": 56.5,
+    "rows_sha256": "ff6da9dff887627e..."
+   },
+   "record": "output/tag_vector_backup/herb-eval-volmax__as-stored-20261008/write_facet_layer.log (the folder the step cites)"
+  },
+  {
+   "step": "facet_layer",
+   "what": "the command that ran backup and the second write",
+   "values": {
+    "transcript_span_s": 104.7
+   }
+  },
+  {
+   "step": "facet_layer",
+   "what": "parts inside round 1's 979.4 s (eval.json wall_s)",
+   "values": {
+    "probe_s": 789.4,
+    "bootstrap_B10000_s": 4.6,
+    "scoring_s": 1.0
+   }
+  },
+  {
+   "step": "facet_layer",
+   "what": "the bands-only bootstrap rerun that rewrote meta.json and BANDS.md",
+   "values": {
+    "wall_s": 4.4,
+    "written": "2026-09-21T01:24:37Z"
+   }
+  },
+  {
+   "step": "facet_layer",
+   "what": "the bake-off's laptop proof caches (bakeoff/cache_proof, cpu)",
+   "values": {
+    "edges": 14,
+    "gte_s": 43.5,
+    "deberta_small_s": 31.3
+   }
+  },
+  {
+   "step": "facet_layer",
+   "what": "the merged full-cache meta carries shard0's rate and count",
+   "values": {
+    "seconds_per_1000_edges_in_meta": 58.7,
+    "edges_this_run_in_meta": 7517,
+    "rate_over_61018_edges": 58.2
+   }
+  },
+  {
+   "step": "later_edges_and_fields",
+   "what": "separate person-edge commands after the write",
+   "values": {
+    "compare_s": 11.6,
+    "verify_s": 7.6
+   }
+  },
+  {
+   "step": "later_edges_and_fields",
+   "what": "the first chunk-times build (time spans) of 2026-10-17, replaced on 2026-10-19",
+   "values": {
+    "command": "2026-10-17T21:04:33.892Z",
+    "span_s": 27.0,
+    "chunks": 4747
+   }
+  },
+  {
+   "step": "later_edges_and_fields",
+   "what": "other counts the runs printed",
+   "values": {
+    "employees": 512,
+    "chunks_with_person_edges": 4646,
+    "person_edges_backed_up": 3894,
+    "customers": 120,
+    "distinct_match_keys": 1185
+   }
+  },
+  {
+   "step": "between graph_copies and embeddings",
+   "what": "the graph changed between the volmax copy and the 2026-10-08 writes; no step covers it",
+   "values": {
+    "tags_after_copy": 15605,
+    "tags_on_2026_10_08": 16714,
+    "edges_after_copy": 62443,
+    "run_edges_on_2026_10_08": 62028
+   },
+   "record": "herb-eval-volmax step_copy.json; write_tag_vectors.log; write_facet_layer_2.log; facet_weight_backup manifests (62,028 from 2026-08-31)"
+  },
+  {
+   "step": "superseded",
+   "what": "the 2026-10-07 manifest's other parts (not the graph's)",
+   "values": {
+    "questions": [
+     1514,
+     34670,
+     43.0
+    ],
+    "corpus": [
+     38540,
+     2719968,
+     1708.9
+    ]
+   }
+  },
+  {
+   "step": "superseded",
+   "what": "round-0 training began a fourth epoch (round0_train.log ends at A4 step 75/847), not in round0_history.json",
+   "values": {}
+  },
+  {
+   "step": "superseded",
+   "what": "the round-0 scoring Colab half (31,764 edges) has no time in PROGRESS.md",
+   "values": {
+    "edges": 31764
+   }
+  }
+ ]
+}

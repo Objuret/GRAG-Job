@@ -118,8 +118,11 @@ def main():
     d = Path(args.folder).resolve()
     repo = Path(args.repo).resolve() if args.repo else d.parents[2]
     sys.path[:0] = [str(repo / "prod"), str(repo / "test")]
-    from harness import capture, fields, orchestrator
+    from harness import capture, fields, orchestrator, provenance
     from harness.contract import GENERATOR_SYSTEM, BuildStats, build_stats_record
+    # the code this correction runs on: the script imports the harness and the arms from it
+    code = {**provenance.code_version(), **{k: v for k, v in provenance.code_state().items()
+                                             if k != "diff"}}
 
     earlier = corrections_of(d)
     src_rows, src_man, before = sources(d, earlier)
@@ -272,9 +275,10 @@ def main():
     elif arm == "vector":
         from arms import vector
         m = old_bs["model"]
+        note = (man.get("index") or {}).get("cache_cost_note") or {}
         bs = build_stats_record(BuildStats(old_bs["build_time_s"], models=[vector._build_entry(
-            m["calls"], m["tokens_in"], m["tokens_out"], m["time_s"],
-            ((man.get("index") or {}).get("cache_cost_note") or {}).get("device"))]))
+            m["calls"], m["tokens_in"], m["tokens_out"], m["time_s"], note.get("device"),
+            vector._seconds_note(note))]))
     else:
         m = old_bs.get("model") or {}
         if any(m.get(k) for k in ("calls", "tokens_in", "tokens_out")) or old_bs.get("models"):
@@ -387,8 +391,9 @@ def main():
                          "before": (f"{kept[name].name}, as recorded" if not slept else
                                     f"made by correct_slept_tries.py from {kept[name].name}")}
                   for name in kept},
-        "script": f"{SCRIPT}, in this folder; run on the files from before it, it gives these "
-                  "files again (the graph is counted when it runs)",
+        "script": f"{SCRIPT}, in this folder; run on the files from before it, with the code "
+                  "named in code, it gives these files again (the graph is counted when it runs)",
+        "code": code,
     }
     (d / "corrections.json").write_text(json.dumps({"corrections": earlier + [entry]},
                                                    ensure_ascii=False, indent=2), encoding="utf-8")

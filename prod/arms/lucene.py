@@ -48,6 +48,13 @@ Generator = Callable[[str, list], object]
 # cut at the budget
 UNIT_IS_ONE_RECORD = True
 
+# what was left out of the data this arm rests on, and on whose word (harness.fields, FIELDS.md)
+LEFT_OUT = [
+    "The directory files: the corpus's three directory files (people, teams, customers) are not "
+    "indexed beside the product records (retrieval_flags.HERB_BASELINE_METADATA off). No rule in "
+    "his words is recorded.",
+]
+
 # the words for what only this arm writes into a run folder (harness.fields, FIELDS.md)
 FIELDS = {
     "meta": sub("What the arm recorded about this question's ranking.", {
@@ -56,9 +63,10 @@ FIELDS = {
             "n_units": "How many units the index holds.",
             "n_ranked": "How many of them scored above zero for this question. Only those are "
                         "ranked; a unit that shares no word with the question is never delivered.",
-            "scores": "The BM25 score of each delivered text, in delivered order.",
-            "next_score": "The BM25 score of the first unit that was not delivered; empty when "
-                          "none was left.",
+            "scores": "The BM25 score of each delivered text, in delivered order. A BM25 score has "
+                      "no upper bound; a higher score is a closer match to the question's words.",
+            "next_score": "The BM25 score of the first unit that was not delivered, on the same "
+                          "scale; empty when none was left.",
         }),
         "chunk_ids": "Only in a run cut at a depth with the directory files indexed: the record "
                      "ids behind each delivered text.",
