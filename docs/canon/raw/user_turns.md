@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2350 turns, chronological. Verbatim text; no edits.
+2352 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -18233,4 +18233,12 @@ Doit
 ## 2026-10-20 19:00 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 And the critique I had for your contrived nonsensical columns?
+
+## 2026-10-20 20:45 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+Oj, well, the judge costs are the same all over are they not? The only thing we decided is which model we used?
+
+## 2026-10-20 21:47 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+Well, the first tile I opened was artefact construction and Holy fuck did you spam that with hot garbage. How was I unclear about this? Do you think they give ANY fuck about how ANYTHING was done in the artefact unless they specifically ask for it? What you put in the xlsx was like 90% garbage.. I do NOT think this needs to be 3 different files..  Col with things, and then 3 cols, one for each arm, with that arm's "data" for those fields.. What the actual fuck is this..?
 

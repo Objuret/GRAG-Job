@@ -1,13 +1,14 @@
-"""The finished data, for giving away: for each arm one workbook of its run and one of its
-construction, values only, with the same sheets and columns for every arm.
+"""The finished data, for giving away: one workbook of the run for each arm, and one workbook of
+the construction with a column for each arm, values only.
 
     python tools/export_finished_data.py [--out finished_data]
 
-Needs openpyxl. Reads the three final run folders, the graph's build cost and the facet layer's
-records, and writes six .xlsx files. A column is a measure he named (times, tokens, runtime, build
-cost, the abstract's scores) or an id of the dataset, the evaluation or the run; nothing else goes
-in, and nothing that belongs to this machine or this project: no path, host, user, session,
-repository file, commit, note or reason. The data sheet comes first; the last sheet is the key.
+Needs openpyxl. Reads the three final run folders and writes four .xlsx files. A column of a run
+is a measure he named (times, tokens, runtime, the RAGAS scores) or an id of the dataset, the
+evaluation or the run; the construction holds what building each arm's index cost, one model at
+a time, and nothing about how it was built. Nothing that belongs to this machine or this project
+goes in: no path, host, user, session, repository file, commit, note or reason. The data sheet
+comes first; the last sheet is the key.
 """
 import argparse
 import json
@@ -24,11 +25,9 @@ RUNS = {"lucene": "lucene__gold100__cb72000__20261008T234209Z",
 DATASET, LICENCE = "HERB (Salesforce AI Research)", "CC BY-NC 4.0"
 # the run records give the laptop's processor only as its CPUID string; this is its product name
 CPU = {"Intel64 Family 6 Model 186 Stepping 2, GenuineIntel": "13th Gen Intel Core i7-1360P"}
-BAKE_OFF = ("tasksource__deberta-small-long-nli", "tasksource__deberta-base-long-nli",
-            "Alibaba-NLP__gte-reranker-modernbert-base", "BAAI__bge-reranker-v2-m3")
 COMPARE_INSIDE = " It counts per retrieved text, so compare it inside one arm only."
 
-# (column, meaning, unit) for every sheet; the key sheet is written from these lists
+# (column, meaning, unit) for every sheet of a run; the key sheet is written from these lists
 SCORES = [
     ("faithfulness", "RAGAS Faithfulness: how factually consistent the answer is with the retrieved text. "
                      "The judge model reads the answer's claims against the retrieved text.", "0 to 1"),
@@ -116,24 +115,22 @@ RUN = [
     ("judge_embedding_tokens", "The evaluation's cost: tokens that the evaluation embedded.", "tokens"),
     ("judging_seconds", "The evaluation's cost: time of the scoring of all questions, after the run.", "seconds"),
 ]
-BUILD = [
-    ("step", "The step of the build.", ""),
-    ("part", "The part of the step.", ""),
-    ("date", "The date (UTC) when the part was made.", "date"),
-    ("model", "The model that the part used. Empty where it used no model, or where it fitted a small model "
-              "of its own.", ""),
-    ("device", "Where the part ran.", ""),
-    ("calls", "Calls to a language model that gave an answer, or requests to an embedding model. Empty where "
-              "the part made no calls, or where they were not counted.", "count"),
-    ("tokens_in", "Tokens sent to the model. Empty where not counted.", "tokens"),
-    ("tokens_out", "Tokens that the model wrote. 0 for an embedding model or an encoder.", "tokens"),
-    ("seconds", "Time of the part, from its start to its end. Empty where not measured.", "seconds"),
-]
-INDEX = [
-    ("name", "What the index holds.", ""),
-    ("value", "How many.", "count"),
-]
-KEY = [("sheet", "", ""), ("column", "", ""), ("meaning", "", ""), ("unit", "", "")]
+INDEX_KIND = {"lucene": ("BM25 full-text index", "corpus record"),
+              "vector": ("dense vector index", "corpus record"),
+              "artefact": ("graph database (Neo4j)", "chunk: one or more corpus records")}
+# a model's rows in the construction, by kind: (row, meaning, its value in the model's build entry)
+MODEL_ROWS = {
+    "chat": [("calls", "Calls to {m} that the build's records count.", "calls"),
+             ("tokens in", "Tokens sent to {m} in the build.", "tokens_in"),
+             ("tokens out", "Tokens that {m} wrote in the build.", "tokens_out"),
+             ("seconds", "Time that {m} worked in the build, from start to end.", "seconds_elapsed")],
+    "embed": [("texts embedded", "Texts that {m} embedded in the build, one request each.", "calls"),
+              ("tokens", "Tokens of those texts.", "tokens_in"),
+              ("seconds", "Time that {m} worked in the build, from start to end.", "seconds_elapsed")],
+    "encoder": [("seconds", "Time that {m} worked in the build, from start to end.", "seconds_elapsed")],
+}
+HARDWARE = {"lucene": "laptop CPU", "vector": "desktop, NVIDIA GeForce GTX 1080 Ti",
+            "artefact": "laptop; desktop, NVIDIA GeForce GTX 1080 Ti; Colab GPU; the model providers' services"}
 
 
 def read(path):
@@ -219,166 +216,48 @@ def runs_tables(arm, folder):
         "judge_tokens_in": judge["tokens_in"], "judge_tokens_out": judge["tokens_out"],
         "judge_embedding_tokens": js["embedding"]["tokens_in"], "judging_seconds": js["wall_s"],
     }
-    return [("questions", QUESTIONS, questions), ("records", RECORDS, records), ("run", RUN, [run])]
+    tables = [("questions", QUESTIONS, questions), ("records", RECORDS, records), ("run", RUN, [run])]
+    key = [{"sheet": name, "column": c, "meaning": m, "unit": u} for name, columns, _ in tables for c, m, u in columns]
+    return [(name, [c for c, _, _ in columns], table) for name, columns, table in tables], \
+        (["sheet", "column", "meaning", "unit"], key)
 
 
-def part(step, name, date, model, device, calls=None, tokens_in=None, tokens_out=None, seconds=None):
-    return {"step": step, "part": name, "date": date, "model": model, "device": device, "calls": calls,
-            "tokens_in": tokens_in, "tokens_out": tokens_out, "seconds": None if seconds is None else float(seconds)}
+def construction_table():
+    """One row per thing, one column per arm: what building each arm's index cost, one model at a time."""
+    built = {}
+    for arm, folder in RUNS.items():
+        man = read(ROOT / "output/k=chars" / folder / "run_manifest.json")
+        units = man["index"]["counts"]["chunks"] if arm == "artefact" else man["index"]["units"]
+        built[arm] = (man["build_stats"], units)
+    things = [("index", "What the arm searches.", {a: INDEX_KIND[a][0] for a in RUNS}),
+              ("unit", "What one unit of the index is.", {a: INDEX_KIND[a][1] for a in RUNS}),
+              ("units in the index", "How many units the arm searches.", {a: built[a][1] for a in RUNS}),
+              ("build time, seconds", "Time to build the index. Lucene builds it in memory at the start of each "
+                                      "run. Vector's is the time to embed every record once. The artefact's is the "
+                                      "time of each step of its build, added; the time between the steps is not "
+                                      "counted.", {a: built[a][0]["build_time_s"] for a in RUNS})]
+    models = {}
+    for arm in RUNS:
+        for e in built[arm][0]["models"]:
+            models.setdefault((e["kind"], e["model"]), {})[arm] = e
+    for (kind, model), by_arm in models.items():
+        for row, meaning, field in MODEL_ROWS[kind]:
+            things.append((f"{model}, {row}", meaning.format(m=model), {a: e[field] for a, e in by_arm.items()}))
+    things.append(("hardware", "Where the index was built.", HARDWARE))
+    table = [{"thing": t, **{a: values.get(a) for a in RUNS}} for t, _, values in things]
+    key = [{"thing": t, "meaning": m} for t, m, _ in things]
+    return [("construction", ["thing", *RUNS], table)], (["thing", "meaning"], key)
 
 
-def artefact_parts(cost):
-    steps = {s["id"]: s for s in cost["steps"]}
-
-    def left_out(step, starts):
-        hits = [x["values"] for x in cost["left_out"] if x["step"] == step and x["what"].startswith(starts)]
-        if len(hits) != 1:
-            sys.exit(f"build_cost.json left_out: not one entry {step!r} {starts!r}")
-        return hits[0]
-
-    c, t = steps["chunks"], steps["descriptions_and_tags"]
-    g, e, f, later = (steps[k] for k in ("graph_copies", "embeddings", "facet_layer", "later_edges_and_fields"))
-    haiku, tagger = "claude-haiku-4-5-20251001", "Anthropic API, 4 calls at a time"
-    neo4j, desktop = "Neo4j on the laptop", "desktop, NVIDIA GeForce GTX 1080 Ti"
-    parts = [part("chunks", "the corpus cut into chunks", c["date"], None, "laptop"),
-             part("chunks", "question, unanswerable-question and product-profile chunks taken out", "2026-05-19",
-                  None, "laptop")]
-    passes, main = t["whole_run"]["by_pass"], t["whole_run"]["main"]
-    pass_s = left_out("descriptions_and_tags", "per-pass elapsed")
-    extract_calls = main["calls_with_usage"] - sum(passes[p]["calls"] for p in ("score_tags", "describe", "score"))
-    for name, label, n in (("extract", "per chunk, a description and its tags", extract_calls),
-                           ("score_tags", "per chunk, five facet scores for each of its tags", passes["score_tags"]["calls"]),
-                           ("describe", "per file, a description", passes["describe"]["calls"]),
-                           ("score", "per file, a relevance score for each of its chunks", passes["score"]["calls"])):
-        p = passes[name]
-        parts.append(part("descriptions and tags", label, t["date"], haiku, tagger, calls=n, tokens_in=p["tokens_in"],
-                          tokens_out=p["tokens_out"], seconds=pass_s[name]))
-    rec_by = left_out("descriptions_and_tags", "the recovery by pass")
-    rec_s = left_out("descriptions_and_tags", "the recovery's elapsed and its passes")
-    for name, label in (("extract", "again: per chunk, a description and its tags"),
-                        ("score_tags", "again: per chunk, five facet scores for each of its tags"),
-                        ("score", "again: per file, a relevance score for each of its chunks"),
-                        ("score_recovery", "again: relevance scores of single chunks")):
-        n, tin, tout, _ = rec_by[name]
-        parts.append(part("descriptions and tags", label, t["date"], haiku, tagger, calls=n, tokens_in=tin,
-                          tokens_out=tout, seconds=rec_s[name]))
-    gs = g["seconds"]
-    parts += [part("graph copies", "the graph copied", "2026-08-12", None, neo4j, seconds=gs["herb_eval_v2_copy_elapsed"]),
-              part("graph copies", "4,111 tags taken out, with their 5,470 edges", "2026-08-12", None, neo4j,
-                   seconds=gs["herb_eval_v2_cleanup_elapsed"]),
-              part("graph copies", "the cleaned graph copied", "2026-08-16", None, neo4j,
-                   seconds=gs["volmax_copy_from_its_console_print"]),
-              part("graph copies", "the entities planned", "2026-08-16", None, neo4j, seconds=gs["volmax_entity_plan_elapsed"]),
-              part("graph copies", "the entity nodes added", "2026-08-16", None, neo4j, seconds=gs["volmax_entities_elapsed"])]
-    ep, embed = e["parts"], "nvidia/llama-nemotron-embed-1b-v2"
-    for key, label in (("tags", "every tag embedded"),
-                       ("tags_with_underscores_in_readable_form", "tags with underscores embedded in readable form"),
-                       ("descriptions", "every chunk description embedded")):
-        p = ep[key]
-        parts.append(part("embeddings", label, e["date"], embed, desktop if "1080" in p["device"] else "laptop CPU",
-                          calls=p["texts"], tokens_in=p["tokens_in"], tokens_out=0, seconds=p["seconds_elapsed"]))
-    parts += [part("embeddings", "the tag vectors written to the graph", e["date"], None, neo4j,
-                   seconds=ep["write_tag_vectors"]["seconds_elapsed"]),
-              part("embeddings", "the description vectors written to the graph", e["date"], None, neo4j,
-                   seconds=ep["write_description_vectors"]["seconds_elapsed"])]
-    fp, pairs = f["parts"], ROOT / "output/facet_pairs"
-    opus = fp["opus_judgements"]
-    runs = left_out("facet_layer", "the Opus judge runs one by one")
-    paused = left_out("facet_layer", "the paused held-out run")
-    started = {k: read(pairs / f"answers/manifest.{k}.0of1.json")["start"][:10]
-               for k in ("control", "train_round0", "heldout")}
-    judged = [("control pairs", started["control"], runs["control"]),
-              ("training pairs", started["train_round0"], runs["train"]),
-              ("held-out pairs, the run that was paused", paused["first_answer"][:10],
-               [paused["calls"], paused["tokens_in"], paused["tokens_out"], paused["seconds_summed_per_call"], None]),
-              ("held-out pairs, the run resumed", started["heldout"], runs["heldout_resumed"])]
-    if [sum(v[i] for _, _, v in judged) for i in range(3)] != [opus["calls"], opus["tokens_in"], opus["tokens_out"]]:
-        sys.exit("the Opus judge runs do not add up to the step's numbers")
-    for label, date, (n, tin, tout, _, el) in judged:
-        parts.append(part("facet layer", f"pairs of tag-to-chunk edges judged: {label}", date, "claude-opus-5",
-                          "Claude Code, effort high, 8 calls at a time", calls=n, tokens_in=tin, tokens_out=tout,
-                          seconds=el))
-    bake = fp["encoder_bake_off"]
-    metas = [read(pairs / "bakeoff/cache" / f"{m}.meta.json") for m in BAKE_OFF]
-    if round(sum(m["seconds"] for m in metas), 1) != bake["seconds_elapsed"] or {m["edges"] for m in metas} != {bake["edges"]}:
-        sys.exit("the bake-off's records do not add up to the step's numbers")
-    for m in metas:
-        parts.append(part("facet layer", "encoder candidate: 5,469 edges encoded for the bake-off", m["written"][:10],
-                          m["model"], "Colab, NVIDIA GPU (CUDA)", tokens_out=0, seconds=m["seconds"]))
-    cache, head, refits, write = (fp[k] for k in ("encoder_cache", "head_selection_training_scoring",
-                                                  "bootstrap_refits", "write"))
-    cache_meta = read(pairs / "fullcache" / f"{BAKE_OFF[2]}.meta.json")
-    if cache_meta["model"] != cache["model"].split(", ")[0]:
-        sys.exit("the encoder cache's record names another model")
-    parts += [part("facet layer", "the bake-off's report", read(pairs / "bakeoff/results/summary.json")["written"][:10],
-                   None, "laptop", seconds=bake["report_seconds_on_the_laptop"]),
-              part("facet layer", "every edge encoded", cache_meta["written"][:10], cache_meta["model"], desktop,
-                   tokens_out=0, seconds=cache["seconds_elapsed"]),
-              part("facet layer", "the facet head selected, trained and scored",
-                   read(pairs / "rounds/round1/eval.json")["written"][:10], None, "laptop CPU",
-                   seconds=head["seconds_elapsed"]),
-              # the refits' scores file (rounds/round1/bootstrap/scores_b24.npz) was written 2026-09-21T00:09Z
-              part("facet layer", "24 bootstrap refits of the head", "2026-09-21", None, "laptop",
-                   seconds=refits["seconds_elapsed"]),
-              part("facet layer", "the graph backed up", "2026-10-08", None, neo4j, seconds=write["backup_seconds"]),
-              part("facet layer", "the facet values written to the edges", "2026-10-08", None, neo4j,
-                   seconds=write["seconds_elapsed"])]
-    ls = later["seconds"]
-    parts += [part("later edges", "person-to-chunk edges", "2026-10-17", None, "laptop",
-                   seconds=ls["person_edges_tool_span"]),
-              part("later edges", "the structure nodes' names and the customer-to-chunk edges", "2026-10-19", None,
-                   "laptop", seconds=ls["structure_names_and_customer_edges_tool_span"]),
-              part("later edges", "each chunk's record times", "2026-10-19", None, "laptop",
-                   seconds=ls["chunk_times_tool_span"])]
-    return parts
+WIDE = {"question": 60, "answer": 80, "meaning": 100, "thing": 50}
 
 
-def construction_tables(arm, folder):
-    d = ROOT / "output/k=chars" / folder
-    man = read(d / "run_manifest.json")
-    idx, bs = man["index"], man["build_stats"]
-    if arm == "lucene":
-        parts = [part("index", "the BM25 index built in memory at the start of the run",
-                      man["legs"][0]["started_at"][:10], None, "laptop CPU", seconds=bs["build_time_s"])]
-        counts = [("records", idx["units"]), ("characters of all record texts", idx["text_chars"])]
-    elif arm == "vector":
-        note, m = idx["cache_cost_note"], bs["models"][0]
-        parts = [part("index", "every record of the corpus embedded", note["made_utc"][:10], m["model"],
-                      "desktop, " + m["device"], calls=m["calls"], tokens_in=m["tokens_in"], tokens_out=m["tokens_out"],
-                      seconds=m["seconds_elapsed"])]
-        counts = [("records", idx["units"]), ("characters of all record texts", idx["text_chars"]),
-                  ("vectors", idx["matrix_shape"][0]), ("dimensions of a vector", idx["matrix_shape"][1])]
-    else:
-        c, census = idx["counts"], man["graph"]["census"]
-        labels, edges = census["labels"], census["relationships"]
-        parts = artefact_parts(read(ROOT / "test/graph/build_cost.json"))
-        counts = [("files", labels["File"]), ("products", labels["Product"]), ("channels", labels["Channel"]),
-                  ("employees", labels["Employee"]), ("customers", labels["Customer"]),
-                  ("companies", labels["Company"]), ("record kinds", labels["Kind"]),
-                  ("organisations", labels["Org"]), ("roles", labels["Role"]),
-                  ("chunks in the graph", labels["Chunk"]), ("chunks the arm searches", c["chunks"]),
-                  ("tags in the graph", labels["Tag"]), ("tags on the chunks the arm searches", c["graph_tags"]),
-                  ("tag-to-chunk edges in the graph", edges["HAS_TAG Chunk Tag"]),
-                  ("tag-to-chunk edges on the chunks the arm searches", c["edges"]),
-                  ("person-to-chunk edges", edges["chunk Employee Chunk"]),
-                  ("customer-to-chunk edges", edges["chunk Customer Chunk"]),
-                  ("chunks with their records' times", c["chunks_with_a_time"])]
-    return [("build", BUILD, parts), ("index", INDEX, [{"name": n, "value": v} for n, v in counts])]
-
-
-WIDE = {"question": 60, "answer": 80, "meaning": 100, "part": 60}
-
-
-def workbook(path, title, tables):
+def workbook(path, title, tables, key):
     wb = Workbook()
     wb.remove(wb.active)
     wb.properties.title, wb.properties.creator = title, ""
-    key = []
-    for name, columns, table in tables + [("key", KEY, None)]:
+    for name, heads, table in tables + [("key", *key)]:
         ws = wb.create_sheet(name)
-        if table is None:
-            table = key
-        heads = [c for c, _, _ in columns]
         ws.append(heads)
         for row in table:
             if set(row) != set(heads):
@@ -391,7 +270,6 @@ def workbook(path, title, tables):
         for i, h in enumerate(heads, 1):
             longest = max([len(h)] + [len(str(r[h])) for r in table[:200] if r[h] is not None])
             ws.column_dimensions[ws.cell(1, i).column_letter].width = min(WIDE.get(h, 40), max(10, longest + 2))
-        key += [{"sheet": name, "column": c, "meaning": m, "unit": u} for c, m, u in columns if name != "key"]
     wb.save(path)
 
 
@@ -400,12 +278,13 @@ def main():
     p.add_argument("--out", default=str(ROOT / "finished_data"))
     out = Path(p.parse_args().out)
     out.mkdir(parents=True, exist_ok=True)
-    for arm, folder in RUNS.items():
-        for kind, tables in (("runs", runs_tables(arm, folder)), ("construction", construction_tables(arm, folder))):
-            path = out / f"{arm}_{kind}.xlsx"
-            workbook(path, f"{arm} {kind}", tables)
-            print(f"{path.name}: {path.stat().st_size:,} bytes, sheets {[n for n, _, _ in tables] + ['key']}, "
-                  f"rows {[len(t) for _, _, t in tables]}")
+    books = [(f"{arm}_runs", runs_tables(arm, folder)) for arm, folder in RUNS.items()]
+    books.append(("construction", construction_table()))
+    for name, (tables, key) in books:
+        path = out / f"{name}.xlsx"
+        workbook(path, name.replace("_", " "), tables, key)
+        print(f"{path.name}: {path.stat().st_size:,} bytes, sheets {[n for n, _, _ in tables] + ['key']}, "
+              f"rows {[len(t) for _, _, t in tables]}")
 
 
 if __name__ == "__main__":
