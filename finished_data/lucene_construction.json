@@ -1,0 +1,90 @@
+{
+ "fields": {
+  "index.arm": "The retrieval method.",
+  "index.kind": "What the arm ranks with.",
+  "index.unit": "What one unit of the index is.",
+  "index.units": "How many units the index holds.",
+  "index.built": "When the index is built.",
+  "index.counts": "What the index holds, each as a name and a value.",
+  "index.parameters": "How the index was built, each as a name and a value.",
+  "parts[].step": "The step of the build.",
+  "parts[].part": "The part of the step.",
+  "parts[].date": "When the part was made (UTC).",
+  "parts[].kind": "chat: a language model; embed: an embedding model; encoder: a model that encodes tag-to-chunk pairs; training: a model fitted here; none: no model.",
+  "parts[].model": "The model. null for no model, or for a model fitted here.",
+  "parts[].device": "Where the part ran.",
+  "parts[].items": "How many things the part made or handled; item says what they are. null where not counted.",
+  "parts[].item": "What items counts.",
+  "parts[].calls": "Language model: calls that answered, however many tries each took. Embedder: requests.",
+  "parts[].attempts": "Language model: every try, the tries that did not answer included. Embedder: requests. null where the tries were not counted.",
+  "parts[].tokens_in": "Tokens sent in the tries that answered (language model), or tokens of the embedded texts (embedder).",
+  "parts[].cached_tokens_in": "The part of tokens_in read from the provider's prompt cache; 0 for an embedder. null where not counted.",
+  "parts[].tokens_out": "Tokens written. 0 for an embedder or an encoder.",
+  "parts[].seconds_summed_per_call": "Seconds of the tries, the pauses between tries and any wait for a free slot, added up over the calls. null where not measured.",
+  "parts[].seconds_elapsed": "Seconds from the start to the end, measured around the calls. null where not measured.",
+  "parts[].seconds_command_span": "Seconds from the start to the end of the command that ran the part, its backup and check included. null where not measured."
+ },
+ "index": {
+  "arm": "lucene",
+  "kind": "BM25 index (bm25s, the Lucene variant of BM25)",
+  "unit": "one record of the corpus",
+  "units": 38540,
+  "built": "in memory, at the start of the run",
+  "counts": [
+   {
+    "name": "characters of all unit texts",
+    "value": 14647521
+   }
+  ],
+  "parameters": [
+   {
+    "name": "method",
+    "value": "lucene"
+   },
+   {
+    "name": "k1",
+    "value": 0.9
+   },
+   {
+    "name": "b",
+    "value": 0.4
+   },
+   {
+    "name": "stop words",
+    "value": "en"
+   },
+   {
+    "name": "stemmer",
+    "value": "english"
+   },
+   {
+    "name": "bm25s version",
+    "value": "0.2.14"
+   },
+   {
+    "name": "PyStemmer version",
+    "value": "3.1.0"
+   }
+  ]
+ },
+ "parts": [
+  {
+   "step": "index",
+   "part": "the BM25 index built",
+   "date": "2026-10-08",
+   "kind": "none",
+   "model": null,
+   "device": "laptop CPU",
+   "items": 38540,
+   "item": "units",
+   "calls": null,
+   "attempts": null,
+   "tokens_in": null,
+   "cached_tokens_in": null,
+   "tokens_out": null,
+   "seconds_summed_per_call": null,
+   "seconds_elapsed": 2.4328767000697553,
+   "seconds_command_span": null
+  }
+ ]
+}

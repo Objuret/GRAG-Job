@@ -2,12 +2,12 @@
 
 40 turns spread across every rule that fired, so the filtering can be checked by hand.
 
-- `tool_result` - 18602 turns rejected
+- `tool_result` - 18670 turns rejected
 - `task_notification` - 1564 turns rejected
 - `is_meta` - 664 turns rejected
 - `command_expansion` - 90 turns rejected
-- `interrupt_marker` - 74 turns rejected
-- `compact_summary` - 33 turns rejected
+- `interrupt_marker` - 75 turns rejected
+- `compact_summary` - 34 turns rejected
 
 ---
 
@@ -59,23 +59,18 @@ Another Claude session sent a message:
 [Request interrupted by user]
 ```
 
-## `compact_summary` · 2026-10-19 02:53:25 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
+## `compact_summary` · 2026-10-20 15:03:31 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 ```
 This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
 
 Summary:
-1. **Primary Request and Intent**
-
-   **Start of session.** He asked me to pick up where the last session ended, as a fresh agent: *"So, picking up from where the last conversation is, that agent has gone full retard and cannot be spoken to, let's try with you instead, a max-powered fresh agent"*. The open step was his *"sure, but what i really want is for you to take a critical fucking look at what is actually built"*, after *"my complaint is you forcing every new idea and concept into what has already been done in some fashion"*. Done: the critical look.
-
-   **Then:**
-   - *"diagnose what actually should be built"*. Done, then given concisely after *"tell it to me cleaner and more concise and ill ask about details if i want them instead"*.
-   - Discussion of the split-content step, the timespan, the conversation structure, scope by names, and fitting.
-   - *"well build this, go on"*: the name border over every structure name. Built.
-
-   **Current intent.** *"dude, i am trying to finish a complete fucking iteration of thi
-[... 21526 more chars]
+1. Primary Request and Intent:
+   - Ongoing thesis project GRAG-Job (repo C:\Coding\exjobbet\GRAG-Job, branch artefact-v4-iteration). Three final runs on the 100 gold questions: `output/k=chars/lucene__gold100__cb72000__20261008T234209Z`, `output/k=chars/vector__gold100__cb72000__20261017T061242Z` (both commit fbc2f22), `output/k=chars/artefact_v4__gold100__cb72000__20261020T041923Z` (commit 0c082a3, clean checkout GRAG-Job-0c082a3).
+   - Earlier in this session: make the three run folders the same format and correct ("make sure all the correct data is in those folders") — done (commits 3a231f3, c22dd71, 126fc97).
+   - Then: apply research-data rules 1–8 to the current folders/data — done and reported rule by rule.
+   - CURRENT REQUEST: "create these versions then" — create six files, two per arm (one for the runs, one for the construction), holding "all the real, clean data" in "the same format/shape" across arms, at "csv-level of 'data'", delivered "in a less retarded format" than CSV, gathered "IN ITS OWN FUCKING CLEAN 
+[... 19107 more chars]
 ```
 
 ## `tool_result` · 2026-10-20 09:33:30 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
@@ -115,23 +110,29 @@ Another Claude session sent a message:
             <command-args>opus[1m]</command-args>
 ```
 
-## `interrupt_marker` · 2026-10-05 04:13:23 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
+## `interrupt_marker` · 2026-10-20 14:36:55 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 ```
 [Request interrupted by user]
 ```
 
-## `compact_summary` · 2026-10-08 21:27:34 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+## `compact_summary` · 2026-10-19 02:53:25 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
 
 ```
 This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
 
 Summary:
-1. Primary Request and Intent:
-   - **Original request (2026-10-08 15:28Z):** "do a critical review of the full lucene and vector runs now, extra careful with academic rigor, compare to the historically required data (metrics like times, tokens in and out, build and more) in the git history, mempalace etc, the new abstract". Delivered (long review; see section 5).
-   - **Then:** "You may make model calls." → I made probe calls and a one-question proof on the made-up question only.
-   - **Then a chain of corrections** in which he (a) wanted a plain yes/no on whether the runs are correctly done (answer: retrieval yes, model calls no), (b) was shocked that the CLI adds text to every call, (c) first ruled the judges are not ours, (d) told me to read RAGAS's own material myself, (e) then reversed: the judge calls must also be done correctly, per RAGAS's own settings, which I was to read and USE, not recite, (f) pointed out that the harness's "temperature 0, thinking off, max_tokens 8192" was in there for a reason (it is the int
-[... 28004 more chars]
+1. **Primary Request and Intent**
+
+   **Start of session.** He asked me to pick up where the last session ended, as a fresh agent: *"So, picking up from where the last conversation is, that agent has gone full retard and cannot be spoken to, let's try with you instead, a max-powered fresh agent"*. The open step was his *"sure, but what i really want is for you to take a critical fucking look at what is actually built"*, after *"my complaint is you forcing every new idea and concept into what has already been done in some fashion"*. Done: the critical look.
+
+   **Then:**
+   - *"diagnose what actually should be built"*. Done, then given concisely after *"tell it to me cleaner and more concise and ill ask about details if i want them instead"*.
+   - Discussion of the split-content step, the timespan, the conversation structure, scope by names, and fitting.
+   - *"well build this, go on"*: the name border over every structure name. Built.
+
+   **Current intent.** *"dude, i am trying to finish a complete fucking iteration of thi
+[... 21526 more chars]
 ```
 
 ## `tool_result` · 2026-10-20 09:33:31 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
@@ -174,24 +175,23 @@ Another Claude session sent a message:
 <local-command-stdout>Set model to `claude-opus-5[1m]`</local-command-stdout>
 ```
 
-## `interrupt_marker` · 2026-10-19 06:53:03 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
+## `interrupt_marker` · 2026-10-05 04:13:23 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
 
 ```
-[Request interrupted by user for tool use]
+[Request interrupted by user]
 ```
 
-## `compact_summary` · 2026-10-10 12:29:00 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+## `compact_summary` · 2026-10-08 21:27:34 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
 
 ```
 This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
 
 Summary:
 1. Primary Request and Intent:
-   The user (Joakim, master's thesis project GRAG-Job) is rebuilding the retrieval of the "artefact" arm (`artefact_v4`). Over this conversation his intents, in order:
-   - Test his hypothesis that the tag-nearness problem is the embedder's "passage: " prefix; put everything embedded for the artefact behind "query: " (done: tags, chunk descriptions, querytags, query description, question; graph rewritten).
-   - Replace the picking rule now that the numbers have a range: clustering / "main cluster" / grades; later "force the n of k in the kNN" and "explore what k=3 to 7 mean" (his kNN = the nearness values cut into clusters/levels, "first" = the nearest cluster — I misbuilt it as "k nearest tags"; unconfirmed reading saved to memory).
-   - Remove the model-written facet numbers on the query side: first the facet instrument (ranker) on (querytag, question+description), then his idea "the interpreter just names which of the facets is most important for this tag", matched against "the facet RANKI
-[... 28648 more chars]
+   - **Original request (2026-10-08 15:28Z):** "do a critical review of the full lucene and vector runs now, extra careful with academic rigor, compare to the historically required data (metrics like times, tokens in and out, build and more) in the git history, mempalace etc, the new abstract". Delivered (long review; see section 5).
+   - **Then:** "You may make model calls." → I made probe calls and a one-question proof on the made-up question only.
+   - **Then a chain of corrections** in which he (a) wanted a plain yes/no on whether the runs are correctly done (answer: retrieval yes, model calls no), (b) was shocked that the CLI adds text to every call, (c) first ruled the judges are not ours, (d) told me to read RAGAS's own material myself, (e) then reversed: the judge calls must also be done correctly, per RAGAS's own settings, which I was to read and USE, not recite, (f) pointed out that the harness's "temperature 0, thinking off, max_tokens 8192" was in there for a reason (it is the int
+[... 28004 more chars]
 ```
 
 ## `tool_result` · 2026-10-20 09:33:31 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
@@ -231,26 +231,24 @@ Another Claude session sent a message:
             <command-args>claude-fable-5-1[1m]</command-args>
 ```
 
-## `interrupt_marker` · 2026-10-04 21:23:58 · 2311cb8a-730e-4bac-ae48-eb0744d04950.jsonl
+## `interrupt_marker` · 2026-10-19 06:53:03 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
 
 ```
-[Request interrupted by user]
+[Request interrupted by user for tool use]
 ```
 
-## `compact_summary` · 2026-10-11 03:07:13 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+## `compact_summary` · 2026-10-10 12:29:00 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 ```
 This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
 
 Summary:
 1. Primary Request and Intent:
-   The user (Joakim, master's thesis project GRAG-Job, artefact arm `artefact_v4`) drove this segment through these requests, in order:
-   - After compaction: **"so, rethink that"** — rethink "the look" (design) given that tags can set scope through their chunks.
-   - **"because we have tried doing this concept with the tags guiding, right? and we have tried it with the chunks guiding? now i want to do the both, side by side, together, either cleanly, or overlapping cloads for each step"** — both sides guide together.
-   - **"biuld and goldsmoke"** — go to build what I had asked about (overlapping clouds for each step) and run the ten.
-   - Status / clarification requests about my tables; he rejected my invented split table ("2 questions... what kind of retarded metrics is this?") and my use of "k" for clusters ("72k is the only fucking k").
-   - **"did you just make up some shit because you didnt understand a specific step?"** / **"ok, but what RANKED each cloud?"** / **"how about we stop fu
-[... 23914 more chars]
+   The user (Joakim, master's thesis project GRAG-Job) is rebuilding the retrieval of the "artefact" arm (`artefact_v4`). Over this conversation his intents, in order:
+   - Test his hypothesis that the tag-nearness problem is the embedder's "passage: " prefix; put everything embedded for the artefact behind "query: " (done: tags, chunk descriptions, querytags, query description, question; graph rewritten).
+   - Replace the picking rule now that the numbers have a range: clustering / "main cluster" / grades; later "force the n of k in the kNN" and "explore what k=3 to 7 mean" (his kNN = the nearness values cut into clusters/levels, "first" = the nearest cluster — I misbuilt it as "k nearest tags"; unconfirmed reading saved to memory).
+   - Remove the model-written facet numbers on the query side: first the facet instrument (ranker) on (querytag, question+description), then his idea "the interpreter just names which of the facets is most important for this tag", matched against "the facet RANKI
+[... 28648 more chars]
 ```
 
 ## `tool_result` · 2026-10-20 09:33:31 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
@@ -307,26 +305,26 @@ Standard goals (always include):
 <local-command-stdout>Set model to `claude-fable-5-1`</local-command-stdout>
 ```
 
-## `interrupt_marker` · 2026-09-29 09:45:18 · 232eaa9a-71a9-4684-8388-e4d07653f737.jsonl
+## `interrupt_marker` · 2026-10-04 21:23:58 · 2311cb8a-730e-4bac-ae48-eb0744d04950.jsonl
 
 ```
-[Request interrupted by user for tool use]
+[Request interrupted by user]
 ```
 
-## `compact_summary` · 2026-10-11 18:09:45 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+## `compact_summary` · 2026-10-11 03:07:13 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 ```
 This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
 
 Summary:
 1. Primary Request and Intent:
-   The user (Joakim, master's thesis project GRAG-Job, artefact arm `artefact_v4`, graph `herb-eval-volmax`) drove this segment through a long chain of requests, in order:
-   - Anger that I never improve what he has built ("how can you possibly NEVER make this better!?") → wanted the real reason.
-   - **"dont use "more ai" in the artefact"** (rule; rules out the map step and any further model call in the artefact).
-   - **"ok, but, those chunks, compare those to those that always gets floated, to see what the diff is, is the descriptions of them bad, is the tags bad etc"**.
-   - "so, where are we with this now then?" / "what was the fucking answer to "compare those ..."" (I had buried the answer).
-   - His concept statements: **"what fucking IS missing, is a REAL use of the graph format, where finally ending up somewhere should make you search the correct scopes no matter what desc or tags say"**; "we both have these and things related to "persons" etc (or users) and nothing at all is actuall
-[... 31030 more chars]
+   The user (Joakim, master's thesis project GRAG-Job, artefact arm `artefact_v4`) drove this segment through these requests, in order:
+   - After compaction: **"so, rethink that"** — rethink "the look" (design) given that tags can set scope through their chunks.
+   - **"because we have tried doing this concept with the tags guiding, right? and we have tried it with the chunks guiding? now i want to do the both, side by side, together, either cleanly, or overlapping cloads for each step"** — both sides guide together.
+   - **"biuld and goldsmoke"** — go to build what I had asked about (overlapping clouds for each step) and run the ten.
+   - Status / clarification requests about my tables; he rejected my invented split table ("2 questions... what kind of retarded metrics is this?") and my use of "k" for clusters ("72k is the only fucking k").
+   - **"did you just make up some shit because you didnt understand a specific step?"** / **"ok, but what RANKED each cloud?"** / **"how about we stop fu
+[... 23914 more chars]
 ```
 
 ## `tool_result` · 2026-10-20 09:34:23 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
@@ -359,26 +357,26 @@ A session-scoped Stop hook is now active with condition: "figure out why, why th
             <command-args>opus[1m]</command-args>
 ```
 
-## `interrupt_marker` · 2026-10-08 23:13:10 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+## `interrupt_marker` · 2026-09-29 09:45:18 · 232eaa9a-71a9-4684-8388-e4d07653f737.jsonl
 
 ```
-[Request interrupted by user]
+[Request interrupted by user for tool use]
 ```
 
-## `compact_summary` · 2026-10-12 21:32:22 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+## `compact_summary` · 2026-10-11 18:09:45 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
 
 ```
 This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
 
 Summary:
 1. Primary Request and Intent:
-   The user (Joakim, master's thesis project GRAG-Job; artefact arm `artefact_v4`; Neo4j graph `herb-eval-volmax`) drove this segment through a chain of questions about why the retrieval does not put gold first, ending in a standing goal. In order:
-   - Asked whether "the best hit of tags or chunk is not always a gold", found it "fucking terrible" and "INSANE if the top chunk is NOT a gold".
-   - Asked whether the centre of a cloud of chunks is gold.
-   - `/goal Explore this more to find the closest first gold` (a Stop-hook goal; explored and reported).
-   - Asked what the top cluster gives with its "siblings" (he meant literally "the one above or under it. Pointer-based"), the gold density of the top chunk from tags and from chunks, then: "the combo should fucking work.. So, if we use the chunk-cloud, see if you can find a way to combo or lift with the tags", then "take that last cloud combo style.. How does scope before or after affect that?".
-   - Called two answers "lazy"; in his own word
-[... 29418 more chars]
+   The user (Joakim, master's thesis project GRAG-Job, artefact arm `artefact_v4`, graph `herb-eval-volmax`) drove this segment through a long chain of requests, in order:
+   - Anger that I never improve what he has built ("how can you possibly NEVER make this better!?") → wanted the real reason.
+   - **"dont use "more ai" in the artefact"** (rule; rules out the map step and any further model call in the artefact).
+   - **"ok, but, those chunks, compare those to those that always gets floated, to see what the diff is, is the descriptions of them bad, is the tags bad etc"**.
+   - "so, where are we with this now then?" / "what was the fucking answer to "compare those ..."" (I had buried the answer).
+   - His concept statements: **"what fucking IS missing, is a REAL use of the graph format, where finally ending up somewhere should make you search the correct scopes no matter what desc or tags say"**; "we both have these and things related to "persons" etc (or users) and nothing at all is actuall
+[... 31030 more chars]
 ```
 
 ## `tool_result` · 2026-10-20 09:34:27 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl

@@ -2,3 +2,6 @@
 
 # Benchmark data is byte-exact (the graph hash-verifies raw files) - never eol-convert
 data/** -text
+
+# The finished data is given away byte-exact - never eol-convert
+finished_data/** -text

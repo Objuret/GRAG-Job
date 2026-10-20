@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2333 turns, chronological. Verbatim text; no edits.
+2342 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -18157,4 +18157,45 @@ you are writing whole programs for this? what the fuck is even happening..
 ## 2026-10-20 13:57 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 tell me wtf is happening now dude
+
+## 2026-10-20 14:31 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+you have worked for hours.. that was fucking insane of you..ok, moving on.
+WHERE can i find this?
+
+## 2026-10-20 14:32 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+so.. you just have them in a fucking pile with all the other things..?
+
+## 2026-10-20 14:36 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+Well, perhaps i was somehow unclear or you just dont understand the concept but i obviously want everything related to the actual finished runs GATHERED IN ITS OWN FUCKING CLEAN AREA
+
+## 2026-10-20 14:38 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+saying that i worry you still wont fucking understand the concept, THE FINISHED DATA, you understand? you just said this: "every path that points to them must change" and i realise i have no idea what retarded fucing shit you have built pertaining this data that requires the fucking paths to function, or even why anything should function at all here
+
+## 2026-10-20 14:43 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+you do realize i am giving this data away, right? you think "where stuff is" is something proffessional data should contain? the fuck is even happening here
+
+## 2026-10-20 14:43 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*queued while an agent was working*
+
+dude, the quality of these 6 files will be near csv-level of "data"
+
+## 2026-10-20 14:44 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*queued while an agent was working*
+
+ofc we will deliver them in a less retarded format since we have the possibility to do so, but.. the size and shit of everything you have created will stay on this fucking computer/repo, not something given away
+
+## 2026-10-20 14:49 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+exactly, its great to have everything as you made it, all links to everything, all the history and reasoning, it IS important.. for me, but not for them, comments on this or that, reason a datapoint was remade etc is only noise to them
+
+## 2026-10-20 14:56 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+create these versions then
 
