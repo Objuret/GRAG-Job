@@ -587,3 +587,17 @@ def test_the_4combo_orders_the_border_by_how_strongly_each_chunk_is_tied_to_the_
     assert ranking['delivered_storyline_strength'] == [strength.get(i, 0) for i in delivered]
     assert ranking['delivered_storyline_ways']['entities'] == [len(chosen) if i == last else 0
                                                                for i in delivered]
+
+
+def test_the_index_block_names_the_graph_and_its_build_cost_with_words_for_every_field():
+    from harness import fields
+    held = prepared(provenance={'database': 'herb-eval-volmax', 'counts': {'chunks': 30}})
+    index = V.index_info(held)
+    assert index['graph'] == 'herb-eval-volmax' and index['facet_layer_run'] == V.RUN_ID
+    assert index['counts'] == {'chunks': 30}
+    if V.BUILD_COST.is_file():
+        assert index['build_cost'] == json.loads(V.BUILD_COST.read_text(encoding='utf-8'))
+        assert index['build_cost_file_sha256'] == V._sha(V.BUILD_COST.read_bytes())
+    missing = set()
+    fields._missing({'index': index}, fields.spec_for('artefact_v4')['run_manifest.json'], '', missing)
+    assert missing == set()

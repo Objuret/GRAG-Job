@@ -45,7 +45,8 @@ numbers are in the run folders and under `output/research/`.
   order is made of is asked of the graph per question, `_ask_graph`, and the start of a run only
   checks and counts the graph),
   `test/artefact/v4_walk.py` (the arithmetic behind it), `test/artefact/query_content.py` (the one
-  model request, the first call), `test/graph/build_person_edges.py` (the person-to-chunk edges),
+  model request, the first call), `test/graph/build_cost.json` (what building the graph cost, step
+  by step from the build records; the arm writes it into each run's manifest, `index_info`), `test/graph/build_person_edges.py` (the person-to-chunk edges),
   `test/graph/build_chunk_times.py` (each chunk's records' own times, `times`; the 4-combo's gap
   in time is the smallest gap between a record of one chunk and a record of the other),
   `test/graph/build_structure_names.py` (each structure node's `name` and `name_keys`, read through

@@ -602,8 +602,21 @@ FIELDS = {
         'returned': 'How many texts were handed over, the one cut at the budget counted.',
         'char_budget': BUDGET_FIELDS,
     }),
-    'index': 'Empty: this arm builds no index of its own. It reads the graph (graph in this '
-             'file, provenance in each row).',
+    'index': sub("What the arm's index is: the graph it reads, and what building that graph "
+                 'cost, as the build records give it.', {
+        'graph': 'The Neo4j database the arm reads.',
+        'facet_layer_run': 'The run id of the facet values on the tag-to-chunk edges.',
+        'counts': whole('What the start of the run counted in the graph (as in provenance).'),
+        'build_cost': whole('Per build step of the graph: what it made, when, with which model '
+                            'or device, its calls, tokens in and out and seconds where the '
+                            "step's own record gives them, the records it is read from, and "
+                            'what those records do not give. Collected from the records into '
+                            '`test/graph/build_cost.json`; nothing in it is estimated.'),
+        'build_cost_file_sha256': 'The sha256 of that file, which identifies the build cost given.',
+        'first_call': 'When and how the first call is made.',
+        'question_embedding': 'When and how the query tags, the description and the question are '
+                              'embedded.',
+    }),
     'retrieval_flags': whole("The arm's switches in the arm's own words, by name: what each one "
                              'does, not what it was set to. What was set on the command line is '
                              'in flags; the entries that end in _at_prepare say what the run '
@@ -866,6 +879,24 @@ def own_work(inside, asked, doc_cache):
             if linked == {False}:
                 other.add(key)
     return {'apart': apart, 'own': own, 'talk': talk, 'messages': messages, 'other': other}
+
+
+BUILD_COST = ROOT / 'test/graph/build_cost.json'
+
+
+def index_info(prepared):
+    """What the arm's index is, for the run manifest: the graph it reads and what building the
+    graph cost, from `test/graph/build_cost.json` (collected from the build records)."""
+    raw = BUILD_COST.read_bytes() if BUILD_COST.is_file() else None
+    return {'graph': prepared.provenance['database'], 'facet_layer_run': RUN_ID,
+            'counts': prepared.provenance['counts'],
+            'build_cost': json.loads(raw.decode('utf-8')) if raw else None,
+            'build_cost_file_sha256': _sha(raw) if raw else None,
+            'first_call': f'at query time, {INTERPRET_MODEL} through the lane; an answer already '
+                          'in the store (HERB_V4_CACHE) is read from it and counted as no call',
+            'question_embedding': 'at query time, local embedder, query mode; a text embedded '
+                                  'before is read from output/query_embed_cache and counted as '
+                                  'no call'}
 
 
 def _same_words(a, b):
