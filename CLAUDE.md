@@ -85,7 +85,10 @@ numbers are in the run folders and under `output/research/`.
   and the step they name; if no step is named, say so and ask. A specialist runs the script
   itself before any sentence about where the work stands. Not from the palace, not from memory.
 - Arms: `ls prod/arms test/arms`. Database an arm used: its run manifest.
-- Runs: `ls output/k=chars`. The two baselines on the hundred:
+- Runs: `ls output/k=chars`. The artefact's final run on the hundred (his "build", 2026-10-20):
+  `artefact_v4__gold100__cb72000__20261020T041923Z` (commit `0c082a3` from a clean checkout,
+  `GRAG-Job-0c082a3`, one question at a time, the first call and the embeddings made in the run,
+  the graph's build cost in its manifest). The two baselines on the hundred:
   `lucene__gold100__cb72000__20261008T234209Z` and `vector__gold100__cb72000__20261017T061242Z`
   (commit `fbc2f22` from a clean checkout, one question at a time; each folder's `FIELDS.md` says
   what it holds; lucene's `corrections.json` says what was corrected). Across arms
