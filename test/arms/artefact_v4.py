@@ -355,7 +355,9 @@ FIELDS = {
                                       'the graph (times).',
             }),
             'source_sha256': whole('The sha256 of each code file the retrieval ran from, by '
-                                   'path.'),
+                                   'path, its line ends as git holds them (LF), so that it is '
+                                   "the sha256 of the commit's file whatever the checkout "
+                                   'wrote.'),
         }),
         'interpreter': sub("The first call and what was embedded for the query side.", {
             'model': 'The model of the first call.',
@@ -612,7 +614,8 @@ FIELDS = {
                             "step's own record gives them, the records it is read from, and "
                             'what those records do not give. Collected from the records into '
                             '`test/graph/build_cost.json`; nothing in it is estimated.'),
-        'build_cost_file_sha256': 'The sha256 of that file, which identifies the build cost given.',
+        'build_cost_file_sha256': 'The sha256 of that file, its line ends as git holds them (LF), '
+                                  'which identifies the build cost given.',
         'first_call': 'When and how the first call is made.',
         'question_embedding': 'When and how the query tags, the description and the question are '
                               'embedded.',
@@ -884,6 +887,106 @@ def own_work(inside, asked, doc_cache):
 BUILD_COST = ROOT / 'test/graph/build_cost.json'
 
 
+def _as_in_git(raw):
+    """A text file's bytes with the line ends git holds (LF): a checkout on Windows can write
+    CR LF, and the sha256 is then still that of the commit's file."""
+    return raw.replace(b'\r\n', b'\n')
+
+# the keys of build_cost.json that hold elapsed seconds or a command's span; 'seconds' holds a
+# step's named spans; seconds_summed_per_call is the other kind and is never added to these
+_ELAPSED_KEYS = ('seconds_elapsed', 'seconds_elapsed_recorded', 'backup_seconds',
+                 'report_seconds_on_the_laptop')
+
+
+def _elapsed_seconds(node, out):
+    """Every elapsed second and command span in a build step, in the order the file gives them;
+    a key about seconds this does not know stops it, so none is dropped unseen."""
+    if not isinstance(node, dict):
+        return
+    for key, value in node.items():
+        if key == 'seconds':
+            out.extend(float(v) for v in (value or {}).values())
+        elif key in _ELAPSED_KEYS:
+            out.append(float(value))
+        elif key == 'seconds_summed_per_call':
+            continue
+        elif 'second' in key:
+            raise ValueError(f'build_cost.json: {key} is no kind of seconds the arm knows')
+        else:
+            _elapsed_seconds(value, out)
+
+
+def build_stats_from_cost(cost):
+    """What building the graph cost, from `test/graph/build_cost.json`: one entry per model, in
+    the order of the file's steps, with its calls, tokens and the two kinds of seconds as the
+    records give them; build_time_s the elapsed seconds and command spans of every step that
+    records them, added (the superseded work is not counted); what no record gives."""
+    steps = {s['id']: s for s in cost['steps']}
+    tagged = steps['descriptions_and_tags']
+    main, again = tagged['whole_run']['main'], tagged['whole_run']['recovery']
+    vectors = steps['embeddings']
+    embedded = [vectors['parts'][p] for p in ('tags', 'tags_with_underscores_in_readable_form',
+                                              'descriptions')]
+    facets = steps['facet_layer']['parts']
+    judged, bake, cache = facets['opus_judgements'], facets['encoder_bake_off'], facets['encoder_cache']
+    facet_gaps = steps['facet_layer']['not_recorded'].split('; ')
+    if (not tagged['where'].startswith('claude-haiku-4-5') or not judged['model'].startswith(
+            'claude-opus-5,') or len(facet_gaps) != 3
+            or not vectors['where'].startswith('nvidia/llama-nemotron-embed-1b-v2')):
+        raise ValueError('build_cost.json is not the file this reading was written for')
+    models = [
+        {'kind': 'chat', 'model': 'claude-haiku-4-5-20251001',
+         'what': 'the tagging run pilot_full_herb: per chunk a description and its tags, five '
+                 'facet scores per tag (later replaced by the facet layer), per file a '
+                 'description and a score per chunk; the main run and its recovery',
+         'calls': main['records'] + again['calls'],
+         'tokens_in': main['tokens_in'] + again['tokens_in'],
+         'tokens_out': main['tokens_out'] + again['tokens_out'],
+         'seconds_summed_per_call': main['seconds_summed_per_call'] + again['seconds_summed_per_call'],
+         'seconds_elapsed': main['seconds_elapsed'],
+         'device': 'anthropic, forced tool use, temperature 0.3, 4 at a time',
+         'not_recorded': f"{tagged['not_recorded']}; the recovery's elapsed time; token counts "
+                         f"for {main['records'] - main['calls_with_usage']} records of the main run"},
+        {'kind': 'embed', 'model': 'nvidia/llama-nemotron-embed-1b-v2',
+         'what': vectors['what'] + ', one text a request',
+         'calls': sum(p['texts'] for p in embedded),
+         'tokens_in': sum(p['tokens_in'] for p in embedded), 'tokens_out': 0,
+         'seconds_summed_per_call': None,
+         'seconds_elapsed': sum(p['seconds_elapsed'] for p in embedded),
+         'device': '; '.join(dict.fromkeys(p['device'] for p in embedded)),
+         'not_recorded': vectors['not_recorded']},
+        {'kind': 'chat', 'model': 'claude-opus-5',
+         'what': f"pairs of tag-to-chunk edges judged for the facet layer ({judged['fitted_on']})",
+         'calls': judged['calls'], 'tokens_in': judged['tokens_in'],
+         'tokens_out': judged['tokens_out'],
+         'seconds_summed_per_call': judged['seconds_summed_per_call'],
+         'seconds_elapsed': judged['seconds_elapsed_recorded'],
+         'device': judged['model'].split(', ', 1)[1],
+         'not_recorded': '; '.join(facet_gaps[:2])},
+        {'kind': 'encoder', 'model': f"{bake['encoders']} candidate encoders",
+         'what': f"the encoder bake-off on {bake['edges']} edges, which chose the encoder; not in "
+                 'the values',
+         'calls': None, 'tokens_in': None, 'tokens_out': None,
+         'seconds_summed_per_call': None, 'seconds_elapsed': bake['seconds_elapsed'],
+         'device': bake['device'],
+         'not_recorded': 'the tokens; the candidates are named in the bake-off\'s own results'},
+        {'kind': 'encoder', 'model': cache['model'].split(', ', 1)[0],
+         'what': f"the encoder cache: every one of the {cache['edges']} tag-to-chunk edges "
+                 f"encoded for the facet head ({cache['model'].split(', ', 1)[1]})",
+         'calls': None, 'tokens_in': None, 'tokens_out': None,
+         'seconds_summed_per_call': None, 'seconds_elapsed': cache['seconds_elapsed'],
+         'device': cache['device'], 'not_recorded': facet_gaps[2]},
+    ]
+    elapsed = []
+    for step in cost['steps']:
+        _elapsed_seconds(step, elapsed)
+    return BuildStats(
+        build_time_s=sum(elapsed), models=models,
+        not_recorded=[f"{s['id']}: {s['not_recorded']}" for s in cost['steps']]
+        + ['the superseded work (index.build_cost.superseded) is recorded there and not counted '
+           'here'])
+
+
 def index_info(prepared):
     """What the arm's index is, for the run manifest: the graph it reads and what building the
     graph cost, from `test/graph/build_cost.json` (collected from the build records)."""
@@ -891,7 +994,7 @@ def index_info(prepared):
     return {'graph': prepared.provenance['database'], 'facet_layer_run': RUN_ID,
             'counts': prepared.provenance['counts'],
             'build_cost': json.loads(raw.decode('utf-8')) if raw else None,
-            'build_cost_file_sha256': _sha(raw) if raw else None,
+            'build_cost_file_sha256': _sha(_as_in_git(raw)) if raw else None,
             'first_call': f'at query time, {INTERPRET_MODEL} through the lane; an answer already '
                           'in the store (HERB_V4_CACHE) is read from it and counted as no call',
             'question_embedding': 'at query time, local embedder, query mode; a text embedded '
@@ -1084,13 +1187,17 @@ def prepare_over_corpus(corpus) -> Prepared:
                    'channels_apart': sum(len(p['apart']) for p in persons.values()),
                    'people': sum(len(p['people']) for p in persons.values()),
                    'chunks_with_a_time': int(timed['with_a_time'])},
-        'source_sha256': {str(p.relative_to(ROOT)): _sha(p.read_bytes()) for p in paths},
+        'source_sha256': {str(p.relative_to(ROOT)): _sha(_as_in_git(p.read_bytes()))
+                          for p in paths},
     }
     elapsed = time.perf_counter() - started
     say(f'artefact_v4: prepared: {counts["chunks"]} chunks, {counts["graph_tags"]} tags and '
         f'{counts["edges"]} edges in the graph, checked in {elapsed:.1f}s')
-    return Prepared(cache_dir=cache, provenance=provenance,
-                    build_stats=BuildStats(elapsed, ModelUsage(), [INTERPRET_MODEL]),
+    # what building the graph cost; these checks' own seconds are the start's prepare_s
+    built = (build_stats_from_cost(json.loads(BUILD_COST.read_text(encoding='utf-8')))
+             if BUILD_COST.is_file() else
+             BuildStats(None, models=[], not_recorded=['test/graph/build_cost.json is not there']))
+    return Prepared(cache_dir=cache, provenance=provenance, build_stats=built,
                     dim=int(dim), products=tuple(folded))
 
 
@@ -1404,8 +1511,11 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
         f'handed over of {sum(gone["chunks_with_nothing_handed_over"].values())}; '
         f'{sum(gone["records_left_out"].values())} records left out; '
         f'{gone["conversations_handed_over"]} conversations whole')
+    # the arm's own count, which the harness checks against the call records; the row holds
+    # those per model
     retrieval = _add(interp_usage, embed_usage)
-    for name, value in chat.take_timing().items():
+    timing = chat.take_timing()
+    for name, value in timing.items():
         setattr(retrieval, name, value)
     meta = {'provenance': prepared.provenance,
             'interpreter': {'model': INTERPRET_MODEL, 'stages': stages,
@@ -1415,7 +1525,10 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
             'scope': scope, 'ranking': ranking, 'diagnostics': diagnostics,
             'chunk_ids': id_lists, 'returned': len(contexts), 'char_budget': budget,
             'handed_over': handed['record']}
-    search_time = max(0., time.perf_counter() - started - interp_usage.time_s)
+    # without any model call or embedder request: the first call as the arm timed it, the tries
+    # of a first call that was refused and asked again (retry_s), and every embedder request
+    search_time = max(0., time.perf_counter() - started - interp_usage.time_s
+                      - timing['retry_s'] - embed_usage.time_s)
     if generate is None:
         answer, gen_usage = '', ModelUsage()
     else:

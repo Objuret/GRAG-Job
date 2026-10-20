@@ -13,6 +13,7 @@ from statistics import mean
 from harness import abort
 from harness import orchestrator
 from harness import questions
+from harness.contract import build_stats_record
 from harness.run_lock import RunLock
 
 _HERE = Path(__file__).parent.parent
@@ -365,10 +366,11 @@ def main():
 
     if args.build:
         corpus = orchestrator.open_corpus(orchestrator.DEFAULT_CORPUS)
-        bs = pipeline.prepare_over_corpus(corpus).build_stats
-        print(f"{args.arm} index built - {bs.model.calls} embed calls, "
-              f"in={bs.model.tokens_in} out={bs.model.tokens_out} tokens, {bs.build_time_s:.1f}s "
-              f"(model: {', '.join(bs.models) or 'none'})")
+        bs = build_stats_record(pipeline.prepare_over_corpus(corpus).build_stats)
+        took = "not recorded" if bs["build_time_s"] is None else f"{bs['build_time_s']:.1f}s"
+        print(f"{args.arm} index built in {took}; "
+              + ("; ".join(f"{m['model']}: {m['calls']} calls, in={m['tokens_in']} "
+                           f"out={m['tokens_out']} tokens" for m in bs["models"]) or "no model"))
         return
 
     top_k, args.char_budget = _resolve_depth(args.k, args.char_budget, args.arm)

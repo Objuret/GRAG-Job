@@ -187,6 +187,55 @@ class EmbedRecordTests(unittest.TestCase):
         self.assertEqual(embed.take_totals()["texts"], 0)
 
 
+class UsageByModelTests(unittest.TestCase):
+    def test_each_model_gets_its_own_entry_and_nothing_of_two_models_is_added(self):
+        calls = [
+            {"kind": "chat", "model": "sonnet", "ok": False, "usage": None,
+             "attempts": [{"outcome": "exit", "seconds": 3.0, "backoff_s": 1.0},
+                          {"outcome": "timeout", "seconds": 500.0, "machine_asleep": True}]},
+            {"kind": "embed", "model": "embedder", "n_texts": 5, "batch": 2, "tokens_in": 50,
+             "encode_s": 0.4, "lock_wait_s": 0.1},
+            {"kind": "chat", "model": "sonnet", "ok": True,
+             "usage": {"prompt_tokens": 20, "completion_tokens": 7, "cached_input_tokens": 12},
+             "attempts": [{"outcome": "ok", "seconds": 2.5}]},
+            {"kind": "chat", "model": "haiku", "ok": True,
+             "usage": {"prompt_tokens": 9, "completion_tokens": 1, "cached_input_tokens": 0},
+             "attempts": [{"outcome": "timeout", "seconds": 8.0}, {"outcome": "ok", "seconds": 1.0}]},
+        ]
+        sonnet, embedder, haiku = capture.usage_by_model(calls)
+        # an answer is one call, however many tries; a call that gave up adds tries, no call
+        self.assertEqual((sonnet["calls"], sonnet["attempts"], sonnet["tokens_in"],
+                          sonnet["cached_input_tokens"], sonnet["tokens_out"]), (1, 3, 20, 12, 7))
+        # a try a correction marked as slept under is left out of the seconds
+        self.assertEqual((sonnet["request_s"], sonnet["retry_s"], sonnet["time_s"]), (2.5, 4.0, 6.5))
+        self.assertEqual((embedder["kind"], embedder["calls"], embedder["attempts"],
+                          embedder["tokens_in"], embedder["tokens_out"]), ("embed", 3, 3, 50, 0))
+        self.assertEqual((embedder["request_s"], embedder["wait_s"], embedder["time_s"]),
+                         (0.4, 0.1, 0.5))
+        self.assertEqual((haiku["calls"], haiku["attempts"], haiku["retry_s"], haiku["time_s"]),
+                         (1, 2, 8.0, 9.0))
+
+    def test_the_answer_call_is_marked_and_left_out_of_the_retrieval(self):
+        cap, token = capture.start()
+        try:
+            capture.record({"kind": "embed", "model": "e", "n_texts": 1, "tokens_in": 4})
+            role = capture.set_role("answer")
+            try:
+                capture.record({"kind": "chat", "model": "m", "ok": True, "attempts": [],
+                                "usage": {"prompt_tokens": 9}})
+            finally:
+                capture.reset_role(role)
+            capture.record({"kind": "embed", "model": "e", "n_texts": 1, "tokens_in": 6})
+        finally:
+            capture.stop(token)
+        calls = cap.close()["calls"]
+        self.assertEqual([c.get("role") for c in calls], [None, "answer", None])
+        own = orchestrator.retrieval_of(calls, ModelUsage(calls=2, tokens_in=10))
+        self.assertEqual([(e["model"], e["calls"], e["tokens_in"]) for e in own], [("e", 2, 10)])
+        with self.assertRaises(RuntimeError):
+            orchestrator.retrieval_of(calls, ModelUsage(calls=3, tokens_in=10))
+
+
 class RunRowTests(unittest.TestCase):
     QS = [QuestionWithTruth(f"q{i}", f"question {i}?", "person", [], []) for i in range(3)]
 

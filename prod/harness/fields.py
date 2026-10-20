@@ -101,6 +101,7 @@ CALL = {
     "stream": "The raw stream of a reply joined from parts; empty otherwise.",
     "stderr": "What the program printed as errors in the try that answered.",
     "error": "The last error of a call that gave up; empty otherwise.",
+    "role": "answer: the call that wrote the answer. Not there on the arm's own calls.",
 }
 
 EMBED = {
@@ -176,6 +177,72 @@ CORRECTION = whole("Only where a stored number was corrected after the run: the 
                    "as recorded and the corrected value. The folder's corrections.json tells the "
                    "whole of it, and the files as recorded stand beside the corrected ones.")
 
+RETRIEVAL_ENTRY = {
+    "kind": "chat: a language model. embed: the embedder.",
+    "model": "The model, by its id or name.",
+    "calls": "chat: how many answers; an answer is one call, however many tries it took. embed: "
+             "how many batches the embedder was given.",
+    "attempts": "chat: how many times the model was asked in all, the tries that did not answer "
+                "included. embed: the same as calls; the embedder is asked once a batch.",
+    "tokens_in": "chat: tokens sent in the tries that answered, the part read from the prompt "
+                 "cache included. embed: the tokens of the texts, prefix included.",
+    "cached_input_tokens": "chat: the part of tokens_in read from the prompt cache. embed: 0.",
+    "tokens_out": "chat: tokens the model wrote in the tries that answered. embed: 0.",
+    "reasoning_tokens": "Always 0.",
+    "time_s": "request_s + wait_s + retry_s.",
+    "request_s": "chat: seconds of the tries that answered. embed: seconds the embedder worked "
+                 "(encode_s).",
+    "wait_s": "chat: 0. embed: seconds the requests waited for the embedder to be free "
+              "(lock_wait_s).",
+    "retry_s": "chat: seconds of the tries that did not answer and of the pauses before trying "
+               "again; a try a correction marked as slept under is left out. embed: 0.",
+}
+
+BUILD_MODEL = {
+    "kind": "chat: a language model. embed: the embedder. encoder: a model that encoded the "
+            "tag-to-chunk edges for the facet values, or the candidates tried for that.",
+    "model": "The model, by its id or name.",
+    "what": "What the model did in the build.",
+    "calls": "How many calls or requests its records count; empty when they count none.",
+    "tokens_in": "Tokens sent, as the records give them; empty when they do not.",
+    "tokens_out": "Tokens written; empty when the records do not give them.",
+    "seconds_summed_per_call": "The seconds of each call added up. Calls that ran side by side "
+                               "make this more than the time it took. Empty when the records do "
+                               "not give it.",
+    "seconds_elapsed": "Start to end of the model's work, as its records give it; empty when they "
+                       "do not.",
+    "device": "Where it ran.",
+    "not_recorded": "What the records do not give for this model.",
+}
+
+GRAPH = {
+    "database": "The Neo4j database the arm read.",
+    "graph_version": "The version the graph's last build record names. The build record is "
+                     "output/graph_build/<database>/build_manifest.json; these five are empty when "
+                     "the folder that ran had none. Steps that changed the graph after that build "
+                     "are in the arm's index (build_cost).",
+    "graph_census_sha256": "The census hash the last build record gives, of the graph as that "
+                           "build left it.",
+    "removed_tags_sha256": "The hash of the tags the build record says were removed.",
+    "build_timestamp": "When the last build record was written (UTC).",
+    "source_database": "The database the last build copied from.",
+    "census": sub("The graph as counted in it when this manifest was written. It counts and "
+                  "reads no value.", {
+                      "labels": whole("Nodes per set of labels, the labels joined by ':'."),
+                      "relationships": whole("Relationships per type and the label sets at "
+                                             "their start and end."),
+                      "node_properties": whole("Per set of labels, how many nodes carry each "
+                                               "property."),
+                      "relationship_properties": whole("Per relationship type, how many carry "
+                                                       "each property."),
+                  }),
+    "census_sha256": "The sha256 of the census, its keys in order: two runs with the same value "
+                     "read a graph of the same shape.",
+    "census_error": "Why the graph could not be counted; there only then.",
+    "mixed_builds": whole("Only when the starts of this folder read different graphs: the graph "
+                          "block of each start, in order."),
+}
+
 ROW = {
     "id": "The question's id. It joins a row to its score rows (question_id) and to the question "
           "set.",
@@ -187,10 +254,13 @@ ROW = {
     "context_ids": "The ids of the corpus records that were handed over whole, in the same order. "
                    "A text cut at the budget is in contexts but its record is not counted here.",
     "search_time_s": "Seconds the arm took to rank the corpus for this question, without any "
-                     "model call it made on the way.",
+                     "model call or embedder request it made on the way.",
     "generator": sub("What the answer call cost.", USAGE),
-    "retrieval": sub("What the arm's own model calls for this question cost, such as embedding "
-                     "the question. All zero for an arm that makes none.", USAGE),
+    "retrieval": sub("What the arm's own model calls and embedder requests for this question "
+                     "cost, one entry per model, in the order the models were first asked; two "
+                     "models are never added together. The harness works it out from the "
+                     "question's call records (calls), the answer call left out, the same way for "
+                     "every arm. Empty for an arm that makes none.", RETRIEVAL_ENTRY),
     "leg": "Which start of this folder made the row: 1 for the first start, one more for each "
            "time the run was taken up again. The start is in run_manifest.json under legs.",
     "timing": sub("The clock of the whole question: ranking and answering.", TIMING),
@@ -253,15 +323,23 @@ MANIFEST = {
     "timestamp": "When this file was written (UTC).",
     "build_stats": sub("What building the arm's index cost.", {
         "build_time_s": "Seconds it took. For an index read from a stored file it is what the "
-                        "making of that file took.",
-        "model": sub("What the model that built it cost.", USAGE),
-        "models": "The models used to build it, by name.",
+                        "making of that file took. For a graph built in steps it is the elapsed "
+                        "seconds and the command spans of every step whose records give them, "
+                        "added; work that was replaced later is not counted. Empty when no "
+                        "record gives them.",
+        "models": sub("One entry per model that worked on the build, in the order of the build; "
+                      "two models are never added together. Empty for an index built without a "
+                      "model.", BUILD_MODEL),
+        "not_recorded": "What the build records do not give, step by step.",
+        "as_the_arm_gave_it": whole("Only for an older arm that gave one sum for none or several "
+                                    "models: that sum and the names, as given."),
     }),
     "flags": whole("The switches given on the command line, each by its name with the value it "
                    "was given; empty when none. What a switch does is the arm's to say "
                    "(retrieval_flags)."),
-    "graph": whole("For an arm that reads the graph database: which database and which build of "
-                   "it. Empty for an arm that reads none."),
+    "graph": sub("For an arm that reads the graph database: which database, its last build "
+                 "record, and the graph as counted when this manifest was written. Empty for an "
+                 "arm that reads none.", GRAPH),
     "code_version": sub("The code the last answering start ran on.", CODE_VERSION),
     "environment": sub("The machine and the software.", {
         "host": "The machine's name.",
@@ -437,21 +515,34 @@ EVAL_FAILURE = {
     "usage": sub("What the failed cell had cost.", USAGE_CELL),
 }
 
-CORRECTIONS = {
+CORRECTION_ENTRY = {
     "made_at": "When the correction was made (UTC).",
     "ordered_by": "The words that ordered it.",
-    "what_happened": "What went wrong during the run.",
-    "rule": whole("The rule that decided which numbers were corrected."),
+    "what_happened": "What was wrong in the stored numbers.",
+    "rule": whole("The rule that decided which numbers were corrected, and how."),
     "not_changed_and_worth_knowing": "What the correction left as recorded and a reader should know.",
-    "slept_tries": whole("The tries the rule found, each with what was recorded for it."),
-    "changes": whole("Every changed number: where it is, the value as recorded, the corrected "
+    "slept_tries": whole("Only in the sleep correction: the tries the rule found, each with what "
+                         "was recorded for it."),
+    "changes": whole("Every changed value: where it is, the value before and the corrected "
                      "value."),
-    "judge_calls_with_logged_low_power_time_inside_them": whole("Judge calls the machine's own "
+    "checks": whole("Only in the clean-up correction: what was checked against the call records "
+                    "and the graph, whether it held, and how many places were looked at."),
+    "judge_calls_with_logged_low_power_time_inside_them": whole("Only in the sleep correction: "
+                                                               "judge calls the machine's own "
                                                                "sleep record touches; not changed."),
-    "low_power_intervals_the_machine_logged": whole("The machine's own record of when it slept."),
-    "files": whole("The sha256 of each corrected file, as recorded and as corrected."),
+    "low_power_intervals_the_machine_logged": whole("Only in the sleep correction: the machine's "
+                                                    "own record of when it slept."),
+    "files": whole("The sha256 of each corrected file, before and after the correction, and "
+                   "where the file from before is kept. The sleep correction's are of the bytes "
+                   "on the disk that ran it; the clean-up correction's are of the files with the "
+                   "line ends git holds (LF), as line_ends says."),
     "evidence": "The file that holds the machine's own record.",
     "script": "The script that made the correction.",
+}
+
+CORRECTIONS = {
+    "corrections": sub("One entry per correction, in the order they were made; each rests on "
+                       "the files the one before it left.", CORRECTION_ENTRY),
 }
 
 # file name, or a pattern with *, -> (what the file is, how it joins, its fields or None)
@@ -484,8 +575,12 @@ FILES = {
                         "file of the same name.", "", None),
     "machine_sleep_events.txt": ("The machine's own record of when it slept and woke, which a "
                                  "correction rests on.", "", None),
-    "correct_slept_tries.py": ("The script that made the correction; run on the files as recorded "
-                               "it gives the corrected files again.", "", None),
+    "correct_slept_tries.py": ("The script that made the sleep correction; run on the files as "
+                               "recorded it gives the files it corrected again.", "", None),
+    "correct_usage_by_model.py": ("The script that made the clean-up correction (the cost per "
+                                  "model, the search time without the model calls, the build "
+                                  "cost per model, the graph as counted); run on the files from "
+                                  "before it, it gives the corrected files again.", "", None),
 }
 
 # score -> (RAGAS's own sentence, where it is from, what goes into it here, what it needs,
@@ -671,6 +766,23 @@ def _lines(path: Path) -> list:
     return out
 
 
+def _same_entries(a: list, b: list) -> bool:
+    """Two lists of per-model entries alike: the same models in the same order, the same counts,
+    the same seconds to within a microsecond."""
+    if len(a) != len(b):
+        return False
+    for x, y in zip(a, b):
+        if set(x) != set(y):
+            return False
+        for k in x:
+            if isinstance(x[k], float) or isinstance(y[k], float):
+                if abs(float(x[k]) - float(y[k])) > 1e-6:
+                    return False
+            elif x[k] != y[k]:
+                return False
+    return True
+
+
 def relations(folder) -> list:
     """(what the words claim, whether it holds in this folder, how many places were looked at)."""
     d = Path(folder)
@@ -692,6 +804,21 @@ def relations(folder) -> list:
     add("generator.time_s is request_s + wait_s + retry_s, to within half a second",
         sum(1 for r in rows if abs(r["generator"]["time_s"] - sum(
             r["generator"][k] for k in ("request_s", "wait_s", "retry_s"))) > 0.5), len(rows))
+    from harness.capture import usage_by_model
+    own = [r for r in rows if isinstance(r.get("retrieval"), list)]
+    add("retrieval is the question's own call records summed per model, the answer call left out",
+        sum(1 for r in own if not _same_entries(r["retrieval"], usage_by_model(
+            [c for c in r.get("calls") or [] if c.get("role") != "answer"]))), len(own))
+    answered = [r for r in rows if (r.get("generator") or {}).get("calls")]
+    add("every answered row has one call marked answer, and it is the one generator counts",
+        sum(1 for r in answered if [(c.get("usage") or {}).get("prompt_tokens")
+                                    for c in r.get("calls") or []
+                                    if c.get("role") == "answer" and c.get("ok")]
+            != [r["generator"]["tokens_in"]]), len(answered))
+    add("no second is counted twice: search_time_s, the retrieval's time_s and generator.time_s "
+        "add up to no more than timing.wall_s, half a second allowed",
+        sum(1 for r in own if r["search_time_s"] + sum(e["time_s"] for e in r["retrieval"])
+            + r["generator"]["time_s"] > r["timing"]["wall_s"] + 0.5), len(own))
     cut = [r for r in rows if (r.get("meta") or {}).get("char_budget")]
     try:
         one_each = cut if getattr(importlib.import_module(f"arms.{_arm_of(d)}"),
@@ -817,6 +944,14 @@ def render(folder=None, arm: str | None = None, stamp_files: bool = False) -> st
             "- `calls` counts answers, `attempts` counts tries. `tokens_in` and `tokens_out` are "
             "those of the try that answered; a try that did not answer is in the call's own "
             "record under `attempts`.",
+            "- `retrieval` is a list with one entry per model. A language model's tokens and the "
+            "embedder's tokens are different things and are never added together; the same holds "
+            "for the entries of `build_stats.models`.",
+            "- `search_time_s` holds no model call and no embedder request; their seconds are in "
+            "`retrieval`. `timing.wall_s` is the whole question, and the harness's own work is "
+            "in it beside those.",
+            "- In `build_stats.models`, `seconds_summed_per_call` and `seconds_elapsed` are two "
+            "kinds of seconds: calls that ran side by side make the first more than the second.",
             "- `tokens_in` includes what was read from the prompt cache; `cached_input_tokens` is "
             "that part alone.",
             "- A text cut at the budget is in `contexts` and its record is not in `context_ids`, "
@@ -864,14 +999,14 @@ def render(folder=None, arm: str | None = None, stamp_files: bool = False) -> st
             out.append("")
     out += ["---", f"Written from `prod/harness/fields.py`, sha256 `{source_sha256()}`."]
     if d and stamp_files:
-        out += ["", "The files as they stood when this was written:", ""]
+        # with the line ends git holds (LF): the harness writes CR LF on Windows, git keeps LF,
+        # and a checkout on any machine then gives these sha256 back
+        out += ["", "The files as they stood when this was written, their line ends as git holds "
+                    "them (LF):", ""]
         for p in sorted(d.iterdir()):
             if p.is_file() and p.name != "FIELDS.md":
-                h = hashlib.sha256()
-                with p.open("rb") as fh:
-                    for block in iter(lambda: fh.read(1 << 20), b""):
-                        h.update(block)
-                out.append(f"- `{p.name}` sha256 `{h.hexdigest()}`")
+                digest = hashlib.sha256(p.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+                out.append(f"- `{p.name}` sha256 `{digest}`")
     return "\n".join(out) + "\n"
 
 

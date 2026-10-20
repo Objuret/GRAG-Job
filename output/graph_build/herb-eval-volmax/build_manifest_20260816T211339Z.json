@@ -1,0 +1,10 @@
+{
+ "complete": false,
+ "graph_census_sha256": null,
+ "graph_version": "build in progress \u2014 database is mid-rebuild",
+ "previous_manifest": null,
+ "removed_tags_sha256": null,
+ "source_database": null,
+ "target_database": "herb-eval-volmax",
+ "timestamp": "2026-08-16T21:13:39Z"
+}

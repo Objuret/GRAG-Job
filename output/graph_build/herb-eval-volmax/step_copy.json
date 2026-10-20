@@ -1,0 +1,105 @@
+{
+ "copied": null,
+ "found": "nodes without schema \u2014 20474 node(s) and 62443 edge(s) present, 2 constraint(s) and 12 index(es) missing: ['chunk_channel', 'chunk_content_ft', 'chunk_desc_emb', 'chunk_employee_id', 'chunk_fulltext', 'chunk_kind', 'chunk_metadata_section', 'chunk_product', 'chunk_section', 'constraint_afab88ae', 'constraint_c5e13f67', 'index_50501cbd', 'index_d07e45e8', 'tag_emb']",
+ "schema": {
+  "constraints_created": [
+   "constraint_afab88ae",
+   "constraint_c5e13f67"
+  ],
+  "indexes_created": [
+   "chunk_channel",
+   "chunk_content_ft",
+   "chunk_desc_emb",
+   "chunk_employee_id",
+   "chunk_fulltext",
+   "chunk_kind",
+   "chunk_metadata_section",
+   "chunk_product",
+   "chunk_section",
+   "index_50501cbd",
+   "index_d07e45e8",
+   "tag_emb"
+  ],
+  "temp_indexes_dropped": []
+ },
+ "source_database": "herb-eval-v2",
+ "source_layer": {
+  "constraints": [
+   "constraint_afab88ae",
+   "constraint_c5e13f67"
+  ],
+  "counts": {
+   "Chunk": 4869,
+   "Tag": 15605
+  },
+  "edges": 62443,
+  "index_coverage": {
+   "chunk_channel": 2669,
+   "chunk_content_ft": 0,
+   "chunk_desc_emb": 4869,
+   "chunk_employee_id": 30,
+   "chunk_fulltext": 0,
+   "chunk_kind": 4869,
+   "chunk_metadata_section": 61,
+   "chunk_product": 4808,
+   "chunk_section": 4808,
+   "index_50501cbd": 4869,
+   "index_d07e45e8": 0,
+   "tag_emb": 15605
+  },
+  "indexes": [
+   "chunk_channel",
+   "chunk_content_ft",
+   "chunk_desc_emb",
+   "chunk_employee_id",
+   "chunk_fulltext",
+   "chunk_kind",
+   "chunk_metadata_section",
+   "chunk_product",
+   "chunk_section",
+   "index_50501cbd",
+   "index_d07e45e8",
+   "tag_emb"
+  ]
+ },
+ "source_lineage": {
+  "database": "herb-eval-v2",
+  "graph_census_sha256": "50f8f36ea39ea18d08513ea6f8c3944a61e8bbbe63c48dec137d3041b7cfb6ba",
+  "graph_version": "copy+cleanup+directory-entities+relations",
+  "removed_tags_sha256": "6a279b3465f4ec55f440607d0239a4c56d1580ebd9582c43a4d31265b4426116",
+  "source_database": "herb-eval",
+  "timestamp": "2026-08-14T00:25:22Z"
+ },
+ "stale_indexes_dropped": [
+  "tmp_copy_chunk",
+  "tmp_copy_tag"
+ ],
+ "target_database": "herb-eval-volmax",
+ "target_layer": {
+  "constraints": [
+   "constraint_afab88ae",
+   "constraint_c5e13f67"
+  ],
+  "counts": {
+   "Chunk": 4869,
+   "Tag": 15605
+  },
+  "edges": 62443,
+  "indexes": [
+   "chunk_channel",
+   "chunk_content_ft",
+   "chunk_desc_emb",
+   "chunk_employee_id",
+   "chunk_fulltext",
+   "chunk_kind",
+   "chunk_metadata_section",
+   "chunk_product",
+   "chunk_section",
+   "index_50501cbd",
+   "index_d07e45e8",
+   "tag_emb"
+  ]
+ },
+ "timestamp": "2026-08-16T21:46:11Z",
+ "would": "drop 2 leftover lookup index(es) ['tmp_copy_chunk', 'tmp_copy_tag'], then skip the copy and apply 2 constraint(s) and 12 index(es)"
+}

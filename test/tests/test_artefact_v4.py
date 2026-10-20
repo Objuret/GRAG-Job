@@ -597,7 +597,48 @@ def test_the_index_block_names_the_graph_and_its_build_cost_with_words_for_every
     assert index['counts'] == {'chunks': 30}
     if V.BUILD_COST.is_file():
         assert index['build_cost'] == json.loads(V.BUILD_COST.read_text(encoding='utf-8'))
-        assert index['build_cost_file_sha256'] == V._sha(V.BUILD_COST.read_bytes())
+        assert index['build_cost_file_sha256'] == V._sha(
+            V.BUILD_COST.read_bytes().replace(b'\r\n', b'\n'))
     missing = set()
     fields._missing({'index': index}, fields.spec_for('artefact_v4')['run_manifest.json'], '', missing)
     assert missing == set()
+
+
+def test_the_graph_build_cost_is_one_entry_per_model_and_no_two_kinds_of_seconds_are_added():
+    from harness.contract import build_stats_record
+    cost = json.loads(V.BUILD_COST.read_text(encoding='utf-8'))
+    held = build_stats_record(V.build_stats_from_cost(cost))
+    assert [(m['kind'], m['model']) for m in held['models']] == [
+        ('chat', 'claude-haiku-4-5-20251001'), ('embed', 'nvidia/llama-nemotron-embed-1b-v2'),
+        ('chat', 'claude-opus-5'), ('encoder', '4 candidate encoders'),
+        ('encoder', 'Alibaba-NLP/gte-reranker-modernbert-base')]
+    steps = {s['id']: s for s in cost['steps']}
+    run = steps['descriptions_and_tags']['whole_run']
+    haiku = held['models'][0]
+    assert (haiku['calls'], haiku['tokens_in']) == (
+        run['main']['records'] + run['recovery']['calls'],
+        run['main']['tokens_in'] + run['recovery']['tokens_in'])
+    # the elapsed seconds and command spans of every step, never the per-call sums
+    parts = steps['embeddings']['parts']
+    facets = steps['facet_layer']['parts']
+    by_hand = (run['main']['seconds_elapsed'] + sum(steps['graph_copies']['seconds'].values())
+               + sum(p['seconds_elapsed'] for p in parts.values())
+               + facets['opus_judgements']['seconds_elapsed_recorded']
+               + facets['encoder_bake_off']['seconds_elapsed']
+               + facets['encoder_bake_off']['report_seconds_on_the_laptop']
+               + facets['encoder_cache']['seconds_elapsed']
+               + facets['head_selection_training_scoring']['seconds_elapsed']
+               + facets['bootstrap_refits']['seconds_elapsed']
+               + facets['write']['seconds_elapsed'] + facets['write']['backup_seconds']
+               + sum(steps['later_edges_and_fields']['seconds'].values()))
+    assert held['build_time_s'] == pytest.approx(by_hand)
+    assert len(held['not_recorded']) == len(cost['steps']) + 1
+
+
+def test_a_kind_of_seconds_the_build_reading_does_not_know_stops_it():
+    with pytest.raises(ValueError, match='no kind of seconds'):
+        V._elapsed_seconds({'parts': {'x': {'seconds_wall_guess': 3.0}}}, [])
+
+
+def test_a_file_hash_is_that_of_the_line_ends_git_holds():
+    assert V._as_in_git(b'a\r\nb\n') == b'a\nb\n'

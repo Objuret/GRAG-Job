@@ -2,8 +2,8 @@
 
 40 turns spread across every rule that fired, so the filtering can be checked by hand.
 
-- `tool_result` - 18193 turns rejected
-- `task_notification` - 1552 turns rejected
+- `tool_result` - 18462 turns rejected
+- `task_notification` - 1557 turns rejected
 - `is_meta` - 660 turns rejected
 - `command_expansion` - 90 turns rejected
 - `interrupt_marker` - 73 turns rejected
@@ -11,21 +11,21 @@
 
 ---
 
-## `tool_result` · 2026-10-05 03:59:47 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
+## `tool_result` · 2026-10-20 09:33:29 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 ```
 
 ```
 
-## `task_notification` · 2026-09-17 13:16:17 · 0b9aab59-8821-4404-98f5-48170ab504fa.jsonl
+## `task_notification` · 2026-10-20 11:00:20 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 ```
 <task-notification>
-<task-id>bkj9x3gel</task-id>
-<tool-use-id>toolu_01P37t5xy651qUz6N5e1Dniu</tool-use-id>
-<status>stopped</status>
-<summary>Background shell command didn't finish before the previous session ended</summary>
-<note>No completion record was found for it in the previous session. It may have been stopped (via the UI, Monitor timeout, or agent teardown — these leave no transcript marker), or it may have been running when the previous Claude Code process exited. Check the output file for partial results before assuming it completed.</note>
+<task-id>broo33a7c</task-id>
+<tool-use-id>toolu_01Mwx41ZVmR1JYpvwAFejLY8</tool-use-id>
+<output-file>C:\Users\jocke\AppData\Local\Temp\claude\c--Coding-exjobbet-GRAG-Job\01cdc39c-ae0a-4777-9788-62636e25d616\tasks\broo33a7c.output</output-file>
+<status>completed</status>
+<summary>Background command "Run the whole test suite in the background" completed (exit code 0)</summary>
 </task-notification>
 ```
 
@@ -88,21 +88,21 @@ Summary:
 [... 21526 more chars]
 ```
 
-## `tool_result` · 2026-10-05 03:59:59 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
+## `tool_result` · 2026-10-20 09:33:30 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 ```
 
 ```
 
-## `task_notification` · 2026-09-09 02:58:16 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
+## `task_notification` · 2026-09-17 13:16:17 · 0b9aab59-8821-4404-98f5-48170ab504fa.jsonl
 
 ```
 <task-notification>
-<task-id>b0kmrnoof</task-id>
-<tool-use-id>toolu_01KcJ2egVpkMe6DVfSgxcteo</tool-use-id>
-<output-file>C:\Users\jocke\AppData\Local\Temp\claude\c--Coding-exjobbet-GRAG-Job\0c8cb0bf-6d61-44dc-b899-73968e627403\tasks\b0kmrnoof.output</output-file>
-<status>completed</status>
-<summary>Background command "Run facet statistics over the whole graph, log to scratchpad" completed (exit code 0)</summary>
+<task-id>bkj9x3gel</task-id>
+<tool-use-id>toolu_01P37t5xy651qUz6N5e1Dniu</tool-use-id>
+<status>stopped</status>
+<summary>Background shell command didn't finish before the previous session ended</summary>
+<note>No completion record was found for it in the previous session. It may have been stopped (via the UI, Monitor timeout, or agent teardown — these leave no transcript marker), or it may have been running when the previous Claude Code process exited. Check the output file for partial results before assuming it completed.</note>
 </task-notification>
 ```
 
@@ -139,21 +139,21 @@ Summary:
 [... 28004 more chars]
 ```
 
-## `tool_result` · 2026-10-05 03:59:59 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
+## `tool_result` · 2026-10-20 09:33:31 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 ```
 
 ```
 
-## `task_notification` · 2026-09-09 03:23:35 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
+## `task_notification` · 2026-09-09 02:58:16 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
 
 ```
 <task-notification>
-<task-id>brsl9afs9</task-id>
-<tool-use-id>toolu_01EjKd6JwPzn42zvLt16s6ip</tool-use-id>
-<output-file>C:\Users\jocke\AppData\Local\Temp\claude\c--Coding-exjobbet-GRAG-Job\0c8cb0bf-6d61-44dc-b899-73968e627403\tasks\brsl9afs9.output</output-file>
+<task-id>b0kmrnoof</task-id>
+<tool-use-id>toolu_01KcJ2egVpkMe6DVfSgxcteo</tool-use-id>
+<output-file>C:\Users\jocke\AppData\Local\Temp\claude\c--Coding-exjobbet-GRAG-Job\0c8cb0bf-6d61-44dc-b899-73968e627403\tasks\b0kmrnoof.output</output-file>
 <status>completed</status>
-<summary>Background command "Run artefact_v3 10smoke in stats mode, retrieval only" completed (exit code 0)</summary>
+<summary>Background command "Run facet statistics over the whole graph, log to scratchpad" completed (exit code 0)</summary>
 </task-notification>
 ```
 
@@ -189,21 +189,21 @@ Summary:
 [... 28648 more chars]
 ```
 
-## `tool_result` · 2026-10-05 04:00:02 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
+## `tool_result` · 2026-10-20 09:33:31 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 ```
 
 ```
 
-## `task_notification` · 2026-09-09 06:06:49 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
+## `task_notification` · 2026-09-09 03:23:35 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
 
 ```
 <task-notification>
-<task-id>b8esryvd2</task-id>
-<tool-use-id>toolu_018bmmkHqnJnWELQNVAzyLWt</tool-use-id>
-<output-file>C:\Users\jocke\AppData\Local\Temp\claude\c--Coding-exjobbet-GRAG-Job\0c8cb0bf-6d61-44dc-b899-73968e627403\tasks\b8esryvd2.output</output-file>
+<task-id>brsl9afs9</task-id>
+<tool-use-id>toolu_01EjKd6JwPzn42zvLt16s6ip</tool-use-id>
+<output-file>C:\Users\jocke\AppData\Local\Temp\claude\c--Coding-exjobbet-GRAG-Job\0c8cb0bf-6d61-44dc-b899-73968e627403\tasks\brsl9afs9.output</output-file>
 <status>completed</status>
-<summary>Background command "Compute chunk-level facet statistics over the whole graph and write the overlay" completed (exit code 0)</summary>
+<summary>Background command "Run artefact_v3 10smoke in stats mode, retrieval only" completed (exit code 0)</summary>
 </task-notification>
 ```
 
@@ -243,21 +243,21 @@ Summary:
 [... 23914 more chars]
 ```
 
-## `tool_result` · 2026-10-05 04:00:21 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
+## `tool_result` · 2026-10-20 09:33:31 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 ```
 
 ```
 
-## `task_notification` · 2026-09-09 10:35:55 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
+## `task_notification` · 2026-09-09 06:06:49 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
 
 ```
 <task-notification>
-<task-id>bpp95d3wg</task-id>
-<tool-use-id>toolu_017QdC9HrkEfRYKFeegMX4G4</tool-use-id>
-<output-file>C:\Users\jocke\AppData\Local\Temp\claude\c--Coding-exjobbet-GRAG-Job\0c8cb0bf-6d61-44dc-b899-73968e627403\tasks\bpp95d3wg.output</output-file>
+<task-id>b8esryvd2</task-id>
+<tool-use-id>toolu_018bmmkHqnJnWELQNVAzyLWt</tool-use-id>
+<output-file>C:\Users\jocke\AppData\Local\Temp\claude\c--Coding-exjobbet-GRAG-Job\0c8cb0bf-6d61-44dc-b899-73968e627403\tasks\b8esryvd2.output</output-file>
 <status>completed</status>
-<summary>Background command "Run the 10smoke on the chunk-level statistics" completed (exit code 0)</summary>
+<summary>Background command "Compute chunk-level facet statistics over the whole graph and write the overlay" completed (exit code 0)</summary>
 </task-notification>
 ```
 
@@ -295,21 +295,21 @@ Summary:
 [... 31030 more chars]
 ```
 
-## `tool_result` · 2026-10-05 04:00:22 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
+## `tool_result` · 2026-10-20 09:34:23 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 ```
 
 ```
 
-## `task_notification` · 2026-09-09 10:38:25 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
+## `task_notification` · 2026-09-09 10:35:55 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
 
 ```
 <task-notification>
-<task-id>b3pebg947</task-id>
-<tool-use-id>toolu_01F3PqDFWy8tiu8hH6NXajr4</tool-use-id>
-<output-file>C:\Users\jocke\AppData\Local\Temp\claude\c--Coding-exjobbet-GRAG-Job\0c8cb0bf-6d61-44dc-b899-73968e627403\tasks\b3pebg947.output</output-file>
+<task-id>bpp95d3wg</task-id>
+<tool-use-id>toolu_017QdC9HrkEfRYKFeegMX4G4</tool-use-id>
+<output-file>C:\Users\jocke\AppData\Local\Temp\claude\c--Coding-exjobbet-GRAG-Job\0c8cb0bf-6d61-44dc-b899-73968e627403\tasks\bpp95d3wg.output</output-file>
 <status>completed</status>
-<summary>Background command "Relaunch the 10smoke on the chunk-level statistics" completed (exit code 0)</summary>
+<summary>Background command "Run the 10smoke on the chunk-level statistics" completed (exit code 0)</summary>
 </task-notification>
 ```
 
@@ -349,23 +349,21 @@ Summary:
 [... 29418 more chars]
 ```
 
-## `tool_result` · 2026-10-05 04:00:22 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
+## `tool_result` · 2026-10-20 09:34:27 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 ```
 
 ```
 
-## `task_notification` · 2026-09-09 15:04:35 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
+## `task_notification` · 2026-09-09 10:38:25 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
 
 ```
 <task-notification>
-<task-id>bs13o48n0</task-id>
-<summary>Monitor event: "artefact_v3GRAG sweep results per run"</summary>
-<event>context_precision_id       0.09
-context_recall_id          0.26
-10/10 answered, 0 failed, 0 did not fill the 72000 char budget  -&gt;  C:\Coding\exjobbet\GRAG-Job\output\k=chars\artefact_v3GRAG__10smoke__cb72000__20260909T150224Z
-=== KEYS=entity,tag,facets</event>
-If this event is something the user would act on now, send a PushNotification. Routine or benign output doesn't need one.
+<task-id>b3pebg947</task-id>
+<tool-use-id>toolu_01F3PqDFWy8tiu8hH6NXajr4</tool-use-id>
+<output-file>C:\Users\jocke\AppData\Local\Temp\claude\c--Coding-exjobbet-GRAG-Job\0c8cb0bf-6d61-44dc-b899-73968e627403\tasks\b3pebg947.output</output-file>
+<status>completed</status>
+<summary>Background command "Relaunch the 10smoke on the chunk-level statistics" completed (exit code 0)</summary>
 </task-notification>
 ```
 

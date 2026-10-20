@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import sys
@@ -18,7 +19,7 @@ from harness import provenance
 from harness.progress import progress
 from harness import questions
 from harness.contract import (
-    ArmOutput, EvalManifest, ModelUsage, RunManifest, generator_messages,
+    ArmOutput, EvalManifest, ModelUsage, RunManifest, build_stats_record, generator_messages,
     generator_usage_from_chat, model_usage_from_dict, model_usage_from_telemetry,
 )
 
@@ -101,15 +102,20 @@ def build_shared_generator(config):
     def generate(question, contexts):
         chat.reset_timing()
         t0 = time.perf_counter()
-        resp = chat.post("/chat/completions", {
-            "model": model,
-            **_GENERATOR_SETTINGS,
-            "messages": generator_messages(question, contexts),
-            "response_format": {
-                "type": "json_schema",
-                "json_schema": {"name": "answer", "schema": _ANSWER_SCHEMA},
-            },
-        }, timeout=480.0)
+        # the answer call's record is marked, so the retrieval's own calls can be told from it
+        role = capture.set_role("answer")
+        try:
+            resp = chat.post("/chat/completions", {
+                "model": model,
+                **_GENERATOR_SETTINGS,
+                "messages": generator_messages(question, contexts),
+                "response_format": {
+                    "type": "json_schema",
+                    "json_schema": {"name": "answer", "schema": _ANSWER_SCHEMA},
+                },
+            }, timeout=480.0)
+        finally:
+            capture.reset_role(role)
         elapsed = time.perf_counter() - t0
         transport = chat.take_timing()
         choices = resp.get("choices") or []
@@ -171,9 +177,26 @@ def _n_exhausted(records_path):
 
 
 def _rehydrate(rec):
+    # a row's retrieval is one entry per model; the scoring reads no part of it
+    own = rec["retrieval"]
     return ArmOutput(rec["answer"], rec["contexts"], rec["context_ids"],
                      rec["search_time_s"], model_usage_from_dict(rec["generator"]),
-                     model_usage_from_dict(rec["retrieval"]))
+                     model_usage_from_dict(own) if isinstance(own, dict) else ModelUsage())
+
+
+def retrieval_of(calls, counted=None):
+    """A row's retrieval: the question's own call records, the answer call left out, one entry
+    per model (`capture.usage_by_model`). `counted`, the arm's own count, may not hold more calls
+    or tokens in than the records: such a call left no record, and the question stops here
+    rather than write a cost that leaves it out."""
+    entries = capture.usage_by_model([c for c in calls or [] if c.get("role") != "answer"])
+    if counted is not None:
+        held = (sum(e["calls"] for e in entries), sum(e["tokens_in"] for e in entries))
+        if counted.calls > held[0] or counted.tokens_in > held[1]:
+            raise RuntimeError(
+                f"the arm counts {counted.calls} model calls and {counted.tokens_in} tokens in "
+                f"for its own work; its call records hold {held[0]} and {held[1]}")
+    return entries
 
 
 def run_one_pipeline(pipeline, chosen, corpus, generate, out_dir, k=DEFAULT_TOP_K,
@@ -207,7 +230,13 @@ def run_one_pipeline(pipeline, chosen, corpus, generate, out_dir, k=DEFAULT_TOP_
             raise
         finally:
             capture.stop(token)
-        return out_obj, cap.close()
+        kept = cap.close()
+        try:
+            retrieval = retrieval_of(kept["calls"], out_obj.retrieval)
+        except BaseException as e:
+            e.herb_capture = kept
+            raise
+        return out_obj, kept, retrieval
 
     ran, failures, aborted, consecutive = [], [], None, 0
     # failures.jsonl is appended, never wiped: a failed try and what it spent stay on record
@@ -223,7 +252,7 @@ def run_one_pipeline(pipeline, chosen, corpus, generate, out_dir, k=DEFAULT_TOP_
                 aborted = "user aborted (pressed q)"
                 break
             try:
-                out_obj, kept = fut.result()
+                out_obj, kept, retrieval = fut.result()
             except abort.Aborted:
                 for f in futures:
                     f.cancel()
@@ -250,7 +279,7 @@ def run_one_pipeline(pipeline, chosen, corpus, generate, out_dir, k=DEFAULT_TOP_
                 fh.write(json.dumps(
                     {"id": q.id, "question": q.question,
                      "answered_at": datetime.now(timezone.utc).isoformat(),
-                     **asdict(out_obj), "leg": leg, **kept},
+                     **asdict(out_obj), "retrieval": retrieval, "leg": leg, **kept},
                     ensure_ascii=False, default=repr) + "\n")
                 fh.flush()
                 os.fsync(fh.fileno())
@@ -266,7 +295,9 @@ def run_one_evaluator(evaluator, outputs, chosen, arm="", corpus=None, results_p
                                    retrieval_only=retrieval_only)
 
 
-def graph_identity(database):
+def graph_identity(database, counted=None):
+    """Which graph a run read: its last build record, and the graph as counted in it
+    (`graph_census`) when that was done."""
     if database is None:
         return None
     version = census = sha = built = source = None
@@ -280,9 +311,77 @@ def graph_identity(database):
         source = record.get("source_database")
     except (OSError, ValueError, AttributeError):
         pass
-    return {"database": database, "graph_version": version,
-            "graph_census_sha256": census, "removed_tags_sha256": sha,
-            "build_timestamp": built, "source_database": source}
+    out = {"database": database, "graph_version": version,
+           "graph_census_sha256": census, "removed_tags_sha256": sha,
+           "build_timestamp": built, "source_database": source,
+           "census": None, "census_sha256": None}
+    out.update(counted or {})
+    return out
+
+
+# the graph's shape, counted: nodes per label set, relationships per type and end label sets,
+# and per label set or type how many carry each property; no value is read
+CENSUS_CYPHER = {
+    "labels": "MATCH (n) RETURN labels(n) AS a, null AS b, null AS c, count(*) AS n",
+    "relationships": "MATCH (x)-[r]->(y) RETURN type(r) AS a, labels(x) AS b, labels(y) AS c, "
+                     "count(*) AS n",
+    "node_properties": "MATCH (n) UNWIND keys(n) AS k RETURN labels(n) AS a, k AS b, null AS c, "
+                       "count(*) AS n",
+    "relationship_properties": "MATCH ()-[r]->() UNWIND keys(r) AS k RETURN type(r) AS a, "
+                               "k AS b, null AS c, count(*) AS n",
+}
+
+
+def _census_key(*parts):
+    return " ".join(":".join(sorted(p)) if isinstance(p, (list, tuple)) else str(p)
+                    for p in parts if p is not None)
+
+
+def census_of(rows_by_part):
+    """The census and its sha256 from the rows of `CENSUS_CYPHER`, each part's keys in order."""
+    census = {}
+    for part in CENSUS_CYPHER:
+        counted = {}
+        for r in rows_by_part.get(part) or []:
+            key = (_census_key(r["a"]) if part == "labels"
+                   else _census_key(r["a"], r["b"], r["c"]) if part == "relationships"
+                   else _census_key(r["a"]))
+            if part in ("node_properties", "relationship_properties"):
+                counted.setdefault(key, {})[str(r["b"])] = int(r["n"])
+            else:
+                counted[key] = counted.get(key, 0) + int(r["n"])
+        census[part] = {k: (dict(sorted(v.items())) if isinstance(v, dict) else v)
+                        for k, v in sorted(counted.items())}
+    digest = hashlib.sha256(json.dumps(census, sort_keys=True, ensure_ascii=False)
+                            .encode("utf-8")).hexdigest()
+    return census, digest
+
+
+def graph_census(database):
+    """The graph as it stands, counted in it (`CENSUS_CYPHER`), read-only. When the database
+    cannot be read the reason is kept instead."""
+    if database is None:
+        return None
+    try:
+        from neo4j import GraphDatabase
+        from harness import chat
+        chat._load_dotenv()
+        password = os.environ.get("NEO4J_PASSWORD")
+        if not password:
+            raise RuntimeError("NEO4J_PASSWORD is not set")
+        driver = GraphDatabase.driver(os.environ.get("NEO4J_URI", "neo4j://localhost:7687"),
+                                      auth=(os.environ.get("NEO4J_USER", "neo4j"), password),
+                                      notifications_min_severity="OFF")
+        try:
+            with driver.session(database=database, default_access_mode="READ") as session:
+                rows = {part: session.execute_read(lambda tx, q=q: [dict(r) for r in tx.run(q)])
+                        for part, q in CENSUS_CYPHER.items()}
+        finally:
+            driver.close()
+    except Exception as e:
+        return {"census": None, "census_sha256": None, "census_error": repr(e)}
+    census, digest = census_of(rows)
+    return {"census": census, "census_sha256": digest}
 
 
 def _merged_graph(prior, current):
@@ -314,10 +413,10 @@ def build_run_manifest(config, arm, build_stats, n_questions, n_ran, n_failed,
         n_failed=n_failed,
         n_exhausted=n_exhausted,
         timestamp=datetime.now(timezone.utc).isoformat(),
-        build_stats=build_stats,
+        build_stats=build_stats_record(build_stats),
         retrieval_flags=config.get("retrieval_flags"),
         flags=config.get("flags"),
-        graph=graph_identity(config.get("graph_database")),
+        graph=graph_identity(config.get("graph_database"), config.get("graph_census")),
         code_version=config.get("code_version") or provenance.code_version(),
         environment=provenance.environment(),
         inputs=provenance.inputs(
@@ -496,6 +595,9 @@ def run(pipeline, evaluator, ids_file, config=None):
            "flags": config.get("flags"), "lane": lane, "index": index}
     config.update(legs=prior_legs + [leg], lane=lane, index=index, code_state=state,
                   code_version=code_version, generator_info=generator_info(config))
+    if config.get("graph_database") and "graph_census" not in config:
+        # the graph the arm read, counted in it now: a build record can be missing or older
+        config["graph_census"] = graph_census(config["graph_database"])
 
     if ran or not manifest_path.is_file():
         manifest = build_run_manifest(
@@ -696,18 +798,62 @@ def _selfcheck():
                 "database": "eval-v9", "graph_version": "copy+entities",
                 "graph_census_sha256": "cd34", "removed_tags_sha256": "ab12",
                 "build_timestamp": "2026-08-12T20:38:00Z",
-                "source_database": "eval-v8"}
+                "source_database": "eval-v8", "census": None, "census_sha256": None}
             assert _graph_of("bare-db") == {
                 "database": "bare-db", "graph_version": None,
                 "graph_census_sha256": None, "removed_tags_sha256": None,
-                "build_timestamp": None, "source_database": None}
+                "build_timestamp": None, "source_database": None,
+                "census": None, "census_sha256": None}
             (built / "build_manifest.json").write_text("{broken", encoding="utf-8")
             assert _graph_of("eval-v9") == {
                 "database": "eval-v9", "graph_version": None,
                 "graph_census_sha256": None, "removed_tags_sha256": None,
-                "build_timestamp": None, "source_database": None}
+                "build_timestamp": None, "source_database": None,
+                "census": None, "census_sha256": None}
+            counted = graph_identity("bare-db", {"census": {"labels": {"Chunk": 2}},
+                                                 "census_sha256": "c9"})
+            assert (counted["census"], counted["census_sha256"]) == ({"labels": {"Chunk": 2}}, "c9")
         finally:
             GRAPH_BUILD_DIR = saved
+
+    census, digest = census_of({
+        "labels": [{"a": ["Tag"], "b": None, "c": None, "n": 3},
+                   {"a": ["Chunk", "Doc"], "b": None, "c": None, "n": 2}],
+        "relationships": [{"a": "HAS_TAG", "b": ["Doc", "Chunk"], "c": ["Tag"], "n": 5}],
+        "node_properties": [{"a": ["Tag"], "b": "name", "c": None, "n": 3}],
+        "relationship_properties": [{"a": "HAS_TAG", "b": "topic", "c": None, "n": 5}]})
+    assert census == {"labels": {"Chunk:Doc": 2, "Tag": 3},
+                      "relationships": {"HAS_TAG Chunk:Doc Tag": 5},
+                      "node_properties": {"Tag": {"name": 3}},
+                      "relationship_properties": {"HAS_TAG": {"topic": 5}}}
+    assert digest == census_of({k: list(reversed(v)) for k, v in {
+        "labels": [{"a": ["Tag"], "b": None, "c": None, "n": 3},
+                   {"a": ["Doc", "Chunk"], "b": None, "c": None, "n": 2}],
+        "relationships": [{"a": "HAS_TAG", "b": ["Chunk", "Doc"], "c": ["Tag"], "n": 5}],
+        "node_properties": [{"a": ["Tag"], "b": "name", "c": None, "n": 3}],
+        "relationship_properties": [{"a": "HAS_TAG", "b": "topic", "c": None, "n": 5}]}.items()})[1]
+
+    asked = [{"kind": "chat", "model": "m", "ok": False, "usage": None,
+              "attempts": [{"outcome": "exit", "seconds": 2.0}]},
+             {"kind": "embed", "model": "e", "n_texts": 3, "batch": 1, "tokens_in": 30,
+              "encode_s": 0.5, "lock_wait_s": 0.25},
+             {"kind": "chat", "model": "m", "ok": True,
+              "usage": {"prompt_tokens": 10, "completion_tokens": 4, "cached_input_tokens": 6},
+              "attempts": [{"outcome": "ok", "seconds": 1.5}]},
+             {"kind": "chat", "model": "m", "ok": True, "role": "answer",
+              "usage": {"prompt_tokens": 99, "completion_tokens": 9, "cached_input_tokens": 0},
+              "attempts": [{"outcome": "ok", "seconds": 7.0}]}]
+    own = retrieval_of(asked, ModelUsage(calls=4, tokens_in=40))
+    assert [(e["kind"], e["model"], e["calls"], e["attempts"], e["tokens_in"]) for e in own] == [
+        ("chat", "m", 1, 2, 10), ("embed", "e", 3, 3, 30)]
+    assert (own[0]["request_s"], own[0]["retry_s"], own[0]["time_s"]) == (1.5, 2.0, 3.5)
+    assert (own[1]["request_s"], own[1]["wait_s"], own[1]["time_s"]) == (0.5, 0.25, 0.75)
+    assert retrieval_of(asked, ModelUsage()) == own
+    try:
+        retrieval_of(asked, ModelUsage(calls=5, tokens_in=40))
+        raise AssertionError("a call the records do not hold was let through")
+    except RuntimeError as e:
+        assert "call records hold 4 and 40" in str(e)
 
     ga = {"database": "db", "graph_version": "v1", "graph_census_sha256": "c1",
           "removed_tags_sha256": "A", "build_timestamp": "t1",
@@ -755,7 +901,7 @@ def _selfcheck():
                 run(gp, None, ids, {"questions_path": droot / "q.jsonl",
                                     "corpus_root": droot / "corpus",
                                     "out_dir": str(droot / "run"),
-                                    "retrieval_only": True})
+                                    "retrieval_only": True, "graph_census": None})
                 return json.loads((droot / "run" / "run_manifest.json")
                                   .read_text(encoding="utf-8"))["graph"]
 
@@ -764,12 +910,13 @@ def _selfcheck():
             assert first == {"database": "fake-db", "graph_version": "shape-A",
                              "graph_census_sha256": "census-A",
                              "removed_tags_sha256": "A", "build_timestamp": "t-A",
-                             "source_database": "parent-db"}
+                             "source_database": "parent-db",
+                             "census": None, "census_sha256": None}
             _record("B")
             second = {"database": "fake-db", "graph_version": "shape-B",
                       "graph_census_sha256": "census-B",
                       "removed_tags_sha256": "B", "build_timestamp": "t-B",
-                      "source_database": "parent-db"}
+                      "source_database": "parent-db", "census": None, "census_sha256": None}
             assert _leg(2) == {"mixed_builds": [first, second]}
 
             (droot / "run" / "run_manifest.json").write_text("{torn",

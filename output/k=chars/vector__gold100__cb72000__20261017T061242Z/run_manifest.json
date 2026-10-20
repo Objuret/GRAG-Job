@@ -10,21 +10,21 @@
   "timestamp": "2026-10-17T06:29:40.560046+00:00",
   "build_stats": {
     "build_time_s": 2982.903398909091,
-    "model": {
-      "calls": 38540,
-      "tokens_in": 4232334,
-      "cached_input_tokens": 0,
-      "tokens_out": 0,
-      "reasoning_tokens": 0,
-      "time_s": 2982.903398909091,
-      "attempts": 0,
-      "request_s": 0.0,
-      "wait_s": 0.0,
-      "retry_s": 0.0
-    },
     "models": [
-      "nvidia/llama-nemotron-embed-1b-v2"
-    ]
+      {
+        "kind": "embed",
+        "model": "nvidia/llama-nemotron-embed-1b-v2",
+        "what": "every unit of the corpus embedded in passage mode, for the stored vectors",
+        "calls": 38540,
+        "tokens_in": 4232334,
+        "tokens_out": 0,
+        "seconds_summed_per_call": null,
+        "seconds_elapsed": 2982.903398909091,
+        "device": "NVIDIA GeForce GTX 1080 Ti",
+        "not_recorded": null
+      }
+    ],
+    "not_recorded": []
   },
   "retrieval_flags": {
     "HERB_BASELINE_METADATA": false

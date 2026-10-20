@@ -1,5 +1,5 @@
 import json
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 
 
 GENERATOR_SYSTEM = "Answer the question using only the provided documents. Be concise."
@@ -158,15 +158,49 @@ class ArmOutput:
     context_ids: list[str]
     search_time_s: float
     generator: ModelUsage = field(default_factory=ModelUsage)
+    # the arm's own count of its model calls: the harness checks it against the question's call
+    # records and writes those per model instead (`capture.usage_by_model`)
     retrieval: ModelUsage = field(default_factory=ModelUsage)
     meta: dict | None = None
 
 
 @dataclass
 class BuildStats:
-    build_time_s: float
-    model: ModelUsage
-    models: list[str]
+    build_time_s: float | None
+    # an older arm's one sum and the names of its models; an arm that gives one entry per
+    # model puts them in `models` as dicts and leaves this empty
+    model: ModelUsage | None = None
+    models: list = field(default_factory=list)
+    not_recorded: list = field(default_factory=list)
+
+
+BUILD_MODEL_KEYS = ("kind", "model", "what", "calls", "tokens_in", "tokens_out",
+                    "seconds_summed_per_call", "seconds_elapsed", "device", "not_recorded")
+
+
+def build_stats_record(bs: BuildStats | None) -> dict | None:
+    """The build_stats of a run manifest: one entry per model that worked on the build, never
+    two models in one sum. An older arm's one sum goes in as one entry when it names one model;
+    one that names none or several is written as the arm gave it, under `as_the_arm_gave_it`."""
+    if bs is None:
+        return None
+    entries = [m for m in bs.models if isinstance(m, dict)]
+    names = [m for m in bs.models if not isinstance(m, dict)]
+    out = {"build_time_s": bs.build_time_s, "models": [], "not_recorded": list(bs.not_recorded)}
+    for m in entries:
+        out["models"].append({k: m.get(k) for k in BUILD_MODEL_KEYS})
+    used = bs.model is not None and any(getattr(bs.model, k) for k in (
+        "calls", "tokens_in", "tokens_out", "time_s"))
+    if used and len(names) == 1:
+        out["models"].append({"kind": None, "model": names[0], "what": None,
+                              "calls": bs.model.calls, "tokens_in": bs.model.tokens_in,
+                              "tokens_out": bs.model.tokens_out,
+                              "seconds_summed_per_call": bs.model.time_s,
+                              "seconds_elapsed": None, "device": None, "not_recorded": None})
+    elif used or names:
+        out["as_the_arm_gave_it"] = {"model": None if bs.model is None else asdict(bs.model),
+                                     "models": names}
+    return out
 
 
 @dataclass
@@ -192,7 +226,7 @@ class RunManifest:
     n_ran: int
     n_failed: int
     timestamp: str
-    build_stats: BuildStats
+    build_stats: dict | None
     retrieval_flags: dict | None = None
     char_budget: int | None = None
     code_version: dict | None = None

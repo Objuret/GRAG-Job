@@ -110,8 +110,36 @@ class RunFolderTests(_Folder):
 
     def test_what_the_words_claim_holds_in_the_numbers(self):
         checked = fields.relations(self.out)
-        self.assertEqual(len(checked), 6)
+        self.assertEqual(len(checked), 9)
         self.assertEqual([text for text, ok, _ in checked if not ok], [])
+
+    def test_the_answer_call_is_marked_and_the_retrieval_holds_one_entry_per_model(self):
+        rows = fields._lines(self.out / "arm_outputs.jsonl")
+        for r in rows:
+            self.assertEqual([c.get("role") for c in r["calls"]], ["answer"])
+            # lucene asks no model of its own: no entry, not one entry of zeros
+            self.assertEqual(r["retrieval"], [])
+        manifest = json.loads((self.out / "run_manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual(manifest["build_stats"]["models"], [])
+        self.assertEqual(set(manifest["build_stats"]), {"build_time_s", "models", "not_recorded"})
+
+    def test_a_retrieval_the_call_records_do_not_hold_is_caught(self):
+        with TemporaryDirectory() as d:
+            copy = Path(d)
+            for p in self.out.iterdir():
+                (copy / p.name).write_bytes(p.read_bytes())
+            rows = fields._lines(copy / "arm_outputs.jsonl")
+            rows[0]["retrieval"] = [{"kind": "embed", "model": "m", "calls": 1, "attempts": 1,
+                                     "tokens_in": 3, "cached_input_tokens": 0, "tokens_out": 0,
+                                     "reasoning_tokens": 0, "time_s": 0.0, "request_s": 0.0,
+                                     "wait_s": 0.0, "retry_s": 0.0}]
+            del rows[1]["calls"][0]["role"]
+            (copy / "arm_outputs.jsonl").write_text(
+                "".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+            broken = [text for text, ok, _ in fields.relations(copy) if not ok]
+            self.assertEqual(len(broken), 2)
+            self.assertIn("summed per model", broken[0])
+            self.assertIn("marked answer", broken[1])
 
     def test_a_field_or_a_file_without_a_word_is_named(self):
         with TemporaryDirectory() as d:
@@ -144,9 +172,11 @@ class RunFolderTests(_Folder):
             (copy / "arm_outputs.jsonl").write_text(
                 "".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
             broken = [text for text, ok, _ in fields.relations(copy) if not ok]
-            self.assertEqual(len(broken), 2)
+            self.assertEqual(len(broken), 3)
             self.assertIn("time_s", broken[0])
-            self.assertIn("context_ids", broken[1])
+            # 30 seconds more than the question's clock: counted twice
+            self.assertIn("counted twice", broken[1])
+            self.assertIn("context_ids", broken[2])
 
 
 class WordsTests(unittest.TestCase):

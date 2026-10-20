@@ -100,16 +100,16 @@ def _fake_vector(ranked, usage=None):
 
 
 class PrepareStatsTests(unittest.TestCase):
-    def test_build_stats_sum_both_arms(self):
+    def test_build_stats_hold_both_arms_entries_side_by_side(self):
         with patch.object(arms, "lucene", _fake_lucene([]), create=True), \
              patch.object(arms, "vector", _fake_vector([]), create=True):
             prepared = arm.prepare_over_corpus("corpus/")
         bs = prepared.build_stats
         self.assertAlmostEqual(bs.build_time_s, 0.5)
-        self.assertAlmostEqual(bs.model.time_s, 0.6)
-        self.assertEqual((bs.model.calls, bs.model.tokens_in, bs.model.tokens_out),
-                         (1, 5, 2))
-        self.assertEqual(bs.models, ["embed-model"])
+        # one entry per model, nothing of two models added together
+        self.assertIsNone(bs.model)
+        self.assertEqual([(m["model"], m["calls"], m["tokens_in"], m["tokens_out"])
+                          for m in bs.models], [("embed-model", 1, 5, 2)])
         self.assertAlmostEqual(prepared.lucene.build_stats.build_time_s, 0.2)
         self.assertAlmostEqual(prepared.vector.build_stats.build_time_s, 0.3)
 

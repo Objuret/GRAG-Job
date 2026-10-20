@@ -5,7 +5,8 @@ import time
 from dataclasses import dataclass
 from typing import Callable, Optional
 
-from harness.contract import ArmOutput, BuildStats, ModelUsage, unpack_generation
+from harness.contract import (ArmOutput, BuildStats, ModelUsage, build_stats_record,
+                              unpack_generation)
 
 
 def _env_float(name: str, default: float) -> float:
@@ -35,18 +36,6 @@ class Prepared:
     build_stats: Optional[BuildStats] = None
 
 
-def _sum_usage(*usages: ModelUsage) -> ModelUsage:
-    total = ModelUsage()
-    for u in usages:
-        total.calls += u.calls
-        total.tokens_in += u.tokens_in
-        total.cached_input_tokens += u.cached_input_tokens
-        total.tokens_out += u.tokens_out
-        total.reasoning_tokens += u.reasoning_tokens
-        total.time_s += u.time_s
-    return total
-
-
 def prepare_over_corpus(corpus) -> Prepared:
     from arms import lucene, vector
 
@@ -63,10 +52,12 @@ def prepare_over_corpus(corpus) -> Prepared:
     vector_prepared = vector.prepare_over_corpus(corpus)
 
     lb, vb = lucene_prepared.build_stats, vector_prepared.build_stats
+    # both indexes' entries side by side, one per model: nothing of two models is added
+    lr, vr = build_stats_record(lb), build_stats_record(vb)
     build_stats = BuildStats(
         build_time_s=lb.build_time_s + vb.build_time_s,
-        model=_sum_usage(lb.model, vb.model),
-        models=list(lb.models) + list(vb.models),
+        models=lr["models"] + vr["models"],
+        not_recorded=lr["not_recorded"] + vr["not_recorded"],
     )
     return Prepared(lucene=lucene_prepared, vector=vector_prepared, build_stats=build_stats)
 

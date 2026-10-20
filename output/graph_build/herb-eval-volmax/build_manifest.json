@@ -1,0 +1,536 @@
+{
+ "authority": "docs/canon/GRAPH_SHAPE_MAP.md",
+ "census": {
+  "category_edges": {
+   "company": 120,
+   "location": 530,
+   "org": 530,
+   "role": 650
+  },
+  "category_nodes": {
+   "company": [
+    "AITransformers",
+    "BlueWave",
+    "CloudSync",
+    "ComputeWorks",
+    "DataSolutions",
+    "FusionTech",
+    "InnovateAI",
+    "NextGenTech",
+    "SmartData",
+    "TechCorp"
+   ],
+   "location": [
+    "Austin",
+    "Berlin",
+    "London",
+    "New York",
+    "Remote",
+    "San Francisco",
+    "Seattle",
+    "Sydney"
+   ],
+   "org": [
+    "einstein",
+    "mulesoft",
+    "sales",
+    "salesforce",
+    "slack",
+    "tableau"
+   ],
+   "role": [
+    "AI Engineer",
+    "Business Analyst",
+    "CEO",
+    "CTO",
+    "Chief Product Officer",
+    "Consultant",
+    "Data Scientist",
+    "Engineering Lead",
+    "Marketing Manager",
+    "Marketing Research Analyst",
+    "Product Manager",
+    "QA Specialist",
+    "Software Engineer",
+    "Solutions Architect",
+    "Technical Architect",
+    "UX Researcher",
+    "VP of Engineering"
+   ]
+  },
+  "entities": 650,
+  "entities_per_position": {
+   "customers_data": 120,
+   "employee": 530,
+   "salesforce_team": 18,
+   "salesforce_team.chief_product_officers": 18,
+   "salesforce_team.engineering_leads": 47,
+   "salesforce_team.engineering_leads.engineers": 248,
+   "salesforce_team.engineering_leads.qa_specialists": 78,
+   "salesforce_team.marketing_managers": 18,
+   "salesforce_team.marketing_research_analysts": 18,
+   "salesforce_team.product_managers": 45,
+   "salesforce_team.tech_architects": 22,
+   "salesforce_team.ux_researchers": 18
+  },
+  "file_groups": [
+   "Product",
+   "customers_data",
+   "employee",
+   "salesforce_team"
+  ],
+  "files": {
+   "Salesforce__HERB/metadata/customers_data.json": {
+    "file_id": "d17fbfa2d9071000cfcf9a4f",
+    "sha256": "d17fbfa2d9071000cfcf9a4f9112cd679862f482a3df37b60006448333d3696c",
+    "size_bytes": 16342
+   },
+   "Salesforce__HERB/metadata/employee.json": {
+    "file_id": "85c7be7ca8f554f27cd84f35",
+    "sha256": "85c7be7ca8f554f27cd84f354dc588aa4abd70ff4e995ca7aa8fd9dd42290747",
+    "size_bytes": 89394
+   }
+  },
+  "positions_without_key": [
+   "Product",
+   "Product.prs.reviews",
+   "Product.slack.Message"
+  ],
+  "registry_files": [
+   "customers_data",
+   "employee",
+   "salesforce_team"
+  ],
+  "relation_edges": {
+   "chief_product_officers": 18,
+   "engineering_leads": 47,
+   "engineers": 248,
+   "marketing_managers": 18,
+   "marketing_research_analysts": 18,
+   "product_managers": 45,
+   "qa_specialists": 78,
+   "tech_architects": 22,
+   "ux_researchers": 18
+  },
+  "relation_positions": {
+   "salesforce_team.chief_product_officers": "chief_product_officers",
+   "salesforce_team.engineering_leads": "engineering_leads",
+   "salesforce_team.engineering_leads.engineers": "engineers",
+   "salesforce_team.engineering_leads.qa_specialists": "qa_specialists",
+   "salesforce_team.marketing_managers": "marketing_managers",
+   "salesforce_team.marketing_research_analysts": "marketing_research_analysts",
+   "salesforce_team.product_managers": "product_managers",
+   "salesforce_team.tech_architects": "tech_architects",
+   "salesforce_team.ux_researchers": "ux_researchers"
+  }
+ },
+ "complete": true,
+ "corpus_root": "C:\\Coding\\exjobbet\\GRAG-Job\\v3\\data\\corpus\\Salesforce__HERB",
+ "database_before": {
+  "labels": {
+   "Chunk": 4869,
+   "Tag": 15605
+  },
+  "rels": {
+   "HAS_TAG": 62443
+  }
+ },
+ "derivation_rules": {
+  "category": "every closed vocabulary a registry entry declares leaves it as an edge to that value's corpus-wide kind node, named after the field, so two entries declaring one value reach one node; an entry declaring one field twice stops the build",
+  "chunk": "a chunk attaches to the position its locator points into, its edge carrying the chunk's own offsets and indices and every specific the records at or below that position declare; the chunk's product and channel attributes hold names and are not carried",
+  "edge_name": "the source's own field or branch name, never an invented verb",
+  "entity_id": "an entity node is identified the way a chunk is: the file it is declared in and the locator addressing it there, and never the source's own key. The locator names the i-th member of the file's own container \u2014 a list element, or one key/value pair of an object in its own order \u2014 so a keyed object and a list resolve alike. An entry two files declare is located at the position declaring the most entries of those declaring it",
+  "entity_relation": "a position nested under a registry position whose records the source also keys holds the same entities again, so its branch is a relation from the entry owning it to the entry it holds, named by the branch the source wrote; an id there that no registry entry carries stops the build",
+  "excluded": "the forbidden keys, and the fields the user ruled out",
+  "key_space": "a scalar field whose distinct values number exactly the distinct records at its position, carrying no whitespace and no ISO 8601 timestamp, is that position's key; a position no field counts exactly falls back to every field reaching 0.9 of its distinct records, and a position with neither is recorded as having no key",
+  "keyed_collection": "a dict of at least 4 values that are all objects of one key signature is a collection keyed by identifier: its keys are records, not branches",
+  "kind": "a string field with at most 64 distinct values over at least 8 occurrences, at most 0.25 distinct per occurrence and no numeric value, is a closed vocabulary: one node per declared value, reached by an edge named after the field",
+  "kind_scope": "a kind is kept apart per position only where a walk can leave it \u2014 where it names a position that a branch or another vocabulary departs from, so one node reached from two positions would be a route neither declares. Every other vocabulary is one node per declared value across the corpus, because nothing traverses out of it and two records declaring the same value belong in the same place",
+  "leaf": "a content record is never a node",
+  "naming": "a vocabulary field carrying one value across every record at a position names the records there: the branch reaching that position lands on the kind, the position's own branches leave from the kind, and the position keeps no node of its own unless it is a whole file",
+  "position": "one node per place the nesting reaches, labelled by the field name the source wrote; files sharing an outermost branch set are one position, named by their directory (singular) when the group holds several and by the file stem when it holds one",
+  "registry": "a whole file whose records the source keys is a directory of entities the rest of the corpus refers to by that key: one node per key value, carrying one id and nothing else. A position inside another file's records declares no entity",
+  "specific": "a key, or a field at least 0.5 of whose distinct values fall in a declared key space \u2014 read off the values, never off the field's name"
+ },
+ "dropped": null,
+ "elapsed_s": 42.3,
+ "entities_without_category": 0,
+ "files": [
+  {
+   "bytes": 112053,
+   "group": "salesforce_team",
+   "path": "metadata/salesforce_team.json",
+   "sha256": "549f8aa4f5c4e84dfd28750de212e5d5aadf0751568ae58522796141f0dcb947"
+  },
+  {
+   "bytes": 16342,
+   "group": "customers_data",
+   "path": "metadata/customers_data.json",
+   "sha256": "d17fbfa2d9071000cfcf9a4f9112cd679862f482a3df37b60006448333d3696c"
+  },
+  {
+   "bytes": 89394,
+   "group": "employee",
+   "path": "metadata/employee.json",
+   "sha256": "85c7be7ca8f554f27cd84f354dc588aa4abd70ff4e995ca7aa8fd9dd42290747"
+  },
+  {
+   "bytes": 901157,
+   "group": "Product",
+   "path": "products/ActionGenie.json",
+   "sha256": "a53163126b896708325e3feb7c7643456c2e8fd7e3834fb11ab5219aa9d7b47f"
+  },
+  {
+   "bytes": 751277,
+   "group": "Product",
+   "path": "products/AnomalyForce.json",
+   "sha256": "757fdd856b93cc22a8151da1184f55458627ce6b7a182136eb2891d129e4986a"
+  },
+  {
+   "bytes": 896621,
+   "group": "Product",
+   "path": "products/AutoTuneForce.json",
+   "sha256": "7db469f931933834aa33e05949273baee4751ba6e150e092686864af71bdb0e6"
+  },
+  {
+   "bytes": 905276,
+   "group": "Product",
+   "path": "products/CoachForce.json",
+   "sha256": "b0ff8247507bb9e6112a301227d104c70a2e937151c4e30aee087ef55574a835"
+  },
+  {
+   "bytes": 1180080,
+   "group": "Product",
+   "path": "products/CollaborateForce.json",
+   "sha256": "4232c42ed09ae90ecc0ec515833a82214dbf9247957c740d9f49a0bc8bb73a7a"
+  },
+  {
+   "bytes": 735910,
+   "group": "Product",
+   "path": "products/CollaborationForce.json",
+   "sha256": "6bc1efb9b0b341013405fc24bd8b60644b5fdd331a1ea37a4e82dcabbdcf7f0c"
+  },
+  {
+   "bytes": 818475,
+   "group": "Product",
+   "path": "products/ConnectForce.json",
+   "sha256": "eedc29529c4b51fdfe6ea21383c678d330829a61659f3035de15744cb8ba5874"
+  },
+  {
+   "bytes": 821110,
+   "group": "Product",
+   "path": "products/ContentForce.json",
+   "sha256": "a16bd8aaa77bcde5ec50681532f2b4b5d89e63acb90d1ba80f0a31bc8b4be94c"
+  },
+  {
+   "bytes": 813342,
+   "group": "Product",
+   "path": "products/ContextForce.json",
+   "sha256": "083f1b1edd553f187f467503b6e00426caf69de3d9807e7333831adcf4efb8cf"
+  },
+  {
+   "bytes": 801416,
+   "group": "Product",
+   "path": "products/EdgeForce.json",
+   "sha256": "7f9874f10e28b77ff782f8761ca96e5a5a2edcb16cb9c64ea439b4a76ab39de7"
+  },
+  {
+   "bytes": 1040076,
+   "group": "Product",
+   "path": "products/ExplainabilityForce.json",
+   "sha256": "2e4690a68aa55769b6b00e263d2cbb74a24da3d3b43b2809ce9622976a9e7cb0"
+  },
+  {
+   "bytes": 853619,
+   "group": "Product",
+   "path": "products/FeedbackForce.json",
+   "sha256": "9bb3b012afdd5070cf5a4c62223cd2cb0e762cb844d9218e521574f33bdcebc2"
+  },
+  {
+   "bytes": 723458,
+   "group": "Product",
+   "path": "products/FlowForce.json",
+   "sha256": "cd4ae5b0bc4dd3bd56a5c889defdb04d0de4df22c3bf4e2a4ca8947106a53da0"
+  },
+  {
+   "bytes": 875602,
+   "group": "Product",
+   "path": "products/ForecastForce.json",
+   "sha256": "c10128f8e86db06fea035381a9777c27546ea8e9b64f6fbf323174d915dafe6b"
+  },
+  {
+   "bytes": 1021477,
+   "group": "Product",
+   "path": "products/InsightForce.json",
+   "sha256": "a550d8a4057a82aad6384fcccf84ccb07cfc733b9d82263f885d2cd128abf96b"
+  },
+  {
+   "bytes": 877061,
+   "group": "Product",
+   "path": "products/KnowledgeForce.json",
+   "sha256": "6c77e4acefcd265df74a4512a6f32e843a1cbbf0289b3917a713879dfdddfcc4"
+  },
+  {
+   "bytes": 971916,
+   "group": "Product",
+   "path": "products/LeadForce.json",
+   "sha256": "d2169da668df431a50e74b67026adb466fec22178ecb247eae80d1ec118e889e"
+  },
+  {
+   "bytes": 742596,
+   "group": "Product",
+   "path": "products/MonitorForce.json",
+   "sha256": "fe148a9dc26d6b2f1b8674971195f9c409e49d94bd125ce1cfb0906480e40cec"
+  },
+  {
+   "bytes": 783341,
+   "group": "Product",
+   "path": "products/PersonalizeForce.json",
+   "sha256": "0d67b0b78a8abb2d0c5b77d86b8a0918814a53eca037a3e79d2d96e1a5204788"
+  },
+  {
+   "bytes": 954509,
+   "group": "Product",
+   "path": "products/PitchForce.json",
+   "sha256": "e1068068eaa9abd33c019af0ad331884809c87f99dabcbd9a54c87524e45c9ae"
+  },
+  {
+   "bytes": 835921,
+   "group": "Product",
+   "path": "products/ProposalForce.json",
+   "sha256": "c04a70abb1d774f01bf95453f4eeac001c8cf3b9727c6949227f564a6b1c2ed4"
+  },
+  {
+   "bytes": 975123,
+   "group": "Product",
+   "path": "products/SearchFlow.json",
+   "sha256": "1bbfb194dc86530bc53a27b71318d755d339121687ed917bcef1b55345980bdb"
+  },
+  {
+   "bytes": 931156,
+   "group": "Product",
+   "path": "products/SearchForce.json",
+   "sha256": "d1979c2cb78bcf166622d98cbc4b01648b979d771bb026555ae3e312623d4d51"
+  },
+  {
+   "bytes": 825488,
+   "group": "Product",
+   "path": "products/SecurityForce.json",
+   "sha256": "150c7d613ac6921afd8dd8a2b1179218616d9884e1d16eec92f30b8d0ba17db1"
+  },
+  {
+   "bytes": 914189,
+   "group": "Product",
+   "path": "products/SentimentForce.json",
+   "sha256": "b388d6393084b5854b1c4cc912f69cb258ca84dedf8fafa4f09f88c42e6c3f67"
+  },
+  {
+   "bytes": 907008,
+   "group": "Product",
+   "path": "products/SummarizeForce.json",
+   "sha256": "4d8ffd4aad2a693e1336c735ffd4a77a75811f66a8ade206fc754157d95bea04"
+  },
+  {
+   "bytes": 795958,
+   "group": "Product",
+   "path": "products/SupportForce.json",
+   "sha256": "aed78a9448b3522a0015c905923e2466755c9834cdb974508e4e55750fe92b57"
+  },
+  {
+   "bytes": 786207,
+   "group": "Product",
+   "path": "products/TrendForce.json",
+   "sha256": "0001bd79d7205213258cdd783bc893598f41a06baebb9e24ba2d7c328565daa9"
+  },
+  {
+   "bytes": 1087510,
+   "group": "Product",
+   "path": "products/VizForce.json",
+   "sha256": "46bc2d8937c62484fd43ad9eeac0b626fd00873b4bbc1fe424950a49df6c04c0"
+  },
+  {
+   "bytes": 880668,
+   "group": "Product",
+   "path": "products/WorkFlowGenie.json",
+   "sha256": "54dbc7455c14a5cbff974ebbcf5a0beec2cea1bf4c2a550fb5d0a4d5a93fba8b"
+  }
+ ],
+ "final_census": {
+  "labels": {
+   "Chunk": 4869,
+   "Entity": 650,
+   "File": 2,
+   "Kind:company": 10,
+   "Kind:location": 8,
+   "Kind:org": 6,
+   "Kind:role": 17,
+   "Tag": 15605
+  },
+  "rels": {
+   "HAS_ENTITY": 650,
+   "HAS_TAG": 62443,
+   "chief_product_officers": 18,
+   "company": 120,
+   "engineering_leads": 47,
+   "engineers": 248,
+   "location": 530,
+   "marketing_managers": 18,
+   "marketing_research_analysts": 18,
+   "org": 530,
+   "product_managers": 45,
+   "qa_specialists": 78,
+   "role": 650,
+   "tech_architects": 22,
+   "ux_researchers": 18
+  }
+ },
+ "forbidden_dropped": {},
+ "graph_census_sha256": "e09bb272d8a7bbef1d8e268abcae9378c865115e6020bfee7661cf6555eb8f28",
+ "graph_version": "semantic-copy+registry-entities",
+ "previous_manifest": {
+  "file": "build_manifest_20260816T211339Z.json",
+  "graph_census_sha256": null,
+  "graph_version": "build in progress \u2014 database is mid-rebuild",
+  "removed_tags_sha256": null,
+  "source_database": null,
+  "timestamp": "2026-08-16T21:13:39Z"
+ },
+ "removed_tags_sha256": null,
+ "semantic_layer": {
+  "after": {
+   "chunk_ids_sha256": "4ddedf1f52cb7a288052194239319ad4e64460cc7c646e9cb487afdac45d1fd1",
+   "chunks": 4869,
+   "desc_emb": 4869,
+   "has_tag": 62443,
+   "tag_emb": 15605,
+   "tag_names_sha256": "1069009c0f2c3df5dacbfdf513a0c1aef397124f3f1bff73887a4b4ebbd1770f",
+   "tags": 15605
+  },
+  "before": {
+   "chunk_ids_sha256": "4ddedf1f52cb7a288052194239319ad4e64460cc7c646e9cb487afdac45d1fd1",
+   "chunks": 4869,
+   "desc_emb": 4869,
+   "has_tag": 62443,
+   "tag_emb": 15605,
+   "tag_names_sha256": "1069009c0f2c3df5dacbfdf513a0c1aef397124f3f1bff73887a4b4ebbd1770f",
+   "tags": 15605
+  },
+  "unchanged": true
+ },
+ "semantic_layer_step": {
+  "copied": null,
+  "found": "nodes without schema \u2014 20474 node(s) and 62443 edge(s) present, 2 constraint(s) and 12 index(es) missing: ['chunk_channel', 'chunk_content_ft', 'chunk_desc_emb', 'chunk_employee_id', 'chunk_fulltext', 'chunk_kind', 'chunk_metadata_section', 'chunk_product', 'chunk_section', 'constraint_afab88ae', 'constraint_c5e13f67', 'index_50501cbd', 'index_d07e45e8', 'tag_emb']",
+  "schema": {
+   "constraints_created": [
+    "constraint_afab88ae",
+    "constraint_c5e13f67"
+   ],
+   "indexes_created": [
+    "chunk_channel",
+    "chunk_content_ft",
+    "chunk_desc_emb",
+    "chunk_employee_id",
+    "chunk_fulltext",
+    "chunk_kind",
+    "chunk_metadata_section",
+    "chunk_product",
+    "chunk_section",
+    "index_50501cbd",
+    "index_d07e45e8",
+    "tag_emb"
+   ],
+   "temp_indexes_dropped": []
+  },
+  "source_database": "herb-eval-v2",
+  "source_layer": {
+   "constraints": [
+    "constraint_afab88ae",
+    "constraint_c5e13f67"
+   ],
+   "counts": {
+    "Chunk": 4869,
+    "Tag": 15605
+   },
+   "edges": 62443,
+   "index_coverage": {
+    "chunk_channel": 2669,
+    "chunk_content_ft": 0,
+    "chunk_desc_emb": 4869,
+    "chunk_employee_id": 30,
+    "chunk_fulltext": 0,
+    "chunk_kind": 4869,
+    "chunk_metadata_section": 61,
+    "chunk_product": 4808,
+    "chunk_section": 4808,
+    "index_50501cbd": 4869,
+    "index_d07e45e8": 0,
+    "tag_emb": 15605
+   },
+   "indexes": [
+    "chunk_channel",
+    "chunk_content_ft",
+    "chunk_desc_emb",
+    "chunk_employee_id",
+    "chunk_fulltext",
+    "chunk_kind",
+    "chunk_metadata_section",
+    "chunk_product",
+    "chunk_section",
+    "index_50501cbd",
+    "index_d07e45e8",
+    "tag_emb"
+   ]
+  },
+  "source_lineage": {
+   "database": "herb-eval-v2",
+   "graph_census_sha256": "50f8f36ea39ea18d08513ea6f8c3944a61e8bbbe63c48dec137d3041b7cfb6ba",
+   "graph_version": "copy+cleanup+directory-entities+relations",
+   "removed_tags_sha256": "6a279b3465f4ec55f440607d0239a4c56d1580ebd9582c43a4d31265b4426116",
+   "source_database": "herb-eval",
+   "timestamp": "2026-08-14T00:25:22Z"
+  },
+  "stale_indexes_dropped": [
+   "tmp_copy_chunk",
+   "tmp_copy_tag"
+  ],
+  "target_database": "herb-eval-volmax",
+  "target_layer": {
+   "constraints": [
+    "constraint_afab88ae",
+    "constraint_c5e13f67"
+   ],
+   "counts": {
+    "Chunk": 4869,
+    "Tag": 15605
+   },
+   "edges": 62443,
+   "indexes": [
+    "chunk_channel",
+    "chunk_content_ft",
+    "chunk_desc_emb",
+    "chunk_employee_id",
+    "chunk_fulltext",
+    "chunk_kind",
+    "chunk_metadata_section",
+    "chunk_product",
+    "chunk_section",
+    "index_50501cbd",
+    "index_d07e45e8",
+    "tag_emb"
+   ]
+  },
+  "timestamp": "2026-08-16T21:46:11Z",
+  "would": "drop 2 leftover lookup index(es) ['tmp_copy_chunk', 'tmp_copy_tag'], then skip the copy and apply 2 constraint(s) and 12 index(es)"
+ },
+ "source_database": "herb-eval-v2",
+ "target_database": "herb-eval-volmax",
+ "timestamp": "2026-08-16T21:46:16Z",
+ "written": {
+  "category_edges": 1830,
+  "category_nodes": 41,
+  "category_nodes_created": 41,
+  "entities": 650,
+  "files": 2,
+  "relation_edges": 512
+ }
+}

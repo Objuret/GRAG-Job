@@ -46,7 +46,8 @@ numbers are in the run folders and under `output/research/`.
   checks and counts the graph),
   `test/artefact/v4_walk.py` (the arithmetic behind it), `test/artefact/query_content.py` (the one
   model request, the first call), `test/graph/build_cost.json` (what building the graph cost, step
-  by step from the build records; the arm writes it into each run's manifest, `index_info`), `test/graph/build_person_edges.py` (the person-to-chunk edges),
+  by step from the build records; the arm writes it into each run's manifest, `index_info`, and
+  one entry per model into its `build_stats`, `build_stats_from_cost`), `test/graph/build_person_edges.py` (the person-to-chunk edges),
   `test/graph/build_chunk_times.py` (each chunk's records' own times, `times`; the 4-combo's gap
   in time is the smallest gap between a record of one chunk and a record of the other),
   `test/graph/build_structure_names.py` (each structure node's `name` and `name_keys`, read through
@@ -90,8 +91,11 @@ numbers are in the run folders and under `output/research/`.
   `GRAG-Job-0c082a3`, one question at a time, the first call and the embeddings made in the run,
   the graph's build cost in its manifest). The two baselines on the hundred:
   `lucene__gold100__cb72000__20261008T234209Z` and `vector__gold100__cb72000__20261017T061242Z`
-  (commit `fbc2f22` from a clean checkout, one question at a time; each folder's `FIELDS.md` says
-  what it holds; lucene's `corrections.json` says what was corrected). Across arms
+  (commit `fbc2f22` from a clean checkout, one question at a time). Each folder's `FIELDS.md` says
+  what it holds and its `corrections.json` what was corrected after the run: in all three on
+  2026-10-20 the cost held one model at a time, the artefact's search time without its model
+  calls, the build cost per model, the artefact's graph counted and its file hashes as git holds
+  them (`tools/correct_usage_by_model.py`); in lucene before that the laptop's sleep. Across arms
   `context_recall_id` and `context_precision_id` compare (both count record ids); the nonllm
   pair is within-arm (counted per delivered text).
 - A run: `python prod/run.py --arm artefact_v4 --set gold|10smoke --char-budget 72000 --workers 6
@@ -157,6 +161,7 @@ The harness and the data:
 - *"what i am talking about are "times, tokens, runtime, build cost" etc etc etc, ALL FUCKING DATAMETRICS"* · *"ragas are not goddamn metrics you fucking hobo, thats the evaluation system"* (2026-10-08) — "metrics" is the measured data of a run; RAGAS is the evaluation.
 - *"we literally have ALL THE FUCKING DATA possibly available! From tokens in/out, times, stamps, DATAPOINTERS and so on and on and on.. YOU just have to make fucking sure that is KEPT every run.. It is so goddamn important"* (2026-10-07) — every run keeps all of it in its own folder, per question and per model call.
 - *"you can't just have fucking smashed fields with no word or explanation to what they mean.."* (2026-10-09, on a run folder that explained none of its fields) — every run folder holds `FIELDS.md`, written by the harness from `prod/harness/fields.py`; an arm gives the words for what only it writes (`FIELDS` in its own file).
+- *"That sounds indeed like you have fufkcing smashes a bunch of data together that does not belong together.."* (2026-10-20, on the artefact's `retrieval` adding the first call's and the embedder's tokens into one sum) — a cost is held one model at a time: a row's `retrieval` and the manifest's `build_stats` hold one entry per model, worked out from the call and build records; two models are never one number.
 
 How to work with him:
 

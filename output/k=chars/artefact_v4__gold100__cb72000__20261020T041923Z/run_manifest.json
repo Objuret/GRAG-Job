@@ -9,21 +9,77 @@
   "n_failed": 0,
   "timestamp": "2026-10-20T05:03:52.744568+00:00",
   "build_stats": {
-    "build_time_s": 25.050562399905175,
-    "model": {
-      "calls": 0,
-      "tokens_in": 0,
-      "cached_input_tokens": 0,
-      "tokens_out": 0,
-      "reasoning_tokens": 0,
-      "time_s": 0.0,
-      "attempts": 0,
-      "request_s": 0.0,
-      "wait_s": 0.0,
-      "retry_s": 0.0
-    },
+    "build_time_s": 28682.1,
     "models": [
-      "claude-sonnet-5"
+      {
+        "kind": "chat",
+        "model": "claude-haiku-4-5-20251001",
+        "what": "the tagging run pilot_full_herb: per chunk a description and its tags, five facet scores per tag (later replaced by the facet layer), per file a description and a score per chunk; the main run and its recovery",
+        "calls": 11802,
+        "tokens_in": 22982655,
+        "tokens_out": 10075140,
+        "seconds_summed_per_call": 54557.5,
+        "seconds_elapsed": 13644.6,
+        "device": "anthropic, forced tool use, temperature 0.3, 4 at a time",
+        "not_recorded": "cached input tokens; the 48 first attempts that failed before a retry; request start times; the recovery's elapsed time; token counts for 17 records of the main run"
+      },
+      {
+        "kind": "embed",
+        "model": "nvidia/llama-nemotron-embed-1b-v2",
+        "what": "every tag and every chunk description embedded in the query role and written to the graph (Tag.emb, Chunk.desc_emb), one text a request",
+        "calls": 21646,
+        "tokens_in": 456052,
+        "tokens_out": 0,
+        "seconds_summed_per_call": null,
+        "seconds_elapsed": 818.2,
+        "device": "desktop, cuda, GeForce GTX 1080 Ti; laptop CPU",
+        "not_recorded": "the laptop's CPU model; file transfer time; the cost of the arm's pool alone (16,654 tags, 4,808 chunks)"
+      },
+      {
+        "kind": "chat",
+        "model": "claude-opus-5",
+        "what": "pairs of tag-to-chunk edges judged for the facet layer (control and train, 920 calls; the 800 held-out calls only evaluated)",
+        "calls": 1720,
+        "tokens_in": 58405680,
+        "tokens_out": 65596,
+        "seconds_summed_per_call": 21552.5,
+        "seconds_elapsed": 2564.4,
+        "device": "effort high, headless lane, 8 at a time",
+        "not_recorded": "cached input tokens of the judge calls; the elapsed time of the paused held-out run"
+      },
+      {
+        "kind": "encoder",
+        "model": "4 candidate encoders",
+        "what": "the encoder bake-off on 5469 edges, which chose the encoder; not in the values",
+        "calls": null,
+        "tokens_in": null,
+        "tokens_out": null,
+        "seconds_summed_per_call": null,
+        "seconds_elapsed": 3227.0,
+        "device": "Colab, cuda",
+        "not_recorded": "the tokens; the candidates are named in the bake-off's own results"
+      },
+      {
+        "kind": "encoder",
+        "model": "Alibaba-NLP/gte-reranker-modernbert-base",
+        "what": "the encoder cache: every one of the 61018 tag-to-chunk edges encoded for the facet head (fp32, fp16 stored)",
+        "calls": null,
+        "tokens_in": null,
+        "tokens_out": null,
+        "seconds_summed_per_call": null,
+        "seconds_elapsed": 3549.5,
+        "device": "desktop, cuda, GeForce GTX 1080 Ti",
+        "not_recorded": "the encoder cache's total tokens"
+      }
+    ],
+    "not_recorded": [
+      "chunks: the elapsed time of the chunking and the load, and the machine",
+      "descriptions_and_tags: cached input tokens; the 48 first attempts that failed before a retry; request start times",
+      "graph_copies: how herb-eval went from 229,249 to 67,913 tag edges; the elapsed time of the crashed first volmax attempt",
+      "embeddings: the laptop's CPU model; file transfer time; the cost of the arm's pool alone (16,654 tags, 4,808 chunks)",
+      "facet_layer: cached input tokens of the judge calls; the elapsed time of the paused held-out run; the encoder cache's total tokens",
+      "later_edges_and_fields: the scripts print no elapsed time; the spans include backup and check",
+      "the superseded work (index.build_cost.superseded) is recorded there and not counted here"
     ]
   },
   "retrieval_flags": {
@@ -245,11 +301,165 @@
   },
   "graph": {
     "database": "herb-eval-volmax",
-    "graph_version": null,
-    "graph_census_sha256": null,
+    "graph_version": "semantic-copy+registry-entities",
+    "graph_census_sha256": "e09bb272d8a7bbef1d8e268abcae9378c865115e6020bfee7661cf6555eb8f28",
     "removed_tags_sha256": null,
-    "build_timestamp": null,
-    "source_database": null
+    "build_timestamp": "2026-08-16T21:46:16Z",
+    "source_database": "herb-eval-v2",
+    "census": {
+      "labels": {
+        "Channel": 302,
+        "Chunk": 4869,
+        "Company": 10,
+        "Customer": 120,
+        "Employee": 530,
+        "FacetLayer": 1,
+        "File": 33,
+        "Kind": 6,
+        "Org": 6,
+        "Product": 30,
+        "Role": 17,
+        "Tag": 16714
+      },
+      "relationships": {
+        "HAS_CHUNK File Chunk": 4869,
+        "HAS_TAG Chunk Tag": 62028,
+        "channel Chunk Channel": 2677,
+        "channel File Channel": 302,
+        "chunk Customer Chunk": 1043,
+        "chunk Employee Chunk": 26950,
+        "company Customer Company": 120,
+        "company File Company": 10,
+        "customer File Customer": 120,
+        "documents Employee Product": 234,
+        "employee File Employee": 1060,
+        "has Product Kind": 180,
+        "kind Chunk Kind": 4808,
+        "manages Employee Employee": 512,
+        "meeting_transcripts Employee Product": 1013,
+        "org Employee Org": 530,
+        "org File Org": 6,
+        "product Chunk Product": 4808,
+        "product File Product": 30,
+        "role Customer Role": 120,
+        "role Employee Role": 530,
+        "role File Role": 20,
+        "slack Employee Channel": 2647,
+        "slack Product Channel": 302
+      },
+      "node_properties": {
+        "Channel": {
+          "file_id": 302,
+          "id": 302,
+          "name": 302,
+          "name_keys": 302,
+          "pointer": 302
+        },
+        "Chunk": {
+          "chunk_id": 4869,
+          "chunk_ref": 4869,
+          "created_at": 4869,
+          "desc_emb": 4869,
+          "doc_field": 569,
+          "employee_id": 30,
+          "end_offset": 4869,
+          "file_id": 4869,
+          "item_index": 1163,
+          "kind": 4869,
+          "locator_json": 4869,
+          "metadata_section": 61,
+          "msg_index_end": 3706,
+          "msg_index_start": 3706,
+          "ordinal": 4869,
+          "parent_ref": 4869,
+          "part_index": 569,
+          "relevance_to_file": 4869,
+          "section": 4808,
+          "start_offset": 4869,
+          "subsection": 14,
+          "times": 4747,
+          "token_estimate": 4869,
+          "years": 3476
+        },
+        "Company": {
+          "name": 10,
+          "name_keys": 10,
+          "value": 10
+        },
+        "Customer": {
+          "file_id": 120,
+          "id": 120,
+          "name": 120,
+          "name_keys": 120,
+          "pointer": 120
+        },
+        "Employee": {
+          "eid": 530,
+          "file_id": 530,
+          "name": 530,
+          "name_keys": 530,
+          "pointer": 530
+        },
+        "FacetLayer": {
+          "edges": 1,
+          "equal_gap": 1,
+          "equal_gap_column": 1,
+          "equal_gap_facets": 1,
+          "facets": 1,
+          "name": 1,
+          "pooled_flip_gap": 1,
+          "pooled_flip_gap_column": 1,
+          "refits": 1,
+          "rows_sha256": 1,
+          "run_id": 1,
+          "source_bands_sha256": 1,
+          "source_dir": 1,
+          "source_refits_sha256": 1,
+          "source_scores_sha256": 1,
+          "value_others": 1,
+          "value_topic": 1,
+          "written": 1
+        },
+        "File": {
+          "created_at": 33,
+          "dataset_id": 33,
+          "dispatch_mode": 33,
+          "file_id": 33,
+          "file_path": 33,
+          "format_family": 33,
+          "rel_path": 33,
+          "sha256": 33,
+          "size_bytes": 33
+        },
+        "Kind": {
+          "name": 6
+        },
+        "Org": {
+          "value": 6
+        },
+        "Product": {
+          "file_id": 30,
+          "name": 30,
+          "name_keys": 30,
+          "pointer": 30
+        },
+        "Role": {
+          "value": 17
+        },
+        "Tag": {
+          "emb": 16714,
+          "name": 16714
+        }
+      },
+      "relationship_properties": {
+        "HAS_TAG": {
+          "facets": 62028,
+          "run_id": 62028,
+          "w_facets": 62028
+        }
+      }
+    },
+    "census_sha256": "3ff48edd94b5407270a162922c9fb36ff4c0e511d42e474f5c7640a5e1d1715b"
   },
   "n_exhausted": 7,
   "flags": null,
@@ -619,7 +829,7 @@
             }
           ]
         },
-        "build_cost_file_sha256": "dfac1217c388cc25d890513ca8be0ead0cdd4bdfa94fb93716288153163ba562",
+        "build_cost_file_sha256": "6517e4441c9c09439560b27d331f66bb3a74c83d5d690a18fdfebdd421a49f43",
         "first_call": "at query time, claude-sonnet-5 through the lane; an answer already in the store (HERB_V4_CACHE) is read from it and counted as no call",
         "question_embedding": "at query time, local embedder, query mode; a text embedded before is read from output/query_embed_cache and counted as no call"
       }
@@ -994,7 +1204,7 @@
         }
       ]
     },
-    "build_cost_file_sha256": "dfac1217c388cc25d890513ca8be0ead0cdd4bdfa94fb93716288153163ba562",
+    "build_cost_file_sha256": "6517e4441c9c09439560b27d331f66bb3a74c83d5d690a18fdfebdd421a49f43",
     "first_call": "at query time, claude-sonnet-5 through the lane; an answer already in the store (HERB_V4_CACHE) is read from it and counted as no call",
     "question_embedding": "at query time, local embedder, query mode; a text embedded before is read from output/query_embed_cache and counted as no call"
   },

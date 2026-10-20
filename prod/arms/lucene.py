@@ -182,11 +182,8 @@ def build_sparse_index(
     retriever = bm25s.BM25(k1=k1, b=b, method="lucene")
     retriever.index(corpus_tokens, show_progress=False)
 
-    build_stats = BuildStats(
-        build_time_s=time.perf_counter() - t0,
-        model=ModelUsage(),
-        models=[],
-    )
+    # BM25 is built without a model: no entry
+    build_stats = BuildStats(build_time_s=time.perf_counter() - t0, models=[])
     return Prepared(
         retriever=retriever,
         stemmer=stemmer,

@@ -1,0 +1,244 @@
+{
+ "census": {
+  "category_edges": {
+   "company": 120,
+   "location": 530,
+   "org": 530,
+   "role": 650
+  },
+  "category_nodes": {
+   "company": [
+    "AITransformers",
+    "BlueWave",
+    "CloudSync",
+    "ComputeWorks",
+    "DataSolutions",
+    "FusionTech",
+    "InnovateAI",
+    "NextGenTech",
+    "SmartData",
+    "TechCorp"
+   ],
+   "location": [
+    "Austin",
+    "Berlin",
+    "London",
+    "New York",
+    "Remote",
+    "San Francisco",
+    "Seattle",
+    "Sydney"
+   ],
+   "org": [
+    "einstein",
+    "mulesoft",
+    "sales",
+    "salesforce",
+    "slack",
+    "tableau"
+   ],
+   "role": [
+    "AI Engineer",
+    "Business Analyst",
+    "CEO",
+    "CTO",
+    "Chief Product Officer",
+    "Consultant",
+    "Data Scientist",
+    "Engineering Lead",
+    "Marketing Manager",
+    "Marketing Research Analyst",
+    "Product Manager",
+    "QA Specialist",
+    "Software Engineer",
+    "Solutions Architect",
+    "Technical Architect",
+    "UX Researcher",
+    "VP of Engineering"
+   ]
+  },
+  "entities": 650,
+  "entities_per_position": {
+   "customers_data": 120,
+   "employee": 530,
+   "salesforce_team": 18,
+   "salesforce_team.chief_product_officers": 18,
+   "salesforce_team.engineering_leads": 47,
+   "salesforce_team.engineering_leads.engineers": 248,
+   "salesforce_team.engineering_leads.qa_specialists": 78,
+   "salesforce_team.marketing_managers": 18,
+   "salesforce_team.marketing_research_analysts": 18,
+   "salesforce_team.product_managers": 45,
+   "salesforce_team.tech_architects": 22,
+   "salesforce_team.ux_researchers": 18
+  },
+  "file_groups": [
+   "Product",
+   "customers_data",
+   "employee",
+   "salesforce_team"
+  ],
+  "files": {
+   "Salesforce__HERB/metadata/customers_data.json": {
+    "file_id": "d17fbfa2d9071000cfcf9a4f",
+    "sha256": "d17fbfa2d9071000cfcf9a4f9112cd679862f482a3df37b60006448333d3696c",
+    "size_bytes": 16342
+   },
+   "Salesforce__HERB/metadata/employee.json": {
+    "file_id": "85c7be7ca8f554f27cd84f35",
+    "sha256": "85c7be7ca8f554f27cd84f354dc588aa4abd70ff4e995ca7aa8fd9dd42290747",
+    "size_bytes": 89394
+   }
+  },
+  "positions_without_key": [
+   "Product",
+   "Product.prs.reviews",
+   "Product.slack.Message"
+  ],
+  "registry_files": [
+   "customers_data",
+   "employee",
+   "salesforce_team"
+  ],
+  "relation_edges": {
+   "chief_product_officers": 18,
+   "engineering_leads": 47,
+   "engineers": 248,
+   "marketing_managers": 18,
+   "marketing_research_analysts": 18,
+   "product_managers": 45,
+   "qa_specialists": 78,
+   "tech_architects": 22,
+   "ux_researchers": 18
+  },
+  "relation_positions": {
+   "salesforce_team.chief_product_officers": "chief_product_officers",
+   "salesforce_team.engineering_leads": "engineering_leads",
+   "salesforce_team.engineering_leads.engineers": "engineers",
+   "salesforce_team.engineering_leads.qa_specialists": "qa_specialists",
+   "salesforce_team.marketing_managers": "marketing_managers",
+   "salesforce_team.marketing_research_analysts": "marketing_research_analysts",
+   "salesforce_team.product_managers": "product_managers",
+   "salesforce_team.tech_architects": "tech_architects",
+   "salesforce_team.ux_researchers": "ux_researchers"
+  }
+ },
+ "dropped": null,
+ "elapsed_s": 42.3,
+ "semantic_layer_step": {
+  "copied": null,
+  "found": "nodes without schema \u2014 20474 node(s) and 62443 edge(s) present, 2 constraint(s) and 12 index(es) missing: ['chunk_channel', 'chunk_content_ft', 'chunk_desc_emb', 'chunk_employee_id', 'chunk_fulltext', 'chunk_kind', 'chunk_metadata_section', 'chunk_product', 'chunk_section', 'constraint_afab88ae', 'constraint_c5e13f67', 'index_50501cbd', 'index_d07e45e8', 'tag_emb']",
+  "schema": {
+   "constraints_created": [
+    "constraint_afab88ae",
+    "constraint_c5e13f67"
+   ],
+   "indexes_created": [
+    "chunk_channel",
+    "chunk_content_ft",
+    "chunk_desc_emb",
+    "chunk_employee_id",
+    "chunk_fulltext",
+    "chunk_kind",
+    "chunk_metadata_section",
+    "chunk_product",
+    "chunk_section",
+    "index_50501cbd",
+    "index_d07e45e8",
+    "tag_emb"
+   ],
+   "temp_indexes_dropped": []
+  },
+  "source_database": "herb-eval-v2",
+  "source_layer": {
+   "constraints": [
+    "constraint_afab88ae",
+    "constraint_c5e13f67"
+   ],
+   "counts": {
+    "Chunk": 4869,
+    "Tag": 15605
+   },
+   "edges": 62443,
+   "index_coverage": {
+    "chunk_channel": 2669,
+    "chunk_content_ft": 0,
+    "chunk_desc_emb": 4869,
+    "chunk_employee_id": 30,
+    "chunk_fulltext": 0,
+    "chunk_kind": 4869,
+    "chunk_metadata_section": 61,
+    "chunk_product": 4808,
+    "chunk_section": 4808,
+    "index_50501cbd": 4869,
+    "index_d07e45e8": 0,
+    "tag_emb": 15605
+   },
+   "indexes": [
+    "chunk_channel",
+    "chunk_content_ft",
+    "chunk_desc_emb",
+    "chunk_employee_id",
+    "chunk_fulltext",
+    "chunk_kind",
+    "chunk_metadata_section",
+    "chunk_product",
+    "chunk_section",
+    "index_50501cbd",
+    "index_d07e45e8",
+    "tag_emb"
+   ]
+  },
+  "source_lineage": {
+   "database": "herb-eval-v2",
+   "graph_census_sha256": "50f8f36ea39ea18d08513ea6f8c3944a61e8bbbe63c48dec137d3041b7cfb6ba",
+   "graph_version": "copy+cleanup+directory-entities+relations",
+   "removed_tags_sha256": "6a279b3465f4ec55f440607d0239a4c56d1580ebd9582c43a4d31265b4426116",
+   "source_database": "herb-eval",
+   "timestamp": "2026-08-14T00:25:22Z"
+  },
+  "stale_indexes_dropped": [
+   "tmp_copy_chunk",
+   "tmp_copy_tag"
+  ],
+  "target_database": "herb-eval-volmax",
+  "target_layer": {
+   "constraints": [
+    "constraint_afab88ae",
+    "constraint_c5e13f67"
+   ],
+   "counts": {
+    "Chunk": 4869,
+    "Tag": 15605
+   },
+   "edges": 62443,
+   "indexes": [
+    "chunk_channel",
+    "chunk_content_ft",
+    "chunk_desc_emb",
+    "chunk_employee_id",
+    "chunk_fulltext",
+    "chunk_kind",
+    "chunk_metadata_section",
+    "chunk_product",
+    "chunk_section",
+    "index_50501cbd",
+    "index_d07e45e8",
+    "tag_emb"
+   ]
+  },
+  "timestamp": "2026-08-16T21:46:11Z",
+  "would": "drop 2 leftover lookup index(es) ['tmp_copy_chunk', 'tmp_copy_tag'], then skip the copy and apply 2 constraint(s) and 12 index(es)"
+ },
+ "source_database": "herb-eval-v2",
+ "target_database": "herb-eval-volmax",
+ "timestamp": "2026-08-16T21:46:16Z",
+ "written": {
+  "category_edges": 1830,
+  "category_nodes": 41,
+  "category_nodes_created": 41,
+  "entities": 650,
+  "files": 2,
+  "relation_edges": 512
+ }
+}

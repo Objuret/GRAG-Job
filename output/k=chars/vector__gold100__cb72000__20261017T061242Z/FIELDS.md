@@ -20,6 +20,9 @@ One run of one retrieval method, **vector**, over 100 questions: for each questi
 | `eval_manifest.json` | What the scoring was: the judge, its settings, and what it cost. | judge_legs[].settings.started_at = the eval_leg of a score row |
 | `failures.jsonl` | One line per try at a question that failed. Empty when none did. A question that failed and was answered in a later start has a line here and a row. | id |
 | `eval_failures.jsonl` | One line per score cell that failed. Empty when none did. | question_id + metric |
+| `corrections.json` | Only in a folder whose stored numbers were corrected after the run: what was changed, by which rule, on whose word. |  |
+| `arm_outputs.as_recorded.jsonl`, `run_manifest.as_recorded.json` | A file exactly as the run wrote it, kept when a correction changed the file of the same name. |  |
+| `correct_usage_by_model.py` | The script that made the clean-up correction (the cost per model, the search time without the model calls, the build cost per model, the graph as counted); run on the files from before it, it gives the corrected files again. |  |
 
 Times are seconds (`_s`) or UTC stamps (`_at`). Sizes are tokens, characters (`chars`) or bytes. Scores run from 0 to 1 and higher is more.
 
@@ -30,7 +33,7 @@ The scores are computed by RAGAS. The quoted sentence of each is RAGAS's own, fr
 | `metric` | What it measures | Needs | Between arms |
 |---|---|---|---|
 | `context_recall_id` | "Calculates context recall by directly comparing retrieved context IDs with reference context IDs. The score represents what proportion of the reference IDs were successfully retrieved." (RAGAS, class IDBasedContextRecall) Here: context_ids against the ids of the question's gold records. | nothing | yes |
-| `context_precision_id` | "Calculates context precision by directly comparing retrieved context IDs with reference context IDs. The score represents what proportion of the retrieved context IDs are actually relevant (present in reference)." (RAGAS, class IDBasedContextPrecision) Here: context_ids against the ids of the question's gold records. | nothing | no, within one arm only |
+| `context_precision_id` | "Calculates context precision by directly comparing retrieved context IDs with reference context IDs. The score represents what proportion of the retrieved context IDs are actually relevant (present in reference)." (RAGAS, class IDBasedContextPrecision) Here: context_ids against the ids of the question's gold records. | nothing | yes |
 | `context_recall_nonllm` | "`NonLLMContextRecall` metric is computed using `retrieved_contexts` and `reference_contexts` [...] This metrics uses non-LLM string comparison metrics to identify if a retrieved context is relevant or not." (RAGAS, docs, context_recall.md) Here: contexts against the text of each gold record; a gold record counts as found when a delivered text is more than 0.5 like it (Levenshtein). | nothing | no, within one arm only |
 | `context_precision_nonllm` | "To determine if a retrieved context is relevant, this method compares each retrieved context or chunk in `retrieved_contexts` with every context in `reference_contexts` using a non-LLM-based similarity measure." (RAGAS, docs, context_precision.md) Here: each delivered text against the gold records' texts, more than 0.5 alike (Levenshtein), weighted by rank. | nothing | no, within one arm only |
 | `context_recall_llm` | "Estimates context recall by estimating TP and FN using annotated answer and retrieved context." (RAGAS, class LLMContextRecall) Here: the gold answer, sentence by sentence, against contexts. | the judge | yes |
@@ -44,7 +47,7 @@ The scores are computed by RAGAS. The quoted sentence of each is RAGAS's own, fr
 | `exact_match` | "The `ExactMatch` metric checks if the response is exactly the same as the reference text." (RAGAS, docs, traditional.md) Here: the answer against the gold answer. | nothing | yes |
 | `string_presence` | "The `StringPresence` metric checks if the response contains the reference text." (RAGAS, docs, traditional.md) Here: the answer against the gold answer. | nothing | yes |
 
-"No, within one arm only": the score is counted per delivered unit, and arms deliver units of different size (one record, or a chunk of several records), so the same delivered records give different values.
+"No, within one arm only": the score is counted per delivered text, and arms deliver texts of different size (one record, or a chunk of several records), so the same delivered records give different values. The id scores count record ids, the same for every arm.
 
 No stored score is called a hit rate. Whether a question got any gold record at all can be read from `context_recall_id` being above 0.
 
@@ -53,6 +56,9 @@ No stored score is called a hit rate. Whether a question got any gold record at 
 - `top_k` in the manifest is not used by a run with a character budget.
 - `generator.payload` is what the harness asked for. `applied` and `not_applied` are what a call carried.
 - `calls` counts answers, `attempts` counts tries. `tokens_in` and `tokens_out` are those of the try that answered; a try that did not answer is in the call's own record under `attempts`.
+- `retrieval` is a list with one entry per model. A language model's tokens and the embedder's tokens are different things and are never added together; the same holds for the entries of `build_stats.models`.
+- `search_time_s` holds no model call and no embedder request; their seconds are in `retrieval`. `timing.wall_s` is the whole question, and the harness's own work is in it beside those.
+- In `build_stats.models`, `seconds_summed_per_call` and `seconds_elapsed` are two kinds of seconds: calls that ran side by side make the first more than the second.
 - `tokens_in` includes what was read from the prompt cache; `cached_input_tokens` is that part alone.
 - A text cut at the budget is in `contexts` and its record is not in `context_ids`, so the id scores do not count it.
 - `request_s` includes the Claude program's own start and end. The time with the model alone is in the call's `envelope`.
@@ -72,9 +78,21 @@ One line per question: what was delivered, the answer, and everything the questi
 | `answered_at` | When the row was written (UTC). |
 | `contexts` | The texts handed to the model, best first, as many as fit the character budget. The last one can be a text cut where the budget ended. |
 | `context_ids` | The ids of the corpus records that were handed over whole, in the same order. A text cut at the budget is in contexts but its record is not counted here. |
-| `search_time_s` | Seconds the arm took to rank the corpus for this question, without any model call it made on the way. |
+| `search_time_s` | Seconds the arm took to rank the corpus for this question, without any model call or embedder request it made on the way. |
 | `generator` | What the answer call cost. Its fields: see "What a model's work cost" below. |
-| `retrieval` | What the arm's own model calls for this question cost, such as embedding the question. All zero for an arm that makes none. Its fields: see "What a model's work cost" below. |
+| `retrieval` | What the arm's own model calls and embedder requests for this question cost, one entry per model, in the order the models were first asked; two models are never added together. The harness works it out from the question's call records (calls), the answer call left out, the same way for every arm. Empty for an arm that makes none. |
+| `retrieval.kind` | chat: a language model. embed: the embedder. |
+| `retrieval.model` | The model, by its id or name. |
+| `retrieval.calls` | chat: how many answers; an answer is one call, however many tries it took. embed: how many batches the embedder was given. |
+| `retrieval.attempts` | chat: how many times the model was asked in all, the tries that did not answer included. embed: the same as calls; the embedder is asked once a batch. |
+| `retrieval.tokens_in` | chat: tokens sent in the tries that answered, the part read from the prompt cache included. embed: the tokens of the texts, prefix included. |
+| `retrieval.cached_input_tokens` | chat: the part of tokens_in read from the prompt cache. embed: 0. |
+| `retrieval.tokens_out` | chat: tokens the model wrote in the tries that answered. embed: 0. |
+| `retrieval.reasoning_tokens` | Always 0. |
+| `retrieval.time_s` | request_s + wait_s + retry_s. |
+| `retrieval.request_s` | chat: seconds of the tries that answered. embed: seconds the embedder worked (encode_s). |
+| `retrieval.wait_s` | chat: 0. embed: seconds the requests waited for the embedder to be free (lock_wait_s). |
+| `retrieval.retry_s` | chat: seconds of the tries that did not answer and of the pauses before trying again; a try a correction marked as slept under is left out. embed: 0. |
 | `leg` | Which start of this folder made the row: 1 for the first start, one more for each time the run was taken up again. The start is in run_manifest.json under legs. |
 | `timing` | The clock of the whole question: ranking and answering. Its fields: see "A clock" below. |
 | `calls` | Every model call and every embedder request the question made, whole. Its fields: see "A call record" below. |
@@ -146,11 +164,36 @@ What the run was: the arm, its index, the code, the machine, the inputs, and eve
 | `n_exhausted` | For how many the ranking ran out before the budget was full. |
 | `timestamp` | When this file was written (UTC). |
 | `build_stats` | What building the arm's index cost. |
-| `build_stats.build_time_s` | Seconds it took. For an index read from a stored file it is what the making of that file took. |
-| `build_stats.model` | What the model that built it cost. Its fields: see "What a model's work cost" below. |
-| `build_stats.models` | The models used to build it, by name. |
+| `build_stats.build_time_s` | Seconds it took. For an index read from a stored file it is what the making of that file took. For a graph built in steps it is the elapsed seconds and the command spans of every step whose records give them, added; work that was replaced later is not counted. Empty when no record gives them. |
+| `build_stats.models` | One entry per model that worked on the build, in the order of the build; two models are never added together. Empty for an index built without a model. |
+| `build_stats.models.kind` | chat: a language model. embed: the embedder. encoder: a model that encoded the tag-to-chunk edges for the facet values, or the candidates tried for that. |
+| `build_stats.models.model` | The model, by its id or name. |
+| `build_stats.models.what` | What the model did in the build. |
+| `build_stats.models.calls` | How many calls or requests its records count; empty when they count none. |
+| `build_stats.models.tokens_in` | Tokens sent, as the records give them; empty when they do not. |
+| `build_stats.models.tokens_out` | Tokens written; empty when the records do not give them. |
+| `build_stats.models.seconds_summed_per_call` | The seconds of each call added up. Calls that ran side by side make this more than the time it took. Empty when the records do not give it. |
+| `build_stats.models.seconds_elapsed` | Start to end of the model's work, as its records give it; empty when they do not. |
+| `build_stats.models.device` | Where it ran. |
+| `build_stats.models.not_recorded` | What the records do not give for this model. |
+| `build_stats.not_recorded` | What the build records do not give, step by step. |
+| `build_stats.as_the_arm_gave_it` | Only for an older arm that gave one sum for none or several models: that sum and the names, as given. |
 | `flags` | The switches given on the command line, each by its name with the value it was given; empty when none. What a switch does is the arm's to say (retrieval_flags). |
-| `graph` | For an arm that reads the graph database: which database and which build of it. Empty for an arm that reads none. |
+| `graph` | For an arm that reads the graph database: which database, its last build record, and the graph as counted when this manifest was written. Empty for an arm that reads none. |
+| `graph.database` | The Neo4j database the arm read. |
+| `graph.graph_version` | The version the graph's last build record names. The build record is output/graph_build/<database>/build_manifest.json; these five are empty when the folder that ran had none. Steps that changed the graph after that build are in the arm's index (build_cost). |
+| `graph.graph_census_sha256` | The census hash the last build record gives, of the graph as that build left it. |
+| `graph.removed_tags_sha256` | The hash of the tags the build record says were removed. |
+| `graph.build_timestamp` | When the last build record was written (UTC). |
+| `graph.source_database` | The database the last build copied from. |
+| `graph.census` | The graph as counted in it when this manifest was written. It counts and reads no value. |
+| `graph.census.labels` | Nodes per set of labels, the labels joined by ':'. |
+| `graph.census.relationships` | Relationships per type and the label sets at their start and end. |
+| `graph.census.node_properties` | Per set of labels, how many nodes carry each property. |
+| `graph.census.relationship_properties` | Per relationship type, how many carry each property. |
+| `graph.census_sha256` | The sha256 of the census, its keys in order: two runs with the same value read a graph of the same shape. |
+| `graph.census_error` | Why the graph could not be counted; there only then. |
+| `graph.mixed_builds` | Only when the starts of this folder read different graphs: the graph block of each start, in order. |
 | `code_version` | The code the last answering start ran on. Its fields: see "The code" below. |
 | `environment` | The machine and the software. |
 | `environment.host` | The machine's name. |
@@ -270,6 +313,27 @@ One line per score cell that failed. Empty when none did.
 | `failed_at` | When (UTC). |
 | `usage` | What the failed cell had cost. Its fields: see "What a score cell cost" below. |
 
+## `corrections.json`
+
+Only in a folder whose stored numbers were corrected after the run: what was changed, by which rule, on whose word.
+
+| Field | What it holds |
+|---|---|
+| `corrections` | One entry per correction, in the order they were made; each rests on the files the one before it left. |
+| `corrections.made_at` | When the correction was made (UTC). |
+| `corrections.ordered_by` | The words that ordered it. |
+| `corrections.what_happened` | What was wrong in the stored numbers. |
+| `corrections.rule` | The rule that decided which numbers were corrected, and how. |
+| `corrections.not_changed_and_worth_knowing` | What the correction left as recorded and a reader should know. |
+| `corrections.slept_tries` | Only in the sleep correction: the tries the rule found, each with what was recorded for it. |
+| `corrections.changes` | Every changed value: where it is, the value before and the corrected value. |
+| `corrections.checks` | Only in the clean-up correction: what was checked against the call records and the graph, whether it held, and how many places were looked at. |
+| `corrections.judge_calls_with_logged_low_power_time_inside_them` | Only in the sleep correction: judge calls the machine's own sleep record touches; not changed. |
+| `corrections.low_power_intervals_the_machine_logged` | Only in the sleep correction: the machine's own record of when it slept. |
+| `corrections.files` | The sha256 of each corrected file, before and after the correction, and where the file from before is kept. The sleep correction's are of the bytes on the disk that ran it; the clean-up correction's are of the files with the line ends git holds (LF), as line_ends says. |
+| `corrections.evidence` | The file that holds the machine's own record. |
+| `corrections.script` | The script that made the correction. |
+
 ## Groups of fields that stand in several places
 
 ### What a model's work cost
@@ -344,6 +408,7 @@ One line per score cell that failed. Empty when none did.
 | `stream` | The raw stream of a reply joined from parts; empty otherwise. |
 | `stderr` | What the program printed as errors in the try that answered. |
 | `error` | The last error of a call that gave up; empty otherwise. |
+| `role` | answer: the call that wrote the answer. Not there on the arm's own calls. |
 
 A record with `kind` chat is a call to a language model; one with `kind` embed is a request to the embedder and has only the fields that say so.
 
@@ -481,14 +546,18 @@ A record with `kind` chat is a call to a language model; one with `kind` embed i
 None: every file and every field of this folder is described above.
 
 ---
-Written from `prod/harness/fields.py`, sha256 `a9453fa46cb7ddf8a6289eee230dfaefeed38d395074143854e5c1b322b3ddae`.
+Written from `prod/harness/fields.py`, sha256 `5ce99d8cb28520b09e36d341d4c8060a0b7e20df616d950098ede6c7a57829b9`.
 
-The files as they stood when this was written:
+The files as they stood when this was written, their line ends as git holds them (LF):
 
-- `arm_outputs.jsonl` sha256 `db8cfadf7b6a83b63bc95f52a8c00d48cb8163370f1a031a46d7a53ff5ff2afe`
-- `eval_calls.jsonl` sha256 `f9636998f7961d8ef3a05c4c88a06cfddbc5bfb36b958125dca3c1f234f0c534`
+- `arm_outputs.as_recorded.jsonl` sha256 `6460b7dc48dc7ba35af7d9c1db7a3a0579b959d1bafbce3becfb2d6d423f4506`
+- `arm_outputs.jsonl` sha256 `52a36ac7fd21e7e6043c1c00c938d25403f1092303b4429d5e760430bcc92050`
+- `correct_usage_by_model.py` sha256 `2e004d3b43788cc765bbe5b48a63de1a67daaf5df032789df9a417afa104b606`
+- `corrections.json` sha256 `3e8334f746083fd5e85a6e746f5d8da631603bc16b1f2f91ad700e78284a180f`
+- `eval_calls.jsonl` sha256 `4ec50f85bad7cde7b3c39c812ec031d4bf0ec8830428addffe9d6d31cd643370`
 - `eval_failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
-- `eval_manifest.json` sha256 `3a66e386c6e27463105d717ed8740fc752a259e3e8e17abd964d95fb03b4d069`
-- `eval_results.jsonl` sha256 `27f873274481f6e983c2659d622a6d5f6cb69fbf4d12a65252b20d4a3bbebdf7`
+- `eval_manifest.json` sha256 `74b5e3841b986a72fa1d2757ab1be28329bef4990e907d4d4b5645ea1262335e`
+- `eval_results.jsonl` sha256 `d7e6f883e246a1868e3d1a9266d20516f47099529ce59053afc7caf7affc9370`
 - `failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
-- `run_manifest.json` sha256 `c4fe3e2e0850a221e6f0fe1bcf8d327bc966e95789021ccb44f5e9281246a520`
+- `run_manifest.as_recorded.json` sha256 `3bf70b5a70cffde5ff62a426940b39fdedd70cddbaf30efdd256f74919f58c8d`
+- `run_manifest.json` sha256 `727f617432c0e19db1f905189f194e04394d9f385f4df9ffa5f79ce903e078e5`

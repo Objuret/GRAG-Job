@@ -1,205 +1,2594 @@
 {
-  "made_at": "2026-10-09T10:04:41.072422+00:00",
-  "ordered_by": "\"why did you add sleep to the metrics.. ffs\" · \"i thought you were done so i slapped the laptop lid down and fell asleep yesterday, thats why it fucking 'broke connection'\" · \"no, i meant, while you still have the stats and information since YOU are the conversation.. you can correct the data based on that\" (2026-10-09)",
-  "what_happened": "The laptop's lid was closed while the answers were being made. Two answer calls were under way, one after the other. Each was cut as a timeout when the laptop woke, although its reply had come back, and was asked again. The second reply is the answer that was kept and judged. No answer, context or score is changed by this correction: only times.",
-  "rule": {
-    "id": "slept-try/1",
-    "text": "A try of a model call is one the machine slept under when all three hold:\n  1. it ended as a timeout;\n  2. it lasted longer than its own timeout (a call that is running is cut at its timeout, so a\n     longer one was not running the whole time);\n  3. the low-power time the machine itself logged inside the try's start and end is at least the\n     try's overrun past its timeout.\nThe seconds recorded for such a try are taken out of the three sums they went into: the row's\ngenerator.time_s and generator.retry_s, the row's timing.wall_s, and the wall_s of that start in\nthe run manifest. What those sums hold afterwards: the try that answered, the pause the harness\nwaits before it tries again, and the harness's own overhead. The slept try's own share of awake\nseconds, in which its reply came back, cannot be told apart from the sleep by the run's clock and\ngoes out with it."
-  },
-  "not_changed_and_worth_knowing": [
-    "generator.attempts is 2 and generator.calls is 1 in these rows: two requests were made and paid for, one answer was kept.",
-    "The tokens of the discarded reply are listed under slept_tries. They are not part of the row's token counts, which are those of the try that answered.",
-    "The try that answered read the prompt from the cache the first try had written (generator.cached_input_tokens), which no other row of this run does.",
-    "started_at, finished_at and answered_at are clock times and have the sleep between them."
-  ],
-  "slept_tries": [
+  "corrections": [
     {
-      "question_id": "CollaborationForce::a::0",
-      "row": 93,
-      "try": 1,
-      "started_at": "2026-10-08T23:52:59.586311+00:00",
-      "recorded_seconds": 18289.515918700024,
-      "timeout_s": 480.0,
-      "low_power_seconds_the_machine_logged_inside_it": 18289.511297225952,
-      "a_whole_reply_had_come_back": true,
-      "tokens_of_the_discarded_reply": {
-        "input_tokens": 2,
-        "cache_creation_input_tokens": 22679,
-        "cache_read_input_tokens": 0,
-        "output_tokens": 103
-      }
-    },
-    {
-      "question_id": "ConnectForce::a::0",
-      "row": 94,
-      "try": 1,
-      "started_at": "2026-10-09T04:57:56.603808+00:00",
-      "recorded_seconds": 7037.336775699863,
-      "timeout_s": 480.0,
-      "low_power_seconds_the_machine_logged_inside_it": 7030.45019197464,
-      "a_whole_reply_had_come_back": true,
-      "tokens_of_the_discarded_reply": {
-        "input_tokens": 2,
-        "cache_creation_input_tokens": 22678,
-        "cache_read_input_tokens": 0,
-        "output_tokens": 195
-      }
-    }
-  ],
-  "changes": [
-    {
-      "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
-      "field": "generator.time_s",
-      "recorded": 18296.913243100047,
-      "corrected": 7.397324400022626,
-      "taken_out": 18289.515918700024
-    },
-    {
-      "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
-      "field": "generator.retry_s",
-      "recorded": 18290.516016099835,
-      "corrected": 1.000097399810329,
-      "taken_out": 18289.515918700024
-    },
-    {
-      "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
-      "field": "timing.wall_s",
-      "recorded": 18296.98557859985,
-      "corrected": 7.469659899827093,
-      "taken_out": 18289.515918700024
-    },
-    {
-      "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
-      "field": "generator.time_s",
-      "recorded": 7045.97102149995,
-      "corrected": 8.634245800087228,
-      "taken_out": 7037.336775699863
-    },
-    {
-      "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
-      "field": "generator.retry_s",
-      "recorded": 7038.337227199925,
-      "corrected": 1.0004515000618994,
-      "taken_out": 7037.336775699863
-    },
-    {
-      "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
-      "field": "timing.wall_s",
-      "recorded": 7046.080426099943,
-      "corrected": 8.743650400079787,
-      "taken_out": 7037.336775699863
-    },
-    {
-      "where": "run_manifest.json legs[leg=1]",
-      "field": "wall_s",
-      "recorded": 26009.67611969984,
-      "corrected": 682.8234252999537,
-      "taken_out": 25326.852694399888
-    }
-  ],
-  "judge_calls_with_logged_low_power_time_inside_them": {
-    "note": "No change is made to these. Whether the call was held while the machine was in this state is not known from the record, so its seconds stand as recorded.",
-    "calls": [
-      {
-        "question_id": "ExplainabilityForce::a::0",
-        "score": "context_recall_llm",
-        "started_at": "2026-10-09T08:08:54.257780+00:00",
-        "finished_at": "2026-10-09T08:09:29.648183+00:00",
-        "tries": [
-          [
-            1,
-            "ok",
-            35.39452819991857
-          ]
-        ],
-        "low_power_seconds_the_machine_logged_inside_it": 24.741999864578247
+      "made_at": "2026-10-09T10:04:41.072422+00:00",
+      "ordered_by": "\"why did you add sleep to the metrics.. ffs\" · \"i thought you were done so i slapped the laptop lid down and fell asleep yesterday, thats why it fucking 'broke connection'\" · \"no, i meant, while you still have the stats and information since YOU are the conversation.. you can correct the data based on that\" (2026-10-09)",
+      "what_happened": "The laptop's lid was closed while the answers were being made. Two answer calls were under way, one after the other. Each was cut as a timeout when the laptop woke, although its reply had come back, and was asked again. The second reply is the answer that was kept and judged. No answer, context or score is changed by this correction: only times.",
+      "rule": {
+        "id": "slept-try/1",
+        "text": "A try of a model call is one the machine slept under when all three hold:\n  1. it ended as a timeout;\n  2. it lasted longer than its own timeout (a call that is running is cut at its timeout, so a\n     longer one was not running the whole time);\n  3. the low-power time the machine itself logged inside the try's start and end is at least the\n     try's overrun past its timeout.\nThe seconds recorded for such a try are taken out of the three sums they went into: the row's\ngenerator.time_s and generator.retry_s, the row's timing.wall_s, and the wall_s of that start in\nthe run manifest. What those sums hold afterwards: the try that answered, the pause the harness\nwaits before it tries again, and the harness's own overhead. The slept try's own share of awake\nseconds, in which its reply came back, cannot be told apart from the sleep by the run's clock and\ngoes out with it."
       },
-      {
-        "question_id": "FeedbackForce::a::0",
-        "score": "answer_correctness",
-        "started_at": "2026-10-09T08:10:02.059782+00:00",
-        "finished_at": "2026-10-09T08:10:17.261038+00:00",
-        "tries": [
-          [
-            1,
-            "ok",
-            15.200434300117195
-          ]
-        ],
-        "low_power_seconds_the_machine_logged_inside_it": 0.12303805351257324
+      "not_changed_and_worth_knowing": [
+        "generator.attempts is 2 and generator.calls is 1 in these rows: two requests were made and paid for, one answer was kept.",
+        "The tokens of the discarded reply are listed under slept_tries. They are not part of the row's token counts, which are those of the try that answered.",
+        "The try that answered read the prompt from the cache the first try had written (generator.cached_input_tokens), which no other row of this run does.",
+        "started_at, finished_at and answered_at are clock times and have the sleep between them."
+      ],
+      "slept_tries": [
+        {
+          "question_id": "CollaborationForce::a::0",
+          "row": 93,
+          "try": 1,
+          "started_at": "2026-10-08T23:52:59.586311+00:00",
+          "recorded_seconds": 18289.515918700024,
+          "timeout_s": 480.0,
+          "low_power_seconds_the_machine_logged_inside_it": 18289.511297225952,
+          "a_whole_reply_had_come_back": true,
+          "tokens_of_the_discarded_reply": {
+            "input_tokens": 2,
+            "cache_creation_input_tokens": 22679,
+            "cache_read_input_tokens": 0,
+            "output_tokens": 103
+          }
+        },
+        {
+          "question_id": "ConnectForce::a::0",
+          "row": 94,
+          "try": 1,
+          "started_at": "2026-10-09T04:57:56.603808+00:00",
+          "recorded_seconds": 7037.336775699863,
+          "timeout_s": 480.0,
+          "low_power_seconds_the_machine_logged_inside_it": 7030.45019197464,
+          "a_whole_reply_had_come_back": true,
+          "tokens_of_the_discarded_reply": {
+            "input_tokens": 2,
+            "cache_creation_input_tokens": 22678,
+            "cache_read_input_tokens": 0,
+            "output_tokens": 195
+          }
+        }
+      ],
+      "changes": [
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "generator.time_s",
+          "recorded": 18296.913243100047,
+          "corrected": 7.397324400022626,
+          "taken_out": 18289.515918700024
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "generator.retry_s",
+          "recorded": 18290.516016099835,
+          "corrected": 1.000097399810329,
+          "taken_out": 18289.515918700024
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 18296.98557859985,
+          "corrected": 7.469659899827093,
+          "taken_out": 18289.515918700024
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "generator.time_s",
+          "recorded": 7045.97102149995,
+          "corrected": 8.634245800087228,
+          "taken_out": 7037.336775699863
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "generator.retry_s",
+          "recorded": 7038.337227199925,
+          "corrected": 1.0004515000618994,
+          "taken_out": 7037.336775699863
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 7046.080426099943,
+          "corrected": 8.743650400079787,
+          "taken_out": 7037.336775699863
+        },
+        {
+          "where": "run_manifest.json legs[leg=1]",
+          "field": "wall_s",
+          "recorded": 26009.67611969984,
+          "corrected": 682.8234252999537,
+          "taken_out": 25326.852694399888
+        }
+      ],
+      "judge_calls_with_logged_low_power_time_inside_them": {
+        "note": "No change is made to these. Whether the call was held while the machine was in this state is not known from the record, so its seconds stand as recorded.",
+        "calls": [
+          {
+            "question_id": "ExplainabilityForce::a::0",
+            "score": "context_recall_llm",
+            "started_at": "2026-10-09T08:08:54.257780+00:00",
+            "finished_at": "2026-10-09T08:09:29.648183+00:00",
+            "tries": [
+              [
+                1,
+                "ok",
+                35.39452819991857
+              ]
+            ],
+            "low_power_seconds_the_machine_logged_inside_it": 24.741999864578247
+          },
+          {
+            "question_id": "FeedbackForce::a::0",
+            "score": "answer_correctness",
+            "started_at": "2026-10-09T08:10:02.059782+00:00",
+            "finished_at": "2026-10-09T08:10:17.261038+00:00",
+            "tries": [
+              [
+                1,
+                "ok",
+                15.200434300117195
+              ]
+            ],
+            "low_power_seconds_the_machine_logged_inside_it": 0.12303805351257324
+          },
+          {
+            "question_id": "FeedbackForce::a::0",
+            "score": "context_recall_llm",
+            "started_at": "2026-10-09T08:10:17.280071+00:00",
+            "finished_at": "2026-10-09T08:10:27.100744+00:00",
+            "tries": [
+              [
+                1,
+                "ok",
+                9.824482300085947
+              ]
+            ],
+            "low_power_seconds_the_machine_logged_inside_it": 5.252928972244263
+          }
+        ]
       },
-      {
-        "question_id": "FeedbackForce::a::0",
-        "score": "context_recall_llm",
-        "started_at": "2026-10-09T08:10:17.280071+00:00",
-        "finished_at": "2026-10-09T08:10:27.100744+00:00",
-        "tries": [
-          [
-            1,
-            "ok",
-            9.824482300085947
-          ]
-        ],
-        "low_power_seconds_the_machine_logged_inside_it": 5.252928972244263
-      }
-    ]
-  },
-  "low_power_intervals_the_machine_logged": [
-    {
-      "start": "2026-10-08T22:33:41.814000+00:00",
-      "end": "2026-10-08T22:33:42.345000+00:00",
-      "seconds": 0.5310001373291016,
-      "what": "Modern Standby: Reason: Idle Timeout."
+      "low_power_intervals_the_machine_logged": [
+        {
+          "start": "2026-10-08T22:33:41.814000+00:00",
+          "end": "2026-10-08T22:33:42.345000+00:00",
+          "seconds": 0.5310001373291016,
+          "what": "Modern Standby: Reason: Idle Timeout."
+        },
+        {
+          "start": "2026-10-08T23:52:59.525000+00:00",
+          "end": "2026-10-08T23:58:17.413000+00:00",
+          "seconds": 317.8880000114441,
+          "what": "Modern Standby: Reason: Lid."
+        },
+        {
+          "start": "2026-10-08T23:58:17.417000+00:00",
+          "end": "2026-10-09T04:57:40.068000+00:00",
+          "seconds": 17962.65100002289,
+          "what": "Modern Standby: Reason: Austerity Battery Drain Budget Exceeded."
+        },
+        {
+          "start": "2026-10-09T04:57:40.068622+00:00",
+          "end": "2026-10-09T06:55:04.356332+00:00",
+          "seconds": 7044.287710428238,
+          "what": "sleep or hibernate"
+        },
+        {
+          "start": "2026-10-09T06:55:04.305000+00:00",
+          "end": "2026-10-09T06:55:07.054000+00:00",
+          "seconds": 2.748999834060669,
+          "what": "Modern Standby: Reason: Sleep, Hibernate, or Shutdown."
+        },
+        {
+          "start": "2026-10-09T08:08:58.223000+00:00",
+          "end": "2026-10-09T08:09:22.965000+00:00",
+          "seconds": 24.741999864578247,
+          "what": "Modern Standby: Reason: Idle Timeout."
+        },
+        {
+          "start": "2026-10-09T08:10:17.138000+00:00",
+          "end": "2026-10-09T08:10:22.533000+00:00",
+          "seconds": 5.394999980926514,
+          "what": "Modern Standby: Reason: Idle Timeout."
+        }
+      ],
+      "files": {
+        "arm_outputs.jsonl": {
+          "sha256_as_recorded": "11a0cc3bba9f620c9bf365df81c05405cd0092c41b014525cbec65a661bce036",
+          "sha256_corrected": "26eedeff715667af1d0a87d0f612e979c3634c6c11bf86a246119f672c8902a8",
+          "as_recorded_copy": "arm_outputs.as_recorded.jsonl"
+        },
+        "run_manifest.json": {
+          "sha256_as_recorded": "035b75d98f68cf1856cda4bdc3b642a006118b498642a8c7fcd1d14da75e742b",
+          "sha256_corrected": "29e1ab72decb37ddef7b634c9030c9724e6e1a8daba742dd5030d075cb304c2c",
+          "as_recorded_copy": "run_manifest.as_recorded.json"
+        }
+      },
+      "evidence": "machine_sleep_events.txt (Windows' System log, Kernel-Power and Power-Troubleshooter, in UTC)",
+      "script": "correct_slept_tries.py, in this folder; run on the files as recorded it gives these files again"
     },
     {
-      "start": "2026-10-08T23:52:59.525000+00:00",
-      "end": "2026-10-08T23:58:17.413000+00:00",
-      "seconds": 317.8880000114441,
-      "what": "Modern Standby: Reason: Lid."
-    },
-    {
-      "start": "2026-10-08T23:58:17.417000+00:00",
-      "end": "2026-10-09T04:57:40.068000+00:00",
-      "seconds": 17962.65100002289,
-      "what": "Modern Standby: Reason: Austerity Battery Drain Budget Exceeded."
-    },
-    {
-      "start": "2026-10-09T04:57:40.068622+00:00",
-      "end": "2026-10-09T06:55:04.356332+00:00",
-      "seconds": 7044.287710428238,
-      "what": "sleep or hibernate"
-    },
-    {
-      "start": "2026-10-09T06:55:04.305000+00:00",
-      "end": "2026-10-09T06:55:07.054000+00:00",
-      "seconds": 2.748999834060669,
-      "what": "Modern Standby: Reason: Sleep, Hibernate, or Shutdown."
-    },
-    {
-      "start": "2026-10-09T08:08:58.223000+00:00",
-      "end": "2026-10-09T08:09:22.965000+00:00",
-      "seconds": 24.741999864578247,
-      "what": "Modern Standby: Reason: Idle Timeout."
-    },
-    {
-      "start": "2026-10-09T08:10:17.138000+00:00",
-      "end": "2026-10-09T08:10:22.533000+00:00",
-      "seconds": 5.394999980926514,
-      "what": "Modern Standby: Reason: Idle Timeout."
+      "made_at": "2026-10-20T11:03:08.707133+00:00",
+      "ordered_by": "\"That sounds indeed like you have fufkcing smashes a bunch of data together that does not belong together.. I sure as fuck hope you did not do that on the actual data\" · \"well, this is the data-cleanup phase so perhaps be less fucking retarded with the answers then\" · \"yes, make sure all the correct data is in those folders first of all, then i have another task for you\" (2026-10-20)",
+      "what_happened": "The row's retrieval and build_stats each held one sum, all zero, in the form the arms cannot share without adding two models together.",
+      "rule": {
+        "id": "usage-by-model/1",
+        "text": "1. A row's retrieval is its own call records summed per model (harness.capture.usage_by_model),\n     the answer call left out. The answer call is the record whose system text is the harness's\n     answer instruction; it is marked role: answer, and its tokens must be the generator's.\n  2. The entries must hold what the row recorded: the same calls, tokens in, tokens out and cached\n     tokens in all.\n  3. artefact_v4 only: search_time_s loses the embedder's seconds (lock_wait_s + encode_s of the\n     row's embed records) and the seconds of the first-call tries that did not answer (the chat\n     entry's retry_s).\n  4. build_stats gets one entry per model, from the run's own manifest: lucene none; vector the\n     embedder, from its build_stats and the stored file's cost note; artefact_v4 from\n     index.build_cost (artefact_v4.build_stats_from_cost).\n  5. artefact_v4 only: the graph block takes the graph's last build record and the graph counted\n     now (orchestrator.graph_census), after a check that the graph holds now what the run counted\n     at its start.\n  6. artefact_v4 only: the sha256 of the code files (meta.provenance.source_sha256) and of the\n     build cost file (index.build_cost_file_sha256) become those of the commit's files, their\n     line ends as git holds them (LF), after a check that each recorded value is the commit's\n     file with the Windows line ends the checkout wrote."
+      },
+      "not_changed_and_worth_knowing": [
+        "No answer, context, id, score or judge call is changed; the call records are changed only by the answer call's role.",
+        "A retrieval entry's seconds are the tries' and the embedder's own seconds from the call records. The sum the arm recorded held the seconds around each call, so the entries hold a little less; that rest is the arm's own work, in timing.wall_s.",
+        "timing.wall_s and the stamps are unchanged. The sleep correction before this one stands as it was."
+      ],
+      "changes": [
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 1 (AnomalyForce::a::0)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 1 (AnomalyForce::a::0)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 2 (AutoTuneForce::a::0)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 2 (AutoTuneForce::a::0)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 3 (CoachForce::a::5)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 3 (CoachForce::a::5)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 5 (CollaborationForce::a::6)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 5 (CollaborationForce::a::6)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 6 (ConnectForce::a::5)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 6 (ConnectForce::a::5)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 7 (ContentForce::a::2)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 7 (ContentForce::a::2)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 8 (ContextForce::a::1)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 8 (ContextForce::a::1)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 9 (EdgeForce::a::2)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 9 (EdgeForce::a::2)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 10 (ExplainabilityForce::a::6)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 10 (ExplainabilityForce::a::6)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 11 (FeedbackForce::a::5)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 11 (FeedbackForce::a::5)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 13 (ForecastForce::a::4)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 13 (ForecastForce::a::4)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 15 (KnowledgeForce::a::4)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 15 (KnowledgeForce::a::4)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 16 (LeadForce::a::5)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 16 (LeadForce::a::5)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 17 (MonitorForce::a::5)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 17 (MonitorForce::a::5)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 19 (PitchForce::a::6)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 19 (PitchForce::a::6)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 20 (ProposalForce::a::11)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 20 (ProposalForce::a::11)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 23 (SecurityForce::a::7)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 23 (SecurityForce::a::7)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 26 (SupportForce::a::5)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 26 (SupportForce::a::5)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 27 (TrendForce::a::9)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 27 (TrendForce::a::9)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 28 (VizForce::a::16)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 28 (VizForce::a::16)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 29 (WorkFlowGenie::a::11)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 29 (WorkFlowGenie::a::11)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 30 (ActionGenie::a::5)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 30 (ActionGenie::a::5)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 31 (AnomalyForce::a::17)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 31 (AnomalyForce::a::17)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 32 (AutoTuneForce::a::12)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 32 (AutoTuneForce::a::12)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 34 (CollaborateForce::a::19)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 34 (CollaborateForce::a::19)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 39 (EdgeForce::a::12)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 39 (EdgeForce::a::12)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 40 (ExplainabilityForce::a::7)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 40 (ExplainabilityForce::a::7)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 41 (FeedbackForce::a::6)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 41 (FeedbackForce::a::6)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 42 (FlowForce::a::12)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 42 (FlowForce::a::12)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 44 (InsightForce::a::6)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 44 (InsightForce::a::6)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 45 (KnowledgeForce::a::14)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 45 (KnowledgeForce::a::14)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 46 (LeadForce::a::13)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 46 (LeadForce::a::13)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 47 (MonitorForce::a::16)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 47 (MonitorForce::a::16)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 48 (PersonalizeForce::a::24)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 48 (PersonalizeForce::a::24)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 50 (ProposalForce::a::17)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 50 (ProposalForce::a::17)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 52 (SearchForce::a::16)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 52 (SearchForce::a::16)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 53 (SentimentForce::a::26)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 53 (SentimentForce::a::26)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 54 (SummarizeForce::a::23)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 54 (SummarizeForce::a::23)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 55 (SupportForce::a::6)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 55 (SupportForce::a::6)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 56 (VizForce::a::43)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 56 (VizForce::a::43)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 58 (AutoTuneForce::a::13)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 58 (AutoTuneForce::a::13)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 60 (ConnectForce::a::14)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 60 (ConnectForce::a::14)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 61 (ContentForce::a::16)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 61 (ContentForce::a::16)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 62 (EdgeForce::a::13)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 62 (EdgeForce::a::13)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 63 (ExplainabilityForce::a::9)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 63 (ExplainabilityForce::a::9)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 64 (FeedbackForce::a::7)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 64 (FeedbackForce::a::7)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 65 (FlowForce::a::13)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 65 (FlowForce::a::13)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 67 (InsightForce::a::7)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 67 (InsightForce::a::7)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 70 (MonitorForce::a::18)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 70 (MonitorForce::a::18)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 71 (PersonalizeForce::a::34)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 71 (PersonalizeForce::a::34)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 72 (PitchForce::a::27)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 72 (PitchForce::a::27)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 73 (ProposalForce::a::20)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 73 (ProposalForce::a::20)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 74 (SentimentForce::a::27)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 74 (SentimentForce::a::27)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 75 (SummarizeForce::a::24)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 75 (SummarizeForce::a::24)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 76 (CollaborateForce::a::31)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 76 (CollaborateForce::a::31)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 77 (ConnectForce::a::15)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 77 (ConnectForce::a::15)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 79 (EdgeForce::a::14)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 79 (EdgeForce::a::14)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 80 (ExplainabilityForce::a::11)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 80 (ExplainabilityForce::a::11)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 85 (SentimentForce::a::29)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 85 (SentimentForce::a::29)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 86 (FeedbackForce::a::16)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 86 (FeedbackForce::a::16)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 87 (FeedbackForce::a::18)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 87 (FeedbackForce::a::18)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 88 (ActionGenie::a::1)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 88 (ActionGenie::a::1)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 91 (CoachForce::a::0)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 91 (CoachForce::a::0)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 92 (CollaborateForce::a::0)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 92 (CollaborateForce::a::0)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 95 (ContentForce::a::0)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 95 (ContentForce::a::0)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 96 (ContextForce::a::0)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 96 (ContextForce::a::0)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 97 (EdgeForce::a::0)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 97 (EdgeForce::a::0)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 98 (ExplainabilityForce::a::0)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 98 (ExplainabilityForce::a::0)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "arm_outputs.jsonl row 99 (FeedbackForce::a::0)",
+          "field": "calls[0].role",
+          "recorded": null,
+          "corrected": "answer"
+        },
+        {
+          "where": "arm_outputs.jsonl row 99 (FeedbackForce::a::0)",
+          "field": "retrieval",
+          "recorded": {
+            "calls": 0,
+            "tokens_in": 0,
+            "cached_input_tokens": 0,
+            "tokens_out": 0,
+            "reasoning_tokens": 0,
+            "time_s": 0.0,
+            "attempts": 0,
+            "request_s": 0.0,
+            "wait_s": 0.0,
+            "retry_s": 0.0
+          },
+          "corrected": []
+        },
+        {
+          "where": "run_manifest.json",
+          "field": "build_stats",
+          "recorded": {
+            "build_time_s": 2.4328767000697553,
+            "model": {
+              "calls": 0,
+              "tokens_in": 0,
+              "cached_input_tokens": 0,
+              "tokens_out": 0,
+              "reasoning_tokens": 0,
+              "time_s": 0.0,
+              "attempts": 0,
+              "request_s": 0.0,
+              "wait_s": 0.0,
+              "retry_s": 0.0
+            },
+            "models": []
+          },
+          "corrected": {
+            "build_time_s": 2.4328767000697553,
+            "models": [],
+            "not_recorded": []
+          }
+        }
+      ],
+      "checks": [
+        {
+          "what": "every row has one answer call, its record marked role: answer",
+          "holds": true,
+          "looked_at": 100
+        },
+        {
+          "what": "the answer call's tokens are the generator's",
+          "holds": true,
+          "looked_at": 100
+        },
+        {
+          "what": "the entries hold the calls, tokens in, tokens out and cached tokens the row recorded",
+          "holds": true,
+          "looked_at": 100
+        },
+        {
+          "what": "no second is counted twice: search_time_s, the retrieval's time_s and generator.time_s add up to no more than timing.wall_s, half a second allowed",
+          "holds": true,
+          "looked_at": 100,
+          "detail": "the smallest gap left in a row: 0.004 s"
+        },
+        {
+          "what": "in every row the retrieval entries' seconds are no more than the arm's own sum with its retry_s, a millisecond allowed",
+          "holds": true,
+          "looked_at": 100,
+          "detail": "the arm's own sum was 0.0000 to 0.0000 s more in a row: its own work around the calls"
+        }
+      ],
+      "files": {
+        "arm_outputs.jsonl": {
+          "sha256_before": "f4846fc2423baebc43ae4ce4825ce9d10a88523e6c76062a7cde3d8dcdb0eecd",
+          "sha256_corrected": "ec7a7c427294692bdd9a0aa3f5ddca97d62100400a060d642c49cf451a77060d",
+          "line_ends": "the sha256 are of the file with the line ends git holds (LF)",
+          "before": "made by correct_slept_tries.py from arm_outputs.as_recorded.jsonl"
+        },
+        "run_manifest.json": {
+          "sha256_before": "f104fcf4a6f6a9d6d1de9c6de35214fc4089898e232109e4944bd27f842d272a",
+          "sha256_corrected": "c0dc71ca352cc9ee016200413b5020884e92d415a5e2aeab83aed2d5901da8c5",
+          "line_ends": "the sha256 are of the file with the line ends git holds (LF)",
+          "before": "made by correct_slept_tries.py from run_manifest.as_recorded.json"
+        }
+      },
+      "script": "correct_usage_by_model.py, in this folder; run on the files from before it, it gives these files again (the graph is counted when it runs)"
     }
-  ],
-  "files": {
-    "arm_outputs.jsonl": {
-      "sha256_as_recorded": "11a0cc3bba9f620c9bf365df81c05405cd0092c41b014525cbec65a661bce036",
-      "sha256_corrected": "26eedeff715667af1d0a87d0f612e979c3634c6c11bf86a246119f672c8902a8",
-      "as_recorded_copy": "arm_outputs.as_recorded.jsonl"
-    },
-    "run_manifest.json": {
-      "sha256_as_recorded": "035b75d98f68cf1856cda4bdc3b642a006118b498642a8c7fcd1d14da75e742b",
-      "sha256_corrected": "29e1ab72decb37ddef7b634c9030c9724e6e1a8daba742dd5030d075cb304c2c",
-      "as_recorded_copy": "run_manifest.as_recorded.json"
-    }
-  },
-  "evidence": "machine_sleep_events.txt (Windows' System log, Kernel-Power and Power-Troubleshooter, in UTC)",
-  "script": "correct_slept_tries.py, in this folder; run on the files as recorded it gives these files again"
+  ]
 }

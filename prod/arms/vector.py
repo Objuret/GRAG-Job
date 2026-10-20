@@ -181,6 +181,16 @@ def _cache_path(ids: list, texts: list) -> Path:
     return CACHE_DIR / f"{EMBED_MODEL.split('/')[-1]}_{h.hexdigest()[:16]}.npz"
 
 
+def _build_entry(calls, tokens_in, tokens_out, seconds, device) -> dict:
+    """The embedder's one entry in build_stats. Its requests run one after the other, so their
+    seconds added are the start to end of its work."""
+    return {"kind": "embed", "model": EMBED_MODEL,
+            "what": "every unit of the corpus embedded in passage mode, for the stored vectors",
+            "calls": calls, "tokens_in": tokens_in, "tokens_out": tokens_out,
+            "seconds_summed_per_call": None, "seconds_elapsed": seconds, "device": device,
+            "not_recorded": None}
+
+
 def build_dense_index(corpus, batch: int = EMBED_BATCH) -> Prepared:
     t0 = time.perf_counter()
     docs = corpus if isinstance(corpus, list) else _read_corpus(corpus)
@@ -199,13 +209,16 @@ def build_dense_index(corpus, batch: int = EMBED_BATCH) -> Prepared:
             tokens_in, tokens_out, model_s = int(stats[2]), 0, float(stats[3])
         else:
             tokens_in, tokens_out, model_s = int(stats[2]), int(stats[3]), float(stats[4])
+        try:
+            note = json.loads((CACHE_DIR / f"{cache.stem}.cost.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            note = {}
         return Prepared(
             matrix=z["matrix"], ids=list(z["ids"]), texts=list(z["texts"]),
             build_stats=BuildStats(
                 build_time_s=bt,
-                model=ModelUsage(calls=calls, tokens_in=tokens_in, tokens_out=tokens_out,
-                                 time_s=model_s),
-                models=[EMBED_MODEL]),
+                models=[_build_entry(calls, tokens_in, tokens_out, model_s,
+                                     note.get("device"))]),
             cache_file=str(cache),
         )
 
@@ -213,9 +226,7 @@ def build_dense_index(corpus, batch: int = EMBED_BATCH) -> Prepared:
 
     build_stats = BuildStats(
         build_time_s=time.perf_counter() - t0,
-        model=ModelUsage(calls=calls, tokens_in=tokens_in, tokens_out=tokens_out,
-                         time_s=model_s, attempts=calls, request_s=model_s),
-        models=[EMBED_MODEL],
+        models=[_build_entry(calls, tokens_in, tokens_out, model_s, EMBED_DEVICE)],
     )
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     fd, tmp = tempfile.mkstemp(dir=CACHE_DIR, suffix=".tmp")
@@ -237,7 +248,7 @@ def build_dense_index(corpus, batch: int = EMBED_BATCH) -> Prepared:
     (CACHE_DIR / f"{cache.stem}.cost.json").write_text(
         json.dumps({"model": EMBED_MODEL, "calls": calls,
                     "tokens_in": tokens_in, "tokens_out": tokens_out,
-                    "build_time_s": build_stats.build_time_s}, indent=2),
+                    "build_time_s": build_stats.build_time_s, "device": EMBED_DEVICE}, indent=2),
         encoding="utf-8")
     return Prepared(matrix=matrix, ids=ids, texts=texts, build_stats=build_stats,
                     cache_file=str(cache))
