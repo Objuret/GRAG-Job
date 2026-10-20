@@ -21,7 +21,7 @@
         "seconds_summed_per_call": null,
         "seconds_elapsed": 2982.903398909091,
         "device": "NVIDIA GeForce GTX 1080 Ti",
-        "not_recorded": null
+        "not_recorded": "no one timer covered all of it; the cost note says: two calls on the same machine: the first, cut off when the laptop that started it slept, made parts 0-11 in 1841.3 s (read off the parts' write times); the second made the rest in 1141.6 s (its own manifest)"
       }
     ],
     "not_recorded": []

@@ -24,7 +24,7 @@ One run of one retrieval method, **vector**, over 100 questions: for each questi
 | `arm_outputs.as_recorded.jsonl`, `run_manifest.as_recorded.json` | A file exactly as the run wrote it, kept when a correction changed the file of the same name. |  |
 | `correct_usage_by_model.py` | The script that made the clean-up correction (the cost per model, the search time without the model calls, the build cost per model, the graph as counted); run on the files from before it, it gives the corrected files again. |  |
 
-Times are seconds (`_s`) or UTC stamps (`_at`). Sizes are tokens, characters (`chars`) or bytes. Scores run from 0 to 1 and higher is more.
+Times are seconds (`_s`), milliseconds (`_ms`) or UTC stamps (`_at`; every other time text carries its own zone). Sizes are tokens, characters (`chars`) or bytes. A count (calls, attempts, requests, texts, records, edges, refits, and the like) is a plain number of the things it names. A price (`usd`, `USD`) is the Claude program's own, in US dollars; no number of this harness uses it. The evaluation's scores run from 0 to 1 and higher is more; a score an arm ranks by says its own scale.
 
 ## The scores
 
@@ -50,6 +50,11 @@ The scores are computed by RAGAS. The quoted sentence of each is RAGAS's own, fr
 "No, within one arm only": the score is counted per delivered text, and arms deliver texts of different size (one record, or a chunk of several records), so the same delivered records give different values. The id scores count record ids, the same for every arm.
 
 No stored score is called a hit rate. Whether a question got any gold record at all can be read from `context_recall_id` being above 0.
+
+## What was left out, and on whose word
+
+- The questions: every run answers the 100 questions of data/gold100.jsonl (inputs.ids_sha256). How these 100 were chosen from the benchmark's questions: no rule in his words is recorded. The set was first added on 2026-05-19 (commit 0b98b12, "Scale gold set to n=100 (balanced) + statistically robust result"); his messages from 2026-05-15 to 2026-05-27 are not in the canon, because that work was done in Cursor.
+- The directory files: the corpus's three directory files (people, teams, customers) are not embedded beside the product records (retrieval_flags.HERB_BASELINE_METADATA off). No rule in his words is recorded.
 
 ## Easy to read wrongly
 
@@ -96,7 +101,7 @@ One line per question: what was delivered, the answer, and everything the questi
 | `leg` | Which start of this folder made the row: 1 for the first start, one more for each time the run was taken up again. The start is in run_manifest.json under legs. |
 | `timing` | The clock of the whole question: ranking and answering. Its fields: see "A clock" below. |
 | `calls` | Every model call and every embedder request the question made, whole. Its fields: see "A call record" below. |
-| `correction` | Only where a stored number was corrected after the run: the rule, the value as recorded and the corrected value. The folder's corrections.json tells the whole of it, and the files as recorded stand beside the corrected ones. |
+| `correction` | Only where a stored number was corrected after the run: the rule, the value as recorded and the corrected value, the seconds taken out (taken_out_s), and in the sleep correction each slept try with its number within the call (from 1), its start, its seconds and its timeout in seconds. The folder's corrections.json tells the whole of it, and the files as recorded stand beside the corrected ones. |
 | `meta` | What the arm recorded about this question's ranking. |
 | `meta.char_budget` | How the character budget was filled. |
 | `meta.char_budget.budget` | The character budget. |
@@ -140,8 +145,8 @@ One line per judge call and per embedder request of the scoring, whole. The judg
 | `eval_leg` | Which scoring start made the call, by that start's starting time. |
 | `arm` | The retrieval method. |
 | `question_id` | The question the call was made for; empty for the embeddings made once before the cells. |
-| `type` | The question's kind in the benchmark. |
-| `score` | The score the call was made for. |
+| `type` | The question's kind in the benchmark; not there for the embeddings made once before the cells. |
+| `score` | The score the call was made for; empty for the embeddings made once before the cells (phase prime), which serve several scores. |
 | `phase` | cell: made for one question and one score. prime: embeddings made once, before the cells. |
 
 Beside these, each line has the fields of "A call record" below.
@@ -169,21 +174,21 @@ What the run was: the arm, its index, the code, the machine, the inputs, and eve
 | `build_stats.models.kind` | chat: a language model. embed: the embedder. encoder: a model that encoded the tag-to-chunk edges for the facet values, or the candidates tried for that. |
 | `build_stats.models.model` | The model, by its id or name. |
 | `build_stats.models.what` | What the model did in the build. |
-| `build_stats.models.calls` | How many calls or requests its records count; empty when they count none. |
-| `build_stats.models.tokens_in` | Tokens sent, as the records give them; empty when they do not. |
-| `build_stats.models.tokens_out` | Tokens written; empty when the records do not give them. |
-| `build_stats.models.seconds_summed_per_call` | The seconds of each call added up. Calls that ran side by side make this more than the time it took. Empty when the records do not give it. |
-| `build_stats.models.seconds_elapsed` | Start to end of the model's work, as its records give it; empty when they do not. |
+| `build_stats.models.calls` | How many calls or requests its records count, added over the model's parts where it worked in several (for a graph, index.build_cost holds each part); empty when they count none. |
+| `build_stats.models.tokens_in` | Tokens sent, as the records give them, added over the model's parts in the same way; empty when they do not give them. |
+| `build_stats.models.tokens_out` | Tokens written, added over the model's parts in the same way; 0 for the embedder and the encoders, which write none; empty when the records do not give them. |
+| `build_stats.models.seconds_summed_per_call` | The seconds of each call added up, over the model's parts in the same way. Calls that ran side by side make this more than the time it took. Empty when the records do not give it. |
+| `build_stats.models.seconds_elapsed` | Start to end of the model's work, as its records give it, added over its parts where they ran one after the other; empty when they do not give it. |
 | `build_stats.models.device` | Where it ran. |
-| `build_stats.models.not_recorded` | What the records do not give for this model. |
-| `build_stats.not_recorded` | What the build records do not give, step by step. |
+| `build_stats.models.not_recorded` | What the records do not give for this model; empty when they leave nothing out. |
+| `build_stats.not_recorded` | What the build records do not give, step by step; empty when nothing is noted. |
 | `build_stats.as_the_arm_gave_it` | Only for an older arm that gave one sum for none or several models: that sum and the names, as given. |
 | `flags` | The switches given on the command line, each by its name with the value it was given; empty when none. What a switch does is the arm's to say (retrieval_flags). |
 | `graph` | For an arm that reads the graph database: which database, its last build record, and the graph as counted when this manifest was written. Empty for an arm that reads none. |
 | `graph.database` | The Neo4j database the arm read. |
 | `graph.graph_version` | The version the graph's last build record names. The build record is output/graph_build/<database>/build_manifest.json; these five are empty when the folder that ran had none. Steps that changed the graph after that build are in the arm's index (build_cost). |
 | `graph.graph_census_sha256` | The census hash the last build record gives, of the graph as that build left it. |
-| `graph.removed_tags_sha256` | The hash of the tags the build record says were removed. |
+| `graph.removed_tags_sha256` | The hash of the tags the build record says were removed; empty when the build record gives none. |
 | `graph.build_timestamp` | When the last build record was written (UTC). |
 | `graph.source_database` | The database the last build copied from. |
 | `graph.census` | The graph as counted in it when this manifest was written. It counts and reads no value. |
@@ -241,7 +246,7 @@ What the run was: the arm, its index, the code, the machine, the inputs, and eve
 | `legs.code_state` | How that code differed from the commit. Its fields: see "How the code differed from its commit" below. |
 | `legs.flags` | The switches given on the command line for this start, each by its name with the value it was given; empty when none. What a switch does is the arm's to say (retrieval_flags). |
 | `legs.lane` | How every model call of the start was made. Its fields: see "How model calls were made" below. |
-| `legs.correction` | Only where a stored number was corrected after the run: the rule, the value as recorded and the corrected value. The folder's corrections.json tells the whole of it, and the files as recorded stand beside the corrected ones. |
+| `legs.correction` | Only where a stored number was corrected after the run: the rule, the value as recorded and the corrected value, the seconds taken out (taken_out_s), and in the sleep correction each slept try with its number within the call (from 1), its start, its seconds and its timeout in seconds. The folder's corrections.json tells the whole of it, and the files as recorded stand beside the corrected ones. |
 | `legs.index` | What the arm's index is. Its fields: see "The arm's index" below. |
 | `workers` | How many questions were worked on at once in the last start. |
 | `lane` | How every model call was made. Its fields: see "How model calls were made" below. |
@@ -325,14 +330,15 @@ Only in a folder whose stored numbers were corrected after the run: what was cha
 | `corrections.what_happened` | What was wrong in the stored numbers. |
 | `corrections.rule` | The rule that decided which numbers were corrected, and how. |
 | `corrections.not_changed_and_worth_knowing` | What the correction left as recorded and a reader should know. |
-| `corrections.slept_tries` | Only in the sleep correction: the tries the rule found, each with what was recorded for it. |
-| `corrections.changes` | Every changed value: where it is, the value before and the corrected value. |
+| `corrections.slept_tries` | Only in the sleep correction: the tries the rule found, each with its question, its row (the line of arm_outputs.jsonl, counted from 0), its try (its number within the call, from 1), its start (UTC), its recorded seconds, its timeout in seconds, the seconds of low power the machine logged inside it, whether a whole reply had come back, and that reply's tokens. |
+| `corrections.changes` | Every changed value: where it is, the value before and the corrected value, and what was taken out (taken_out: seconds in the sleep correction; in the clean-up correction the embedder's seconds and the seconds of refused first calls). The value before is empty where the field was not there before the correction. A copied value keeps its empty parts; its own field's words say why they are empty. |
 | `corrections.checks` | Only in the clean-up correction: what was checked against the call records and the graph, whether it held, and how many places were looked at. |
-| `corrections.judge_calls_with_logged_low_power_time_inside_them` | Only in the sleep correction: judge calls the machine's own sleep record touches; not changed. |
-| `corrections.low_power_intervals_the_machine_logged` | Only in the sleep correction: the machine's own record of when it slept. |
+| `corrections.judge_calls_with_logged_low_power_time_inside_them` | Only in the sleep correction: judge calls the machine's own sleep record touches, not changed; each try as [its number from 1, its outcome, its seconds]. |
+| `corrections.low_power_intervals_the_machine_logged` | Only in the sleep correction: the machine's own record of when it slept: start and end (UTC), seconds, and what the machine said. |
 | `corrections.files` | The sha256 of each corrected file, before and after the correction, and where the file from before is kept. The sleep correction's are of the bytes on the disk that ran it; the clean-up correction's are of the files with the line ends git holds (LF), as line_ends says. |
 | `corrections.evidence` | The file that holds the machine's own record. |
 | `corrections.script` | The script that made the correction. |
+| `corrections.code` | Only in the clean-up correction: the code the script ran on, which it imports its harness and arms from: the commit, whether anything differed from it, and what. |
 
 ## Groups of fields that stand in several places
 
@@ -373,7 +379,7 @@ Only in a folder whose stored numbers were corrected after the run: what was cha
 | `lock_wait_s` | Seconds the request waited for the embedder to be free. |
 | `encode_s` | Seconds the embedder worked on the request. |
 | `exe` | The Claude program that made the call. |
-| `flags` | The arguments the program was started with, without the system text and the schema. |
+| `flags` | The arguments the program was started with, without the system text and the schema. The empty argument after --tools is the empty tool list: the call has no tool. |
 | `system` | The system text sent with the call; empty when the caller gave none. |
 | `schema` | The JSON schema the reply had to follow, when the caller gave one. |
 | `prompt` | The text sent as the user's message, exactly as sent. |
@@ -385,7 +391,7 @@ Only in a folder whose stored numbers were corrected after the run: what was cha
 | `env_set` | The environment variables the harness set for this call, by name: the switches that shape what the program sends. |
 | `env_unset` | The switches the harness took away for this call, so that a value left in the shell did not reach it. |
 | `applied` | What the caller asked for and the call carried, one entry per setting. |
-| `not_applied` | What the caller asked for and the call could not carry, each with the reason. |
+| `not_applied` | What the caller asked for and the call could not carry, each with the reason; empty when the call carried all of it. |
 | `payload_dropped` | The names of the settings in not_applied. |
 | `attempts` | Every try of the call, in order. |
 | `attempts.n` | The try's number within the call, from 1. |
@@ -393,20 +399,20 @@ Only in a folder whose stored numbers were corrected after the run: what was cha
 | `attempts.seconds` | How long the try took. |
 | `attempts.outcome` | ok (it answered), exit (the program ended with an error), bad_envelope (its reply could not be read), or timeout (cut at timeout_s). |
 | `attempts.returncode` | The program's exit code; empty for a timeout. |
-| `attempts.error` | The error of a try that did not answer. |
-| `attempts.stdout` | What the program printed, kept for a try that did not answer. |
-| `attempts.stderr` | What the program printed as errors, kept for a try that did not answer. |
+| `attempts.error` | The error of a try that did not answer; empty for the try that answered. |
+| `attempts.stdout` | What the program printed, kept for a try that did not answer; empty for the try that answered, whose reply is in text and envelope. |
+| `attempts.stderr` | What the program printed as errors, kept for a try that did not answer; empty for the try that answered, and empty when the program printed nothing. |
 | `attempts.backoff_s` | The pause after a try that did not answer, before the next one. |
 | `attempts.machine_asleep` | Only where a correction marked the try: the machine slept under it. See corrections.json. |
 | `ok` | Whether the call ended with an answer. |
-| `text` | The reply's text. For an answer call it is the JSON that holds the answer. |
-| `usage` | The tokens of the try that answered. |
+| `text` | The reply's text. For an answer call it is the JSON that holds the answer. Empty for a call that gave up: no try answered. |
+| `usage` | The tokens of the try that answered; empty for a call that gave up. |
 | `usage.prompt_tokens` | Tokens sent: fresh input, plus what was written to the prompt cache, plus what was read from it. |
 | `usage.completion_tokens` | Tokens the model wrote. |
 | `usage.cached_input_tokens` | The part of prompt_tokens read from the prompt cache. |
-| `envelope` | The Claude program's whole reply as it printed it: its own times (duration_ms for the whole program run, duration_api_ms for the time spent with the model, ttft_ms until the first token), its own token counts, the models it used, its session id, how many turns it took. |
+| `envelope` | The Claude program's whole reply as it printed it, each part as the program gives it: its own times in milliseconds (duration_ms for the whole program run, duration_api_ms for the time spent with the model, ttft_ms until the first token, ttft_stream_ms and time_to_request_ms), its own token counts, the models it used with their context window in tokens (contextWindow), its own price in US dollars (total_cost_usd, costUSD; no number of this harness uses it), its counts of web requests (0: the call has no tool), its session id, how many turns it took, and its error fields, which are empty when the call had no error (api_error_status, permission_denials). Empty for a call that gave up: no reply was read. |
 | `stream` | The raw stream of a reply joined from parts; empty otherwise. |
-| `stderr` | What the program printed as errors in the try that answered. |
+| `stderr` | What the program printed as errors in the try that answered; empty when it printed nothing, and for a call that gave up. |
 | `error` | The last error of a call that gave up; empty otherwise. |
 | `role` | answer: the call that wrote the answer. Not there on the arm's own calls. |
 
@@ -436,7 +442,7 @@ A record with `kind` chat is a call to a language model; one with `kind` embed i
 | `status` | The code paths that differed from the commit, as git lists them. Empty when the code was exactly the commit. |
 | `diff_sha256` | The sha256 of the difference between the code and the commit. When nothing differs it is the sha256 of nothing. |
 | `diff_file` | The file in this folder that holds that difference; there only when there is one. |
-| `untracked_sha256` | The sha256 of each code file git did not know. |
+| `untracked_sha256` | The sha256 of each code file git did not know; empty when git knew every code file. |
 
 ### How model calls were made
 
@@ -445,12 +451,12 @@ A record with `kind` chat is a call to a language model; one with `kind` embed i
 | `exe` | The Claude program used for every model call. |
 | `cli_version` | Its version. |
 | `cwd` | The folder it is started in. |
-| `fixed_flags` | The arguments every call is started with. |
+| `fixed_flags` | The arguments every call is started with. The empty argument after --tools is the empty tool list: no call has a tool. |
 | `system_prompt` | How the system text is passed. |
 | `stdin` | How the prompt is handed over. |
 | `env_set` | The environment variables set on every call, by name. |
 | `login` | How the program logs in. |
-| `config_settings` | The settings file the harness puts in the program's own config folder. |
+| `config_settings` | The settings file the harness puts in the program's own config folder; cleanupPeriodDays is how many days the program keeps its own transcripts of the calls. |
 | `env_per_call` | The switches a call sets only when it asks for them, and that are taken away when it does not. |
 | `per_call` | Where to find what each single call carried. |
 | `cli_adds` | What the program puts into every call by itself. It is in no row. |
@@ -487,7 +493,7 @@ A record with `kind` chat is a call to a language model; one with `kind` embed i
 | `max_consecutive_failed_questions` | After this many questions in a row with mostly failed cells the scoring stops. |
 | `ragas` | The version of RAGAS, the library that writes the judge's prompts and computes the scores. |
 | `embed_model` | The embedding model the scores use. |
-| `ragas_run_config` | RAGAS's own run settings as handed to it. |
+| `ragas_run_config` | RAGAS's own run settings as handed to it, in RAGAS's own units: timeout and max_wait in seconds, max_retries and max_workers as counts. |
 | `ragas_do_not_track` | Whether RAGAS's usage reporting to its makers was switched off. |
 | `lane` | How every judge call was made. Its fields: see "How model calls were made" below. |
 | `calls_file` | The file that keeps every judge call and embedder request. |
@@ -537,7 +543,7 @@ A record with `kind` chat is a call to a language model; one with `kind` embed i
 | `cache_file` | The stored file the vectors were read from, as a path on the machine that ran it. |
 | `cache_file_bytes` | Its size. |
 | `cache_file_sha256` | Its sha256, which identifies the vectors. |
-| `cache_cost_note` | What making those vectors cost and on which machine, as noted beside the stored file when it was made. |
+| `cache_cost_note` | What making those vectors cost and on which machine, as noted beside the stored file when it was made: calls (requests to the embedder), batch (texts in a request), tokens, build_time_s and how it was read (build_time_note), max_seq_length (the most tokens a text may have) and how many units were longer, the device, the machine and the software. |
 | `embedder_warm_s` | Seconds the embedder took for one empty request before the first question, so that no question pays for its loading. |
 | `question_embedding` | When and how a question is embedded. |
 
@@ -545,19 +551,568 @@ A record with `kind` chat is a call to a language model; one with `kind` embed i
 
 None: every file and every field of this folder is described above.
 
+## The fields as they stand in this folder
+
+Counted from the files themselves when this was written. A record is a line of a .jsonl file, or the whole of a .json file. Empty is null, an empty text, an empty list or an empty object; the field's words say when and why it is empty.
+
+### `arm_outputs.jsonl` (100 records)
+
+| Field | Types | Records that hold it | Of those, empty |
+|---|---|---|---|
+| `answer` | string | 100 | 0 |
+| `answered_at` | string | 100 | 0 |
+| `calls` | array | 100 | 0 |
+| `calls.applied` | object | 100 | 0 |
+| `calls.attempts` | array | 100 | 0 |
+| `calls.attempts.error` | null | 100 | 100 |
+| `calls.attempts.n` | integer | 100 | 0 |
+| `calls.attempts.outcome` | string | 100 | 0 |
+| `calls.attempts.returncode` | integer | 100 | 0 |
+| `calls.attempts.seconds` | number | 100 | 0 |
+| `calls.attempts.started_at` | string | 100 | 0 |
+| `calls.attempts.stderr` | null | 100 | 100 |
+| `calls.attempts.stdout` | null | 100 | 100 |
+| `calls.batch` | integer | 100 | 0 |
+| `calls.cwd` | string | 100 | 0 |
+| `calls.device` | string | 100 | 0 |
+| `calls.dtype` | string | 100 | 0 |
+| `calls.effort` | null | 100 | 100 |
+| `calls.encode_s` | number | 100 | 0 |
+| `calls.env_set` | object | 100 | 0 |
+| `calls.env_unset` | array | 100 | 0 |
+| `calls.envelope` | object | 100 | 0 |
+| `calls.error` | null | 100 | 100 |
+| `calls.exe` | string | 100 | 0 |
+| `calls.finished_at` | string | 100 | 0 |
+| `calls.flags` | array | 100 | 0 |
+| `calls.input_type` | string | 100 | 0 |
+| `calls.join_parts` | boolean | 100 | 0 |
+| `calls.kind` | string | 100 | 0 |
+| `calls.lock_wait_s` | number | 100 | 0 |
+| `calls.max_tries` | integer | 100 | 0 |
+| `calls.model` | string | 100 | 0 |
+| `calls.n_texts` | integer | 100 | 0 |
+| `calls.not_applied` | object | 100 | 0 |
+| `calls.ok` | boolean | 100 | 0 |
+| `calls.payload_dropped` | array | 100 | 0 |
+| `calls.prefix` | string | 100 | 0 |
+| `calls.prompt` | string | 100 | 0 |
+| `calls.revision` | string | 100 | 0 |
+| `calls.role` | string | 100 | 0 |
+| `calls.schema` | object | 100 | 0 |
+| `calls.seq` | integer | 100 | 0 |
+| `calls.started_at` | string | 100 | 0 |
+| `calls.stderr` | string | 100 | 100 |
+| `calls.stream` | null | 100 | 100 |
+| `calls.system` | string | 100 | 0 |
+| `calls.text` | string | 100 | 0 |
+| `calls.texts` | array | 100 | 0 |
+| `calls.timeout_s` | number | 100 | 0 |
+| `calls.tokens` | array | 100 | 0 |
+| `calls.tokens_in` | integer | 100 | 0 |
+| `calls.usage` | object | 100 | 0 |
+| `calls.usage.cached_input_tokens` | integer | 100 | 0 |
+| `calls.usage.completion_tokens` | integer | 100 | 0 |
+| `calls.usage.prompt_tokens` | integer | 100 | 0 |
+| `context_ids` | array | 100 | 0 |
+| `contexts` | array | 100 | 0 |
+| `generator` | object | 100 | 0 |
+| `generator.attempts` | integer | 100 | 0 |
+| `generator.cached_input_tokens` | integer | 100 | 0 |
+| `generator.calls` | integer | 100 | 0 |
+| `generator.reasoning_tokens` | integer | 100 | 0 |
+| `generator.request_s` | number | 100 | 0 |
+| `generator.retry_s` | number | 100 | 0 |
+| `generator.time_s` | number | 100 | 0 |
+| `generator.tokens_in` | integer | 100 | 0 |
+| `generator.tokens_out` | integer | 100 | 0 |
+| `generator.wait_s` | number | 100 | 0 |
+| `id` | string | 100 | 0 |
+| `leg` | integer | 100 | 0 |
+| `meta` | object | 100 | 0 |
+| `meta.char_budget` | object | 100 | 0 |
+| `meta.char_budget.boundary` | object | 100 | 0 |
+| `meta.char_budget.boundary.chars_full` | integer | 100 | 0 |
+| `meta.char_budget.boundary.chars_kept` | integer | 100 | 0 |
+| `meta.char_budget.boundary.id` | string | 100 | 0 |
+| `meta.char_budget.budget` | integer | 100 | 0 |
+| `meta.char_budget.chars` | integer | 100 | 0 |
+| `meta.char_budget.exhausted` | boolean | 100 | 0 |
+| `meta.char_budget.kept` | integer | 100 | 0 |
+| `meta.ranking` | object | 100 | 0 |
+| `meta.ranking.n_ranked` | integer | 100 | 0 |
+| `meta.ranking.n_units` | integer | 100 | 0 |
+| `meta.ranking.next_score` | number | 100 | 0 |
+| `meta.ranking.scores` | array | 100 | 0 |
+| `question` | string | 100 | 0 |
+| `retrieval` | array | 100 | 0 |
+| `retrieval.attempts` | integer | 100 | 0 |
+| `retrieval.cached_input_tokens` | integer | 100 | 0 |
+| `retrieval.calls` | integer | 100 | 0 |
+| `retrieval.kind` | string | 100 | 0 |
+| `retrieval.model` | string | 100 | 0 |
+| `retrieval.reasoning_tokens` | integer | 100 | 0 |
+| `retrieval.request_s` | number | 100 | 0 |
+| `retrieval.retry_s` | number | 100 | 0 |
+| `retrieval.time_s` | number | 100 | 0 |
+| `retrieval.tokens_in` | integer | 100 | 0 |
+| `retrieval.tokens_out` | integer | 100 | 0 |
+| `retrieval.wait_s` | number | 100 | 0 |
+| `search_time_s` | number | 100 | 0 |
+| `timing` | object | 100 | 0 |
+| `timing.finished_at` | string | 100 | 0 |
+| `timing.started_at` | string | 100 | 0 |
+| `timing.thread` | string | 100 | 0 |
+| `timing.wall_s` | number | 100 | 0 |
+
+### `corrections.json` (1 records)
+
+| Field | Types | Records that hold it | Of those, empty |
+|---|---|---|---|
+| `corrections` | array | 1 | 0 |
+| `corrections.changes` | array | 1 | 0 |
+| `corrections.checks` | array | 1 | 0 |
+| `corrections.code` | object | 1 | 0 |
+| `corrections.files` | object | 1 | 0 |
+| `corrections.made_at` | string | 1 | 0 |
+| `corrections.not_changed_and_worth_knowing` | array | 1 | 0 |
+| `corrections.ordered_by` | string | 1 | 0 |
+| `corrections.rule` | object | 1 | 0 |
+| `corrections.script` | string | 1 | 0 |
+| `corrections.what_happened` | string | 1 | 0 |
+
+### `eval_calls.jsonl` (800 records)
+
+| Field | Types | Records that hold it | Of those, empty |
+|---|---|---|---|
+| `applied` | object | 600 | 0 |
+| `arm` | string | 800 | 0 |
+| `attempts` | array | 600 | 0 |
+| `attempts.error` | null | 600 | 600 |
+| `attempts.n` | integer | 600 | 0 |
+| `attempts.outcome` | string | 600 | 0 |
+| `attempts.returncode` | integer | 600 | 0 |
+| `attempts.seconds` | number | 600 | 0 |
+| `attempts.started_at` | string | 600 | 0 |
+| `attempts.stderr` | null | 600 | 600 |
+| `attempts.stdout` | null | 600 | 600 |
+| `batch` | integer | 200 | 0 |
+| `cwd` | string | 600 | 0 |
+| `device` | string | 200 | 0 |
+| `dtype` | string | 200 | 0 |
+| `effort` | null | 600 | 600 |
+| `encode_s` | number | 200 | 0 |
+| `env_set` | object | 600 | 0 |
+| `env_unset` | array | 600 | 0 |
+| `envelope` | object | 600 | 0 |
+| `error` | null | 600 | 600 |
+| `eval_leg` | string | 800 | 0 |
+| `exe` | string | 600 | 0 |
+| `finished_at` | string | 800 | 0 |
+| `flags` | array | 600 | 0 |
+| `input_type` | string | 200 | 0 |
+| `join_parts` | boolean | 600 | 0 |
+| `kind` | string | 800 | 0 |
+| `lock_wait_s` | number | 200 | 0 |
+| `max_tries` | integer | 600 | 0 |
+| `model` | string | 800 | 0 |
+| `n_texts` | integer | 200 | 0 |
+| `not_applied` | object | 600 | 600 |
+| `ok` | boolean | 600 | 0 |
+| `payload_dropped` | array | 600 | 600 |
+| `phase` | string | 800 | 0 |
+| `prefix` | string | 200 | 0 |
+| `prompt` | string | 600 | 0 |
+| `question_id` | null, string | 800 | 200 |
+| `revision` | string | 200 | 0 |
+| `schema` | null | 600 | 600 |
+| `score` | null, string | 800 | 200 |
+| `seq` | integer | 800 | 0 |
+| `started_at` | string | 800 | 0 |
+| `stderr` | string | 600 | 600 |
+| `stream` | null | 600 | 600 |
+| `system` | string | 600 | 600 |
+| `text` | string | 600 | 0 |
+| `texts` | array | 200 | 0 |
+| `timeout_s` | number | 600 | 0 |
+| `tokens` | array | 200 | 0 |
+| `tokens_in` | integer | 200 | 0 |
+| `type` | string | 600 | 0 |
+| `usage` | object | 600 | 0 |
+| `usage.cached_input_tokens` | integer | 600 | 0 |
+| `usage.completion_tokens` | integer | 600 | 0 |
+| `usage.prompt_tokens` | integer | 600 | 0 |
+
+### `eval_failures.jsonl` (0 records)
+
+The file holds no record.
+
+### `eval_manifest.json` (1 records)
+
+| Field | Types | Records that hold it | Of those, empty |
+|---|---|---|---|
+| `arm` | string | 1 | 0 |
+| `judge_backend` | string | 1 | 0 |
+| `judge_effort` | null | 1 | 1 |
+| `judge_elapsed_s` | number | 1 | 0 |
+| `judge_legs` | array | 1 | 0 |
+| `judge_legs.elapsed_s` | number | 1 | 0 |
+| `judge_legs.judge_backend` | string | 1 | 0 |
+| `judge_legs.judge_model` | string | 1 | 0 |
+| `judge_legs.settings` | object | 1 | 0 |
+| `judge_legs.settings.argv` | array | 1 | 0 |
+| `judge_legs.settings.calls_file` | string | 1 | 0 |
+| `judge_legs.settings.cells` | object | 1 | 0 |
+| `judge_legs.settings.embed_model` | string | 1 | 0 |
+| `judge_legs.settings.embedding` | object | 1 | 0 |
+| `judge_legs.settings.embedding.encode_s` | number | 1 | 0 |
+| `judge_legs.settings.embedding.lock_wait_s` | number | 1 | 0 |
+| `judge_legs.settings.embedding.requests` | integer | 1 | 0 |
+| `judge_legs.settings.embedding.texts` | integer | 1 | 0 |
+| `judge_legs.settings.embedding.tokens_in` | integer | 1 | 0 |
+| `judge_legs.settings.finished_at` | string | 1 | 0 |
+| `judge_legs.settings.interrupted` | null | 1 | 1 |
+| `judge_legs.settings.judge_backend` | string | 1 | 0 |
+| `judge_legs.settings.judge_call` | object | 1 | 0 |
+| `judge_legs.settings.judge_call.applied` | object | 1 | 0 |
+| `judge_legs.settings.judge_call.env_set` | object | 1 | 0 |
+| `judge_legs.settings.judge_call.env_unset` | array | 1 | 0 |
+| `judge_legs.settings.judge_call.model` | string | 1 | 0 |
+| `judge_legs.settings.judge_call.not_applied` | object | 1 | 1 |
+| `judge_legs.settings.judge_call.payload` | object | 1 | 0 |
+| `judge_legs.settings.judge_call.system` | string | 1 | 1 |
+| `judge_legs.settings.judge_empty_reply_tries` | integer | 1 | 0 |
+| `judge_legs.settings.judge_inflight` | integer | 1 | 0 |
+| `judge_legs.settings.judge_max_tries` | integer | 1 | 0 |
+| `judge_legs.settings.judge_model` | string | 1 | 0 |
+| `judge_legs.settings.judge_timeout_s` | number | 1 | 0 |
+| `judge_legs.settings.lane` | object | 1 | 0 |
+| `judge_legs.settings.lane.cli_adds` | object | 1 | 0 |
+| `judge_legs.settings.lane.cli_adds.in_front_of_the_prompt` | string | 1 | 0 |
+| `judge_legs.settings.lane.cli_adds.seen_with` | string | 1 | 0 |
+| `judge_legs.settings.lane.cli_adds.system_prompt_first` | string | 1 | 0 |
+| `judge_legs.settings.lane.cli_version` | string | 1 | 0 |
+| `judge_legs.settings.lane.config_settings` | object | 1 | 0 |
+| `judge_legs.settings.lane.cwd` | string | 1 | 0 |
+| `judge_legs.settings.lane.env_per_call` | array | 1 | 0 |
+| `judge_legs.settings.lane.env_set` | object | 1 | 0 |
+| `judge_legs.settings.lane.exe` | string | 1 | 0 |
+| `judge_legs.settings.lane.fixed_flags` | array | 1 | 0 |
+| `judge_legs.settings.lane.login` | string | 1 | 0 |
+| `judge_legs.settings.lane.max_tries_default` | integer | 1 | 0 |
+| `judge_legs.settings.lane.per_call` | string | 1 | 0 |
+| `judge_legs.settings.lane.stdin` | string | 1 | 0 |
+| `judge_legs.settings.lane.system_prompt` | string | 1 | 0 |
+| `judge_legs.settings.max_consecutive_failed_questions` | integer | 1 | 0 |
+| `judge_legs.settings.max_judge_context_chars` | integer | 1 | 0 |
+| `judge_legs.settings.pid` | integer | 1 | 0 |
+| `judge_legs.settings.python_executable` | string | 1 | 0 |
+| `judge_legs.settings.ragas` | string | 1 | 0 |
+| `judge_legs.settings.ragas_do_not_track` | string | 1 | 0 |
+| `judge_legs.settings.ragas_run_config` | object | 1 | 0 |
+| `judge_legs.settings.retrieval_only` | boolean | 1 | 0 |
+| `judge_legs.settings.scores` | array | 1 | 0 |
+| `judge_legs.settings.started_at` | string | 1 | 0 |
+| `judge_legs.settings.wall_s` | number | 1 | 0 |
+| `judge_legs.settings.workers` | integer | 1 | 0 |
+| `judge_legs.timestamp` | string | 1 | 0 |
+| `judge_legs.usage` | object | 1 | 0 |
+| `judge_legs.usage.attempts` | integer | 1 | 0 |
+| `judge_legs.usage.cached_input_tokens` | integer | 1 | 0 |
+| `judge_legs.usage.calls` | integer | 1 | 0 |
+| `judge_legs.usage.reasoning_tokens` | integer | 1 | 0 |
+| `judge_legs.usage.request_s` | number | 1 | 0 |
+| `judge_legs.usage.retry_s` | number | 1 | 0 |
+| `judge_legs.usage.time_s` | number | 1 | 0 |
+| `judge_legs.usage.tokens_in` | integer | 1 | 0 |
+| `judge_legs.usage.tokens_out` | integer | 1 | 0 |
+| `judge_legs.usage.wait_s` | number | 1 | 0 |
+| `judge_model` | string | 1 | 0 |
+| `judge_settings` | object | 1 | 0 |
+| `judge_settings.argv` | array | 1 | 0 |
+| `judge_settings.calls_file` | string | 1 | 0 |
+| `judge_settings.cells` | object | 1 | 0 |
+| `judge_settings.embed_model` | string | 1 | 0 |
+| `judge_settings.embedding` | object | 1 | 0 |
+| `judge_settings.embedding.encode_s` | number | 1 | 0 |
+| `judge_settings.embedding.lock_wait_s` | number | 1 | 0 |
+| `judge_settings.embedding.requests` | integer | 1 | 0 |
+| `judge_settings.embedding.texts` | integer | 1 | 0 |
+| `judge_settings.embedding.tokens_in` | integer | 1 | 0 |
+| `judge_settings.finished_at` | string | 1 | 0 |
+| `judge_settings.interrupted` | null | 1 | 1 |
+| `judge_settings.judge_backend` | string | 1 | 0 |
+| `judge_settings.judge_call` | object | 1 | 0 |
+| `judge_settings.judge_call.applied` | object | 1 | 0 |
+| `judge_settings.judge_call.env_set` | object | 1 | 0 |
+| `judge_settings.judge_call.env_unset` | array | 1 | 0 |
+| `judge_settings.judge_call.model` | string | 1 | 0 |
+| `judge_settings.judge_call.not_applied` | object | 1 | 1 |
+| `judge_settings.judge_call.payload` | object | 1 | 0 |
+| `judge_settings.judge_call.system` | string | 1 | 1 |
+| `judge_settings.judge_empty_reply_tries` | integer | 1 | 0 |
+| `judge_settings.judge_inflight` | integer | 1 | 0 |
+| `judge_settings.judge_max_tries` | integer | 1 | 0 |
+| `judge_settings.judge_model` | string | 1 | 0 |
+| `judge_settings.judge_timeout_s` | number | 1 | 0 |
+| `judge_settings.lane` | object | 1 | 0 |
+| `judge_settings.lane.cli_adds` | object | 1 | 0 |
+| `judge_settings.lane.cli_adds.in_front_of_the_prompt` | string | 1 | 0 |
+| `judge_settings.lane.cli_adds.seen_with` | string | 1 | 0 |
+| `judge_settings.lane.cli_adds.system_prompt_first` | string | 1 | 0 |
+| `judge_settings.lane.cli_version` | string | 1 | 0 |
+| `judge_settings.lane.config_settings` | object | 1 | 0 |
+| `judge_settings.lane.cwd` | string | 1 | 0 |
+| `judge_settings.lane.env_per_call` | array | 1 | 0 |
+| `judge_settings.lane.env_set` | object | 1 | 0 |
+| `judge_settings.lane.exe` | string | 1 | 0 |
+| `judge_settings.lane.fixed_flags` | array | 1 | 0 |
+| `judge_settings.lane.login` | string | 1 | 0 |
+| `judge_settings.lane.max_tries_default` | integer | 1 | 0 |
+| `judge_settings.lane.per_call` | string | 1 | 0 |
+| `judge_settings.lane.stdin` | string | 1 | 0 |
+| `judge_settings.lane.system_prompt` | string | 1 | 0 |
+| `judge_settings.max_consecutive_failed_questions` | integer | 1 | 0 |
+| `judge_settings.max_judge_context_chars` | integer | 1 | 0 |
+| `judge_settings.pid` | integer | 1 | 0 |
+| `judge_settings.python_executable` | string | 1 | 0 |
+| `judge_settings.ragas` | string | 1 | 0 |
+| `judge_settings.ragas_do_not_track` | string | 1 | 0 |
+| `judge_settings.ragas_run_config` | object | 1 | 0 |
+| `judge_settings.retrieval_only` | boolean | 1 | 0 |
+| `judge_settings.scores` | array | 1 | 0 |
+| `judge_settings.started_at` | string | 1 | 0 |
+| `judge_settings.wall_s` | number | 1 | 0 |
+| `judge_settings.workers` | integer | 1 | 0 |
+| `judge_usage` | object | 1 | 0 |
+| `judge_usage.attempts` | integer | 1 | 0 |
+| `judge_usage.cached_input_tokens` | integer | 1 | 0 |
+| `judge_usage.calls` | integer | 1 | 0 |
+| `judge_usage.reasoning_tokens` | integer | 1 | 0 |
+| `judge_usage.request_s` | number | 1 | 0 |
+| `judge_usage.retry_s` | number | 1 | 0 |
+| `judge_usage.time_s` | number | 1 | 0 |
+| `judge_usage.tokens_in` | integer | 1 | 0 |
+| `judge_usage.tokens_out` | integer | 1 | 0 |
+| `judge_usage.wait_s` | number | 1 | 0 |
+| `scorer` | string | 1 | 0 |
+| `source_run` | string | 1 | 0 |
+| `timestamp` | string | 1 | 0 |
+
+### `eval_results.jsonl` (1400 records)
+
+| Field | Types | Records that hold it | Of those, empty |
+|---|---|---|---|
+| `arm` | string | 1400 | 0 |
+| `components` | object | 1400 | 0 |
+| `components.usage` | object | 1400 | 0 |
+| `components.usage.cached_input_tokens` | integer | 1400 | 0 |
+| `components.usage.chat_attempts` | integer | 1400 | 0 |
+| `components.usage.chat_calls` | integer | 1400 | 0 |
+| `components.usage.chat_s` | number | 1400 | 0 |
+| `components.usage.embed_calls` | integer | 1400 | 0 |
+| `components.usage.embed_s` | number | 1400 | 0 |
+| `components.usage.embed_texts` | integer | 1400 | 0 |
+| `components.usage.embed_tokens` | integer | 1400 | 0 |
+| `components.usage.eval_leg` | string | 1400 | 0 |
+| `components.usage.finished_at` | string | 1400 | 0 |
+| `components.usage.started_at` | string | 1400 | 0 |
+| `components.usage.thread` | string | 1400 | 0 |
+| `components.usage.tokens_in` | integer | 1400 | 0 |
+| `components.usage.tokens_out` | integer | 1400 | 0 |
+| `components.usage.wall_s` | number | 1400 | 0 |
+| `human_label` | null | 1400 | 1400 |
+| `metric` | string | 1400 | 0 |
+| `question_id` | string | 1400 | 0 |
+| `status` | string | 1400 | 0 |
+| `type` | string | 1400 | 0 |
+| `value` | number | 1400 | 0 |
+
+### `failures.jsonl` (0 records)
+
+The file holds no record.
+
+### `run_manifest.json` (1 records)
+
+| Field | Types | Records that hold it | Of those, empty |
+|---|---|---|---|
+| `arm` | string | 1 | 0 |
+| `build_stats` | object | 1 | 0 |
+| `build_stats.build_time_s` | number | 1 | 0 |
+| `build_stats.models` | array | 1 | 0 |
+| `build_stats.models.calls` | integer | 1 | 0 |
+| `build_stats.models.device` | string | 1 | 0 |
+| `build_stats.models.kind` | string | 1 | 0 |
+| `build_stats.models.model` | string | 1 | 0 |
+| `build_stats.models.not_recorded` | string | 1 | 0 |
+| `build_stats.models.seconds_elapsed` | number | 1 | 0 |
+| `build_stats.models.seconds_summed_per_call` | null | 1 | 1 |
+| `build_stats.models.tokens_in` | integer | 1 | 0 |
+| `build_stats.models.tokens_out` | integer | 1 | 0 |
+| `build_stats.models.what` | string | 1 | 0 |
+| `build_stats.not_recorded` | array | 1 | 1 |
+| `char_budget` | integer | 1 | 0 |
+| `code_state` | object | 1 | 0 |
+| `code_state.diff_sha256` | string | 1 | 0 |
+| `code_state.status` | array | 1 | 1 |
+| `code_state.untracked_sha256` | object | 1 | 1 |
+| `code_version` | object | 1 | 0 |
+| `code_version.branch` | string | 1 | 0 |
+| `code_version.commit` | string | 1 | 0 |
+| `code_version.dirty` | boolean | 1 | 0 |
+| `env` | object | 1 | 0 |
+| `environment` | object | 1 | 0 |
+| `environment.cpu` | string | 1 | 0 |
+| `environment.cpu_count` | integer | 1 | 0 |
+| `environment.embedder` | object | 1 | 0 |
+| `environment.embedder.device` | string | 1 | 0 |
+| `environment.embedder.dtype` | string | 1 | 0 |
+| `environment.embedder.model` | string | 1 | 0 |
+| `environment.embedder.revision` | string | 1 | 0 |
+| `environment.host` | string | 1 | 0 |
+| `environment.packages` | object | 1 | 0 |
+| `environment.packages_all` | array | 1 | 0 |
+| `environment.platform` | string | 1 | 0 |
+| `environment.python` | string | 1 | 0 |
+| `environment.python_executable` | string | 1 | 0 |
+| `environment.ram_bytes` | integer | 1 | 0 |
+| `flags` | null | 1 | 1 |
+| `generator` | object | 1 | 0 |
+| `generator.applied` | object | 1 | 0 |
+| `generator.env_set` | object | 1 | 0 |
+| `generator.env_unset` | array | 1 | 0 |
+| `generator.model` | string | 1 | 0 |
+| `generator.not_applied` | object | 1 | 0 |
+| `generator.payload` | object | 1 | 0 |
+| `generator.schema` | object | 1 | 0 |
+| `generator.system` | string | 1 | 0 |
+| `generator.timeout_s` | number | 1 | 0 |
+| `generator.user_template` | string | 1 | 0 |
+| `generator_model` | string | 1 | 0 |
+| `graph` | null | 1 | 1 |
+| `index` | object | 1 | 0 |
+| `index.cache_cost_note` | object | 1 | 0 |
+| `index.cache_file` | string | 1 | 0 |
+| `index.cache_file_bytes` | integer | 1 | 0 |
+| `index.cache_file_sha256` | string | 1 | 0 |
+| `index.embedder_warm_s` | number | 1 | 0 |
+| `index.matrix_bytes` | integer | 1 | 0 |
+| `index.matrix_dtype` | string | 1 | 0 |
+| `index.matrix_shape` | array | 1 | 0 |
+| `index.question_embedding` | string | 1 | 0 |
+| `index.text_chars` | integer | 1 | 0 |
+| `index.unit_text` | string | 1 | 0 |
+| `index.units` | integer | 1 | 0 |
+| `index.units_sha256` | string | 1 | 0 |
+| `inputs` | object | 1 | 0 |
+| `inputs.corpus` | object | 1 | 0 |
+| `inputs.corpus.n_files` | integer | 1 | 0 |
+| `inputs.corpus.sha256` | string | 1 | 0 |
+| `inputs.ids_sha256` | string | 1 | 0 |
+| `inputs.questions_sha256` | string | 1 | 0 |
+| `interpreter_model` | null | 1 | 1 |
+| `lane` | object | 1 | 0 |
+| `lane.cli_adds` | object | 1 | 0 |
+| `lane.cli_adds.in_front_of_the_prompt` | string | 1 | 0 |
+| `lane.cli_adds.seen_with` | string | 1 | 0 |
+| `lane.cli_adds.system_prompt_first` | string | 1 | 0 |
+| `lane.cli_version` | string | 1 | 0 |
+| `lane.config_settings` | object | 1 | 0 |
+| `lane.cwd` | string | 1 | 0 |
+| `lane.env_per_call` | array | 1 | 0 |
+| `lane.env_set` | object | 1 | 0 |
+| `lane.exe` | string | 1 | 0 |
+| `lane.fixed_flags` | array | 1 | 0 |
+| `lane.login` | string | 1 | 0 |
+| `lane.max_tries_default` | integer | 1 | 0 |
+| `lane.per_call` | string | 1 | 0 |
+| `lane.stdin` | string | 1 | 0 |
+| `lane.system_prompt` | string | 1 | 0 |
+| `legs` | array | 1 | 0 |
+| `legs.aborted` | null | 1 | 1 |
+| `legs.argv` | array | 1 | 0 |
+| `legs.code_state` | object | 1 | 0 |
+| `legs.code_state.diff_sha256` | string | 1 | 0 |
+| `legs.code_state.status` | array | 1 | 1 |
+| `legs.code_state.untracked_sha256` | object | 1 | 1 |
+| `legs.code_version` | object | 1 | 0 |
+| `legs.code_version.branch` | string | 1 | 0 |
+| `legs.code_version.commit` | string | 1 | 0 |
+| `legs.code_version.dirty` | boolean | 1 | 0 |
+| `legs.embedder_load_s` | number | 1 | 0 |
+| `legs.evaluator` | string | 1 | 0 |
+| `legs.finished_at` | string | 1 | 0 |
+| `legs.flags` | null | 1 | 1 |
+| `legs.ids_file` | string | 1 | 0 |
+| `legs.index` | object | 1 | 0 |
+| `legs.index.cache_cost_note` | object | 1 | 0 |
+| `legs.index.cache_file` | string | 1 | 0 |
+| `legs.index.cache_file_bytes` | integer | 1 | 0 |
+| `legs.index.cache_file_sha256` | string | 1 | 0 |
+| `legs.index.embedder_warm_s` | number | 1 | 0 |
+| `legs.index.matrix_bytes` | integer | 1 | 0 |
+| `legs.index.matrix_dtype` | string | 1 | 0 |
+| `legs.index.matrix_shape` | array | 1 | 0 |
+| `legs.index.question_embedding` | string | 1 | 0 |
+| `legs.index.text_chars` | integer | 1 | 0 |
+| `legs.index.unit_text` | string | 1 | 0 |
+| `legs.index.units` | integer | 1 | 0 |
+| `legs.index.units_sha256` | string | 1 | 0 |
+| `legs.lane` | object | 1 | 0 |
+| `legs.lane.cli_adds` | object | 1 | 0 |
+| `legs.lane.cli_adds.in_front_of_the_prompt` | string | 1 | 0 |
+| `legs.lane.cli_adds.seen_with` | string | 1 | 0 |
+| `legs.lane.cli_adds.system_prompt_first` | string | 1 | 0 |
+| `legs.lane.cli_version` | string | 1 | 0 |
+| `legs.lane.config_settings` | object | 1 | 0 |
+| `legs.lane.cwd` | string | 1 | 0 |
+| `legs.lane.env_per_call` | array | 1 | 0 |
+| `legs.lane.env_set` | object | 1 | 0 |
+| `legs.lane.exe` | string | 1 | 0 |
+| `legs.lane.fixed_flags` | array | 1 | 0 |
+| `legs.lane.login` | string | 1 | 0 |
+| `legs.lane.max_tries_default` | integer | 1 | 0 |
+| `legs.lane.per_call` | string | 1 | 0 |
+| `legs.lane.stdin` | string | 1 | 0 |
+| `legs.lane.system_prompt` | string | 1 | 0 |
+| `legs.leg` | integer | 1 | 0 |
+| `legs.n_answered` | integer | 1 | 0 |
+| `legs.n_chosen` | integer | 1 | 0 |
+| `legs.n_todo` | integer | 1 | 0 |
+| `legs.n_unanswered_after` | integer | 1 | 0 |
+| `legs.peak_memory_bytes` | integer | 1 | 0 |
+| `legs.pid` | integer | 1 | 0 |
+| `legs.prepare_s` | number | 1 | 0 |
+| `legs.process_cpu_s` | number | 1 | 0 |
+| `legs.python_executable` | string | 1 | 0 |
+| `legs.retrieval_only` | boolean | 1 | 0 |
+| `legs.started_at` | string | 1 | 0 |
+| `legs.wall_s` | number | 1 | 0 |
+| `legs.workers` | integer | 1 | 0 |
+| `n_exhausted` | integer | 1 | 0 |
+| `n_failed` | integer | 1 | 0 |
+| `n_questions` | integer | 1 | 0 |
+| `n_ran` | integer | 1 | 0 |
+| `questions_file` | string | 1 | 0 |
+| `retrieval_flags` | object | 1 | 0 |
+| `retrieval_flags.HERB_BASELINE_METADATA` | boolean | 1 | 0 |
+| `timestamp` | string | 1 | 0 |
+| `top_k` | integer | 1 | 0 |
+| `workers` | integer | 1 | 0 |
+
 ---
-Written from `prod/harness/fields.py`, sha256 `5ce99d8cb28520b09e36d341d4c8060a0b7e20df616d950098ede6c7a57829b9`.
+Written from `prod/harness/fields.py`, sha256 `a6e488ec9f0cf39e93c1de76159f2c816df362e4ee3311a56ad250f78704aeb6`.
 
 The files as they stood when this was written, their line ends as git holds them (LF):
 
 - `arm_outputs.as_recorded.jsonl` sha256 `6460b7dc48dc7ba35af7d9c1db7a3a0579b959d1bafbce3becfb2d6d423f4506`
 - `arm_outputs.jsonl` sha256 `52a36ac7fd21e7e6043c1c00c938d25403f1092303b4429d5e760430bcc92050`
-- `correct_usage_by_model.py` sha256 `2e004d3b43788cc765bbe5b48a63de1a67daaf5df032789df9a417afa104b606`
-- `corrections.json` sha256 `3e8334f746083fd5e85a6e746f5d8da631603bc16b1f2f91ad700e78284a180f`
+- `correct_usage_by_model.py` sha256 `28d2357c693e407a2d4739241d1fddca55751553f0c9d4f42eedcf5a79a0d299`
+- `corrections.json` sha256 `24dd1c9170868236f56e581199c7d592cfdf4b23e582f1757c7f2d4157597cc4`
 - `eval_calls.jsonl` sha256 `4ec50f85bad7cde7b3c39c812ec031d4bf0ec8830428addffe9d6d31cd643370`
 - `eval_failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - `eval_manifest.json` sha256 `74b5e3841b986a72fa1d2757ab1be28329bef4990e907d4d4b5645ea1262335e`
 - `eval_results.jsonl` sha256 `d7e6f883e246a1868e3d1a9266d20516f47099529ce59053afc7caf7affc9370`
 - `failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - `run_manifest.as_recorded.json` sha256 `3bf70b5a70cffde5ff62a426940b39fdedd70cddbaf30efdd256f74919f58c8d`
-- `run_manifest.json` sha256 `727f617432c0e19db1f905189f194e04394d9f385f4df9ffa5f79ce903e078e5`
+- `run_manifest.json` sha256 `02fad0e3f1ad76e782e3a1365270bf5c9a61fcd7c005ac04e6f534dc899484e1`

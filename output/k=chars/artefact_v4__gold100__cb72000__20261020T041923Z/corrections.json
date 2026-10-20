@@ -1,7 +1,7 @@
 {
   "corrections": [
     {
-      "made_at": "2026-10-20T11:02:22.010715+00:00",
+      "made_at": "2026-10-20T14:12:28.703135+00:00",
       "ordered_by": "\"That sounds indeed like you have fufkcing smashes a bunch of data together that does not belong together.. I sure as fuck hope you did not do that on the actual data\" · \"well, this is the data-cleanup phase so perhaps be less fucking retarded with the answers then\" · \"yes, make sure all the correct data is in those folders first of all, then i have another task for you\" (2026-10-20)",
       "what_happened": "The row's retrieval held the first call (claude-sonnet-5) and the embedder's requests added into one sum: a language model's tokens and the embedder's tokens were one number, and attempts counted the first call's tries while calls counted both; in the two questions whose first call was refused and asked again, its time_s left out the refused call's seconds, which only its retry_s held. search_time_s held the embedder's seconds, which were also in retrieval.time_s, and, in those two questions, the refused call's seconds. build_stats held the seconds of the run's start, not what building the graph cost, which stood only in index.build_cost. The graph block named the database only: the checkout the run was made from had no build record of the graph, and nothing counted the graph. The sha256 of the code files and of the build cost file were of the files with the Windows line ends the checkout wrote, so none matched the commit's.",
       "rule": {
@@ -6348,7 +6348,7 @@
                 "what": "the encoder bake-off on 5469 edges, which chose the encoder; not in the values",
                 "calls": null,
                 "tokens_in": null,
-                "tokens_out": null,
+                "tokens_out": 0,
                 "seconds_summed_per_call": null,
                 "seconds_elapsed": 3227.0,
                 "device": "Colab, cuda",
@@ -6360,7 +6360,7 @@
                 "what": "the encoder cache: every one of the 61018 tag-to-chunk edges encoded for the facet head (fp32, fp16 stored)",
                 "calls": null,
                 "tokens_in": null,
-                "tokens_out": null,
+                "tokens_out": 0,
                 "seconds_summed_per_call": null,
                 "seconds_elapsed": 3549.5,
                 "device": "desktop, cuda, GeForce GTX 1080 Ti",
@@ -6630,12 +6630,20 @@
         },
         "run_manifest.json": {
           "sha256_before": "074ad6669751a97e11f744e7cd3eb2d08d0138d8d016bc42ab4551070e79819b",
-          "sha256_corrected": "eece77e3d9eb7af0e566a72864d56ba30a708b43298626ee7049950d8d5e2a89",
+          "sha256_corrected": "7e8f8f531b37a72a27735e2df905388e8480eb35068679272a1fc279fee8bf40",
           "line_ends": "the sha256 are of the file with the line ends git holds (LF)",
           "before": "run_manifest.as_recorded.json, as recorded"
         }
       },
-      "script": "correct_usage_by_model.py, in this folder; run on the files from before it, it gives these files again (the graph is counted when it runs)"
+      "script": "correct_usage_by_model.py, in this folder; run on the files from before it, with the code named in code, it gives these files again (the graph is counted when it runs)",
+      "code": {
+        "commit": "c22dd71df79b5a89d40a21415623a8c551743969",
+        "branch": "artefact-v4-iteration",
+        "dirty": true,
+        "status": [],
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_sha256": {}
+      }
     }
   ]
 }

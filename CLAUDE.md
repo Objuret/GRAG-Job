@@ -47,7 +47,9 @@ numbers are in the run folders and under `output/research/`.
   `test/artefact/v4_walk.py` (the arithmetic behind it), `test/artefact/query_content.py` (the one
   model request, the first call), `test/graph/build_cost.json` (what building the graph cost, step
   by step from the build records; the arm writes it into each run's manifest, `index_info`, and
-  one entry per model into its `build_stats`, `build_stats_from_cost`), `test/graph/build_person_edges.py` (the person-to-chunk edges),
+  one entry per model into its `build_stats`, `build_stats_from_cost`; its recount against every
+  record it names is `test/graph/build_cost_check.json`, and every build record with its hashes
+  `test/graph/build_records.json`), `test/graph/build_person_edges.py` (the person-to-chunk edges),
   `test/graph/build_chunk_times.py` (each chunk's records' own times, `times`; the 4-combo's gap
   in time is the smallest gap between a record of one chunk and a record of the other),
   `test/graph/build_structure_names.py` (each structure node's `name` and `name_keys`, read through
@@ -92,7 +94,8 @@ numbers are in the run folders and under `output/research/`.
   the graph's build cost in its manifest). The two baselines on the hundred:
   `lucene__gold100__cb72000__20261008T234209Z` and `vector__gold100__cb72000__20261017T061242Z`
   (commit `fbc2f22` from a clean checkout, one question at a time). Each folder's `FIELDS.md` says
-  what it holds and its `corrections.json` what was corrected after the run: in all three on
+  what it holds (every field's words, its type and counts in the folder, and what was left out and
+  on whose word) and its `corrections.json` what was corrected after the run: in all three on
   2026-10-20 the cost held one model at a time, the artefact's search time without its model
   calls, the build cost per model, the artefact's graph counted and its file hashes as git holds
   them (`tools/correct_usage_by_model.py`); in lucene before that the laptop's sleep. Across arms
@@ -162,6 +165,7 @@ The harness and the data:
 - *"we literally have ALL THE FUCKING DATA possibly available! From tokens in/out, times, stamps, DATAPOINTERS and so on and on and on.. YOU just have to make fucking sure that is KEPT every run.. It is so goddamn important"* (2026-10-07) — every run keeps all of it in its own folder, per question and per model call.
 - *"you can't just have fucking smashed fields with no word or explanation to what they mean.."* (2026-10-09, on a run folder that explained none of its fields) — every run folder holds `FIELDS.md`, written by the harness from `prod/harness/fields.py`; an arm gives the words for what only it writes (`FIELDS` in its own file).
 - *"That sounds indeed like you have fufkcing smashes a bunch of data together that does not belong together.."* (2026-10-20, on the artefact's `retrieval` adding the first call's and the embedder's tokens into one sum) — a cost is held one model at a time: a row's `retrieval` and the manifest's `build_stats` hold one entry per model, worked out from the call and build records; two models are never one number.
+- *"YOU are not the one choosing what should be or not in the fucking files dude"* · *"have you no sense of proper protocol for data science and research, some fucking academic rigor? you are just "picking" random shit.."* · *"ok, yes but no,make sure 1-8 is done and correct for the folders/data we have right now"* (2026-10-20) — the data follows research practice: raw data stays as recorded and what is derived is made by a kept script; nothing is selected by the agent; one table per kind of observation; one schema across the arms, an empty value saying why; a data dictionary; provenance with checksums; corrections visible; data left out only by his rule, written in with his words, or "no rule recorded".
 
 How to work with him:
 

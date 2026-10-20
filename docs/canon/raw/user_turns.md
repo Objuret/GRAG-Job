@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2322 turns, chronological. Verbatim text; no edits.
+2333 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -18112,4 +18112,49 @@ is the artefact and graph built fully and correctly now?
 ## 2026-10-20 10:01 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 yes, make sure all the correct data is in those folders first of all, then i have another task for you
+
+## 2026-10-20 11:11 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+so, what i wnt now is 2 files for each arm, 1 for the runs and 1 for the construction, containing all the real, clean data for each, in "the same format/shape". Do you understand what i even mean by this?
+
+## 2026-10-20 11:23 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+explain the fields?
+
+## 2026-10-20 11:40 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+WHERE have you put this data?
+
+## 2026-10-20 11:42 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+no you fucking cunt, how is THAT a "go, do it"?
+i wanted to know, because it sounded retarded and i needed to read wtf you were doing
+
+## 2026-10-20 11:58 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+is this.. everything..?
+
+## 2026-10-20 12:01 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+WHY WOULD YOU ONLY NAME A PART OF IT!? how the fuck can i answer the question correct if you withhold information, shesus fuck
+
+## 2026-10-20 12:15 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+thats my fucking point.. YOU are not the one choosing what should be or not in the fucking files dude
+
+## 2026-10-20 12:17 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+have you no sense of proper protocol for data science and research, some fucking academic rigor? you are just "picking" random shit.. the actual fuck are you doing?
+
+## 2026-10-20 13:03 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+ok, yes but no,make sure 1-8 is done and correct for the folders/data we have right now, when that is done we will confirm together
+
+## 2026-10-20 13:26 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+you are writing whole programs for this? what the fuck is even happening..
+
+## 2026-10-20 13:57 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+tell me wtf is happening now dude
 
