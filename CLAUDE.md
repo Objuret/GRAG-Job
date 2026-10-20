@@ -63,13 +63,14 @@ numbers are in the run folders and under `output/research/`.
   `output/code_before_knee_clouds/20261018T013204Z/`; before the border by every structure name:
   `output/code_before_structure_names/20261019T011742Z/`. What a run used: its `run_manifest.json` and each
   row's `meta`.
-- `finished_data/` — the data given away, six files and nothing else: for each arm
-  `<arm>_runs.json` (the final run on the hundred, one record per question: texts, record ids,
-  scores, times and the cost of each model) and `<arm>_construction.json` (the index, and one
-  record per part of its build), values only, each file explaining its fields. Made by
-  `tools/export_finished_data.py` from the three final run folders, `test/graph/build_cost.json`
-  and the facet layer's records under `output/facet_pairs/`; the export stops on any value that
-  does not line up.
+- `finished_data/` — the data given away, six .xlsx workbooks and nothing else: for each arm
+  `<arm>_runs.xlsx` (sheets `questions`: one row per question of the final run on the hundred
+  with its scores, times, tokens and tries; `records`: one row per retrieved record; `run`: the
+  run's models, machine and runtime; `key`) and `<arm>_construction.xlsx` (`build`: one row per
+  part of the index's build; `index`: its counts; `key`), values only, the same sheets and
+  columns for the three arms, the key sheet last. Made by `tools/export_finished_data.py` (needs
+  openpyxl) from the three final run folders, `test/graph/build_cost.json` and the facet layer's
+  records under `output/facet_pairs/`; the export stops on any value that does not line up.
 - `docs/ENVIRONMENT.md` — the machines, the Neo4j start, the model lane and how many calls this
   laptop holds at once. `docs/canon/raw/user_turns_all.jsonl` — his typed messages
   (`tools/canon_extract.py`); archive, nothing reads it.
@@ -172,7 +173,7 @@ The harness and the data:
 - *"we literally have ALL THE FUCKING DATA possibly available! From tokens in/out, times, stamps, DATAPOINTERS and so on and on and on.. YOU just have to make fucking sure that is KEPT every run.. It is so goddamn important"* (2026-10-07) — every run keeps all of it in its own folder, per question and per model call.
 - *"you can't just have fucking smashed fields with no word or explanation to what they mean.."* (2026-10-09, on a run folder that explained none of its fields) — every run folder holds `FIELDS.md`, written by the harness from `prod/harness/fields.py`; an arm gives the words for what only it writes (`FIELDS` in its own file).
 - *"That sounds indeed like you have fufkcing smashes a bunch of data together that does not belong together.."* (2026-10-20, on the artefact's `retrieval` adding the first call's and the embedder's tokens into one sum) — a cost is held one model at a time: a row's `retrieval` and the manifest's `build_stats` hold one entry per model, worked out from the call and build records; two models are never one number.
-- *"the size and shit of everything you have created will stay on this fucking computer/repo, not something given away"* · *"its great to have everything as you made it, all links to everything, all the history and reasoning, it IS important.. for me, but not for them, comments on this or that, reason a datapoint was remade etc is only noise to them"* (2026-10-20) — the data given away (two files per arm: the runs and the construction) holds only the values, at the level of a CSV, in a proper format; the run folders, the records, the corrections, the links and the reasoning stay in the repo.
+- *"the size and shit of everything you have created will stay on this fucking computer/repo, not something given away"* · *"its great to have everything as you made it, all links to everything, all the history and reasoning, it IS important.. for me, but not for them, comments on this or that, reason a datapoint was remade etc is only noise to them"* (2026-10-20) — the data given away (two files per arm: the runs and the construction) holds only the values, at the level of a CSV, in a proper format; the run folders, the records, the corrections, the links and the reasoning stay in the repo. *"answering started at, finished? WHY!? WHY IN THE GODDAMN FUCK!?"* · *"these fucking fields you have are not only fucking impossible to descipher without the motherfucking key, are they even what i asked for!?"* (2026-10-20, on the first six files: a key block in each, the run's clock times, client flags and settings, short field names in nested blocks) — a column's name says what it holds and its unit, read without a key.
 - *"YOU are not the one choosing what should be or not in the fucking files dude"* · *"have you no sense of proper protocol for data science and research, some fucking academic rigor? you are just "picking" random shit.."* · *"ok, yes but no,make sure 1-8 is done and correct for the folders/data we have right now"* (2026-10-20) — the data follows research practice: raw data stays as recorded and what is derived is made by a kept script; nothing is selected by the agent; one table per kind of observation; one schema across the arms, an empty value saying why; a data dictionary; provenance with checksums; corrections visible; data left out only by his rule, written in with his words, or "no rule recorded".
 
 How to work with him:

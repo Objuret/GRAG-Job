@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2342 turns, chronological. Verbatim text; no edits.
+2349 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -18198,4 +18198,35 @@ exactly, its great to have everything as you made it, all links to everything, a
 ## 2026-10-20 14:56 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 create these versions then
+
+## 2026-10-20 16:38 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+WHERE are they? you seriously have to stop beeing so fucking obtuse and difficult with this
+
+## 2026-10-20 16:46 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+you made a key in each fucking file..?
+
+## 2026-10-20 16:49 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+dude, it's pretty fucking rageinducing to read this datafile, i have read about 10% of it and i am already in borderline rage.. the actual fuck are you doing? answering started at, finished? WHY!? WHY IN THE GODDAMN FUCK!?
+duuuuude, these fucking fields you have are not only fucking impossible to descipher without the motherfucking key, are they even what i asked for!?
+
+## 2026-10-20 17:12 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+What IS the respectful good format to give them?
+
+## 2026-10-20 18:35 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+We are not using the "herb benchmark"..?
+
+## 2026-10-20 18:35 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*queued while an agent was working*
+
+But yes, xlsx sounds good..
+
+## 2026-10-20 18:38 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+Doit
 
