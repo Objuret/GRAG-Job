@@ -19,16 +19,18 @@ Per question:
      aside (`border_of`). The chunks outside the border are out of the pool. No model call.
   3. The tags side: each chunk's closest tag to a query tag (`v4_walk.tags_nearness`). The
      query tags are embedded in the query role, as the graph's tags are.
-  4. The facets, ranks against ranks (his 2026-10-19 "the chunks are chosen first based on
-     similarity, then that "most similar" IS a rank, and then that rank list is compared to the
-     facets and is adjusted for relative rank", "that i goes both ways", "construct and
-     gold10smoketest it"; `v4_walk.facet_relative_places`): per query tag, the border's chunks
-     ranked by their closeness to it, each through its closest tag, and ranked again, among the
-     same chunks, by the facet net's value of that edge in the facet the first call named for the
-     query tag; a chunk stands midway between its two ranks, lifted or lowered by half the gap;
-     where the first call said the facet does not matter for the tag, closeness alone. Each chunk
-     takes the best place any query tag gives it (the agent's choice). The facets touch no
-     closeness: the clouds and the 4-combo read closeness alone.
+  4. The facets, read relative to the tag (his 2026-10-19 "ok, but can we make them adaptive
+     easily deterministically?", "well do that then", "ok, do that and run a smoke?";
+     `v4_walk.closest_edge_standing`): a chunk's edge to its closest tag gets a standing in the
+     facet the first call named for the query tag that gives that closeness, read only against
+     the same graph tag's other edges on chunks of the same kind inside the border: above when it
+     beats more of them than it loses to, below when it loses more, the same otherwise (one edge
+     beats another when its value is higher by more than the facet's range on the FacetLayer
+     node, the net's 24 refits). An edge whose graph tag is the query tag's own phrase never stands
+     below. Where the first call said the facet does not matter, no standing. The standing acts in
+     the tags' cloud (step 6). The tags side's places are by closeness alone
+     (`v4_walk.closeness_places`: per query tag the border's chunks by closeness, each chunk at the
+     best place any query tag gives it, the agent's choice).
   5. The chunk side: the chunk descriptions' closeness to the question with the border's names
      taken out (`_without_names`: inside the border the name tells nothing), embedded in the
      query role as the chunk descriptions are.
@@ -39,8 +41,11 @@ Per question:
      border; a chunk's step is 2 in both clouds, 3 in one, 4 in neither; the parents holding the
      majority of the chunks in a cloud are the scope, whose chunks come first inside a step of the
      clouds' order; then the two sides' ranks counted equally (the tags side's place from step 4,
-     the description side's closeness; the agent's choice, ranks against ranks). The chunks in
-     both clouds (with none, those of the lowest step) are the chosen chunks.
+     the description side's closeness; the agent's choice, ranks against ranks). The tags' cloud
+     keeps the size its knee gives and takes the chunks first by their level of closeness moved
+     one nearer by a standing above and one farther by a standing below, then by closeness: the
+     facets decide who is in it at its edge. The chunks in both clouds (with none, those of the
+     lowest step) are the chosen chunks.
   7. The 4-combo (his 2026-10-17 "time, scope, entities, chunknearness?", "that IS the 4-combo",
      "well then, build it!"; `v4_walk.storyline`, the graph asked per question in
      `STORYLINE_CYPHER`): each other chunk of the clouds is tied to each chosen chunk by scope
@@ -278,12 +283,14 @@ RETRIEVAL_FLAGS = {
         "chunk's step is 2 in both clouds, 3 in one, 4 in neither; the parents holding the majority "
         "of the chunks in a cloud are the scope, whose chunks come first inside a step of the clouds' "
         "order, then the two sides' ranks counted equally: the description side's by closeness, the "
-        "tags side's place by the facets, ranks against ranks (`v4_walk.facet_relative_places`: per "
-        "query tag, the border's chunks ranked by closeness and again, among the same chunks, by the "
-        "facet net's value of the same edge in the facet the first call named for the query tag; a "
-        'chunk stands midway between its two ranks; where the facet does not matter for the tag, '
-        'closeness alone; each chunk takes the best place any query tag gives it). The chunks in '
-        'both clouds (with none, those of the lowest step) are the chosen chunks. The 4-combo (`v4_walk.storyline`, the graph asked per question in '
+        "tags side's place by closeness (`v4_walk.closeness_places`: per query tag the border's "
+        "chunks by closeness, each chunk at the best place any query tag gives it). The facets "
+        "(`v4_walk.closest_edge_standing`): a chunk's edge to its closest tag stands above, the "
+        "same or below the same graph tag's other edges on chunks of the same kind, in the facet "
+        "the first call named for the query tag, beyond the facet's range on the FacetLayer node; "
+        "the query tag's own phrase never stands below; the tags' cloud keeps the size of its knee "
+        "and takes the chunks by their level of closeness moved one by the standing, then by "
+        'closeness. The chunks in both clouds (with none, those of the lowest step) are the chosen chunks. The 4-combo (`v4_walk.storyline`, the graph asked per question in '
         '`STORYLINE_CYPHER`): every other chunk of the clouds is tied to each chosen chunk by scope '
         '(the same parent), entities (a person tied to both, through the person-to-chunk edges), '
         'time (the smallest gap between a record of the one and a record of the other, from the '
@@ -415,8 +422,8 @@ FIELDS = {
                          "many as the closeness shows.", {
                 'chunks': 'Chunks of the border.',
                 'clouds': sub("Chunks in each side's cloud.", {
-                    'tags': "Of the chunks' closeness through their tags, as the facets' "
-                            'influence left it.',
+                    'tags': "Of the chunks' closeness through their tags, as many as its knee "
+                            'gives, taken by level moved by the facets.',
                     'description': "Of the chunk descriptions' closeness to the question "
                                    "without the names.",
                 }),
@@ -429,23 +436,35 @@ FIELDS = {
                                 'requests, links or chats, or the parts of one document or one '
                                 'transcript.',
                 'chunks_in_scope': 'Chunks of the border under those parents.',
+                'tags_cloud_by_the_facets': sub("What the facets' standing did to the tags' cloud.", {
+                    'nearer': 'Chunks moved one level of closeness nearer.',
+                    'farther': 'Chunks moved one level farther.',
+                    'changed': "Chunks in the tags' cloud that were not in it by closeness alone.",
+                }),
             }),
-            'facets': sub("The query's facets as ranks against ranks: per query tag, the "
-                          "border's chunks ranked by closeness and again, among the same chunks, by "
-                          "the facet net's value of the same edge in the facet the first call named; "
-                          'a chunk stands midway between its two ranks; each chunk takes the best '
-                          'place any query tag gives it.', {
+            'facets': sub("The query's facets read relative to the tag: each chunk's edge to its "
+                          "closest tag against the same graph tag's other edges on chunks of its "
+                          "kind, in the facet the first call named for the query tag; the standing "
+                          "moves the chunk one level of closeness at the tags' cloud's edge.", {
                 'per_query_tag': sub('One entry a query tag, in the order of the two tag lists (a '
                                      'phrase written in both lists stands twice).', {
                     'phrase': 'The query tag as the first call wrote it.',
                     'facet': 'The one facet the first call named as mattering most for it.',
                     'matters': 'Whether the first call said that facet matters for it at all; '
-                               'only then does the facet rank its chunks.',
+                               'only then does the facet give a standing.',
                 }),
-                'query_tags_with_a_facet': 'How many query tags have a facet that ranks.',
-                'chunks_whose_place_changed': "Chunks of the border whose tags side's place the "
-                                              'facets changed, against their place by closeness '
-                                              'alone.',
+                'query_tags_with_a_facet': 'How many query tags have a facet that matters.',
+                'chunks_standing': sub("Chunks of the border by their closest edge's standing.", {
+                    'above': 'Standing above the same tag\'s other edges of their kind.',
+                    'below': 'Standing below them.',
+                }),
+                'own_phrase_edges_kept_from_below': "Chunks whose closest tag is the query tag's "
+                                                    'own phrase and that would have stood below.',
+                'tags_cloud_by_the_facets': sub("What the standing did to the tags' cloud.", {
+                    'nearer': 'Chunks moved one level of closeness nearer.',
+                    'farther': 'Chunks moved one level farther.',
+                    'changed': "Chunks in the tags' cloud that were not in it by closeness alone.",
+                }),
             }),
             'storyline': sub("The 4-combo: the chosen chunks (those in both clouds; with none, "
                              "those of the lowest step) and how the other chunks of the clouds are "
@@ -494,9 +513,10 @@ FIELDS = {
             'delivered_tags_place': "Its tags side's place: the best place a query tag gives it.",
             'delivered_closeness_rank': 'Under that query tag, its rank by closeness among the '
                                         "border's chunks.",
-            'delivered_facet_rank': 'Under that query tag, its rank by the named facet among the '
-                                    "border's chunks (its rank by closeness where the facet does "
-                                    'not matter for the tag).',
+            'delivered_standing': "Its closest edge's standing in the named facet against the "
+                                  "same graph tag's other edges on chunks of its kind: 1 above, "
+                                  '0 the same or no facet, -1 below; it moves the chunk one level '
+                                  "of closeness at the tags' cloud's edge.",
             'delivered_named_facet': 'The facet the first call named for that query tag; empty '
                                      'where the first call said it does not matter.',
             'delivered_tags_nearness': 'The cosine of its closest tag to a query tag.',
@@ -848,6 +868,11 @@ def own_work(inside, asked, doc_cache):
     return {'apart': apart, 'own': own, 'talk': talk, 'messages': messages, 'other': other}
 
 
+def _same_words(a, b):
+    """Whether two phrases are the same words (case and spacing aside)."""
+    return ' '.join(str(a).lower().split()) == ' '.join(str(b).lower().split())
+
+
 def _hand_over(order, asked, char_budget, k, doc_cache):
     """What is handed over of the ordered chunks, and the record of it (the step as it stands).
 
@@ -988,6 +1013,9 @@ def prepare_over_corpus(corpus) -> Prepared:
     finally:
         driver.close()
     node = GL.read(edge_rows, layer_rows).node
+    if list(node.get('equal_gap_facets') or []) != list(WK.RANKING_FACETS) \
+            or len(node.get('equal_gap') or []) != len(WK.RANKING_FACETS):
+        raise ValueError('The FacetLayer node carries no range for each ranking facet')
     if counts['topic_apart'] > TOPIC_TOLERANCE:
         raise ValueError('The topic value on an edge differs from the cosine of its vectors '
                          f'by {counts["topic_apart"]:.2g}: the layer was written from other vectors')
@@ -1269,22 +1297,36 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
     parents = sorted({str(row['parent']) for row in asked.chunk_rows})
     at = {name: i for i, name in enumerate(parents)}
     parent_of = np.array([at[str(row['parent'])] for row in asked.chunk_rows], dtype=np.int64)
-    # The query's facets, ranks against ranks: per query tag its chunks by closeness and by the
-    # facet the first call named for it, where it said the facet matters for the tag; the clouds
-    # are read off closeness alone and the places order inside them.
+    # The tags side's places by closeness; the query's facets read relative to the tag: each
+    # chunk's closest edge against the same tag's other edges, in the facet the first call named
+    # for its query tag, where it said the facet matters; the standing acts at the tags' cloud's
+    # edge.
     written = (*query.tags, *query.query_tags)
     facet_of = np.array([t.facet_index if t.matters else -1 for t in written], dtype=np.int64)
-    placed = WK.facet_relative_places(layer, query_rows, facet_of, inside)
+    placed = WK.closeness_places(layer, query_rows, inside)
+    _, t_edge = WK.tags_nearness(layer, query_rows)
+    closest_q = np.where(t_edge >= 0, query_rows[:, layer['edge_tag']].argmax(axis=0)[
+        np.maximum(t_edge, 0)], -1)
+    own = np.array([bool(t_edge[c] >= 0 and closest_q[c] >= 0 and _same_words(
+        asked.graph_tags[int(layer['edge_tag'][t_edge[c]])], written[int(closest_q[c])].text))
+        for c in range(layer['chunks'])], dtype=bool)
+    gaps = prepared.provenance['facet_layer']['equal_gap']
+    standing = WK.closest_edge_standing(layer, inside, t_edge, closest_q, facet_of, gaps, own)
+    unfloored = WK.closest_edge_standing(layer, inside, t_edge, closest_q, facet_of, gaps,
+                                         np.zeros(layer['chunks'], dtype=bool))
+    combo = WK.cloud_combo(layer, query_rows, d_bare, inside, parent_of, tags_place=placed['place'],
+                           standing=standing)
     facets_said = {
         'per_query_tag': [{'phrase': t.text, 'facet': t.facet, 'matters': t.matters}
                           for t in written],
         'query_tags_with_a_facet': int((facet_of >= 0).sum()),
-        'chunks_whose_place_changed': int(sum(1 for i in inside
-                                              if placed['place'][i] != placed['place_by_closeness'][i]))}
-    combo = WK.cloud_combo(layer, query_rows, d_bare, inside, parent_of, tags_place=placed['place'])
+        'chunks_standing': {'above': int((standing[inside] > 0).sum()),
+                            'below': int((standing[inside] < 0).sum())},
+        'own_phrase_edges_kept_from_below': int((standing[inside] != unfloored[inside]).sum()),
+        'tags_cloud_by_the_facets': combo['record']['tags_cloud_by_the_facets']}
     # the pointers a row keeps name the query tag that gave the place and its closest edge
     combo = {**combo, 'edge': placed['edge'], 'query_tag': placed['query_tag'], 'placed': placed,
-             'facet_of': facet_of}
+             'facet_of': facet_of, 'standing': standing}
     gauged = combo['record']
     gauged['scopes_taken'] = [parents[s] for s in gauged['scopes_taken']]
     # The 4-combo: the chunks of both clouds (with none, of the lowest step) are the chosen chunks;
@@ -1356,11 +1398,11 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
 
 def _combo_record(qid, combo, asked, query, order, delivered, scope, said, boundary, rows, tags,
                   question_side, d_description, d_question):
-    """What a row keeps of the step as it stands (`v4_walk.cloud_combo`,
-    `facet_relative_places`): per delivered chunk its step, its level and nearness on each side,
+    """What a row keeps of the step as it stands (`v4_walk.cloud_combo`, `closeness_places`,
+    `closest_edge_standing`): per delivered chunk its step, its level and nearness on each side,
     whether it is in scope, its ranks, the query tag (as written) that gave its tags side's place
-    with its two ranks under it and the facet named for it, and the graph tag of its closest edge
-    to that query tag. The first call's description and the question as asked do not enter the
+    with its rank by closeness under it and the facet named for it, its closest edge's standing,
+    and the graph tag of its closest edge to that query tag. The first call's description and the question as asked do not enter the
     order; their nearness is kept beside it."""
     layer = asked.layer
     steps = [int(combo['step'][i]) for i in delivered]
@@ -1394,8 +1436,7 @@ def _combo_record(qid, combo, asked, query, order, delivered, scope, said, bound
                'delivered_tags_place': [float(combo['placed']['place'][i]) for i in delivered],
                'delivered_closeness_rank': [float(combo['placed']['closeness_rank'][i])
                                             for i in delivered],
-               'delivered_facet_rank': [float(combo['placed']['facet_rank'][i])
-                                        for i in delivered],
+               'delivered_standing': [int(combo['standing'][i]) for i in delivered],
                'delivered_tags_nearness': [float(combo['tags_nearness'][i]) for i in delivered],
                'delivered_description_nearness': [float(combo['description_nearness'][i])
                                                   for i in delivered],

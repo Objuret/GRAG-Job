@@ -1,10 +1,11 @@
 """artefact_v4's arithmetic: arrays in, arrays out.
 
 `build_layer` holds what does not depend on the question. Per question: `tags_nearness` is each
-chunk's closest tag to a query tag; `facet_relative_places` ranks each query tag's chunks by
-closeness and again by the facet named for it, a chunk standing midway between the two;
-`cloud_combo` finds the tags' side's cloud and the chunk descriptions' side's cloud from closeness
-alone, each the chunks before the knee of its own closeness, a chunk's step is its two levels added
+chunk's closest tag to a query tag; `closeness_places` ranks each query tag's chunks by closeness;
+`closest_edge_standing` reads each chunk's closest edge in the facet named for its query tag
+against the same tag's other edges (`facet_standings`); `cloud_combo` finds the tags' side's cloud
+and the chunk descriptions' side's cloud, each the chunks before the knee of its own closeness, the
+facets moving a chunk one level at the tags' cloud's edge, a chunk's step is its two levels added
 (in a cloud or not), the scope gauged after that (`majority_scopes`) puts its chunks first inside a
 step, and inside a step the two sides' ranks decide.
 `storyline` is the 4-combo: how strongly each chunk of the clouds is tied to the chosen chunks by
@@ -293,66 +294,96 @@ def storyline_order(combo_order, start, strength, region):
     return first + tied + rest
 
 
-def facet_relative_places(layer, cosines, facet_of, inside):
-    """The query's facets as ranks against ranks (his 2026-10-19 "the chunks are chosen first based
-    on similarity, then that "most similar" IS a rank, and then that rank list is compared to the
-    facets and is adjusted for relative rank", "that i goes both ways"; the facet net was trained
-    to say which of two tag-chunk pairs is the more relevant in one facet).
+def closeness_places(layer, cosines, inside):
+    """Per query tag the border's chunks ranked by their closeness to it, each through its closest
+    eligible tag, then chunk id; a chunk with no eligible edge stands last. Each chunk then takes
+    the best place any query tag gives it (taking the best, counting no tags, is the agent's
+    choice); every query tag's list holds the same chunks.
 
-    Per query tag: the border's chunks ranked by their closeness to it, each through its closest
-    eligible tag, and ranked again, among the same chunks, by the net's value of that same edge in
-    the facet the first call named for the query tag. A chunk stands midway between its two ranks:
-    the facet lifts it by half the gap when it ranks it higher, lowers it by half when lower (half
-    is the one share no number has to give); equals by closeness, then chunk id. Where the first
-    call said the facet does not matter for the tag, closeness alone. A chunk with no eligible edge
-    stands last on both. Each chunk then takes the best place any query tag gives it (taking the
-    best, counting no tags, is the agent's choice); every query tag's list holds the same chunks.
-
-    cosines: (query tags, graph tags); facet_of: per query tag the index of its named facet in
-    RANKING_FACETS, -1 where it does not matter; inside: the border's chunk indices. Returns per
-    chunk (inf outside the border) its place, 1 the first, the query tag and the edge that give it,
-    its rank by closeness and by the facet under that query tag, and its place by closeness alone."""
+    cosines: (query tags, graph tags); inside: the border's chunk indices. Returns per chunk (inf
+    outside the border) its place, 1 the first, the query tag and the edge that give it, and its
+    rank by closeness under that query tag."""
     rows = np.asarray(cosines, dtype=np.float64)
-    facet_of = np.asarray(facet_of, dtype=np.int64)
     inside = np.asarray(inside, dtype=np.int64)
     n = layer['chunks']
     if rows.ndim != 2 or not rows.shape[0] or rows.shape[1] != layer['eligible'].size:
         raise ValueError('Expected one cosine row over the graph tags per query tag')
-    if facet_of.shape != (rows.shape[0],) or (facet_of < -1).any() \
-            or (facet_of >= len(RANKING_FACETS)).any():
-        raise ValueError('Expected one named facet, or -1, per query tag')
-    if inside.ndim != 1 or not inside.size or inside.min() < 0 or inside.max() >= n \
-            or np.unique(inside).size != inside.size:
+    if inside.ndim != 1 or not inside.size or inside.min() < 0 or inside.max() >= n             or np.unique(inside).size != inside.size:
         raise ValueError('Expected the distinct chunks of the border')
-    tag_e, chunk_e, values = layer['edge_tag'], layer['edge_chunk'], layer['raw'][:, 1:]
+    tag_e, chunk_e = layer['edge_tag'], layer['edge_chunk']
     q_count, m = rows.shape[0], inside.size
     place = np.full((q_count, n), np.inf)
-    plain = np.full((q_count, n), np.inf)
     by_closeness = np.full((q_count, n), np.nan)
-    by_facet = np.full((q_count, n), np.nan)
     carried = np.full((q_count, n), -1, dtype=np.int64)
     ids = layer['id_rank'][inside]
     for q in range(q_count):
         near, edge = best_edges(rows[q, tag_e], chunk_e, n)
         near, edge = near[inside], edge[inside]
         has = edge >= 0
-        last = float(has.sum() + 1)
-        s = np.full(m, last)
+        s = np.full(m, float(has.sum() + 1))
         s[has] = rankdata(-near[has], method='average')
-        f = s
-        if facet_of[q] >= 0:
-            f = np.full(m, last)
-            f[has] = rankdata(-values[edge[has], facet_of[q]], method='average')
-        mid = (s + f) / 2.
-        place[q, inside[np.lexsort((ids, s, mid))]] = np.arange(1, m + 1)
-        plain[q, inside[np.lexsort((ids, s))]] = np.arange(1, m + 1)
-        by_closeness[q, inside], by_facet[q, inside], carried[q, inside] = s, f, edge
+        place[q, inside[np.lexsort((ids, s))]] = np.arange(1, m + 1)
+        by_closeness[q, inside], carried[q, inside] = s, edge
     best = np.argmin(place, axis=0)
     at = np.arange(n)
     query_tag = np.where(np.isfinite(place[best, at]), best, -1)
     return {'place': place[best, at], 'query_tag': query_tag, 'edge': carried[best, at],
-            'closeness_rank': by_closeness[best, at], 'facet_rank': by_facet[best, at],
-            'place_by_closeness': plain.min(axis=0)}
+            'closeness_rank': by_closeness[best, at]}
+
+
+def wins(value, gap=0.):
+    """Per item its wins over the others: the higher value wins when it is higher by more than gap,
+    the same within it counts a half. Counted by sorting, not by pairs."""
+    value = np.asarray(value, dtype=np.float64)
+    v = np.sort(value)
+    below = np.searchsorted(v, value - gap, side='left')
+    within = np.searchsorted(v, value + gap, side='right') - below
+    return below + .5 * (within - 1)
+
+
+def facet_standings(layer, inside, facet, gap):
+    """Per edge its standing in one facet, read only against the same graph tag's other edges on
+    chunks of the same record kind inside the border (his 2026-10-19 "ok, but can we make them
+    adaptive easily deterministically?"; the tag's own level and the kind, which the structure
+    gives, stay out): +1 when it beats more of them than it loses to, -1 when it loses more, 0
+    otherwise, alone, or outside the border. One edge beats another when its value is higher by
+    more than gap, the facet's range (the difference the net's 24 refits agree on)."""
+    if not 0 <= facet < len(RANKING_FACETS):
+        raise ValueError('Expected one of the ranking facets')
+    tag_e, chunk_e, raw, kind = layer['edge_tag'], layer['edge_chunk'], layer['raw'], layer['kind']
+    in_border = np.zeros(layer['chunks'], dtype=bool)
+    in_border[np.asarray(inside, dtype=np.int64)] = True
+    keep = np.flatnonzero(in_border[chunk_e])
+    out = np.zeros(tag_e.size)
+    group = tag_e[keep].astype(np.int64) * (int(kind.max()) + 1) + kind[chunk_e[keep]]
+    order = np.argsort(group, kind='stable')
+    for members in np.split(keep[order], np.flatnonzero(np.diff(group[order])) + 1):
+        if members.size > 1:
+            out[members] = np.sign(wins(raw[members, 1 + facet], gap) - (members.size - 1) / 2.)
+    return out
+
+
+def closest_edge_standing(layer, inside, t_edge, query_tag, facet_of, gaps, own):
+    """Per chunk the standing (`facet_standings`) of its edge to its closest tag, in the facet the
+    first call named for the query tag that gives that closeness; 0 where that facet does not
+    matter or the chunk has no edge. own: per chunk, whether that closest tag is the query tag's
+    own phrase; such an edge never stands below (his 2026-10-19 "ok, do that and run a smoke?":
+    the chunks the facets pushed out held gold most often when their tag was the query tag)."""
+    facet_of = np.asarray(facet_of, dtype=np.int64)
+    gaps = np.asarray(gaps, dtype=np.float64)
+    if gaps.shape != (len(RANKING_FACETS),):
+        raise ValueError('Expected one range per ranking facet')
+    standing = np.zeros(layer['chunks'])
+    by_facet = {int(f): facet_standings(layer, inside, int(f), gaps[f])
+                for f in np.unique(facet_of[facet_of >= 0])}
+    for c in np.asarray(inside, dtype=np.int64):
+        e, q = int(t_edge[c]), int(query_tag[c])
+        if e < 0 or q < 0 or facet_of[q] < 0:
+            continue
+        standing[c] = by_facet[int(facet_of[q])][e]
+        if own[c] and standing[c] < 0:
+            standing[c] = 0.
+    return standing
 
 
 def majority_scopes(hits, scope_of):
@@ -379,7 +410,7 @@ def majority_scopes(hits, scope_of):
     return sorted(int(s) for s, count in zip(scopes, held) if count >= last)
 
 
-def cloud_combo(layer, cosines, d_near, inside, scope_of, tags_place=None):
+def cloud_combo(layer, cosines, d_near, inside, scope_of, tags_place=None, standing=None):
     """The chunk cloud and the tags' cloud together, over the chunks of a border (his 2026-10-12
     "the combo should fucking work.. So, if we use the chunk-cloud, see if you can find a way to
     combo or lift with the tags", his 2026-10-10 "overlapping clouds for each step"). No
@@ -391,6 +422,12 @@ def cloud_combo(layer, cosines, d_near, inside, scope_of, tags_place=None):
     is its near group over the border's chunks: the chunks before the knee of its closeness sorted
     from the nearest down, the knee looked for among the values above the median (`levels_of`), so
     a cloud holds at most half the border. A side whose closeness has no knee has no cloud.
+    With the facets (`standing`, per chunk +1, 0 or -1, `closest_edge_standing`), the tags' cloud
+    keeps the size its knee gives and takes the chunks first by their level of closeness moved one
+    nearer for +1 and one farther for -1 (everything beyond the knee one level after the last),
+    then by closeness: the facets decide who is in it at its edge (his 2026-10-19 "what if we just
+    moved something 1 step per thing?", "they are the RELEVANCE MODIFIER OF THE TAGS TO THE
+    CHUNKS").
 
     The level    per side 1 in its cloud, 2 outside it.
     The step     a chunk's two levels added: 2 in both clouds, 3 in one, 4 in neither.
@@ -403,8 +440,8 @@ def cloud_combo(layer, cosines, d_near, inside, scope_of, tags_place=None):
                  chunk id.
 
     inside: the border's chunk indices; scope_of: per chunk the number of its scope; tags_place:
-    the tags side's place per chunk when it was made otherwise (`facet_relative_places`), its
-    closeness when not given. The clouds are read off the closeness alone either way. Returns the
+    the tags side's place per chunk when it was made otherwise (`closeness_places`), its closeness
+    when not given; standing: per chunk, or none for the clouds by closeness alone. Returns the
     order (the border's chunks only), what lies behind it per chunk, and the record."""
     n = layer['chunks']
     d_near = np.asarray(d_near, dtype=np.float64)
@@ -426,9 +463,25 @@ def cloud_combo(layer, cosines, d_near, inside, scope_of, tags_place=None):
     query_tag = np.where(t_edge >= 0, rows[:, layer['edge_tag']].argmax(axis=0)[np.maximum(t_edge, 0)], -1)
     sides = {'tags': t_near, 'description': d_near}
     level = {name: np.zeros(n, dtype=np.int64) for name in sides}
+    by_closeness = set()
+    moved_record = {'nearer': 0, 'farther': 0, 'changed': 0}
     for name, x in sides.items():
-        lv, _ = levels_of(x[inside])
+        lv, count = levels_of(x[inside])
         level[name][inside] = np.where(lv >= 1, 1, 2)
+        if name == 'tags':
+            by_closeness = set(inside[lv >= 1].tolist())
+            if standing is not None and count:
+                standing = np.asarray(standing, dtype=np.float64)
+                if standing.shape != (n,) or not np.isin(standing[inside], (-1., 0., 1.)).all():
+                    raise ValueError('Expected a standing of -1, 0 or 1 per chunk')
+                at = np.where(lv >= 1, lv, count + 1).astype(np.float64)
+                moved = np.clip(at - standing[inside], 1., count + 1.)
+                by = np.lexsort((layer['id_rank'][inside], -x[inside], moved))
+                level['tags'][inside] = 2
+                level['tags'][inside[by[:len(by_closeness)]]] = 1
+                moved_record = {'nearer': int((moved < at).sum()), 'farther': int((moved > at).sum()),
+                                'changed': len(set(inside[by[:len(by_closeness)]].tolist())
+                                               - by_closeness)}
     rank = {name: np.full(n, np.nan) for name in sides}
     rank['tags'][inside] = rankdata(tags_place[inside] if tags_place is not None
                                     else -t_near[inside], method='average')
@@ -448,6 +501,7 @@ def cloud_combo(layer, cosines, d_near, inside, scope_of, tags_place=None):
     steps, counts = np.unique(step[inside], return_counts=True)
     record = {'chunks': int(inside.size),
               'clouds': {name: int((level[name][inside] == 1).sum()) for name in sides},
+              'tags_cloud_by_the_facets': moved_record,
               'chunks_on_each_step': {int(s): int(c) for s, c in zip(steps, counts)},
               'scope_gauged_from_chunks': int(gauged_from.size),
               'scopes_taken': taken, 'chunks_in_scope': int(in_scope.sum())}

@@ -122,6 +122,7 @@ def test_each_sides_cloud_is_its_near_group_and_the_clouds_order_the_border():
     assert got['step'].tolist() == [2, 3, 2, 3, 4, 4, 4, 4, 4, 4, 0, 0]
     # the scope is gauged from the chunks in a cloud (0-3): parents 0 and 1 hold two each
     assert got['record'] == {'chunks': 10, 'clouds': {'tags': 3, 'description': 3},
+                             'tags_cloud_by_the_facets': {'nearer': 0, 'farther': 0, 'changed': 0},
                              'chunks_on_each_step': {2: 2, 3: 2, 4: 6}, 'scope_gauged_from_chunks': 4,
                              'scopes_taken': [0, 1], 'chunks_in_scope': 4}
     # the step first, then in scope first, then the middle of the two sides' ranks
@@ -136,6 +137,24 @@ def test_each_sides_cloud_is_its_near_group_and_the_clouds_order_the_border():
     flat = WK.cloud_combo(layer, t_near[None, :], np.full(12, .2), np.arange(10), scope_of)
     assert flat['step'][:10].tolist() == [3, 3, 3] + [4] * 7
     assert flat['record']['clouds'] == {'tags': 3, 'description': 0}
+    # the facets' standing: the cloud keeps the size of its knee; a chunk at its last level that
+    # stands below moves one level out and the nearest chunk beyond the knee that stands above
+    # moves one level in
+    standing = np.zeros(12)
+    standing[[2, 3]] = [-1, 1]
+    moved = WK.cloud_combo(layer, t_near[None, :], d_near, np.arange(10), scope_of, standing=standing)
+    assert moved['level']['tags'].tolist() == [1, 1, 2, 1, 2, 2, 2, 2, 2, 2, 0, 0]
+    assert moved['record']['tags_cloud_by_the_facets'] == {'nearer': 1, 'farther': 1, 'changed': 1}
+    assert moved['record']['clouds'] == {'tags': 3, 'description': 3}
+    # everything one level nearer changes nothing: a level-1 chunk stays, the rest meet it there
+    # and closeness decides
+    every = WK.cloud_combo(layer, t_near[None, :], d_near, np.arange(10), scope_of,
+                           standing=np.ones(12))
+    assert every['level']['tags'].tolist() == got['level']['tags'].tolist()
+    assert every['record']['tags_cloud_by_the_facets'] == {'nearer': 7, 'farther': 0, 'changed': 0}
+    with pytest.raises(ValueError, match='a standing of -1, 0 or 1 per chunk'):
+        WK.cloud_combo(layer, t_near[None, :], d_near, np.arange(10), scope_of,
+                       standing=np.full(12, .5))
     with pytest.raises(ValueError, match='one finite description closeness per chunk'):
         WK.cloud_combo(layer, cosines, d_near[:5], np.arange(10), scope_of)
     with pytest.raises(ValueError, match='one scope per chunk'):
@@ -144,33 +163,56 @@ def test_each_sides_cloud_is_its_near_group_and_the_clouds_order_the_border():
         WK.cloud_combo(layer, cosines, d_near, np.array([0, 0, 1]), scope_of)
 
 
-def test_the_facet_ranks_each_query_tags_chunks_again_and_a_chunk_stands_midway():
-    # four chunks, one edge each, through graph tags 0-3; by closeness to the query tag 0 > 1 > 2
-    # > 3; by the net's temporal value 2 > 0 > 1 > 3
-    facets = np.zeros((4, 4))
-    facets[:, 0] = [.5, .2, .9, .1]
+def test_each_query_tag_ranks_the_borders_chunks_by_closeness_and_a_chunk_takes_its_best_place():
+    # four chunks, one edge each, through graph tags 0-3; by closeness to the query tag 0 > 1 > 2 > 3
     layer = {'chunks': 4, 'eligible': np.ones(4, dtype=bool), 'edge_tag': np.arange(4),
-             'edge_chunk': np.arange(4), 'raw': np.column_stack([np.zeros(4), facets]),
-             'id_rank': np.arange(4)}
+             'edge_chunk': np.arange(4), 'raw': np.zeros((4, 5)), 'id_rank': np.arange(4)}
     rows = np.array([[.9, .8, .7, .6]])
-    got = WK.facet_relative_places(layer, rows, [0], np.arange(4))
-    # both ways: chunk 2 rises by half the gap (3rd by closeness, 1st by the facet), chunk 1 falls
-    assert got['closeness_rank'].tolist() == [1, 2, 3, 4] and got['facet_rank'].tolist() == [2, 3, 1, 4]
-    assert got['place'].tolist() == [1, 3, 2, 4] and got['place_by_closeness'].tolist() == [1, 2, 3, 4]
+    got = WK.closeness_places(layer, rows, np.arange(4))
+    assert got['place'].tolist() == [1, 2, 3, 4] and got['closeness_rank'].tolist() == [1, 2, 3, 4]
     assert got['query_tag'].tolist() == [0] * 4 and got['edge'].tolist() == [0, 1, 2, 3]
-    # where the facet does not matter for the tag, closeness alone
-    assert WK.facet_relative_places(layer, rows, [-1], np.arange(4))['place'].tolist() == [1, 2, 3, 4]
     # a second query tag that puts chunk 3 first: each chunk takes the best place a query tag gives it
-    two = WK.facet_relative_places(layer, np.array([[.9, .8, .7, .6], [.1, .2, .3, .95]]), [0, -1],
-                                   np.arange(4))
-    assert two['place'].tolist() == [1, 3, 2, 1] and two['query_tag'].tolist() == [0, 0, 0, 1]
-    # only the border's chunks are ranked; two chunks that swap ranks stand level, and a level
-    # goes to closeness
-    part = WK.facet_relative_places(layer, rows, [0], np.array([1, 2]))
-    assert part['facet_rank'][[1, 2]].tolist() == [2, 1] and part['place'][[1, 2]].tolist() == [1, 2]
-    assert np.isinf(part['place'][[0, 3]]).all()
-    with pytest.raises(ValueError, match='one named facet, or -1, per query tag'):
-        WK.facet_relative_places(layer, rows, [4], np.arange(4))
+    two = WK.closeness_places(layer, np.array([[.9, .8, .7, .6], [.1, .2, .3, .95]]), np.arange(4))
+    assert two['place'].tolist() == [1, 2, 2, 1] and two['query_tag'].tolist() == [0, 0, 1, 1]
+    # only the border's chunks are ranked
+    part = WK.closeness_places(layer, rows, np.array([1, 2]))
+    assert part['place'][[1, 2]].tolist() == [1, 2] and np.isinf(part['place'][[0, 3]]).all()
+    with pytest.raises(ValueError, match='one cosine row over the graph tags per query tag'):
+        WK.closeness_places(layer, rows[:, :3], np.arange(4))
+
+
+def test_an_edges_standing_is_read_against_the_same_tags_other_edges_of_its_kind():
+    assert WK.wins(np.array([3., 0., .5]), 1.).tolist() == [2., .5, .5]
+    # tag 0 on chunks 0 and 1 (kind 0) and on chunk 2 (kind 1); tag 1 alone on chunk 3; tag 2 on
+    # chunks 4 and 5 (kind 0), close to each other; chunk 6 lies outside the border
+    facets = np.zeros((7, 4))
+    facets[:, 0] = [3., 0., 9., 5., .5, 0., -9.]
+    layer = {'chunks': 7, 'edge_tag': np.array([0, 0, 0, 1, 2, 2, 0]),
+             'edge_chunk': np.arange(7), 'raw': np.column_stack([np.zeros(7), facets]),
+             'kind': np.array([0, 0, 1, 0, 0, 0, 0])}
+    got = WK.facet_standings(layer, np.arange(6), 0, 1.)
+    # chunk 0 beats chunk 1 by more than the range; chunk 2 is the only one of its kind; tag 1 is
+    # alone; tags 2's two edges are within the range; chunk 6 is outside: no standing
+    assert got.tolist() == [1, -1, 0, 0, 0, 0, 0]
+    # with chunk 6 in the border it joins tag 0's kind-0 edges and loses to both
+    assert WK.facet_standings(layer, np.arange(7), 0, 1.).tolist() == [1, 0, 0, 0, 0, 0, -1]
+    with pytest.raises(ValueError, match='one of the ranking facets'):
+        WK.facet_standings(layer, np.arange(6), 4, 1.)
+    # per chunk its closest edge's standing in the facet its query tag names; the query tag's own
+    # phrase never stands below; no facet, no standing
+    t_edge, query_tag = np.arange(7), np.zeros(7, dtype=np.int64)
+    gaps = [1., 1., 1., 1.]
+    plain = WK.closest_edge_standing(layer, np.arange(6), t_edge, query_tag, [0], gaps,
+                                     np.zeros(7, dtype=bool))
+    assert plain.tolist() == [1, -1, 0, 0, 0, 0, 0]
+    own = np.zeros(7, dtype=bool)
+    own[1] = True
+    assert WK.closest_edge_standing(layer, np.arange(6), t_edge, query_tag, [0], gaps,
+                                    own).tolist() == [1, 0, 0, 0, 0, 0, 0]
+    assert not WK.closest_edge_standing(layer, np.arange(6), t_edge, query_tag, [-1], gaps,
+                                        own).any()
+    with pytest.raises(ValueError, match='one range per ranking facet'):
+        WK.closest_edge_standing(layer, np.arange(6), t_edge, query_tag, [0], [1.], own)
 
 
 def test_the_knee_and_the_levels_it_reads_off_a_list():

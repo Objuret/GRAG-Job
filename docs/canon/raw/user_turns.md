@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2287 turns, chronological. Verbatim text; no edits.
+2314 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -17965,4 +17965,119 @@ thats why i fucking asked you to find the actual relationship to what gets added
 ## 2026-10-19 23:57 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
 
 ok, do that and run a smoke?
+
+## 2026-10-20 00:36 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+this means nothing to me..
+
+## 2026-10-20 00:41 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+dude just give me the fucking judgements for the smoke you ran
+
+## 2026-10-20 00:44 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+compared to lucene and vector?
+
+## 2026-10-20 00:46 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+do the scores not compare!?
+
+## 2026-10-20 00:56 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+isnt this MUCH worse than it was before?
+
+## 2026-10-20 01:00 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+*queued while an agent was working*
+
+what.. you dont have the stats from earlier smokes?
+
+## 2026-10-20 01:14 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+holy shit you are beeing unclear now'
+
+## 2026-10-20 01:28 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+so.. ACTUAL STATS
+
+## 2026-10-20 01:30 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+dude, your fucking things are unreadable, what the actual fuck are you doing?
+
+## 2026-10-20 01:30 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+why have you hade up a whole new way of failing to showing me shit
+
+## 2026-10-20 01:30 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+*queued while an agent was working*
+
+BUT YOU ARE NOT SHOWING THE FUCKING COMPARISON
+
+## 2026-10-20 01:31 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+new smoke seems pretty good tho?
+
+## 2026-10-20 01:34 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+so, how true is the artefact arm to the abstract now? and can it be ran like the latest lucene and vector runs were to get all the fucking metrics/data/metadata etc and the full judgement so we can finally be done with this?
+
+## 2026-10-20 02:01 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+well you fucking had to make that messy instantly?
+
+## 2026-10-20 02:13 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+dude.. evidence hitrate is in the fucking judges.. it IS measured.. but why is not context prescicion comparable?
+
+## 2026-10-20 02:19 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+what you need?
+
+## 2026-10-20 02:26 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+is there a reason to not use the adaptive? is it bad? too complex? not fitting the abstract?
+
+## 2026-10-20 02:29 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+oh it does does it? you have hidden duties to uphold i dont know about?
+you think it's "compromising" in discovering it's dumb to rearrange "almost perfect hits" ?
+
+## 2026-10-20 02:32 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+soo..
+
+## 2026-10-20 02:51 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+*queued while an agent was working*
+
+wtf are you doing dude? i wrote soo and you have been working forever.. wtf?
+
+## 2026-10-20 03:04 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+do you see al the extra stats they gathered?
+
+## 2026-10-20 03:09 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+i meant tokens, tiems and all that shit.. have you even bothered
+
+## 2026-10-20 03:11 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+74 seconds of searchtime!?
+
+## 2026-10-20 03:13 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+stop, stop beeing a fucking retarded shit machine, snap into it and start understanding the fucking context
+
+## 2026-10-20 03:14 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+I ASKED IF YOU FUCKING UNDERSTOOD.. i want to make sure you understand what fucking data i want back from a full run and why in the goddamn whole fucking fuck is that so fucking hard for you to tell me?
+
+## 2026-10-20 03:23 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+and it's ready to be ran like this?
+
+## 2026-10-20 03:24 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+go ahead fix those things
 
