@@ -65,10 +65,11 @@ numbers are in the run folders and under `output/research/`.
   row's `meta`.
 - `finished_data/` — the data given away, six .xlsx workbooks and nothing else: for each arm
   `<arm>_runs.xlsx` (sheets `questions`: one row per question of the final run on the hundred
-  with its scores, times, tokens and tries; `records`: one row per retrieved record; `run`: the
-  run's models, machine and runtime; `key`) and `<arm>_construction.xlsx` (`build`: one row per
-  part of the index's build; `index`: its counts; `key`), values only, the same sheets and
-  columns for the three arms, the key sheet last. Made by `tools/export_finished_data.py` (needs
+  with its RAGAS scores, and its times and tokens one model at a time; `records`: one row per
+  retrieved record; `run`: the run's models, machine, runtime and the evaluation's cost; `key`)
+  and `<arm>_construction.xlsx` (`build`: one row per part of the index's build, its model,
+  calls, tokens and seconds; `index`: what the index holds; `key`), values only, the same sheets
+  and columns for the three arms, the key sheet last; a column is a measure he named or an id. Made by `tools/export_finished_data.py` (needs
   openpyxl) from the three final run folders, `test/graph/build_cost.json` and the facet layer's
   records under `output/facet_pairs/`; the export stops on any value that does not line up.
 - `docs/ENVIRONMENT.md` — the machines, the Neo4j start, the model lane and how many calls this
