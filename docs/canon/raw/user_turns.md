@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2283 turns, chronological. Verbatim text; no edits.
+2287 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -17949,4 +17949,20 @@ what, was that really all you figured out? again? after all of that.. you did.. 
 ## 2026-10-19 22:15 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
 
 well do that then
+
+## 2026-10-19 22:46 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+well, if you realize you built it wrong, fucking dont do that then and fix it.. what are you even saying here dude?
+
+## 2026-10-19 23:12 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+game? you made some shit that once again, gives us "the same result" ?
+
+## 2026-10-19 23:38 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+thats why i fucking asked you to find the actual relationship to what gets added and what gets lost with the facets, to see what they actually affect, and thus be able to maybe do it adaptive.. f f s
+
+## 2026-10-19 23:57 · bef6ed56-a4fa-4bed-8837-987c5943ff64.jsonl
+
+ok, do that and run a smoke?
 

@@ -27,6 +27,9 @@ Where the first call names a facet that matters for the query tag:
    Zermelo 1929 / Bradley-Terry). The level's items take the places the level already holds in the
    base, ordered by score, ties by the base: a nearer level stays ahead of a farther one, and no
    other query tag's items move.
+3. An item whose graph tag is the query tag's own phrase (the same words) may rise in its level but
+   never falls below its place in the base (his 2026-10-19 "ok, do that and run a smoke?" on: the
+   chunks the facets push out hold gold most often when their tag is the query tag itself).
 A chunk's place on the tags side is its best item's place; the tag cloud is the first chunks of that
 order, as many as the bend of the tags side's closeness gives; it meets the description cloud as now.
 (First built with the facet only between the edges of one graph tag; the arm reads the tags side
@@ -106,6 +109,30 @@ def standings(values, groups, gap):
     return out
 
 
+def _norm(text):
+    return ' '.join(str(text).lower().split())
+
+
+def _is_own_phrase(q, tag):
+    """Whether graph tag `tag` is query tag `q`'s own phrase (the same words)."""
+    return _norm(_LOCAL.graph_tags[int(tag)]) == _norm(_LOCAL.phrases[int(q)])
+
+
+def floor_order(by_score, by_base, own):
+    """The order by score, except that an item of `own` never stands below its place in the
+    base: at each place, an own item whose base place it is goes there unless already placed."""
+    due = {slot: int(k) for slot, k in enumerate(by_base) if int(k) in own}
+    out, used = [], set()
+    rest = iter(int(k) for k in by_score)
+    for slot in range(len(by_score)):
+        k = due.get(slot)
+        if k is None or k in used:
+            k = next(i for i in rest if i not in used)
+        out.append(k)
+        used.add(k)
+    return out
+
+
 def adaptive_places(layer, cosines, facet_of, inside):
     rows = np.asarray(cosines, dtype=np.float64)
     facet_of = np.asarray(facet_of, dtype=np.int64)
@@ -137,7 +164,7 @@ def adaptive_places(layer, cosines, facet_of, inside):
     plain = np.full(n, np.inf)
     q_of = np.full(n, -1, dtype=np.int64)
     edge_of = np.full(n, -1, dtype=np.int64)
-    groups = in_groups = moved = 0
+    groups = in_groups = moved = own_items = floored = 0
     _LOCAL.dump = [] if not DUMP else [
         (int(q), int(tag_e[e]), int(kind[chunk_e[e]]), layer['chunk_ids'][int(chunk_e[e])], int(facet_of[q]),
          [float(x) for x in raw[e, 1:]], int(cl), int(tl))
@@ -167,7 +194,15 @@ def adaptive_places(layer, cosines, facet_of, inside):
                     continue
                 m = mine[at]
                 score = wins(-t_item[m]) + wins(stand[at])
-                new[m[np.lexsort((pos[m], -score))]] = np.sort(pos[m])
+                by_score = m[np.lexsort((pos[m], -score))]
+                # an edge whose graph tag is the query tag's own phrase may rise, never fall
+                own = {int(k) for k in m if _is_own_phrase(q, tag_e[e_item[k]])}
+                by_base = m[np.argsort(pos[m])]
+                floored += sum(1 for slot, k in enumerate(by_score) if int(k) in own
+                               and slot > int(np.flatnonzero(by_base == k)[0]))
+                by_score = np.array(floor_order(by_score, by_base, own))
+                own_items += len(own)
+                new[by_score] = np.sort(pos[m])
                 groups += 1
                 in_groups += m.size
                 level_chunks.append(chunk_e[e_item[m]])
@@ -189,7 +224,8 @@ def adaptive_places(layer, cosines, facet_of, inside):
         edge_of[far] = edge[far]
     _LOCAL.place, _LOCAL.plain, _LOCAL.level_chunks = place, plain, level_chunks
     _LOCAL.record = {'items': len(items), 'groups': groups, 'items_in_groups': in_groups,
-                     'items_moved': moved}
+                     'items_moved': moved, 'own_phrase_items_in_groups': own_items,
+                     'own_phrase_items_held_up': floored}
     return {'place': place, 'query_tag': q_of, 'edge': edge_of,
             'closeness_rank': rankdata(plain, method='average'), 'facet_rank': place.copy(),
             'place_by_closeness': plain}
@@ -251,6 +287,27 @@ WK.cloud_combo = cloud_combo_moved
 from arms import artefact_v4 as V  # noqa: E402
 
 _answer = V.answer_one_question
+_interpret = V._interpret
+_ask = V._ask_graph
+
+
+def interpret_kept(*a, **k):
+    """The first call's answer, its query tags' phrases kept for this question."""
+    out = _interpret(*a, **k)
+    query = out[0]
+    _LOCAL.phrases = [t.text for t in (*query.tags, *query.query_tags)]
+    return out
+
+
+def ask_kept(*a, **k):
+    """The graph's answer, its graph tags' names kept for this question."""
+    asked = _ask(*a, **k)
+    _LOCAL.graph_tags = asked.graph_tags
+    return asked
+
+
+V._interpret = interpret_kept
+V._ask_graph = ask_kept
 
 
 def answer_one_question(question, *a, **k):
