@@ -78,17 +78,19 @@ QUESTIONS = [
     ("answer_tokens_in", "Tokens sent to the answer model.", "tokens"),
     ("answer_tokens_out", "Tokens that the answer model wrote.", "tokens"),
 ]
-RUN = [
+# the same for the three arms; the export stops if an arm differs
+SETUP = [
     ("dataset", "The dataset that the questions and the corpus records come from.", ""),
     ("dataset_licence", "The dataset's licence: give its name as the source, and use the data for "
                         "non-commercial purposes only.", ""),
     ("character_limit", "The most characters of retrieved text given to the answer model for one question.",
      "characters"),
-    ("interpreter_model", "The language model of the interpreter. Empty for an arm without an interpreter.", ""),
     ("answer_model", "The language model that wrote every answer.", ""),
     ("judge_model", "The language model that judged for the RAGAS scores that need a judge.", ""),
     ("embedding_model", "The embedding model: for the arm's own embeddings, and for the RAGAS scores that "
                         "compare by embeddings.", ""),
+]
+RUN = [
     ("run_seconds", "Time of the whole run over all questions. A time when the machine slept is not counted.",
      "seconds"),
     ("judge_tokens_in", "The evaluation's cost: tokens sent to the judge model for all questions.", "tokens"),
@@ -176,16 +178,20 @@ def runs_tables(arm, folder):
     if (sum(u["chat_calls"] for u in use), sum(u["tokens_in"] for u in use), sum(u["tokens_out"] for u in use)) \
             != (judge["calls"], judge["tokens_in"], judge["tokens_out"]) or any(u.get("embed_calls") for u in use):
         sys.exit(f"{arm}: the scores' judge cost does not add up to the evaluation's")
-    run = {
+    setup = {
         "dataset": DATASET, "dataset_licence": LICENCE,
-        "character_limit": man["char_budget"],
-        "interpreter_model": model_name(man["interpreter_model"]), "answer_model": model_name(man["generator_model"]),
+        "character_limit": man["char_budget"], "answer_model": model_name(man["generator_model"]),
         "judge_model": model_name(ev["judge_model"]), "embedding_model": model_name(env["embedder"]["model"]),
+    }
+    # his 2026-10-21 "cba adding interpreter, it's just the answer model"
+    if man["interpreter_model"] is not None and model_name(man["interpreter_model"]) != setup["answer_model"]:
+        sys.exit(f"{arm}: the interpreter's model is not the answer model")
+    run = {
         "run_seconds": leg["wall_s"],
         "judge_tokens_in": judge["tokens_in"], "judge_tokens_out": judge["tokens_out"],
         "judge_embedding_tokens": js["embedding"]["tokens_in"], "judging_seconds": js["wall_s"],
     }
-    return questions, run
+    return questions, setup, run
 
 
 def construction_table():
@@ -298,16 +304,21 @@ def main():
     p.add_argument("--out", default=str(ROOT / "finished_data"))
     out = Path(p.parse_args().out)
     out.mkdir(parents=True, exist_ok=True)
-    questions, runs = [], {}
+    questions, setups, runs = [], {}, {}
     for arm, folder in RUNS.items():
-        rows_of_arm, runs[arm] = runs_tables(arm, folder)
+        rows_of_arm, setups[arm], runs[arm] = runs_tables(arm, folder)
         questions += rows_of_arm
+    setup = setups["lucene"]
+    if any(s != setup for s in setups.values()):
+        sys.exit("the arms differ in the setup; this export writes it once")
     run = [{"property": c, **{arm: runs[arm][c] for arm in RUNS}} for c, _, _ in RUN]
     construction, construction_key = construction_table()
     tables = [("questions", [c for c, _, _ in QUESTIONS], questions), ("run", ["property", *RUNS], run),
-              ("construction", ["property", *RUNS], construction)]
+              ("construction", ["property", *RUNS], construction),
+              ("setup", ["property", "value"], [{"property": c, "value": setup[c]} for c, _, _ in SETUP])]
     key = ([{"sheet": "questions", "field": c, "meaning": m, "unit": u} for c, m, u in QUESTIONS]
-           + [{"sheet": "run", "field": c, "meaning": m, "unit": u} for c, m, u in RUN] + construction_key)
+           + [{"sheet": "run", "field": c, "meaning": m, "unit": u} for c, m, u in RUN] + construction_key
+           + [{"sheet": "setup", "field": c, "meaning": m, "unit": u} for c, m, u in SETUP])
     path = out / "finished_data.xlsx"
     workbook(path, "finished data", tables, (["sheet", "field", "meaning", "unit"], key))
     print(f"{path.name}: {path.stat().st_size:,} bytes, sheets {[n for n, _, _ in tables] + ['key']}, "

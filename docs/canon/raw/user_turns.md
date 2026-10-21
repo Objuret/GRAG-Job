@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2401 turns, chronological. Verbatim text; no edits.
+2402 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -18519,4 +18519,22 @@ rundate? why?
 ## 2026-10-21 04:01 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 like we can factcheck that somehow, just delete it
+
+## 2026-10-21 04:03 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+so, since these are identical for all arms:
+"
+
+<pasted_content id="f6a8">
+dataset
+dataset_licence
+character_limit
+interpreter_model
+answer_model
+judge_model
+embedding_model
+</pasted_content id="f6a8">
+
+"
+it feels retarded just having it written thrice on all.. just.. why.. also, cba adding interpreter, it's just the answer model
 
