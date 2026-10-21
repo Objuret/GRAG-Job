@@ -2,11 +2,11 @@
 
 40 turns spread across every rule that fired, so the filtering can be checked by hand.
 
-- `tool_result` - 18728 turns rejected
+- `tool_result` - 18797 turns rejected
 - `task_notification` - 1564 turns rejected
 - `is_meta` - 664 turns rejected
 - `command_expansion` - 90 turns rejected
-- `interrupt_marker` - 75 turns rejected
+- `interrupt_marker` - 76 turns rejected
 - `compact_summary` - 34 turns rejected
 
 ---
@@ -175,10 +175,10 @@ Another Claude session sent a message:
 <local-command-stdout>Set model to `claude-opus-5[1m]`</local-command-stdout>
 ```
 
-## `interrupt_marker` · 2026-10-05 04:13:23 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
+## `interrupt_marker` · 2026-10-21 00:56:13 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 ```
-[Request interrupted by user]
+[Request interrupted by user for tool use]
 ```
 
 ## `compact_summary` · 2026-10-08 21:27:34 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
@@ -231,10 +231,10 @@ Another Claude session sent a message:
             <command-args>claude-fable-5-1[1m]</command-args>
 ```
 
-## `interrupt_marker` · 2026-10-19 06:53:03 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
+## `interrupt_marker` · 2026-10-05 04:13:23 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
 
 ```
-[Request interrupted by user for tool use]
+[Request interrupted by user]
 ```
 
 ## `compact_summary` · 2026-10-10 12:29:00 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
@@ -305,10 +305,10 @@ Standard goals (always include):
 <local-command-stdout>Set model to `claude-fable-5-1`</local-command-stdout>
 ```
 
-## `interrupt_marker` · 2026-10-04 21:23:58 · 2311cb8a-730e-4bac-ae48-eb0744d04950.jsonl
+## `interrupt_marker` · 2026-10-19 06:53:03 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
 
 ```
-[Request interrupted by user]
+[Request interrupted by user for tool use]
 ```
 
 ## `compact_summary` · 2026-10-11 03:07:13 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
@@ -357,10 +357,10 @@ A session-scoped Stop hook is now active with condition: "figure out why, why th
             <command-args>opus[1m]</command-args>
 ```
 
-## `interrupt_marker` · 2026-09-29 09:45:18 · 232eaa9a-71a9-4684-8388-e4d07653f737.jsonl
+## `interrupt_marker` · 2026-10-04 21:23:58 · 2311cb8a-730e-4bac-ae48-eb0744d04950.jsonl
 
 ```
-[Request interrupted by user for tool use]
+[Request interrupted by user]
 ```
 
 ## `compact_summary` · 2026-10-11 18:09:45 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl

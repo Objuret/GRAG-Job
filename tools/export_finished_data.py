@@ -3,15 +3,17 @@ the construction with a column for each arm, values only.
 
     python tools/export_finished_data.py [--out finished_data]
 
-Needs openpyxl. Reads the three final run folders and writes four .xlsx files. A column of a run
-is a measure he named (times, tokens, runtime, the RAGAS scores) or an id of the dataset, the
-evaluation or the run; the construction holds what building each arm's index cost, one model at
-a time, and nothing about how it was built. Nothing that belongs to this machine or this project
+Needs openpyxl. Reads the three final run folders and the graph's build cost
+(test/graph/build_cost.json), and writes four .xlsx files. A column of a run is a measure he named
+(times, tokens, runtime, the RAGAS scores) or an id of the dataset, the evaluation or the run; the
+construction holds what built the index that each final run read, one model at a time, and nothing
+about how it was built. Nothing that belongs to this machine or this project
 goes in: no path, host, user, session, repository file, commit, note or reason. The data sheet
 comes first; the last sheet is the key.
 """
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -118,19 +120,12 @@ RUN = [
 INDEX_KIND = {"lucene": ("BM25 full-text index", "corpus record"),
               "vector": ("dense vector index", "corpus record"),
               "artefact": ("graph database (Neo4j)", "chunk: one or more corpus records")}
-# a model's rows in the construction, by kind: (row, meaning, its value in the model's build entry)
-MODEL_ROWS = {
-    "chat": [("calls", "Calls to {m} that the build's records count.", "calls"),
-             ("tokens in", "Tokens sent to {m} in the build.", "tokens_in"),
-             ("tokens out", "Tokens that {m} wrote in the build.", "tokens_out"),
-             ("seconds", "Time that {m} worked in the build, from start to end.", "seconds_elapsed")],
-    "embed": [("texts embedded", "Texts that {m} embedded in the build, one request each.", "calls"),
-              ("tokens", "Tokens of those texts.", "tokens_in"),
-              ("seconds", "Time that {m} worked in the build, from start to end.", "seconds_elapsed")],
-    "encoder": [("seconds", "Time that {m} worked in the build, from start to end.", "seconds_elapsed")],
-}
-HARDWARE = {"lucene": "laptop CPU", "vector": "desktop, NVIDIA GeForce GTX 1080 Ti",
-            "artefact": "laptop; desktop, NVIDIA GeForce GTX 1080 Ti; Colab GPU; the model providers' services"}
+
+
+def model_name(name):
+    """A model's name without its publisher and without a snapshot date (his 2026-10-21 "fucking
+    off with the nvidia tag", "20251001 for haiku? Stop beeing retarded")."""
+    return None if name is None else re.sub(r"-\d{8}$", "", str(name).split("/")[-1])
 
 
 def read(path):
@@ -207,8 +202,8 @@ def runs_tables(arm, folder):
         "arm": arm, "dataset": DATASET, "dataset_licence": LICENCE,
         "questions": man["n_questions"], "answered": man["n_ran"], "failed": man["n_failed"],
         "character_limit": man["char_budget"],
-        "interpreter_model": man["interpreter_model"], "answer_model": man["generator_model"],
-        "judge_model": ev["judge_model"], "embedding_model": env["embedder"]["model"],
+        "interpreter_model": model_name(man["interpreter_model"]), "answer_model": model_name(man["generator_model"]),
+        "judge_model": model_name(ev["judge_model"]), "embedding_model": model_name(env["embedder"]["model"]),
         "run_date": leg["started_at"][:10],
         "machine_cpu": CPU[env["cpu"]], "machine_threads": env["cpu_count"], "machine_ram_bytes": env["ram_bytes"],
         "machine_os": env["platform"],
@@ -223,28 +218,83 @@ def runs_tables(arm, folder):
 
 
 def construction_table():
-    """One row per thing, one column per arm: what building each arm's index cost, one model at a time."""
-    built = {}
-    for arm, folder in RUNS.items():
-        man = read(ROOT / "output/k=chars" / folder / "run_manifest.json")
-        units = man["index"]["counts"]["chunks"] if arm == "artefact" else man["index"]["units"]
-        built[arm] = (man["build_stats"], units)
-    things = [("index", "What the arm searches.", {a: INDEX_KIND[a][0] for a in RUNS}),
-              ("unit", "What one unit of the index is.", {a: INDEX_KIND[a][1] for a in RUNS}),
-              ("units in the index", "How many units the arm searches.", {a: built[a][1] for a in RUNS}),
-              ("build time, seconds", "Time to build the index. Lucene builds it in memory at the start of each "
-                                      "run. Vector's is the time to embed every record once. The artefact's is the "
-                                      "time of each step of its build, added; the time between the steps is not "
-                                      "counted.", {a: built[a][0]["build_time_s"] for a in RUNS})]
-    models = {}
-    for arm in RUNS:
-        for e in built[arm][0]["models"]:
-            models.setdefault((e["kind"], e["model"]), {})[arm] = e
-    for (kind, model), by_arm in models.items():
-        for row, meaning, field in MODEL_ROWS[kind]:
-            things.append((f"{model}, {row}", meaning.format(m=model), {a: e[field] for a, e in by_arm.items()}))
-    things.append(("hardware", "Where the index was built.", HARDWARE))
-    table = [{"thing": t, **{a: values.get(a) for a in RUNS}} for t, _, values in things]
+    """One row per thing, one column per arm: what built the index that the final run read, one model
+    at a time (his 2026-10-21 "The ONLY thing that matters, at all, is the iteration that ran the
+    RAGAS"). For the artefact that is read from test/graph/build_cost.json: the descriptions and tags
+    of the chunks in the graph, the vectors, the Opus judgements the facet network learned from, the
+    encoding of every edge, and the steps with no model; work replaced later, trials and tests stay
+    out."""
+    mans = {a: read(ROOT / "output/k=chars" / f / "run_manifest.json") for a, f in RUNS.items()}
+    cost = read(ROOT / "test/graph/build_cost.json")
+    steps = {s["id"]: s for s in cost["steps"]}
+
+    def left_out(step, starts):
+        hits = [x["values"] for x in cost["left_out"] if x["step"] == step and x["what"].startswith(starts)]
+        if len(hits) != 1:
+            sys.exit(f"build_cost.json left_out: not one entry {step!r} {starts!r}")
+        return hits[0]
+
+    tagging = steps["descriptions_and_tags"]
+    graph_chunks = tagging["the_4869_chunks_of_this_graph"]["extract"]
+    recovery = left_out("descriptions_and_tags", "the recovery by pass")["extract"]   # calls, in, out, summed
+    # the pass wrote these chunks and the ones taken out later; its time is split by the calls' own time
+    pass_seconds = (left_out("descriptions_and_tags", "per-pass elapsed")["extract"]
+                    + left_out("descriptions_and_tags", "the recovery's elapsed and its passes")["extract"])
+    haiku_seconds = pass_seconds * graph_chunks["seconds_summed_per_call"] / (
+        tagging["whole_run"]["by_pass"]["extract"]["seconds_summed_per_call"] + recovery[3])
+    vectors = steps["embeddings"]["parts"]
+    embedded = [vectors[k] for k in ("tags", "tags_with_underscores_in_readable_form", "descriptions")]
+    runs = left_out("facet_layer", "the Opus judge runs one by one")
+    learned_from = [runs["control"], runs["train"]]    # calls, in, out, summed, elapsed; the held-out only tested
+    facet = steps["facet_layer"]["parts"]
+    no_model = (sum(steps["graph_copies"]["seconds"].values())
+                + vectors["write_tag_vectors"]["seconds_elapsed"] + vectors["write_description_vectors"]["seconds_elapsed"]
+                + facet["head_selection_training_scoring"]["seconds_elapsed"]
+                + facet["bootstrap_refits"]["seconds_elapsed"]
+                + facet["write"]["seconds_elapsed"] + facet["write"]["backup_seconds"]
+                + sum(steps["later_edges_and_fields"]["seconds"].values()))
+    embed_seconds = sum(p["seconds_elapsed"] for p in embedded)
+    opus_seconds = sum(r[4] for r in learned_from)
+    encoder_seconds = facet["encoder_cache"]["seconds_elapsed"]
+    vector = mans["vector"]["build_stats"]["models"][0]
+    embedder = model_name(vector["model"])
+    if model_name(mans["artefact"]["environment"]["embedder"]["model"]) != embedder:
+        sys.exit("the arms name different embedding models")
+    encoder = model_name(facet["encoder_cache"]["model"].split(", ")[0])
+    a = "artefact"
+    things = [
+        ("index", "What the arm searches.", {k: INDEX_KIND[k][0] for k in RUNS}),
+        ("unit", "What one unit of the index is.", {k: INDEX_KIND[k][1] for k in RUNS}),
+        ("units in the index", "How many units the arm searches.",
+         {"lucene": mans["lucene"]["index"]["units"], "vector": mans["vector"]["index"]["units"],
+          a: mans[a]["index"]["counts"]["chunks"]}),
+        ("build time, seconds", "Time to build the index that the final run read. Lucene builds it in memory at "
+                                "the start of each run. Vector's is the time to embed every record once. The "
+                                "artefact's is the time of each step of its build, added; the time between the "
+                                "steps is not counted.",
+         {"lucene": mans["lucene"]["build_stats"]["build_time_s"], "vector": vector["seconds_elapsed"],
+          a: haiku_seconds + embed_seconds + opus_seconds + encoder_seconds + no_model}),
+        (f"{embedder}, texts embedded", f"Texts that {embedder} embedded for the index, one request each.",
+         {"vector": vector["calls"], a: sum(p["texts"] for p in embedded)}),
+        (f"{embedder}, tokens", "Tokens of those texts.",
+         {"vector": vector["tokens_in"], a: sum(p["tokens_in"] for p in embedded)}),
+        (f"{embedder}, seconds", f"Time that {embedder} worked for the index, from start to end.",
+         {"vector": vector["seconds_elapsed"], a: embed_seconds}),
+        ("claude-haiku-4-5, calls", "Calls to claude-haiku-4-5 for the index.", {a: graph_chunks["calls_with_usage"]}),
+        ("claude-haiku-4-5, tokens in", "Tokens sent to claude-haiku-4-5 for the index.", {a: graph_chunks["tokens_in"]}),
+        ("claude-haiku-4-5, tokens out", "Tokens that claude-haiku-4-5 wrote for the index.",
+         {a: graph_chunks["tokens_out"]}),
+        ("claude-haiku-4-5, seconds", "Time that claude-haiku-4-5 worked for the index: the time of the pass that "
+                                      "wrote it, in the share of the calls' own time that the index's chunks took.",
+         {a: haiku_seconds}),
+        ("claude-opus-5, calls", "Calls to claude-opus-5 for the index.", {a: sum(r[0] for r in learned_from)}),
+        ("claude-opus-5, tokens in", "Tokens sent to claude-opus-5 for the index.", {a: sum(r[1] for r in learned_from)}),
+        ("claude-opus-5, tokens out", "Tokens that claude-opus-5 wrote for the index.",
+         {a: sum(r[2] for r in learned_from)}),
+        ("claude-opus-5, seconds", "Time that claude-opus-5 worked for the index, from start to end.", {a: opus_seconds}),
+        (f"{encoder}, seconds", f"Time that {encoder} worked for the index, from start to end.", {a: encoder_seconds}),
+    ]
+    table = [{"thing": t, **{k: values.get(k) for k in RUNS}} for t, _, values in things]
     key = [{"thing": t, "meaning": m} for t, m, _ in things]
     return [("construction", ["thing", *RUNS], table)], (["thing", "meaning"], key)
 

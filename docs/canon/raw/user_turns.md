@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2352 turns, chronological. Verbatim text; no edits.
+2373 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -18241,4 +18241,149 @@ Oj, well, the judge costs are the same all over are they not? The only thing we 
 ## 2026-10-20 21:47 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 Well, the first tile I opened was artefact construction and Holy fuck did you spam that with hot garbage. How was I unclear about this? Do you think they give ANY fuck about how ANYTHING was done in the artefact unless they specifically ask for it? What you put in the xlsx was like 90% garbage.. I do NOT think this needs to be 3 different files..  Col with things, and then 3 cols, one for each arm, with that arm's "data" for those fields.. What the actual fuck is this..?
+
+## 2026-10-20 21:53 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*queued while an agent was working*
+
+Ok, closed it
+
+## 2026-10-20 22:13 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+Are those things really interesting? Look back to old conversations around v1 in the git and academic work, what did we have then?
+
+## 2026-10-21 00:22 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*paste / file drop · 3788 chars*
+
+@"C:\Users\jocke\.claude\uploads\01cdc39c-ae0a-4777-9788-62636e25d616\d2e5fb78-arm_outputs.jsonl" @"C:\Users\jocke\.claude\uploads\01cdc39c-ae0a-4777-9788-62636e25d616\caf14c29-eval_results.jsonl" so, remember when we did these?
+i wrote this when i appended those files:
+"
+The lucene and vector arms have been constructed and evaluated using 14 RAGAS metrics at k=50 and evaluated at k=5,10,15,20,30,40 using 11/14 metrics (not the 3 demanding an llm judge).
+
+Same 100 questions, this gives 1100 rows /k, as well as the recorded k's, run metrics like tokens, calls, time etc. 
+
+They are in jasonl output format right now, 2 files per run, arm output and eval results (14 files/arm).
+Obviously some cleaning can/should be made on these but better check while i can format/order/gather or fix it.
+How would you like the data?
+
+Attaching 1 set ( Vector, k=20) for review.
+
+At the moment the artefact has not been ran like this yet.
+Working on it but i might be hastily interrupted in this over the coming week since my partner is due to give birth soon (already overdue..).
+
+While i obviously cannot guarantee anything based on the fickle nature of such an event, communication, light work and git is still used so hopefully nothing is truly stuck because of this.
+
+Please do check if the data is enough/the expected etc.
+"
+
+the response i got from these was:
+"
+The results look as expected, and with all the k-runs included, they should be sufficient for the additional analysis. Please just make sure that the outputs remain comparable with the previous graph-based and Lucene test cases, especially in terms of question IDs, metrics, k-values, tokens, runtime, and result structure.
+"
+
+this was pre 72k chars, that was the next mail i sent which we all accepted with:
+"
+I started picking everything up again last week, and re-reading the new abstract got me looking closer at the evaluation. It describes matched evidence budgets, and while going through the two comparison methods (Lucene and vector search) I noticed that's not quite what the runs do: they fetch one source record at a time, while ours pulls in bigger batches, so counting "number of
+results" doesn't mean the same thing across them.
+
+My suggestion is capping retrieval at 72k characters (the budget the old runs already used for the answer step: 40 chunks × 1,800 characters = 72,000). There's solid precedent for comparing this way when retrieval units differ in size (Chen et al., EMNLP 2024: https://arxiv.org/abs/2312.06648), while the standard retrieval benchmarks don't address the situation at all.
+
+So before we run anything: does this sound right to you?
+It's all three methods on the gold question set, compared on the same amount of material, capped at 72k characters each, measuring the usual RAGAS metrics. Pretty much as before but char-capped instead of chunks, that's all.
+The runs themselves are decently quick nowadays, a few hours including the judging, so we'll hold off until we hear from you."
+-"Thanks for the update. I agree with you and Vijay that using the same 72k-character retrieval budget across all three methods seems like a reasonable and fair way to make the comparison, particularly since the retrieval units differ between the methods.
+I think we should make the procedure very explicit in the methodology, including how the 72k-character cap is applied, how retrieved material is truncated if the limit is exceeded. This should make the comparison transparent and reproducible.
+From my side, I also think you can proceed with the runs using this setup.
+"
+-"Yes, capping retrieval at 72k characters is a good approach. We should clearly mention this process in the method to avoid confusion."
+
+So, yeah. What can you take away from those files that we have missed here or misfitted?
+
+## 2026-10-21 00:27 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+the POINT was that ALL THREE ARMS have the same shit, for that first fucking random hangup you had
+
+## 2026-10-21 00:29 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+yeah, but i am telling yo to focus on THIS specific exact step
+
+## 2026-10-21 00:36 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+Well, your first index, unit, units in index, those we keep.
+Buildtime seconds.. Unsure tbh, how the fuck did you even measure that for the artefact?
+The model for embedding, fucking off with the nvidia tag, shesus, we used the hugging face local version, but those stats are fine too.
+20251001 for haiku? Stop beeing retarded. Those stats are fine. Same for opus, but wait, what ARE all those things? Are these the sums of all shit we have done?
+There is so much shit here that the others have NO idea of
+
+## 2026-10-21 00:44 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+I also mean, you can't just fill this shit with random unwanted context..
+Especially shit I did before I found a different way.  I don't give a shit about the cost for other things, and they even less so..  The ONLY thing that matters, at all, is the iteration that ran the RAGAS
+
+## 2026-10-21 00:47 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+Well, is that the cost for the full original runs, and not what Is ACTUALLY in the graph?
+
+## 2026-10-21 00:53 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+Facet values?
+
+## 2026-10-21 00:56 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+No dude, I asked, what fucking values?
+
+## 2026-10-21 00:57 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+Wait.. It uses that number for order? Really?
+
+## 2026-10-21 00:57 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+Everything you say now sounds fucking off
+How about you take a look at the actual artefact..
+
+## 2026-10-21 00:59 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+Wait, that sounds retarded for real, that's not what the "ranking relative to all other edges" mean.. That is just "I am the mostest" dumb ranking.. That can't be it. We had a fucking massive conversation about this..
+
+## 2026-10-21 01:28 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+thats fucking not what i just said dude
+
+## 2026-10-21 01:28 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*queued while an agent was working*
+
+i meant what created those numbers you claim are on the facets
+
+## 2026-10-21 01:37 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+so.. do we really give fucks about any of this for the others? i mean, the facets have a fucking number.. thats as far as they new it had before too.. is there any difference for them?
+
+## 2026-10-21 01:49 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+Yes
+
+## 2026-10-21 02:02 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+dude, just split the time and remove the affected etc.. average should be close enough over that many, right?
+
+## 2026-10-21 02:02 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*queued while an agent was working*
+
+this is not super-relevant information anyway
+
+## 2026-10-21 02:03 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*queued while an agent was working*
+
+hardware is a useless row also, who gives a shit..
+also, do the number of calls matter?
+
+## 2026-10-21 02:03 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*queued while an agent was working*
+
+not saying we remove it, just curious
 
