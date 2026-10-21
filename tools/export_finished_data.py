@@ -37,9 +37,9 @@ SCORES = [
                            "F1 of the claims that the judge model finds in both, plus 0.25 times "
                            "semantic_similarity.", "0 to 1"),
     ("context_recall_id", "RAGAS IDBasedContextRecall: the share of HERB's evidence records for the question that "
-                          "are among the records given in full (records sheet).", "0 to 1"),
-    ("context_precision_id", "RAGAS IDBasedContextPrecision: the share of the records given in full (records "
-                             "sheet, each record once) that are HERB evidence records for the question.", "0 to 1"),
+                          "are among the retrieved records.", "0 to 1"),
+    ("context_precision_id", "RAGAS IDBasedContextPrecision: the share of the retrieved records that are HERB "
+                             "evidence records for the question.", "0 to 1"),
     ("context_recall_llm", "RAGAS LLMContextRecall: the share of the reference answer's sentences that the judge "
                            "model finds supported by the retrieved text.", "0 to 1"),
     ("context_recall_nonllm", "RAGAS NonLLMContextRecall: the share of HERB's evidence records whose text a "
@@ -78,14 +78,6 @@ QUESTIONS = [
                                "nothing.", "tokens"),
     ("answer_tokens_in", "Tokens sent to the answer model.", "tokens"),
     ("answer_tokens_out", "Tokens that the answer model wrote.", "tokens"),
-]
-RECORDS = [
-    ("question_id", "The question, as in the questions sheet.", ""),
-    ("rank", "The position of the retrieved text in the arm's order, from 1. The records of one text share "
-             "a rank, and one record can stand in more than one text.", "position"),
-    ("record_id", "The id of a HERB corpus record in that text.", ""),
-    ("given_in_full", "FALSE for the records of the last text, which was cut at the character limit: only the "
-                      "start of that text was given to the answer model.", "TRUE or FALSE"),
 ]
 RUN = [
     ("arm", "The retrieval method.", ""),
@@ -154,7 +146,7 @@ def runs_tables(arm, folder):
     cells = {}
     for r in rows(d / "eval_results.jsonl"):
         cells.setdefault(r["question_id"], {})[r["metric"]] = r
-    questions, records = [], []
+    questions = []
     for r in rows(d / "arm_outputs.jsonl"):
         own = {}
         for e in r["retrieval"]:
@@ -170,8 +162,6 @@ def runs_tables(arm, folder):
         counted = list(dict.fromkeys(str(i) for ids, w in zip(id_lists, whole) if w for i in ids))
         if len(id_lists) != len(texts) or counted != [str(i) for i in r["context_ids"]]:
             sys.exit(f"{arm} {r['id']}: the record ids do not line up with the retrieved texts")
-        for rank, (ids, w) in enumerate(zip(id_lists, whole), 1):
-            records += [{"question_id": r["id"], "rank": rank, "record_id": str(i), "given_in_full": w} for i in ids]
         mine = cells[r["id"]]
         if set(mine) != {s for s, _, _ in SCORES} or any(c["status"] != "ok" for c in mine.values()):
             sys.exit(f"{arm} {r['id']}: not every score is there and ok")
@@ -211,7 +201,7 @@ def runs_tables(arm, folder):
         "judge_tokens_in": judge["tokens_in"], "judge_tokens_out": judge["tokens_out"],
         "judge_embedding_tokens": js["embedding"]["tokens_in"], "judging_seconds": js["wall_s"],
     }
-    tables = [("questions", QUESTIONS, questions), ("records", RECORDS, records), ("run", RUN, [run])]
+    tables = [("questions", QUESTIONS, questions), ("run", RUN, [run])]
     key = [{"sheet": name, "column": c, "meaning": m, "unit": u} for name, columns, _ in tables for c, m, u in columns]
     return [(name, [c for c, _, _ in columns], table) for name, columns, table in tables], \
         (["sheet", "column", "meaning", "unit"], key)

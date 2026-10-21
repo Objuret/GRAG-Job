@@ -65,8 +65,8 @@ numbers are in the run folders and under `output/research/`.
   row's `meta`.
 - `finished_data/` — the data given away, four .xlsx workbooks and nothing else: for each arm
   `<arm>_runs.xlsx` (sheets `questions`: one row per question of the final run on the hundred
-  with its RAGAS scores, and its times and tokens one model at a time; `records`: one row per
-  retrieved record; `run`: the run's models, machine, runtime and the evaluation's cost; `key`),
+  with its RAGAS scores, and its times and tokens one model at a time; `run`: the run's models,
+  machine, runtime and the evaluation's cost; `key`),
   the same sheets and columns for the three arms, a column a measure he named or an id; and
   `construction.xlsx` (one row per property, one column per arm: the index, its size, its build time
   and each model's calls, tokens and seconds, counting only what built the index that the final
