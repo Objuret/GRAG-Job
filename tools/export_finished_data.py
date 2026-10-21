@@ -25,78 +25,76 @@ RUNS = {"lucene": "lucene__gold100__cb72000__20261008T234209Z",
         "vector": "vector__gold100__cb72000__20261017T061242Z",
         "artefact": "artefact_v4__gold100__cb72000__20261020T041923Z"}
 DATASET, LICENCE = "HERB (Salesforce AI Research)", "CC BY-NC 4.0"
-COMPARE_INSIDE = " It counts per retrieved text, so compare it inside one arm only."
+# the sheets' names
+PER_QUESTION, PER_RUN, CONSTRUCTION, KEY = ("results per question", "run settings and totals",
+                                            "index construction", "data dictionary")
 
-# (column, meaning, unit) for every sheet of a run; the key sheet is written from these lists
+# (field, meaning, unit): the data dictionary is written from these lists. A score's meaning is
+# RAGAS's own definition (docs.ragas.io, available metrics) with the setting RAGAS 0.4.3 used.
 SCORES = [
-    ("faithfulness", "RAGAS Faithfulness: how factually consistent the answer is with the retrieved text. "
-                     "The judge model reads the answer's claims against the retrieved text.", "0 to 1"),
-    ("answer_correctness", "RAGAS AnswerCorrectness: the answer against HERB's reference answer: 0.75 times the "
-                           "F1 of the claims that the judge model finds in both, plus 0.25 times "
-                           "semantic_similarity.", "0 to 1"),
-    ("context_recall_id", "RAGAS IDBasedContextRecall: the share of HERB's evidence records for the question that "
-                          "are among the retrieved records.", "0 to 1"),
-    ("context_precision_id", "RAGAS IDBasedContextPrecision: the share of the retrieved records that are HERB "
-                             "evidence records for the question.", "0 to 1"),
-    ("context_recall_llm", "RAGAS LLMContextRecall: the share of the reference answer's sentences that the judge "
-                           "model finds supported by the retrieved text.", "0 to 1"),
-    ("context_recall_nonllm", "RAGAS NonLLMContextRecall: the share of HERB's evidence records whose text a "
-                              "retrieved text matches more than 0.5 (Levenshtein)." + COMPARE_INSIDE, "0 to 1"),
-    ("context_precision_nonllm", "RAGAS NonLLMContextPrecisionWithReference: the retrieved texts that match the text "
-                                 "of an evidence record more than 0.5 (Levenshtein), weighted by rank."
-                                 + COMPARE_INSIDE, "0 to 1"),
-    ("semantic_similarity", "RAGAS SemanticSimilarity: the cosine of the answer and the reference answer, both "
-                            "embedded by the embedding model.", "0 to 1"),
-    ("string_similarity", "RAGAS NonLLMStringSimilarity: the answer against the reference answer, Levenshtein.",
-     "0 to 1"),
-    ("bleu", "RAGAS BleuScore: the answer against the reference answer, n-gram precision with a brevity penalty.",
-     "0 to 1"),
-    ("rouge", "RAGAS RougeScore: the answer against the reference answer, ROUGE-L F-measure.", "0 to 1"),
-    ("chrf", "RAGAS ChrfScore: the answer against the reference answer, character n-gram F-score.", "0 to 1"),
-    ("exact_match", "RAGAS ExactMatch: 1 when the answer is exactly the reference answer, else 0.", "0 or 1"),
-    ("string_presence", "RAGAS StringPresence: 1 when the answer contains the reference answer, else 0.", "0 or 1"),
+    ("faithfulness", "RAGAS Faithfulness. Claims in the answer supported by the retrieved context / all claims "
+                     "in the answer.", "0-1"),
+    ("answer_correctness", "RAGAS AnswerCorrectness. Weighted average of factual similarity to the reference "
+                           "answer (weight 0.75) and semantic_similarity (weight 0.25). Reference answer: HERB's answer.", "0-1"),
+    ("context_recall_id", "RAGAS IDBasedContextRecall. Reference context ids found in the retrieved context ids / "
+                          "all reference context ids. Reference context ids: HERB's evidence record ids.", "0-1"),
+    ("context_precision_id", "RAGAS IDBasedContextPrecision. Retrieved context ids found in the reference context "
+                             "ids / all retrieved context ids.", "0-1"),
+    ("context_recall_llm", "RAGAS LLMContextRecall. Claims in the reference answer supported by the retrieved "
+                           "context / all claims in the reference answer.", "0-1"),
+    ("context_recall_nonllm", "RAGAS NonLLMContextRecall. Relevant contexts retrieved / all reference contexts. "
+                              "Relevant: Levenshtein similarity to a reference context of 0.5 or more. Reference context: text of a "
+                              "HERB evidence record.", "0-1"),
+    ("context_precision_nonllm", "RAGAS NonLLMContextPrecisionWithReference. Context precision@K: mean of "
+                                 "precision@k over the ranks k of the relevant retrieved contexts. Relevant: "
+                                 "Levenshtein similarity to a reference context of 0.5 or more.", "0-1"),
+    ("semantic_similarity", "RAGAS SemanticSimilarity. Cosine similarity of the embeddings of the answer and the "
+                            "reference answer.", "0-1"),
+    ("string_similarity", "RAGAS NonLLMStringSimilarity. Levenshtein similarity of the answer and the reference "
+                          "answer.", "0-1"),
+    ("bleu", "RAGAS BleuScore. BLEU of the answer against the reference answer.", "0-1"),
+    ("rouge", "RAGAS RougeScore. ROUGE-L F-measure of the answer against the reference answer.", "0-1"),
+    ("chrf", "RAGAS ChrfScore. chrF of the answer against the reference answer.", "0-1"),
+    ("exact_match", "RAGAS ExactMatch. 1 if the answer is the same as the reference answer, else 0.", "0 or 1"),
+    ("string_presence", "RAGAS StringPresence. 1 if the answer contains the reference answer, else 0.", "0 or 1"),
 ]
 QUESTIONS = [
-    ("arm", "The retrieval method.", ""),
-    ("question_id", "The question: the name of HERB's product file, 'a' for answerable, and the question's "
-                    "position, counted from 0, in that file's list of answerable questions.", ""),
-    ("question_type", "The question's type, as HERB gives it.", ""),
-    ("question", "The question, from HERB.", ""),
-    ("answer", "The answer that the answer model wrote from the retrieved text.", ""),
+    ("arm", "Retrieval method.", ""),
+    ("question_id", "Question id: product, a (answerable), index of the question in the product's answerable "
+                    "questions in HERB, from 0.", ""),
+    ("question_type", "HERB question type.", ""),
+    ("question", "Question, from HERB.", ""),
+    ("answer", "Answer of the answer model.", ""),
     *SCORES,
-    ("search_seconds", "Time of the arm's own search, without its model calls.", "seconds"),
-    ("interpreter_seconds", "Time of the interpreter: the arm's call to a language model before its search. "
-                            "Empty for an arm without an interpreter.", "seconds"),
-    ("query_embedding_seconds", "Time of the arm's embedding of the question. Empty for an arm that embeds "
-                                "nothing.", "seconds"),
-    ("answer_seconds", "Time of the answer model's call.", "seconds"),
-    ("total_seconds", "Time of all the work on the question, from the question to the answer.", "seconds"),
-    ("interpreter_tokens_in", "Tokens sent to the interpreter. Empty for an arm without an interpreter.", "tokens"),
-    ("interpreter_tokens_out", "Tokens that the interpreter wrote.", "tokens"),
-    ("query_embedding_tokens", "Tokens that the arm embedded for the question. Empty for an arm that embeds "
-                               "nothing.", "tokens"),
-    ("answer_tokens_in", "Tokens sent to the answer model.", "tokens"),
-    ("answer_tokens_out", "Tokens that the answer model wrote.", "tokens"),
+    ("search_seconds", "Retrieval time, without the interpreter and the query embedding.", "seconds"),
+    ("interpreter_seconds", "Time of the interpreter call: the answer model, called before retrieval. Artefact "
+                            "only.", "seconds"),
+    ("query_embedding_seconds", "Time to embed the query. Vector and artefact only.", "seconds"),
+    ("answer_seconds", "Time of the answer model call.", "seconds"),
+    ("total_seconds", "Time of all steps for the question, to the answer.", "seconds"),
+    ("interpreter_tokens_in", "Input tokens of the interpreter call. Artefact only.", "tokens"),
+    ("interpreter_tokens_out", "Output tokens of the interpreter call. Artefact only.", "tokens"),
+    ("query_embedding_tokens", "Tokens embedded for the query. Vector and artefact only.", "tokens"),
+    ("answer_tokens_in", "Input tokens of the answer model call.", "tokens"),
+    ("answer_tokens_out", "Output tokens of the answer model call.", "tokens"),
 ]
-# the same for the three arms; the export stops if an arm differs
+# the same for the three arms; the export stops if an arm differs. The dataset and its licence
+# are their own words and have no entry in the data dictionary.
 SETUP = [
-    ("dataset", "The dataset that the questions and the corpus records come from.", ""),
-    ("dataset_licence", "The dataset's licence: give its name as the source, and use the data for "
-                        "non-commercial purposes only.", ""),
-    ("character_limit", "The most characters of retrieved text given to the answer model for one question.",
+    ("dataset", None, ""),
+    ("dataset_licence", None, ""),
+    ("character_limit", "Maximum characters of retrieved text given to the answer model per question.",
      "characters"),
-    ("answer_model", "The language model that wrote every answer.", ""),
-    ("judge_model", "The language model that judged for the RAGAS scores that need a judge.", ""),
-    ("embedding_model", "The embedding model: for the arm's own embeddings, and for the RAGAS scores that "
-                        "compare by embeddings.", ""),
+    ("answer_model", "Language model of the answers and of the artefact's interpreter.", ""),
+    ("judge_model", "Language model that RAGAS uses as judge.", ""),
+    ("embedding_model", "Embedding model of the query embeddings and of the RAGAS scores that use embeddings.", ""),
 ]
 RUN = [
-    ("run_seconds", "Time of the whole run over all questions. A time when the machine slept is not counted.",
-     "seconds"),
-    ("judge_tokens_in", "The evaluation's cost: tokens sent to the judge model for all questions.", "tokens"),
-    ("judge_tokens_out", "The evaluation's cost: tokens that the judge model wrote for all questions.", "tokens"),
-    ("judge_embedding_tokens", "The evaluation's cost: tokens that the evaluation embedded.", "tokens"),
-    ("judging_seconds", "The evaluation's cost: time of the scoring of all questions, after the run.", "seconds"),
+    ("run_seconds", "Time of the run over the 100 questions.", "seconds"),
+    ("judge_tokens_in", "Input tokens of all RAGAS judge calls.", "tokens"),
+    ("judge_tokens_out", "Output tokens of all RAGAS judge calls.", "tokens"),
+    ("judge_embedding_tokens", "Tokens embedded by RAGAS.", "tokens"),
+    ("judging_seconds", "Time of the RAGAS evaluation over the 100 questions.", "seconds"),
 ]
 INDEX_KIND = {"lucene": ("BM25 full-text index", "corpus record"),
               "vector": ("dense vector index", "corpus record"),
@@ -240,39 +238,35 @@ def construction_table():
     encoder = model_name(facet["encoder_cache"]["model"].split(", ")[0])
     a = "artefact"
     things = [
-        ("index", "What the arm searches.", {k: INDEX_KIND[k][0] for k in RUNS}),
-        ("unit", "What one unit of the index is.", {k: INDEX_KIND[k][1] for k in RUNS}),
-        ("units in the index", "How many units the arm searches.",
+        ("index", "Index type.", "", {k: INDEX_KIND[k][0] for k in RUNS}),
+        ("unit", "Unit stored in the index.", "", {k: INDEX_KIND[k][1] for k in RUNS}),
+        ("units in the index", "Units in the index.", "count",
          {"lucene": mans["lucene"]["index"]["units"], "vector": mans["vector"]["index"]["units"],
           a: mans[a]["index"]["counts"]["chunks"]}),
-        ("build time, seconds", "Time to build the index that the final run read. Lucene builds it in memory at "
-                                "the start of each run. Vector's is the time to embed every record once. The "
-                                "artefact's is the time of each step of its build, added; the time between the "
-                                "steps is not counted.",
+        ("build time, seconds", "Time to build the index. Artefact: sum of the times of the build steps.", "seconds",
          {"lucene": mans["lucene"]["build_stats"]["build_time_s"], "vector": vector["seconds_elapsed"],
           a: haiku_seconds + embed_seconds + opus_seconds + encoder_seconds + no_model}),
-        (f"{embedder}, texts embedded", f"Texts that {embedder} embedded for the index, one request each.",
+        (f"{embedder}, texts embedded", "Texts embedded for the index.", "count",
          {"vector": vector["calls"], a: sum(p["texts"] for p in embedded)}),
-        (f"{embedder}, tokens", "Tokens of those texts.",
+        (f"{embedder}, tokens", "Tokens embedded for the index.", "tokens",
          {"vector": vector["tokens_in"], a: sum(p["tokens_in"] for p in embedded)}),
-        (f"{embedder}, seconds", f"Time that {embedder} worked for the index, from start to end.",
+        (f"{embedder}, seconds", "Embedding time for the index.", "seconds",
          {"vector": vector["seconds_elapsed"], a: embed_seconds}),
-        ("claude-haiku-4-5, calls", "Calls to claude-haiku-4-5 for the index.", {a: graph_chunks["calls_with_usage"]}),
-        ("claude-haiku-4-5, tokens in", "Tokens sent to claude-haiku-4-5 for the index.", {a: graph_chunks["tokens_in"]}),
-        ("claude-haiku-4-5, tokens out", "Tokens that claude-haiku-4-5 wrote for the index.",
-         {a: graph_chunks["tokens_out"]}),
-        ("claude-haiku-4-5, seconds", "Time that claude-haiku-4-5 worked for the index: the time of the pass that "
-                                      "wrote it, in the share of the calls' own time that the index's chunks took.",
-         {a: haiku_seconds}),
-        ("claude-opus-5, calls", "Calls to claude-opus-5 for the index.", {a: sum(r[0] for r in learned_from)}),
-        ("claude-opus-5, tokens in", "Tokens sent to claude-opus-5 for the index.", {a: sum(r[1] for r in learned_from)}),
-        ("claude-opus-5, tokens out", "Tokens that claude-opus-5 wrote for the index.",
-         {a: sum(r[2] for r in learned_from)}),
-        ("claude-opus-5, seconds", "Time that claude-opus-5 worked for the index, from start to end.", {a: opus_seconds}),
-        (f"{encoder}, seconds", f"Time that {encoder} worked for the index, from start to end.", {a: encoder_seconds}),
+        ("claude-haiku-4-5, calls", "Calls to claude-haiku-4-5 for the index.", "count",
+         {a: graph_chunks["calls_with_usage"]}),
+        ("claude-haiku-4-5, tokens in", "Input tokens of those calls.", "tokens", {a: graph_chunks["tokens_in"]}),
+        ("claude-haiku-4-5, tokens out", "Output tokens of those calls.", "tokens", {a: graph_chunks["tokens_out"]}),
+        ("claude-haiku-4-5, seconds", "Time of those calls: the time of the pass that made them, multiplied by "
+                                      "their share of the pass's call time.", "seconds", {a: haiku_seconds}),
+        ("claude-opus-5, calls", "Calls to claude-opus-5 for the index.", "count",
+         {a: sum(r[0] for r in learned_from)}),
+        ("claude-opus-5, tokens in", "Input tokens of those calls.", "tokens", {a: sum(r[1] for r in learned_from)}),
+        ("claude-opus-5, tokens out", "Output tokens of those calls.", "tokens", {a: sum(r[2] for r in learned_from)}),
+        ("claude-opus-5, seconds", "Time of those calls.", "seconds", {a: opus_seconds}),
+        (f"{encoder}, seconds", f"Encoding time of {encoder} for the index.", "seconds", {a: encoder_seconds}),
     ]
-    table = [{"property": t, **{k: values.get(k) for k in RUNS}} for t, _, values in things]
-    return table, [{"sheet": "construction", "field": t, "meaning": m, "unit": ""} for t, m, _ in things]
+    table = [{"property": t, **{k: values.get(k) for k in RUNS}} for t, _, _, values in things]
+    return table, [{"sheet": CONSTRUCTION, "field": t, "meaning": m, "unit": u} for t, m, u, _ in things]
 
 
 WIDE = {"question": 60, "answer": 80, "meaning": 100, "property": 50}
@@ -324,12 +318,13 @@ def main():
     same = [{"property": c, "value": setup[c]} for c, _, _ in SETUP]
     run = [{"property": c, **{arm: runs[arm][c] for arm in RUNS}} for c, _, _ in RUN]
     construction, construction_key = construction_table()
-    key = ([{"sheet": "questions", "field": c, "meaning": m, "unit": u} for c, m, u in QUESTIONS]
-           + [{"sheet": "run", "field": c, "meaning": m, "unit": u} for c, m, u in SETUP + RUN] + construction_key)
-    sheets = [("questions", [([c for c, _, _ in QUESTIONS], questions)]),
-              ("run", [(["property", "value"], same), (["property", *RUNS], run)]),
-              ("construction", [(["property", *RUNS], construction)]),
-              ("key", [(["sheet", "field", "meaning", "unit"], key)])]
+    key = ([{"sheet": PER_QUESTION, "field": c, "meaning": m, "unit": u} for c, m, u in QUESTIONS]
+           + [{"sheet": PER_RUN, "field": c, "meaning": m, "unit": u} for c, m, u in SETUP + RUN if m]
+           + construction_key)
+    sheets = [(PER_QUESTION, [([c for c, _, _ in QUESTIONS], questions)]),
+              (PER_RUN, [(["property", "value"], same), (["property", *RUNS], run)]),
+              (CONSTRUCTION, [(["property", *RUNS], construction)]),
+              (KEY, [(["sheet", "field", "meaning", "unit"], key)])]
     path = out / "finished_data.xlsx"
     workbook(path, "finished data", sheets)
     print(f"{path.name}: {path.stat().st_size:,} bytes, sheets {[n for n, _ in sheets]}, "
