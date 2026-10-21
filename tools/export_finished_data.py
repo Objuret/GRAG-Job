@@ -26,8 +26,7 @@ RUNS = {"lucene": "lucene__gold100__cb72000__20261008T234209Z",
         "artefact": "artefact_v4__gold100__cb72000__20261020T041923Z"}
 DATASET, LICENCE = "HERB (Salesforce AI Research)", "CC BY-NC 4.0"
 # the sheets' names
-PER_QUESTION, PER_RUN, CONSTRUCTION, KEY = ("results per question", "run settings and totals",
-                                            "index construction", "data dictionary")
+PER_QUESTION, PER_RUN, CONSTRUCTION, KEY = "results", "run data", "arm construction", "key"
 
 # (field, meaning, unit): the data dictionary is written from these lists. A score's meaning is
 # RAGAS's own definition (docs.ragas.io, available metrics) with the setting RAGAS 0.4.3 used.

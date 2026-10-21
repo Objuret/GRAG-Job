@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2411 turns, chronological. Verbatim text; no edits.
+2413 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -18583,4 +18583,12 @@ best auditions
 *queued while an agent was working*
 
 ops, wrong tab, ignore that
+
+## 2026-10-21 04:29 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+"index".. is that the arms? how about "results", run data, arm construction, key
+
+## 2026-10-21 04:30 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+closed, you dont agree with this renaming?
 
