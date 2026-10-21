@@ -66,13 +66,13 @@ numbers are in the run folders and under `output/research/`.
 - `finished_data/` — the data given away, one workbook and nothing else: `finished_data.xlsx`
   (sheets `questions`: one row per arm and question of the final runs on the hundred, with the
   RAGAS scores and the times and tokens one model at a time, a column a measure he named or an id;
-  `run`: one row per property, one column per arm, the run's runtime and the evaluation's cost;
+  `run`: one row per property, one column per arm: first what is the same for the three arms,
+  written once in one cell across the arms (the dataset, its licence, the character limit and the
+  models, the interpreter not named apart: his *"cba adding interpreter, it's just the answer
+  model"*, 2026-10-21), then the run's runtime and the evaluation's cost;
   `construction`: one row per property, one column per arm, the index, its size, its build time
   and each model's calls, tokens and seconds, counting only what built the index that the final
-  runs read, nothing on how a build was done; `setup`: what is the same for the three arms, once:
-  the dataset, its licence, the character limit and the models, the interpreter not named apart
-  (his *"cba adding interpreter, it's just the answer model"*, 2026-10-21); `key`). Values only,
-  the key sheet last. Made by
+  runs read, nothing on how a build was done; `key`). Values only, the key sheet last. Made by
   `tools/export_finished_data.py` (needs openpyxl) from the three final run folders and
   `test/graph/build_cost.json`; the export stops on any value that does not line up.
 - `docs/ENVIRONMENT.md` — the machines, the Neo4j start, the model lane and how many calls this
