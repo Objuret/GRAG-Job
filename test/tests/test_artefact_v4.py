@@ -329,13 +329,20 @@ def own_work_corpus():
 
     def message(mid, at, text='', channel='ch-own'):
         stamp = (V.datetime(2026, 1, 1) + (V.datetime(1970, 1, 2) - V.datetime(1970, 1, 1)) * (at / day))
-        return {'id': mid, 'Channel': {'channelID': channel},
-                'Message': {'User': {'timestamp': stamp.isoformat(), 'text': text}}}
+        return {'id': mid, 'Channel': {'channelID': channel, 'name': channel},
+                'Message': {'User': {'timestamp': stamp.isoformat(), 'text': text, 'userId': 'e1',
+                                     'utterranceID': mid}}}
 
-    own_pr = {'id': 'pr1', 'user': {'login': 'e1'}, 'link': 'https://github.com/x/own/pull/1'}
-    other_pr = {'id': 'pr2', 'user': {'login': 'EMP_9'}, 'link': 'https://github.com/y/other/pull/7'}
-    more_pr = {'id': 'pr3', 'user': {'login': 'EMP_8'}, 'link': 'https://github.com/y/other/pull/8'}
-    document = {'id': 'doc1', 'document_link': 'https://docs.example/own_doc'}
+    def pr(pid, login, link):
+        return {'id': pid, 'user': {'login': login}, 'link': link, 'title': f'pull request {pid}',
+                'created_at': '2026-01-01', 'state': 'closed', 'mergeable': True, 'merged': True,
+                'summary': 'a change', 'reviews': []}
+
+    own_pr = pr('pr1', 'e1', 'https://github.com/x/own/pull/1')
+    other_pr = pr('pr2', 'EMP_9', 'https://github.com/y/other/pull/7')
+    more_pr = pr('pr3', 'EMP_8', 'https://github.com/y/other/pull/8')
+    document = {'id': 'doc1', 'document_link': 'https://docs.example/own_doc', 'date': '2026-01-02',
+                'author': 'e2', 'type': 'Product Vision Document', 'content': 'the document'}
     m = [message('m1', 0, 'please check https://github.com/x/own/pull/1.'),
          message('m2', 120), message('m3', 300),
          message('m4', day, 'see https://github.com/y/other/pull/7'), message('m5', day + 180),
@@ -366,8 +373,12 @@ def test_what_is_handed_over_is_the_products_own_work_and_conversations_whole(mo
     held, records = own_work_corpus()
     at = {c: i for i, c in enumerate(held.chunk_ids)}
     monkeypatch.setattr(V, '_pointed_records', lambda row, cache: records[row['chunkId']])
-    monkeypatch.setattr(V, '_resolve_chunk', lambda row, cache: (
-        'the document as it is', [r['id'] for r in records[row['chunkId']]]))
+    monkeypatch.setattr(V, '_pointed', lambda row, cache: ('documents', records[row['chunkId']],
+                                                            None))
+    # where a text's first record stands in the product's file: its section, its place in it
+    place = {f'm{n}': n for n in range(1, 11)} | {'pr1': 0, 'doc1': 0}
+    monkeypatch.setattr(V, '_pointer', lambda rows, unit, cache: (
+        ['slack', 'documents', 'prs'].index(unit['section']), min(place[r] for r in unit['ids'])))
     order = [at[c] for c in ('s2', 's4', 'p1', 'p2', 'd1', 's1', 's3', 's5')]
     book = V.own_work(order, held, {})
     assert book['apart'] == {'x1', 'x2', 'x3'}
@@ -377,12 +388,17 @@ def test_what_is_handed_over_is_the_products_own_work_and_conversations_whole(mo
     # B links to another project's pull request only; D links to one and to an own document
     assert {key[2] for key in book['other']} == {1}
     contexts, id_lists, context_ids, budget, delivered, handed = V._hand_over(order, held, None, 10, {})
-    lines = lambda names: '\n'.join(json.dumps(r, ensure_ascii=False)       # noqa: E731
-                                    for c, k in names for r in [records[c][k]])
-    # s2 holds the end of A, all of B and the start of C: A and C go whole, B is left out
-    assert id_lists == [['m1', 'm2', 'm3', 'm6', 'm7', 'm8'], ['pr1'], ['doc1'], ['m9'], ['m10']]
-    assert contexts[0] == lines([('s1', 0), ('s1', 1), ('s2', 0), ('s2', 3), ('s3', 0), ('s3', 1)])
-    assert contexts[1] == lines([('p1', 0)]) and contexts[2] == 'the document as it is'
+    # every record as lucene and vector write it, a blank line between the records of a chunk
+    texts = lambda section, names: '\n\n'.join(V.record_text(section, records[c][k])  # noqa: E731
+                                               for c, k in names)
+    # s2 holds the end of A, all of B and the start of C: A and C go whole, B is left out; the
+    # texts reach the model in pointer order: the channel's messages, the document, the pull request
+    assert id_lists == [['m1', 'm2', 'm3', 'm6', 'm7', 'm8'], ['m9'], ['m10'], ['doc1'], ['pr1']]
+    assert contexts[0] == texts('slack', [('s1', 0), ('s1', 1), ('s2', 0), ('s2', 3), ('s3', 0),
+                                          ('s3', 1)])
+    assert contexts[3] == texts('documents', [('d1', 0)])
+    assert contexts[4] == texts('prs', [('p1', 0)])
+    whole_document = contexts[3]
     assert delivered == [at['s2'], at['p1'], at['d1'], at['s3'], at['s5']] and budget is None
     assert context_ids == ['m1', 'm2', 'm3', 'm6', 'm7', 'm8', 'pr1', 'doc1', 'm9', 'm10']
     assert handed['record'] == {
@@ -398,12 +414,13 @@ def test_what_is_handed_over_is_the_products_own_work_and_conversations_whole(mo
                                    'delivered_records_of_other_chunks': [4, 0, 0, 0, 0],
                                    'delivered_records_not_handed_over': [2, 1, 0, 2, 1]}
     # the harness's cut: the text that does not fit is cut where the budget ends and not credited
-    room = len(contexts[0]) + len(contexts[1]) + 5
+    room = len(contexts[0]) + len(contexts[4]) + 5
     contexts, id_lists, context_ids, budget, delivered, handed = V._hand_over(order, held, room, 10, {})
     assert delivered == [at['s2'], at['p1']] and context_ids[-1] == 'pr1'
     assert budget == {'budget': room, 'chars': room, 'kept': 2, 'exhausted': False,
-                      'boundary': {'id': 'd1', 'chars_kept': 5, 'chars_full': 21}}
-    assert len(id_lists) == 3 and contexts[2] == 'the d'
+                      'boundary': {'id': 'd1', 'chars_kept': 5,
+                                   'chars_full': len(whole_document)}}
+    assert len(id_lists) == 3 and contexts[1] == whole_document[:5]
     assert handed['record']['chunks_gone_through'] == 5       # the order was left where it ended
     # with no budget the first k texts
     assert V._hand_over(order, held, None, 2, {})[4] == [at['s2'], at['p1']]

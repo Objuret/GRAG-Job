@@ -66,7 +66,10 @@ Per question:
      of it links to a pull request that is not the product's own and none links to an own pull
      request or a document of the product. The author, a message's links and its time are fields
      of the records, read through the chunk's pointer.
-  9. The harness's cut at the character budget is applied to what is handed over.
+  9. The harness's cut at the character budget is applied to what is handed over; a split record
+     whose parts all went in goes in as one text and the cut is made again; the texts then reach
+     the model in pointer order (his 2026-10-22 "after the 72k cut, but before the model gets
+     it").
 Everything the order is made of is asked of the graph for each question (his 2026-10-07 "it MUST
 be asked of the DB", `_ask_graph`): the border's chunks with their pointers, the eligible tags on
 them with their edges' facet values, every closeness (the graph's own cosine of its stored
@@ -102,7 +105,8 @@ from artefact import query_content as Q
 from artefact import graph_layer as GL
 from artefact import v4_walk as WK
 from arms.artefact_facet_joint import _cached_stage, _query_cosines, _sha
-from arms.artefact_v2 import _load_verified_doc, _resolve_chunk
+from harness.record_text import FORM as RECORD_FORM, record_text
+from arms.artefact_v2 import _load_verified_doc
 
 ROOT = Path(__file__).resolve().parents[2]
 DATABASE = 'herb-eval-volmax'
@@ -163,7 +167,10 @@ OPTIONAL MATCH (c)-[:channel]->(ch:Channel)
 WITH f, c, p, collect(ch.id) AS channels
 RETURN c.chunk_id AS chunkId, c.kind AS kind, c.parent_ref AS parent, c.ordinal AS ordinal,
        c.locator_json AS locator, f.rel_path AS relpath, f.sha256 AS sha256, p.name AS product,
-       channels, [v IN $vectors | 2 * vector.similarity.cosine(c.desc_emb, v) - 1] AS closeness
+       channels, [v IN $vectors | 2 * vector.similarity.cosine(c.desc_emb, v) - 1] AS closeness,
+       CASE WHEN c.part_index IS NULL THEN null ELSE COUNT {
+           MATCH (q:Chunk) WHERE q.parent_ref = c.parent_ref AND q.item_index = c.item_index
+             AND q.doc_field = c.doc_field AND q.part_index IS NOT NULL } END AS parts
 ORDER BY chunkId
 '''
 QUESTION_TAGS_CYPHER = '''
@@ -519,14 +526,17 @@ FIELDS = {
             }),
         }),
         'ranking': sub('The order, and what lies behind each delivered chunk. The lists that '
-                       'start with delivered_ have one entry a delivered chunk, in delivered '
-                       'order.', {
+                       "start with delivered_ have one entry a delivered chunk, in the arm's "
+                       'order (the texts reach the answer model in pointer order, as chunk_ids '
+                       'lists them).', {
             'ordered_chunk_ids': "Every chunk of the border in the arm's order, by chunk id.",
             'delivered_chunk_ids': 'The chunks whose text, what was handed over of them, went '
                                    'in whole before the budget ended, by chunk id. A text can also '
                                    'hold records of other chunks, the rest of a conversation '
                                    '(delivered_records_of_other_chunks); those records are named '
-                                   'in chunk_ids by record id.',
+                                   'in chunk_ids by record id. A split record whose parts all '
+                                   'went in is one text, the whole record, under the chunk of its '
+                                   'first part.',
             'delivered_step': "The chunk's step: its two levels added, 2 in both clouds, 3 in one, "
                               '4 in neither.',
             'delivered_tags_level': "1 when it is in the tags side's cloud, 2 when it is not.",
@@ -630,7 +640,8 @@ FIELDS = {
                                             'step.'),
             'delivered_in_scope': 'How many of the delivered chunks are in scope.',
         }),
-        'chunk_ids': 'The record ids behind each delivered text, one list a text.',
+        'chunk_ids': 'The record ids behind each text handed over, one list a text, in the order '
+                     'the texts reach the answer model: pointer order.',
         'returned': 'How many texts were handed over, the one cut at the budget counted.',
         'char_budget': BUDGET_FIELDS,
     }),
@@ -652,6 +663,9 @@ FIELDS = {
         'first_call': 'When and how the first call is made.',
         'question_embedding': 'When and how the query tags, the description and the question are '
                               'embedded.',
+        'unit_text': 'The form a record is written in for the answer model, and where that form '
+                     'is from; a part of a split record, and a split record whose parts all went '
+                     'in; the order the texts reach the model in.',
     }),
     'retrieval_flags': whole("The arm's switches in the arm's own words, by name: what each one "
                              'does, not what it was set to. What was set on the command line is '
@@ -1032,12 +1046,68 @@ def index_info(prepared):
                           'in the store (HERB_V4_CACHE) is read from it and counted as no call',
             'question_embedding': 'at query time, local embedder, query mode; a text embedded '
                                   'before is read from output/query_embed_cache and counted as '
-                                  'no call'}
+                                  'no call',
+            'unit_text': f'each record as lucene and vector write it ({RECORD_FORM}), the records '
+                         'of a chunk one after the other with a blank line between them; a part '
+                         'of a split document or transcript is its record so written with only '
+                         "that part of its long field (a document's feedback with its last "
+                         'part), and a split record whose parts all went in is one text, the '
+                         'whole record, where its first part stood, the cut made again over '
+                         'those texts; after the cut the texts reach the answer model in pointer '
+                         "order: file, section in the file's own order, place of the text's "
+                         'first record in its section, part'}
 
 
 def _same_words(a, b):
     """Whether two phrases are the same words (case and spacing aside)."""
     return ' '.join(str(a).lower().split()) == ' '.join(str(b).lower().split())
+
+
+def _pointed(row, cache):
+    """A chunk's records through its pointer and their section; for a part of a split record,
+    also the pointer, which names the part (`char_range`, `field`, `part`)."""
+    loc = json.loads(row['locator'])
+    held = _load_verified_doc(row['relpath'], row['sha256'], cache)[loc['section']]
+    if 'char_range' in loc:
+        return loc['section'], [held[loc['index']]], loc
+    return (loc['section'], [held[i] for i in (loc['indices'] if 'indices' in loc else [loc['index']])],
+            None)
+
+
+def _record_texts(section, records):
+    """The records as lucene and vector write them (`harness.record_text`), one after the other
+    with a blank line between them, and where in that text each record ends."""
+    texts = [record_text(section, record) for record in records]
+    ends, at = [], 0
+    for n, text in enumerate(texts):
+        at += (2 if n else 0) + len(text)
+        ends.append(at)
+    return '\n\n'.join(texts), ends
+
+
+def _part_text(section, record, loc, parts):
+    """A part of a split document or transcript: its record as lucene and vector write it, with
+    only this part of its long field; a document's feedback, which follows its content, stands
+    with the last part."""
+    start, end = loc['char_range']
+    shown = dict(record)
+    shown[loc['field']] = record[loc['field']][start:end]
+    if loc['part'] + 1 < parts:
+        shown.pop('feedback', None)
+    return record_text(section, shown)
+
+
+def _pointer(rows, unit, doc_cache):
+    """Where a text stands in HERB's files: its file, its section in the file's own order, the
+    place of its first record in that section, and its part (0 for a whole record)."""
+    row = rows[unit['chunk']]
+    doc = _load_verified_doc(row['relpath'], row['sha256'], doc_cache)
+    key = ('places', row['relpath'], unit['section'])
+    if key not in doc_cache:
+        doc_cache[key] = {str(record['id']): n for n, record in enumerate(doc[unit['section']])}
+    return (row['relpath'], list(doc).index(unit['section']),
+            min(doc_cache[key][record] for record in unit['ids']),
+            unit['part'][1] if 'part' in unit else 0)
 
 
 def _hand_over(order, asked, char_budget, k, doc_cache):
@@ -1046,94 +1116,139 @@ def _hand_over(order, asked, char_budget, k, doc_cache):
     In the order: no message of a channel apart; of a batch of pull requests only the
     product's own; of a batch of Slack messages the conversations that are not about another
     project's pull request, each whole where it first shows (its messages in other chunks come
-    with it and are not handed over again); any other chunk as it is. The harness's cut is
-    applied to these texts (`cut_at_budget`); with no budget the first k are handed over.
+    with it and are not handed over again); any other chunk as it is. Every record is written
+    as lucene and vector write theirs (`_record_texts`), a part of a split record with only its
+    part of the long field (`_part_text`). The harness's cut is applied to these texts
+    (`cut_at_budget`); with no budget the first k are handed over. A split record whose parts all
+    went in whole goes in as one text, the whole record, where its first part stands, and the cut
+    is made again, until no more split records go in whole. The texts then reach the model in
+    pointer order (`_pointer`; his 2026-10-22 "after the 72k cut, but before the model gets it").
 
-    Returns the texts, the record ids behind each text, the record ids handed over whole, the
-    cut's block, the chunks handed over whole, and what a row keeps of it."""
+    A record is credited as handed over when its whole text went in, the rule lucene and vector
+    keep: every record of a text handed over whole (a split record only as one text), and the
+    records of the cut text that end before the cut.
+
+    Returns the texts in pointer order, the record ids behind each text, the record ids handed
+    over whole, the cut's block, the chunks handed over whole in the arm's order, and what a row
+    keeps of it."""
     rows = asked.chunk_rows
     book = own_work(order, asked, doc_cache)
-    units, seen = [], set()
-    nothing, left = Counter(), Counter()
-    gone = [0]
 
-    def stream():
-        for i in order:
-            row, kind = rows[i], rows[i]['kind']
-            gone[0] += 1
-            if kind == 'slack_thread_batch':
-                held = [str(record['id']) for record in _pointed_records(row, doc_cache)]
-                mine = [m for m in held if m not in book['apart']]
-                left['messages_of_a_channel_apart'] += len(held) - len(mine)
-                if not mine:
-                    nothing['in_a_channel_apart'] += 1
-                    continue
-                here = list(dict.fromkeys(book['talk'][m] for m in mine))
-                left['messages_about_another_projects_pull_request'] += sum(
-                    1 for m in mine if book['talk'][m] in book['other'])
-                new = [t for t in here if t not in book['other'] and t not in seen]
-                if not new:
-                    nothing['no_conversation_left'] += 1
-                    continue
-                seen.update(new)
-                records = [record for t in new for record in book['messages'][t]]
-                ids = [str(record['id']) for record in records]
-                unit = {'chunk': i, 'ids': ids, 'of_other_chunks': len(set(ids) - set(mine)),
-                        'not_handed_over': len(set(held) - set(ids)), 'conversations': len(new),
-                        'reaching': sum(1 for t in new if any(
-                            str(record['id']) not in mine for record in book['messages'][t]))}
-            elif kind == 'pr_batch':
-                held = _pointed_records(row, doc_cache)
-                records = [record for record in held if book['own'][str(record['id'])]]
-                left['pull_requests_of_other_projects'] += len(held) - len(records)
-                if not records:
-                    nothing['no_own_pull_request'] += 1
-                    continue
-                unit = {'chunk': i, 'ids': [str(record['id']) for record in records],
-                        'of_other_chunks': 0, 'not_handed_over': len(held) - len(records)}
-            else:
-                text, ids = _resolve_chunk(row, doc_cache)
-                units.append({'chunk': i, 'ids': [str(x) for x in ids], 'of_other_chunks': 0,
-                              'not_handed_over': 0})
+    def handed(joined):
+        """One pass over the order, each split record in `joined` as one text."""
+        units, seen, given = [], set(), set()
+        nothing, left = Counter(), Counter()
+        gone = [0]
+
+        def stream():
+            for i in order:
+                row, kind = rows[i], rows[i]['kind']
+                gone[0] += 1
+                if kind == 'slack_thread_batch':
+                    held = [str(record['id']) for record in _pointed_records(row, doc_cache)]
+                    mine = [m for m in held if m not in book['apart']]
+                    left['messages_of_a_channel_apart'] += len(held) - len(mine)
+                    if not mine:
+                        nothing['in_a_channel_apart'] += 1
+                        continue
+                    here = list(dict.fromkeys(book['talk'][m] for m in mine))
+                    left['messages_about_another_projects_pull_request'] += sum(
+                        1 for m in mine if book['talk'][m] in book['other'])
+                    new = [t for t in here if t not in book['other'] and t not in seen]
+                    if not new:
+                        nothing['no_conversation_left'] += 1
+                        continue
+                    seen.update(new)
+                    section, records = 'slack', [record for t in new
+                                                 for record in book['messages'][t]]
+                    ids = [str(record['id']) for record in records]
+                    unit = {'chunk': i, 'ids': ids, 'of_other_chunks': len(set(ids) - set(mine)),
+                            'not_handed_over': len(set(held) - set(ids)), 'conversations': len(new),
+                            'reaching': sum(1 for t in new if any(
+                                str(record['id']) not in mine for record in book['messages'][t]))}
+                elif kind == 'pr_batch':
+                    held = _pointed_records(row, doc_cache)
+                    section, records = 'prs', [record for record in held
+                                               if book['own'][str(record['id'])]]
+                    left['pull_requests_of_other_projects'] += len(held) - len(records)
+                    if not records:
+                        nothing['no_own_pull_request'] += 1
+                        continue
+                    unit = {'chunk': i, 'ids': [str(record['id']) for record in records],
+                            'of_other_chunks': 0, 'not_handed_over': len(held) - len(records)}
+                else:
+                    section, records, part = _pointed(row, doc_cache)
+                    unit = {'chunk': i, 'ids': list(dict.fromkeys(str(r['id']) for r in records)),
+                            'of_other_chunks': 0, 'not_handed_over': 0}
+                    if part is not None:
+                        record = unit['ids'][0]
+                        if record in given:
+                            continue
+                        if record not in joined:
+                            unit.update(section=section, part=(record, part['part'], row['parts']),
+                                        ends=[])
+                            units.append(unit)
+                            yield row['chunkId'], _part_text(section, records[0], part,
+                                                             row['parts'])
+                            continue
+                        # the whole record, here where its first part stands
+                        given.add(record)
+                text, ends = _record_texts(section, records)
+                unit.update(section=section,
+                            ends=list(zip((str(record['id']) for record in records), ends)))
+                units.append(unit)
                 yield row['chunkId'], text
-                continue
-            units.append(unit)
-            # a chunk's text as `_resolve_chunk` writes it: its records as JSON, one a line
-            yield row['chunkId'], '\n'.join(json.dumps(record, ensure_ascii=False)
-                                            for record in records)
 
-    if char_budget is not None:
-        cut = cut_at_budget(stream(), char_budget)
-        contexts, kept = cut.contexts, cut.kept
-        budget = {'budget': char_budget, 'chars': cut.chars, 'kept': cut.kept,
-                  'boundary': cut.boundary, 'exhausted': cut.exhausted}
-    else:
-        contexts = [text for _, (_, text) in zip(range(k), stream())]
-        kept, budget = len(contexts), None
-    context_ids = list(dict.fromkeys(aid for unit in units[:kept] for aid in unit['ids']))
-    delivered = [unit['chunk'] for unit in units[:kept]]
+        if char_budget is not None:
+            cut = cut_at_budget(stream(), char_budget)
+            budget = {'budget': char_budget, 'chars': cut.chars, 'kept': cut.kept,
+                      'boundary': cut.boundary, 'exhausted': cut.exhausted}
+            return units, cut.contexts, cut.kept, budget, nothing, left, gone[0]
+        texts = [text for _, (_, text) in zip(range(k), stream())]
+        return units, texts, len(texts), None, nothing, left, gone[0]
+
+    joined = set()
+    while True:
+        units, texts, kept, budget, nothing, left, gone = handed(joined)
+        parts_in = {}
+        for unit in units[:kept]:
+            if 'part' in unit:
+                record, part, of = unit['part']
+                parts_in.setdefault(record, (of, set()))[1].add(part)
+        complete = {record for record, (of, got) in parts_in.items() if got == set(range(of))}
+        if not complete:
+            break
+        joined |= complete
+    if len(units) != len(texts):
+        raise RuntimeError(f'artefact_v4: {len(texts)} texts handed over for {len(units)} units')
+    whole = units[:kept]
+    credited = [record for unit in whole if 'part' not in unit for record in unit['ids']]
+    if budget is not None and budget['boundary']:
+        credited += [record for record, end in units[kept]['ends']
+                     if end <= budget['boundary']['chars_kept']]
+    context_ids = list(dict.fromkeys(credited))
+    placed = sorted(range(len(texts)), key=lambda n: (_pointer(rows, units[n], doc_cache), n))
+    delivered = [unit['chunk'] for unit in whole]
     products = sorted({rows[i]['product'] for i in order})
     record = {
         'products': {name: {'channels_apart': sorted(asked.persons[name]['apart']),
                             'people': len(asked.persons[name]['people'])} for name in products},
-        'chunks_gone_through': gone[0],
+        'chunks_gone_through': gone,
         'chunks_with_nothing_handed_over': {name: nothing[name] for name in (
             'in_a_channel_apart', 'no_own_pull_request', 'no_conversation_left')},
         'records_left_out': {name: left[name] for name in (
             'messages_of_a_channel_apart', 'pull_requests_of_other_projects',
             'messages_about_another_projects_pull_request')},
         # counted over the texts that went in whole, not the one cut at the budget
-        'conversations_handed_over': sum(unit.get('conversations', 0) for unit in units[:kept]),
+        'conversations_handed_over': sum(unit.get('conversations', 0) for unit in whole),
         'conversations_reaching_into_another_chunk': sum(unit.get('reaching', 0)
-                                                         for unit in units[:kept]),
+                                                         for unit in whole),
     }
-    per_chunk = {'delivered_records': [len(unit['ids']) for unit in units[:kept]],
-                 'delivered_records_of_other_chunks': [unit['of_other_chunks']
-                                                       for unit in units[:kept]],
-                 'delivered_records_not_handed_over': [unit['not_handed_over']
-                                                       for unit in units[:kept]]}
-    return (contexts, [unit['ids'] for unit in units], context_ids, budget, delivered,
-            {'record': record, 'per_chunk': per_chunk})
+    per_chunk = {'delivered_records': [len(unit['ids']) for unit in whole],
+                 'delivered_records_of_other_chunks': [unit['of_other_chunks'] for unit in whole],
+                 'delivered_records_not_handed_over': [unit['not_handed_over'] for unit in whole]}
+    return ([texts[n] for n in placed], [units[n]['ids'] for n in placed], context_ids, budget,
+            delivered, {'record': record, 'per_chunk': per_chunk})
 
 
 def prepare_over_corpus(corpus) -> Prepared:
@@ -1396,7 +1511,8 @@ def _ask_graph(chunk_ids, tag_vectors, text_vectors, prepared):
                            np.array([at[c] for c, _, _ in edges], dtype=np.int64),
                            edge_values[:, 0], edge_values[:, 1:])
     rows = tuple({'chunkId': str(r['chunkId']), 'kind': r['kind'], 'parent': r['parent'],
-                  'ordinal': r['ordinal'], 'locator': r['locator'], 'relpath': r['relpath'],
+                  'ordinal': r['ordinal'], 'parts': r['parts'], 'locator': r['locator'],
+                  'relpath': r['relpath'],
                   'sha256': r['sha256'], 'product': str(r['product']),
                   'channels': [str(ch) for ch in r['channels']]} for r in chunk_rows)
     return Asked(chunk_rows=rows, chunk_ids=ids, graph_tags=graph_tags, layer=layer,

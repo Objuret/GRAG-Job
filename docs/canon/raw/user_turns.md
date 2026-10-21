@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2425 turns, chronological. Verbatim text; no edits.
+2520 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -18645,4 +18645,432 @@ in run data, put the averages for each arm for each metric?
 *queued while an agent was working*
 
 or is that dumb?
+
+## 2026-10-21 04:57 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+wait.. the interpreter takes 13 seconds?
+
+## 2026-10-21 04:58 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+you answer like its a sum
+
+## 2026-10-21 04:59 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+HOW IS THAT NOT A FUCKING SUM!?
+
+## 2026-10-21 05:00 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+why the fuck are the failed tries in there?
+
+## 2026-10-21 05:01 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+correct this
+
+## 2026-10-21 05:10 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+ok, but can i send this now then?
+
+## 2026-10-21 12:52 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*paste / file drop · 2303 chars*
+
+I got this response:
+"
+Thanks for sharing the results. Data format is fine, and the proposed 72k-character cap seems reasonable, particularly since the retrieval units differ across the three methods.
+Before we proceed further, I would like to clarify a few methodological points to ensure the comparisons are fair.
+Evidence budget: Although all three methods have a 72k-character limit, their average answer input tokens differ (26k for Lucene, 30k for vector and 32k for Artefact). Is 72k simply the maximum allowed, or are the methods actually receiving comparable amounts of evidence? Can we record the actual characters and tokens supplied for each question?
+Context recall and precision: Artefact retrieves larger chunks containing multiple source records. Are the ID-based metrics calculated using the original source-record IDs or the Artefact chunk IDs? Ideally, we should evaluate all three methods against the same original source records, considering only evidence actually passed to the answer model.
+Differences between recall metrics: Artefact achieves considerably higher ID-based context recall (0.647), but its non-LLM recall is much lower (0.053). Could we check how these metrics are calculated and whether the difference in retrieval granularity affects them?
+Answer correctness: Despite relatively high faithfulness across all three methods, answer correctness remains low (0.175–0.273). Several answers also indicate that the requested information could not be found. Could we examine whether this is primarily a retrieval problem or an issue with extracting the correct answer from the retrieved evidence? For questions involving employee IDs and PR links, exact entity-level accuracy might be more informative than text-similarity metrics.
+Comparison and statistical analysis: Can we confirm that all three methods were evaluated on exactly the same questions, reference answers and judging setup? If so, we could perform paired statistical comparisons and calculate confidence intervals to establish whether Artefact's improvements are significant.
+Do we have the original retrieval results, including source IDs, retrieved contexts and actual context lengths? If these are available, we may be able to verify or recalculate several metrics without rerunning the experiments.
+"
+
+## 2026-10-21 13:04 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+Yeah, but don't write this in this format to ME, write it correctly to give back as an email to HIM
+
+## 2026-10-21 13:07 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+you are not answering his questions
+
+## 2026-10-21 13:08 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+no, the first question
+
+## 2026-10-21 13:17 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+are you even answering the correct question here?
+"
+Evidence budget: Although all three methods have a 72k-character limit, their average answer input tokens differ (26k for Lucene, 30k for vector and 32k for Artefact). Is 72k simply the maximum allowed, or are the methods actually receiving comparable amounts of evidence? Can we record the actual characters and tokens supplied for each question?
+"
+
+## 2026-10-21 13:19 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+what the fuck does this mean "Lucene and vector pass them in the format HERB’s own code uses" ?
+
+## 2026-10-21 13:20 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+why would THIS not be the same? and does it matter at all?
+
+## 2026-10-21 13:21 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+dude, fucking STOP.. you are skipping so much important here
+
+## 2026-10-21 13:22 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*queued while an agent was working*
+
+are you fucking shitting me? WHY do we have different INPUT!=
+
+## 2026-10-21 13:22 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*queued while an agent was working*
+
+HOW IS THAT OK!?
+
+## 2026-10-21 13:24 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+you mother fucker.. how about you once in a fucking while took accountability for your limitless incompetence
+
+## 2026-10-21 13:27 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+i guess we have to go through and confirm every fucking step again you piece of shit.. 
+
+first, define all steps an arm take in this
+
+## 2026-10-21 13:39 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+status?
+
+## 2026-10-21 13:39 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+running WHAT?
+
+## 2026-10-21 13:39 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+you can read the fucking code, what are you even doing?
+
+## 2026-10-21 13:42 · 27f14760-a0f1-4642-b119-42ed8aa2d5ac.jsonl
+
+take a moment and compare what he asked, each thing, to the answers given here, question 2-5 and see if he is asking something else or if you have left out information or misinterpreted etc
+
+## 2026-10-21 13:54 · 27f14760-a0f1-4642-b119-42ed8aa2d5ac.jsonl
+
+write the correct anwers here then
+
+## 2026-10-21 13:59 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+THIS is the big fucking issue then?:
+"
+text written for the answer model	record_text	record_text	each record as raw JSON, one per line; a part of a document as a bare slice of its text ⚠
+context_ids	the records of the whole texts	the same	the records of the whole texts, deduplicated (since today, also the whole records before the cut)
+"
+
+## 2026-10-21 14:00 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+you took too long meaning you were giving me a retarded answer, first, we'll handle that last part, context_ids, is it NOT the same for the artefact? what the fuck do you even mean here? deduplicated?
+
+## 2026-10-21 14:00 · 27f14760-a0f1-4642-b119-42ed8aa2d5ac.jsonl
+
+*queued while an agent was working*
+
+hello?
+
+## 2026-10-21 14:05 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+how the fuck can one record stand in several chunks?
+
+## 2026-10-21 14:08 · 27f14760-a0f1-4642-b119-42ed8aa2d5ac.jsonl
+
+*queued while an agent was working*
+
+you made a fucking commit and push for aquestion about an email!?
+
+## 2026-10-21 14:19 · 27f14760-a0f1-4642-b119-42ed8aa2d5ac.jsonl
+
+what the fuck..? does this affect anything? what DID you do!?
+
+## 2026-10-21 14:20 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+ok, dont we litterally have a marker for that though?
+
+## 2026-10-21 14:21 · 27f14760-a0f1-4642-b119-42ed8aa2d5ac.jsonl
+
+ok, so answer the fucking questions he had then..
+
+## 2026-10-21 14:29 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+dude.. in what order is the artefact chunks given to the model!?
+
+## 2026-10-21 14:29 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+dont tell me its in the fucking.. god fucking damnit piece of shit.. ofc it's not in the correct order.. good god.. how useless
+
+## 2026-10-21 14:32 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+well , first of all, we REALLY need to fix that raw json and no record_text..  is the record text the good solution for this?
+
+## 2026-10-21 14:36 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+yes, but is it lean and correct format to give a llm?
+
+## 2026-10-21 14:37 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+perhaps give the chunks in "time order" or something to the model, after the cut has been made so to speak? or you got a better idea? just "pointer order" perhaps
+
+## 2026-10-21 15:14 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+ok, why is the " their average answer input tokens differ (26k for Lucene, 30k for vector and 32k for Artefact)" different for lucene and vector then?
+
+## 2026-10-21 15:53 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+But you said they receive 72k.. You are mixing the fucking things up here
+
+## 2026-10-21 15:53 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+Either they receive 72 fucking K context and that's it. But that's not the question, is it? The question is input tokens. That's not the fucking same.
+
+## 2026-10-21 16:12 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+Ok but dude, that format issue. If we ran the artefact again.. With the removal of the JSON formatting what is the actual difference between all three of these? If vector and lysine are identical in shape, that's what we're going to do because I can't run all three again unless they are also really bad. By the way a fucking JSON file is really bad because it fills the context with actual garbage or am I wrong? Is it garbage? You need to be fucking clear when communicating now.
+
+## 2026-10-21 16:13 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+No, dont do per different fucking records dude, you keep muddying the waters you fucking cunt.
+
+## 2026-10-21 16:17 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+That's not what I fucking said.
+
+## 2026-10-21 16:18 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+No I'm talking about the fucking format, the bloat of the context. Jesus fucking Christ.
+
+## 2026-10-21 16:48 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+Good then fucking let's discuss that part.
+
+## 2026-10-21 18:50 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+how would a real world implementation of a retrieval like this have looked for lucene and vector?
+
+## 2026-10-21 19:00 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+"a blank line between texts" what.. we.. what...
+
+## 2026-10-21 19:12 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+yeah that is unfortunate but wont happen now, as would it probably be to clean the retrieved messages to actual content only instead of this garbage
+
+## 2026-10-21 19:12 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+drop it dude, lets focus on the cleanup
+
+## 2026-10-21 19:13 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+is that a part of the structured output then?
+
+## 2026-10-21 19:14 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+ok, so, the structured in and outputs are cleaned? they are not filled with shit, toolcalls and noise?
+
+## 2026-10-21 19:15 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*queued while an agent was working*
+
+i remember we DID a cleanup for that once but based on how much THIS part failed i suddenly have no fucking trust
+
+## 2026-10-21 19:22 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+good!
+next is the actual shape that is delivered to the answering model then, right? that is all we have to care about?
+
+## 2026-10-21 19:24 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+nr 2 there, how do we fix that then? is it broken for all arms?
+
+## 2026-10-21 19:27 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+i dont get it, are you actuall asking me what the "correct" way is here?
+
+## 2026-10-21 19:29 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+i see, we REALLY should have included that flag for partial documents then, unless we did, i remember deciding to do that once in a time but as everything else i assume it was fucked up
+
+## 2026-10-21 19:30 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+look at the fucking database..
+
+dont ask prose..
+
+## 2026-10-21 19:33 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+wait a fucking minute.. the marker IS in.. we fucking have it!? and you have had me litterally bending backwards trying to find the cleanest link between chunks that.. dude.. you actual goddamn mother fucked what an actual piece of shit you are to work with
+
+## 2026-10-21 19:36 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+this is.. holy shit..
+
+## 2026-10-21 19:49 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+ok, explain what we can use this information for because i get the feeling you might be missing how big this is
+
+## 2026-10-21 19:58 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+i WILL have to run the artefact once more you know so dont worry about that part, because we have to trim the outputs anyway
+
+## 2026-10-21 20:00 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+1,2 seems good, 3 tho, i dont understand this part, i mean, yeah, this solution might be the correct one, but WHY does it matter? is it for one of the ragas? what is it thats "not counting" ? i mean, either what it got led it to the answers we wanted, or it didnt, so, what is happening here?
+4, what? what the fuck?
+5, what?
+
+## 2026-10-21 20:03 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+do lucene and vector "cut" them? perhaps now, when we have the information to do so, we can make the artefact NOT CUT like that also..
+
+## 2026-10-21 20:05 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+you dont seem to fucking understand what i am saying at all, are you stuck?
+
+## 2026-10-21 20:08 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+ah, ok, so, that is correct then, and only those two metrics make this a thing at all, the others will actually use the models answers instead and thus it might matter to get those chars in so to speak. anyway, its even..
+
+the point i was making it, we have to rebuild the artefact
+
+## 2026-10-21 20:34 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+no you retarded fuckstick, i mean the tiny bits in the arm.. HAVE YOU NOT BEEN HERE FOR THIS FUCKING CONVERSATION MATE?!
+
+## 2026-10-21 20:41 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+stop you fucker, what are you doing!? i was looking away and you are WORKING on something? what1?
+
+## 2026-10-21 20:41 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+i cant believe you just started doing some random fucking job out of thin air..
+
+## 2026-10-21 20:41 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*queued while an agent was working*
+
+there should be some sort of ai-deathpenalty on that
+
+## 2026-10-21 20:42 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+ok, well you started building something we actually want tho so thats good..
+
+## 2026-10-21 20:43 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+how is that working btw, there needs to be something saying its there or not? handed off to the ragas for the judgement to work on those? i dont get it, doesnt the ragas know ?
+
+## 2026-10-21 21:00 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+oh, ok, yeah, but that is handled by a function for the arms AFTER their retrieval and output and all that, correct?
+
+## 2026-10-21 21:05 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+what? why dont you write the ids AFTER the cut?
+
+## 2026-10-21 21:06 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+ok, so, if all i of isnt there for a record, its not kept, that is built now?
+
+## 2026-10-21 21:09 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+what "The other new test, for the cut, still fails."? is that about?
+
+## 2026-10-21 21:19 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+you .. made.. a .. test.. for it? but.. why? you need like 1 check for it.. 'are all records of the cut off chunk/record present'? which is always a fucking no, if it was CUT THE FUCK OFF.. correct?
+
+## 2026-10-21 21:20 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+dude, you can do whatever fucking temporary tests you want for your coding, but keep them off my fucking code when you have assertained that the code YOU wrote is actually working as intended.. how is this now how you work as a basis? am i missing something here?
+
+## 2026-10-21 21:22 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+please be fucking clearer, what are you asking me? so much fucking hum and haw and prose about nothing
+
+## 2026-10-21 21:23 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+1 yes, 2 yes, 3 wait, why on 100 you fuck, how long does that even take? anyway, we have more to build anyway
+
+## 2026-10-21 21:29 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+herbv4offline wtf is that?
+
+## 2026-10-21 21:29 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*queued while an agent was working*
+
+goddamnit you have built such a fucking abomination behind the scenes here, shut the fuck up and stop
+
+## 2026-10-21 21:42 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+just stop your shit and stop derailing this goddamn conversation, this has been insane for several hours now, what the actual fuck is wrong with you?
+
+## 2026-10-21 21:42 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+but WHY, why are you acting like this all of a sudden?
+
+## 2026-10-21 21:44 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+you can search the last conversation right? find the things I SAID and reflect upon what you think i want to do next
+
+## 2026-10-21 22:05 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+well, i mean, when we retrieve for a question in the artefact, we can up the weight, or autoinclude chunks that are part of the same split object from the strongest chunks or something like that, you understand what i say?
+
+## 2026-10-21 22:46 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+yes, this happens after shit has been chosen as "good fit" for the query
+
+## 2026-10-21 23:00 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+what are you even saying.. why so fucking much prose all the goddamn time dude
+
+## 2026-10-21 23:06 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+how you read the code of the arm and db at all?
+
+## 2026-10-21 23:08 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+nothing have been decided you fuck, what IS the best step for this choice?, how about we test it out
+
+## 2026-10-21 23:21 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+*queued while an agent was working*
+
+soo..
+
+## 2026-10-21 23:21 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+*queued while an agent was working*
+
+status?
+
+## 2026-10-21 23:24 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+still, these dont tell me shit, give me ragas metrics dude
+
+## 2026-10-21 23:28 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+you have gold smokes to compare to, you have so much dude.. stop beeing a fuckwad..
+
+so, this is with the new NOT JSONL output format also?
+
+## 2026-10-21 23:31 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+do the [Part i of n] really need to be part of what actually goes into the answering agent?
+
+## 2026-10-21 23:37 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+yeah and it is contextnoise, ok, that part is removed (what the model gets that is), also in case we did t do it, we should "after the 72k cut, but before the model gets it" also order the chunks by the pointer order
+
+## 2026-10-21 23:40 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+do them now
 

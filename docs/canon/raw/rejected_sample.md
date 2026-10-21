@@ -2,12 +2,12 @@
 
 40 turns spread across every rule that fired, so the filtering can be checked by hand.
 
-- `tool_result` - 18970 turns rejected
-- `task_notification` - 1566 turns rejected
-- `is_meta` - 667 turns rejected
-- `command_expansion` - 92 turns rejected
-- `interrupt_marker` - 77 turns rejected
-- `compact_summary` - 35 turns rejected
+- `tool_result` - 19827 turns rejected
+- `task_notification` - 1584 turns rejected
+- `is_meta` - 679 turns rejected
+- `command_expansion` - 94 turns rejected
+- `interrupt_marker` - 85 turns rejected
+- `compact_summary` - 37 turns rejected
 
 ---
 
@@ -243,17 +243,18 @@ Another Claude session sent a message:
 [Request interrupted by user]
 ```
 
-## `compact_summary` · 2026-10-08 21:27:34 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+## `compact_summary` · 2026-10-20 15:03:31 · 27f14760-a0f1-4642-b119-42ed8aa2d5ac.jsonl
 
 ```
 This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
 
 Summary:
 1. Primary Request and Intent:
-   - **Original request (2026-10-08 15:28Z):** "do a critical review of the full lucene and vector runs now, extra careful with academic rigor, compare to the historically required data (metrics like times, tokens in and out, build and more) in the git history, mempalace etc, the new abstract". Delivered (long review; see section 5).
-   - **Then:** "You may make model calls." → I made probe calls and a one-question proof on the made-up question only.
-   - **Then a chain of corrections** in which he (a) wanted a plain yes/no on whether the runs are correctly done (answer: retrieval yes, model calls no), (b) was shocked that the CLI adds text to every call, (c) first ruled the judges are not ours, (d) told me to read RAGAS's own material myself, (e) then reversed: the judge calls must also be done correctly, per RAGAS's own settings, which I was to read and USE, not recite, (f) pointed out that the harness's "temperature 0, thinking off, max_tokens 8192" was in there for a reason (it is the int
-[... 28004 more chars]
+   - Ongoing thesis project GRAG-Job (repo C:\Coding\exjobbet\GRAG-Job, branch artefact-v4-iteration). Three final runs on the 100 gold questions: `output/k=chars/lucene__gold100__cb72000__20261008T234209Z`, `output/k=chars/vector__gold100__cb72000__20261017T061242Z` (both commit fbc2f22), `output/k=chars/artefact_v4__gold100__cb72000__20261020T041923Z` (commit 0c082a3, clean checkout GRAG-Job-0c082a3).
+   - Earlier in this session: make the three run folders the same format and correct ("make sure all the correct data is in those folders") — done (commits 3a231f3, c22dd71, 126fc97).
+   - Then: apply research-data rules 1–8 to the current folders/data — done and reported rule by rule.
+   - CURRENT REQUEST: "create these versions then" — create six files, two per arm (one for the runs, one for the construction), holding "all the real, clean data" in "the same format/shape" across arms, at "csv-level of 'data'", delivered "in a less retarded format" than CSV, gathered "IN ITS OWN FUCKING CLEAN 
+[... 19107 more chars]
 ```
 
 ## `tool_result` · 2026-10-20 09:33:31 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
@@ -298,24 +299,29 @@ Another Claude session sent a message:
 <local-command-stdout>Set model to `claude-opus-5[1m]`</local-command-stdout>
 ```
 
-## `interrupt_marker` · 2026-10-05 04:13:23 · 072c5e83-66a1-4d1d-a0c5-6a8d23407688.jsonl
+## `interrupt_marker` · 2026-10-21 13:08:07 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 ```
 [Request interrupted by user]
 ```
 
-## `compact_summary` · 2026-10-10 12:29:00 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+## `compact_summary` · 2026-10-21 02:39:56 · 27f14760-a0f1-4642-b119-42ed8aa2d5ac.jsonl
 
 ```
 This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
 
 Summary:
 1. Primary Request and Intent:
-   The user (Joakim, master's thesis project GRAG-Job) is rebuilding the retrieval of the "artefact" arm (`artefact_v4`). Over this conversation his intents, in order:
-   - Test his hypothesis that the tag-nearness problem is the embedder's "passage: " prefix; put everything embedded for the artefact behind "query: " (done: tags, chunk descriptions, querytags, query description, question; graph rewritten).
-   - Replace the picking rule now that the numbers have a range: clustering / "main cluster" / grades; later "force the n of k in the kNN" and "explore what k=3 to 7 mean" (his kNN = the nearness values cut into clusters/levels, "first" = the nearest cluster — I misbuilt it as "k nearest tags"; unconfirmed reading saved to memory).
-   - Remove the model-written facet numbers on the query side: first the facet instrument (ranker) on (querytag, question+description), then his idea "the interpreter just names which of the facets is most important for this tag", matched against "the facet RANKI
-[... 28648 more chars]
+   - Project GRAG-Job (repo C:\Coding\exjobbet\GRAG-Job, branch artefact-v4-iteration). Three final runs on the 100 gold questions:
+     - `output/k=chars/lucene__gold100__cb72000__20261008T234209Z`
+     - `output/k=chars/vector__gold100__cb72000__20261017T061242Z`
+     - `output/k=chars/artefact_v4__gold100__cb72000__20261020T041923Z`
+   - The overall goal of this span: produce the finished data that he gives away to "our analyst" / "his people". The final state:
+     - `C:\Coding\exjobbet\GRAG-Job\finished_data\` holds four .xlsx workbooks and nothing else: lucene_runs.xlsx, vector_runs.xlsx, artefact_runs.xlsx and construction.xlsx.
+     - The files hold values only, at CSV level, in a proper format (xlsx). They hold no comments, reasons, links, paths, host or user names, session ids, repo files, commits or notes.
+     - Column names must be readable without a key, and the key sheet comes last.
+     - The three runs workbooks have the same sheets and columns ("ALL THREE ARMS have the same 
+[... 20885 more chars]
 ```
 
 ## `tool_result` · 2026-10-20 09:34:23 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
@@ -348,26 +354,23 @@ Summary:
             <command-args>claude-fable-5-1[1m]</command-args>
 ```
 
-## `interrupt_marker` · 2026-10-19 06:53:03 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
+## `interrupt_marker` · 2026-10-21 13:59:36 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 ```
-[Request interrupted by user for tool use]
+[Request interrupted by user]
 ```
 
-## `compact_summary` · 2026-10-11 03:07:13 · 4e21fd23-8afe-437a-b0bb-32a1114ef8aa.jsonl
+## `compact_summary` · 2026-10-08 21:27:34 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
 
 ```
 This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
 
 Summary:
 1. Primary Request and Intent:
-   The user (Joakim, master's thesis project GRAG-Job, artefact arm `artefact_v4`) drove this segment through these requests, in order:
-   - After compaction: **"so, rethink that"** — rethink "the look" (design) given that tags can set scope through their chunks.
-   - **"because we have tried doing this concept with the tags guiding, right? and we have tried it with the chunks guiding? now i want to do the both, side by side, together, either cleanly, or overlapping cloads for each step"** — both sides guide together.
-   - **"biuld and goldsmoke"** — go to build what I had asked about (overlapping clouds for each step) and run the ten.
-   - Status / clarification requests about my tables; he rejected my invented split table ("2 questions... what kind of retarded metrics is this?") and my use of "k" for clusters ("72k is the only fucking k").
-   - **"did you just make up some shit because you didnt understand a specific step?"** / **"ok, but what RANKED each cloud?"** / **"how about we stop fu
-[... 23914 more chars]
+   - **Original request (2026-10-08 15:28Z):** "do a critical review of the full lucene and vector runs now, extra careful with academic rigor, compare to the historically required data (metrics like times, tokens in and out, build and more) in the git history, mempalace etc, the new abstract". Delivered (long review; see section 5).
+   - **Then:** "You may make model calls." → I made probe calls and a one-question proof on the made-up question only.
+   - **Then a chain of corrections** in which he (a) wanted a plain yes/no on whether the runs are correctly done (answer: retrieval yes, model calls no), (b) was shocked that the CLI adds text to every call, (c) first ruled the judges are not ours, (d) told me to read RAGAS's own material myself, (e) then reversed: the judge calls must also be done correctly, per RAGAS's own settings, which I was to read and USE, not recite, (f) pointed out that the harness's "temperature 0, thinking off, max_tokens 8192" was in there for a reason (it is the int
+[... 28004 more chars]
 ```
 
 ## `tool_result` · 2026-10-20 09:34:27 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
