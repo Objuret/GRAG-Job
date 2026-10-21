@@ -1,0 +1,12 @@
+lucene: stored nonllm scores given again: 200 of 200
+vector: stored nonllm scores given again: 200 of 200
+artefact: stored nonllm scores given again: 200 of 200; stored id scores given again: 200 of 200
+  context_recall_nonllm, from as run:
+    split into records: up on 92 (by 0.007 to 1.000), down on 0 (by 0.000 to 0.000), the same on 8; mean 0.053 -> 0.612
+    split, baselines' form: up on 89 (by 0.056 to 0.833), down on 1 (by 0.036 to 0.036), the same on 10; mean 0.053 -> 0.428
+  context_precision_nonllm, from as run:
+    split into records: up on 72 (by 0.014 to 1.000), down on 23 (by 0.010 to 0.467), the same on 5; mean 0.195 -> 0.388
+    split, baselines' form: up on 67 (by 0.022 to 1.000), down on 27 (by 0.026 to 0.704), the same on 6; mean 0.195 -> 0.310
+  id scores, documents handed over only as slices holding less than their whole text not counted: 20 cited records in 17 questions
+    context_recall_id: up on 0 (by 0.000 to 0.000), down on 17 (by 0.015 to 0.118), the same on 83; mean 0.647 -> 0.638
+    context_precision_id: up on 26 (by 0.000 to 0.018), down on 17 (by 0.001 to 0.016), the same on 57; mean 0.193 -> 0.193

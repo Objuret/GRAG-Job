@@ -1,0 +1,14 @@
+product files 30; records of the six kinds with an id: 38540 (ids seen twice: 60)
+artefact pool: 4808 chunks (569 a slice of one document), 38540 distinct records; of them outside the six kinds: 0
+records of the six kinds the artefact pool does not reach: 0 by kind {}
+cited evidence: 3932 (question, record) pairs, 3501 records; by kind {'documents': 39, 'slack': 3534, 'meeting_transcripts': 178, 'meeting_chats': 7, 'prs': 147, 'urls': 27}
+  outside the baselines' records: 0 pairs in 0 questions
+  outside the artefact's pool: 0 pairs in 0 questions; by kind {}
+artefact records passed whole (once per question): 12765; JSON chars 6,776,632; the same records in the baselines' form 4,713,234 (30% fewer)
+  slack: JSON 5,294,807 -> form 3,284,506 (38% fewer); share of the JSON chars 78%
+  meeting_transcripts: JSON 1,080,117 -> form 1,059,925 (2% fewer); share of the JSON chars 16%
+  meeting_chats: JSON 5,759 -> form 5,689 (1% fewer); share of the JSON chars 0%
+  documents: JSON 260,849 -> form 256,787 (2% fewer); share of the JSON chars 4%
+  prs: JSON 135,100 -> form 106,327 (21% fewer); share of the JSON chars 2%
+slice texts passed whole: 152; documents credited only through slices: 100 {'documents': 82, 'meeting_transcripts': 18}; of them cited evidence of their question: 22
+  share of the document's text the passed slices hold: min 0.07, median 0.36, max 1.00; whole document (>= 0.99): 9 of 100
