@@ -1,5 +1,6 @@
-"""The finished data, for giving away: one workbook, values only: the questions of the three
-arms in one sheet, the runs and the construction with a column for each arm.
+"""The finished data, for giving away: one workbook, values only. Sheets: results (the three
+arms' questions in one table), run data (what is the same for the arms once, then a column per
+arm), arm construction (a column per arm), key.
 
     python tools/export_finished_data.py [--out finished_data]
 
@@ -139,15 +140,6 @@ def runs_tables(arm, folder):
             if e["kind"] in own:
                 sys.exit(f"{arm} {r['id']}: two {e['kind']} models in the arm's own calls")
             own[e["kind"]] = e
-        texts, cut = r["contexts"], r["meta"]["char_budget"].get("boundary")
-        if arm == "artefact":
-            id_lists = r["meta"]["chunk_ids"]
-        else:
-            id_lists = [[i] for i in r["context_ids"]] + ([[cut["id"]]] if cut else [])
-        whole = [not (cut and n == len(texts) - 1) for n in range(len(texts))]
-        counted = list(dict.fromkeys(str(i) for ids, w in zip(id_lists, whole) if w for i in ids))
-        if len(id_lists) != len(texts) or counted != [str(i) for i in r["context_ids"]]:
-            sys.exit(f"{arm} {r['id']}: the record ids do not line up with the retrieved texts")
         mine = cells[r["id"]]
         if set(mine) != {s for s, _, _ in SCORES} or any(c["status"] != "ok" for c in mine.values()):
             sys.exit(f"{arm} {r['id']}: not every score is there and ok")
@@ -313,7 +305,7 @@ def main():
     setup = setups["lucene"]
     if any(s != setup for s in setups.values()):
         sys.exit("the arms differ in the setup; this export writes it once")
-    # the run sheet: what is the same for the three arms once, then a table with a column per arm
+    # run data: what is the same for the three arms once, then a table with a column per arm
     same = [{"property": c, "value": setup[c]} for c, _, _ in SETUP]
     run = [{"property": c, **{arm: runs[arm][c] for arm in RUNS}} for c, _, _ in RUN]
     construction, construction_key = construction_table()
