@@ -67,11 +67,12 @@ QUESTIONS = [
     ("answer", "Answer of the answer model.", ""),
     *SCORES,
     ("search_seconds", "Retrieval time, without the interpreter and the query embedding.", "seconds"),
-    ("interpreter_seconds", "Time of the interpreter call: the answer model, called before retrieval. Artefact "
-                            "only.", "seconds"),
+    ("interpreter_seconds", "Time of the interpreter call's answering try: the answer model, called before "
+                            "retrieval. Artefact only.", "seconds"),
     ("query_embedding_seconds", "Time to embed the query. Vector and artefact only.", "seconds"),
-    ("answer_seconds", "Time of the answer model call.", "seconds"),
-    ("total_seconds", "Time of all steps for the question, to the answer.", "seconds"),
+    ("answer_seconds", "Time of the answer model call's answering try.", "seconds"),
+    ("total_seconds", "Time of all steps for the question, to the answer, without failed tries of model "
+                      "calls.", "seconds"),
     ("interpreter_tokens_in", "Input tokens of the interpreter call. Artefact only.", "tokens"),
     ("interpreter_tokens_out", "Output tokens of the interpreter call. Artefact only.", "tokens"),
     ("query_embedding_tokens", "Tokens embedded for the query. Vector and artefact only.", "tokens"),
@@ -90,7 +91,7 @@ SETUP = [
     ("embedding_model", "Embedding model of the query embeddings and of the RAGAS scores that use embeddings.", ""),
 ]
 RUN = [
-    ("run_seconds", "Time of the run over the 100 questions.", "seconds"),
+    ("run_seconds", "Time of the run over the 100 questions, without failed tries of model calls.", "seconds"),
     ("judge_tokens_in", "Input tokens of all RAGAS judge calls.", "tokens"),
     ("judge_tokens_out", "Output tokens of all RAGAS judge calls.", "tokens"),
     ("judge_embedding_tokens", "Tokens embedded by RAGAS.", "tokens"),
@@ -133,7 +134,7 @@ def runs_tables(arm, folder):
     cells = {}
     for r in rows(d / "eval_results.jsonl"):
         cells.setdefault(r["question_id"], {})[r["metric"]] = r
-    questions = []
+    questions, failed_in_run = [], 0.0
     for r in rows(d / "arm_outputs.jsonl"):
         own = {}
         for e in r["retrieval"]:
@@ -144,6 +145,14 @@ def runs_tables(arm, folder):
         if set(mine) != {s for s, _, _ in SCORES} or any(c["status"] != "ok" for c in mine.values()):
             sys.exit(f"{arm} {r['id']}: not every score is there and ok")
         g, interp, qe = r["generator"], own.get("chat"), own.get("embed")
+        # a model call's time is its answering try; the seconds of failed tries are taken out of
+        # the call, the question and the run (his 2026-10-21 "correct this")
+        for call in (g, interp, qe):
+            # the call's time holds its tries, its wait and a few milliseconds of the harness
+            if call and not -1e-6 <= call["time_s"] - call["request_s"] - call["wait_s"] - call["retry_s"] < 0.05:
+                sys.exit(f"{arm} {r['id']}: a call's time is not its tries and its wait")
+        failed = sum(call["retry_s"] for call in (g, interp, qe) if call)
+        failed_in_run += failed
         questions.append({
             "arm": arm,
             "question_id": r["id"],
@@ -152,10 +161,10 @@ def runs_tables(arm, folder):
             "answer": r["answer"],
             **{s: mine[s]["value"] for s, _, _ in SCORES},
             "search_seconds": r["search_time_s"],
-            "interpreter_seconds": interp and interp["time_s"],
-            "query_embedding_seconds": qe and qe["time_s"],
-            "answer_seconds": g["time_s"],
-            "total_seconds": r["timing"]["wall_s"],
+            "interpreter_seconds": interp and interp["time_s"] - interp["retry_s"],
+            "query_embedding_seconds": qe and qe["time_s"] - qe["retry_s"],
+            "answer_seconds": g["time_s"] - g["retry_s"],
+            "total_seconds": r["timing"]["wall_s"] - failed,
             "interpreter_tokens_in": interp and interp["tokens_in"],
             "interpreter_tokens_out": interp and interp["tokens_out"],
             "query_embedding_tokens": qe and qe["tokens_in"],
@@ -176,7 +185,7 @@ def runs_tables(arm, folder):
     if man["interpreter_model"] is not None and model_name(man["interpreter_model"]) != setup["answer_model"]:
         sys.exit(f"{arm}: the interpreter's model is not the answer model")
     run = {
-        "run_seconds": leg["wall_s"],
+        "run_seconds": leg["wall_s"] - failed_in_run,
         "judge_tokens_in": judge["tokens_in"], "judge_tokens_out": judge["tokens_out"],
         "judge_embedding_tokens": js["embedding"]["tokens_in"], "judging_seconds": js["wall_s"],
     }

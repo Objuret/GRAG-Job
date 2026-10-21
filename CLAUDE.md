@@ -65,7 +65,9 @@ numbers are in the run folders and under `output/research/`.
   row's `meta`.
 - `finished_data/` — the data given away, one workbook and nothing else: `grag-data.xlsx` (his name, 2026-10-21)
   (sheets, named by him 2026-10-21, `results`: one row per arm and question of the final runs on the hundred, with the
-  RAGAS scores and the times and tokens one model at a time, a column a measure he named or an id;
+  RAGAS scores and the times and tokens one model at a time, a column a measure he named or an id,
+  a model call's time its answering try, the seconds of failed tries out of the call, the question
+  and the run (his *"why the fuck are the failed tries in there?"* · *"correct this"*, 2026-10-21);
   `run data`: two tables, first what is the same for the three arms, once, property and value (the
   dataset, its licence, the character limit and the models, the interpreter not named apart: his
   *"cba adding interpreter, it's just the answer model"*, 2026-10-21), under it one row per
