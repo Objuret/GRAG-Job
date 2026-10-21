@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2375 turns, chronological. Verbatim text; no edits.
+2390 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -18394,4 +18394,80 @@ so, isnt querytime the same for each question
 ## 2026-10-21 02:21 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 rofl. .you named the header "thing"
+
+## 2026-10-21 02:22 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*queued while an agent was working*
+
+median? if you are to give me that, you should do the complete data-science exploration-numbers
+
+## 2026-10-21 02:29 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+checking the actual runs data now.. the embedding was that slow despite local? i mean, you have to fucking be a bit critical here, what IS relevant for actual scientific comparison here?
+
+## 2026-10-21 02:34 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+well, i see about 0% chance they will use anything else than the average for that because why fucking would they give a shit for single questions time but whatever, it can stay
+
+## 2026-10-21 02:34 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+"question type" like.. what..
+
+## 2026-10-21 02:48 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+i had a look at the next abomination of yours.. lets say the "questions" tab is correct for now..
+the records side: what the fuck is "rank" here?, what the fuck is "given in full" ?
+
+## 2026-10-21 02:49 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*queued while an agent was working*
+
+and what the fuck does the record id matter here? so, that leaves us with 0 fields i know i want there for this tab
+
+## 2026-10-21 02:50 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*queued while an agent was working*
+
+care to answer?
+
+## 2026-10-21 02:55 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+"shows the cut" you are so incredibly full of shit.. "true" or "false" does NOT show or give fucking anything dude
+
+## 2026-10-21 02:56 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+WHY ARE THESE FILES FUCKING SMACKED FULL OF YOUR GODDAMN STORYTELLING!?
+
+WHY ARE YOU "SAYING" SHIT IN MY DATAFILES!?
+
+CAN YOU UNDERSTAND ACTUAL RAGE?
+
+MOTHER FUCKING STOP AND ANSWER
+
+## 2026-10-21 02:59 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+what the fuck are you on about now then with this? "
+ The ID-based scores count only one of the 1,124 records, because that record is also in a whole text. A fix needs the position of each record in the chunk's text. With those positions, the records before the cut can be counted and the ID-based scores calculated again, with no model call.
+"
+What the fuck do you think the pointers are then?
+
+## 2026-10-21 03:03 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+dude, fucking DO the goddamn work and stop beeing a wet rag
+
+## 2026-10-21 03:12 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+wait, ragas already measure this?
+
+## 2026-10-21 03:12 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+THEN WHY THE FUCK HAVE YOU ADDED IT!?
+
+## 2026-10-21 03:12 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+so why does that fucking tab even exist!?
+
+## 2026-10-21 03:13 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+kill that tab
 
