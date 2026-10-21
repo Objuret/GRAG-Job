@@ -6644,6 +6644,1208 @@
         "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "untracked_sha256": {}
       }
+    },
+    {
+      "made_at": "2026-10-21T04:51:52.579972+00:00",
+      "ordered_by": "\"oh, wait, yes, how does that change the results?\" · \"but this is the honest thing to update, yes?\" · \"doit\" (2026-10-21)",
+      "what_happened": "The two id-based scores were calculated on the row's context_ids, which hold only the records of the texts handed over whole. The artefact's text is a chunk of one or more records, so the records of the cut chunk whose text the answer model got whole were not counted.",
+      "rule": {
+        "id": "cut-chunk-records/1",
+        "text": "1. A record counts as retrieved when the answer model got its text whole. The harness's cut\n     (char_budget.cut_at_budget) hands over the start of the text that crosses the limit, and the\n     row's context_ids hold only the records of the texts handed over whole.\n  2. artefact_v4 only: a chunk's text is its records as JSON, one a line, in the order of its ids\n     (artefact_v4._hand_over, artefact_v2._resolve_chunk). In the cut chunk, every line that ends\n     before the cut is a record the answer model got whole; a chunk that is part of one record's\n     text has none.\n  3. context_recall_id and context_precision_id are calculated again by RAGAS's own\n     IDBasedContextRecall and IDBasedContextPrecision on the row's context_ids with those records\n     added, against the questions file's citations; every other score and every other file stays\n     as it is."
+      },
+      "not_changed_and_worth_knowing": [
+        "No answer, context, context_ids, other score or judge call is changed; arm_outputs.jsonl is as it was. Lucene and vector are not changed: their cut text is one record, and the answer model got only its start."
+      ],
+      "changes": [
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ActionGenie::a::0",
+          "field": "context_precision_id",
+          "recorded": 0.2413793103448276,
+          "corrected": 0.20588235294117646,
+          "records_added": [
+            "20260717-0-1b13a",
+            "20260717-1-edf1b",
+            "20260717-2-06e48",
+            "20260717-3-e0fbb",
+            "20260717-4-f1742",
+            "20260717-94-143ec",
+            "20260717-5-095df",
+            "20260717-6-3810a",
+            "20260717-7-5415d",
+            "20260717-8-c2eaf"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AnomalyForce::a::0",
+          "field": "context_precision_id",
+          "recorded": 0.08264462809917356,
+          "corrected": 0.07092198581560284,
+          "records_added": [
+            "20260627-0-212e3",
+            "20260627-1-0cd63",
+            "20260627-2-28be7",
+            "20260627-3-4a0ab",
+            "20260627-4-521d9",
+            "20260627-5-77390",
+            "20260627-6-a64a1",
+            "20260627-7-ad6db",
+            "20260627-8-45c9c",
+            "20260627-9-78363",
+            "20260627-10-02010",
+            "20260627-11-e35ef",
+            "20260627-12-b7d9c",
+            "20260624-0-ae52f",
+            "20260624-1-01a2c",
+            "20260624-2-5da7e",
+            "20260624-3-b6924",
+            "20260624-4-6b6b9",
+            "20260624-5-efbed",
+            "20260624-6-72e32"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CoachForce::a::5",
+          "field": "context_precision_id",
+          "recorded": 0.2558139534883721,
+          "corrected": 0.24444444444444444,
+          "records_added": [
+            "20260827-0-c27be",
+            "20260827-1-42a53",
+            "20260827-2-14db6",
+            "20260827-3-89468"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::1",
+          "field": "context_recall_id",
+          "recorded": 0.75,
+          "corrected": 1.0,
+          "records_added": [
+            "20260916-0-1b08d",
+            "20260916-1-b0d28",
+            "20260916-2-b095a",
+            "20260916-3-ca21a",
+            "20260916-4-dbcaa",
+            "20260916-5-37bb4",
+            "20260916-6-bcd38",
+            "20260916-7-a8153",
+            "20260916-8-6e630",
+            "20260916-9-039b9",
+            "20260916-10-8cd02",
+            "20260916-11-4f7bb",
+            "20260618-0-729b6",
+            "20260620-0-ec3b2",
+            "20260620-52-d67be",
+            "20260620-1-0b3ee",
+            "20260620-2-6f1bd",
+            "20260620-53-9cb26",
+            "20260622-0-9c9df",
+            "20260622-1-5baaa",
+            "20260622-2-696cd",
+            "20260622-3-c07b2",
+            "20260622-4-c7aa3"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::1",
+          "field": "context_precision_id",
+          "recorded": 0.08411214953271028,
+          "corrected": 0.09230769230769231,
+          "records_added": [
+            "20260916-0-1b08d",
+            "20260916-1-b0d28",
+            "20260916-2-b095a",
+            "20260916-3-ca21a",
+            "20260916-4-dbcaa",
+            "20260916-5-37bb4",
+            "20260916-6-bcd38",
+            "20260916-7-a8153",
+            "20260916-8-6e630",
+            "20260916-9-039b9",
+            "20260916-10-8cd02",
+            "20260916-11-4f7bb",
+            "20260618-0-729b6",
+            "20260620-0-ec3b2",
+            "20260620-52-d67be",
+            "20260620-1-0b3ee",
+            "20260620-2-6f1bd",
+            "20260620-53-9cb26",
+            "20260622-0-9c9df",
+            "20260622-1-5baaa",
+            "20260622-2-696cd",
+            "20260622-3-c07b2",
+            "20260622-4-c7aa3"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::2",
+          "field": "context_precision_id",
+          "recorded": 0.06040268456375839,
+          "corrected": 0.06,
+          "records_added": [
+            "20270324-0-26ef9"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ForecastForce::a::4",
+          "field": "context_precision_id",
+          "recorded": 0.4533333333333333,
+          "corrected": 0.4503311258278146,
+          "records_added": [
+            "20260409-0-fc988"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "InsightForce::a::5",
+          "field": "context_precision_id",
+          "recorded": 0.3382352941176471,
+          "corrected": 0.2911392405063291,
+          "records_added": [
+            "20260514-0-134fc",
+            "20260514-1-85e51",
+            "20260514-2-d4f63",
+            "20260514-3-d1a39",
+            "20260514-4-1bf29",
+            "20260514-5-8a992",
+            "20260514-6-c2d47",
+            "20260514-7-8f01d",
+            "20260514-8-f6ff2",
+            "20260522-33-0a73d",
+            "20260522-0-2c3b7"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "KnowledgeForce::a::4",
+          "field": "context_precision_id",
+          "recorded": 0.08928571428571429,
+          "corrected": 0.08547008547008547,
+          "records_added": [
+            "20261005-0-95ad9",
+            "20261005-1-b1ed5",
+            "20261005-2-b125a",
+            "20261005-3-aaaff",
+            "20261005-4-2a7dc"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PersonalizeForce::a::7",
+          "field": "context_precision_id",
+          "recorded": 0.08823529411764706,
+          "corrected": 0.08391608391608392,
+          "records_added": [
+            "20260810-0-bb012",
+            "20260810-1-a0892",
+            "20260810-2-f2b42",
+            "20260810-3-76374",
+            "20260810-4-72aee",
+            "20260810-5-2d867",
+            "20260810-6-5a420"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PitchForce::a::6",
+          "field": "context_precision_id",
+          "recorded": 0.5739130434782609,
+          "corrected": 0.5,
+          "records_added": [
+            "20261026-0-69ce8",
+            "20261026-1-191a7",
+            "20261026-2-070a3",
+            "20261026-3-d612f",
+            "20261026-4-9d40b",
+            "20261026-5-3d9d3",
+            "20261026-6-1ce7e",
+            "20261026-7-15a5b",
+            "20261026-8-c01b0",
+            "20261026-9-ef999",
+            "20261101-0-5e10e",
+            "20261101-1-b9217",
+            "20261101-2-61d19",
+            "20261101-3-09711",
+            "20261101-4-d83f5",
+            "20261101-5-52eee",
+            "20261101-6-5fd6a"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ProposalForce::a::11",
+          "field": "context_precision_id",
+          "recorded": 0.10810810810810811,
+          "corrected": 0.10084033613445378,
+          "records_added": [
+            "20261218-0-b581e",
+            "20261218-1-79c94",
+            "20261224-2-5cd22",
+            "20261226-0-cfc80",
+            "20261226-1-23158",
+            "20261226-2-1a9a6",
+            "20261226-3-34fe1",
+            "20261226-4-06251"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SecurityForce::a::7",
+          "field": "context_recall_id",
+          "recorded": 0.5063291139240507,
+          "corrected": 0.5949367088607594,
+          "records_added": [
+            "20260813-0-8b37d",
+            "20260813-1-e3622",
+            "20260813-2-754b3",
+            "20260813-3-50680",
+            "20260813-4-04f89",
+            "20260813-5-12c78",
+            "20260430-19-887df",
+            "20260813-6-8c682"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SecurityForce::a::7",
+          "field": "context_precision_id",
+          "recorded": 0.39215686274509803,
+          "corrected": 0.42727272727272725,
+          "records_added": [
+            "20260813-0-8b37d",
+            "20260813-1-e3622",
+            "20260813-2-754b3",
+            "20260813-3-50680",
+            "20260813-4-04f89",
+            "20260813-5-12c78",
+            "20260430-19-887df",
+            "20260813-6-8c682"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::8",
+          "field": "context_precision_id",
+          "recorded": 0.2546583850931677,
+          "corrected": 0.25,
+          "records_added": [
+            "20260819-0-39edc",
+            "20260819-1-51490",
+            "20260819-0-c3acd"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SummarizeForce::a::11",
+          "field": "context_recall_id",
+          "recorded": 0.8375,
+          "corrected": 0.9125,
+          "records_added": [
+            "20261007-0-706f9",
+            "20261007-1-efdc5",
+            "20261007-2-2793e",
+            "20261007-3-f910b",
+            "20261007-4-abb01",
+            "20261007-5-a362b",
+            "20261007-6-a7b2e",
+            "20261007-7-26ec4",
+            "20261007-8-c82c2",
+            "20261009-38-fa444",
+            "20261118-0-f0a46",
+            "20261118-1-b1ccd",
+            "20261118-2-6cef5",
+            "20261118-3-6d74f",
+            "20261118-4-3c30d",
+            "20261118-5-57070"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SummarizeForce::a::11",
+          "field": "context_precision_id",
+          "recorded": 0.5317460317460317,
+          "corrected": 0.5140845070422535,
+          "records_added": [
+            "20261007-0-706f9",
+            "20261007-1-efdc5",
+            "20261007-2-2793e",
+            "20261007-3-f910b",
+            "20261007-4-abb01",
+            "20261007-5-a362b",
+            "20261007-6-a7b2e",
+            "20261007-7-26ec4",
+            "20261007-8-c82c2",
+            "20261009-38-fa444",
+            "20261118-0-f0a46",
+            "20261118-1-b1ccd",
+            "20261118-2-6cef5",
+            "20261118-3-6d74f",
+            "20261118-4-3c30d",
+            "20261118-5-57070"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SupportForce::a::5",
+          "field": "context_precision_id",
+          "recorded": 0.06521739130434782,
+          "corrected": 0.04477611940298507,
+          "records_added": [
+            "20260609-0-932b9",
+            "20260609-1-23cde",
+            "20260609-2-52980",
+            "20260609-3-f69fa",
+            "20260609-4-39c44",
+            "20260609-5-1605d",
+            "20260609-6-5f69e",
+            "20260609-7-41832",
+            "20260609-8-64e00",
+            "20260609-9-0f584",
+            "20260609-10-5b7b1",
+            "20260606-40-2f92b",
+            "20260606-0-4a1f3",
+            "20260606-1-059dc",
+            "20260606-2-86ca5",
+            "20260606-3-ee6b1",
+            "20260606-4-ecc73",
+            "20260606-5-101db",
+            "20260606-6-3e033",
+            "20260606-7-81f27",
+            "20260606-8-65acd"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "VizForce::a::16",
+          "field": "context_precision_id",
+          "recorded": 0.348993288590604,
+          "corrected": 0.325,
+          "records_added": [
+            "20260403-0-eb6cb",
+            "20260407-0-98ced",
+            "20260407-1-2bffb",
+            "20260407-2-9f458",
+            "20260407-3-b4200",
+            "20260407-4-edc2d",
+            "20260407-5-daa8c",
+            "20260407-6-aad0c",
+            "20260407-7-0f0de",
+            "20260407-8-780d1",
+            "20260407-9-e7ffb"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AnomalyForce::a::17",
+          "field": "context_precision_id",
+          "recorded": 0.5114503816793893,
+          "corrected": 0.4855072463768116,
+          "records_added": [
+            "20260921-0-cc7b3",
+            "20260921-1-2e83f",
+            "20260921-2-3859d",
+            "20260921-3-db8a6",
+            "20260921-4-07561",
+            "20260921-5-1f4f7",
+            "20260921-6-88e55"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AutoTuneForce::a::12",
+          "field": "context_precision_id",
+          "recorded": 0.1896551724137931,
+          "corrected": 0.16666666666666666,
+          "records_added": [
+            "20260812-0-ca1ac",
+            "20260812-1-3d8b3",
+            "20260812-2-a882e",
+            "20260812-3-7fea2",
+            "20260812-4-4b74f",
+            "20260812-5-54aa2",
+            "20260812-6-c152b",
+            "20260812-7-80542",
+            "20260810-0-11050",
+            "20260816-0-9e1b7",
+            "20260816-1-21700",
+            "20260816-2-8d30e",
+            "20260816-3-e1f18",
+            "20260816-4-26cc5",
+            "20260816-5-82085",
+            "20260816-6-35d8f"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CoachForce::a::11",
+          "field": "context_recall_id",
+          "recorded": 0.6341463414634146,
+          "corrected": 0.6829268292682927,
+          "records_added": [
+            "20260606-0-25ffe",
+            "20260606-1-f5330",
+            "20260606-2-17ab6",
+            "20260621-3-e7e9d",
+            "20260625-0-6dec3",
+            "20260625-1-19620"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CoachForce::a::11",
+          "field": "context_precision_id",
+          "recorded": 0.3466666666666667,
+          "corrected": 0.345679012345679,
+          "records_added": [
+            "20260606-0-25ffe",
+            "20260606-1-f5330",
+            "20260606-2-17ab6",
+            "20260621-3-e7e9d",
+            "20260625-0-6dec3",
+            "20260625-1-19620"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::19",
+          "field": "context_precision_id",
+          "recorded": 0.21656050955414013,
+          "corrected": 0.2125,
+          "records_added": [
+            "20261014-0-a184b",
+            "20261014-1-b17c4",
+            "20261014-2-f62d0"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborationForce::a::12",
+          "field": "context_precision_id",
+          "recorded": 0.007633587786259542,
+          "corrected": 0.007407407407407408,
+          "records_added": [
+            "20261002-0-d84c4",
+            "20261002-1-d4a75",
+            "20261002-2-c72ab",
+            "20261002-3-a449c"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::7",
+          "field": "context_precision_id",
+          "recorded": 0.2608695652173913,
+          "corrected": 0.2222222222222222,
+          "records_added": [
+            "20260505-0-59be1",
+            "20260505-1-c8ebe",
+            "20260505-2-14481",
+            "20260505-3-9f423",
+            "20260505-4-45594",
+            "20260505-5-8a236",
+            "20260505-6-286f1",
+            "20260505-7-9697f",
+            "20260505-8-263fb",
+            "20260505-9-5ac84",
+            "20260505-10-894e7",
+            "20260505-11-0eaf8",
+            "20260506-0-5b4f0",
+            "20260506-1-63674",
+            "20260506-2-d64c9",
+            "20260506-3-d7aa6"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContextForce::a::22",
+          "field": "context_recall_id",
+          "recorded": 0.2804878048780488,
+          "corrected": 0.3048780487804878,
+          "records_added": [
+            "20270111-0-9bc0c",
+            "20270111-1-1220f",
+            "20270111-2-d6b85",
+            "20270111-3-3506b",
+            "20270111-4-5722f",
+            "20270111-5-a3c7b",
+            "20270111-6-3bb0b",
+            "20270111-7-9b8c0",
+            "20270114-0-70100",
+            "20270114-1-8a942"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContextForce::a::22",
+          "field": "context_precision_id",
+          "recorded": 0.1503267973856209,
+          "corrected": 0.15337423312883436,
+          "records_added": [
+            "20270111-0-9bc0c",
+            "20270111-1-1220f",
+            "20270111-2-d6b85",
+            "20270111-3-3506b",
+            "20270111-4-5722f",
+            "20270111-5-a3c7b",
+            "20270111-6-3bb0b",
+            "20270111-7-9b8c0",
+            "20270114-0-70100",
+            "20270114-1-8a942"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::12",
+          "field": "context_precision_id",
+          "recorded": 0.10679611650485436,
+          "corrected": 0.09821428571428571,
+          "records_added": [
+            "20261117-0-06ea5",
+            "20261117-1-aa0e6",
+            "20261117-2-6d0d4",
+            "20261117-3-3dbd8",
+            "20261119-0-65446",
+            "20261119-1-b3204",
+            "20261119-2-0afbb",
+            "20261119-3-fbd80",
+            "20261119-4-8b8cc"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::7",
+          "field": "context_precision_id",
+          "recorded": 0.13380281690140844,
+          "corrected": 0.12025316455696203,
+          "records_added": [
+            "20260827-0-971ba",
+            "20260827-1-5f805",
+            "20260827-2-5ac42",
+            "20260827-3-e19d2",
+            "20260827-4-524b1",
+            "20260827-5-422a4",
+            "20260827-6-65a5a",
+            "20260827-7-bbc16",
+            "20260827-8-6a4bc",
+            "20260825-0-85582",
+            "20260825-1-d73bc",
+            "20260825-2-846d7",
+            "20260825-3-fc2f2",
+            "20260825-4-84a6a",
+            "20260825-5-837dd",
+            "20260825-6-cfd00"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ForecastForce::a::24",
+          "field": "context_precision_id",
+          "recorded": 0.1456953642384106,
+          "corrected": 0.1286549707602339,
+          "records_added": [
+            "20260512-0-77302",
+            "20260401-57-bdf07",
+            "20260512-1-5ba64",
+            "20260512-2-fdedd",
+            "20260512-3-eccec",
+            "20260512-4-a2504",
+            "20260512-5-97a26",
+            "20260512-6-baf8b",
+            "20260512-7-e53f9",
+            "20260512-8-6cdae",
+            "20260512-9-c561b",
+            "20260401-66-c6f08",
+            "20260419-0-23fdb",
+            "20260419-1-0ec7a",
+            "20260419-2-ff78a",
+            "20260419-3-63c10",
+            "20260419-4-47f9c",
+            "20260419-5-ab590",
+            "20260419-6-ef53b",
+            "20260419-7-7dd56"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "MonitorForce::a::16",
+          "field": "context_recall_id",
+          "recorded": 0.6068376068376068,
+          "corrected": 0.6581196581196581,
+          "records_added": [
+            "20261002-0-dcf86",
+            "20261002-1-9ab21",
+            "20261002-2-d6ceb",
+            "20261002-3-8a9fa",
+            "20261002-4-95c6e",
+            "20261002-5-a3399"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "MonitorForce::a::16",
+          "field": "context_precision_id",
+          "recorded": 0.4329268292682927,
+          "corrected": 0.45294117647058824,
+          "records_added": [
+            "20261002-0-dcf86",
+            "20261002-1-9ab21",
+            "20261002-2-d6ceb",
+            "20261002-3-8a9fa",
+            "20261002-4-95c6e",
+            "20261002-5-a3399"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PersonalizeForce::a::24",
+          "field": "context_precision_id",
+          "recorded": 0.5641025641025641,
+          "corrected": 0.5116279069767442,
+          "records_added": [
+            "20260517-0-1757f",
+            "20260517-1-a60ea",
+            "20260517-2-7700f",
+            "20260518-6-4359a",
+            "20260517-3-524a0",
+            "20260517-4-fb697",
+            "20260517-5-d2e46",
+            "20260517-6-a324c",
+            "20260517-7-940d4",
+            "20260517-8-f4957",
+            "20260517-9-bfba6",
+            "20260517-10-1d744"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SearchForce::a::16",
+          "field": "context_precision_id",
+          "recorded": 0.21359223300970873,
+          "corrected": 0.19469026548672566,
+          "records_added": [
+            "20260926-0-0a300",
+            "20260927-0-496b5",
+            "20260927-1-41413",
+            "20260927-2-660e2",
+            "20260927-3-1ab8e",
+            "20260927-4-9b87b",
+            "20260927-5-4a31c",
+            "20260927-6-76e76",
+            "20260927-7-96f6e",
+            "20260927-8-cd83f"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SummarizeForce::a::23",
+          "field": "context_precision_id",
+          "recorded": 0.06622516556291391,
+          "corrected": 0.06329113924050633,
+          "records_added": [
+            "20270419-0-c5112",
+            "20270419-1-7a1dd",
+            "20270419-2-a5a50",
+            "20270419-3-e5b92",
+            "20270419-4-97849",
+            "20270419-5-f407b",
+            "20270419-6-c1f27"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AutoTuneForce::a::13",
+          "field": "context_recall_id",
+          "recorded": 0.2916666666666667,
+          "corrected": 0.3541666666666667,
+          "records_added": [
+            "20261006-0-3b016",
+            "20261006-1-20843",
+            "20261006-2-e6f28"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AutoTuneForce::a::13",
+          "field": "context_precision_id",
+          "recorded": 0.1414141414141414,
+          "corrected": 0.16666666666666666,
+          "records_added": [
+            "20261006-0-3b016",
+            "20261006-1-20843",
+            "20261006-2-e6f28"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::21",
+          "field": "context_precision_id",
+          "recorded": 0.05161290322580645,
+          "corrected": 0.04938271604938271,
+          "records_added": [
+            "20261115-0-8989c",
+            "20261115-1-b8f3c",
+            "20261115-2-1a37b",
+            "20261115-3-c7101",
+            "20261115-4-a48f7",
+            "20261115-5-ce542",
+            "20261115-6-c1e95"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::13",
+          "field": "context_recall_id",
+          "recorded": 0.4864864864864865,
+          "corrected": 0.6756756756756757,
+          "records_added": [
+            "20261114-0-0c120",
+            "20261114-1-a74fc",
+            "20261114-2-5081c",
+            "20261114-3-96b89",
+            "20261114-4-29a56",
+            "20261114-5-189be",
+            "20261114-6-ebd18"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::13",
+          "field": "context_precision_id",
+          "recorded": 0.1836734693877551,
+          "corrected": 0.23809523809523808,
+          "records_added": [
+            "20261114-0-0c120",
+            "20261114-1-a74fc",
+            "20261114-2-5081c",
+            "20261114-3-96b89",
+            "20261114-4-29a56",
+            "20261114-5-189be",
+            "20261114-6-ebd18"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::9",
+          "field": "context_precision_id",
+          "recorded": 0.33962264150943394,
+          "corrected": 0.33540372670807456,
+          "records_added": [
+            "20260929-0-0b3ab",
+            "20260929-1-569e3"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FlowForce::a::13",
+          "field": "context_precision_id",
+          "recorded": 0.22330097087378642,
+          "corrected": 0.20909090909090908,
+          "records_added": [
+            "20260729-0-297e3",
+            "20260729-1-87019",
+            "20260729-2-7e0a8",
+            "20260729-3-635b1",
+            "20260729-4-57e19",
+            "20260729-5-660bc",
+            "20260729-6-1fba2"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ForecastForce::a::26",
+          "field": "context_precision_id",
+          "recorded": 0.13580246913580246,
+          "corrected": 0.13253012048192772,
+          "records_added": [
+            "20261205-0-1ea5d",
+            "20261205-1-f73c3",
+            "20261205-2-0a403",
+            "20261205-3-9dc51"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "KnowledgeForce::a::15",
+          "field": "context_recall_id",
+          "recorded": 0.7183098591549296,
+          "corrected": 0.8450704225352113,
+          "records_added": [
+            "20261018-0-edc81",
+            "20261018-1-34141",
+            "20261018-2-81852",
+            "20261018-3-d8262",
+            "20261018-4-cfadf",
+            "20261018-5-7d475",
+            "20261018-6-52a62",
+            "20261018-7-88f40",
+            "20261018-8-bab39"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "KnowledgeForce::a::15",
+          "field": "context_precision_id",
+          "recorded": 0.6538461538461539,
+          "corrected": 0.6896551724137931,
+          "records_added": [
+            "20261018-0-edc81",
+            "20261018-1-34141",
+            "20261018-2-81852",
+            "20261018-3-d8262",
+            "20261018-4-cfadf",
+            "20261018-5-7d475",
+            "20261018-6-52a62",
+            "20261018-7-88f40",
+            "20261018-8-bab39"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "LeadForce::a::20",
+          "field": "context_precision_id",
+          "recorded": 0.04819277108433735,
+          "corrected": 0.0449438202247191,
+          "records_added": [
+            "20260619-0-93a12",
+            "20260619-1-37b85",
+            "20260619-2-13b88",
+            "20260619-3-9fb09",
+            "20260619-4-dfebd",
+            "20260619-5-b13ab",
+            "20260619-6-e43ee",
+            "20260619-7-6dc33",
+            "20260619-8-16559",
+            "20260619-0-c66e2",
+            "20260619-1-7b597",
+            "20260619-2-1be92"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PitchForce::a::27",
+          "field": "context_recall_id",
+          "recorded": 0.5384615384615384,
+          "corrected": 0.5576923076923077,
+          "records_added": [
+            "20261201-0-740f4"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PitchForce::a::27",
+          "field": "context_precision_id",
+          "recorded": 0.16766467065868262,
+          "corrected": 0.17261904761904762,
+          "records_added": [
+            "20261201-0-740f4"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ProposalForce::a::20",
+          "field": "context_recall_id",
+          "recorded": 0.4,
+          "corrected": 0.52,
+          "records_added": [
+            "20270213-0-a60e1",
+            "20270213-1-952c1",
+            "20270213-2-a7b67",
+            "20270213-3-f2653",
+            "20270213-4-6f4ff",
+            "20270213-5-11524",
+            "20270213-6-dd8a3",
+            "20270213-7-43e24",
+            "20270213-8-25ebe",
+            "20270213-9-64c8b",
+            "20270213-10-b9540",
+            "20270213-11-f5f31",
+            "20270113-0-1059f",
+            "20270115-0-30574",
+            "20270115-1-27bb1",
+            "20270115-2-2180c",
+            "20270115-54-b33c0",
+            "20270116-55-cf27e",
+            "20270117-0-9fc97",
+            "20270118-57-d88d2"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ProposalForce::a::20",
+          "field": "context_precision_id",
+          "recorded": 0.07246376811594203,
+          "corrected": 0.08227848101265822,
+          "records_added": [
+            "20270213-0-a60e1",
+            "20270213-1-952c1",
+            "20270213-2-a7b67",
+            "20270213-3-f2653",
+            "20270213-4-6f4ff",
+            "20270213-5-11524",
+            "20270213-6-dd8a3",
+            "20270213-7-43e24",
+            "20270213-8-25ebe",
+            "20270213-9-64c8b",
+            "20270213-10-b9540",
+            "20270213-11-f5f31",
+            "20270113-0-1059f",
+            "20270115-0-30574",
+            "20270115-1-27bb1",
+            "20270115-2-2180c",
+            "20270115-54-b33c0",
+            "20270116-55-cf27e",
+            "20270117-0-9fc97",
+            "20270118-57-d88d2"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::27",
+          "field": "context_precision_id",
+          "recorded": 0.13496932515337423,
+          "corrected": 0.13333333333333333,
+          "records_added": [
+            "20261107-0-2312e",
+            "20261107-1-e5ada"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SummarizeForce::a::24",
+          "field": "context_precision_id",
+          "recorded": 0.059602649006622516,
+          "corrected": 0.056962025316455694,
+          "records_added": [
+            "20270419-0-c5112",
+            "20270419-1-7a1dd",
+            "20270419-2-a5a50",
+            "20270419-3-e5b92",
+            "20270419-4-97849",
+            "20270419-5-f407b",
+            "20270419-6-c1f27"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::14",
+          "field": "context_precision_id",
+          "recorded": 0.2585034013605442,
+          "corrected": 0.24836601307189543,
+          "records_added": [
+            "20261117-0-09d09",
+            "20261117-1-3e2f5",
+            "20261117-2-ee430",
+            "20261117-3-f83a4",
+            "20261117-4-64699",
+            "20261117-5-15fa0"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::11",
+          "field": "context_precision_id",
+          "recorded": 0.1590909090909091,
+          "corrected": 0.15789473684210525,
+          "records_added": [
+            "20260910-0-0ea58"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::29",
+          "field": "context_precision_id",
+          "recorded": 0.1527777777777778,
+          "corrected": 0.13414634146341464,
+          "records_added": [
+            "20260327-0-be826",
+            "20260327-1-0c024",
+            "20260327-2-5dbc9",
+            "20260327-3-937c9",
+            "20260327-4-2d5f3",
+            "20260327-5-4f7b1",
+            "20260327-6-4009a",
+            "20260327-7-566b0",
+            "20260327-10-4f345",
+            "20260327-8-ea4b5",
+            "20260504-0-8ef7d",
+            "20260327-12-07559",
+            "20260329-13-685fa",
+            "20260328-0-772bb",
+            "20260328-1-2eb49",
+            "20260328-2-79fe3",
+            "20260328-3-590d1",
+            "20260328-4-33f11",
+            "20260328-5-6d05a",
+            "20260328-6-e0963"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::16",
+          "field": "context_precision_id",
+          "recorded": 0.08125,
+          "corrected": 0.07926829268292683,
+          "records_added": [
+            "20261031-0-210f2",
+            "20261031-1-70813",
+            "20261031-2-e006c",
+            "20261031-3-b29aa"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AnomalyForce::a::1",
+          "field": "context_precision_id",
+          "recorded": 0.07936507936507936,
+          "corrected": 0.07751937984496124,
+          "records_added": [
+            "20261007-0-33e35",
+            "20261007-1-67037",
+            "20261007-0-1f646"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AutoTuneForce::a::1",
+          "field": "context_precision_id",
+          "recorded": 0.06521739130434782,
+          "corrected": 0.06164383561643835,
+          "records_added": [
+            "20261222-0-ae9ff",
+            "20261222-1-0f6f6",
+            "20261222-0-6bbfa",
+            "20261222-1-e7488",
+            "20261222-2-46b30",
+            "20261222-3-3fef5",
+            "20261222-4-bb90b",
+            "20261222-5-075b0"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CoachForce::a::0",
+          "field": "context_precision_id",
+          "recorded": 0.10526315789473684,
+          "corrected": 0.1037037037037037,
+          "records_added": [
+            "20261013-0-52353",
+            "20261013-1-a36be"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborationForce::a::0",
+          "field": "context_precision_id",
+          "recorded": 0.13821138211382114,
+          "corrected": 0.12878787878787878,
+          "records_added": [
+            "20270107-0-34518",
+            "20270107-1-d07c0",
+            "20270107-2-08dc1",
+            "20270107-3-874c6",
+            "20270107-4-b461c",
+            "20270107-5-c1f6e",
+            "20270107-6-ca085",
+            "20270107-7-6d190",
+            "20270107-8-518b6"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::0",
+          "field": "context_precision_id",
+          "recorded": 0.1037037037037037,
+          "corrected": 0.10144927536231885,
+          "records_added": [
+            "20260419-0-e4879",
+            "20260419-1-d2b90",
+            "20260419-2-20363"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::0",
+          "field": "context_precision_id",
+          "recorded": 0.060810810810810814,
+          "corrected": 0.056962025316455694,
+          "records_added": [
+            "20270118-0-db28c",
+            "20270118-1-3c041",
+            "20270118-2-16cd9",
+            "20270118-3-1913b",
+            "20270118-4-3ca5e",
+            "20270118-5-c8155",
+            "20270118-6-09288",
+            "20270118-7-33441",
+            "20270118-8-54757",
+            "20270118-9-7f29a"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::0",
+          "field": "context_precision_id",
+          "recorded": 0.15555555555555556,
+          "corrected": 0.14736842105263157,
+          "records_added": [
+            "20270206-0-915d6",
+            "20270206-1-47b0c",
+            "20270206-2-b5afe",
+            "20270206-3-154e1",
+            "20270206-4-d9c52"
+          ]
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::0",
+          "field": "context_precision_id",
+          "recorded": 0.15315315315315314,
+          "corrected": 0.1504424778761062,
+          "records_added": [
+            "20260905-0-3ab11",
+            "20260905-1-86c67"
+          ]
+        }
+      ],
+      "checks": [
+        {
+          "what": "RAGAS on the row's context_ids gives the stored score again",
+          "holds": true,
+          "looked_at": 200
+        },
+        {
+          "what": "each cut chunk's lines are its records in the order of its ids",
+          "holds": true,
+          "looked_at": 93
+        }
+      ],
+      "files": {
+        "eval_results.jsonl": {
+          "sha256_before": "f411df8c8256334556380b71f049ecec45cb2e0889c63ce44f218d95ee4915ce",
+          "sha256_corrected": "e0016f962d7ad7f332183c1dafe15e0b7b8dcf1539fbb89983b15ff9c90c9e78"
+        }
+      },
+      "script": "correct_cut_chunk_records.py, in this folder; run on the files from before it, with the code named in code, it gives these files again",
+      "code": {
+        "commit": "392e8cd2fdb1d24300caa827b7d932bfd970a897",
+        "branch": "artefact-v4-iteration",
+        "dirty": true,
+        "status": [
+          " M prod/harness/fields.py",
+          "?? tools/correct_cut_chunk_records.py"
+        ],
+        "diff_sha256": "3514867f974c6f51a2bace9986a9c11014c8746c1eb21c5b329e42b13864cd43",
+        "untracked_sha256": {
+          "tools/correct_cut_chunk_records.py": "b26fd7de0e2ca9257dabf2d0f9a78dfeee96352d39c25ee3cff5592b03a8416f"
+        }
+      }
     }
   ]
 }

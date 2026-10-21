@@ -5,7 +5,7 @@ arm), arm construction (a column per arm), key.
     python tools/export_finished_data.py [--out finished_data]
 
 Needs openpyxl. Reads the three final run folders and the graph's build cost
-(test/graph/build_cost.json), and writes finished_data.xlsx. A column of a run is a measure he named
+(test/graph/build_cost.json), and writes grag-data.xlsx. A column of a run is a measure he named
 (times, tokens, runtime, the RAGAS scores) or an id of the dataset, the evaluation or the run; the
 construction holds what built the index that each final run read, one model at a time, and nothing
 about how it was built. Nothing that belongs to this machine or this project
@@ -316,8 +316,8 @@ def main():
               (PER_RUN, [(["property", "value"], same), (["property", *RUNS], run)]),
               (CONSTRUCTION, [(["property", *RUNS], construction)]),
               (KEY, [(["sheet", "field", "meaning", "unit"], key)])]
-    path = out / "finished_data.xlsx"
-    workbook(path, "finished data", sheets)
+    path = out / "grag-data.xlsx"
+    workbook(path, "grag data", sheets)
     print(f"{path.name}: {path.stat().st_size:,} bytes, sheets {[n for n, _ in sheets]}, "
           f"rows {[[len(t) for _, t in blocks] for _, blocks in sheets]}")
 

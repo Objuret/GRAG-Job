@@ -625,6 +625,10 @@ FILES = {
                                   "model, the search time without the model calls, the build "
                                   "cost per model, the graph as counted); run on the files from "
                                   "before it, it gives the corrected files again.", "", None),
+    "correct_cut_chunk_records.py": ("The script that made the cut-chunk correction (the records "
+                                     "of the cut chunk handed over whole counted in the two "
+                                     "id-based scores); run on the files from before it, it gives "
+                                     "the corrected files again.", "", None),
 }
 
 # score -> (RAGAS's own sentence, where it is from, what goes into it here, what it needs,

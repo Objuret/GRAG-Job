@@ -21,8 +21,9 @@ One run of one retrieval method, **artefact_v4**, over 100 questions: for each q
 | `failures.jsonl` | One line per try at a question that failed. Empty when none did. A question that failed and was answered in a later start has a line here and a row. | id |
 | `eval_failures.jsonl` | One line per score cell that failed. Empty when none did. | question_id + metric |
 | `corrections.json` | Only in a folder whose stored numbers were corrected after the run: what was changed, by which rule, on whose word. |  |
-| `arm_outputs.as_recorded.jsonl`, `run_manifest.as_recorded.json` | A file exactly as the run wrote it, kept when a correction changed the file of the same name. |  |
+| `arm_outputs.as_recorded.jsonl`, `eval_results.as_recorded.jsonl`, `run_manifest.as_recorded.json` | A file exactly as the run wrote it, kept when a correction changed the file of the same name. |  |
 | `correct_usage_by_model.py` | The script that made the clean-up correction (the cost per model, the search time without the model calls, the build cost per model, the graph as counted); run on the files from before it, it gives the corrected files again. |  |
+| `correct_cut_chunk_records.py` | The script that made the cut-chunk correction (the records of the cut chunk handed over whole counted in the two id-based scores); run on the files from before it, it gives the corrected files again. |  |
 
 Times are seconds (`_s`), milliseconds (`_ms`) or UTC stamps (`_at`; every other time text carries its own zone). Sizes are tokens, characters (`chars`) or bytes. A count (calls, attempts, requests, texts, records, edges, refits, and the like) is a plain number of the things it names. A price (`usd`, `USD`) is the Claude program's own, in US dollars; no number of this harness uses it. The evaluation's scores run from 0 to 1 and higher is more; a score an arm ranks by says its own scale.
 
@@ -1386,18 +1387,20 @@ The file holds no record.
 | `workers` | integer | 1 | 0 |
 
 ---
-Written from `prod/harness/fields.py`, sha256 `a6e488ec9f0cf39e93c1de76159f2c816df362e4ee3311a56ad250f78704aeb6`.
+Written from `prod/harness/fields.py`, sha256 `20bfbd81eacd20e42bac247f407de99ad1f44f93576ee2df74bac38db4d42a1b`.
 
 The files as they stood when this was written, their line ends as git holds them (LF):
 
 - `arm_outputs.as_recorded.jsonl` sha256 `44e0ce70ddecb7d85dfcd70d03ac3ca5c1a60c22ec5125e91768b543266cebf1`
 - `arm_outputs.jsonl` sha256 `4ad7ff4719389a94c312aa5251f1a7acbf05a7af723a861ffe6e3d8532fd0939`
+- `correct_cut_chunk_records.py` sha256 `b26fd7de0e2ca9257dabf2d0f9a78dfeee96352d39c25ee3cff5592b03a8416f`
 - `correct_usage_by_model.py` sha256 `28d2357c693e407a2d4739241d1fddca55751553f0c9d4f42eedcf5a79a0d299`
-- `corrections.json` sha256 `c7d4db5cf910bea37d9baf9a651d7aa1777b00bd39f7080908d7990007269ef2`
+- `corrections.json` sha256 `97a6c820d4661f4c4d74ed033f23b756ddf6cd7294414e1992fe223763c26a99`
 - `eval_calls.jsonl` sha256 `2f871893c3e9c9bd29b8c6b5868fdd1d314881b1f01de5b04e8f386ebc1a18c0`
 - `eval_failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - `eval_manifest.json` sha256 `7b1aa73548f408b7be4236a740627467d16d2a2703b77b9a7c86038b152659ef`
-- `eval_results.jsonl` sha256 `f411df8c8256334556380b71f049ecec45cb2e0889c63ce44f218d95ee4915ce`
+- `eval_results.as_recorded.jsonl` sha256 `f411df8c8256334556380b71f049ecec45cb2e0889c63ce44f218d95ee4915ce`
+- `eval_results.jsonl` sha256 `e0016f962d7ad7f332183c1dafe15e0b7b8dcf1539fbb89983b15ff9c90c9e78`
 - `failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - `run_manifest.as_recorded.json` sha256 `074ad6669751a97e11f744e7cd3eb2d08d0138d8d016bc42ab4551070e79819b`
 - `run_manifest.json` sha256 `7e8f8f531b37a72a27735e2df905388e8480eb35068679272a1fc279fee8bf40`

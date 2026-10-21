@@ -63,7 +63,7 @@ numbers are in the run folders and under `output/research/`.
   `output/code_before_knee_clouds/20261018T013204Z/`; before the border by every structure name:
   `output/code_before_structure_names/20261019T011742Z/`. What a run used: its `run_manifest.json` and each
   row's `meta`.
-- `finished_data/` — the data given away, one workbook and nothing else: `finished_data.xlsx`
+- `finished_data/` — the data given away, one workbook and nothing else: `grag-data.xlsx` (his name, 2026-10-21)
   (sheets, named by him 2026-10-21, `results`: one row per arm and question of the final runs on the hundred, with the
   RAGAS scores and the times and tokens one model at a time, a column a measure he named or an id;
   `run data`: two tables, first what is the same for the three arms, once, property and value (the
@@ -114,7 +114,10 @@ numbers are in the run folders and under `output/research/`.
   on whose word) and its `corrections.json` what was corrected after the run: in all three on
   2026-10-20 the cost held one model at a time, the artefact's search time without its model
   calls, the build cost per model, the artefact's graph counted and its file hashes as git holds
-  them (`tools/correct_usage_by_model.py`); in lucene before that the laptop's sleep. Across arms
+  them (`tools/correct_usage_by_model.py`); in lucene before that the laptop's sleep; in the
+  artefact on 2026-10-21 the records of the cut chunk that the answer model got whole counted in
+  the two id-based scores (`tools/correct_cut_chunk_records.py`, his *"but this is the honest
+  thing to update, yes?"* · *"doit"*). Across arms
   `context_recall_id` and `context_precision_id` compare (both count record ids); the nonllm
   pair is within-arm (counted per delivered text).
 - A run: `python prod/run.py --arm artefact_v4 --set gold|10smoke --char-budget 72000 --workers 6
