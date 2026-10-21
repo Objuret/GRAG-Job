@@ -69,7 +69,9 @@ numbers are in the run folders and under `output/research/`.
   `run data`: two tables, first what is the same for the three arms, once, property and value (the
   dataset, its licence, the character limit and the models, the interpreter not named apart: his
   *"cba adding interpreter, it's just the answer model"*, 2026-10-21), under it one row per
-  property and one column per arm, the run's runtime and the evaluation's cost;
+  property and one column per arm, the run's runtime and the evaluation's cost, under it the mean
+  of each measure of `results` over an arm's 100 questions, one column per arm (his "in run data,
+  put the averages for each arm for each metric", 2026-10-21);
   `arm construction`: one row per property, one column per arm, the index, its size, its build
   time and each model's calls, tokens and seconds, counting only what built the index that the
   final runs read, nothing on how a build was done; `key`: each field's meaning and

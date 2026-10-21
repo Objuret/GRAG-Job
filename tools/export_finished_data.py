@@ -308,12 +308,19 @@ def main():
     # run data: what is the same for the three arms once, then a table with a column per arm
     same = [{"property": c, "value": setup[c]} for c, _, _ in SETUP]
     run = [{"property": c, **{arm: runs[arm][c] for arm in RUNS}} for c, _, _ in RUN]
+    # the mean of each measure of the results over an arm's 100 questions; empty where the arm has none
+    measures = [c for c, _, u in QUESTIONS if u]
+    means = [{"mean of": c, **{arm: (lambda v: sum(v) / len(v) if v else None)(
+        [q[c] for q in questions if q["arm"] == arm and q[c] is not None]) for arm in RUNS}} for c in measures]
     construction, construction_key = construction_table()
     key = ([{"sheet": PER_QUESTION, "field": c, "meaning": m, "unit": u} for c, m, u in QUESTIONS]
            + [{"sheet": PER_RUN, "field": c, "meaning": m, "unit": u} for c, m, u in SETUP + RUN if m]
+           + [{"sheet": PER_RUN, "field": "mean of", "meaning": f"Mean over the arm's 100 questions of the field "
+                                                               f"of {PER_QUESTION} named in the row.", "unit": ""}]
            + construction_key)
     sheets = [(PER_QUESTION, [([c for c, _, _ in QUESTIONS], questions)]),
-              (PER_RUN, [(["property", "value"], same), (["property", *RUNS], run)]),
+              (PER_RUN, [(["property", "value"], same), (["property", *RUNS], run),
+                         (["mean of", *RUNS], means)]),
               (CONSTRUCTION, [(["property", *RUNS], construction)]),
               (KEY, [(["sheet", "field", "meaning", "unit"], key)])]
     path = out / "grag-data.xlsx"

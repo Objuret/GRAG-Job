@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2422 turns, chronological. Verbatim text; no edits.
+2425 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -18631,4 +18631,18 @@ doit
 *queued while an agent was working*
 
 also, name the workbook to grag-data
+
+## 2026-10-21 04:54 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+it is not open..
+
+## 2026-10-21 04:55 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+in run data, put the averages for each arm for each metric?
+
+## 2026-10-21 04:55 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+*queued while an agent was working*
+
+or is that dumb?
 
