@@ -66,10 +66,10 @@ numbers are in the run folders and under `output/research/`.
 - `finished_data/` — the data given away, one workbook and nothing else: `finished_data.xlsx`
   (sheets `questions`: one row per arm and question of the final runs on the hundred, with the
   RAGAS scores and the times and tokens one model at a time, a column a measure he named or an id;
-  `run`: one row per property, one column per arm: first what is the same for the three arms,
-  written once in one cell across the arms (the dataset, its licence, the character limit and the
-  models, the interpreter not named apart: his *"cba adding interpreter, it's just the answer
-  model"*, 2026-10-21), then the run's runtime and the evaluation's cost;
+  `run`: two tables, first what is the same for the three arms, once, property and value (the
+  dataset, its licence, the character limit and the models, the interpreter not named apart: his
+  *"cba adding interpreter, it's just the answer model"*, 2026-10-21), under it one row per
+  property and one column per arm, the run's runtime and the evaluation's cost;
   `construction`: one row per property, one column per arm, the index, its size, its build time
   and each model's calls, tokens and seconds, counting only what built the index that the final
   runs read, nothing on how a build was done; `key`). Values only, the key sheet last. Made by

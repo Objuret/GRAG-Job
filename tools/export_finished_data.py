@@ -18,7 +18,7 @@ import sys
 from pathlib import Path
 
 from openpyxl import Workbook
-from openpyxl.styles import Alignment, Font
+from openpyxl.styles import Font
 
 ROOT = Path(__file__).resolve().parent.parent
 RUNS = {"lucene": "lucene__gold100__cb72000__20261008T234209Z",
@@ -278,29 +278,33 @@ def construction_table():
 WIDE = {"question": 60, "answer": 80, "meaning": 100, "property": 50}
 
 
-def workbook(path, title, tables, key, merged=None):
-    merged = merged or {}
+def workbook(path, title, sheets):
+    """sheets: (name, [(heads, rows), ...]); the tables of one sheet stand under each other, a blank
+    row between them."""
     wb = Workbook()
     wb.remove(wb.active)
     wb.properties.title, wb.properties.creator = title, ""
-    for name, heads, table in tables + [("key", *key)]:
+    for name, blocks in sheets:
         ws = wb.create_sheet(name)
-        ws.append(heads)
-        for row in table:
-            if set(row) != set(heads):
-                sys.exit(f"{path.name} {name}: a row's columns differ from the sheet's")
-            ws.append([row[h] for h in heads])
-        for cell in ws[1]:
-            cell.font = Font(bold=True)
-        ws.freeze_panes = "A2"
-        ws.auto_filter.ref = ws.dimensions
-        for i, h in enumerate(heads, 1):
-            longest = max([len(h)] + [len(str(r[h])) for r in table[:200] if r[h] is not None
-                                      and (name not in merged or i == 1)])
-            ws.column_dimensions[ws.cell(1, i).column_letter].width = min(WIDE.get(h, 40), max(10, longest + 2))
-        for n in merged.get(name, ()):
-            ws.merge_cells(start_row=n, start_column=2, end_row=n, end_column=len(heads))
-            ws.cell(n, 2).alignment = Alignment(horizontal="center")
+        widths = {}
+        for n, (heads, table) in enumerate(blocks):
+            if n:
+                ws.append([])
+            ws.append(heads)
+            for cell in ws[ws.max_row]:
+                cell.font = Font(bold=True)
+            for row in table:
+                if set(row) != set(heads):
+                    sys.exit(f"{path.name} {name}: a row's columns differ from its table's")
+                ws.append([row[h] for h in heads])
+            for i, h in enumerate(heads, 1):
+                longest = max([len(h)] + [len(str(r[h])) for r in table[:200] if r[h] is not None])
+                widths[i] = max(widths.get(i, 10), min(WIDE.get(h, 40), longest + 2))
+        if len(blocks) == 1:
+            ws.freeze_panes = "A2"
+            ws.auto_filter.ref = ws.dimensions
+        for i, w in widths.items():
+            ws.column_dimensions[ws.cell(1, i).column_letter].width = w
     wb.save(path)
 
 
@@ -316,20 +320,20 @@ def main():
     setup = setups["lucene"]
     if any(s != setup for s in setups.values()):
         sys.exit("the arms differ in the setup; this export writes it once")
-    # a value the same for the three arms stands once, in one cell across the arms' columns
-    first = next(iter(RUNS))
-    run = ([{"property": c, **{arm: setup[c] if arm == first else None for arm in RUNS}} for c, _, _ in SETUP]
-           + [{"property": c, **{arm: runs[arm][c] for arm in RUNS}} for c, _, _ in RUN])
+    # the run sheet: what is the same for the three arms once, then a table with a column per arm
+    same = [{"property": c, "value": setup[c]} for c, _, _ in SETUP]
+    run = [{"property": c, **{arm: runs[arm][c] for arm in RUNS}} for c, _, _ in RUN]
     construction, construction_key = construction_table()
-    tables = [("questions", [c for c, _, _ in QUESTIONS], questions), ("run", ["property", *RUNS], run),
-              ("construction", ["property", *RUNS], construction)]
     key = ([{"sheet": "questions", "field": c, "meaning": m, "unit": u} for c, m, u in QUESTIONS]
            + [{"sheet": "run", "field": c, "meaning": m, "unit": u} for c, m, u in SETUP + RUN] + construction_key)
+    sheets = [("questions", [([c for c, _, _ in QUESTIONS], questions)]),
+              ("run", [(["property", "value"], same), (["property", *RUNS], run)]),
+              ("construction", [(["property", *RUNS], construction)]),
+              ("key", [(["sheet", "field", "meaning", "unit"], key)])]
     path = out / "finished_data.xlsx"
-    workbook(path, "finished data", tables, (["sheet", "field", "meaning", "unit"], key),
-             merged={"run": range(2, 2 + len(SETUP))})
-    print(f"{path.name}: {path.stat().st_size:,} bytes, sheets {[n for n, _, _ in tables] + ['key']}, "
-          f"rows {[len(t) for _, _, t in tables]}")
+    workbook(path, "finished data", sheets)
+    print(f"{path.name}: {path.stat().st_size:,} bytes, sheets {[n for n, _ in sheets]}, "
+          f"rows {[[len(t) for _, t in blocks] for _, blocks in sheets]}")
 
 
 if __name__ == "__main__":
