@@ -1,15 +1,15 @@
-"""The finished data, for giving away: one workbook of the run for each arm, and one workbook of
-the construction with a column for each arm, values only.
+"""The finished data, for giving away: one workbook, values only: the questions of the three
+arms in one sheet, the runs and the construction with a column for each arm.
 
     python tools/export_finished_data.py [--out finished_data]
 
 Needs openpyxl. Reads the three final run folders and the graph's build cost
-(test/graph/build_cost.json), and writes four .xlsx files. A column of a run is a measure he named
+(test/graph/build_cost.json), and writes finished_data.xlsx. A column of a run is a measure he named
 (times, tokens, runtime, the RAGAS scores) or an id of the dataset, the evaluation or the run; the
 construction holds what built the index that each final run read, one model at a time, and nothing
 about how it was built. Nothing that belongs to this machine or this project
-goes in: no path, host, user, session, repository file, commit, note or reason. The data sheet
-comes first; the last sheet is the key.
+goes in: no path, host, user, session, repository file, commit, note or reason. The data sheets
+come first; the last sheet is the key.
 """
 import argparse
 import json
@@ -59,6 +59,7 @@ SCORES = [
     ("string_presence", "RAGAS StringPresence: 1 when the answer contains the reference answer, else 0.", "0 or 1"),
 ]
 QUESTIONS = [
+    ("arm", "The retrieval method.", ""),
     ("question_id", "The question: the name of HERB's product file, 'a' for answerable, and the question's "
                     "position, counted from 0, in that file's list of answerable questions.", ""),
     ("question_type", "The question's type, as HERB gives it.", ""),
@@ -80,7 +81,6 @@ QUESTIONS = [
     ("answer_tokens_out", "Tokens that the answer model wrote.", "tokens"),
 ]
 RUN = [
-    ("arm", "The retrieval method.", ""),
     ("dataset", "The dataset that the questions and the corpus records come from.", ""),
     ("dataset_licence", "The dataset's licence: give its name as the source, and use the data for "
                         "non-commercial purposes only.", ""),
@@ -167,6 +167,7 @@ def runs_tables(arm, folder):
             sys.exit(f"{arm} {r['id']}: not every score is there and ok")
         g, interp, qe = r["generator"], own.get("chat"), own.get("embed")
         questions.append({
+            "arm": arm,
             "question_id": r["id"],
             "question_type": one((c["type"] for c in mine.values()), f"{r['id']} type"),
             "question": r["question"],
@@ -189,7 +190,7 @@ def runs_tables(arm, folder):
             != (judge["calls"], judge["tokens_in"], judge["tokens_out"]) or any(u.get("embed_calls") for u in use):
         sys.exit(f"{arm}: the scores' judge cost does not add up to the evaluation's")
     run = {
-        "arm": arm, "dataset": DATASET, "dataset_licence": LICENCE,
+        "dataset": DATASET, "dataset_licence": LICENCE,
         "questions": man["n_questions"], "answered": man["n_ran"], "failed": man["n_failed"],
         "character_limit": man["char_budget"],
         "interpreter_model": model_name(man["interpreter_model"]), "answer_model": model_name(man["generator_model"]),
@@ -201,10 +202,7 @@ def runs_tables(arm, folder):
         "judge_tokens_in": judge["tokens_in"], "judge_tokens_out": judge["tokens_out"],
         "judge_embedding_tokens": js["embedding"]["tokens_in"], "judging_seconds": js["wall_s"],
     }
-    tables = [("questions", QUESTIONS, questions), ("run", RUN, [run])]
-    key = [{"sheet": name, "column": c, "meaning": m, "unit": u} for name, columns, _ in tables for c, m, u in columns]
-    return [(name, [c for c, _, _ in columns], table) for name, columns, table in tables], \
-        (["sheet", "column", "meaning", "unit"], key)
+    return questions, run
 
 
 def construction_table():
@@ -285,8 +283,7 @@ def construction_table():
         (f"{encoder}, seconds", f"Time that {encoder} worked for the index, from start to end.", {a: encoder_seconds}),
     ]
     table = [{"property": t, **{k: values.get(k) for k in RUNS}} for t, _, values in things]
-    key = [{"property": t, "meaning": m} for t, m, _ in things]
-    return [("construction", ["property", *RUNS], table)], (["property", "meaning"], key)
+    return table, [{"sheet": "construction", "field": t, "meaning": m, "unit": ""} for t, m, _ in things]
 
 
 WIDE = {"question": 60, "answer": 80, "meaning": 100, "property": 50}
@@ -318,13 +315,20 @@ def main():
     p.add_argument("--out", default=str(ROOT / "finished_data"))
     out = Path(p.parse_args().out)
     out.mkdir(parents=True, exist_ok=True)
-    books = [(f"{arm}_runs", runs_tables(arm, folder)) for arm, folder in RUNS.items()]
-    books.append(("construction", construction_table()))
-    for name, (tables, key) in books:
-        path = out / f"{name}.xlsx"
-        workbook(path, name.replace("_", " "), tables, key)
-        print(f"{path.name}: {path.stat().st_size:,} bytes, sheets {[n for n, _, _ in tables] + ['key']}, "
-              f"rows {[len(t) for _, _, t in tables]}")
+    questions, runs = [], {}
+    for arm, folder in RUNS.items():
+        rows_of_arm, runs[arm] = runs_tables(arm, folder)
+        questions += rows_of_arm
+    run = [{"property": c, **{arm: runs[arm][c] for arm in RUNS}} for c, _, _ in RUN]
+    construction, construction_key = construction_table()
+    tables = [("questions", [c for c, _, _ in QUESTIONS], questions), ("run", ["property", *RUNS], run),
+              ("construction", ["property", *RUNS], construction)]
+    key = ([{"sheet": "questions", "field": c, "meaning": m, "unit": u} for c, m, u in QUESTIONS]
+           + [{"sheet": "run", "field": c, "meaning": m, "unit": u} for c, m, u in RUN] + construction_key)
+    path = out / "finished_data.xlsx"
+    workbook(path, "finished data", tables, (["sheet", "field", "meaning", "unit"], key))
+    print(f"{path.name}: {path.stat().st_size:,} bytes, sheets {[n for n, _, _ in tables] + ['key']}, "
+          f"rows {[len(t) for _, _, t in tables]}")
 
 
 if __name__ == "__main__":
