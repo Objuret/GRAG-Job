@@ -89,7 +89,6 @@ RUN = [
     ("judge_model", "The language model that judged for the RAGAS scores that need a judge.", ""),
     ("embedding_model", "The embedding model: for the arm's own embeddings, and for the RAGAS scores that "
                         "compare by embeddings.", ""),
-    ("run_date", "The date (UTC) when the run started.", "date"),
     ("run_seconds", "Time of the whole run over all questions. A time when the machine slept is not counted.",
      "seconds"),
     ("judge_tokens_in", "The evaluation's cost: tokens sent to the judge model for all questions.", "tokens"),
@@ -182,7 +181,6 @@ def runs_tables(arm, folder):
         "character_limit": man["char_budget"],
         "interpreter_model": model_name(man["interpreter_model"]), "answer_model": model_name(man["generator_model"]),
         "judge_model": model_name(ev["judge_model"]), "embedding_model": model_name(env["embedder"]["model"]),
-        "run_date": leg["started_at"][:10],
         "run_seconds": leg["wall_s"],
         "judge_tokens_in": judge["tokens_in"], "judge_tokens_out": judge["tokens_out"],
         "judge_embedding_tokens": js["embedding"]["tokens_in"], "judging_seconds": js["wall_s"],
