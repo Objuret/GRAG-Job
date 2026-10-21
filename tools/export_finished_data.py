@@ -218,7 +218,7 @@ def runs_tables(arm, folder):
 
 
 def construction_table():
-    """One row per thing, one column per arm: what built the index that the final run read, one model
+    """One row per property, one column per arm: what built the index that the final run read, one model
     at a time (his 2026-10-21 "The ONLY thing that matters, at all, is the iteration that ran the
     RAGAS"). For the artefact that is read from test/graph/build_cost.json: the descriptions and tags
     of the chunks in the graph, the vectors, the Opus judgements the facet network learned from, the
@@ -294,12 +294,12 @@ def construction_table():
         ("claude-opus-5, seconds", "Time that claude-opus-5 worked for the index, from start to end.", {a: opus_seconds}),
         (f"{encoder}, seconds", f"Time that {encoder} worked for the index, from start to end.", {a: encoder_seconds}),
     ]
-    table = [{"thing": t, **{k: values.get(k) for k in RUNS}} for t, _, values in things]
-    key = [{"thing": t, "meaning": m} for t, m, _ in things]
-    return [("construction", ["thing", *RUNS], table)], (["thing", "meaning"], key)
+    table = [{"property": t, **{k: values.get(k) for k in RUNS}} for t, _, values in things]
+    key = [{"property": t, "meaning": m} for t, m, _ in things]
+    return [("construction", ["property", *RUNS], table)], (["property", "meaning"], key)
 
 
-WIDE = {"question": 60, "answer": 80, "meaning": 100, "thing": 50}
+WIDE = {"question": 60, "answer": 80, "meaning": 100, "property": 50}
 
 
 def workbook(path, title, tables, key):

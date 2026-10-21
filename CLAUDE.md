@@ -68,7 +68,7 @@ numbers are in the run folders and under `output/research/`.
   with its RAGAS scores, and its times and tokens one model at a time; `records`: one row per
   retrieved record; `run`: the run's models, machine, runtime and the evaluation's cost; `key`),
   the same sheets and columns for the three arms, a column a measure he named or an id; and
-  `construction.xlsx` (one row per thing, one column per arm: the index, its size, its build time
+  `construction.xlsx` (one row per property, one column per arm: the index, its size, its build time
   and each model's calls, tokens and seconds, counting only what built the index that the final
   runs read; `key`), nothing on how a build was done. Values only, the key sheet last. Made by
   `tools/export_finished_data.py` (needs openpyxl) from the three final run folders and
