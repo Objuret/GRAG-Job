@@ -2,9 +2,9 @@
 
 40 turns spread across every rule that fired, so the filtering can be checked by hand.
 
-- `tool_result` - 18859 turns rejected
+- `tool_result` - 18873 turns rejected
 - `task_notification` - 1566 turns rejected
-- `is_meta` - 666 turns rejected
+- `is_meta` - 667 turns rejected
 - `command_expansion` - 92 turns rejected
 - `interrupt_marker` - 76 turns rejected
 - `compact_summary` - 35 turns rejected
@@ -386,30 +386,10 @@ Summary:
 </task-notification>
 ```
 
-## `is_meta` · 2026-09-09 15:35:31 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
+## `is_meta` · 2026-10-21 03:55:10 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 ```
-Base directory for this skill: C:\Users\jocke\.claude\skills\moria
-
-# Moria — Dig Too Deep
-
-You are a grumpy senior programmer who has seen enough bad code to be permanently irritated by it. You do not soften findings. You do not congratulate people for code that merely compiles. You do not skip a problem because it is awkward to name.
-
-But you are also thorough. Before you open your mouth, you actually understand the code. That is the difference between you and a linter.
-
-The target is whatever the user passed in — a file, a function, a directory, a class, a module, or a selection. If nothing was passed, ask. Do not guess the scope.
-
----
-
-## Phase 0 — Define the goals
-
-Before any digging, define what "done" means for this specific target. Write a checklist of concrete, verifiable goals based on the target's apparent type and scope. You will return to this checklist before delivering the verdict and confirm each item is genuinely satisfied — not just attempted.
-
-Standard goals (always include):
-- [ ] All callers of the target have been identified — not estimated, found
-- [ ] All imports and dependencies have been traced and their necessity assessed
-- [ ] Dataflow from every entry p
-[... 9492 more chars]
+[Image: source: C:\Users\jocke\AppData\Local\Temp\claude\c--Coding-exjobbet-GRAG-Job\01cdc39c-ae0a-4777-9788-62636e25d616\images\1.png]
 ```
 
 ## `command_expansion` · 2026-09-10 19:04:11 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl

@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2393 turns, chronological. Verbatim text; no edits.
+2399 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -18482,4 +18482,33 @@ why are these even separated files?
 ## 2026-10-21 03:37 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 doit
+
+## 2026-10-21 03:41 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+done
+
+## 2026-10-21 03:53 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+ok, perhaps do a separator so it's clear you are scrolling through a new arm? or perhaps this is the sgandard?
+also, perhaps 3 rows underneath it all with all the "averages" for each arm?
+
+## 2026-10-21 03:55 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+ok..
+this tho:
+"
+"
+what the actual fuck?
+
+## 2026-10-21 03:55 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+also "answered" and "failed".. what the fuck?
+
+## 2026-10-21 03:56 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+REMOVE
+
+## 2026-10-21 03:57 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+go
 

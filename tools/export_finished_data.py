@@ -25,8 +25,6 @@ RUNS = {"lucene": "lucene__gold100__cb72000__20261008T234209Z",
         "vector": "vector__gold100__cb72000__20261017T061242Z",
         "artefact": "artefact_v4__gold100__cb72000__20261020T041923Z"}
 DATASET, LICENCE = "HERB (Salesforce AI Research)", "CC BY-NC 4.0"
-# the run records give the laptop's processor only as its CPUID string; this is its product name
-CPU = {"Intel64 Family 6 Model 186 Stepping 2, GenuineIntel": "13th Gen Intel Core i7-1360P"}
 COMPARE_INSIDE = " It counts per retrieved text, so compare it inside one arm only."
 
 # (column, meaning, unit) for every sheet of a run; the key sheet is written from these lists
@@ -84,9 +82,6 @@ RUN = [
     ("dataset", "The dataset that the questions and the corpus records come from.", ""),
     ("dataset_licence", "The dataset's licence: give its name as the source, and use the data for "
                         "non-commercial purposes only.", ""),
-    ("questions", "Questions given to the run.", "count"),
-    ("answered", "Questions answered.", "count"),
-    ("failed", "Questions not answered.", "count"),
     ("character_limit", "The most characters of retrieved text given to the answer model for one question.",
      "characters"),
     ("interpreter_model", "The language model of the interpreter. Empty for an arm without an interpreter.", ""),
@@ -95,15 +90,8 @@ RUN = [
     ("embedding_model", "The embedding model: for the arm's own embeddings, and for the RAGAS scores that "
                         "compare by embeddings.", ""),
     ("run_date", "The date (UTC) when the run started.", "date"),
-    ("machine_cpu", "The processor of the machine that made the run.", ""),
-    ("machine_threads", "Threads of that processor.", "count"),
-    ("machine_ram_bytes", "Memory of that machine.", "bytes"),
-    ("machine_os", "The operating system of that machine.", ""),
     ("run_seconds", "Time of the whole run over all questions. A time when the machine slept is not counted.",
      "seconds"),
-    ("cpu_seconds", "Processor time of the run's own process. The language-model calls run in other processes "
-                    "and are not in it.", "seconds"),
-    ("peak_memory_bytes", "The largest memory use of the run's own process.", "bytes"),
     ("judge_tokens_in", "The evaluation's cost: tokens sent to the judge model for all questions.", "tokens"),
     ("judge_tokens_out", "The evaluation's cost: tokens that the judge model wrote for all questions.", "tokens"),
     ("judge_embedding_tokens", "The evaluation's cost: tokens that the evaluation embedded.", "tokens"),
@@ -141,8 +129,8 @@ def runs_tables(arm, folder):
     if len(man["legs"]) != 1 or len(ev["judge_legs"]) != 1:
         sys.exit(f"{arm}: more than one start; this export reads one")
     leg, js, env = man["legs"][0], ev["judge_settings"], man["environment"]
-    if env["cpu"] not in CPU:
-        sys.exit(f"{arm}: a processor this export does not name: {env['cpu']}")
+    if (man["n_questions"], man["n_ran"], man["n_failed"]) != (100, 100, 0):
+        sys.exit(f"{arm}: not every one of the hundred questions was answered")
     cells = {}
     for r in rows(d / "eval_results.jsonl"):
         cells.setdefault(r["question_id"], {})[r["metric"]] = r
@@ -191,14 +179,11 @@ def runs_tables(arm, folder):
         sys.exit(f"{arm}: the scores' judge cost does not add up to the evaluation's")
     run = {
         "dataset": DATASET, "dataset_licence": LICENCE,
-        "questions": man["n_questions"], "answered": man["n_ran"], "failed": man["n_failed"],
         "character_limit": man["char_budget"],
         "interpreter_model": model_name(man["interpreter_model"]), "answer_model": model_name(man["generator_model"]),
         "judge_model": model_name(ev["judge_model"]), "embedding_model": model_name(env["embedder"]["model"]),
         "run_date": leg["started_at"][:10],
-        "machine_cpu": CPU[env["cpu"]], "machine_threads": env["cpu_count"], "machine_ram_bytes": env["ram_bytes"],
-        "machine_os": env["platform"],
-        "run_seconds": leg["wall_s"], "cpu_seconds": leg["process_cpu_s"], "peak_memory_bytes": leg["peak_memory_bytes"],
+        "run_seconds": leg["wall_s"],
         "judge_tokens_in": judge["tokens_in"], "judge_tokens_out": judge["tokens_out"],
         "judge_embedding_tokens": js["embedding"]["tokens_in"], "judging_seconds": js["wall_s"],
     }
