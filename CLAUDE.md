@@ -44,7 +44,9 @@ numbers are in the run folders and under `output/research/`.
   and talk about another project's pull request by the links in its messages, writes every record
   as lucene and vector do (`record_text`), a chosen chunk that is a part of a split document or
   transcript as its whole record, once, at its place (any other part as only that part, not
-  counted), and after the cut gives the answer model the texts in pointer
+  counted), after a chosen conversation the product's own documents and pull requests its
+  messages link to, each once and whole (a record handed over before is not handed over again),
+  and after the cut gives the answer model the texts in pointer
   order while `contexts`, which RAGAS reads, keeps the arm's order (`reading_order` in the row); a
   record counts as handed over only when its whole text went in; everything the
   order is made of is asked of the graph per question, `_ask_graph`, and the start of a run only
@@ -118,8 +120,9 @@ numbers are in the run folders and under `output/research/`.
 - Arms: `ls prod/arms test/arms`. Database an arm used: its run manifest.
 - Runs: `ls output/k=chars`. The artefact's final run on the hundred (his *"populated by the not
   last, but first 1+2 run"*, 2026-10-22): `artefact_v4__gold100__cb72000__20261022T081034Z`
-  (commit `7ebb93d` on branch `artefact-v4-links`, split over the laptop and the desktop and
-  merged by `tools/merge_split_run.py`; the interpreter's answers read from the store of the run
+  (commit `7ebb93d` on branch `artefact-v4-links`, on `artefact-v4-iteration` as `657c58d`,
+  split over the laptop and the desktop and merged by `tools/merge_split_run.py`, merged again
+  the same day from its kept halves after the tool's judge settings were fixed; the interpreter's answers read from the store of the run
   before it and most query embeddings from the machines' embedding cache, the same on every
   question, so the workbook takes those values from that run; its run time, as for the other arms,
   is the time of all the things in the run added: his *"THE RUN TIME IS THE ADDED TIME FOR ALL THE

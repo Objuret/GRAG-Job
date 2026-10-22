@@ -3,7 +3,7 @@
   "judge_model": "claude-haiku-4-5-20251001",
   "source_run": "output\\k=chars\\artefact_v4__gold100__cb72000__20261022T081034Z",
   "arm": "artefact_v4",
-  "timestamp": "2026-10-22T08:25:09.363618+00:00",
+  "timestamp": "2026-10-22T18:20:39.555507+00:00",
   "judge_backend": "claude-cli",
   "judge_effort": null,
   "judge_usage": {
@@ -326,10 +326,10 @@
     }
   ],
   "judge_settings": {
-    "started_at": "2026-10-22T08:14:07.004527+00:00",
-    "finished_at": "2026-10-22T08:18:13.450799+00:00",
-    "interrupted": null,
-    "workers": 24,
+    "started_at": "2026-10-22T08:13:38.622138+00:00",
+    "finished_at": "2026-10-22T08:23:00.580284+00:00",
+    "interrupted": false,
+    "workers": null,
     "retrieval_only": false,
     "scores": [
       "context_precision_id",
@@ -427,35 +427,19 @@
       "max_tries_default": 6
     },
     "calls_file": "eval_calls.jsonl",
-    "argv": [
-      "prod\\run.py",
-      "--arm",
-      "artefact_v4",
-      "--set",
-      "output/split/gold100/gold100.b.jsonl",
-      "--char-budget",
-      "72000",
-      "--workers",
-      "24",
-      "--flag",
-      "HERB_V4_OFFLINE=on",
-      "--flag",
-      "HERB_V4_CACHE=A:/exjobbet/grag_setup/final_store",
-      "--out",
-      "output/split/gold100/artefact_v4__gold100.b__cb72000__20261022T081034Z_desktop"
-    ],
-    "pid": 74772,
-    "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
-    "wall_s": 246.44613789999858,
+    "argv": null,
+    "pid": null,
+    "python_executable": null,
+    "wall_s": null,
     "embedding": {
-      "requests": 100,
-      "texts": 100,
-      "tokens_in": 10543,
-      "lock_wait_s": 3.339990507811308e-05,
-      "encode_s": 77.96397050097585
+      "requests": 200,
+      "texts": 200,
+      "tokens_in": 21049,
+      "lock_wait_s": 0.00010249995102640241,
+      "encode_s": 199.4101902008697
     },
     "cells": {
-      "ok": 700
+      "ok": 1400
     }
   }
 }

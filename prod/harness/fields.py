@@ -616,6 +616,11 @@ MERGE = {
                      "stops and writes nothing when one differs.",
     "left_empty": "The top-level fields of run_manifest.json left empty because their value "
                   "differed between the two runs.",
+    "judge_settings_left_empty": "The fields of eval_manifest.json's judge_settings left empty "
+                                 "because each scoring start has its own; each start's value is "
+                                 "in judge_legs[].settings. Of the others, started_at is the "
+                                 "first start, finished_at the last end, and embedding and cells "
+                                 "the starts' counts added.",
     "sources": sub("The two runs, the first half first.", {
         "name": "The run's folder name; legs[].source_run in run_manifest.json.",
         "path": "Where the folder was when it was merged, as a path on the machine that merged.",

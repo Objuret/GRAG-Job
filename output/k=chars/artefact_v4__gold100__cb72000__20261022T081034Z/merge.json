@@ -1,7 +1,7 @@
 {
-  "merged_at": "2026-10-22T08:25:09.363618+00:00",
+  "merged_at": "2026-10-22T18:20:39.555507+00:00",
   "tool": "tools/merge_split_run.py",
-  "tool_sha256": "86b1e9420146ff92275957a5f9e972339e1ef6759a3f21a681bc4c28d58cd6fc",
+  "tool_sha256": "7ee26bc69f457fa4dd446a7c5fe28e0f4b718367a3ec4188ae81916ca8ae9415",
   "argv": [
     "tools/merge_split_run.py",
     "merge",
@@ -9,11 +9,11 @@
     "gold",
     "--out",
     "output/k=chars/artefact_v4__gold100__cb72000__20261022T081034Z",
-    "output/split/gold100/artefact_v4__gold100.a__cb72000__20261022T081034Z_laptop",
-    "output/split/gold100/artefact_v4__gold100.b__cb72000__20261022T081034Z_desktop"
+    "C:/Users/jocke/AppData/Local/Temp/claude/c--Coding-exjobbet-GRAG-Job/04a8cd9f-2200-47de-a4dc-081a35d0e671/scratchpad/q1/old_merged/halves/artefact_v4__gold100.a__cb72000__20261022T081034Z_laptop",
+    "C:/Users/jocke/AppData/Local/Temp/claude/c--Coding-exjobbet-GRAG-Job/04a8cd9f-2200-47de-a4dc-081a35d0e671/scratchpad/q1/old_merged/halves/artefact_v4__gold100.b__cb72000__20261022T081034Z_desktop"
   ],
   "whole_set": {
-    "file": "C:\\Coding\\exjobbet\\GRAG-Job-links\\data\\gold100.jsonl",
+    "file": "C:\\Coding\\exjobbet\\GRAG-Job\\data\\gold100.jsonl",
     "sha256": "cddaca624c8513c618657ece0b357b1463282f7c4ef083d1a7058959d8ccbf3d",
     "n_questions": 100
   },
@@ -29,7 +29,7 @@
     "flags (HERB_V4_CACHE: C:/Users/jocke/AppData/Local/Temp/claude/c--Coding-exjobbet-GRAG-Job/5190c761-6797-4b93-91be-e7ea3e0a8f20/scratchpad/final_store | A:/exjobbet/grag_setup/final_store)",
     "graph",
     "index",
-    "code_state",
+    "code_state (files the run loads: prod/, test/)",
     "code_version.commit",
     "code_version.branch",
     "inputs.questions_sha256",
@@ -53,10 +53,17 @@
     "lane",
     "workers"
   ],
+  "judge_settings_left_empty": [
+    "workers",
+    "argv",
+    "pid",
+    "python_executable",
+    "wall_s"
+  ],
   "sources": [
     {
       "name": "artefact_v4__gold100.a__cb72000__20261022T081034Z_laptop",
-      "path": "C:\\Coding\\exjobbet\\GRAG-Job-links\\output\\split\\gold100\\artefact_v4__gold100.a__cb72000__20261022T081034Z_laptop",
+      "path": "C:\\Users\\jocke\\AppData\\Local\\Temp\\claude\\c--Coding-exjobbet-GRAG-Job\\04a8cd9f-2200-47de-a4dc-081a35d0e671\\scratchpad\\q1\\old_merged\\halves\\artefact_v4__gold100.a__cb72000__20261022T081034Z_laptop",
       "half": "a",
       "n_questions": 50,
       "ids_sha256": "48b7a1e4d421b12929ac2f75921da268d01be9c52d068d9574a4e0da11913331",
@@ -347,7 +354,7 @@
     },
     {
       "name": "artefact_v4__gold100.b__cb72000__20261022T081034Z_desktop",
-      "path": "C:\\Coding\\exjobbet\\GRAG-Job-links\\output\\split\\gold100\\artefact_v4__gold100.b__cb72000__20261022T081034Z_desktop",
+      "path": "C:\\Users\\jocke\\AppData\\Local\\Temp\\claude\\c--Coding-exjobbet-GRAG-Job\\04a8cd9f-2200-47de-a4dc-081a35d0e671\\scratchpad\\q1\\old_merged\\halves\\artefact_v4__gold100.b__cb72000__20261022T081034Z_desktop",
       "half": "b",
       "n_questions": 50,
       "ids_sha256": "b5cce7057601df32a5ccdb5ebf3a5510e8cc5a820d4961474cca7ba3f653daa6",

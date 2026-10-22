@@ -186,6 +186,44 @@ def _usage_sum(entries, names):
     return total
 
 
+def _added(parts):
+    """The scoring starts' counts added key by key; a value that is not a number is kept when the
+    starts agree and left empty when they do not."""
+    parts = [p for p in parts if p]
+    if not parts:
+        return None
+    out = {}
+    for key in dict.fromkeys(k for p in parts for k in p):
+        values = [p.get(key) for p in parts]
+        if all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in values):
+            out[key] = sum(values)
+        else:
+            out[key] = values[0] if all(v == values[0] for v in values) else None
+    return out
+
+
+def _merged_settings(settings):
+    """The merged run's scoring settings: what the starts share, the first start and the last end,
+    and their counts added; what each start has of its own and cannot be added is left empty here
+    and stays in judge_legs[].settings. Returns the settings and the fields left empty."""
+    settings = [s for s in settings if s]
+    if not settings:
+        return None, []
+    out = dict(settings[-1])
+    starts = [s["started_at"] for s in settings if s.get("started_at")]
+    ends = [s["finished_at"] for s in settings if s.get("finished_at")]
+    out["started_at"] = min(starts) if starts else None
+    out["finished_at"] = max(ends) if ends else None
+    out["interrupted"] = any(s.get("interrupted") for s in settings)
+    out["embedding"] = _added([s.get("embedding") for s in settings])
+    out["cells"] = _added([s.get("cells") for s in settings])
+    empty = [k for k in SETTINGS_OWN
+             if k not in ("started_at", "finished_at", "interrupted", "embedding", "cells")]
+    for k in empty:
+        out[k] = None
+    return out, empty
+
+
 class Run:
     def __init__(self, folder):
         self.dir = Path(folder)
@@ -379,7 +417,7 @@ def merge(args):
         timestamp=now, legs=new_legs)
     man["inputs"] = dict(man.get("inputs") or {}, ids_sha256=_file_sha(whole_file))
 
-    ev = None
+    ev, settings_left_empty = None, []
     if all(judged):
         jlegs = []
         for r in runs:
@@ -389,10 +427,14 @@ def merge(args):
                                   or x.get("timestamp") or ""))
         names = list(ModelUsage.__dataclass_fields__)
         ev = copy.deepcopy(runs[0].eval)
+        # the merged settings are both starts' (the last start's settings alone were read as the
+        # whole scoring's time and embedding count)
+        settings, settings_left_empty = (_merged_settings([x.get("settings") for x in jlegs]) if jlegs
+                                         else (ev.get("judge_settings"), []))
         ev.update(source_run=str(out), timestamp=now, judge_legs=jlegs,
                   judge_usage=_usage_sum([x.get("usage") for x in jlegs], names),
                   judge_elapsed_s=sum(float(x.get("elapsed_s") or 0.0) for x in jlegs),
-                  judge_settings=jlegs[-1].get("settings") if jlegs else ev.get("judge_settings"))
+                  judge_settings=settings)
         named = [x.get("judge_model") for x in jlegs if x.get("judge_model")]
         if named:
             ev["judge_model"] = named[-1]
@@ -407,6 +449,7 @@ def merge(args):
         "split_after": cut,
         "checked_equal": checked,
         "left_empty": left_empty,
+        "judge_settings_left_empty": settings_left_empty,
         "sources": [{
             "name": r.name, "path": str(r.dir.resolve()), "half": tag,
             "n_questions": len(half), "ids_sha256": _get(r.manifest, "inputs.ids_sha256"),

@@ -501,6 +501,7 @@ Only in a folder merged from two runs over the two halves of one question set, m
 | `split_after` | How many of the set's questions, from the top of its file, the first half holds. |
 | `checked_equal` | The fields checked to be the same in both runs before the merge; the merge stops and writes nothing when one differs. |
 | `left_empty` | The top-level fields of run_manifest.json left empty because their value differed between the two runs. |
+| `judge_settings_left_empty` | The fields of eval_manifest.json's judge_settings left empty because each scoring start has its own; each start's value is in judge_legs[].settings. Of the others, started_at is the first start, finished_at the last end, and embedding and cells the starts' counts added. |
 | `sources` | The two runs, the first half first. |
 | `sources.name` | The run's folder name; legs[].source_run in run_manifest.json. |
 | `sources.path` | Where the folder was when it was merged, as a path on the machine that merged. |
@@ -1138,7 +1139,7 @@ The file holds no record.
 | `judge_legs.usage.wait_s` | number | 1 | 0 |
 | `judge_model` | string | 1 | 0 |
 | `judge_settings` | object | 1 | 0 |
-| `judge_settings.argv` | array | 1 | 0 |
+| `judge_settings.argv` | null | 1 | 1 |
 | `judge_settings.calls_file` | string | 1 | 0 |
 | `judge_settings.cells` | object | 1 | 0 |
 | `judge_settings.embed_model` | string | 1 | 0 |
@@ -1149,7 +1150,7 @@ The file holds no record.
 | `judge_settings.embedding.texts` | integer | 1 | 0 |
 | `judge_settings.embedding.tokens_in` | integer | 1 | 0 |
 | `judge_settings.finished_at` | string | 1 | 0 |
-| `judge_settings.interrupted` | null | 1 | 1 |
+| `judge_settings.interrupted` | boolean | 1 | 0 |
 | `judge_settings.judge_backend` | string | 1 | 0 |
 | `judge_settings.judge_call` | object | 1 | 0 |
 | `judge_settings.judge_call.applied` | object | 1 | 0 |
@@ -1183,16 +1184,16 @@ The file holds no record.
 | `judge_settings.lane.system_prompt` | string | 1 | 0 |
 | `judge_settings.max_consecutive_failed_questions` | integer | 1 | 0 |
 | `judge_settings.max_judge_context_chars` | integer | 1 | 0 |
-| `judge_settings.pid` | integer | 1 | 0 |
-| `judge_settings.python_executable` | string | 1 | 0 |
+| `judge_settings.pid` | null | 1 | 1 |
+| `judge_settings.python_executable` | null | 1 | 1 |
 | `judge_settings.ragas` | string | 1 | 0 |
 | `judge_settings.ragas_do_not_track` | string | 1 | 0 |
 | `judge_settings.ragas_run_config` | object | 1 | 0 |
 | `judge_settings.retrieval_only` | boolean | 1 | 0 |
 | `judge_settings.scores` | array | 1 | 0 |
 | `judge_settings.started_at` | string | 1 | 0 |
-| `judge_settings.wall_s` | number | 1 | 0 |
-| `judge_settings.workers` | integer | 1 | 0 |
+| `judge_settings.wall_s` | null | 1 | 1 |
+| `judge_settings.workers` | null | 1 | 1 |
 | `judge_usage` | object | 1 | 0 |
 | `judge_usage.attempts` | integer | 1 | 0 |
 | `judge_usage.cached_input_tokens` | integer | 1 | 0 |
@@ -1247,6 +1248,7 @@ The file holds no record.
 |---|---|---|---|
 | `argv` | array | 1 | 0 |
 | `checked_equal` | array | 1 | 0 |
+| `judge_settings_left_empty` | array | 1 | 0 |
 | `kept_raw` | string | 1 | 0 |
 | `left_empty` | array | 1 | 0 |
 | `merged_at` | string | 1 | 0 |
@@ -1433,4 +1435,4 @@ The file holds no record.
 | `workers` | null | 1 | 1 |
 
 ---
-Written from `prod/harness/fields.py`, sha256 `b7d4082a50d35311d7a57834dbdcbbf9e62715ec242aa282b97619f39ad8a564`.
+Written from `prod/harness/fields.py`, sha256 `57fabe80bee1f7d11896db584af4087fb05d09bf2be0ca4d6ba5c9ec700e29e0`.
