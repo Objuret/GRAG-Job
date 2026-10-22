@@ -280,8 +280,7 @@ laptop's judge settings. A split run: `tools/merge_split_run.py split` makes the
 question set, each machine runs one half with `prod/run.py` (each with a new, empty first-call
 store, `--flag HERB_V4_CACHE=<new folder>`; the desktop half started detached through
 `A:\exjobbet\grag_setup\run_gold100_b.cmd`), and `tools/merge_split_run.py merge` writes the one
-run folder, the halves kept beside it. A run started from an agent's shell carries that session's
-CLAUDE* variables into its records; start the laptop half from his own terminal.
+run folder, the halves kept beside it.
 
 **Reached from the laptop over SSH since 2026-09-15:** `ssh djuret@192.168.50.253` (OpenSSH server
 installed via winget, port 22 opened in the firewall, the laptop's public key
