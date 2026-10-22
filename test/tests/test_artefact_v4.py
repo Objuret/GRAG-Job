@@ -240,7 +240,7 @@ def test_the_border_the_question_names_and_the_two_clouds_order_it(monkeypatch):
     texts = []
     toy_graph(monkeypatch, toy, without_the_name, texts)
 
-    def hand_over(order, p, char_budget, k, docs):
+    def hand_over(order, p, char_budget, k, docs, chosen=frozenset()):
         kept = list(order)[:6]
         record = {'products': {}, 'chunks_gone_through': 6,
                   'chunks_with_nothing_handed_over': {}, 'records_left_out': {},
@@ -450,7 +450,7 @@ def test_the_facets_weigh_the_tags_and_the_own_work_is_handed_over(monkeypatch):
                                    'messages_about_another_projects_pull_request': 3},
               'conversations_handed_over': 2, 'conversations_reaching_into_another_chunk': 0}
 
-    def hand_over(order, p, char_budget, k, docs):
+    def hand_over(order, p, char_budget, k, docs, chosen=frozenset()):
         seen['order'], seen['budget'] = [p.chunk_ids[i] for i in order], char_budget
         kept = list(order)[1:4]                       # the first chunk had nothing to hand over
         return (['one', 'two', 'thr'], [['a'], ['b'], ['c']], ['a', 'b'],
@@ -540,7 +540,7 @@ def test_the_4combo_orders_the_border_by_how_strongly_each_chunk_is_tied_to_the_
     toy_graph(monkeypatch, toy, without_the_name)
     seen, asked_of_the_graph = {}, []
 
-    def hand_over(order, p, char_budget, k, docs):
+    def hand_over(order, p, char_budget, k, docs, chosen=frozenset()):
         seen['order'] = [p.chunk_ids[i] for i in order]
         kept = list(order)[:3]
         record = {'products': {}, 'chunks_gone_through': 3,

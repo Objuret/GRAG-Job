@@ -66,9 +66,9 @@ Per question:
      of it links to a pull request that is not the product's own and none links to an own pull
      request or a document of the product. The author, a message's links and its time are fields
      of the records, read through the chunk's pointer.
-     A part of a split document or transcript goes in as its whole record, once, where its first
-     part shows (his 2026-10-22 "this continued document chunks is the "other half" of the
-     slack").
+     A chosen chunk that is a part of a split document or transcript goes in as its whole record,
+     once, at its place (his 2026-10-22 "this continued document chunks is the "other half" of
+     the slack", "chosen it is"); any other part goes in as only that part.
   9. The harness's cut at the character budget is applied to what is handed over; the texts then
      reach the model in pointer order (his 2026-10-22 "after the 72k cut, but before the model gets
      it"), and the row keeps them in the arm's order, which RAGAS reads as their rank.
@@ -533,8 +533,8 @@ FIELDS = {
                                    'in whole before the budget ended, by chunk id. A text can also '
                                    'hold records of other chunks, the rest of a conversation '
                                    '(delivered_records_of_other_chunks); those records are named '
-                                   'in chunk_ids by record id. A part of a split record is its '
-                                   'whole record, under the chunk of the part that showed first.',
+                                   'in chunk_ids by record id. A chosen part of a split record is '
+                                   'its whole record; any other part is only that part.',
             'delivered_step': "The chunk's step: its two levels added, 2 in both clouds, 3 in one, "
                               '4 in neither.',
             'delivered_tags_level': "1 when it is in the tags side's cloud, 2 when it is not.",
@@ -1048,11 +1048,13 @@ def index_info(prepared):
                                   'before is read from output/query_embed_cache and counted as '
                                   'no call',
             'unit_text': f'each record as lucene and vector write it ({RECORD_FORM}), the records '
-                         'of a chunk one after the other with a blank line between them; a part '
-                         'of a split document or transcript goes in as its whole record, once, '
-                         'where its first part shows in the order; after the cut the texts reach '
-                         "the answer model in pointer order: file, section in the file's own "
-                         "order, place of the text's first record in its section; contexts keeps "
+                         'of a chunk one after the other with a blank line between them; a chosen '
+                         'chunk that is a part of a split document or transcript goes in as its '
+                         'whole record, once, at its place, any other part as its record with only '
+                         "that part of its long field (a document's feedback with its last part); "
+                         "after the cut the texts reach the answer model in pointer order: file, "
+                         "section in the file's own order, place of the text's first record in its "
+                         "section, part; contexts keeps "
                          "the arm's order, "
                          "which RAGAS reads as their rank, and reading_order gives the model's"}
 
@@ -1084,27 +1086,41 @@ def _record_texts(section, records):
     return '\n\n'.join(texts), ends
 
 
+def _part_text(section, record, loc):
+    """A part of a split document or transcript: its record as lucene and vector write it, with
+    only this part of its long field; a document's feedback, which follows its content, stands
+    with the last part (`last`)."""
+    start, end = loc['char_range']
+    shown = dict(record)
+    shown[loc['field']] = record[loc['field']][start:end]
+    if not loc['last']:
+        shown.pop('feedback', None)
+    return record_text(section, shown)
+
+
 def _pointer(rows, unit, doc_cache):
-    """Where a text stands in HERB's files: its file, its section in the file's own order, and the
-    place of its first record in that section."""
+    """Where a text stands in HERB's files: its file, its section in the file's own order, the
+    place of its first record in that section, and its part (0 for a whole record)."""
     row = rows[unit['chunk']]
     doc = _load_verified_doc(row['relpath'], row['sha256'], doc_cache)
     key = ('places', row['relpath'], unit['section'])
     if key not in doc_cache:
         doc_cache[key] = {str(record['id']): n for n, record in enumerate(doc[unit['section']])}
     return (row['relpath'], list(doc).index(unit['section']),
-            min(doc_cache[key][record] for record in unit['ids']))
+            min(doc_cache[key][record] for record in unit['ids']),
+            unit['part'][1] if 'part' in unit else 0)
 
 
-def _hand_over(order, asked, char_budget, k, doc_cache):
+def _hand_over(order, asked, char_budget, k, doc_cache, chosen=frozenset()):
     """What is handed over of the ordered chunks, and the record of it (the step as it stands).
 
     In the order: no message of a channel apart; of a batch of pull requests only the
     product's own; of a batch of Slack messages the conversations that are not about another
     project's pull request, each whole where it first shows (its messages in other chunks come
-    with it and are not handed over again); of a part of a split document or transcript its whole
-    record, once, where its first part shows (the record's other parts come with it; his
-    2026-10-22 "this continued document chunks is the "other half" of the slack"); any other
+    with it and are not handed over again); of a part of a split document or transcript that is
+    one of the chosen chunks its whole record, once, at its place (the record's other parts come
+    with it; his 2026-10-22 "autoinclude chunks that are part of the same split object from the
+    strongest chunks", "chosen it is"), of any other part only that part, not credited; any other
     chunk as it is. Every record is written as lucene and vector write theirs (`_record_texts`).
     The harness's cut is applied to these texts (`cut_at_budget`); with no budget the first k are
     handed over. The model reads the texts in pointer order (`_pointer`; his 2026-10-22 "after
@@ -1113,12 +1129,13 @@ def _hand_over(order, asked, char_budget, k, doc_cache):
     not agree to create that?").
 
     A record is credited as handed over when its whole text went in, the rule lucene and vector
-    keep: every record of a text handed over whole, and the records of the cut text that end
-    before the cut.
+    keep: every record of a text handed over whole (a part alone never), and the records of the
+    cut text that end before the cut.
 
-    Returns the texts in the arm's order, the record ids behind each text, the record ids handed
-    over whole, the cut's block, the chunks handed over whole, and what a row keeps of it with the
-    order the model reads the texts in (`reading_order`)."""
+    chosen: the chosen chunks' indices (`answer_one_question`). Returns the texts in the arm's
+    order, the record ids behind each text, the record ids handed over whole, the cut's block, the
+    chunks handed over whole, and what a row keeps of it with the order the model reads the texts
+    in (`reading_order`)."""
     rows = asked.chunk_rows
     book = own_work(order, asked, doc_cache)
     units, seen, given = [], set(), set()
@@ -1168,6 +1185,13 @@ def _hand_over(order, asked, char_budget, k, doc_cache):
                 if part is not None:
                     if unit['ids'][0] in given:
                         continue
+                    if i not in chosen:
+                        # a part ends its record when its range reaches the end of the long field
+                        last = part['char_range'][1] >= len(records[0][part['field']])
+                        unit.update(section=section, part=(unit['ids'][0], part['part']), ends=[])
+                        units.append(unit)
+                        yield row['chunkId'], _part_text(section, records[0], {**part, 'last': last})
+                        continue
                     given.add(unit['ids'][0])
             text, ends = _record_texts(section, records)
             unit.update(section=section,
@@ -1186,7 +1210,7 @@ def _hand_over(order, asked, char_budget, k, doc_cache):
     if len(units) != len(texts):
         raise RuntimeError(f'artefact_v4: {len(texts)} texts handed over for {len(units)} units')
     whole = units[:kept]
-    credited = [record for unit in whole for record in unit['ids']]
+    credited = [record for unit in whole if 'part' not in unit for record in unit['ids']]
     if budget is not None and budget['boundary']:
         credited += [record for record, end in units[kept]['ends']
                      if end <= budget['boundary']['chars_kept']]
@@ -1607,7 +1631,7 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
                                   if not n['set_aside']) or 'no name of the graph, nothing cut')
             + f'; {len(chosen)} chosen chunks, {story["record"]["chunks_reached"]} tied to them')
     contexts, id_lists, context_ids, budget, delivered, handed = _hand_over(
-        order, asked, char_budget, k, doc_cache)
+        order, asked, char_budget, k, doc_cache, chosen=frozenset(int(i) for i in chosen))
     boundary = budget['boundary']['id'] if budget and budget['boundary'] else None
     scope['delivered_under_the_names'] = len(delivered) if border else 0
     diagnostics, ranking = _combo_record(qid, combo, asked, query, order, delivered, scope, said,
