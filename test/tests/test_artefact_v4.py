@@ -406,11 +406,13 @@ def test_what_is_handed_over_is_the_products_own_work_and_conversations_whole(mo
         'products': {'B': {'channels_apart': ['ch-apart'], 'people': 2}},
         'chunks_gone_through': 8,
         'chunks_with_nothing_handed_over': {'in_a_channel_apart': 1, 'no_own_pull_request': 1,
-                                            'no_conversation_left': 1},
+                                            'no_conversation_left': 1,
+                                            'all_already_handed_over': 0},
         'records_left_out': {'messages_of_a_channel_apart': 3,
                              'pull_requests_of_other_projects': 2,
                              'messages_about_another_projects_pull_request': 2},
-        'conversations_handed_over': 4, 'conversations_reaching_into_another_chunk': 2}
+        'conversations_handed_over': 4, 'conversations_reaching_into_another_chunk': 2,
+        'linked_records_handed_over': 0}
     assert handed['per_chunk'] == {'delivered_records': [6, 1, 1, 1, 1],
                                    'delivered_records_of_other_chunks': [4, 0, 0, 0, 0],
                                    'delivered_records_not_handed_over': [2, 1, 0, 2, 1]}
