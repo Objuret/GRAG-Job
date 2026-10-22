@@ -608,6 +608,8 @@ FIELDS = {
                 'no_conversation_left': "A batch of messages whose conversations are about "
                                         "another project's pull request or were handed over "
                                         'before with another chunk.',
+                'all_already_handed_over': 'A chunk whose records all went in before, linked '
+                                           'from a chosen conversation or with another chunk.',
             }),
             'records_left_out': sub("Records of those chunks left out: a channel apart and "
                                     "other projects' pull requests by the graph's people, talk "
@@ -625,6 +627,9 @@ FIELDS = {
             'conversations_reaching_into_another_chunk': 'Of those, the conversations with '
                                                          'messages in another chunk than the '
                                                          'one they first showed in.',
+            'linked_records_handed_over': "The product's own documents and pull requests that "
+                                          "a chosen conversation's messages link to, handed over "
+                                          'right after it, in the texts that went in whole.',
         }),
         'diagnostics': sub('Counts that say how the order came about.', {
             'credited_delivered_rows': 'How many texts went in whole before the budget ended.',
@@ -1111,6 +1116,30 @@ def _pointer(rows, unit, doc_cache):
             unit['part'][1] if 'part' in unit else 0)
 
 
+def _linked(row, messages, people, doc_cache):
+    """The product's own documents and pull requests the messages link to, in the order the
+    messages stand: a document by its document_link, a pull request by its link and only when its
+    author is one of the product's people, matched as the arm matches links (`_links`)."""
+    doc = _load_verified_doc(row['relpath'], row['sha256'], doc_cache)
+    key = ('links', row['relpath'])
+    if key not in doc_cache:
+        found = {}
+        for section, field in (('documents', 'document_link'), ('prs', 'link')):
+            for record in doc.get(section, []):
+                for link in _links(record.get(field) or ''):
+                    found.setdefault(link, (section, record))
+        doc_cache[key] = found
+    found, out = doc_cache[key], []
+    for message in messages:
+        for link in sorted(_links(message['Message']['User']['text'])):
+            if link in found:
+                section, record = found[link]
+                if section == 'prs' and str(record['user']['login']) not in people:
+                    continue
+                out.append((section, record))
+    return out
+
+
 def _hand_over(order, asked, char_budget, k, doc_cache, chosen=frozenset()):
     """What is handed over of the ordered chunks, and the record of it (the step as it stands).
 
@@ -1121,7 +1150,9 @@ def _hand_over(order, asked, char_budget, k, doc_cache, chosen=frozenset()):
     one of the chosen chunks its whole record, once, at its place (the record's other parts come
     with it; his 2026-10-22 "autoinclude chunks that are part of the same split object from the
     strongest chunks", "chosen it is"), of any other part only that part, not credited; any other
-    chunk as it is. Every record is written as lucene and vector write theirs (`_record_texts`).
+    chunk as it is, its records not handed over again. After a chosen conversation, the product's
+    own documents and pull requests its messages link to, each once and whole (`_linked`; the
+    link is a pointer the message carries). Every record is written as lucene and vector write theirs (`_record_texts`).
     The harness's cut is applied to these texts (`cut_at_budget`); with no budget the first k are
     handed over. The model reads the texts in pointer order (`_pointer`; his 2026-10-22 "after
     the 72k cut, but before the model gets it"); they are returned in the arm's order, which RAGAS
@@ -1169,11 +1200,11 @@ def _hand_over(order, asked, char_budget, k, doc_cache, chosen=frozenset()):
                             str(record['id']) not in mine for record in book['messages'][t]))}
             elif kind == 'pr_batch':
                 held = _pointed_records(row, doc_cache)
-                section, records = 'prs', [record for record in held
-                                           if book['own'][str(record['id'])]]
-                left['pull_requests_of_other_projects'] += len(held) - len(records)
+                own = [record for record in held if book['own'][str(record['id'])]]
+                left['pull_requests_of_other_projects'] += len(held) - len(own)
+                section, records = 'prs', [record for record in own if str(record['id']) not in given]
                 if not records:
-                    nothing['no_own_pull_request'] += 1
+                    nothing['no_own_pull_request' if not own else 'all_already_handed_over'] += 1
                     continue
                 unit = {'chunk': i, 'ids': [str(record['id']) for record in records],
                         'of_other_chunks': 0, 'not_handed_over': len(held) - len(records)}
@@ -1182,6 +1213,9 @@ def _hand_over(order, asked, char_budget, k, doc_cache, chosen=frozenset()):
                 section, records, part = _pointed(row, doc_cache)
                 unit = {'chunk': i, 'ids': list(dict.fromkeys(str(r['id']) for r in records)),
                         'of_other_chunks': 0, 'not_handed_over': 0}
+                if part is None and set(unit['ids']) <= given:
+                    nothing['all_already_handed_over'] += 1
+                    continue
                 if part is not None:
                     if unit['ids'][0] in given:
                         continue
@@ -1197,7 +1231,20 @@ def _hand_over(order, asked, char_budget, k, doc_cache, chosen=frozenset()):
             unit.update(section=section,
                         ends=list(zip((str(record['id']) for record in records), ends)))
             units.append(unit)
+            given.update(unit['ids'])
             yield row['chunkId'], text
+            if kind == 'slack_thread_batch' and i in chosen:
+                people = asked.persons[row['product']]['people']
+                for linked_section, linked in _linked(row, records, people, doc_cache):
+                    rid = str(linked['id'])
+                    if rid in given:
+                        continue
+                    given.add(rid)
+                    linked_text = record_text(linked_section, linked)
+                    units.append({'chunk': i, 'ids': [rid], 'of_other_chunks': 1,
+                                  'not_handed_over': 0, 'linked': True, 'section': linked_section,
+                                  'ends': [(rid, len(linked_text))]})
+                    yield row['chunkId'], linked_text
 
     if char_budget is not None:
         cut = cut_at_budget(stream(), char_budget)
@@ -1223,7 +1270,8 @@ def _hand_over(order, asked, char_budget, k, doc_cache, chosen=frozenset()):
                             'people': len(asked.persons[name]['people'])} for name in products},
         'chunks_gone_through': gone[0],
         'chunks_with_nothing_handed_over': {name: nothing[name] for name in (
-            'in_a_channel_apart', 'no_own_pull_request', 'no_conversation_left')},
+            'in_a_channel_apart', 'no_own_pull_request', 'no_conversation_left',
+            'all_already_handed_over')},
         'records_left_out': {name: left[name] for name in (
             'messages_of_a_channel_apart', 'pull_requests_of_other_projects',
             'messages_about_another_projects_pull_request')},
@@ -1231,6 +1279,7 @@ def _hand_over(order, asked, char_budget, k, doc_cache, chosen=frozenset()):
         'conversations_handed_over': sum(unit.get('conversations', 0) for unit in whole),
         'conversations_reaching_into_another_chunk': sum(unit.get('reaching', 0)
                                                          for unit in whole),
+        'linked_records_handed_over': sum(1 for unit in whole if unit.get('linked')),
     }
     per_chunk = {'delivered_records': [len(unit['ids']) for unit in whole],
                  'delivered_records_of_other_chunks': [unit['of_other_chunks'] for unit in whole],
