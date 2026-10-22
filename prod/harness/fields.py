@@ -293,6 +293,22 @@ ROW = {
     "correction": CORRECTION,
 }
 
+ENVIRONMENT = {
+    "host": "The machine's name.",
+    "platform": "Its operating system.",
+    "python": "The Python version.",
+    "python_executable": "The Python that ran.",
+    "cpu": "The processor.",
+    "cpu_count": "How many processor threads it has.",
+    "ram_bytes": "How much memory it has.",
+    "packages": whole("The versions of the packages the run rests on most."),
+    "packages_all": "Every installed package with its version.",
+    "embedder": sub("The embedding model the run is set to use.", {
+        "model": "Its name.", "revision": "Its exact version.",
+        "device": "Where it runs.", "dtype": "The number type it computes in.",
+    }),
+}
+
 LEG = {
     "leg": "The start's number, from 1.",
     "started_at": "When the start began (UTC).",
@@ -327,6 +343,13 @@ LEG = {
                    "say (retrieval_flags)."),
     "lane": sub("How every model call of the start was made.", LANE),
     "correction": CORRECTION,
+    "source_run": "Only in a folder merged from two runs (merge.json): the run this start belongs "
+                  "to, by its folder's name; that folder is kept whole under halves/.",
+    "source_leg": "Only in a merged folder: the start's number in that run.",
+    "environment": sub("Only in a merged folder: the machine and the software of that run.",
+                       ENVIRONMENT),
+    "env": whole("Only in a merged folder: that run's environment variables that can change what "
+                 "a run or a model call does, by name. A secret shows as <set>."),
 }
 
 MANIFEST = {
@@ -367,21 +390,7 @@ MANIFEST = {
                  "record, and the graph as counted when this manifest was written. Empty for an "
                  "arm that reads none.", GRAPH),
     "code_version": sub("The code the last answering start ran on.", CODE_VERSION),
-    "environment": sub("The machine and the software.", {
-        "host": "The machine's name.",
-        "platform": "Its operating system.",
-        "python": "The Python version.",
-        "python_executable": "The Python that ran.",
-        "cpu": "The processor.",
-        "cpu_count": "How many processor threads it has.",
-        "ram_bytes": "How much memory it has.",
-        "packages": whole("The versions of the packages the run rests on most."),
-        "packages_all": "Every installed package with its version.",
-        "embedder": sub("The embedding model the run is set to use.", {
-            "model": "Its name.", "revision": "Its exact version.",
-            "device": "Where it runs.", "dtype": "The number type it computes in.",
-        }),
-    }),
+    "environment": sub("The machine and the software.", ENVIRONMENT),
     "inputs": sub("What the run read, as hashes: these identify the inputs, the paths do not.", {
         "questions_sha256": "The sha256 of the questions file.",
         "ids_sha256": "The sha256 of the file that lists the set's questions.",
@@ -508,6 +517,8 @@ EVAL_MANIFEST = {
         "usage": sub("What the start's judge calls cost.", USAGE),
         "elapsed_s": "Seconds the start took.",
         "settings": sub("What the start ran under.", SETTINGS),
+        "source_run": "Only in a folder merged from two runs (merge.json): the run this scoring "
+                      "start belongs to, by its folder's name.",
     }),
     "judge_settings": sub("What the last scoring start ran under.", SETTINGS),
 }
@@ -589,6 +600,47 @@ CORRECTIONS = {
                        "the files the one before it left.", CORRECTION_ENTRY),
 }
 
+MERGE = {
+    "merged_at": "When the two runs were merged (UTC).",
+    "tool": "The script that merged them.",
+    "tool_sha256": "The sha256 of that script, its line ends as git holds them (LF).",
+    "argv": "The command line of the merge.",
+    "whole_set": sub("The question set the two runs are the halves of.", {
+        "file": "Its file, as a path on the machine that merged.",
+        "sha256": "The sha256 of that file; run_manifest.json's inputs.ids_sha256 is the same.",
+        "n_questions": "How many questions it holds.",
+    }),
+    "split_after": "How many of the set's questions, from the top of its file, the first half "
+                   "holds.",
+    "checked_equal": "The fields checked to be the same in both runs before the merge; the merge "
+                     "stops and writes nothing when one differs.",
+    "left_empty": "The top-level fields of run_manifest.json left empty because their value "
+                  "differed between the two runs.",
+    "sources": sub("The two runs, the first half first.", {
+        "name": "The run's folder name; legs[].source_run in run_manifest.json.",
+        "path": "Where the folder was when it was merged, as a path on the machine that merged.",
+        "half": "a for the first half of the set, b for the second.",
+        "n_questions": "How many questions its half holds.",
+        "ids_sha256": "The sha256 of the file that lists its half's questions.",
+        "host": "The machine it ran on.",
+        "n_rows": "How many answer rows it has.",
+        "n_failure_lines": "How many lines its failures.jsonl has.",
+        "n_score_rows": "How many lines its eval_results.jsonl has.",
+        "n_eval_calls": "How many lines its eval_calls.jsonl has.",
+        "n_eval_failure_lines": "How many lines its eval_failures.jsonl has.",
+        "legs": sub("Its starts: their number in the run and in this folder.", {
+            "source_leg": "The start's number in the run.",
+            "leg": "Its number in this folder.",
+        }),
+        "manifest_values": whole("The run's own value of each field named in left_empty, as its "
+                                 "run_manifest.json holds it."),
+        "files_sha256": whole("The sha256 of every file of the run, by its path in the run's "
+                              "folder, as the run wrote it; the same files are under "
+                              "halves/<name>/."),
+    }),
+    "kept_raw": "Where the two runs are kept, byte for byte.",
+}
+
 # file name, or a pattern with *, -> (what the file is, how it joins, its fields or None)
 FILES = {
     "FIELDS.md": ("This file.", "", None),
@@ -629,6 +681,16 @@ FILES = {
                                      "of the cut chunk handed over whole counted in the two "
                                      "id-based scores); run on the files from before it, it gives "
                                      "the corrected files again.", "", None),
+    "merge.json": ("Only in a folder merged from two runs over the two halves of one question set, "
+                   "made at the same commit, on one machine or two (tools/merge_split_run.py): "
+                   "what was merged, what was checked to be the same in both, and the sha256 of "
+                   "every file of both runs. Both runs are kept under halves/, byte for byte. The "
+                   "rows of both stand here in the order of the set's questions; legs holds the "
+                   "starts of both runs, numbered again in the order they began, each with its "
+                   "run's machine, and a row's leg is the new number. A top-level field of "
+                   "run_manifest.json whose value differed between the two runs is empty, and "
+                   "each run's value is in sources[].manifest_values.",
+                   "sources[].name = legs[].source_run", MERGE),
 }
 
 # score -> (RAGAS's own sentence, where it is from, what goes into it here, what it needs,

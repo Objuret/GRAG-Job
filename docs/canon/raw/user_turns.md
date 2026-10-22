@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2581 turns, chronological. Verbatim text; no edits.
+2607 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -19335,4 +19335,127 @@ wait.. you added it to words again.. THATS IT!? WHY DO YOU ONLY FUCKING ADD IT T
 ## 2026-10-22 04:04 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 make sure you can run the new 100gold later cocurrently also, i want to do this on both the laptop and desktop every fucking time you do anything tbh, max speed if possible
+
+## 2026-10-22 04:15 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*paste / file drop · 1884 chars*
+
+So, with this built then, have we tackled these returnquestions?
+"
+
+<pasted_content id="6ca8">
+Evidence budget: Although all three methods have a 72k-character limit, their average answer input tokens differ (26k for Lucene, 30k for vector and 32k for Artefact). Is 72k simply the maximum allowed, or are the methods actually receiving comparable amounts of evidence? Can we record the actual characters and tokens supplied for each question?
+Context recall and precision: Artefact retrieves larger chunks containing multiple source records. Are the ID-based metrics calculated using the original source-record IDs or the Artefact chunk IDs? Ideally, we should evaluate all three methods against the same original source records, considering only evidence actually passed to the answer model.
+Differences between recall metrics: Artefact achieves considerably higher ID-based context recall (0.647), but its non-LLM recall is much lower (0.053). Could we check how these metrics are calculated and whether the difference in retrieval granularity affects them?
+Answer correctness: Despite relatively high faithfulness across all three methods, answer correctness remains low (0.175–0.273). Several answers also indicate that the requested information could not be found. Could we examine whether this is primarily a retrieval problem or an issue with extracting the correct answer from the retrieved evidence? For questions involving employee IDs and PR links, exact entity-level accuracy might be more informative than text-similarity metrics.
+Comparison and statistical analysis: Can we confirm that all three methods were evaluated on exactly the same questions, reference answers and judging setup? If so, we could perform paired statistical comparisons and calculate confidence intervals to establish whether Artefact's improvements are significant.
+</pasted_content id="6ca8">
+
+"
+
+## 2026-10-22 04:17 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+"Only the whole input's tokens are recorded, not the tokens of the evidence alone. The new run must show the new tokens. On 11 questions, the artefact's list runs out before 72,000 characters." fucking HOW
+
+## 2026-10-22 04:19 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+ok, but are those questions CORRECT then? or are they shitty also?
+
+## 2026-10-22 04:22 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+stfu dude, we are still on question 1 so stay in the goddamn lane
+
+## 2026-10-22 04:23 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+what the actual fuck are you on about? we have ran this on both computers ALOT of times just the last few weeks,
+
+## 2026-10-22 04:23 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+...
+
+## 2026-10-22 04:44 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+i mean, its the same fucking network, just shove it over there, or gitupdate there or whatever dude
+
+## 2026-10-22 04:46 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+make sure ragas can be ran like that
+
+## 2026-10-22 04:49 · a2bd7952-5640-4e68-90a3-87feca93031d.jsonl
+
+why is it terrible at answering these questions then?
+
+## 2026-10-22 04:57 · a2bd7952-5640-4e68-90a3-87feca93031d.jsonl
+
+ok, that one is as it is, i can defend it atleast, even if you still havent really met the argument about why they are so different in tokenssize, i am thinkin git's because of one of them fetches slot of the same typ och records, but i dont see why it would get more or less tokens from that.. also, 3 and 4.. we need to fucking handle those
+
+## 2026-10-22 05:01 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+status?
+
+## 2026-10-22 05:02 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+fuck it, you are apparently too shit at this
+
+## 2026-10-22 05:03 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+how long will it take to run o the laptop even if we do a few cocurrent instances?
+
+## 2026-10-22 05:03 · a2bd7952-5640-4e68-90a3-87feca93031d.jsonl
+
+status?
+
+## 2026-10-22 05:04 · a2bd7952-5640-4e68-90a3-87feca93031d.jsonl
+
+script? what the fuck are you even talking about?
+
+## 2026-10-22 05:04 · a2bd7952-5640-4e68-90a3-87feca93031d.jsonl
+
+i said we need to have the fucking discussion about 3 and 4 and you went full retard again
+
+## 2026-10-22 05:09 · a2bd7952-5640-4e68-90a3-87feca93031d.jsonl
+
+focus on HIS questions:
+"
+Differences between recall metrics: Artefact achieves considerably higher ID-based context recall (0.647), but its non-LLM recall is much lower (0.053). Could we check how these metrics are calculated and whether the difference in retrieval granularity affects them?
+Answer correctness: Despite relatively high faithfulness across all three methods, answer correctness remains low (0.175–0.273). Several answers also indicate that the requested information could not be found. Could we examine whether this is primarily a retrieval problem or an issue with extracting the correct answer from the retrieved evidence? For questions involving employee IDs and PR links, exact entity-level accuracy might be more informative than text-similarity metrics.
+"
+
+## 2026-10-22 05:12 · a2bd7952-5640-4e68-90a3-87feca93031d.jsonl
+
+any thing more that needs to be  built before we run the new goldrun?
+
+## 2026-10-22 05:14 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+so it doesnt have to be ran 1 at a time?
+
+## 2026-10-22 05:16 · a2bd7952-5640-4e68-90a3-87feca93031d.jsonl
+
+i meant about his 5 quetions..
+
+## 2026-10-22 05:17 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+retarded as usual.. the time per question is still the same you fuckbot
+
+## 2026-10-22 05:19 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+check if all active processes etc are relevant for what we are doing now
+
+## 2026-10-22 05:20 · a2bd7952-5640-4e68-90a3-87feca93031d.jsonl
+
+I STILL DONT KNOW WHAT THE FUCK YOU ARE TALKING ABOUT FOR QUESTION 3.. i cannot be more clear about this
+
+## 2026-10-22 05:28 · a2bd7952-5640-4e68-90a3-87feca93031d.jsonl
+
+i ´dont see how that affects the actual run tho
+
+## 2026-10-22 05:28 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+so we cant run on the desktop anyway?
+
+## 2026-10-22 05:29 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+dude, you are doing it again, either its a fucking problem or it isnt, just SAY WHAT THE FUCKING PROBLEM IS
 

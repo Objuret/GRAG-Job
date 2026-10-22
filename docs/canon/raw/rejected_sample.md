@@ -2,11 +2,11 @@
 
 40 turns spread across every rule that fired, so the filtering can be checked by hand.
 
-- `tool_result` - 20134 turns rejected
-- `task_notification` - 1603 turns rejected
-- `is_meta` - 684 turns rejected
+- `tool_result` - 20376 turns rejected
+- `task_notification` - 1623 turns rejected
+- `is_meta` - 690 turns rejected
+- `interrupt_marker` - 94 turns rejected
 - `command_expansion` - 94 turns rejected
-- `interrupt_marker` - 91 turns rejected
 - `compact_summary` - 37 turns rejected
 
 ---
@@ -45,18 +45,18 @@ Another Claude session sent a message:
 [... 5224 more chars]
 ```
 
+## `interrupt_marker` · 2026-10-20 11:42:34 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+```
+[Request interrupted by user]
+```
+
 ## `command_expansion` · 2026-10-21 02:38:20 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 ```
 <command-name>/compact</command-name>
             <command-message>compact</command-message>
             <command-args></command-args>
-```
-
-## `interrupt_marker` · 2026-10-20 11:42:34 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
-
-```
-[Request interrupted by user]
 ```
 
 ## `compact_summary` · 2026-10-20 15:03:31 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
@@ -102,16 +102,16 @@ Another Claude session sent a message:
 [... 5313 more chars]
 ```
 
-## `command_expansion` · 2026-10-21 02:39:58 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
-
-```
-<local-command-stdout>Compacted PreCompact [bash "${CLAUDE_PLUGIN_ROOT}/hooks/mempal-precompact-hook.sh"] completed successfully: {}</local-command-stdout>
-```
-
 ## `interrupt_marker` · 2026-10-20 14:36:55 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 ```
 [Request interrupted by user]
+```
+
+## `command_expansion` · 2026-10-21 02:39:58 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+```
+<local-command-stdout>Compacted PreCompact [bash "${CLAUDE_PLUGIN_ROOT}/hooks/mempal-precompact-hook.sh"] completed successfully: {}</local-command-stdout>
 ```
 
 ## `compact_summary` · 2026-10-21 02:39:56 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
@@ -167,18 +167,18 @@ Another Claude session sent a message:
 [... 4392 more chars]
 ```
 
+## `interrupt_marker` · 2026-10-21 00:56:13 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+```
+[Request interrupted by user for tool use]
+```
+
 ## `command_expansion` · 2026-09-10 05:34:25 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
 
 ```
 <command-name>/goal</command-name>
             <command-message>goal</command-message>
             <command-args>figure out why, why this isnt working better, and actually both aim to finally include all things in a build, and solve the underlying issue you uncover</command-args>
-```
-
-## `interrupt_marker` · 2026-10-21 00:56:13 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
-
-```
-[Request interrupted by user for tool use]
 ```
 
 ## `compact_summary` · 2026-10-19 02:53:25 · 1726312f-173a-4303-813a-80110e1b3674.jsonl
@@ -229,18 +229,18 @@ Another Claude session sent a message:
 [... 5013 more chars]
 ```
 
+## `interrupt_marker` · 2026-10-21 04:16:30 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+```
+[Request interrupted by user]
+```
+
 ## `command_expansion` · 2026-09-10 19:03:11 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
 
 ```
 <command-name>/model</command-name>
             <command-message>model</command-message>
             <command-args>opus[1m]</command-args>
-```
-
-## `interrupt_marker` · 2026-10-21 04:16:30 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
-
-```
-[Request interrupted by user]
 ```
 
 ## `compact_summary` · 2026-10-20 15:03:31 · 27f14760-a0f1-4642-b119-42ed8aa2d5ac.jsonl
@@ -293,16 +293,16 @@ Another Claude session sent a message:
 [... 2287 more chars]
 ```
 
-## `command_expansion` · 2026-09-10 19:03:11 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
-
-```
-<local-command-stdout>Set model to `claude-opus-5[1m]`</local-command-stdout>
-```
-
 ## `interrupt_marker` · 2026-10-21 13:08:07 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 ```
 [Request interrupted by user]
+```
+
+## `command_expansion` · 2026-09-10 19:03:11 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
+
+```
+<local-command-stdout>Set model to `claude-opus-5[1m]`</local-command-stdout>
 ```
 
 ## `compact_summary` · 2026-10-21 02:39:56 · 27f14760-a0f1-4642-b119-42ed8aa2d5ac.jsonl
@@ -346,18 +346,18 @@ Summary:
 <local-command-caveat>The command below was run directly in Claude Code, not sent to you as a request, and its output goes straight to the user. It's recorded here as context for later messages.</local-command-caveat>
 ```
 
+## `interrupt_marker` · 2026-10-21 13:59:36 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
+
+```
+[Request interrupted by user]
+```
+
 ## `command_expansion` · 2026-09-10 19:04:11 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
 
 ```
 <command-name>/model</command-name>
             <command-message>model</command-message>
             <command-args>claude-fable-5-1[1m]</command-args>
-```
-
-## `interrupt_marker` · 2026-10-21 13:59:36 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
-
-```
-[Request interrupted by user]
 ```
 
 ## `compact_summary` · 2026-10-08 21:27:34 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
@@ -395,9 +395,9 @@ Summary:
 [Image: source: C:\Users\jocke\AppData\Local\Temp\claude\c--Coding-exjobbet-GRAG-Job\01cdc39c-ae0a-4777-9788-62636e25d616\images\1.png]
 ```
 
-## `command_expansion` · 2026-09-10 19:04:11 · 0c8cb0bf-6d61-44dc-b899-73968e627403.jsonl
+## `interrupt_marker` · 2026-10-21 15:53:07 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
 
 ```
-<local-command-stdout>Set model to `claude-fable-5-1`</local-command-stdout>
+[Request interrupted by user]
 ```
 

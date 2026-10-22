@@ -88,7 +88,8 @@ numbers are in the run folders and under `output/research/`.
   `tools/export_finished_data.py` (needs openpyxl) from the three final run folders and
   `test/graph/build_cost.json`; the export stops on any value that does not line up.
 - `docs/ENVIRONMENT.md` — the machines, the Neo4j start, the model lane and how many calls this
-  laptop holds at once. `docs/canon/raw/user_turns.jsonl` — his typed messages
+  laptop holds at once; the desktop's clone and graph for split runs, and the commands of a split
+  run (`tools/merge_split_run.py split|merge`). `docs/canon/raw/user_turns.jsonl` — his typed messages
   (`tools/canon_extract.py`); archive, nothing reads it.
 - `docs/record/CLAUDE_md_until_2026-10-07.md` — this file as it stood before the cut: his turns,
   the answers and the run numbers, day by day. Read it only when a question needs it. Nothing is

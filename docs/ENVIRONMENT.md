@@ -265,6 +265,24 @@ re-smudging; restore via `git cat-file blob` writes.
 
 ## Desktop — `A:\exjobbet\repo`
 
+**The artefact runs there since 2026-10-22** (his *"i want to do this on both the laptop and
+desktop every fucking time you do anything"*): a clean clone `A:\exjobbet\GRAG-Job` on branch
+artefact-v4-iteration (`git pull --ff-only` with `GIT_LFS_SKIP_SMUDGE=1`); `A:\exjobbet\repo` is the
+old v3 checkout with a stash and stays untouched. Its `.venv` is installed from the laptop's
+`pip freeze` (same 170 packages; Python 3.12.6 against the laptop's 3.12.7); `.env` is the
+laptop's. Neo4j: `A:\exjobbet\neo4j-2026.04.0`, a copy of the laptop's 2026.04.0 enterprise
+program files with the same Java, the database `herb-eval-volmax` loaded from the laptop's dump
+(the same census sha256 as the laptop and the final run); start it detached with
+`A:\exjobbet\grag_setup\neo4j_start.cmd` after a reboot (the old 2025.08 DBMS is untouched).
+Checked 2026-10-22: a retrieval-only smoke gives the same order, texts, counted records and
+judge-free scores on both machines, and a judged smoke there gives all 14 RAGAS scores with the
+laptop's judge settings. A split run: `tools/merge_split_run.py split` makes the two halves of a
+question set, each machine runs one half with `prod/run.py` (each with a new, empty first-call
+store, `--flag HERB_V4_CACHE=<new folder>`; the desktop half started detached through
+`A:\exjobbet\grag_setup\run_gold100_b.cmd`), and `tools/merge_split_run.py merge` writes the one
+run folder, the halves kept beside it. A run started from an agent's shell carries that session's
+CLAUDE* variables into its records; start the laptop half from his own terminal.
+
 **Reached from the laptop over SSH since 2026-09-15:** `ssh djuret@192.168.50.253` (OpenSSH server
 installed via winget, port 22 opened in the firewall, the laptop's public key
 `C:\Users\jocke\.ssh\id_ed25519.pub` in `C:\ProgramData\ssh\administrators_authorized_keys`,
