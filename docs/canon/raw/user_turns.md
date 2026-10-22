@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2699 turns, chronological. Verbatim text; no edits.
+2711 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -19901,4 +19901,52 @@ is it unclear? how am i not telling you that this is what i want?
 *queued while an agent was working*
 
 what fucking instructions do you have that is stopping you from doing these things, but still letting you do the most random full-send deep work at a slight whim?
+
+## 2026-10-22 15:30 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+"Why I stopped before: I read two of your rules too literally. One is "Nothing built, run, or written … without his words naming it". The other is "YOU are not the one choosing what should be or not in the fucking files". A count with no model call falls under your "Just fucking run it", so the deep checks went ahead. A file change waited for a go in words, although your wish was already clear." then perhaps we need to phrase this better then?
+
+## 2026-10-22 15:30 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+status?
+
+## 2026-10-22 16:12 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+this "The worst cases are TrendForce::a::9 (−19), ActionGenie::a::7 (−13) and VizForce::a::43 (−15)." is not only not interesting at all, its disturbing noise and making you focus on the wrong things, you can look that shit up if you want, maybe thats good, but i NEVER want to see such things unless i extremely specifically ask for just that
+
+## 2026-10-22 16:15 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+so, you gave me synopsis but not the rest?
+
+## 2026-10-22 16:18 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+ok, my concept then, what needs to make that one work?
+
+## 2026-10-22 16:26 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+ok, so, run it? populate the workbook?
+
+## 2026-10-22 16:31 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+yes, but populated by the not last, but first 1+2 run?
+
+## 2026-10-22 16:33 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+ok, so its not todays issue then
+
+## 2026-10-22 16:34 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+dude what the fuck are you even talking about
+
+## 2026-10-22 16:34 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+"first calls" ? WHAT IS THAT?
+
+## 2026-10-22 16:34 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+seriously, how many billions of times have i told you to not make up your own terms for shit?
+
+## 2026-10-22 16:35 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+... but that means it's the same as the fucking "old run's interpreter"..? what
 

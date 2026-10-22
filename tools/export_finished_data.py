@@ -5,7 +5,11 @@ arm), arm construction (a column per arm), key.
     python tools/export_finished_data.py [--out finished_data]
 
 Needs openpyxl. Reads the three final run folders and the graph's build cost
-(test/graph/build_cost.json), and writes grag-data.xlsx. A column of a run is a measure he named
+(test/graph/build_cost.json), and writes grag-data.xlsx. A run split over the laptop and the
+desktop is read with its halves: its time and its judging's time from the first start to the last
+end, its environment and its judging from the halves. A run that read its interpreter's answers
+and its query embeddings from an earlier run's store and cache takes those values from that run
+(MADE_IN). A column of a run is a measure he named
 (times, tokens, characters, runtime, the RAGAS scores) or an id of the dataset, the evaluation or the run; the
 construction holds what built the index that each final run read, one model at a time, and nothing
 about how it was built. Nothing that belongs to this machine or this project
@@ -16,6 +20,7 @@ import argparse
 import json
 import re
 import sys
+from datetime import datetime
 from pathlib import Path
 
 from openpyxl import Workbook
@@ -24,7 +29,11 @@ from openpyxl.styles import Font
 ROOT = Path(__file__).resolve().parent.parent
 RUNS = {"lucene": "lucene__gold100__cb72000__20261008T234209Z",
         "vector": "vector__gold100__cb72000__20261017T061242Z",
-        "artefact": "artefact_v4__gold100__cb72000__20261020T041923Z"}
+        "artefact": "artefact_v4__gold100__cb72000__20261022T081034Z"}
+# the artefact's run read its interpreter's answers from this run's store and its query embeddings
+# from the machines' embedding cache, the same on every question, so the values of those calls are
+# this run's (his 2026-10-22 "it's the same as the fucking "old run's interpreter"")
+MADE_IN = {"artefact": "artefact_v4__gold100__cb72000__20261020T041923Z"}
 DATASET, LICENCE = "HERB (Salesforce AI Research)", "CC BY-NC 4.0"
 # the sheets' names
 PER_QUESTION, PER_RUN, CONSTRUCTION, KEY = "results", "run data", "arm construction", "key"
@@ -125,17 +134,51 @@ def one(values, what):
     return values[0]
 
 
+def clock_seconds(spans):
+    """From the first start to the last end of (started_at, finished_at) pairs."""
+    return (max(datetime.fromisoformat(b) for _, b in spans)
+            - min(datetime.fromisoformat(a) for a, _ in spans)).total_seconds()
+
+
+def halves(d, name):
+    """A file of each half of a run split over two machines, as that half wrote it."""
+    return [read(p) for p in sorted((d / "halves").glob(f"*/{name}"))]
+
+
+def environment(d, man):
+    """The run's environment; a split run keeps it in its halves, which must name one embedding model."""
+    if man["environment"] is not None:
+        return man["environment"]
+    envs = [h["environment"] for h in halves(d, "run_manifest.json")]
+    if len(envs) != len(man["legs"]) or len({e["embedder"]["model"] for e in envs}) != 1:
+        sys.exit(f"{d.name}: the halves do not name one embedding model")
+    return envs[0]
+
+
+def interpreter_and_embeddings(r):
+    """What the interpreter answered and what was embedded for the query, without how each was got
+    (asked anew, or read from a store or a cache)."""
+    i = r["meta"]["interpreter"]
+    return ([{k: v for k, v in s.items() if k not in ("cache_hit", "offline", "asks")} for s in i["stages"]],
+            i["embeddings"])
+
+
 def runs_tables(arm, folder):
     d = ROOT / "output/k=chars" / folder
     man, ev = read(d / "run_manifest.json"), read(d / "eval_manifest.json")
-    if len(man["legs"]) != 1 or len(ev["judge_legs"]) != 1:
-        sys.exit(f"{arm}: more than one start; this export reads one")
-    leg, js, env = man["legs"][0], ev["judge_settings"], man["environment"]
+    split = len(man["legs"]) > 1
+    # the merged eval manifest keeps one half's judge settings, so a split run's judging is read from its halves
+    judged = halves(d, "eval_manifest.json") if split else [ev]
+    if len(judged) != len(ev["judge_legs"]) or (split and len(judged) != len(man["legs"])):
+        sys.exit(f"{arm}: the run's starts and its halves do not match")
+    leg, js, env = man["legs"][0], ev["judge_settings"], environment(d, man)
     if (man["n_questions"], man["n_ran"], man["n_failed"]) != (100, 100, 0):
         sys.exit(f"{arm}: not every one of the hundred questions was answered")
     cells = {}
     for r in rows(d / "eval_results.jsonl"):
         cells.setdefault(r["question_id"], {})[r["metric"]] = r
+    source = {o["id"]: o for o in rows(ROOT / "output/k=chars" / MADE_IN[arm] / "arm_outputs.jsonl")} \
+        if arm in MADE_IN else {}
     questions, failed_in_run = [], 0.0
     for r in rows(d / "arm_outputs.jsonl"):
         own = {}
@@ -143,18 +186,33 @@ def runs_tables(arm, folder):
             if e["kind"] in own:
                 sys.exit(f"{arm} {r['id']}: two {e['kind']} models in the arm's own calls")
             own[e["kind"]] = e
+        replaced = None
+        if source:
+            o = source[r["id"]]
+            if "chat" in own or interpreter_and_embeddings(r) != interpreter_and_embeddings(o):
+                sys.exit(f"{arm} {r['id']}: the interpreter's answers or the query embeddings are not those of "
+                         f"{MADE_IN[arm]}")
+            made = {e["kind"]: e for e in o["retrieval"]}
+            # this run's own embedding calls, for texts its machine had not embedded before, give way to
+            # the calls that embedded all of them
+            replaced = own.get("embed")
+            own["chat"], own["embed"] = made["chat"], made["embed"]
         mine = cells[r["id"]]
         if set(mine) != {s for s, _, _ in SCORES} or any(c["status"] != "ok" for c in mine.values()):
             sys.exit(f"{arm} {r['id']}: not every score is there and ok")
         g, interp, qe = r["generator"], own.get("chat"), own.get("embed")
         # a model call's time is its answering try; the seconds of failed tries are taken out of
         # the call, the question and the run (his 2026-10-21 "correct this")
-        for call in (g, interp, qe):
+        for call in (g, interp, qe, replaced):
             # the call's time holds its tries, its wait and a few milliseconds of the harness
             if call and not -1e-6 <= call["time_s"] - call["request_s"] - call["wait_s"] - call["retry_s"] < 0.05:
                 sys.exit(f"{arm} {r['id']}: a call's time is not its tries and its wait")
-        failed = sum(call["retry_s"] for call in (g, interp, qe) if call)
+        # calls made in another run are steps of the question by their answering try; their failed
+        # tries are not this run's, and this run's own embedding calls give way to them
+        failed = sum(call["retry_s"] for call in ((g, replaced) if source else (g, interp, qe)) if call)
         failed_in_run += failed
+        made_elsewhere = (sum(c["time_s"] - c["retry_s"] for c in (interp, qe))
+                          - (replaced["time_s"] - replaced["retry_s"] if replaced else 0.0)) if source else 0.0
         # the characters the cut handed over, checked against the texts themselves
         chars = r["meta"]["char_budget"]["chars"]
         if chars != sum(len(t) for t in r["contexts"]) or chars > man["char_budget"]:
@@ -170,7 +228,7 @@ def runs_tables(arm, folder):
             "interpreter_seconds": interp and interp["time_s"] - interp["retry_s"],
             "query_embedding_seconds": qe and qe["time_s"] - qe["retry_s"],
             "answer_seconds": g["time_s"] - g["retry_s"],
-            "total_seconds": r["timing"]["wall_s"] - failed,
+            "total_seconds": r["timing"]["wall_s"] - failed + made_elsewhere,
             "interpreter_tokens_in": interp and interp["tokens_in"],
             "interpreter_tokens_out": interp and interp["tokens_out"],
             "query_embedding_tokens": qe and qe["tokens_in"],
@@ -191,10 +249,16 @@ def runs_tables(arm, folder):
     # his 2026-10-21 "cba adding interpreter, it's just the answer model"
     if man["interpreter_model"] is not None and model_name(man["interpreter_model"]) != setup["answer_model"]:
         sys.exit(f"{arm}: the interpreter's model is not the answer model")
+    # the halves ran at the same time, so a failed try's seconds cannot be taken out of the clock time
+    if split and failed_in_run:
+        sys.exit(f"{arm}: failed tries in a split run; its time without them is not known")
     run = {
-        "run_seconds": leg["wall_s"] - failed_in_run,
+        "run_seconds": clock_seconds([(l["started_at"], l["finished_at"]) for l in man["legs"]]) if split
+        else leg["wall_s"] - failed_in_run,
         "judge_tokens_in": judge["tokens_in"], "judge_tokens_out": judge["tokens_out"],
-        "judge_embedding_tokens": js["embedding"]["tokens_in"], "judging_seconds": js["wall_s"],
+        "judge_embedding_tokens": sum(j["judge_settings"]["embedding"]["tokens_in"] for j in judged),
+        "judging_seconds": clock_seconds([(j["judge_settings"]["started_at"], j["judge_settings"]["finished_at"])
+                                          for j in judged]) if split else js["wall_s"],
     }
     return questions, setup, run
 
@@ -240,7 +304,7 @@ def construction_table():
     encoder_seconds = facet["encoder_cache"]["seconds_elapsed"]
     vector = mans["vector"]["build_stats"]["models"][0]
     embedder = model_name(vector["model"])
-    if model_name(mans["artefact"]["environment"]["embedder"]["model"]) != embedder:
+    if model_name(environment(ROOT / "output/k=chars" / RUNS["artefact"], mans["artefact"])["embedder"]["model"]) != embedder:
         sys.exit("the arms name different embedding models")
     encoder = model_name(facet["encoder_cache"]["model"].split(", ")[0])
     a = "artefact"
