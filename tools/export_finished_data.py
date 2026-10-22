@@ -6,7 +6,7 @@ arm), arm construction (a column per arm), key.
 
 Needs openpyxl. Reads the three final run folders and the graph's build cost
 (test/graph/build_cost.json), and writes grag-data.xlsx. A column of a run is a measure he named
-(times, tokens, runtime, the RAGAS scores) or an id of the dataset, the evaluation or the run; the
+(times, tokens, characters, runtime, the RAGAS scores) or an id of the dataset, the evaluation or the run; the
 construction holds what built the index that each final run read, one model at a time, and nothing
 about how it was built. Nothing that belongs to this machine or this project
 goes in: no path, host, user, session, repository file, commit, note or reason. The data sheets
@@ -76,6 +76,8 @@ QUESTIONS = [
     ("interpreter_tokens_in", "Input tokens of the interpreter call. Artefact only.", "tokens"),
     ("interpreter_tokens_out", "Output tokens of the interpreter call. Artefact only.", "tokens"),
     ("query_embedding_tokens", "Tokens embedded for the query. Vector and artefact only.", "tokens"),
+    ("retrieved_context_characters", "Characters of the retrieved context given to the answer model. At most "
+                                     "character_limit.", "characters"),
     ("answer_tokens_in", "Input tokens of the answer model call.", "tokens"),
     ("answer_tokens_out", "Output tokens of the answer model call.", "tokens"),
 ]
@@ -153,6 +155,10 @@ def runs_tables(arm, folder):
                 sys.exit(f"{arm} {r['id']}: a call's time is not its tries and its wait")
         failed = sum(call["retry_s"] for call in (g, interp, qe) if call)
         failed_in_run += failed
+        # the characters the cut handed over, checked against the texts themselves
+        chars = r["meta"]["char_budget"]["chars"]
+        if chars != sum(len(t) for t in r["contexts"]) or chars > man["char_budget"]:
+            sys.exit(f"{arm} {r['id']}: the characters handed over are not those of the retrieved context")
         questions.append({
             "arm": arm,
             "question_id": r["id"],
@@ -168,6 +174,7 @@ def runs_tables(arm, folder):
             "interpreter_tokens_in": interp and interp["tokens_in"],
             "interpreter_tokens_out": interp and interp["tokens_out"],
             "query_embedding_tokens": qe and qe["tokens_in"],
+            "retrieved_context_characters": chars,
             "answer_tokens_in": g["tokens_in"],
             "answer_tokens_out": g["tokens_out"],
         })

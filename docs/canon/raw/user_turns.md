@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2627 turns, chronological. Verbatim text; no edits.
+2699 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -19575,4 +19575,330 @@ wait.. what.. "with context_recall_id nearly unchanged (0.721 vs 0.722, up on 5 
 *queued while an agent was working*
 
 also, fuck you and your goddamn messy fucking outputs, WHY ARE THEY ALWAYS SHOWING IN THIS FUCKING CHAT!?
+
+## 2026-10-22 05:58 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+you are inducing rage again.. how about you stop fucking taking stabs in the dark and actually check shit up, what does the testruns you did earlier with this technique ACTUALLY say?
+
+## 2026-10-22 06:00 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+how will it look if we implement nr 2 also then?
+
+## 2026-10-22 06:05 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+status
+
+## 2026-10-22 06:12 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+what?
+
+## 2026-10-22 06:13 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+...
+
+## 2026-10-22 06:13 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+WHAT!?
+
+## 2026-10-22 06:14 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+NO, what the absolute fuck are you uo to and whats even happening
+
+## 2026-10-22 06:14 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+why are you "writing a script" like this? suddenly failing at it?
+
+## 2026-10-22 06:15 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+or. you know.. clone the artefact and fucking BUILD IT FOR REAL.. what the fuuuuuck
+
+you and your fucking tests
+
+## 2026-10-22 06:16 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+this really is the absolute worst way to develope something via ai
+
+## 2026-10-22 06:16 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+NO dude, stop FUCKING AROUND
+
+## 2026-10-22 06:17 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+you have built a fucking bajillion versions of this before and now, suddenly, you cant?
+
+## 2026-10-22 06:17 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+stop and tell me the fucking issue before i murder you
+
+## 2026-10-22 06:18 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+just like that huh?
+
+## 2026-10-22 06:21 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+you can as i say, do your fucking tests in private WHEN BUILDING, but gto after
+
+## 2026-10-22 06:21 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+gtfo*
+
+## 2026-10-22 06:23 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+wtf are you even sahing? it fails in the copy? what copy? the artefact? HOW?
+
+## 2026-10-22 06:23 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+you copied the ENTIRE REPO!?
+
+## 2026-10-22 06:24 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+literally eveything you do is causing rage, fucking stop immediately qith verything you are doing
+
+## 2026-10-22 06:24 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+WHY ARE YOU RUNNING IT IF YOU ARE SAYING IT IS FAILING
+
+## 2026-10-22 06:25 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+what?
+
+## 2026-10-22 06:25 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+.. then fucking finish the damn run then
+
+## 2026-10-22 06:27 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+status?
+
+## 2026-10-22 06:29 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+and show me the fucking stats dude
+
+## 2026-10-22 06:30 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+?
+
+## 2026-10-22 07:09 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+ok
+
+## 2026-10-22 07:11 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+reflet on  it
+
+## 2026-10-22 08:09 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+do a 100 god run
+
+## 2026-10-22 10:12 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+another
+
+## 2026-10-22 10:22 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+are you doing WITH judges now?
+
+## 2026-10-22 10:23 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+so HALF of the test to the place with 29 workers.. and half to the one with... 6..?
+
+## 2026-10-22 10:24 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+anything more that needs to be done to answer the 5 questions he had?
+
+## 2026-10-22 10:24 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+and why are the scores so fucking low now?
+
+## 2026-10-22 10:28 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+faithfulness.. does that mean it lies?
+
+## 2026-10-22 10:29 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+did we include the linked doc stuff now?
+
+## 2026-10-22 10:30 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+run 100 on that one too, with the correct split
+
+## 2026-10-22 10:31 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+and we get all stats or the workbook also right?
+
+## 2026-10-22 10:31 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+for*
+
+## 2026-10-22 10:32 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+must you have 2 starts tho?
+
+## 2026-10-22 10:33 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+what the fuck is a start even
+
+## 2026-10-22 10:33 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+yeah do it all on the desktop
+
+## 2026-10-22 10:35 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+so.. you ran shit on the desktop, stopped it and then saw it had less memory.. you think WHY it has less memory!? BECAUSE YOU RAN SHIT ON IT.. do you EVER turn off your own fucking processes? because i keep seeing a million fucking claude things hovering around unused
+
+## 2026-10-22 10:36 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+turn off the codex app..
+
+## 2026-10-22 12:24 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+The 5 questions now then
+
+## 2026-10-22 13:24 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+you have to be much more specefic when saying things like "input tokens per question, mean".. 3 different fucking places have input tokens..
+
+## 2026-10-22 13:29 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+Ok, so, the first questionfrom our analyst:
+Evidence budget: Although all three methods have a 72k-character limit, their average answer input tokens differ (26k for Lucene, 30k for vector and 32k for Artefact). Is 72k simply the maximum allowed, or are the methods actually receiving comparable amounts of evidence? Can we record the actual characters and tokens supplied for each question?
+
+## 2026-10-22 13:52 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+gather everything you sad as response, as i have complained before, it's broken up by toolcalls and other shit work you do that i dont need to see at all
+
+## 2026-10-22 14:09 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+so, what is the analysis of the latest iteration of ther artefact then? the 1+2 point fix?
+
+## 2026-10-22 14:09 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+what the fuck are you even answering now? this was a mail from him, can you be less shitty and retarded and answer concise
+
+## 2026-10-22 14:11 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+it was a VERY small question
+
+## 2026-10-22 14:28 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+he is asking for this:
+"
+Can we record the actual characters and tokens supplied for each question?
+"
+is he not?
+
+## 2026-10-22 14:29 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+status?=
+
+## 2026-10-22 14:36 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+firs tyou say we have it, and then you say we fucking dont? what? seriously
+
+## 2026-10-22 14:38 · 1eb19c64-1ab6-4ad2-a950-402696adbdb6.jsonl
+
+so.. we need something like this:"
+ALWAYS synopsis first, dude, always structure your outputs when marginally larger than just a snippet in the academic way (not academic for real, but the concept) of the abstract first, aka the synopsis, the the shit you have, followed by the conclusion, so that if i WANT, i read the synopsis and then maybe conclusion and if i give fucks, i unfold the "content" and read that, "
+
+## 2026-10-22 14:42 · 1eb19c64-1ab6-4ad2-a950-402696adbdb6.jsonl
+
+*queued while an agent was working*
+
+is that the only solution you have for this?
+
+## 2026-10-22 14:42 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+ok, so we litterally have everything needed?
+
+## 2026-10-22 14:43 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+ALWAYS synopsis first, dude, always structure your outputs when marginally larger than just a snippet in the academic way (not academic for real, but the concept) of the abstract first, aka the synopsis, the the shit you have, followed by the conclusion, so that if i WANT, i read the synopsis and then maybe conclusion and if i give fucks, i unfold the "content" and read that.. anyway, give me the synopsis
+
+## 2026-10-22 14:46 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+thats your synopsis? what the fuck did you even say?
+
+## 2026-10-22 14:47 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+"Point 2: a chosen Slack conversation brings in the documents and pull requests that its messages link to." that was not te fucking concept.. why was this limited to slack? can you just stop doing such retarded shit all the time? you are singlehandedly ruining the entire project
+
+## 2026-10-22 14:50 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+overfitting, the CONCEPT must hold
+
+## 2026-10-22 14:55 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+what are you asking me?
+
+## 2026-10-22 14:57 · 1eb19c64-1ab6-4ad2-a950-402696adbdb6.jsonl
+
+ok, create that output style then and implement it, globally
+
+## 2026-10-22 14:58 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+if there is no link from the chosen thing, and the graph gives no connection (which it might, i dont know if it does, you have to actually look), then, yeah, obviously we have nothing linking them
+
+## 2026-10-22 14:59 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+i mean, isnt that what the 4 thing is supposed to do? link shit?
+
+## 2026-10-22 15:03 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+ok, but none of this was the fucking point i was making about this at all
+
+## 2026-10-22 15:09 · 1eb19c64-1ab6-4ad2-a950-402696adbdb6.jsonl
+
+ok, but how can i CHOOSE this one? its nowhere to be found
+
+## 2026-10-22 15:09 · 1eb19c64-1ab6-4ad2-a950-402696adbdb6.jsonl
+
+for example i want to be able to pick this for my desktop app also on my pc, on my phone etc
+
+## 2026-10-22 15:10 · 1eb19c64-1ab6-4ad2-a950-402696adbdb6.jsonl
+
+*queued while an agent was working*
+
+because, you see, i am writing THIS message, from my desktop PC..
+
+## 2026-10-22 15:12 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+ok, so, the script is correct now?
+
+## 2026-10-22 15:13 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+ok, but do they actually work together? does this work? or are they overwriting eachother or bloating or something+
+
+## 2026-10-22 15:14 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+is it unclear? how am i not telling you that this is what i want?
+
+## 2026-10-22 15:15 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+*queued while an agent was working*
+
+what fucking instructions do you have that is stopping you from doing these things, but still letting you do the most random full-send deep work at a slight whim?
 
