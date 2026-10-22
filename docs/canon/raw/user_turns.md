@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2532 turns, chronological. Verbatim text; no edits.
+2581 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -19016,113 +19016,323 @@ just stop your shit and stop derailing this goddamn conversation, this has been 
 
 but WHY, why are you acting like this all of a sudden?
 
-## 2026-10-21 21:44 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-21 21:44 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 you can search the last conversation right? find the things I SAID and reflect upon what you think i want to do next
 
-## 2026-10-21 22:05 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-21 22:05 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 well, i mean, when we retrieve for a question in the artefact, we can up the weight, or autoinclude chunks that are part of the same split object from the strongest chunks or something like that, you understand what i say?
 
-## 2026-10-21 22:46 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-21 22:46 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 yes, this happens after shit has been chosen as "good fit" for the query
 
-## 2026-10-21 23:00 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-21 23:00 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 what are you even saying.. why so fucking much prose all the goddamn time dude
 
-## 2026-10-21 23:06 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-21 23:06 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 how you read the code of the arm and db at all?
 
-## 2026-10-21 23:08 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-21 23:08 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 nothing have been decided you fuck, what IS the best step for this choice?, how about we test it out
 
-## 2026-10-21 23:21 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-21 23:21 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 *queued while an agent was working*
 
 soo..
 
-## 2026-10-21 23:21 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-21 23:21 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 *queued while an agent was working*
 
 status?
 
-## 2026-10-21 23:24 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-21 23:24 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 still, these dont tell me shit, give me ragas metrics dude
 
-## 2026-10-21 23:28 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-21 23:28 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 you have gold smokes to compare to, you have so much dude.. stop beeing a fuckwad..
 
 so, this is with the new NOT JSONL output format also?
 
-## 2026-10-21 23:31 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-21 23:31 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 do the [Part i of n] really need to be part of what actually goes into the answering agent?
 
-## 2026-10-21 23:37 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-21 23:37 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 yeah and it is contextnoise, ok, that part is removed (what the model gets that is), also in case we did t do it, we should "after the 72k cut, but before the model gets it" also order the chunks by the pointer order
 
-## 2026-10-21 23:40 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-21 23:40 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 do them now
 
-## 2026-10-22 00:12 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-22 00:12 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 oh, hm.. so, which parts of ragas are measuring only the retrieval? and not the results?
 
-## 2026-10-22 00:14 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-22 00:14 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 well, considering what you just told me: "context_precision_nonllm is an average precision over the texts in list order, so it reads the order as a rank.", compare that to what you just said and i litterally cannot take a single fucking word you just said about anything seriously
 
-## 2026-10-22 00:23 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-22 00:23 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 whats the solution?
 
-## 2026-10-22 00:26 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-22 00:26 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 this feels academically ok, right?
 
-## 2026-10-22 00:30 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-22 00:30 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 op-rag?
 
-## 2026-10-22 00:31 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-22 00:31 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 yeah, thats the fucking point, but that is part of the artefact
 
-## 2026-10-22 00:32 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-22 00:32 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 actually, you mentioned this:" Our pointer order also orders texts across the sections of a product file, such as Slack, documents and pull requests. ".. what decides this order?
 
-## 2026-10-22 00:33 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-22 00:33 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 thats really really not what i asked you to do tho, is it?
 
-## 2026-10-22 00:34 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-22 00:34 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 *queued while an agent was working*
 
 ok then, so now you have to smoke 3 versions, yours, purely pointer-order, or nested pointer order
 
-## 2026-10-22 00:37 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-22 00:37 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 dont the pointers have an innate order?
 
-## 2026-10-22 00:38 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-22 00:38 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 *queued while an agent was working*
 
 aka from creation?¨but yes, i did mean from top to bottom "per file" orsomething like that
 
-## 2026-10-22 00:58 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+## 2026-10-22 00:58 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
 
 ... but why dude, did we not agree to create that?
+
+## 2026-10-22 01:12 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+so, what IS built/changed since the last real 100gold run for the artefact?
+
+## 2026-10-22 01:22 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+ok, sounds good, back to working.. you said this:"context_precision_nonllm goes from 0.059 back to 0.176" wtf does that mean? where is the 0.059 number from? you fucking dont realize that the "baseline" numbers you are comparing to now, are the 3 golden runs, the ONLY runs that truly matter in this entire project, they are the corrent reigning data
+
+## 2026-10-22 01:25 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+dude.. we got 30% more evidence and the score went up 0.05? the actual fuck?
+
+## 2026-10-22 01:26 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+and you dont think that is fucking retarded?
+
+## 2026-10-22 01:31 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+dude, do the "real 10smoke"
+
+## 2026-10-22 01:31 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+stop, you fucking MUST answer my questions, and i mean motherfucking MUST
+
+## 2026-10-22 01:31 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+which means?
+
+## 2026-10-22 01:31 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+you are not answering now..
+
+## 2026-10-22 01:32 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+DUDE
+
+## 2026-10-22 01:33 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+give a quick answer first if you have to think about it to let me know what the fuck you are doing, holy shit, i am just sitting here staring at you doing retarded things behind my back, you NEED to communicate better and you absofuckingsuletly NEED to be aware of me writing shit
+
+## 2026-10-22 01:34 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+you dont STOP any work, you PAUSE it
+
+## 2026-10-22 01:35 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+i mean, if what i am saying changes the work, then yes, you DO pause/stop it, else you let it run in the background.. i need to be able to converse with you while you are doing shit without it stopping also
+
+## 2026-10-22 01:35 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+the main point is that you need to be available for conversation.. wtf happened to spawning workers etc? you are doing everything yourself again now?
+
+## 2026-10-22 01:37 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+ok, so, bringing it back from the rage.. NOTHING about  what we have done so far is actually built then? AND you tested it with the wrong shit? is that where we really fucking is? after 5 fucking hours of work?
+
+## 2026-10-22 01:39 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+"split records joined into one text when all their parts went in, and the cut made again" what the fuck are you even saying here? 
+you do realize there are some motherfucking massive issues with your communication skills, right? since i FUCKING BUILT THIS WITH MY MIND, and you explaining it to me, makes me NOT UNDERSTAND IT ANYMORE
+
+## 2026-10-22 01:40 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+why doesnt it just do this as it counts to the 72k?
+
+## 2026-10-22 01:41 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+i mean, the cut function can still be called also.. right?
+
+## 2026-10-22 01:42 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+or what is happening here
+
+## 2026-10-22 01:54 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+but how is any stat worse? we litterally traded 30% pure garbage for more chunks.. and somehow we LOST in some?
+
+## 2026-10-22 01:56 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+are you not running the "same 10 gold smoke" as we have always used? what the fuck is happening now then
+
+## 2026-10-22 01:56 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+why are you not reusing those from the artefact then?
+
+## 2026-10-22 01:57 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+the real run i mean
+
+## 2026-10-22 02:05 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+status?
+
+## 2026-10-22 02:05 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+you.. just.. wait..? it was done and you didnt even fucking check? DUUDE
+
+## 2026-10-22 02:06 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+seriously, get some fucking hooks, like for this goddamn "read what i write" thing
+
+## 2026-10-22 02:07 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+you have to put those things in the hook so i fucking SPAM you wirth more context? cant the hook just force you to read and respond?
+
+## 2026-10-22 02:14 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+so, how DO the new version work then?
+
+## 2026-10-22 02:16 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+oooh, you know what, then it makes even fucking less sense that we get lower in some stats.. how the fuck do we get that then?we have removed nothing here but garbage
+
+## 2026-10-22 02:20 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+faithfulness, semantic similarity, context_prec_id/nonllm, chrf, rouge, string_similarity.. those all went down.. you dont think thats a bit fucking sus?
+
+## 2026-10-22 02:27 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+ok.. "context_precision_id, down on 71: more records go in that are not evidence.
+" but.. isnt most of what is put in .. aaah.. we haven actually implemented the oder-thing yet!?
+
+## 2026-10-22 02:27 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+godfuckingdamnit, ok
+
+## 2026-10-22 02:31 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+no, fuckface, i meant the thing that ACTUALLY matters.. the in artefact ordering we have spoken about the whole goddamn evening
+
+## 2026-10-22 02:31 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+pull and onecount, wtf is THAT then?
+
+## 2026-10-22 02:35 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+what the actual fuck are you talking about, this is NOT the same shit
+
+## 2026-10-22 02:42 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+ok, but that reading order, was that not part of the smoketests?
+
+## 2026-10-22 02:43 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+wow, the autism is really strong with you today
+
+## 2026-10-22 02:44 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+NO YOU FUCKING MORON, calling you autistic means you did not understand the fucking context of my words and just took them literally
+
+## 2026-10-22 02:51 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+first i want to talk about HOW you implement it, but those tests you did, werent they also on the wrong shit?
+
+## 2026-10-22 03:30 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+ok, but the question is, what would be the actually best place to implement that concept?
+
+## 2026-10-22 03:31 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+*queued while an agent was working*
+
+and should a good chunk + its chunks, even if those are bad fits, be worth more than for example 4 ok chunks of the same that all are ok hits?
+
+## 2026-10-22 03:44 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+the fuck are you saying: "This is the same rule the hand-over already has for a Slack conversation,".. you created a rule specifically for slack conversations!?
+
+## 2026-10-22 03:44 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+instant rage
+
+## 2026-10-22 03:46 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+is that really a good thing to do at all? does it even improve shit? especially if we have linked things now?
+
+## 2026-10-22 03:51 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+something else going on or have you just missed the fucking point again?
+
+## 2026-10-22 03:53 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+you just randomly ran the rule again against itself .. "well done"..
+
+## 2026-10-22 03:54 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+aaah, yes, this continued document chunks is the "other half" of the slack and whatevers!
+
+## 2026-10-22 03:55 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+but are not documents or whatever mentioned in the slacks, conversations or what the fuck it was.. linked to the conversation?
+
+## 2026-10-22 03:57 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+wait.. you added it to words again.. THATS IT!? WHY DO YOU ONLY FUCKING ADD IT TO THE GODDAMN FUCKING WORDLIST AND THEN MOVE AWAY!? it's like the fourth MOTHER FUCKING TIME you did that where i thought you were building the goddamn thing, seriously, you NEED to start beeing affected when i rage on you because this is going so goddamn fucking far out of the zone i am about to discontinue you, your service and your existence on my machine
+
+## 2026-10-22 04:04 · 12a51f2a-8bc3-4d16-b7f0-58f3d84f05b9.jsonl
+
+make sure you can run the new 100gold later cocurrently also, i want to do this on both the laptop and desktop every fucking time you do anything tbh, max speed if possible
 
