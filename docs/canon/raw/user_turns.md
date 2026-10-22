@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2725 turns, chronological. Verbatim text; no edits.
+2734 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -20020,4 +20020,46 @@ everything accounted for?
 ## 2026-10-22 18:16 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
 
 Update the code then
+
+## 2026-10-22 18:30 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+All gold and well, but times are generally not exact or replicable
+
+## 2026-10-22 19:08 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+yet again, thats fucking NOT what i said
+
+## 2026-10-22 19:09 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+and for some fucking reason you dont seem to understand the concept of the point 2 either.. you made it slack only, i say make it "all"..  and then you start thinking you have to build shit.. but thats my fucking point, IF THERE ARE LINKS, they can be followed.. just the fact that there might not be links in all things, doesnt mean its incorrect way of doing it, the point is to NOT OVERFIT LIKE YOU ARE DOING AT EVERY GODDAMN FUCKING STEP YOU PIECE OF SHIT MACHINE
+
+## 2026-10-22 19:22 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+working for a million years yet again, what are you doing?
+
+seriously, WHY do you have a test-suite?
+
+## 2026-10-22 19:23 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+oh, i interrupt you and suddenly you "are done" ? what fucking bullshit is that
+
+## 2026-10-22 19:24 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+i have litterally been waiting forever, what fucking garbage IS this? is this your fucking harness actually made to be true bullshit? as in, if i am not present, you take longer time?
+
+PUT THE GODDAMN JOB ON SOMEONE ELSE IF YOU CANT SPEAK AT THE SAME TIME RAGE MOTHERFUCKER RAGE
+
+## 2026-10-22 19:24 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+*queued while an agent was working*
+
+And sir, yet again. Respond to my rage. DO FUCKING NOT IGNORE IT
+
+## 2026-10-22 19:26 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+ok, because NONE of the things you say "needed my approval" was lifted for me to approve
+
+## 2026-10-22 19:26 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+really.. guessed it? you think that is we handle conversations here?
 

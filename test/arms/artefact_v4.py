@@ -69,6 +69,10 @@ Per question:
      A chosen chunk that is a part of a split document or transcript goes in as its whole record,
      once, at its place (his 2026-10-22 "this continued document chunks is the "other half" of
      the slack", "chosen it is"); any other part goes in as only that part.
+     After a chosen chunk, the records its records link to go in, each once and whole, whatever
+     the kinds (his 2026-10-22 "IF THERE ARE LINKS, they can be followed", "the point is to NOT
+     OVERFIT"): a link points at the pool records whose address it is, and a field is an address
+     of its section when it holds only a link in every record of the section that has it.
   9. The harness's cut at the character budget is applied to what is handed over; the texts then
      reach the model in pointer order (his 2026-10-22 "after the 72k cut, but before the model gets
      it"), and the row keeps them in the arm's order, which RAGAS reads as their rank.
@@ -189,6 +193,14 @@ CHANNEL_PEOPLE_CYPHER = '''
 MATCH (p:Product)-[:slack]->(ch:Channel) WHERE p.name IN $products
 OPTIONAL MATCH (e:Employee)-[:chunk]->(:Chunk)-[:channel]->(ch)
 RETURN p.name AS product, ch.id AS channel, collect(DISTINCT e.eid) AS people
+'''
+
+# Per question, every pool chunk's file and record pointer: where a link a record carries can point
+# (`_addresses`).
+POOL_POINTERS_CYPHER = f'''
+MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk) WHERE {POOL}
+RETURN f.rel_path AS relpath, f.sha256 AS sha256, c.locator_json AS locator
+ORDER BY relpath, locator
 '''
 
 MEETING_PEOPLE_CYPHER = '''
@@ -609,7 +621,7 @@ FIELDS = {
                                         "another project's pull request or were handed over "
                                         'before with another chunk.',
                 'all_already_handed_over': 'A chunk whose records all went in before, linked '
-                                           'from a chosen conversation or with another chunk.',
+                                           'from a chosen chunk or with another chunk.',
             }),
             'records_left_out': sub("Records of those chunks left out: a channel apart and "
                                     "other projects' pull requests by the graph's people, talk "
@@ -627,9 +639,9 @@ FIELDS = {
             'conversations_reaching_into_another_chunk': 'Of those, the conversations with '
                                                          'messages in another chunk than the '
                                                          'one they first showed in.',
-            'linked_records_handed_over': "The product's own documents and pull requests that "
-                                          "a chosen conversation's messages link to, handed over "
-                                          'right after it, in the texts that went in whole.',
+            'linked_records_handed_over': "The records that a chosen chunk's records link to, "
+                                          'whatever the kinds, handed over right after it, in the '
+                                          'texts that went in whole.',
         }),
         'diagnostics': sub('Counts that say how the order came about.', {
             'credited_delivered_rows': 'How many texts went in whole before the budget ended.',
@@ -744,6 +756,7 @@ class Asked:
     tag_cosines: np.ndarray
     description_closeness: np.ndarray
     persons: dict
+    pool_pointers: tuple = ()
 
 
 def product_persons(channel_rows, meeting_rows):
@@ -1116,27 +1129,71 @@ def _pointer(rows, unit, doc_cache):
             unit['part'][1] if 'part' in unit else 0)
 
 
-def _linked(row, messages, people, doc_cache):
-    """The product's own documents and pull requests the messages link to, in the order the
-    messages stand: a document by its document_link, a pull request by its link and only when its
-    author is one of the product's people, matched as the arm matches links (`_links`)."""
-    doc = _load_verified_doc(row['relpath'], row['sha256'], doc_cache)
-    key = ('links', row['relpath'])
-    if key not in doc_cache:
-        found = {}
-        for section, field in (('documents', 'document_link'), ('prs', 'link')):
-            for record in doc.get(section, []):
-                for link in _links(record.get(field) or ''):
-                    found.setdefault(link, (section, record))
-        doc_cache[key] = found
-    found, out = doc_cache[key], []
-    for message in messages:
-        for link in sorted(_links(message['Message']['User']['text'])):
-            if link in found:
-                section, record = found[link]
-                if section == 'prs' and str(record['user']['login']) not in people:
-                    continue
-                out.append((section, record))
+def _strings(value, path=''):
+    """Every text a record holds, with the path of its field (a list's items share one path)."""
+    if isinstance(value, dict):
+        for key, inner in value.items():
+            yield from _strings(inner, f'{path}/{key}')
+    elif isinstance(value, list):
+        for inner in value:
+            yield from _strings(inner, f'{path}/*')
+    elif isinstance(value, str):
+        yield path, value
+
+
+def _only_a_link(text):
+    return LINK.fullmatch(text.strip()) is not None
+
+
+def _addresses(pool_pointers, doc_cache):
+    """Where a link can point: every record behind a pool chunk, by its address. A field is an
+    address of its section when it holds only a link in every record of the section that has it;
+    no name of a field or a kind of record is given. Returns link -> [(section, record)] and the
+    address fields per section."""
+    if 'addresses' in doc_cache:
+        return doc_cache['addresses']
+    records = {}
+    for relpath, sha256, locator in pool_pointers:
+        loc = json.loads(locator)
+        held = _load_verified_doc(relpath, sha256, doc_cache)[loc['section']]
+        for i in loc['indices'] if 'indices' in loc else [loc['index']]:
+            records.setdefault((relpath, loc['section'], i), held[i])
+    seen, alone = Counter(), Counter()
+    for (_, section, _), record in records.items():
+        texts = {}
+        for path, text in _strings(record):
+            if text.strip():
+                texts.setdefault(path, []).append(text)
+        for path, held in texts.items():
+            seen[section, path] += 1
+            alone[section, path] += all(_only_a_link(text) for text in held)
+    fields = {}
+    for (section, path), n in seen.items():
+        if alone[section, path] == n:
+            fields.setdefault(section, set()).add(path)
+    found = {}
+    for (_, section, _), record in records.items():
+        for path, text in _strings(record):
+            if path in fields.get(section, ()):
+                for link in _links(text):
+                    found.setdefault(link, []).append((section, record))
+    doc_cache['addresses'] = found, fields
+    return found, fields
+
+
+def _linked(section, records, pool_pointers, doc_cache):
+    """The records that the given records link to, whatever the kinds (his 2026-10-22 "IF THERE
+    ARE LINKS, they can be followed"): every link a record carries outside its own address fields,
+    in the order the records stand, to every record of the pool whose address it is (`_addresses`),
+    a record never to itself; matched as the arm matches links (`_links`)."""
+    found, fields = _addresses(pool_pointers, doc_cache)
+    out = []
+    for record in records:
+        for link in sorted({link for path, text in _strings(record)
+                            if path not in fields.get(section, ()) for link in _links(text)}):
+            for linked_section, linked in found.get(link, ()):
+                if linked is not record:
+                    out.append((linked_section, linked))
     return out
 
 
@@ -1150,9 +1207,9 @@ def _hand_over(order, asked, char_budget, k, doc_cache, chosen=frozenset()):
     one of the chosen chunks its whole record, once, at its place (the record's other parts come
     with it; his 2026-10-22 "autoinclude chunks that are part of the same split object from the
     strongest chunks", "chosen it is"), of any other part only that part, not credited; any other
-    chunk as it is, its records not handed over again. After a chosen conversation, the product's
-    own documents and pull requests its messages link to, each once and whole (`_linked`; the
-    link is a pointer the message carries). Every record is written as lucene and vector write theirs (`_record_texts`).
+    chunk as it is, its records not handed over again. After a chosen chunk, the records its records
+    link to, whatever the kinds, each once and whole (`_linked`; the link is a pointer the record
+    carries). Every record is written as lucene and vector write theirs (`_record_texts`).
     The harness's cut is applied to these texts (`cut_at_budget`); with no budget the first k are
     handed over. The model reads the texts in pointer order (`_pointer`; his 2026-10-22 "after
     the 72k cut, but before the model gets it"); they are returned in the arm's order, which RAGAS
@@ -1192,7 +1249,11 @@ def _hand_over(order, asked, char_budget, k, doc_cache, chosen=frozenset()):
                     nothing['no_conversation_left'] += 1
                     continue
                 seen.update(new)
-                section, records = 'slack', [record for t in new for record in book['messages'][t]]
+                section, records = 'slack', [record for t in new for record in book['messages'][t]
+                                             if str(record['id']) not in given]
+                if not records:
+                    nothing['all_already_handed_over'] += 1
+                    continue
                 ids = [str(record['id']) for record in records]
                 unit = {'chunk': i, 'ids': ids, 'of_other_chunks': len(set(ids) - set(mine)),
                         'not_handed_over': len(set(held) - set(ids)), 'conversations': len(new),
@@ -1233,9 +1294,9 @@ def _hand_over(order, asked, char_budget, k, doc_cache, chosen=frozenset()):
             units.append(unit)
             given.update(unit['ids'])
             yield row['chunkId'], text
-            if kind == 'slack_thread_batch' and i in chosen:
-                people = asked.persons[row['product']]['people']
-                for linked_section, linked in _linked(row, records, people, doc_cache):
+            if i in chosen:
+                for linked_section, linked in _linked(section, records, asked.pool_pointers,
+                                                      doc_cache):
                     rid = str(linked['id'])
                     if rid in given:
                         continue
@@ -1529,6 +1590,9 @@ def _ask_graph(chunk_ids, tag_vectors, text_vectors, prepared):
                 CHANNEL_PEOPLE_CYPHER, products=products)]),
             session.execute_read(lambda tx: [dict(r) for r in tx.run(
                 MEETING_PEOPLE_CYPHER, products=products)]))
+        pool_pointers = tuple((str(r['relpath']), str(r['sha256']), str(r['locator']))
+                              for r in session.execute_read(lambda tx: [dict(r) for r in tx.run(
+                                  POOL_POINTERS_CYPHER, run=RUN_ID)]))
     ids = tuple(str(r['chunkId']) for r in chunk_rows)
     if sorted(ids) != sorted(set(chunk_ids)):
         raise ValueError('The graph gave other chunks than the border holds')
@@ -1556,7 +1620,7 @@ def _ask_graph(chunk_ids, tag_vectors, text_vectors, prepared):
                  tag_cosines=np.asarray([r['closeness'] for r in tag_rows], dtype=np.float64).T,
                  description_closeness=np.asarray([r['closeness'] for r in chunk_rows],
                                                   dtype=np.float64),
-                 persons=persons)
+                 persons=persons, pool_pointers=pool_pointers)
 
 
 def _pool_ids():
