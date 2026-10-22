@@ -43,6 +43,8 @@ SAME_RUN = ("arm", "generator_model", "interpreter_model", "top_k", "char_budget
             "retrieval_flags", "flags", "graph", "index", "code_state", "code_version.commit",
             "code_version.branch", "inputs.questions_sha256", "inputs.corpus",
             "environment.packages", "environment.packages_all", "environment.embedder")
+# flags that name a folder on each machine (the first call's store): compared by being set
+PATH_FLAGS = ("HERB_V4_CACHE",)
 # fields that hold a machine's own paths: compared with the user's home folder taken out
 SAME_RUN_HOMED = ("generator",)
 # per-machine top-level fields: kept when the two runs agree, else left empty and kept per run in
@@ -110,6 +112,17 @@ def _get(d, dotted):
             return None
         d = d.get(key)
     return d
+
+
+def _run_code(state):
+    """A code state as the run sees it: the changed and untracked files under prod/ and test/,
+    the code a run loads; a file outside them (a tool, a document) does not change the run, so a
+    state whose changes all lie outside them counts as clean (its diff hash is of all files)."""
+    if not isinstance(state, dict):
+        return state
+    loaded = sorted(e for e in state.get("status") or []
+                    if e[3:].replace("\\", "/").startswith(("prod/", "test/")))
+    return state if loaded else {"status": []}
 
 
 def _homeless(value, home):
@@ -255,7 +268,19 @@ def merge(args):
     checked = []
     for path in SAME_RUN:
         va, vb = (_get(r.manifest, path) for r in runs)
-        checked.append(path)
+        if path == "code_state":
+            va, vb = (_run_code(x) for x in (va, vb))
+            checked.append("code_state (files the run loads: prod/, test/)")
+        elif path == "flags":
+            # a flag that names a folder on the machine: the same flag set on both, its path kept
+            # per run; the folder's content is the operator's to check before the merge
+            va, vb = ({k: (v if k not in PATH_FLAGS else "<path>") for k, v in (x or {}).items()}
+                      for x in (va, vb))
+            checked.append("flags (" + ", ".join(
+                f"{k}: " + " | ".join(str((_get(r.manifest, "flags") or {}).get(k)) for r in runs)
+                for k in PATH_FLAGS) + ")")
+        else:
+            checked.append(path)
         if va != vb:
             problems.append(f"run_manifest {path} differs")
     for path in SAME_RUN_HOMED:
@@ -270,7 +295,7 @@ def merge(args):
     for r in runs:
         for leg in r.manifest.get("legs") or []:
             if (_get(leg, "code_version.commit") != _get(first_leg, "code_version.commit")
-                    or leg.get("code_state") != first_leg.get("code_state")):
+                    or _run_code(leg.get("code_state")) != _run_code(first_leg.get("code_state"))):
                 problems.append(f"{r.name} leg {leg.get('leg')}: the code differs from the first "
                                 "start's")
     checked.append("legs[].code_version.commit, legs[].code_state")
