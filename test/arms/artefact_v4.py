@@ -69,7 +69,7 @@ Per question:
   9. The harness's cut at the character budget is applied to what is handed over; a split record
      whose parts all went in goes in as one text and the cut is made again; the texts then reach
      the model in pointer order (his 2026-10-22 "after the 72k cut, but before the model gets
-     it").
+     it"), and the row keeps them in the arm's order, which RAGAS reads as their rank.
 Everything the order is made of is asked of the graph for each question (his 2026-10-07 "it MUST
 be asked of the DB", `_ask_graph`): the border's chunks with their pointers, the eligible tags on
 them with their edges' facet values, every closeness (the graph's own cosine of its stored
@@ -527,8 +527,8 @@ FIELDS = {
         }),
         'ranking': sub('The order, and what lies behind each delivered chunk. The lists that '
                        "start with delivered_ have one entry a delivered chunk, in the arm's "
-                       'order (the texts reach the answer model in pointer order, as chunk_ids '
-                       'lists them).', {
+                       'order (the answer model read the texts in pointer order, '
+                       'reading_order).', {
             'ordered_chunk_ids': "Every chunk of the border in the arm's order, by chunk id.",
             'delivered_chunk_ids': 'The chunks whose text, what was handed over of them, went '
                                    'in whole before the budget ended, by chunk id. A text can also '
@@ -641,7 +641,9 @@ FIELDS = {
             'delivered_in_scope': 'How many of the delivered chunks are in scope.',
         }),
         'chunk_ids': 'The record ids behind each text handed over, one list a text, in the order '
-                     'the texts reach the answer model: pointer order.',
+                     "of contexts: the arm's order.",
+        'reading_order': 'The order the answer model read the texts in, pointer order, as '
+                         'positions in contexts (0 the first).',
         'returned': 'How many texts were handed over, the one cut at the budget counted.',
         'char_budget': BUDGET_FIELDS,
     }),
@@ -1055,7 +1057,8 @@ def index_info(prepared):
                          'whole record, where its first part stood, the cut made again over '
                          'those texts; after the cut the texts reach the answer model in pointer '
                          "order: file, section in the file's own order, place of the text's "
-                         'first record in its section, part'}
+                         "first record in its section, part; contexts keeps the arm's order, "
+                         "which RAGAS reads as their rank, and reading_order gives the model's"}
 
 
 def _same_words(a, b):
@@ -1121,16 +1124,18 @@ def _hand_over(order, asked, char_budget, k, doc_cache):
     part of the long field (`_part_text`). The harness's cut is applied to these texts
     (`cut_at_budget`); with no budget the first k are handed over. A split record whose parts all
     went in whole goes in as one text, the whole record, where its first part stands, and the cut
-    is made again, until no more split records go in whole. The texts then reach the model in
-    pointer order (`_pointer`; his 2026-10-22 "after the 72k cut, but before the model gets it").
+    is made again, until no more split records go in whole. The model reads the texts in pointer
+    order (`_pointer`; his 2026-10-22 "after the 72k cut, but before the model gets it"); they are
+    returned in the arm's order, which RAGAS reads as their rank, with the pointer order beside
+    them as positions (his 2026-10-22 "did we not agree to create that?").
 
     A record is credited as handed over when its whole text went in, the rule lucene and vector
     keep: every record of a text handed over whole (a split record only as one text), and the
     records of the cut text that end before the cut.
 
-    Returns the texts in pointer order, the record ids behind each text, the record ids handed
-    over whole, the cut's block, the chunks handed over whole in the arm's order, and what a row
-    keeps of it."""
+    Returns the texts in the arm's order, the record ids behind each text, the record ids handed
+    over whole, the cut's block, the chunks handed over whole, and what a row keeps of it with the
+    order the model reads the texts in (`reading_order`)."""
     rows = asked.chunk_rows
     book = own_work(order, asked, doc_cache)
 
@@ -1247,8 +1252,8 @@ def _hand_over(order, asked, char_budget, k, doc_cache):
     per_chunk = {'delivered_records': [len(unit['ids']) for unit in whole],
                  'delivered_records_of_other_chunks': [unit['of_other_chunks'] for unit in whole],
                  'delivered_records_not_handed_over': [unit['not_handed_over'] for unit in whole]}
-    return ([texts[n] for n in placed], [units[n]['ids'] for n in placed], context_ids, budget,
-            delivered, {'record': record, 'per_chunk': per_chunk})
+    return (texts, [unit['ids'] for unit in units], context_ids, budget, delivered,
+            {'record': record, 'per_chunk': per_chunk, 'reading_order': placed})
 
 
 def prepare_over_corpus(corpus) -> Prepared:
@@ -1672,7 +1677,8 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
                             'question_side_tags': len(question_side),
                             'embeddings': embeddings},
             'scope': scope, 'ranking': ranking, 'diagnostics': diagnostics,
-            'chunk_ids': id_lists, 'returned': len(contexts), 'char_budget': budget,
+            'chunk_ids': id_lists, 'reading_order': handed['reading_order'],
+            'returned': len(contexts), 'char_budget': budget,
             'handed_over': handed['record']}
     # without any model call or embedder request: the first call as the arm timed it, the tries
     # of a first call that was refused and asked again (retry_s), and every embedder request
@@ -1681,8 +1687,11 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
     if generate is None:
         answer, gen_usage = '', ModelUsage()
     else:
+        # the model reads the texts in pointer order; contexts keeps the arm's order, which RAGAS
+        # reads as their rank
+        read = [contexts[n] for n in handed['reading_order']]
         gen_started = time.perf_counter()
-        answer, gen_usage = unpack_generation(generate(text, contexts),
+        answer, gen_usage = unpack_generation(generate(text, read),
                                               time.perf_counter() - gen_started)
     return ArmOutput(answer=answer, contexts=contexts, context_ids=context_ids,
                      search_time_s=search_time, generator=gen_usage, retrieval=retrieval,

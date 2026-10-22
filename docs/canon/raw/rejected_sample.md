@@ -2,9 +2,9 @@
 
 40 turns spread across every rule that fired, so the filtering can be checked by hand.
 
-- `tool_result` - 19827 turns rejected
-- `task_notification` - 1584 turns rejected
-- `is_meta` - 679 turns rejected
+- `tool_result` - 19874 turns rejected
+- `task_notification` - 1587 turns rejected
+- `is_meta` - 680 turns rejected
 - `command_expansion` - 94 turns rejected
 - `interrupt_marker` - 85 turns rejected
 - `compact_summary` - 37 turns rejected

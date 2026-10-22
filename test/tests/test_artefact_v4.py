@@ -248,7 +248,7 @@ def test_the_border_the_question_names_and_the_two_clouds_order_it(monkeypatch):
         return ([p.chunk_ids[i] for i in kept], [[p.chunk_ids[i]] for i in kept],
                 [p.chunk_ids[i] for i in kept],
                 {'budget': char_budget, 'kept': 5, 'boundary': {'id': p.chunk_ids[kept[5]]}},
-                kept[:5], {'record': record, 'per_chunk': {}})
+                kept[:5], {'record': record, 'per_chunk': {}, 'reading_order': list(range(6))})
 
     monkeypatch.setattr(V, '_interpret', lambda text, p: (
         Q.parse(text, answer('one', 'two', asked=('three',))), ModelUsage(), []))
@@ -392,13 +392,14 @@ def test_what_is_handed_over_is_the_products_own_work_and_conversations_whole(mo
     texts = lambda section, names: '\n\n'.join(V.record_text(section, records[c][k])  # noqa: E731
                                                for c, k in names)
     # s2 holds the end of A, all of B and the start of C: A and C go whole, B is left out; the
-    # texts reach the model in pointer order: the channel's messages, the document, the pull request
-    assert id_lists == [['m1', 'm2', 'm3', 'm6', 'm7', 'm8'], ['m9'], ['m10'], ['doc1'], ['pr1']]
+    # model reads them in pointer order: the channel's messages, the document, the pull request
+    assert id_lists == [['m1', 'm2', 'm3', 'm6', 'm7', 'm8'], ['pr1'], ['doc1'], ['m9'], ['m10']]
+    assert handed['reading_order'] == [0, 3, 4, 2, 1]
     assert contexts[0] == texts('slack', [('s1', 0), ('s1', 1), ('s2', 0), ('s2', 3), ('s3', 0),
                                           ('s3', 1)])
-    assert contexts[3] == texts('documents', [('d1', 0)])
-    assert contexts[4] == texts('prs', [('p1', 0)])
-    whole_document = contexts[3]
+    assert contexts[1] == texts('prs', [('p1', 0)])
+    assert contexts[2] == texts('documents', [('d1', 0)])
+    whole_document = contexts[2]
     assert delivered == [at['s2'], at['p1'], at['d1'], at['s3'], at['s5']] and budget is None
     assert context_ids == ['m1', 'm2', 'm3', 'm6', 'm7', 'm8', 'pr1', 'doc1', 'm9', 'm10']
     assert handed['record'] == {
@@ -414,13 +415,14 @@ def test_what_is_handed_over_is_the_products_own_work_and_conversations_whole(mo
                                    'delivered_records_of_other_chunks': [4, 0, 0, 0, 0],
                                    'delivered_records_not_handed_over': [2, 1, 0, 2, 1]}
     # the harness's cut: the text that does not fit is cut where the budget ends and not credited
-    room = len(contexts[0]) + len(contexts[4]) + 5
+    room = len(contexts[0]) + len(contexts[1]) + 5
     contexts, id_lists, context_ids, budget, delivered, handed = V._hand_over(order, held, room, 10, {})
     assert delivered == [at['s2'], at['p1']] and context_ids[-1] == 'pr1'
     assert budget == {'budget': room, 'chars': room, 'kept': 2, 'exhausted': False,
                       'boundary': {'id': 'd1', 'chars_kept': 5,
                                    'chars_full': len(whole_document)}}
-    assert len(id_lists) == 3 and contexts[1] == whole_document[:5]
+    assert len(id_lists) == 3 and contexts[2] == whole_document[:5]
+    assert handed['reading_order'] == [0, 2, 1]
     assert handed['record']['chunks_gone_through'] == 5       # the order was left where it ended
     # with no budget the first k texts
     assert V._hand_over(order, held, None, 2, {})[4] == [at['s2'], at['p1']]
@@ -457,7 +459,8 @@ def test_the_facets_weigh_the_tags_and_the_own_work_is_handed_over(monkeypatch):
                 {'record': record,
                  'per_chunk': {'delivered_records': [1, 1],
                                'delivered_records_of_other_chunks': [0, 0],
-                               'delivered_records_not_handed_over': [3, 0]}})
+                               'delivered_records_not_handed_over': [3, 0]},
+                 'reading_order': [0, 1, 2]})
 
     # the first call names, for each query tag, the facet that matters most for it and whether
     # that facet matters for it at all: for the first two it does, for the third it does not
@@ -545,7 +548,7 @@ def test_the_4combo_orders_the_border_by_how_strongly_each_chunk_is_tied_to_the_
                   'conversations_handed_over': 0, 'conversations_reaching_into_another_chunk': 0}
         return (['a', 'b', 'c'], [['a'], ['b'], ['c']], ['a', 'b', 'c'],
                 {'budget': char_budget, 'kept': 3, 'boundary': None}, kept,
-                {'record': record, 'per_chunk': {}})
+                {'record': record, 'per_chunk': {}, 'reading_order': [0, 1, 2]})
 
     monkeypatch.setattr(V, '_interpret', lambda text, p: (
         Q.parse(text, answer('one', 'two', asked=('three',))), ModelUsage(), []))

@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2520 turns, chronological. Verbatim text; no edits.
+2532 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -19073,4 +19073,56 @@ yeah and it is contextnoise, ok, that part is removed (what the model gets that 
 ## 2026-10-21 23:40 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
 
 do them now
+
+## 2026-10-22 00:12 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+oh, hm.. so, which parts of ragas are measuring only the retrieval? and not the results?
+
+## 2026-10-22 00:14 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+well, considering what you just told me: "context_precision_nonllm is an average precision over the texts in list order, so it reads the order as a rank.", compare that to what you just said and i litterally cannot take a single fucking word you just said about anything seriously
+
+## 2026-10-22 00:23 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+whats the solution?
+
+## 2026-10-22 00:26 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+this feels academically ok, right?
+
+## 2026-10-22 00:30 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+op-rag?
+
+## 2026-10-22 00:31 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+yeah, thats the fucking point, but that is part of the artefact
+
+## 2026-10-22 00:32 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+actually, you mentioned this:" Our pointer order also orders texts across the sections of a product file, such as Slack, documents and pull requests. ".. what decides this order?
+
+## 2026-10-22 00:33 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+thats really really not what i asked you to do tho, is it?
+
+## 2026-10-22 00:34 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+*queued while an agent was working*
+
+ok then, so now you have to smoke 3 versions, yours, purely pointer-order, or nested pointer order
+
+## 2026-10-22 00:37 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+dont the pointers have an innate order?
+
+## 2026-10-22 00:38 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+*queued while an agent was working*
+
+aka from creation?¨but yes, i did mean from top to bottom "per file" orsomething like that
+
+## 2026-10-22 00:58 · 5190c761-6797-4b93-91be-e7ea3e0a8f20.jsonl
+
+... but why dude, did we not agree to create that?
 
