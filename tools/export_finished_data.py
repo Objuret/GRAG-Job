@@ -6,10 +6,10 @@ arm), arm construction (a column per arm), key.
 
 Needs openpyxl. Reads the three final run folders and the graph's build cost
 (test/graph/build_cost.json), and writes grag-data.xlsx. A run split over the laptop and the
-desktop is read with its halves: its time and its judging's time from the first start to the last
-end, its environment and its judging from the halves. A run that read its interpreter's answers
-and its query embeddings from an earlier run's store and cache takes those values from that run
-(MADE_IN). A column of a run is a measure he named
+desktop is read with its halves: its environment, its judging, and its time and its judging's time
+as the halves' times added. A run that read its interpreter's answers and its query embeddings
+from an earlier run takes those values from that run (MADE_IN). A column of a run is a measure he
+named
 (times, tokens, characters, runtime, the RAGAS scores) or an id of the dataset, the evaluation or the run; the
 construction holds what built the index that each final run read, one model at a time, and nothing
 about how it was built. Nothing that belongs to this machine or this project
@@ -30,9 +30,8 @@ ROOT = Path(__file__).resolve().parent.parent
 RUNS = {"lucene": "lucene__gold100__cb72000__20261008T234209Z",
         "vector": "vector__gold100__cb72000__20261017T061242Z",
         "artefact": "artefact_v4__gold100__cb72000__20261022T081034Z"}
-# the artefact's run read its interpreter's answers from this run's store and its query embeddings
-# from the machines' embedding cache, the same on every question, so the values of those calls are
-# this run's (his 2026-10-22 "it's the same as the fucking "old run's interpreter"")
+# the artefact's run read its interpreter's answers and its query embeddings, the same on every
+# question, from this run (his 2026-10-22 "it's the same as the fucking "old run's interpreter"")
 MADE_IN = {"artefact": "artefact_v4__gold100__cb72000__20261020T041923Z"}
 DATASET, LICENCE = "HERB (Salesforce AI Research)", "CC BY-NC 4.0"
 # the sheets' names
@@ -134,10 +133,26 @@ def one(values, what):
     return values[0]
 
 
-def clock_seconds(spans):
-    """From the first start to the last end of (started_at, finished_at) pairs."""
-    return (max(datetime.fromisoformat(b) for _, b in spans)
-            - min(datetime.fromisoformat(a) for a, _ in spans)).total_seconds()
+def judging_of_questions(d, ids):
+    """The judging's time as each question's judging added: from the question's first judge call to
+    its last."""
+    spans = {}
+    for c in rows(d / "eval_calls.jsonl"):
+        if c.get("question_id") in ids and c.get("started_at") and c.get("finished_at"):
+            a, b = datetime.fromisoformat(c["started_at"]), datetime.fromisoformat(c["finished_at"])
+            s = spans.setdefault(c["question_id"], [a, b])
+            s[0], s[1] = min(s[0], a), max(s[1], b)
+    if set(spans) != set(ids):
+        sys.exit(f"{d.name}: not every question has its judge calls")
+    return sum((b - a).total_seconds() for a, b in spans.values())
+
+
+def interpreter_and_embeddings(r):
+    """What the interpreter answered and what was embedded for the query, without how each was got
+    (asked anew, or read from a store or a cache)."""
+    i = r["meta"]["interpreter"]
+    return ([{k: v for k, v in s.items() if k not in ("cache_hit", "offline", "asks")} for s in i["stages"]],
+            i["embeddings"])
 
 
 def halves(d, name):
@@ -153,14 +168,6 @@ def environment(d, man):
     if len(envs) != len(man["legs"]) or len({e["embedder"]["model"] for e in envs}) != 1:
         sys.exit(f"{d.name}: the halves do not name one embedding model")
     return envs[0]
-
-
-def interpreter_and_embeddings(r):
-    """What the interpreter answered and what was embedded for the query, without how each was got
-    (asked anew, or read from a store or a cache)."""
-    i = r["meta"]["interpreter"]
-    return ([{k: v for k, v in s.items() if k not in ("cache_hit", "offline", "asks")} for s in i["stages"]],
-            i["embeddings"])
 
 
 def runs_tables(arm, folder):
@@ -207,8 +214,8 @@ def runs_tables(arm, folder):
             # the call's time holds its tries, its wait and a few milliseconds of the harness
             if call and not -1e-6 <= call["time_s"] - call["request_s"] - call["wait_s"] - call["retry_s"] < 0.05:
                 sys.exit(f"{arm} {r['id']}: a call's time is not its tries and its wait")
-        # calls made in another run are steps of the question by their answering try; their failed
-        # tries are not this run's, and this run's own embedding calls give way to them
+        # the question's time holds all its steps: an interpreter call and embedding calls made in
+        # MADE_IN's run count by their answering try, in place of this run's own embedding calls
         failed = sum(call["retry_s"] for call in ((g, replaced) if source else (g, interp, qe)) if call)
         failed_in_run += failed
         made_elsewhere = (sum(c["time_s"] - c["retry_s"] for c in (interp, qe))
@@ -249,16 +256,14 @@ def runs_tables(arm, folder):
     # his 2026-10-21 "cba adding interpreter, it's just the answer model"
     if man["interpreter_model"] is not None and model_name(man["interpreter_model"]) != setup["answer_model"]:
         sys.exit(f"{arm}: the interpreter's model is not the answer model")
-    # the halves ran at the same time, so a failed try's seconds cannot be taken out of the clock time
-    if split and failed_in_run:
-        sys.exit(f"{arm}: failed tries in a split run; its time without them is not known")
+    # a run's time is the time of all the things in it added; a run of one question at a time measures
+    # that itself, a split run gets it from its questions (his 2026-10-22 "THE RUN TIME IS THE ADDED TIME
+    # FOR ALL THE THINGS IN THE FUCKING RUN")
     run = {
-        "run_seconds": clock_seconds([(l["started_at"], l["finished_at"]) for l in man["legs"]]) if split
-        else leg["wall_s"] - failed_in_run,
+        "run_seconds": sum(q["total_seconds"] for q in questions) if split else leg["wall_s"] - failed_in_run,
         "judge_tokens_in": judge["tokens_in"], "judge_tokens_out": judge["tokens_out"],
         "judge_embedding_tokens": sum(j["judge_settings"]["embedding"]["tokens_in"] for j in judged),
-        "judging_seconds": clock_seconds([(j["judge_settings"]["started_at"], j["judge_settings"]["finished_at"])
-                                          for j in judged]) if split else js["wall_s"],
+        "judging_seconds": judging_of_questions(d, set(cells)) if split else js["wall_s"],
     }
     return questions, setup, run
 

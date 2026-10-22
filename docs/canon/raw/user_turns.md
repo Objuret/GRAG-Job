@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2711 turns, chronological. Verbatim text; no edits.
+2722 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -19949,4 +19949,61 @@ seriously, how many billions of times have i told you to not make up your own te
 ## 2026-10-22 16:35 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
 
 ... but that means it's the same as the fucking "old run's interpreter"..? what
+
+## 2026-10-22 16:54 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+dude, what the actual fuck are you doing? WHAT ARE YOU DOING WITH THE FUCKING NUMBERS!?
+
+## 2026-10-22 16:54 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+i dont know what makes me angries, you fucking around like this, or it forcing me to WRITE THE SAME FUCKING SHIT EVER FUCKING TIME
+
+## 2026-10-22 16:56 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+*queued while an agent was working*
+
+but are you actually retarded? there is nothing here in your logic that fucking says that the "total runtime" is everything added.. you seriously thought that interpreting it as you did is EVER correct? in ANY fucking measure beside measuring how much faster it is to run shit side by side
+
+## 2026-10-22 16:59 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+*queued while an agent was working*
+
+absolutely missing my fucking point all over
+
+## 2026-10-22 17:01 · 1eb19c64-1ab6-4ad2-a950-402696adbdb6.jsonl
+
+we also need a way to make sure that the autistic interpretation you have all the time is softened because its fucking driving me insane, its great when we are doing code ok for specs etc... but when conversing? you not understanding context is borderline unusable
+
+## 2026-10-22 17:04 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+wow.. everytime i say something, you do the opposite
+
+## 2026-10-22 17:05 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+you litterally just reverted everything i esxplicitly asked you for, and kept the retarded shit YOU added
+what a fucking piece of shit
+
+## 2026-10-22 17:07 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+*queued while an agent was working*
+
+THE RUN TIME IS THE ADDED TIME FOR ALL THE THINGS IN THE FUCKING RUN!? how is this complicated at all!? and no, NOT LITTERALLY YOU FUCKING CUNT, the .. good god, do i really have to spell every fucking detail out now?
+
+## 2026-10-22 17:07 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+*queued while an agent was working*
+
+if i have to do that, WHY DO I EVEN USE YOU!?
+
+## 2026-10-22 17:08 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+*queued while an agent was working*
+
+if everything else's total run.. for fucks sake.. this is murdering me
+
+## 2026-10-22 17:08 · 04a8cd9f-2200-47de-a4dc-081a35d0e671.jsonl
+
+*queued while an agent was working*
+
+mm
 

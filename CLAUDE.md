@@ -120,8 +120,10 @@ numbers are in the run folders and under `output/research/`.
   last, but first 1+2 run"*, 2026-10-22): `artefact_v4__gold100__cb72000__20261022T081034Z`
   (commit `7ebb93d` on branch `artefact-v4-links`, split over the laptop and the desktop and
   merged by `tools/merge_split_run.py`; the interpreter's answers read from the store of the run
-  before it and the query embeddings from the machines' embedding cache, the same on every
-  question, so the workbook takes those values from that run). The run before it:
+  before it and most query embeddings from the machines' embedding cache, the same on every
+  question, so the workbook takes those values from that run; its run time, as for the other arms,
+  is the time of all the things in the run added: his *"THE RUN TIME IS THE ADDED TIME FOR ALL THE
+  THINGS IN THE FUCKING RUN"*, 2026-10-22). The run before it:
   `artefact_v4__gold100__cb72000__20261020T041923Z` (his "build", 2026-10-20; commit `0c082a3`
   from a clean checkout, `GRAG-Job-0c082a3`, one question at a time, the interpreter and the
   query embeddings made in the run, the graph's build cost in its manifest). The two baselines on
@@ -231,6 +233,7 @@ How to work with him:
 - *"back to the goddamn fucking conversation we have had several times already"* · *"talk about missing my point herer, that A D you did a fucking "job" instead.."* (2026-10-16, after the first was answered by building and running a judged comparison) — a call back to the conversation is answered by talking; nothing is built or run on it.
 - *"the format of the outputs you think you have given me, when its broken up by "work you do" it fucking atrocious.. … sure, write it out as it comes i guess, but you really need to write it all together when you have "finished", also explain the steps you took"* · *"did you jsut give me the entire fucking conversation? i mean after my fucking prompt to your "final answer""* (2026-10-16, the second on a recap of the whole day given in answer to the first) — short notes may come during the work; the message that finishes the work on a prompt of his, also when it comes after a background count, gathers everything done and found since that prompt and the steps taken, and nothing from before it.
 - *"ALWAYS synopsis first, dude, always structure your outputs when marginally larger than just a snippet in the academic way (not academic for real, but the concept) of the abstract first, aka the synopsis, the the shit you have, followed by the conclusion, so that if i WANT, i read the synopsis and then maybe conclusion and if i give fucks, i unfold the "content" and read that"* (2026-10-22) — an output larger than a snippet is the synopsis first, then the content, then the conclusion. Built as the global output style `Synopsis` (`~/.claude/output-styles/synopsis.md` on the laptop and on the desktop, two copies, selected in each machine's `~/.claude/settings.json`; the content under its own label, not folded, because the chat panel drops raw HTML) on his *"ok, create that output style then and implement it, globally"* (2026-10-22).
+- *"NO YOU FUCKING MORON, calling you autistic means you did not understand the fucking context of my words and just took them literally"* · *"we also need a way to make sure that the autistic interpretation you have all the time is softened because its fucking driving me insane, its great when we are doing code ok for specs etc... but when conversing? you not understanding context is borderline unusable"* (2026-10-22) — in conversation a message is read against the last exchange for what he means and answered at its size; word-for-word reading is for code, specs and data. In the output style `Synopsis`, section "Reading the user".
 
 The second model:
 
