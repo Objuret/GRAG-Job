@@ -4,7 +4,8 @@ arm), arm construction (a column per arm), key.
 
     python tools/export_finished_data.py [--out finished_data]
 
-Needs openpyxl. Reads the three final run folders and the graph's build cost
+Needs openpyxl. Reads the three final run folders, the questions file they all read
+(data/questions.jsonl, checked against each run's hash of it) and the graph's build cost
 (test/graph/build_cost.json), and writes grag-data.xlsx. A run split over the laptop and the
 desktop is read with its halves: its environment and its judging. Every run's time, and its
 judging's time, is its questions' times added. A run that read its interpreter's answers and its query embeddings
@@ -17,6 +18,7 @@ goes in: no path, host, user, session, repository file, commit, note or reason. 
 come first; the last sheet is the key.
 """
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -72,6 +74,9 @@ QUESTIONS = [
                     "questions in HERB, from 0.", ""),
     ("question_type", "HERB question type.", ""),
     ("question", "Question, from HERB.", ""),
+    ("reference_answer", "Reference answer: HERB's answer to the question, as RAGAS was given it (its parts "
+                         "joined by spaces).", ""),
+    ("reference_context_ids", "Reference context ids: the ids of HERB's evidence records for the question.", ""),
     ("answer", "Answer of the answer model.", ""),
     *SCORES,
     ("search_seconds", "Retrieval time, without the interpreter and the query embedding.", "seconds"),
@@ -170,7 +175,18 @@ def environment(d, man):
     return envs[0]
 
 
-def runs_tables(arm, folder):
+def references():
+    """Each question's row of the questions file, which holds HERB's reference answer and evidence record
+    ids; every final run must have read this file as it is."""
+    path = ROOT / "data/questions.jsonl"
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    for arm, folder in RUNS.items():
+        if read(ROOT / "output/k=chars" / folder / "run_manifest.json")["inputs"]["questions_sha256"] != digest:
+            sys.exit(f"{arm}: the run read another questions file than {path}")
+    return {q["id"]: q for q in rows(path)}
+
+
+def runs_tables(arm, folder, refs):
     d = ROOT / "output/k=chars" / folder
     man, ev = read(d / "run_manifest.json"), read(d / "eval_manifest.json")
     split = len(man["legs"]) > 1
@@ -223,11 +239,16 @@ def runs_tables(arm, folder):
         chars = r["meta"]["char_budget"]["chars"]
         if chars != sum(len(t) for t in r["contexts"]) or chars > man["char_budget"]:
             sys.exit(f"{arm} {r['id']}: the characters handed over are not those of the retrieved context")
+        ref = refs[r["id"]]
+        if ref["question"] != r["question"]:
+            sys.exit(f"{arm} {r['id']}: the question is not the questions file's")
         questions.append({
             "arm": arm,
             "question_id": r["id"],
             "question_type": one((c["type"] for c in mine.values()), f"{r['id']} type"),
             "question": r["question"],
+            "reference_answer": " ".join(str(g) for g in ref["ground_truth"]),
+            "reference_context_ids": ", ".join(str(c) for c in ref["citations"]),
             "answer": r["answer"],
             **{s: mine[s]["value"] for s, _, _ in SCORES},
             "search_seconds": r["search_time_s"],
@@ -344,7 +365,7 @@ def construction_table():
     return table, [{"sheet": CONSTRUCTION, "field": t, "meaning": m, "unit": u} for t, m, u, _ in things]
 
 
-WIDE = {"question": 60, "answer": 80, "meaning": 100, "property": 50}
+WIDE = {"question": 60, "reference_answer": 60, "answer": 80, "meaning": 100, "property": 50}
 
 
 def workbook(path, title, sheets):
@@ -383,8 +404,9 @@ def main():
     out = Path(p.parse_args().out)
     out.mkdir(parents=True, exist_ok=True)
     questions, setups, runs = [], {}, {}
+    refs = references()
     for arm, folder in RUNS.items():
-        rows_of_arm, setups[arm], runs[arm] = runs_tables(arm, folder)
+        rows_of_arm, setups[arm], runs[arm] = runs_tables(arm, folder, refs)
         questions += rows_of_arm
     setup = setups["lucene"]
     if any(s != setup for s in setups.values()):
