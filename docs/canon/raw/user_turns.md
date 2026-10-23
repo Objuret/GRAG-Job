@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2837 turns, chronological. Verbatim text; no edits.
+2850 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -20497,6 +20497,12 @@ no, stop, you wont understand that
 
 do the fucking run, on the desktop
 
+## 2026-10-23 02:08 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+*queued while an agent was working*
+
+after you make sure it has the correct artefact, data etc
+
 ## 2026-10-23 02:08 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
 
 *paste / file drop · 2203 chars*
@@ -20515,4 +20521,77 @@ Do we have the original retrieval results, including source IDs, retrieved conte
 "
 
 explain them to him cleanly and consicely
+
+## 2026-10-23 02:16 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+seriously tho, why are you not understanding these questions?
+
+## 2026-10-23 02:17 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+you have to answer like the dude have never fucking seen this repo, BECAUSE HE HAVENT
+
+## 2026-10-23 02:23 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+status?
+
+## 2026-10-23 02:24 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+what a ret.. fucking.. dude.. i'll give you a fucking example of what the correct answer is for question 1 for example.. 
+
+Evidence budget. 72,000 characters is a hard cap, applied the same way to all three methods: each method’s results are taken in its own rank order and cut at the 72,000th character.
+
+* In characters, the methods get about the same amount. Lucene and vector fill the cap on every question. The artefact fills it on 90 of 100 questions, with a mean of 69,003 characters. On the other 10, it selected less text than the cap. This is because of how the artefact works, it limits scope and if for some reason for some odd questions there is just few points of data at that direction (insert small example), it gets those and then it's empty there.  There is really no way to just "force in more to fill up to 72k" in those specific cases.
+
+"Can we record the actual characters and tokens supplied for each question?" Yeah, we can and have, tell him that or fucking make sure it's in the workbook, stop beeing a fucking retard and vomit random datashit in a fucking CHAT with me..
+
+## 2026-10-23 02:29 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+yeah, why 0?, do so
+
+## 2026-10-23 02:30 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+pretty sure you include WAY too much garbage here
+
+## 2026-10-23 02:35 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+this is my nr 1:
+
+1. Evidence budget: 72,000 characters is a hard cap, applied the same way to all three methods: each method’s results are taken in its own rank order and cut at the 72,000th character.
+   * In characters, the methods get about the same amount. Lucene and vector fill the cap on every question. The artefact fills it on 90 of 100 questions. This comes from how the artefact works: it first limits the search to the part of the data that the question points at and if that part holds only a few records, the artefact takes those, and then there is nothing more there to take. There is no reasonable way to force in more text to fill up to 72,000 in those cases.
+
+   * In tokens they differ because the same number of characters gives more tokens for some kinds of text than for others. Some messages, which carry IDs and timestamps, give more tokens per character than document text. Vector and the artefact pass a larger share of those messages than lucene does.
+
+   * Yes, both are recorded for every question, and both are in the workbook: the characters of evidence passed (retrieved_context_characters) and the input tokens of the answer call (answer_tokens_in).
+
+## 2026-10-23 02:41 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+and the workbook is updated with this? AND the workbook is made available for the desktop?
+
+## 2026-10-23 02:41 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+is ther e afucking reason you keep having detailed numbers in your answers here?
+
+## 2026-10-23 02:43 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+*paste / file drop · 1906 chars*
+
+THIS was the 5 questions.. you seem to, in this very very short time, have to FULLY fucking migrated 19 scopes away from it:
+"
+
+1. Evidence budget: Although all three methods have a 72k-character limit, their average answer input tokens differ (26k for Lucene, 30k for vector and 32k for Artefact). Is 72k simply the maximum allowed, or are the methods actually receiving comparable amounts of evidence? Can we record the actual characters and tokens supplied for each question?
+2. Context recall and precision: Artefact retrieves larger chunks containing multiple source records. Are the ID-based metrics calculated using the original source-record IDs or the Artefact chunk IDs? Ideally, we should evaluate all three methods against the same original source records, considering only evidence actually passed to the answer model.
+3. Differences between recall metrics: Artefact achieves considerably higher ID-based context recall (0.647), but its non-LLM recall is much lower (0.053). Could we check how these metrics are calculated and whether the difference in retrieval granularity affects them?
+4. Answer correctness: Despite relatively high faithfulness across all three methods, answer correctness remains low (0.175–0.273). Several answers also indicate that the requested information could not be found. Could we examine whether this is primarily a retrieval problem or an issue with extracting the correct answer from the retrieved evidence? For questions involving employee IDs and PR links, exact entity-level accuracy might be more informative than text-similarity metrics.
+5. Comparison and statistical analysis: Can we confirm that all three methods were evaluated on exactly the same questions, reference answers and judging setup? If so, we could perform paired statistical comparisons and calculate confidence intervals to establish whether Artefact's improvements are significant.
+6. "
+
+## 2026-10-23 02:44 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+ah, so you are also retarded, nice.. how about understanding the fucking concept of that metric?
+
+## 2026-10-23 02:45 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+*queued while an agent was working*
+
+wall time? this is not a thing
 
