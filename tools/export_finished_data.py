@@ -9,7 +9,9 @@ Needs openpyxl. Reads the three final run folders, the questions file they all r
 (test/graph/build_cost.json), and writes grag-data.xlsx. A run split over the laptop and the
 desktop is read with its halves: its environment and its judging. Every run's time, and its
 judging's time, is its questions' times added. A run that read its interpreter's answers and its query embeddings
-from an earlier run takes those values from that run (MADE_IN). A column of a run is a measure he
+from an earlier run takes those values from that run (MADE_IN). Two scores judged after the final
+runs, on their answers with their judge, are read from the folder beside each run (REJUDGED), and
+their judging is added to the run's. A column of a run is a measure he
 named
 (times, tokens, characters, runtime, the RAGAS scores) or an id of the dataset, the evaluation or the run; the
 construction holds what built the index that each final run read, one model at a time, and nothing
@@ -35,6 +37,10 @@ RUNS = {"lucene": "lucene__gold100__cb72000__20261008T234209Z",
 # the artefact's run read its interpreter's answers and its query embeddings, the same on every
 # question, from this run (his 2026-10-22 "it's the same as the fucking "old run's interpreter"")
 MADE_IN = {"artefact": "artefact_v4__gold100__cb72000__20261020T041923Z"}
+# scores judged after the final runs, on their answers with their judge, by prod/run.py --rejudge into
+# the folder beside each run (his 2026-10-23 "just toggle them and run them on all 100 for all 3 arms")
+REJUDGED = "__j-claude-haiku-4-5-20251001__gold100"
+REJUDGED_SCORES = ("factual_correctness", "context_entity_recall")
 DATASET, LICENCE = "HERB (Salesforce AI Research)", "CC BY-NC 4.0"
 # the sheets' names
 PER_QUESTION, PER_RUN, CONSTRUCTION, KEY = "results", "run data", "arm construction", "key"
@@ -46,12 +52,19 @@ SCORES = [
                      "in the answer.", "0-1"),
     ("answer_correctness", "RAGAS AnswerCorrectness. Weighted average of factual similarity to the reference "
                            "answer (weight 0.75) and semantic_similarity (weight 0.25). Reference answer: HERB's answer.", "0-1"),
+    ("factual_correctness", "RAGAS FactualCorrectness. F1 of precision, TP / (TP + FP), and recall, TP / (TP + FN). "
+                            "TP: claims in the answer present in the reference answer. FP: claims in the answer not "
+                            "present in the reference answer. FN: claims in the reference answer not present in the "
+                            "answer. Claims and their presence: the judge's, atomicity and coverage low. Rounded to "
+                            "two decimals.", "0-1"),
     ("context_recall_id", "RAGAS IDBasedContextRecall. Reference context ids found in the retrieved context ids / "
                           "all reference context ids. Reference context ids: HERB's evidence record ids.", "0-1"),
     ("context_precision_id", "RAGAS IDBasedContextPrecision. Retrieved context ids found in the reference context "
                              "ids / all retrieved context ids.", "0-1"),
     ("context_recall_llm", "RAGAS LLMContextRecall. Claims in the reference answer supported by the retrieved "
                            "context / all claims in the reference answer.", "0-1"),
+    ("context_entity_recall", "RAGAS ContextEntityRecall. Entities common to the reference answer and the retrieved "
+                              "context / all entities in the reference answer. Entities: the judge's.", "0-1"),
     ("context_recall_nonllm", "RAGAS NonLLMContextRecall. Relevant contexts retrieved / all reference contexts. "
                               "Relevant: Levenshtein similarity to a reference context of 0.5 or more. Reference context: text of a "
                               "HERB evidence record.", "0-1"),
@@ -175,6 +188,42 @@ def environment(d, man):
     return envs[0]
 
 
+def rejudged(arm, d, cells, judge_model):
+    """REJUDGED_SCORES from the folder beside the run, which judged the run's own answers and holds the
+    run's other scores as the run has them. Their cost is that of the kept cells' judge calls; their
+    time each question's span of calls added, one span per start of the judging."""
+    j = d.parent / (d.name + REJUDGED)
+    if ({r["id"]: r for r in rows(j / "arm_outputs.jsonl")}
+            != {r["id"]: r for r in rows(d / "arm_outputs.jsonl")}):
+        sys.exit(f"{arm}: {j.name} judged other answers than the run's")
+    added, kept = {}, set()
+    for r in rows(j / "eval_results.jsonl"):
+        if r["metric"] in REJUDGED_SCORES:
+            added.setdefault(r["question_id"], {})[r["metric"]] = r
+            kept.add((r["question_id"], r["metric"], r["components"]["usage"]["eval_leg"]))
+        elif r != cells[r["question_id"]][r["metric"]]:
+            sys.exit(f"{arm} {r['question_id']}: {r['metric']} in {j.name} is not the run's")
+    calls = [c for c in rows(j / "eval_calls.jsonl")
+             if (c.get("question_id"), c.get("score"), c.get("eval_leg")) in kept]
+    use = [c["components"]["usage"] for q in added.values() for c in q.values()]
+    tokens = [c.get("usage") or {} for c in calls]
+    if ((sum(u["chat_calls"] for u in use), sum(u["tokens_in"] for u in use), sum(u["tokens_out"] for u in use))
+            != (len(calls), sum(int(t.get("prompt_tokens") or 0) for t in tokens),
+                sum(int(t.get("completion_tokens") or 0) for t in tokens))
+            or any(c["kind"] != "chat" or c["model"] != judge_model for c in calls)):
+        sys.exit(f"{arm}: the re-judged scores' cost is not their calls', or a call is not the run's judge's")
+    spans = {}
+    for c in calls:
+        if c.get("started_at") and c.get("finished_at"):
+            a, b = datetime.fromisoformat(c["started_at"]), datetime.fromisoformat(c["finished_at"])
+            s = spans.setdefault((c["question_id"], c["eval_leg"]), [a, b])
+            s[0], s[1] = min(s[0], a), max(s[1], b)
+    if {q for q, _ in spans} != set(cells):
+        sys.exit(f"{arm}: not every question has its re-judged calls")
+    return (added, sum((b - a).total_seconds() for a, b in spans.values()),
+            sum(u["tokens_in"] for u in use), sum(u["tokens_out"] for u in use))
+
+
 def references():
     """Each question's row of the questions file, which holds HERB's reference answer and evidence record
     ids; every final run must have read this file as it is."""
@@ -200,6 +249,10 @@ def runs_tables(arm, folder, refs):
     cells = {}
     for r in rows(d / "eval_results.jsonl"):
         cells.setdefault(r["question_id"], {})[r["metric"]] = r
+    use = [c["components"]["usage"] for q in cells.values() for c in q.values()]
+    added, added_seconds, added_in, added_out = rejudged(arm, d, cells, ev["judge_model"])
+    for qid, scores in added.items():
+        cells[qid].update(scores)
     source = {o["id"]: o for o in rows(ROOT / "output/k=chars" / MADE_IN[arm] / "arm_outputs.jsonl")} \
         if arm in MADE_IN else {}
     questions = []
@@ -263,7 +316,6 @@ def runs_tables(arm, folder, refs):
             "answer_tokens_in": g["tokens_in"],
             "answer_tokens_out": g["tokens_out"],
         })
-    use = [c["components"]["usage"] for q in cells.values() for c in q.values()]
     judge = ev["judge_usage"]
     if (sum(u["chat_calls"] for u in use), sum(u["tokens_in"] for u in use), sum(u["tokens_out"] for u in use)) \
             != (judge["calls"], judge["tokens_in"], judge["tokens_out"]) or any(u.get("embed_calls") for u in use):
@@ -281,9 +333,9 @@ def runs_tables(arm, folder, refs):
     # THINGS IN THE FUCKING RUN", 2026-10-23 "wall time? this is not a thing")
     run = {
         "run_seconds": sum(q["total_seconds"] for q in questions),
-        "judge_tokens_in": judge["tokens_in"], "judge_tokens_out": judge["tokens_out"],
+        "judge_tokens_in": judge["tokens_in"] + added_in, "judge_tokens_out": judge["tokens_out"] + added_out,
         "judge_embedding_tokens": sum(j["judge_settings"]["embedding"]["tokens_in"] for j in judged),
-        "judging_seconds": judging_of_questions(d, set(cells)),
+        "judging_seconds": judging_of_questions(d, set(cells)) + added_seconds,
     }
     return questions, setup, run
 

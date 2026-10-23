@@ -483,6 +483,7 @@ _REGISTRY = {
 
 _PER_CONTEXT = {"context_precision_llm", "context_precision_llm_ref"}
 _CONTEXT_HEAVY_LLM = {
+    "context_entity_recall",
     "context_precision_llm",
     "context_precision_llm_ref",
     "context_recall_llm",
@@ -748,7 +749,8 @@ def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
     if embedder is not None and sample_of:
         cap, token = capture.start()
         try:
-            _prime_embed_cache(embedder, metrics, sample_of.values())
+            _prime_embed_cache(embedder, {n for i in sample_of for n in selected - done_ok[i]},
+                               sample_of.values())
         finally:
             capture.stop(token)
             _keep_calls(cap.close(), question_id=None, score=None, phase="prime")

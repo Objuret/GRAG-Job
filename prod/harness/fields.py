@@ -738,6 +738,17 @@ SCORES = {
         "the answer against the gold answer: 0.75 times the F1 of the claims the judge finds in "
         "both, plus 0.25 times semantic_similarity (RAGAS's own weights).",
         "the judge and the embedder", True),
+    "factual_correctness": (
+        "It uses claim decomposition and natural language inference (NLI) to verify the claims "
+        "made in the responses against reference texts.", "class FactualCorrectness",
+        "the answer against the gold answer: the F1 of the answer's claims the judge finds in the "
+        "gold answer and the gold answer's claims it finds in the answer (RAGAS's defaults: mode "
+        "f1, beta 1, atomicity and coverage low), rounded to two decimals.", "the judge", True),
+    "context_entity_recall": (
+        "Calculates recall based on entities present in ground truth and context.",
+        "class ContextEntityRecall",
+        "the entities the judge finds in the gold answer, found among the entities it finds in "
+        "contexts joined into one text.", "the judge", True),
     "semantic_similarity": (
         "The **Semantic Similarity** metric evaluates the semantic resemblance between a "
         "generated response and a reference (ground truth) answer. [...] This metric uses "

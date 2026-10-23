@@ -49,8 +49,8 @@ the palace and the session transcripts; the numbers are in the run folders and u
 - `finished_data/grag-data.xlsx` — the data given away, one workbook and nothing else (his name,
   2026-10-21), four sheets: `results`, `run data`, `arm construction`, `key` (what each holds:
   "The data given away" below). Made by `tools/export_finished_data.py` (needs openpyxl) from the
-  three final run folders and `test/graph/build_cost.json`; the export stops on any value that
-  does not line up.
+  three final run folders, the re-judging folder beside each and `test/graph/build_cost.json`;
+  the export stops on any value that does not line up.
 - `docs/ENVIRONMENT.md` — the machines, the Neo4j start, the model lane and how many calls this
   laptop holds at once; the desktop's clone and graph for split runs, and the commands of a split
   run (`tools/merge_split_run.py split|merge`). `docs/canon/raw/user_turns.jsonl` — his typed messages
@@ -87,7 +87,11 @@ the palace and the session transcripts; the numbers are in the run folders and u
   (commit `0c082a3` from a clean checkout) and most query embeddings from the machines' embedding
   cache, so the workbook takes those values from that run. Each folder's `FIELDS.md` says what it
   holds and on whose word anything was left out; its `corrections.json`, what was corrected after
-  the run. Across arms `context_recall_id` and `context_precision_id` compare (both count record
+  the run. `factual_correctness` and `context_entity_recall` were judged after the three, on their
+  answers with the same judge, by `prod/run.py --rejudge` into the folder beside each,
+  `<run>__j-claude-haiku-4-5-20251001__gold100` (his *"just toggle them and run them on all 100 for
+  all 3 arms"*, 2026-10-23); the workbook reads those two scores there.
+  Across arms `context_recall_id` and `context_precision_id` compare (both count record
   ids); the nonllm pair is within-arm (counted per delivered text).
 - A run: `python prod/run.py --arm artefact_v4 --set gold|10smoke --char-budget 72000 --workers 6
   --out <folder>`; the same command into the same folder resumes. `--retrieval-only` makes no

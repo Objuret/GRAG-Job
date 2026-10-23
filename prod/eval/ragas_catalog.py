@@ -70,6 +70,8 @@ SELECTED = [
     "faithfulness",
     "answer_correctness",
     "context_recall_llm",
+    "factual_correctness",
+    "context_entity_recall",
 ]
 
 

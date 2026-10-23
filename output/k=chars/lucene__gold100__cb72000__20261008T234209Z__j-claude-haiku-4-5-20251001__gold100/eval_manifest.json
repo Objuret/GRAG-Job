@@ -1,0 +1,63 @@
+{
+  "scorer": "ragas",
+  "judge_model": "claude-haiku-4-5-20251001",
+  "source_run": "output\\k=chars\\lucene__gold100__cb72000__20261008T234209Z",
+  "arm": "lucene",
+  "timestamp": "2026-10-23T05:52:49.927960+00:00",
+  "judge_backend": "claude-cli",
+  "judge_effort": null,
+  "judge_usage": {
+    "calls": 529,
+    "tokens_in": 2079590,
+    "cached_input_tokens": 349977,
+    "tokens_out": 596842,
+    "reasoning_tokens": 0,
+    "time_s": 8280.39512130036,
+    "attempts": 529,
+    "request_s": 8279.356999499956,
+    "wait_s": 0.0,
+    "retry_s": 0.0
+  },
+  "judge_elapsed_s": 1142.5226295999018,
+  "judge_legs": [
+    {
+      "timestamp": "2026-10-23T05:48:21.856483+00:00",
+      "judge_model": "claude-haiku-4-5-20251001",
+      "judge_backend": "claude-cli",
+      "usage": {
+        "calls": 523,
+        "tokens_in": 2009348,
+        "cached_input_tokens": 282312,
+        "tokens_out": 574375,
+        "reasoning_tokens": 0,
+        "time_s": 8039.24853630038,
+        "attempts": 523,
+        "request_s": 8038.2179997998755,
+        "wait_s": 0.0,
+        "retry_s": 0.0
+      },
+      "elapsed_s": 1019.8828114999924,
+      "settings": null
+    },
+    {
+      "timestamp": "2026-10-23T05:52:49.927960+00:00",
+      "judge_model": "claude-haiku-4-5-20251001",
+      "judge_backend": "claude-cli",
+      "usage": {
+        "calls": 6,
+        "tokens_in": 70242,
+        "cached_input_tokens": 67665,
+        "tokens_out": 22467,
+        "reasoning_tokens": 0,
+        "time_s": 241.1465849999804,
+        "attempts": 6,
+        "request_s": 241.1389997000806,
+        "wait_s": 0.0,
+        "retry_s": 0.0
+      },
+      "elapsed_s": 122.63981809990946,
+      "settings": null
+    }
+  ],
+  "judge_settings": null
+}
