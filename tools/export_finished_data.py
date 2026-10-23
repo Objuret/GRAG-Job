@@ -6,8 +6,8 @@ arm), arm construction (a column per arm), key.
 
 Needs openpyxl. Reads the three final run folders and the graph's build cost
 (test/graph/build_cost.json), and writes grag-data.xlsx. A run split over the laptop and the
-desktop is read with its halves: its environment, its judging, and its time and its judging's time
-as the halves' times added. A run that read its interpreter's answers and its query embeddings
+desktop is read with its halves: its environment and its judging. Every run's time, and its
+judging's time, is its questions' times added. A run that read its interpreter's answers and its query embeddings
 from an earlier run takes those values from that run (MADE_IN). A column of a run is a measure he
 named
 (times, tokens, characters, runtime, the RAGAS scores) or an id of the dataset, the evaluation or the run; the
@@ -178,7 +178,7 @@ def runs_tables(arm, folder):
     judged = halves(d, "eval_manifest.json") if split else [ev]
     if len(judged) != len(ev["judge_legs"]) or (split and len(judged) != len(man["legs"])):
         sys.exit(f"{arm}: the run's starts and its halves do not match")
-    leg, js, env = man["legs"][0], ev["judge_settings"], environment(d, man)
+    env = environment(d, man)
     if (man["n_questions"], man["n_ran"], man["n_failed"]) != (100, 100, 0):
         sys.exit(f"{arm}: not every one of the hundred questions was answered")
     cells = {}
@@ -186,7 +186,7 @@ def runs_tables(arm, folder):
         cells.setdefault(r["question_id"], {})[r["metric"]] = r
     source = {o["id"]: o for o in rows(ROOT / "output/k=chars" / MADE_IN[arm] / "arm_outputs.jsonl")} \
         if arm in MADE_IN else {}
-    questions, failed_in_run = [], 0.0
+    questions = []
     for r in rows(d / "arm_outputs.jsonl"):
         own = {}
         for e in r["retrieval"]:
@@ -217,7 +217,6 @@ def runs_tables(arm, folder):
         # the question's time holds all its steps: an interpreter call and embedding calls made in
         # MADE_IN's run count by their answering try, in place of this run's own embedding calls
         failed = sum(call["retry_s"] for call in ((g, replaced) if source else (g, interp, qe)) if call)
-        failed_in_run += failed
         made_elsewhere = (sum(c["time_s"] - c["retry_s"] for c in (interp, qe))
                           - (replaced["time_s"] - replaced["retry_s"] if replaced else 0.0)) if source else 0.0
         # the characters the cut handed over, checked against the texts themselves
@@ -256,14 +255,14 @@ def runs_tables(arm, folder):
     # his 2026-10-21 "cba adding interpreter, it's just the answer model"
     if man["interpreter_model"] is not None and model_name(man["interpreter_model"]) != setup["answer_model"]:
         sys.exit(f"{arm}: the interpreter's model is not the answer model")
-    # a run's time is the time of all the things in it added; a run of one question at a time measures
-    # that itself, a split run gets it from its questions (his 2026-10-22 "THE RUN TIME IS THE ADDED TIME
-    # FOR ALL THE THINGS IN THE FUCKING RUN")
+    # a run's time, and its judging's, is the time of all the things in it added: its questions' times,
+    # never the clock of the run as a whole (his 2026-10-22 "THE RUN TIME IS THE ADDED TIME FOR ALL THE
+    # THINGS IN THE FUCKING RUN", 2026-10-23 "wall time? this is not a thing")
     run = {
-        "run_seconds": sum(q["total_seconds"] for q in questions) if split else leg["wall_s"] - failed_in_run,
+        "run_seconds": sum(q["total_seconds"] for q in questions),
         "judge_tokens_in": judge["tokens_in"], "judge_tokens_out": judge["tokens_out"],
         "judge_embedding_tokens": sum(j["judge_settings"]["embedding"]["tokens_in"] for j in judged),
-        "judging_seconds": judging_of_questions(d, set(cells)) if split else js["wall_s"],
+        "judging_seconds": judging_of_questions(d, set(cells)),
     }
     return questions, setup, run
 
