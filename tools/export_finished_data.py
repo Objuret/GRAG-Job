@@ -29,7 +29,7 @@ from openpyxl.styles import Font
 ROOT = Path(__file__).resolve().parent.parent
 RUNS = {"lucene": "lucene__gold100__cb72000__20261008T234209Z",
         "vector": "vector__gold100__cb72000__20261017T061242Z",
-        "artefact": "artefact_v4__gold100__cb72000__20261022T081034Z"}
+        "artefact": "artefact_v4__gold100__cb72000__20261023T021439Z"}
 # the artefact's run read its interpreter's answers and its query embeddings, the same on every
 # question, from this run (his 2026-10-22 "it's the same as the fucking "old run's interpreter"")
 MADE_IN = {"artefact": "artefact_v4__gold100__cb72000__20261020T041923Z"}

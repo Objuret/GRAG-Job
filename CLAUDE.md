@@ -78,15 +78,11 @@ the palace and the session transcripts; the numbers are in the run folders and u
   itself before any sentence about where the work stands. Not from the palace, not from memory.
 - Arms: `ls prod/arms test/arms`. Database an arm used: its run manifest.
 - Runs: `ls output/k=chars`. The final runs on the hundred, the ones the workbook reads:
-  `artefact_v4__gold100__cb72000__20261022T081034Z` (his *"populated by the not last, but first
-  1+2 run"*, 2026-10-22; commit `7ebb93d` on branch `artefact-v4-links`, on
-  `artefact-v4-iteration` as `657c58d`; split over the laptop and the desktop and merged by
-  `tools/merge_split_run.py`), `lucene__gold100__cb72000__20261008T234209Z` and
-  `vector__gold100__cb72000__20261017T061242Z` (commit `fbc2f22` from a clean checkout). The
-  artefact's final run followed links from chosen conversations to the product's own documents
-  and pull requests, and its hand-over left out a channel apart, other projects' pull requests and
-  talk about another project's pull request; the arm's code now follows no link and leaves nothing
-  out. Its
+  `artefact_v4__gold100__cb72000__20261023T021439Z` (his *"and the workbook is updated with
+  this?"*, 2026-10-23; commit `751a72d`, one launch on the desktop with 27 workers; the answer
+  call's tokens of 40 rows corrected from the CLI's own record, `tools/correct_zero_usage.py`),
+  `lucene__gold100__cb72000__20261008T234209Z` and `vector__gold100__cb72000__20261017T061242Z`
+  (commit `fbc2f22` from a clean checkout, one worker each). The artefact's
   interpreter answers were read from the store of `artefact_v4__gold100__cb72000__20261020T041923Z`
   (commit `0c082a3` from a clean checkout) and most query embeddings from the machines' embedding
   cache, so the workbook takes those values from that run. Each folder's `FIELDS.md` says what it

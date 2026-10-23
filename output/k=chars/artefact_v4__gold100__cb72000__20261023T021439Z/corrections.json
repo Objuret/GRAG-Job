@@ -1,0 +1,1484 @@
+{
+  "corrections": [
+    {
+      "made_at": "2026-10-23T02:33:33.595220+00:00",
+      "ordered_by": "\"yeah, why 0?, do so\" (2026-10-23, on the answer calls whose rows held 0 tokens)",
+      "what_happened": "On 40 answer calls the CLI's reply held 0 in its usage field and an empty list of iterations, while the same reply's counts per model and the CLI's own transcript of the call held the tokens. The harness reads the usage field, so the rows held 0 tokens for those calls.",
+      "rule": {
+        "id": "zero-usage/1",
+        "text": "1. An answer call (the row's call record marked role: answer) is corrected when its reply's usage\n     field holds 0 tokens in and 0 out and its list of iterations is empty.\n  2. Its counts are the reply's own counts per model (modelUsage), for the one model the call\n     names, counted as the harness counts the usage field (harness.chat): tokens in = inputTokens\n     + cacheCreationInputTokens + cacheReadInputTokens, cached tokens in = cacheReadInputTokens,\n     tokens out = outputTokens.\n  3. They must be the counts of the CLI's own transcript of the call, found by the reply's\n     session_id; otherwise nothing is written.\n  4. They go into the call record's usage and into the row's generator. The reply itself (the\n     envelope) stays as the CLI wrote it; no answer, context, score or time changes."
+      },
+      "not_changed_and_worth_knowing": [
+        "Why the CLI wrote 0 in its usage field on these calls is not known. On them its list of iterations is empty, and they took longer: a median of 24.6 s against 7.2 s for the other answer calls.",
+        "No answer, context, score or time is changed: only the tokens of those answer calls."
+      ],
+      "changes": [
+        {
+          "where": "arm_outputs.jsonl row 60 (ConnectForce::a::14)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 6411,
+            "completion_tokens": 247,
+            "cached_input_tokens": 0
+          },
+          "session_id": "cd56dafa-e9cb-4c43-8b04-9ab61d9d590a"
+        },
+        {
+          "where": "arm_outputs.jsonl row 60 (ConnectForce::a::14)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 6411,
+          "session_id": "cd56dafa-e9cb-4c43-8b04-9ab61d9d590a"
+        },
+        {
+          "where": "arm_outputs.jsonl row 60 (ConnectForce::a::14)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "cd56dafa-e9cb-4c43-8b04-9ab61d9d590a"
+        },
+        {
+          "where": "arm_outputs.jsonl row 60 (ConnectForce::a::14)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 247,
+          "session_id": "cd56dafa-e9cb-4c43-8b04-9ab61d9d590a"
+        },
+        {
+          "where": "arm_outputs.jsonl row 61 (ContentForce::a::16)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 16174,
+            "completion_tokens": 346,
+            "cached_input_tokens": 0
+          },
+          "session_id": "d5332896-3604-4786-a802-2c5e64e1d368"
+        },
+        {
+          "where": "arm_outputs.jsonl row 61 (ContentForce::a::16)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 16174,
+          "session_id": "d5332896-3604-4786-a802-2c5e64e1d368"
+        },
+        {
+          "where": "arm_outputs.jsonl row 61 (ContentForce::a::16)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "d5332896-3604-4786-a802-2c5e64e1d368"
+        },
+        {
+          "where": "arm_outputs.jsonl row 61 (ContentForce::a::16)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 346,
+          "session_id": "d5332896-3604-4786-a802-2c5e64e1d368"
+        },
+        {
+          "where": "arm_outputs.jsonl row 62 (EdgeForce::a::13)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 31320,
+            "completion_tokens": 555,
+            "cached_input_tokens": 0
+          },
+          "session_id": "cb10929b-c58a-4072-85a7-a6288b4ae0fe"
+        },
+        {
+          "where": "arm_outputs.jsonl row 62 (EdgeForce::a::13)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 31320,
+          "session_id": "cb10929b-c58a-4072-85a7-a6288b4ae0fe"
+        },
+        {
+          "where": "arm_outputs.jsonl row 62 (EdgeForce::a::13)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "cb10929b-c58a-4072-85a7-a6288b4ae0fe"
+        },
+        {
+          "where": "arm_outputs.jsonl row 62 (EdgeForce::a::13)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 555,
+          "session_id": "cb10929b-c58a-4072-85a7-a6288b4ae0fe"
+        },
+        {
+          "where": "arm_outputs.jsonl row 63 (ExplainabilityForce::a::9)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 32897,
+            "completion_tokens": 298,
+            "cached_input_tokens": 0
+          },
+          "session_id": "8f3efe12-1e6e-4c6a-964e-cb0f6fa94f2d"
+        },
+        {
+          "where": "arm_outputs.jsonl row 63 (ExplainabilityForce::a::9)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 32897,
+          "session_id": "8f3efe12-1e6e-4c6a-964e-cb0f6fa94f2d"
+        },
+        {
+          "where": "arm_outputs.jsonl row 63 (ExplainabilityForce::a::9)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "8f3efe12-1e6e-4c6a-964e-cb0f6fa94f2d"
+        },
+        {
+          "where": "arm_outputs.jsonl row 63 (ExplainabilityForce::a::9)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 298,
+          "session_id": "8f3efe12-1e6e-4c6a-964e-cb0f6fa94f2d"
+        },
+        {
+          "where": "arm_outputs.jsonl row 64 (FeedbackForce::a::7)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 27415,
+            "completion_tokens": 416,
+            "cached_input_tokens": 0
+          },
+          "session_id": "2ea33131-1ab1-4c85-9030-fea46a78a1f7"
+        },
+        {
+          "where": "arm_outputs.jsonl row 64 (FeedbackForce::a::7)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 27415,
+          "session_id": "2ea33131-1ab1-4c85-9030-fea46a78a1f7"
+        },
+        {
+          "where": "arm_outputs.jsonl row 64 (FeedbackForce::a::7)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "2ea33131-1ab1-4c85-9030-fea46a78a1f7"
+        },
+        {
+          "where": "arm_outputs.jsonl row 64 (FeedbackForce::a::7)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 416,
+          "session_id": "2ea33131-1ab1-4c85-9030-fea46a78a1f7"
+        },
+        {
+          "where": "arm_outputs.jsonl row 65 (FlowForce::a::13)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 29477,
+            "completion_tokens": 604,
+            "cached_input_tokens": 0
+          },
+          "session_id": "e96c9402-eec6-4b96-9320-fe014ef72e18"
+        },
+        {
+          "where": "arm_outputs.jsonl row 65 (FlowForce::a::13)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 29477,
+          "session_id": "e96c9402-eec6-4b96-9320-fe014ef72e18"
+        },
+        {
+          "where": "arm_outputs.jsonl row 65 (FlowForce::a::13)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "e96c9402-eec6-4b96-9320-fe014ef72e18"
+        },
+        {
+          "where": "arm_outputs.jsonl row 65 (FlowForce::a::13)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 604,
+          "session_id": "e96c9402-eec6-4b96-9320-fe014ef72e18"
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 25219,
+            "completion_tokens": 344,
+            "cached_input_tokens": 0
+          },
+          "session_id": "c9c2e5be-32a3-4828-851f-96caba675ce6"
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 25219,
+          "session_id": "c9c2e5be-32a3-4828-851f-96caba675ce6"
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "c9c2e5be-32a3-4828-851f-96caba675ce6"
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 344,
+          "session_id": "c9c2e5be-32a3-4828-851f-96caba675ce6"
+        },
+        {
+          "where": "arm_outputs.jsonl row 67 (InsightForce::a::7)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 29638,
+            "completion_tokens": 808,
+            "cached_input_tokens": 0
+          },
+          "session_id": "e08a0793-610a-4a18-89d8-80499217b0d1"
+        },
+        {
+          "where": "arm_outputs.jsonl row 67 (InsightForce::a::7)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 29638,
+          "session_id": "e08a0793-610a-4a18-89d8-80499217b0d1"
+        },
+        {
+          "where": "arm_outputs.jsonl row 67 (InsightForce::a::7)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "e08a0793-610a-4a18-89d8-80499217b0d1"
+        },
+        {
+          "where": "arm_outputs.jsonl row 67 (InsightForce::a::7)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 808,
+          "session_id": "e08a0793-610a-4a18-89d8-80499217b0d1"
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 32145,
+            "completion_tokens": 660,
+            "cached_input_tokens": 0
+          },
+          "session_id": "cd66afd4-264e-47cc-993c-eb2a588abd1d"
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 32145,
+          "session_id": "cd66afd4-264e-47cc-993c-eb2a588abd1d"
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "cd66afd4-264e-47cc-993c-eb2a588abd1d"
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 660,
+          "session_id": "cd66afd4-264e-47cc-993c-eb2a588abd1d"
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 33164,
+            "completion_tokens": 355,
+            "cached_input_tokens": 0
+          },
+          "session_id": "bf5910f6-c766-4061-a91a-d32cdaa4b38a"
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 33164,
+          "session_id": "bf5910f6-c766-4061-a91a-d32cdaa4b38a"
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "bf5910f6-c766-4061-a91a-d32cdaa4b38a"
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 355,
+          "session_id": "bf5910f6-c766-4061-a91a-d32cdaa4b38a"
+        },
+        {
+          "where": "arm_outputs.jsonl row 70 (MonitorForce::a::18)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 33395,
+            "completion_tokens": 155,
+            "cached_input_tokens": 0
+          },
+          "session_id": "4ebd3948-ba73-475b-af7d-cafa0685dab1"
+        },
+        {
+          "where": "arm_outputs.jsonl row 70 (MonitorForce::a::18)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 33395,
+          "session_id": "4ebd3948-ba73-475b-af7d-cafa0685dab1"
+        },
+        {
+          "where": "arm_outputs.jsonl row 70 (MonitorForce::a::18)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "4ebd3948-ba73-475b-af7d-cafa0685dab1"
+        },
+        {
+          "where": "arm_outputs.jsonl row 70 (MonitorForce::a::18)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 155,
+          "session_id": "4ebd3948-ba73-475b-af7d-cafa0685dab1"
+        },
+        {
+          "where": "arm_outputs.jsonl row 71 (PersonalizeForce::a::34)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 20759,
+            "completion_tokens": 380,
+            "cached_input_tokens": 0
+          },
+          "session_id": "a9798148-0860-40bf-a390-e96b31f8d212"
+        },
+        {
+          "where": "arm_outputs.jsonl row 71 (PersonalizeForce::a::34)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 20759,
+          "session_id": "a9798148-0860-40bf-a390-e96b31f8d212"
+        },
+        {
+          "where": "arm_outputs.jsonl row 71 (PersonalizeForce::a::34)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "a9798148-0860-40bf-a390-e96b31f8d212"
+        },
+        {
+          "where": "arm_outputs.jsonl row 71 (PersonalizeForce::a::34)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 380,
+          "session_id": "a9798148-0860-40bf-a390-e96b31f8d212"
+        },
+        {
+          "where": "arm_outputs.jsonl row 72 (PitchForce::a::27)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 32339,
+            "completion_tokens": 117,
+            "cached_input_tokens": 0
+          },
+          "session_id": "2b9a914d-ce41-45f6-a153-ea1347a63208"
+        },
+        {
+          "where": "arm_outputs.jsonl row 72 (PitchForce::a::27)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 32339,
+          "session_id": "2b9a914d-ce41-45f6-a153-ea1347a63208"
+        },
+        {
+          "where": "arm_outputs.jsonl row 72 (PitchForce::a::27)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "2b9a914d-ce41-45f6-a153-ea1347a63208"
+        },
+        {
+          "where": "arm_outputs.jsonl row 72 (PitchForce::a::27)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 117,
+          "session_id": "2b9a914d-ce41-45f6-a153-ea1347a63208"
+        },
+        {
+          "where": "arm_outputs.jsonl row 73 (ProposalForce::a::20)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 31969,
+            "completion_tokens": 359,
+            "cached_input_tokens": 0
+          },
+          "session_id": "b601cf62-ccf6-4c68-9614-4077c66b0ba4"
+        },
+        {
+          "where": "arm_outputs.jsonl row 73 (ProposalForce::a::20)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 31969,
+          "session_id": "b601cf62-ccf6-4c68-9614-4077c66b0ba4"
+        },
+        {
+          "where": "arm_outputs.jsonl row 73 (ProposalForce::a::20)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "b601cf62-ccf6-4c68-9614-4077c66b0ba4"
+        },
+        {
+          "where": "arm_outputs.jsonl row 73 (ProposalForce::a::20)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 359,
+          "session_id": "b601cf62-ccf6-4c68-9614-4077c66b0ba4"
+        },
+        {
+          "where": "arm_outputs.jsonl row 74 (SentimentForce::a::27)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 33063,
+            "completion_tokens": 263,
+            "cached_input_tokens": 0
+          },
+          "session_id": "324dae72-4e34-4e92-b25d-cad9ac6c5a23"
+        },
+        {
+          "where": "arm_outputs.jsonl row 74 (SentimentForce::a::27)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 33063,
+          "session_id": "324dae72-4e34-4e92-b25d-cad9ac6c5a23"
+        },
+        {
+          "where": "arm_outputs.jsonl row 74 (SentimentForce::a::27)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "324dae72-4e34-4e92-b25d-cad9ac6c5a23"
+        },
+        {
+          "where": "arm_outputs.jsonl row 74 (SentimentForce::a::27)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 263,
+          "session_id": "324dae72-4e34-4e92-b25d-cad9ac6c5a23"
+        },
+        {
+          "where": "arm_outputs.jsonl row 75 (SummarizeForce::a::24)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 32942,
+            "completion_tokens": 1307,
+            "cached_input_tokens": 0
+          },
+          "session_id": "fbf69f90-a04f-4e51-956d-4d771f841bd4"
+        },
+        {
+          "where": "arm_outputs.jsonl row 75 (SummarizeForce::a::24)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 32942,
+          "session_id": "fbf69f90-a04f-4e51-956d-4d771f841bd4"
+        },
+        {
+          "where": "arm_outputs.jsonl row 75 (SummarizeForce::a::24)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "fbf69f90-a04f-4e51-956d-4d771f841bd4"
+        },
+        {
+          "where": "arm_outputs.jsonl row 75 (SummarizeForce::a::24)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 1307,
+          "session_id": "fbf69f90-a04f-4e51-956d-4d771f841bd4"
+        },
+        {
+          "where": "arm_outputs.jsonl row 76 (CollaborateForce::a::31)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 17050,
+            "completion_tokens": 190,
+            "cached_input_tokens": 0
+          },
+          "session_id": "84c4c29a-c303-4c7c-977f-64c08b0268ef"
+        },
+        {
+          "where": "arm_outputs.jsonl row 76 (CollaborateForce::a::31)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 17050,
+          "session_id": "84c4c29a-c303-4c7c-977f-64c08b0268ef"
+        },
+        {
+          "where": "arm_outputs.jsonl row 76 (CollaborateForce::a::31)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "84c4c29a-c303-4c7c-977f-64c08b0268ef"
+        },
+        {
+          "where": "arm_outputs.jsonl row 76 (CollaborateForce::a::31)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 190,
+          "session_id": "84c4c29a-c303-4c7c-977f-64c08b0268ef"
+        },
+        {
+          "where": "arm_outputs.jsonl row 77 (ConnectForce::a::15)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 19956,
+            "completion_tokens": 347,
+            "cached_input_tokens": 0
+          },
+          "session_id": "f6f9ac70-d9dd-4416-89a1-21399f2ba107"
+        },
+        {
+          "where": "arm_outputs.jsonl row 77 (ConnectForce::a::15)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 19956,
+          "session_id": "f6f9ac70-d9dd-4416-89a1-21399f2ba107"
+        },
+        {
+          "where": "arm_outputs.jsonl row 77 (ConnectForce::a::15)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "f6f9ac70-d9dd-4416-89a1-21399f2ba107"
+        },
+        {
+          "where": "arm_outputs.jsonl row 77 (ConnectForce::a::15)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 347,
+          "session_id": "f6f9ac70-d9dd-4416-89a1-21399f2ba107"
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 30524,
+            "completion_tokens": 210,
+            "cached_input_tokens": 0
+          },
+          "session_id": "43dd8511-6e8f-4b8c-83d5-430f05a1fddd"
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 30524,
+          "session_id": "43dd8511-6e8f-4b8c-83d5-430f05a1fddd"
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "43dd8511-6e8f-4b8c-83d5-430f05a1fddd"
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 210,
+          "session_id": "43dd8511-6e8f-4b8c-83d5-430f05a1fddd"
+        },
+        {
+          "where": "arm_outputs.jsonl row 79 (EdgeForce::a::14)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 31924,
+            "completion_tokens": 562,
+            "cached_input_tokens": 0
+          },
+          "session_id": "78f50f31-4f98-4849-953f-714fe8035b1d"
+        },
+        {
+          "where": "arm_outputs.jsonl row 79 (EdgeForce::a::14)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 31924,
+          "session_id": "78f50f31-4f98-4849-953f-714fe8035b1d"
+        },
+        {
+          "where": "arm_outputs.jsonl row 79 (EdgeForce::a::14)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "78f50f31-4f98-4849-953f-714fe8035b1d"
+        },
+        {
+          "where": "arm_outputs.jsonl row 79 (EdgeForce::a::14)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 562,
+          "session_id": "78f50f31-4f98-4849-953f-714fe8035b1d"
+        },
+        {
+          "where": "arm_outputs.jsonl row 80 (ExplainabilityForce::a::11)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 31786,
+            "completion_tokens": 411,
+            "cached_input_tokens": 0
+          },
+          "session_id": "56df0afd-a458-4b3b-9b29-ec222595c8e3"
+        },
+        {
+          "where": "arm_outputs.jsonl row 80 (ExplainabilityForce::a::11)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 31786,
+          "session_id": "56df0afd-a458-4b3b-9b29-ec222595c8e3"
+        },
+        {
+          "where": "arm_outputs.jsonl row 80 (ExplainabilityForce::a::11)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "56df0afd-a458-4b3b-9b29-ec222595c8e3"
+        },
+        {
+          "where": "arm_outputs.jsonl row 80 (ExplainabilityForce::a::11)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 411,
+          "session_id": "56df0afd-a458-4b3b-9b29-ec222595c8e3"
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 10080,
+            "completion_tokens": 394,
+            "cached_input_tokens": 0
+          },
+          "session_id": "9918e59a-ecfe-4a11-90fd-36e3e08c4de2"
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 10080,
+          "session_id": "9918e59a-ecfe-4a11-90fd-36e3e08c4de2"
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "9918e59a-ecfe-4a11-90fd-36e3e08c4de2"
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 394,
+          "session_id": "9918e59a-ecfe-4a11-90fd-36e3e08c4de2"
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 31775,
+            "completion_tokens": 443,
+            "cached_input_tokens": 0
+          },
+          "session_id": "303c9a3f-a85f-4938-8d6f-27030387389a"
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 31775,
+          "session_id": "303c9a3f-a85f-4938-8d6f-27030387389a"
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "303c9a3f-a85f-4938-8d6f-27030387389a"
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 443,
+          "session_id": "303c9a3f-a85f-4938-8d6f-27030387389a"
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 33432,
+            "completion_tokens": 320,
+            "cached_input_tokens": 0
+          },
+          "session_id": "da706b2f-1940-4c9b-bb20-bd44922093a2"
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 33432,
+          "session_id": "da706b2f-1940-4c9b-bb20-bd44922093a2"
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "da706b2f-1940-4c9b-bb20-bd44922093a2"
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 320,
+          "session_id": "da706b2f-1940-4c9b-bb20-bd44922093a2"
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 33451,
+            "completion_tokens": 545,
+            "cached_input_tokens": 0
+          },
+          "session_id": "f3febb5a-7071-4c79-9d3d-bcf31c1e7c87"
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 33451,
+          "session_id": "f3febb5a-7071-4c79-9d3d-bcf31c1e7c87"
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "f3febb5a-7071-4c79-9d3d-bcf31c1e7c87"
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 545,
+          "session_id": "f3febb5a-7071-4c79-9d3d-bcf31c1e7c87"
+        },
+        {
+          "where": "arm_outputs.jsonl row 85 (SentimentForce::a::29)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 32306,
+            "completion_tokens": 217,
+            "cached_input_tokens": 0
+          },
+          "session_id": "b8bf6385-0ca3-435a-9a50-6724b59cf129"
+        },
+        {
+          "where": "arm_outputs.jsonl row 85 (SentimentForce::a::29)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 32306,
+          "session_id": "b8bf6385-0ca3-435a-9a50-6724b59cf129"
+        },
+        {
+          "where": "arm_outputs.jsonl row 85 (SentimentForce::a::29)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "b8bf6385-0ca3-435a-9a50-6724b59cf129"
+        },
+        {
+          "where": "arm_outputs.jsonl row 85 (SentimentForce::a::29)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 217,
+          "session_id": "b8bf6385-0ca3-435a-9a50-6724b59cf129"
+        },
+        {
+          "where": "arm_outputs.jsonl row 86 (FeedbackForce::a::16)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 28439,
+            "completion_tokens": 168,
+            "cached_input_tokens": 0
+          },
+          "session_id": "efd5fecd-7358-4869-9108-4194f8f494e5"
+        },
+        {
+          "where": "arm_outputs.jsonl row 86 (FeedbackForce::a::16)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 28439,
+          "session_id": "efd5fecd-7358-4869-9108-4194f8f494e5"
+        },
+        {
+          "where": "arm_outputs.jsonl row 86 (FeedbackForce::a::16)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "efd5fecd-7358-4869-9108-4194f8f494e5"
+        },
+        {
+          "where": "arm_outputs.jsonl row 86 (FeedbackForce::a::16)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 168,
+          "session_id": "efd5fecd-7358-4869-9108-4194f8f494e5"
+        },
+        {
+          "where": "arm_outputs.jsonl row 87 (FeedbackForce::a::18)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 19094,
+            "completion_tokens": 197,
+            "cached_input_tokens": 0
+          },
+          "session_id": "5e3e6c3b-4562-4c96-a7c0-8a54ce87ad9b"
+        },
+        {
+          "where": "arm_outputs.jsonl row 87 (FeedbackForce::a::18)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 19094,
+          "session_id": "5e3e6c3b-4562-4c96-a7c0-8a54ce87ad9b"
+        },
+        {
+          "where": "arm_outputs.jsonl row 87 (FeedbackForce::a::18)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "5e3e6c3b-4562-4c96-a7c0-8a54ce87ad9b"
+        },
+        {
+          "where": "arm_outputs.jsonl row 87 (FeedbackForce::a::18)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 197,
+          "session_id": "5e3e6c3b-4562-4c96-a7c0-8a54ce87ad9b"
+        },
+        {
+          "where": "arm_outputs.jsonl row 88 (ActionGenie::a::1)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 28908,
+            "completion_tokens": 256,
+            "cached_input_tokens": 0
+          },
+          "session_id": "b7de7178-da55-44ec-bf8a-59161d26a94d"
+        },
+        {
+          "where": "arm_outputs.jsonl row 88 (ActionGenie::a::1)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 28908,
+          "session_id": "b7de7178-da55-44ec-bf8a-59161d26a94d"
+        },
+        {
+          "where": "arm_outputs.jsonl row 88 (ActionGenie::a::1)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "b7de7178-da55-44ec-bf8a-59161d26a94d"
+        },
+        {
+          "where": "arm_outputs.jsonl row 88 (ActionGenie::a::1)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 256,
+          "session_id": "b7de7178-da55-44ec-bf8a-59161d26a94d"
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 30841,
+            "completion_tokens": 331,
+            "cached_input_tokens": 0
+          },
+          "session_id": "1355557d-1a36-4194-97eb-38e250cce071"
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 30841,
+          "session_id": "1355557d-1a36-4194-97eb-38e250cce071"
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "1355557d-1a36-4194-97eb-38e250cce071"
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 331,
+          "session_id": "1355557d-1a36-4194-97eb-38e250cce071"
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 32807,
+            "completion_tokens": 338,
+            "cached_input_tokens": 0
+          },
+          "session_id": "cffdfd59-0641-44dc-a006-8ed9bb323388"
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 32807,
+          "session_id": "cffdfd59-0641-44dc-a006-8ed9bb323388"
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "cffdfd59-0641-44dc-a006-8ed9bb323388"
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 338,
+          "session_id": "cffdfd59-0641-44dc-a006-8ed9bb323388"
+        },
+        {
+          "where": "arm_outputs.jsonl row 91 (CoachForce::a::0)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 30780,
+            "completion_tokens": 286,
+            "cached_input_tokens": 0
+          },
+          "session_id": "b8cf5d5f-529d-445b-9bfd-844971d806e7"
+        },
+        {
+          "where": "arm_outputs.jsonl row 91 (CoachForce::a::0)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 30780,
+          "session_id": "b8cf5d5f-529d-445b-9bfd-844971d806e7"
+        },
+        {
+          "where": "arm_outputs.jsonl row 91 (CoachForce::a::0)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "b8cf5d5f-529d-445b-9bfd-844971d806e7"
+        },
+        {
+          "where": "arm_outputs.jsonl row 91 (CoachForce::a::0)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 286,
+          "session_id": "b8cf5d5f-529d-445b-9bfd-844971d806e7"
+        },
+        {
+          "where": "arm_outputs.jsonl row 92 (CollaborateForce::a::0)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 30401,
+            "completion_tokens": 220,
+            "cached_input_tokens": 0
+          },
+          "session_id": "9f777ec0-4167-46b3-8989-63b33421e085"
+        },
+        {
+          "where": "arm_outputs.jsonl row 92 (CollaborateForce::a::0)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 30401,
+          "session_id": "9f777ec0-4167-46b3-8989-63b33421e085"
+        },
+        {
+          "where": "arm_outputs.jsonl row 92 (CollaborateForce::a::0)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "9f777ec0-4167-46b3-8989-63b33421e085"
+        },
+        {
+          "where": "arm_outputs.jsonl row 92 (CollaborateForce::a::0)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 220,
+          "session_id": "9f777ec0-4167-46b3-8989-63b33421e085"
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 30287,
+            "completion_tokens": 283,
+            "cached_input_tokens": 0
+          },
+          "session_id": "f71707f1-191a-4229-9f70-be2e71a7ee10"
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 30287,
+          "session_id": "f71707f1-191a-4229-9f70-be2e71a7ee10"
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "f71707f1-191a-4229-9f70-be2e71a7ee10"
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 283,
+          "session_id": "f71707f1-191a-4229-9f70-be2e71a7ee10"
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 31273,
+            "completion_tokens": 303,
+            "cached_input_tokens": 0
+          },
+          "session_id": "a5d0c0a7-697b-4d83-a9bc-f85b9a45be00"
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 31273,
+          "session_id": "a5d0c0a7-697b-4d83-a9bc-f85b9a45be00"
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "a5d0c0a7-697b-4d83-a9bc-f85b9a45be00"
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 303,
+          "session_id": "a5d0c0a7-697b-4d83-a9bc-f85b9a45be00"
+        },
+        {
+          "where": "arm_outputs.jsonl row 95 (ContentForce::a::0)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 31552,
+            "completion_tokens": 371,
+            "cached_input_tokens": 0
+          },
+          "session_id": "d7acf3ea-dc8a-4496-8156-8445b9aa7ed7"
+        },
+        {
+          "where": "arm_outputs.jsonl row 95 (ContentForce::a::0)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 31552,
+          "session_id": "d7acf3ea-dc8a-4496-8156-8445b9aa7ed7"
+        },
+        {
+          "where": "arm_outputs.jsonl row 95 (ContentForce::a::0)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "d7acf3ea-dc8a-4496-8156-8445b9aa7ed7"
+        },
+        {
+          "where": "arm_outputs.jsonl row 95 (ContentForce::a::0)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 371,
+          "session_id": "d7acf3ea-dc8a-4496-8156-8445b9aa7ed7"
+        },
+        {
+          "where": "arm_outputs.jsonl row 96 (ContextForce::a::0)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 30949,
+            "completion_tokens": 201,
+            "cached_input_tokens": 0
+          },
+          "session_id": "b1d2a1ff-96fb-4dc9-8535-c8cf9ee90104"
+        },
+        {
+          "where": "arm_outputs.jsonl row 96 (ContextForce::a::0)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 30949,
+          "session_id": "b1d2a1ff-96fb-4dc9-8535-c8cf9ee90104"
+        },
+        {
+          "where": "arm_outputs.jsonl row 96 (ContextForce::a::0)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "b1d2a1ff-96fb-4dc9-8535-c8cf9ee90104"
+        },
+        {
+          "where": "arm_outputs.jsonl row 96 (ContextForce::a::0)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 201,
+          "session_id": "b1d2a1ff-96fb-4dc9-8535-c8cf9ee90104"
+        },
+        {
+          "where": "arm_outputs.jsonl row 97 (EdgeForce::a::0)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 30467,
+            "completion_tokens": 287,
+            "cached_input_tokens": 0
+          },
+          "session_id": "0a63e912-f1e6-4288-851b-0e76d9dfb3b7"
+        },
+        {
+          "where": "arm_outputs.jsonl row 97 (EdgeForce::a::0)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 30467,
+          "session_id": "0a63e912-f1e6-4288-851b-0e76d9dfb3b7"
+        },
+        {
+          "where": "arm_outputs.jsonl row 97 (EdgeForce::a::0)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "0a63e912-f1e6-4288-851b-0e76d9dfb3b7"
+        },
+        {
+          "where": "arm_outputs.jsonl row 97 (EdgeForce::a::0)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 287,
+          "session_id": "0a63e912-f1e6-4288-851b-0e76d9dfb3b7"
+        },
+        {
+          "where": "arm_outputs.jsonl row 98 (ExplainabilityForce::a::0)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 29888,
+            "completion_tokens": 406,
+            "cached_input_tokens": 0
+          },
+          "session_id": "0e531256-338a-4799-bab9-60af9d54ed0e"
+        },
+        {
+          "where": "arm_outputs.jsonl row 98 (ExplainabilityForce::a::0)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 29888,
+          "session_id": "0e531256-338a-4799-bab9-60af9d54ed0e"
+        },
+        {
+          "where": "arm_outputs.jsonl row 98 (ExplainabilityForce::a::0)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "0e531256-338a-4799-bab9-60af9d54ed0e"
+        },
+        {
+          "where": "arm_outputs.jsonl row 98 (ExplainabilityForce::a::0)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 406,
+          "session_id": "0e531256-338a-4799-bab9-60af9d54ed0e"
+        },
+        {
+          "where": "arm_outputs.jsonl row 99 (FeedbackForce::a::0)",
+          "field": "calls[0].usage",
+          "recorded": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cached_input_tokens": 0
+          },
+          "corrected": {
+            "prompt_tokens": 29850,
+            "completion_tokens": 284,
+            "cached_input_tokens": 0
+          },
+          "session_id": "16320897-bad9-49b2-b62c-dc99fb79c5b2"
+        },
+        {
+          "where": "arm_outputs.jsonl row 99 (FeedbackForce::a::0)",
+          "field": "generator.tokens_in",
+          "recorded": 0,
+          "corrected": 29850,
+          "session_id": "16320897-bad9-49b2-b62c-dc99fb79c5b2"
+        },
+        {
+          "where": "arm_outputs.jsonl row 99 (FeedbackForce::a::0)",
+          "field": "generator.cached_input_tokens",
+          "recorded": 0,
+          "corrected": 0,
+          "session_id": "16320897-bad9-49b2-b62c-dc99fb79c5b2"
+        },
+        {
+          "where": "arm_outputs.jsonl row 99 (FeedbackForce::a::0)",
+          "field": "generator.tokens_out",
+          "recorded": 0,
+          "corrected": 284,
+          "session_id": "16320897-bad9-49b2-b62c-dc99fb79c5b2"
+        }
+      ],
+      "checks": [
+        {
+          "what": "every answer call corrected has counts for its one model in its own reply",
+          "holds": true,
+          "looked_at": 40
+        },
+        {
+          "what": "those counts are the CLI's own transcript of the call, by session_id",
+          "holds": true,
+          "looked_at": 40
+        }
+      ],
+      "evidence": {
+        "file": "cli_transcript_usage.json",
+        "sha256": "088f7fde383d7cdbdb4eda9a144af863f572cc2798ad9eedade6ceab8fbdf245",
+        "what": "the CLI's own transcript counts of each corrected call, read on the machine that made the calls"
+      },
+      "files": {
+        "arm_outputs.jsonl": {
+          "sha256_before": "c7fed810e4cd61efb0298e55622333a0bffc3291d3db20de81206ce334634797",
+          "sha256_corrected": "cc130175ed73983b198dbe72c6bb32947737dad3d9f0ca6b6223166e767173a6",
+          "as_recorded": "arm_outputs.as_recorded.jsonl"
+        }
+      },
+      "script": "correct_zero_usage.py, in this folder"
+    }
+  ]
+}
