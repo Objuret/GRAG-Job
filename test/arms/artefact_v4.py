@@ -57,30 +57,21 @@ Per question:
      is the ways it is tied, added over
      the chosen chunks. The order: the chosen chunks, then the rest of the clouds by strength,
      equals in the clouds' order, then everything outside the clouds as the clouds order it.
-  8. What is handed over (2026-10-13, the agent's find, `_hand_over`): in that order, each chunk
-     without the records that are not the product's own work, and a conversation whole where it
-     first shows. From the graph's people (`product_persons`, read through the person-to-chunk
-     edges): a channel none of whose employees is tied to another channel or to a meeting of the
-     product is apart; a pull request is the product's own when its author is one of the
-     product's people. From the links in the messages: a conversation is left out when a message
-     of it links to a pull request that is not the product's own and none links to an own pull
-     request or a document of the product. The author, a message's links and its time are fields
-     of the records, read through the chunk's pointer.
+  8. What is handed over (`_hand_over`): in that order, every record of each chunk, and a Slack
+     conversation whole where it first shows (a channel's messages between its long gaps, each
+     message at its own time, read through the chunk's pointer). Nothing is left out (his
+     2026-10-23 "yes, remove them", on leaving out a channel apart, other projects' pull requests
+     and talk about another project's pull request).
      A chosen chunk that is a part of a split document or transcript goes in as its whole record,
      once, at its place (his 2026-10-22 "this continued document chunks is the "other half" of
      the slack", "chosen it is"); any other part goes in as only that part.
-     After a chosen chunk, the records its records link to go in, each once and whole, whatever
-     the kinds (his 2026-10-22 "IF THERE ARE LINKS, they can be followed", "the point is to NOT
-     OVERFIT"): a link points at the pool records whose address it is, and a field is an address
-     of its section when it holds only a link in every record of the section that has it.
   9. The harness's cut at the character budget is applied to what is handed over; the texts then
      reach the model in pointer order (his 2026-10-22 "after the 72k cut, but before the model gets
      it"), and the row keeps them in the arm's order, which RAGAS reads as their rank.
 Everything the order is made of is asked of the graph for each question (his 2026-10-07 "it MUST
 be asked of the DB", `_ask_graph`): the border's chunks with their pointers, the eligible tags on
 them with their edges' facet values, every closeness (the graph's own cosine of its stored
-vectors and the query side's), the people of the border's products and the
-4-combo's ties. The start of a run only checks and counts the graph (`prepare_over_corpus`).
+vectors and the query side's) and the 4-combo's ties. The start of a run only checks and counts the graph (`prepare_over_corpus`).
 Each delivered chunk keeps, as pointers, the query tag and graph tag of the edge that gave its
 closeness through the tags as the order used it, its nearness on each side, how it is tied to
 the chosen chunks and the records behind it.
@@ -185,33 +176,6 @@ RETURN t.name AS tag, edges,
        [v IN $vectors | 2 * vector.similarity.cosine(t.emb, v) - 1] AS closeness
 ORDER BY tag
 '''
-# The graph's people: which employees post in which channel of a product, and which sit in its
-# meetings, read through the chunks they are tied to (`test/graph/build_person_edges.py`; his
-# 2026-10-17 "persons edges shouldnt go to scope directly, but to chunks instead"), asked per
-# question for the border's products. What is made of them is `product_persons`.
-CHANNEL_PEOPLE_CYPHER = '''
-MATCH (p:Product)-[:slack]->(ch:Channel) WHERE p.name IN $products
-OPTIONAL MATCH (e:Employee)-[:chunk]->(:Chunk)-[:channel]->(ch)
-RETURN p.name AS product, ch.id AS channel, collect(DISTINCT e.eid) AS people
-'''
-
-# Per question, every pool chunk's file and record pointer: where a link a record carries can point
-# (`_addresses`).
-POOL_POINTERS_CYPHER = f'''
-MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk) WHERE {POOL}
-RETURN f.rel_path AS relpath, f.sha256 AS sha256, c.locator_json AS locator
-ORDER BY relpath, locator
-'''
-
-MEETING_PEOPLE_CYPHER = '''
-MATCH (e:Employee)-[:chunk]->(c:Chunk)-[:product]->(p:Product)
-WHERE p.name IN $products AND c.kind IN ['meeting_transcript', 'meeting_transcript_part']
-RETURN p.name AS product, collect(DISTINCT e.eid) AS people
-'''
-PERSON_PRODUCTS_CYPHER = f'''
-MATCH (c:Chunk)-[:product]->(p:Product) WHERE {POOL}
-RETURN collect(DISTINCT p.name) AS products
-'''
 # The 4-combo's graph side, asked per question: per chosen chunk and other chunk of the border,
 # whether they sit under the same parent, whether a person is tied to both, and the gap in time:
 # the smallest gap in seconds between a record of the one and a record of the other, from each
@@ -271,7 +235,6 @@ MATCH (n) WHERE n.name_keys IS NOT NULL
 RETURN labels(n)[0] AS label, count(n) AS nodes ORDER BY label
 '''
 CUSTOMER_EDGE_CYPHER = 'MATCH (:Customer)-[r:chunk]->(:Chunk) RETURN count(r) AS edges'
-LINK = re.compile(r'https?://[^\s"\'<>\)\]|]+')
 
 # The harness writes this into the run manifest.
 RETRIEVAL_FLAGS = {
@@ -319,19 +282,12 @@ RETRIEVAL_FLAGS = {
         "chunk's strength is the ways it is tied, "
         'added over the chosen chunks; the order is the chosen chunks, then the rest of the clouds by '
         "strength, equals in the clouds' order, then everything outside the clouds as the clouds "
-        'order it. What is handed over, in that order (`_hand_over`): no message of a channel apart; of a batch of pull requests only the '
-        'product\'s own; of a batch of Slack messages only the conversations that are not about '
-        'another project\'s pull request, each conversation whole where it first shows; any other '
-        'chunk as it is. From the graph (`product_persons`, through the person-to-chunk edges): a '
-        'channel is apart when it has employees and none of them is tied to another channel or to a '
-        'meeting of the product; the product\'s people are the employees of its other channels and '
-        'of its meetings. From the records, through the chunk\'s pointer: a pull request is the '
-        'product\'s own when its author is one of the product\'s people; a conversation is a '
-        'channel\'s messages between its long gaps (`v4_walk.conversations`, no length given); it '
-        'is about another project\'s when a message of it links to a pull request that is not the '
-        'product\'s own and none links to an own pull request or to a document of the product. The '
-        'handing over is the agent\'s find, read off the benchmark\'s own account of the distraction '
-        'it holds (arXiv 2506.23139), not his concept; it never reads the question.'),
+        'order it. What is handed over, in that order (`_hand_over`): every record of each chunk; of '
+        'a batch of Slack messages its conversations, each whole where it first shows (a '
+        "conversation is a channel's messages between its long gaps, `v4_walk.conversations`, no "
+        'length given, read through the chunk\'s pointer); of a part of a split document or '
+        'transcript that is a chosen chunk its whole record, once, at its place, of any other part '
+        'only that part; nothing is left out.'),
 }
 # What was left out of the data this arm rests on, and on whose word (harness.fields, FIELDS.md):
 # his words quoted with their time, or that no rule of his is recorded.
@@ -390,11 +346,6 @@ FIELDS = {
                                                'name_keys the question is matched against.'),
                 'customer_chunk_edges': 'Edges from a customer to a chunk whose records carry '
                                         "the customer's id.",
-                'channels_apart': "Channels the graph's people set apart: a channel with "
-                                  'employees none of whom is tied to another channel or to a '
-                                  'meeting of its product.',
-                'people': "Employees tied to a product's channel that is not apart or to its "
-                          'meetings, counted once a product.',
                 'chunks_with_a_time': "Chunks of the pool that carry their records' own times in "
                                       'the graph (times).',
             }),
@@ -602,46 +553,24 @@ FIELDS = {
                                                  'rest of a conversation this chunk holds a '
                                                  'part of.',
             'delivered_records_not_handed_over': "How many of the chunk's own records were not "
-                                                 "handed over with it: not the product's own "
-                                                 'work, or handed over before with another '
-                                                 'chunk.',
+                                                 'handed over with it: they went in before, with '
+                                                 'another chunk.',
         }),
-        'handed_over': sub("What of the ordered chunks was handed over and what was left out. "
-                           "The counts are over the chunks gone through until the budget was "
-                           "full.", {
-            'products': whole("Per product of the border, what the graph's people say: the ids "
-                              'of its channels apart, and how many people the product has.'),
+        'handed_over': sub("What of the ordered chunks was handed over. The counts are over the "
+                           "chunks gone through until the budget was full.", {
             'chunks_gone_through': 'How many chunks of the order were gone through.',
             'chunks_with_nothing_handed_over': sub('Of those, the chunks nothing was handed '
                                                    'over of.', {
-                'in_a_channel_apart': 'All its messages lie in a channel apart.',
-                'no_own_pull_request': "A batch of pull requests none of which is the "
-                                       "product's own.",
-                'no_conversation_left': "A batch of messages whose conversations are about "
-                                        "another project's pull request or were handed over "
-                                        'before with another chunk.',
-                'all_already_handed_over': 'A chunk whose records all went in before, linked '
-                                           'from a chosen chunk or with another chunk.',
-            }),
-            'records_left_out': sub("Records of those chunks left out: a channel apart and "
-                                    "other projects' pull requests by the graph's people, talk "
-                                    "about another project's pull request by the links in its "
-                                    'messages.', {
-                'messages_of_a_channel_apart': 'Messages of a channel apart.',
-                'pull_requests_of_other_projects': "Pull requests whose author is not one of "
-                                                   "the product's people.",
-                'messages_about_another_projects_pull_request':
-                    "Messages of a conversation that links to another project's pull request "
-                    'and to no own pull request or document.',
+                'conversations_handed_over_before': 'A batch of messages whose conversations '
+                                                    'all went in before, with another chunk.',
+                'record_handed_over_before': 'A part of a split document or transcript whose '
+                                             'whole record went in before.',
             }),
             'conversations_handed_over': 'Conversations handed over whole, in the texts that '
                                          'went in whole (not the one cut at the budget).',
             'conversations_reaching_into_another_chunk': 'Of those, the conversations with '
                                                          'messages in another chunk than the '
                                                          'one they first showed in.',
-            'linked_records_handed_over': "The records that a chosen chunk's records link to, "
-                                          'whatever the kinds, handed over right after it, in the '
-                                          'texts that went in whole.',
         }),
         'diagnostics': sub('Counts that say how the order came about.', {
             'credited_delivered_rows': 'How many texts went in whole before the budget ended.',
@@ -748,43 +677,13 @@ class Asked:
     product and channels, the eligible graph tags on them with their edges as a layer
     (`v4_walk.build_layer`), the query tags' closeness to those tags, the
     chunk descriptions' closeness to the question without the names, the question and the
-    description, and the people of the border's products."""
+    description."""
     chunk_rows: tuple
     chunk_ids: tuple
     graph_tags: tuple
     layer: dict
     tag_cosines: np.ndarray
     description_closeness: np.ndarray
-    persons: dict
-    pool_pointers: tuple = ()
-
-
-def product_persons(channel_rows, meeting_rows):
-    """What the graph's people say about each product (his 2026-10-11 "things related to
-    persons ... nothing at all is actually using the graph").
-
-    channel_rows: per channel of a product the employees that post in it; meeting_rows: per
-    product the employees that sit in its meetings. A channel is apart when it has employees
-    and none of them posts in another channel of the product or sits in one of its meetings (a
-    team that works on nothing else of the product). The product's people are the employees of
-    its other channels and of its meetings. Returns product -> the ids of its channels apart
-    and its people. No name of a channel or a person is read and no number is given."""
-    channels, meetings = {}, {}
-    for row in channel_rows:
-        channels.setdefault(str(row['product']), {})[str(row['channel'])] = frozenset(
-            str(e) for e in row['people'] if e is not None)
-    for row in meeting_rows:
-        meetings[str(row['product'])] = frozenset(str(e) for e in row['people'] if e is not None)
-    out = {}
-    for product in sorted(set(channels) | set(meetings)):
-        held, met = channels.get(product, {}), meetings.get(product, frozenset())
-        apart = frozenset(
-            channel for channel, who in held.items()
-            if who and not who & met.union(*(w for other, w in held.items() if other != channel)))
-        out[product] = {'apart': apart,
-                        'people': met.union(*(w for channel, w in held.items()
-                                              if channel not in apart))}
-    return out
 
 
 def _plain(text):
@@ -882,55 +781,27 @@ def _seconds(stamp):
     return (when.replace(tzinfo=None) - datetime(1970, 1, 1)).total_seconds()
 
 
-def _links(text):
-    """The links a text holds, as they are compared: lower case, no closing mark or slash."""
-    return {found.rstrip('.,;:!?').rstrip('/').lower() for found in LINK.findall(str(text))}
+def _conversations(inside, asked, doc_cache):
+    """The conversations the Slack messages behind the border's chunks form, read through each
+    chunk's pointer: a channel's messages between its long gaps (`v4_walk.conversations`), each
+    message at its own time (a message's channel is its record's; the graph ties a chunk to that
+    channel, and to two where two channels bear one name).
 
-
-def own_work(inside, asked, doc_cache):
-    """Which records behind the border's chunks are the product's own work, and the
-    conversations its messages form. The graph's people say whose a thing is (`product_persons`);
-    the author of a pull request, a message's links and its time are fields of the records,
-    read through each chunk's pointer.
-
-    apart     the messages in a channel apart (a message's channel is its record's; the graph
-              ties a chunk to that channel, and to two where two channels bear one name)
-    own       per pull request id whether its author is one of the product's people
-    talk      per message id its conversation: a channel's messages between its long gaps
-              (`v4_walk.conversations`)
+    talk      per message id its conversation
     messages  per conversation its messages, in the order written
-    other     the conversations about another project's pull request: a message links to a
-              pull request that is not the product's own, and none links to an own pull request
-              or to a document of the product
     """
-    if asked.persons is None:
-        raise ValueError("The graph's people were not read for this question")
     rows = asked.chunk_rows
-    apart, own, talk, messages, other = set(), {}, {}, {}, set()
-    channels, things = {}, {}
+    talk, messages, channels = {}, {}, {}
     for i in inside:
         row = rows[i]
-        product, kind = row['product'], row['kind']
-        who = asked.persons[product]
-        if kind == 'slack_thread_batch':
-            for record in _pointed_records(row, doc_cache):
-                channel = str(record['Channel']['channelID'])
-                if channel not in row['channels']:
-                    raise ValueError(f'A message of the Slack chunk {row["chunkId"]} lies in a '
-                                     'channel the graph does not tie the chunk to')
-                if channel in who['apart']:
-                    apart.add(str(record['id']))
-                else:
-                    channels.setdefault((product, channel), {})[str(record['id'])] = record
-        elif kind == 'pr_batch':
-            for record in _pointed_records(row, doc_cache):
-                mine = str(record['user']['login']) in who['people']
-                own[str(record['id'])] = mine
-                things.setdefault(product, {}).update(dict.fromkeys(_links(record['link']), mine))
-        elif kind in ('document', 'document_part'):
-            for record in _pointed_records(row, doc_cache):
-                things.setdefault(product, {}).update(
-                    dict.fromkeys(_links(record['document_link']), True))
+        if row['kind'] != 'slack_thread_batch':
+            continue
+        for record in _pointed_records(row, doc_cache):
+            channel = str(record['Channel']['channelID'])
+            if channel not in row['channels']:
+                raise ValueError(f'A message of the Slack chunk {row["chunkId"]} lies in a '
+                                 'channel the graph does not tie the chunk to')
+            channels.setdefault((row['product'], channel), {})[str(record['id'])] = record
     for (product, channel), held in channels.items():
         line = sorted(held.values(),
                       key=lambda r: (_seconds(r['Message']['User']['timestamp']), str(r['id'])))
@@ -939,14 +810,7 @@ def own_work(inside, asked, doc_cache):
             key = (product, channel, number)
             talk[str(record['id'])] = key
             messages.setdefault(key, []).append(record)
-        known = things.get(product, {})
-        for number in sorted(set(numbers.tolist())):
-            key = (product, channel, number)
-            linked = {known[link] for record in messages[key]
-                      for link in _links(record['Message']['User']['text']) if link in known}
-            if linked == {False}:
-                other.add(key)
-    return {'apart': apart, 'own': own, 'talk': talk, 'messages': messages, 'other': other}
+    return {'talk': talk, 'messages': messages}
 
 
 BUILD_COST = ROOT / 'test/graph/build_cost.json'
@@ -1129,87 +993,17 @@ def _pointer(rows, unit, doc_cache):
             unit['part'][1] if 'part' in unit else 0)
 
 
-def _strings(value, path=''):
-    """Every text a record holds, with the path of its field (a list's items share one path)."""
-    if isinstance(value, dict):
-        for key, inner in value.items():
-            yield from _strings(inner, f'{path}/{key}')
-    elif isinstance(value, list):
-        for inner in value:
-            yield from _strings(inner, f'{path}/*')
-    elif isinstance(value, str):
-        yield path, value
-
-
-def _only_a_link(text):
-    return LINK.fullmatch(text.strip()) is not None
-
-
-def _addresses(pool_pointers, doc_cache):
-    """Where a link can point: every record behind a pool chunk, by its address. A field is an
-    address of its section when it holds only a link in every record of the section that has it;
-    no name of a field or a kind of record is given. Returns link -> [(section, record)] and the
-    address fields per section."""
-    if 'addresses' in doc_cache:
-        return doc_cache['addresses']
-    records = {}
-    for relpath, sha256, locator in pool_pointers:
-        loc = json.loads(locator)
-        held = _load_verified_doc(relpath, sha256, doc_cache)[loc['section']]
-        for i in loc['indices'] if 'indices' in loc else [loc['index']]:
-            records.setdefault((relpath, loc['section'], i), held[i])
-    seen, alone = Counter(), Counter()
-    for (_, section, _), record in records.items():
-        texts = {}
-        for path, text in _strings(record):
-            if text.strip():
-                texts.setdefault(path, []).append(text)
-        for path, held in texts.items():
-            seen[section, path] += 1
-            alone[section, path] += all(_only_a_link(text) for text in held)
-    fields = {}
-    for (section, path), n in seen.items():
-        if alone[section, path] == n:
-            fields.setdefault(section, set()).add(path)
-    found = {}
-    for (_, section, _), record in records.items():
-        for path, text in _strings(record):
-            if path in fields.get(section, ()):
-                for link in _links(text):
-                    found.setdefault(link, []).append((section, record))
-    doc_cache['addresses'] = found, fields
-    return found, fields
-
-
-def _linked(section, records, pool_pointers, doc_cache):
-    """The records that the given records link to, whatever the kinds (his 2026-10-22 "IF THERE
-    ARE LINKS, they can be followed"): every link a record carries outside its own address fields,
-    in the order the records stand, to every record of the pool whose address it is (`_addresses`),
-    a record never to itself; matched as the arm matches links (`_links`)."""
-    found, fields = _addresses(pool_pointers, doc_cache)
-    out = []
-    for record in records:
-        for link in sorted({link for path, text in _strings(record)
-                            if path not in fields.get(section, ()) for link in _links(text)}):
-            for linked_section, linked in found.get(link, ()):
-                if linked is not record:
-                    out.append((linked_section, linked))
-    return out
-
-
 def _hand_over(order, asked, char_budget, k, doc_cache, chosen=frozenset()):
     """What is handed over of the ordered chunks, and the record of it (the step as it stands).
 
-    In the order: no message of a channel apart; of a batch of pull requests only the
-    product's own; of a batch of Slack messages the conversations that are not about another
-    project's pull request, each whole where it first shows (its messages in other chunks come
-    with it and are not handed over again); of a part of a split document or transcript that is
-    one of the chosen chunks its whole record, once, at its place (the record's other parts come
-    with it; his 2026-10-22 "autoinclude chunks that are part of the same split object from the
-    strongest chunks", "chosen it is"), of any other part only that part, not credited; any other
-    chunk as it is, its records not handed over again. After a chosen chunk, the records its records
-    link to, whatever the kinds, each once and whole (`_linked`; the link is a pointer the record
-    carries). Every record is written as lucene and vector write theirs (`_record_texts`).
+    In the order: of a batch of Slack messages its conversations, each whole where it first
+    shows (`_conversations`; its messages in other chunks come with it and are not handed over
+    again); of a part of a split document or transcript that is one of the chosen chunks its
+    whole record, once, at its place (the record's other parts come with it; his 2026-10-22
+    "autoinclude chunks that are part of the same split object from the strongest chunks",
+    "chosen it is"), of any other part only that part, not credited; any other chunk with all
+    its records. Nothing is left out (his 2026-10-23 "yes, remove them"). Every record is
+    written as lucene and vector write theirs (`_record_texts`).
     The harness's cut is applied to these texts (`cut_at_budget`); with no budget the first k are
     handed over. The model reads the texts in pointer order (`_pointer`; his 2026-10-22 "after
     the 72k cut, but before the model gets it"); they are returned in the arm's order, which RAGAS
@@ -1225,9 +1019,9 @@ def _hand_over(order, asked, char_budget, k, doc_cache, chosen=frozenset()):
     chunks handed over whole, and what a row keeps of it with the order the model reads the texts
     in (`reading_order`)."""
     rows = asked.chunk_rows
-    book = own_work(order, asked, doc_cache)
+    book = _conversations(order, asked, doc_cache)
     units, seen, given = [], set(), set()
-    nothing, left = Counter(), Counter()
+    nothing = Counter()
     gone = [0]
 
     def stream():
@@ -1236,49 +1030,26 @@ def _hand_over(order, asked, char_budget, k, doc_cache, chosen=frozenset()):
             gone[0] += 1
             if kind == 'slack_thread_batch':
                 held = [str(record['id']) for record in _pointed_records(row, doc_cache)]
-                mine = [m for m in held if m not in book['apart']]
-                left['messages_of_a_channel_apart'] += len(held) - len(mine)
-                if not mine:
-                    nothing['in_a_channel_apart'] += 1
-                    continue
-                here = list(dict.fromkeys(book['talk'][m] for m in mine))
-                left['messages_about_another_projects_pull_request'] += sum(
-                    1 for m in mine if book['talk'][m] in book['other'])
-                new = [t for t in here if t not in book['other'] and t not in seen]
+                here = list(dict.fromkeys(book['talk'][m] for m in held))
+                new = [t for t in here if t not in seen]
                 if not new:
-                    nothing['no_conversation_left'] += 1
+                    nothing['conversations_handed_over_before'] += 1
                     continue
                 seen.update(new)
-                section, records = 'slack', [record for t in new for record in book['messages'][t]
-                                             if str(record['id']) not in given]
-                if not records:
-                    nothing['all_already_handed_over'] += 1
-                    continue
+                section, records = 'slack', [record for t in new for record in book['messages'][t]]
                 ids = [str(record['id']) for record in records]
-                unit = {'chunk': i, 'ids': ids, 'of_other_chunks': len(set(ids) - set(mine)),
+                unit = {'chunk': i, 'ids': ids, 'of_other_chunks': len(set(ids) - set(held)),
                         'not_handed_over': len(set(held) - set(ids)), 'conversations': len(new),
                         'reaching': sum(1 for t in new if any(
-                            str(record['id']) not in mine for record in book['messages'][t]))}
-            elif kind == 'pr_batch':
-                held = _pointed_records(row, doc_cache)
-                own = [record for record in held if book['own'][str(record['id'])]]
-                left['pull_requests_of_other_projects'] += len(held) - len(own)
-                section, records = 'prs', [record for record in own if str(record['id']) not in given]
-                if not records:
-                    nothing['no_own_pull_request' if not own else 'all_already_handed_over'] += 1
-                    continue
-                unit = {'chunk': i, 'ids': [str(record['id']) for record in records],
-                        'of_other_chunks': 0, 'not_handed_over': len(held) - len(records)}
+                            str(record['id']) not in held for record in book['messages'][t]))}
             else:
                 # a part of a split record points at the whole record (`_pointed`)
                 section, records, part = _pointed(row, doc_cache)
                 unit = {'chunk': i, 'ids': list(dict.fromkeys(str(r['id']) for r in records)),
                         'of_other_chunks': 0, 'not_handed_over': 0}
-                if part is None and set(unit['ids']) <= given:
-                    nothing['all_already_handed_over'] += 1
-                    continue
                 if part is not None:
                     if unit['ids'][0] in given:
+                        nothing['record_handed_over_before'] += 1
                         continue
                     if i not in chosen:
                         # a part ends its record when its range reaches the end of the long field
@@ -1292,20 +1063,7 @@ def _hand_over(order, asked, char_budget, k, doc_cache, chosen=frozenset()):
             unit.update(section=section,
                         ends=list(zip((str(record['id']) for record in records), ends)))
             units.append(unit)
-            given.update(unit['ids'])
             yield row['chunkId'], text
-            if i in chosen:
-                for linked_section, linked in _linked(section, records, asked.pool_pointers,
-                                                      doc_cache):
-                    rid = str(linked['id'])
-                    if rid in given:
-                        continue
-                    given.add(rid)
-                    linked_text = record_text(linked_section, linked)
-                    units.append({'chunk': i, 'ids': [rid], 'of_other_chunks': 1,
-                                  'not_handed_over': 0, 'linked': True, 'section': linked_section,
-                                  'ends': [(rid, len(linked_text))]})
-                    yield row['chunkId'], linked_text
 
     if char_budget is not None:
         cut = cut_at_budget(stream(), char_budget)
@@ -1325,22 +1083,14 @@ def _hand_over(order, asked, char_budget, k, doc_cache, chosen=frozenset()):
     context_ids = list(dict.fromkeys(credited))
     placed = sorted(range(len(texts)), key=lambda n: (_pointer(rows, units[n], doc_cache), n))
     delivered = [unit['chunk'] for unit in whole]
-    products = sorted({rows[i]['product'] for i in order})
     record = {
-        'products': {name: {'channels_apart': sorted(asked.persons[name]['apart']),
-                            'people': len(asked.persons[name]['people'])} for name in products},
         'chunks_gone_through': gone[0],
         'chunks_with_nothing_handed_over': {name: nothing[name] for name in (
-            'in_a_channel_apart', 'no_own_pull_request', 'no_conversation_left',
-            'all_already_handed_over')},
-        'records_left_out': {name: left[name] for name in (
-            'messages_of_a_channel_apart', 'pull_requests_of_other_projects',
-            'messages_about_another_projects_pull_request')},
+            'conversations_handed_over_before', 'record_handed_over_before')},
         # counted over the texts that went in whole, not the one cut at the budget
         'conversations_handed_over': sum(unit.get('conversations', 0) for unit in whole),
         'conversations_reaching_into_another_chunk': sum(unit.get('reaching', 0)
                                                          for unit in whole),
-        'linked_records_handed_over': sum(1 for unit in whole if unit.get('linked')),
     }
     per_chunk = {'delivered_records': [len(unit['ids']) for unit in whole],
                  'delivered_records_of_other_chunks': [unit['of_other_chunks'] for unit in whole],
@@ -1354,8 +1104,8 @@ def prepare_over_corpus(corpus) -> Prepared:
     MUST be asked of the DB"; every question asks the graph for its own, `_ask_graph`). The edges'
     facet values are read whole once to check they are the ones the FacetLayer node was written
     with (`graph_layer.read`); the topic value on each edge is checked against the cosine of its
-    two vectors in the graph; and the structure names, the customer edges, the chunks' times and
-    every pool product's people must be in the graph. A
+    two vectors in the graph; and the structure names, the customer edges and the chunks' times
+    must be in the graph. A
     graph tag that is a product's name is structure, not a tag to match: the products' names
     are kept to leave those tags out."""
     started = time.perf_counter()
@@ -1378,13 +1128,6 @@ def prepare_over_corpus(corpus) -> Prepared:
             counts = session.execute_read(lambda tx: tx.run(
                 COUNTS_CYPHER, run=RUN_ID, products=folded).single().data())
             dim = session.execute_read(lambda tx: tx.run(DIM_CYPHER).single()['dim'])
-            pool_products = session.execute_read(lambda tx: tx.run(
-                PERSON_PRODUCTS_CYPHER, run=RUN_ID).single()['products'])
-            persons = product_persons(
-                session.execute_read(lambda tx: [dict(r) for r in tx.run(
-                    CHANNEL_PEOPLE_CYPHER, products=pool_products)]),
-                session.execute_read(lambda tx: [dict(r) for r in tx.run(
-                    MEETING_PEOPLE_CYPHER, products=pool_products)]))
             timed = session.execute_read(lambda tx: tx.run(TIME_CYPHER).single().data())
             named = session.execute_read(lambda tx: {r['label']: r['nodes']
                                                      for r in tx.run(NAMES_CYPHER)})
@@ -1407,9 +1150,6 @@ def prepare_over_corpus(corpus) -> Prepared:
                          'test/graph/build_structure_names.py write')
     if not customer_edges:
         raise ValueError('No customer is tied to a chunk: run test/graph/build_customer_edges.py write')
-    missing = sorted(set(pool_products) - set(persons))
-    if missing:
-        raise ValueError(f'The graph names no channel and no meeting for {missing}')
     say(f'artefact_v4: names to match the question against: {named}; {customer_edges} customer '
         'edges to chunks')
     paths = [Path(__file__), ROOT / 'test/artefact/v4_walk.py',
@@ -1430,8 +1170,6 @@ def prepare_over_corpus(corpus) -> Prepared:
                    'chunks_with_an_eligible_edge': int(counts['chunks_with_an_eligible_edge']),
                    'named_structure_nodes': named,
                    'customer_chunk_edges': int(customer_edges),
-                   'channels_apart': sum(len(p['apart']) for p in persons.values()),
-                   'people': sum(len(p['people']) for p in persons.values()),
                    'chunks_with_a_time': int(timed['with_a_time'])},
         'source_sha256': {str(p.relative_to(ROOT)): _sha(_as_in_git(p.read_bytes()))
                           for p in paths},
@@ -1575,8 +1313,7 @@ def _ask_graph(chunk_ids, tag_vectors, text_vectors, prepared):
     asked of the DB"; `QUESTION_CHUNKS_CYPHER`, `QUESTION_TAGS_CYPHER`): the border's chunks with
     their record pointer, product and channels, and their descriptions' closeness to each text
     vector; the eligible graph tags on them with each tag's closeness to each query tag vector and
-    its edges' five values, in the order of chunk id and tag; the people of the border's products
-    (`product_persons`). Returns an `Asked`."""
+    its edges' five values, in the order of chunk id and tag. Returns an `Asked`."""
     chunk_ids = list(chunk_ids)
     with _graph().session(database=DATABASE, default_access_mode='READ') as session:
         chunk_rows = session.execute_read(lambda tx: [dict(r) for r in tx.run(
@@ -1584,22 +1321,10 @@ def _ask_graph(chunk_ids, tag_vectors, text_vectors, prepared):
         tag_rows = session.execute_read(lambda tx: [dict(r) for r in tx.run(
             QUESTION_TAGS_CYPHER, chunks=chunk_ids, run=RUN_ID, products=list(prepared.products),
             vectors=_floats(tag_vectors))])
-        products = sorted({str(r['product']) for r in chunk_rows})
-        persons = product_persons(
-            session.execute_read(lambda tx: [dict(r) for r in tx.run(
-                CHANNEL_PEOPLE_CYPHER, products=products)]),
-            session.execute_read(lambda tx: [dict(r) for r in tx.run(
-                MEETING_PEOPLE_CYPHER, products=products)]))
-        pool_pointers = tuple((str(r['relpath']), str(r['sha256']), str(r['locator']))
-                              for r in session.execute_read(lambda tx: [dict(r) for r in tx.run(
-                                  POOL_POINTERS_CYPHER, run=RUN_ID)]))
     ids = tuple(str(r['chunkId']) for r in chunk_rows)
     if sorted(ids) != sorted(set(chunk_ids)):
         raise ValueError('The graph gave other chunks than the border holds')
-    missing = sorted(set(products) - set(persons))
-    if missing:
-        raise ValueError(f'The graph names no channel and no meeting for {missing}')
-    at = {c: i for i, c in enumerate(ids)}
+    at ={c: i for i, c in enumerate(ids)}
     graph_tags = tuple(str(r['tag']) for r in tag_rows)
     edges = sorted((str(e['chunk']), t, e['values'])
                    for t, row in enumerate(tag_rows) for e in row['edges'])
@@ -1619,8 +1344,7 @@ def _ask_graph(chunk_ids, tag_vectors, text_vectors, prepared):
     return Asked(chunk_rows=rows, chunk_ids=ids, graph_tags=graph_tags, layer=layer,
                  tag_cosines=np.asarray([r['closeness'] for r in tag_rows], dtype=np.float64).T,
                  description_closeness=np.asarray([r['closeness'] for r in chunk_rows],
-                                                  dtype=np.float64),
-                 persons=persons, pool_pointers=pool_pointers)
+                                                  dtype=np.float64))
 
 
 def _pool_ids():
@@ -1759,7 +1483,6 @@ def answer_one_question(question, prepared: Prepared, generate, k: int = 50,
     gone = handed['record']
     say(f'artefact_v4 {qid}: {gone["chunks_gone_through"]} chunks gone through, nothing '
         f'handed over of {sum(gone["chunks_with_nothing_handed_over"].values())}; '
-        f'{sum(gone["records_left_out"].values())} records left out; '
         f'{gone["conversations_handed_over"]} conversations whole')
     # the arm's own count, which the harness checks against the call records; the row holds
     # those per model

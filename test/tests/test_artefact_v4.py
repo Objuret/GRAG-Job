@@ -1,4 +1,3 @@
-from dataclasses import replace
 import json
 
 import numpy as np
@@ -208,8 +207,7 @@ class Toy:
                        graph_tags=tuple(self.graph_tags[t] for t in tags), layer=local,
                        tag_cosines=self.cosines['tags'][:, tags],
                        description_closeness=np.column_stack([
-                           bare[idx], self.cosines['question'][idx], self.cosines['description'][idx]]),
-                       persons={})
+                           bare[idx], self.cosines['question'][idx], self.cosines['description'][idx]]))
 
 
 def toy_graph(monkeypatch, toy, without_the_name, texts=None):
@@ -242,8 +240,7 @@ def test_the_border_the_question_names_and_the_two_clouds_order_it(monkeypatch):
 
     def hand_over(order, p, char_budget, k, docs, chosen=frozenset()):
         kept = list(order)[:6]
-        record = {'products': {}, 'chunks_gone_through': 6,
-                  'chunks_with_nothing_handed_over': {}, 'records_left_out': {},
+        record = {'chunks_gone_through': 6, 'chunks_with_nothing_handed_over': {},
                   'conversations_handed_over': 0, 'conversations_reaching_into_another_chunk': 0}
         return ([p.chunk_ids[i] for i in kept], [[p.chunk_ids[i]] for i in kept],
                 [p.chunk_ids[i] for i in kept],
@@ -304,27 +301,9 @@ def test_the_border_the_question_names_and_the_two_clouds_order_it(monkeypatch):
     assert out.meta['ranking']['ordered_chunk_ids'] == [ids[i] for i in whole['order']]
 
 
-def test_the_graphs_people_say_which_channel_is_apart_and_who_the_products_people_are():
-    channels = [{'product': 'B', 'channel': 'ch-own', 'people': ['e1', 'e2']},
-                {'product': 'B', 'channel': 'ch-more', 'people': ['e2', 'e3']},
-                {'product': 'B', 'channel': 'ch-apart', 'people': ['x1', 'x2']},
-                {'product': 'B', 'channel': 'ch-empty', 'people': [None]},
-                {'product': 'B', 'channel': 'ch-met', 'people': ['m1']},
-                {'product': 'C', 'channel': 'ch-one', 'people': ['x1']}]
-    meetings = [{'product': 'B', 'people': ['m1', 'm2']}]
-    persons = V.product_persons(channels, meetings)
-    # ch-apart: its employees post in no other channel of B and sit in none of its meetings;
-    # a channel with no employee is not apart; one whose only employee sits in a meeting is not
-    assert persons['B']['apart'] == {'ch-apart'}
-    assert persons['B']['people'] == {'e1', 'e2', 'e3', 'm1', 'm2'}
-    # a product's one channel with employees and no meeting: nothing else to be tied to
-    assert persons['C'] == {'apart': frozenset({'ch-one'}), 'people': frozenset()}
-
-
-def own_work_corpus():
-    """One product, B: a channel of its own with four conversations (A links to an own pull
-    request, B to another project's only, C to nothing, D to another project's and to an own
-    document), a channel apart, two batches of pull requests and a document."""
+def hand_over_corpus():
+    """One product, B: a channel with five conversations (A to E), a second channel with one,
+    two batches of pull requests and a document."""
     day = 86400
 
     def message(mid, at, text='', channel='ch-own'):
@@ -363,80 +342,71 @@ def own_work_corpus():
     rows = tuple({'chunkId': c, 'kind': kinds[c], 'product': 'B', 'channels': channels.get(c, [])}
                  for c in ids)
     held = V.Asked(chunk_rows=rows, chunk_ids=ids, graph_tags=(), layer={},
-                   tag_cosines=np.zeros((0, 0)), description_closeness=np.zeros((0, 3)),
-                   persons={'B': {'apart': frozenset({'ch-apart'}),
-                                  'people': frozenset({'e1', 'e2'})}})
+                   tag_cosines=np.zeros((0, 0)), description_closeness=np.zeros((0, 3)))
     return held, records
 
 
-def test_what_is_handed_over_is_the_products_own_work_and_conversations_whole(monkeypatch):
-    held, records = own_work_corpus()
+def test_every_record_is_handed_over_and_a_conversation_whole_where_it_first_shows(monkeypatch):
+    held, records = hand_over_corpus()
     at = {c: i for i, c in enumerate(held.chunk_ids)}
     monkeypatch.setattr(V, '_pointed_records', lambda row, cache: records[row['chunkId']])
-    monkeypatch.setattr(V, '_pointed', lambda row, cache: ('documents', records[row['chunkId']],
-                                                            None))
+    monkeypatch.setattr(V, '_pointed', lambda row, cache: (
+        {'pr_batch': 'prs'}.get(row['kind'], 'documents'), records[row['chunkId']], None))
     # where a text's first record stands in the product's file: its section, its place in it
-    place = {f'm{n}': n for n in range(1, 11)} | {'pr1': 0, 'doc1': 0}
+    place = ({f'm{n}': n for n in range(1, 11)} | {'x1': 11, 'x2': 12, 'x3': 13}
+             | {'pr1': 0, 'pr2': 1, 'pr3': 2, 'doc1': 0})
     monkeypatch.setattr(V, '_pointer', lambda rows, unit, cache: (
         ['slack', 'documents', 'prs'].index(unit['section']), min(place[r] for r in unit['ids'])))
     order = [at[c] for c in ('s2', 's4', 'p1', 'p2', 'd1', 's1', 's3', 's5')]
-    book = V.own_work(order, held, {})
-    assert book['apart'] == {'x1', 'x2', 'x3'}
-    assert book['own'] == {'pr1': True, 'pr2': False, 'pr3': False}
+    book = V._conversations(order, held, {})
     talks = [book['talk'][f'm{k}'][2] for k in range(1, 11)]
     assert talks == [0, 0, 0, 1, 1, 2, 2, 2, 3, 4]
-    # B links to another project's pull request only; D links to one and to an own document
-    assert {key[2] for key in book['other']} == {1}
+    assert {book['talk'][x] for x in ('x1', 'x2', 'x3')} == {('B', 'ch-apart', 0)}
     contexts, id_lists, context_ids, budget, delivered, handed = V._hand_over(order, held, None, 10, {})
     # every record as lucene and vector write it, a blank line between the records of a chunk
     texts = lambda section, names: '\n\n'.join(V.record_text(section, records[c][k])  # noqa: E731
                                                for c, k in names)
-    # s2 holds the end of A, all of B and the start of C: A and C go whole, B is left out; the
-    # model reads them in pointer order: the channel's messages, the document, the pull request
-    assert id_lists == [['m1', 'm2', 'm3', 'm6', 'm7', 'm8'], ['pr1'], ['doc1'], ['m9'], ['m10']]
-    assert handed['reading_order'] == [0, 3, 4, 2, 1]
-    assert contexts[0] == texts('slack', [('s1', 0), ('s1', 1), ('s2', 0), ('s2', 3), ('s3', 0),
-                                          ('s3', 1)])
-    assert contexts[1] == texts('prs', [('p1', 0)])
-    assert contexts[2] == texts('documents', [('d1', 0)])
-    whole_document = contexts[2]
-    assert delivered == [at['s2'], at['p1'], at['d1'], at['s3'], at['s5']] and budget is None
-    assert context_ids == ['m1', 'm2', 'm3', 'm6', 'm7', 'm8', 'pr1', 'doc1', 'm9', 'm10']
+    # s2 holds the end of A, all of B and the start of C: the three go whole; the model reads the
+    # texts in pointer order: the channels' messages, the document, the pull requests
+    assert id_lists == [['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8'], ['x1', 'x2', 'x3'],
+                        ['pr1', 'pr2'], ['pr3'], ['doc1'], ['m9'], ['m10']]
+    assert handed['reading_order'] == [0, 5, 6, 1, 4, 2, 3]
+    assert contexts[0] == texts('slack', [('s1', 0), ('s1', 1), ('s2', 0), ('s2', 1), ('s2', 2),
+                                          ('s2', 3), ('s3', 0), ('s3', 1)])
+    assert contexts[1] == texts('slack', [('s4', 0), ('s4', 1), ('s5', 0)])
+    assert contexts[2] == texts('prs', [('p1', 0), ('p1', 1)])
+    assert contexts[4] == texts('documents', [('d1', 0)])
+    pull_requests = contexts[2]
+    assert delivered == [at[c] for c in ('s2', 's4', 'p1', 'p2', 'd1', 's3', 's5')] and budget is None
+    assert context_ids == ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'x1', 'x2', 'x3', 'pr1',
+                           'pr2', 'pr3', 'doc1', 'm9', 'm10']
     assert handed['record'] == {
-        'products': {'B': {'channels_apart': ['ch-apart'], 'people': 2}},
         'chunks_gone_through': 8,
-        'chunks_with_nothing_handed_over': {'in_a_channel_apart': 1, 'no_own_pull_request': 1,
-                                            'no_conversation_left': 1,
-                                            'all_already_handed_over': 0},
-        'records_left_out': {'messages_of_a_channel_apart': 3,
-                             'pull_requests_of_other_projects': 2,
-                             'messages_about_another_projects_pull_request': 2},
-        'conversations_handed_over': 4, 'conversations_reaching_into_another_chunk': 2,
-        'linked_records_handed_over': 0}
-    assert handed['per_chunk'] == {'delivered_records': [6, 1, 1, 1, 1],
-                                   'delivered_records_of_other_chunks': [4, 0, 0, 0, 0],
-                                   'delivered_records_not_handed_over': [2, 1, 0, 2, 1]}
+        'chunks_with_nothing_handed_over': {'conversations_handed_over_before': 1,
+                                            'record_handed_over_before': 0},
+        'conversations_handed_over': 6, 'conversations_reaching_into_another_chunk': 3}
+    assert handed['per_chunk'] == {'delivered_records': [8, 3, 2, 1, 1, 1, 1],
+                                   'delivered_records_of_other_chunks': [4, 1, 0, 0, 0, 0, 0],
+                                   'delivered_records_not_handed_over': [0, 0, 0, 0, 0, 2, 1]}
     # the harness's cut: the text that does not fit is cut where the budget ends and not credited
     room = len(contexts[0]) + len(contexts[1]) + 5
     contexts, id_lists, context_ids, budget, delivered, handed = V._hand_over(order, held, room, 10, {})
-    assert delivered == [at['s2'], at['p1']] and context_ids[-1] == 'pr1'
+    assert delivered == [at['s2'], at['s4']] and context_ids[-1] == 'x3'
     assert budget == {'budget': room, 'chars': room, 'kept': 2, 'exhausted': False,
-                      'boundary': {'id': 'd1', 'chars_kept': 5,
-                                   'chars_full': len(whole_document)}}
-    assert len(id_lists) == 3 and contexts[2] == whole_document[:5]
-    assert handed['reading_order'] == [0, 2, 1]
-    assert handed['record']['chunks_gone_through'] == 5       # the order was left where it ended
+                      'boundary': {'id': 'p1', 'chars_kept': 5,
+                                   'chars_full': len(pull_requests)}}
+    assert len(id_lists) == 3 and contexts[2] == pull_requests[:5]
+    assert handed['reading_order'] == [0, 1, 2]
+    assert handed['record']['chunks_gone_through'] == 3       # the order was left where it ended
     # with no budget the first k texts
-    assert V._hand_over(order, held, None, 2, {})[4] == [at['s2'], at['p1']]
-    with pytest.raises(ValueError, match="people were not read"):
-        V.own_work(order, replace(held, persons=None), {})
+    assert V._hand_over(order, held, None, 2, {})[4] == [at['s2'], at['s4']]
     # a message in a channel the graph does not tie its chunk to is a fault in the graph
     records['s1'][0]['Channel']['channelID'] = 'ch-unknown'
     with pytest.raises(ValueError, match='the graph does not tie the chunk to'):
-        V.own_work(order, held, {})
+        V._conversations(order, held, {})
 
 
-def test_the_facets_weigh_the_tags_and_the_own_work_is_handed_over(monkeypatch):
+def test_the_facets_weigh_the_tags_and_the_hand_over_is_recorded(monkeypatch):
     no_model(monkeypatch)
     toy, held = Toy(), prepared()
     ids = toy.chunk_ids
@@ -444,12 +414,9 @@ def test_the_facets_weigh_the_tags_and_the_own_work_is_handed_over(monkeypatch):
     without_the_name = np.random.default_rng(11).normal(.2, .06, size=30)
     toy_graph(monkeypatch, toy, without_the_name)
     seen = {}
-    record = {'products': {}, 'chunks_gone_through': 4,
-              'chunks_with_nothing_handed_over': {'in_a_channel_apart': 1, 'no_own_pull_request': 0,
-                                                  'no_conversation_left': 0},
-              'records_left_out': {'messages_of_a_channel_apart': 13,
-                                   'pull_requests_of_other_projects': 0,
-                                   'messages_about_another_projects_pull_request': 3},
+    record = {'chunks_gone_through': 4,
+              'chunks_with_nothing_handed_over': {'conversations_handed_over_before': 1,
+                                                  'record_handed_over_before': 0},
               'conversations_handed_over': 2, 'conversations_reaching_into_another_chunk': 0}
 
     def hand_over(order, p, char_budget, k, docs, chosen=frozenset()):
@@ -545,8 +512,7 @@ def test_the_4combo_orders_the_border_by_how_strongly_each_chunk_is_tied_to_the_
     def hand_over(order, p, char_budget, k, docs, chosen=frozenset()):
         seen['order'] = [p.chunk_ids[i] for i in order]
         kept = list(order)[:3]
-        record = {'products': {}, 'chunks_gone_through': 3,
-                  'chunks_with_nothing_handed_over': {}, 'records_left_out': {},
+        record = {'chunks_gone_through': 3, 'chunks_with_nothing_handed_over': {},
                   'conversations_handed_over': 0, 'conversations_reaching_into_another_chunk': 0}
         return (['a', 'b', 'c'], [['a'], ['b'], ['c']], ['a', 'b', 'c'],
                 {'budget': char_budget, 'kept': 3, 'boundary': None}, kept,

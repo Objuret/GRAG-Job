@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2734 turns, chronological. Verbatim text; no edits.
+2837 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -20062,4 +20062,457 @@ ok, because NONE of the things you say "needed my approval" was lifted for me to
 ## 2026-10-22 19:26 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
 
 really.. guessed it? you think that is we handle conversations here?
+
+## 2026-10-22 19:32 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+what? what the fuck are you talking about now?  WHAT ARE YOU DOING!?
+
+## 2026-10-22 19:32 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+yup, full fucking autism again.. if YOUR AGENTS ARE DOING SOMETHING, its YOU who are doing it!
+
+## 2026-10-22 19:33 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+BUT WHY ARE YOU RUNNING IT!? WHAAAAT IIIIS HAAAPEEENIIIIING!
+
+## 2026-10-22 19:34 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+holy shit, once more you have turbofucked my entire goddamn repo with your prose garbage, 100% of this project have been pain at every single fucking step of the entire way, and it's 100% because of you. Not even close to be because of anything else. How on earth is anthropic using you to actually create anything
+
+## 2026-10-22 19:35 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+WHY ARE YOU TRYING TO RUN ANYTHING NOW!?
+
+## 2026-10-22 19:35 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+ok, but why only on that branch.. god i really really hate communicating with you
+
+## 2026-10-22 19:35 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+dude, its like 10 seconds ago you said you paused the run
+
+## 2026-10-22 19:36 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+BUT I FUCKING SAID SO NOW
+
+## 2026-10-22 19:36 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+ok, i dont know what you are doing, if you tilted, went into stress or just are the worst model i have ever seen, but you are begging to unravel, is incomprehensive and NOT doing anything useful at all. So, tell me exactly what the fuck is happeniing now
+
+## 2026-10-22 19:39 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+and yet, you did not answer what i actually asked
+
+## 2026-10-22 19:39 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+i am talking about YOUR behaviours, not the actual code
+
+## 2026-10-22 19:40 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+YES FOR FUCKS SAKE, I KNOW WHAT YOU DID WRONG, holy shit
+
+## 2026-10-22 19:41 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+where were we with the actual work now then?
+
+## 2026-10-22 19:43 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+ok, so, lets do a full "final run" then? do it fully on the desktop if everything is up to date
+
+## 2026-10-22 19:43 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+cocurrently ofc
+
+PAUSE
+
+## 2026-10-22 19:44 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+i fucking hate how you lock in like you do, it litterally means you can NEVER read what the fuck i am writing, until you "take a break" WHICH YOU DONT.. such a fucking dumb setup.. holy shit i hate this harness so much..
+anyway, did you make it so that you can do it all from here? aka running it on both does not make it retarded and has to be merged in a bad way?
+
+## 2026-10-22 19:46 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+you do know there are actual techniques for shit like this right? making it a single complete instance?  "distributed computing" is quite the fucking concept i am pretty sure you know
+
+## 2026-10-22 19:49 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+again dude "first-call store"!? WHAT THE FUCK IS THAT!?
+
+## 2026-10-22 19:49 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+nvm, you cause too much rage, just run it fully on the desktop now
+
+## 2026-10-22 19:50 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+" It is a folder with the saved answers of the interpreter" what? so you are saying we should NOT run it again? duuuude what is happening
+
+## 2026-10-22 19:51 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+ok, but is the store CORRECT? it DOES mean we get a better comparison so yeah, i AM ok with running it, if it is academically correct
+
+## 2026-10-22 19:53 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+you are not running it..
+
+## 2026-10-22 19:55 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+STILL NOT STARTED WTF ARE YOU DOING NOW THEN
+
+## 2026-10-22 19:56 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+WHAT!? what fucking CHECK!?
+
+## 2026-10-22 19:56 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+good god, you know if you have fucking pushed and cloned what y... DUDE
+
+## 2026-10-22 19:56 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+its litterally a diff-check, HOW can this take more than like 1 second?
+
+## 2026-10-22 19:57 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+but WHY!? why have you not given it a singular tiny command, to do 1 operation and NOTHING else? and when done, you ask a DIFFERENT agent to do another single small task, or wait, hey, an idea, DO THEM AT THE SAME TIME
+
+## 2026-10-22 19:58 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+do you ever remove old rules when putting new in?
+
+## 2026-10-22 19:58 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+ok, so, the entire claude.md is literallt a mountain of shit now?
+
+## 2026-10-22 20:00 · b85f5317-9c60-4349-9d18-9c7c85f8558e.jsonl
+
+need to go through the entire claude.md file.. apparently you never remove some old outdated or contradicting information when i say something new, you just cake it on top like an actual retard
+
+## 2026-10-22 20:01 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+i have 16gb free of memory.. what is happening?
+
+## 2026-10-22 20:02 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+there is nowhere near that many claudes working
+
+## 2026-10-22 20:02 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+wait, its almost done already? what IS happening?
+
+## 2026-10-22 20:03 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+well, i do have a quite active python instance running.., only using 5,7gb tho
+
+## 2026-10-22 20:12 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+done now right?
+
+## 2026-10-22 20:16 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+wait what, that does not at all look like anything else
+
+## 2026-10-22 20:23 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+the numbers in the table, what is "final run" and what is "new run" etc etc
+
+## 2026-10-22 20:25 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+wait.. this run was much worse tho..
+FUCK IT.. wait.. what stored questions did you use? the same as the "final run" ?
+
+## 2026-10-22 20:26 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+but is it different? meaning, do those links exist? is this a shit solution?
+
+## 2026-10-22 22:07 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+so, perhaps "auto" is not the play
+
+## 2026-10-22 22:08 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+what if its done after everything else? meaning it still stays in the scope-ish? better or worse?
+
+## 2026-10-22 22:09 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+i mean, i think a "nearness" to a chunk is relevant for how far or much should be fetched
+
+## 2026-10-22 22:10 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+just because it is linked together is not in itself a reason to bring shit in, fuck, its a graph, if we did THAT, we would bring in the entire fucking thing everytime
+
+## 2026-10-22 22:12 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+so perhaps a link is the 5th thing instead?
+
+## 2026-10-22 22:13 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+ok, but you just made the whole 5 utterly useless
+
+## 2026-10-22 22:17 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+tell me each of the 5
+
+## 2026-10-22 22:29 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+well, you said nothing survives that long, so how the fuck are any of these 4 doing any use?
+
+## 2026-10-22 22:30 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+only orders? that,.. does not sound correct at all
+
+## 2026-10-22 22:30 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+the clouds yes, but the clouds are "huge" compared to what is chosen, no?
+
+## 2026-10-22 22:32 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+ah, but the point is that each "tie" lifts chunks because of it's relation to better chunks etc?
+
+## 2026-10-22 22:33 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+why would the link not improve this?
+
+## 2026-10-22 22:34 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+not AS BUILT.. wtf
+
+## 2026-10-22 22:35 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+i mean, isnt this a reasonable implementation? "A link is one more relation to a best chunk, so as a fifth tie it lifts a chunk the same way the other four do"
+
+## 2026-10-22 22:40 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+soo.. now we have 5.. what..? they are beginning to sound VERY much like the original facets
+
+## 2026-10-22 22:45 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+is it the same for all 5 kinds?
+
+## 2026-10-22 22:46 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+*queued while an agent was working*
+
+aka the 4 and links, the 5 from now on
+
+## 2026-10-22 22:48 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+so, "is it the same for all 5 kinds?".. are you checking?
+
+## 2026-10-22 22:53 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+using cocurrency or beeing tarded as usual?
+
+## 2026-10-22 22:58 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+how the fuck does any of that makes sense? you litterally said they all pretty much doule the evidence, and then finish by saying it's much more without them? what the fuck?
+
+## 2026-10-22 23:01 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+if closeness was all that mattered, wouldnt we have more evidence by itself?
+
+## 2026-10-22 23:03 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+prove it
+
+## 2026-10-22 23:07 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+... what?
+
+## 2026-10-22 23:09 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+are you retarded for real? where do you think you are "showing" me this?
+
+## 2026-10-22 23:10 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+how about you take a few fucking steps back and reflect fully on this conversation
+
+## 2026-10-22 23:43 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+i knowe..
+
+## 2026-10-23 00:10 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+what? "These shares come from the gold"
+
+## 2026-10-23 00:15 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+"Two faults stand in the code. The arm on artefact-v4-iteration (2bd2534) brings every linked record in, against your rule of tonight. And the 4-combo counts related chunks, not ways. I change neither until you say what replaces it. Two points are open: what “many ways” means in the count, and whether a tie may lift a chunk from below the clouds."
+
+doesnt many "ways" just mean that a chunk has many relations? aka many points enhancing it? or what do YOU mean?
+
+## 2026-10-23 00:29 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+it may not, but, shouldnt we fit the link to the same concept as the others?
+
+## 2026-10-23 00:35 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+well, would the link fetch those?  and how much noise would it fetch at the same time?
+
+## 2026-10-23 00:38 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+not what i asked but ok.. links within scope then? how about that?
+
+## 2026-10-23 00:38 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+*queued while an agent was working*
+
+kinda seems like overfitting tho
+
+## 2026-10-23 00:39 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+"You asked whether the link would fetch those 53. As a tie it would not: no tie may lift a chunk from below the clouds, so they stay out. Inside the clouds it fetches nothing new, so it brings no noise. It only moves cloud chunks up."  really? YOU GAVE ME FUCKING DATA AND I RESPONDED TO THAT, and then you move the fucking goalposts for YOUR answer to that? shesus goddamn fucking christ
+
+## 2026-10-23 00:41 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+taking deep breaths..
+
+WHAT IF: WE USED THE LINKS AFTER THE SCOPE IS ENFORCED, SUCH THAT THE LINKS CAN ONLY MOVE UP CHUNKS (YES FROM BEYOND THE CLOUD IF NEEDED) IF THEY ARE WITHIN THE SCOPE..
+
+is that clear enough for you? CAN YOU FUCKING COMPREHEND A SINGLE FUCKING BIT OF ENGLISH TODAY?!
+
+## 2026-10-23 00:44 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+so, you think i fucking want this documented before we even try if its giving us something? what a fucking backwards way you have of working
+
+## 2026-10-23 01:00 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+so, lets try here then, about "the 5" and trying the link concept after the scope has limited instead
+
+## 2026-10-23 01:06 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+*queued while an agent was working*
+
+pause
+
+## 2026-10-23 01:06 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+*queued while an agent was working*
+
+what the fuck is happening
+
+## 2026-10-23 01:06 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+the first words in the fucking chat and you just ran off working? no fucking words first? nothing? checking if you understood.. anything?
+
+## 2026-10-23 01:13 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+"ad the scope that is enforced as the name border." what? what do you even mean?
+
+## 2026-10-23 01:14 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+scope is literally one of them...
+
+## 2026-10-23 01:14 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+scope cut.. why the fuck would you rename that
+
+## 2026-10-23 01:16 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+scope cut right? or what do you think?
+
+## 2026-10-23 01:17 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+i mean, its called LINK, that goes all ways
+
+## 2026-10-23 01:17 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+all of this feels like such a fucking inelegant solution
+
+## 2026-10-23 01:23 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+i mean, WHAT is "reading inside the files" ?
+
+## 2026-10-23 01:24 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+so, the arm does it..? its deterministic? no agent is seeing that shit?
+
+## 2026-10-23 01:25 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+oh you goddamn fuck... you piece of shit.. ofc you would autist-interpret my words as an actual fucking weblink!? good god how i hate you
+
+## 2026-10-23 01:26 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+*queued while an agent was working*
+
+i am pretty fucking sure i have NEVER spoken about a weblink in ANY of our conversations )no, that is NOT a challenge for you to try to find that, but you SHOULD find what i actually said..
+
+## 2026-10-23 01:31 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+yeah, this is fucking terrible
+
+## 2026-10-23 01:32 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+nope, if this is the only way, the link stuff is fucking out
+
+## 2026-10-23 01:32 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+*queued while an agent was working*
+
+what was point 1 about?
+
+## 2026-10-23 01:40 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+so, do a correct complete full run again on point 1 then?
+
+## 2026-10-23 01:42 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+hand-over?
+
+## 2026-10-23 01:45 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+that sounds the most overfitted jank i have ever heard of, it really does that?
+
+## 2026-10-23 01:46 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+holy shit thats retarded
+
+## 2026-10-23 01:46 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+yes, remove them
+
+## 2026-10-23 01:58 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+GIVE ME THE FUCKING METRICS, not that goddamn fucking garbage i STILL dont give a shit about
+
+## 2026-10-23 02:00 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+really.. you have to compute every fucking time? and compare it to the gold we sent in where we recieved the email, pre 1 and 2
+
+## 2026-10-23 02:05 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+well, i fucking hate it but i guess that is where we are, atleast it's correct.. fucking shit
+
+## 2026-10-23 02:07 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+shove the test suite up your ass dude.. do the full run of this on the desktop cocurrently etc
+
+## 2026-10-23 02:07 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+*queued while an agent was working*
+
+no, stop, you wont understand that
+
+## 2026-10-23 02:07 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+*queued while an agent was working*
+
+do the fucking run, on the desktop
+
+## 2026-10-23 02:08 · 1e9771e5-7b5e-46a2-a47c-34931d6ca6f8.jsonl
+
+*paste / file drop · 2203 chars*
+
+ok, so, dude.. these questions he had:
+"
+Before we proceed further, I would like to clarify a few methodological points to ensure the comparisons are fair.
+
+1. Evidence budget: Although all three methods have a 72k-character limit, their average answer input tokens differ (26k for Lucene, 30k for vector and 32k for Artefact). Is 72k simply the maximum allowed, or are the methods actually receiving comparable amounts of evidence? Can we record the actual characters and tokens supplied for each question?
+2. Context recall and precision: Artefact retrieves larger chunks containing multiple source records. Are the ID-based metrics calculated using the original source-record IDs or the Artefact chunk IDs? Ideally, we should evaluate all three methods against the same original source records, considering only evidence actually passed to the answer model.
+3. Differences between recall metrics: Artefact achieves considerably higher ID-based context recall (0.647), but its non-LLM recall is much lower (0.053). Could we check how these metrics are calculated and whether the difference in retrieval granularity affects them?
+4. Answer correctness: Despite relatively high faithfulness across all three methods, answer correctness remains low (0.175–0.273). Several answers also indicate that the requested information could not be found. Could we examine whether this is primarily a retrieval problem or an issue with extracting the correct answer from the retrieved evidence? For questions involving employee IDs and PR links, exact entity-level accuracy might be more informative than text-similarity metrics.
+5. Comparison and statistical analysis: Can we confirm that all three methods were evaluated on exactly the same questions, reference answers and judging setup? If so, we could perform paired statistical comparisons and calculate confidence intervals to establish whether Artefact's improvements are significant.
+
+Do we have the original retrieval results, including source IDs, retrieved contexts and actual context lengths? If these are available, we may be able to verify or recalculate several metrics without rerunning the experiments.
+"
+
+explain them to him cleanly and consicely
 
