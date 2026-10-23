@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2850 turns, chronological. Verbatim text; no edits.
+2853 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -20594,4 +20594,18 @@ ah, so you are also retarded, nice.. how about understanding the fucking concept
 *queued while an agent was working*
 
 wall time? this is not a thing
+
+## 2026-10-23 02:55 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+oh yeah, is the "correct order of chunks" still given to the judge instead of the rearranged list the model gets?
+
+## 2026-10-23 02:56 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+*queued while an agent was working*
+
+check what the fucking CODE says holy shit
+
+## 2026-10-23 02:57 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
+
+ALWAYS check the code, how is this unclear? it's the only thing telling the truth.
 

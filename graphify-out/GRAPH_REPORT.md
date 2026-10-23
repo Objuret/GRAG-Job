@@ -5,7 +5,7 @@
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4930 nodes · 10264 edges · 266 communities (204 shown, 62 thin omitted)
+- 4930 nodes · 10264 edges · 266 communities (205 shown, 61 thin omitted)
 - Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 508 edges (avg confidence: 0.55)
 - Token cost: 0 input · 0 output
 
@@ -36,10 +36,10 @@
 - [[_COMMUNITY__plan()|_plan()]]
 - [[_COMMUNITY_ndarray|ndarray]]
 - [[_COMMUNITY_cut_at_budget()|cut_at_budget()]]
+- [[_COMMUNITY_test_artefact_v1.py|test_artefact_v1.py]]
 - [[_COMMUNITY_QuestionWithTruth|QuestionWithTruth]]
 - [[_COMMUNITY_facet_pairs_judge.py|facet_pairs_judge.py]]
 - [[_COMMUNITY_facet_pairs_select.py|facet_pairs_select.py]]
-- [[_COMMUNITY_test_artefact_v1.py|test_artefact_v1.py]]
 - [[_COMMUNITY_cache_probe.py|cache_probe.py]]
 - [[_COMMUNITY_facet_answers.py|facet_answers.py]]
 - [[_COMMUNITY__write()|_write()]]
@@ -65,7 +65,6 @@
 - [[_COMMUNITY_gold_join_face_scope.py|gold_join_face_scope.py]]
 - [[_COMMUNITY_main()|main()]]
 - [[_COMMUNITY_DerivedLayerBuildTests|DerivedLayerBuildTests]]
-- [[_COMMUNITY__layer()|_layer()]]
 - [[_COMMUNITY_test_artefact_v4.py|test_artefact_v4.py]]
 - [[_COMMUNITY_artefact_facet_joint.py|artefact_facet_joint.py]]
 - [[_COMMUNITY_artefact_facet_leader_hits.py|artefact_facet_leader_hits.py]]
@@ -73,6 +72,7 @@
 - [[_COMMUNITY_test_facet_pairs.py|test_facet_pairs.py]]
 - [[_COMMUNITY_ragas.py|ragas.py]]
 - [[_COMMUNITY_test_facet_pairs_bootstrap.py|test_facet_pairs_bootstrap.py]]
+- [[_COMMUNITY__layer()|_layer()]]
 - [[_COMMUNITY_unpack_generation()|unpack_generation()]]
 - [[_COMMUNITY_artefact_facet_leader_macro.py|artefact_facet_leader_macro.py]]
 - [[_COMMUNITY_map_topic.py|map_topic.py]]
@@ -128,6 +128,7 @@
 - [[_COMMUNITY_facet_views_check.py|facet_views_check.py]]
 - [[_COMMUNITY_build_values()|build_values()]]
 - [[_COMMUNITY_DeterministicPlanTests|DeterministicPlanTests]]
+- [[_COMMUNITY_test_artefact_v1_relevance_weight.py|test_artefact_v1_relevance_weight.py]]
 - [[_COMMUNITY_EntityDerivationTests|EntityDerivationTests]]
 - [[_COMMUNITY_graph_store.py|graph_store.py]]
 - [[_COMMUNITY_reconstruct_query_description()|reconstruct_query_description()]]
@@ -174,7 +175,6 @@
 - [[_COMMUNITY_RunLock|RunLock]]
 - [[_COMMUNITY_CombineModeTests|CombineModeTests]]
 - [[_COMMUNITY_TimeReferenceTests|TimeReferenceTests]]
-- [[_COMMUNITY_LayerBuildTests|LayerBuildTests]]
 - [[_COMMUNITY_Static|Static]]
 - [[_COMMUNITY_test_facet_lab_schedule.py|test_facet_lab_schedule.py]]
 - [[_COMMUNITY_StreamingBookkeeping|StreamingBookkeeping]]
@@ -182,7 +182,6 @@
 - [[_COMMUNITY_record_text()|record_text()]]
 - [[_COMMUNITY_train.py|train.py]]
 - [[_COMMUNITY___init__.py|__init__.py]]
-- [[_COMMUNITY_test_artefact_v1_relevance_weight.py|test_artefact_v1_relevance_weight.py]]
 - [[_COMMUNITY_TagGeometryTests|TagGeometryTests]]
 - [[_COMMUNITY_test_retrieval_harness.py|test_retrieval_harness.py]]
 - [[_COMMUNITY_interval_order()|interval_order()]]
@@ -197,7 +196,6 @@
 - [[_COMMUNITY_InterpCacheTests|InterpCacheTests]]
 - [[_COMMUNITY_AreaTests|AreaTests]]
 - [[_COMMUNITY_CentredDemandTests|CentredDemandTests]]
-- [[_COMMUNITY_RetrievalFlagTests|RetrievalFlagTests]]
 - [[_COMMUNITY_install_lane()|install_lane()]]
 - [[_COMMUNITY_plant()|plant()]]
 - [[_COMMUNITY_graph_layer.py|graph_layer.py]]
@@ -209,6 +207,7 @@
 - [[_COMMUNITY_CombineTests|CombineTests]]
 - [[_COMMUNITY_LevelChainTests|LevelChainTests]]
 - [[_COMMUNITY_DirectoryTests|DirectoryTests]]
+- [[_COMMUNITY_LayerBuildTests|LayerBuildTests]]
 - [[_COMMUNITY_OneOperationTests|OneOperationTests]]
 - [[_COMMUNITY_DirectoryReaderTests|DirectoryReaderTests]]
 - [[_COMMUNITY_OrgTreeRelationTests|OrgTreeRelationTests]]
@@ -224,8 +223,9 @@
 - [[_COMMUNITY_GapBreakTests|GapBreakTests]]
 - [[_COMMUNITY_Pass2ValidationTests|Pass2ValidationTests]]
 - [[_COMMUNITY_FlagTests|FlagTests]]
-- [[_COMMUNITY_GuideTests|GuideTests]]
+- [[_COMMUNITY_DemandTests|DemandTests]]
 - [[_COMMUNITY_QueryReliabilityTests|QueryReliabilityTests]]
+- [[_COMMUNITY_RunFlagTests|RunFlagTests]]
 - [[_COMMUNITY_TruncateRebuildTests|TruncateRebuildTests]]
 - [[_COMMUNITY_LinkTwoBand|LinkTwoBand]]
 - [[_COMMUNITY_RemovalPredicateTests|RemovalPredicateTests]]
@@ -297,7 +297,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (266 total, 62 thin omitted)
+## Communities (266 total, 61 thin omitted)
 
 ### Community 0 - "artefact_v3.py"
 Cohesion: 0.05
@@ -403,21 +403,21 @@ Nodes (42): bca_interval(), boot_t_interval(), column_contrast(), delta_repeat()
 Cohesion: 0.06
 Nodes (9): BudgetCut, cut_at_budget(), _selfcheck(), CutMathTests, DepthModeTests, ExportRootTests, OutRootTests, RunCliTests (+1 more)
 
-### Community 26 - "QuestionWithTruth"
+### Community 26 - "test_artefact_v1.py"
+Cohesion: 0.05
+Nodes (9): DoorTraceTests, EmbedCacheTests, InterpreterBackendTests, ModifierLerpTests, MultiKSupportTests, NormalizeTests, ResolveGuardTests, RetrievalFlagTests (+1 more)
+
+### Community 27 - "QuestionWithTruth"
 Cohesion: 0.09
 Nodes (16): CompletedProcess, EvalResult, QuestionWithTruth, RunConfig, SingleTurnSample, ChatCallRecordTests, DeliveredScoreTests, EvaluationLegTests (+8 more)
 
-### Community 27 - "facet_pairs_judge.py"
+### Community 28 - "facet_pairs_judge.py"
 Cohesion: 0.11
 Nodes (38): answer_path(), call_once(), _call_with_ladder(), canonical(), fa(), failed_path(), in_shard(), judge_row() (+30 more)
 
-### Community 28 - "facet_pairs_select.py"
+### Community 29 - "facet_pairs_select.py"
 Cohesion: 0.13
 Nodes (35): acquire(), bin_of(), build(), build_pool(), draw_binned(), draw_mix(), draw_plain(), edge_id() (+27 more)
-
-### Community 29 - "test_artefact_v1.py"
-Cohesion: 0.05
-Nodes (9): DoorTraceTests, EmbedCacheTests, InterpreterBackendTests, ModifierLerpTests, MultiKSupportTests, NormalizeTests, ResolveGuardTests, RunFlagTests (+1 more)
 
 ### Community 30 - "cache_probe.py"
 Cohesion: 0.09
@@ -515,37 +515,37 @@ Nodes (25): main(), q(), Do the four facets separate, per ruler — and the clea
 Cohesion: 0.12
 Nodes (24): build_rows(), chunk_descriptions(), core_ok(), crossed_deltas(), main(), §1: the crossed Δ — `v^w1(C) − v^w2(C')`. Equal variance to the matched Δ under, The rule's conditions on one write, as PROGRESS.md states them and §9 guards the, The register check of PROGRESS.md's diagnostics: Haiku's description against the (+16 more)
 
-### Community 55 - "_layer()"
-Cohesion: 0.12
-Nodes (5): AffinityTests, DemandTests, _layer(), RetrieveTests, StatedScopeTests
-
-### Community 56 - "test_artefact_v4.py"
+### Community 55 - "test_artefact_v4.py"
 Cohesion: 0.13
 Nodes (21): answer(), cached(), hand_over_corpus(), no_model(), prepared(), Thirty chunks in three products (a chunk's index mod 3) and four parents (mod 4), The graph's answer for the toy's names: products A, B and C, each its chunks., What the graph gives for these chunks (`V._ask_graph`): the toy's edges among th (+13 more)
 
-### Community 57 - "artefact_facet_joint.py"
+### Community 56 - "artefact_facet_joint.py"
 Cohesion: 0.13
 Nodes (24): Explicit area-first variant of the frozen joint-facet arm.  Same interpretation,, answer_one_question(), _atomic_json(), _cached_stage(), _embed_kept(), _interpret(), _keep_row(), _kept_row() (+16 more)
 
-### Community 58 - "artefact_facet_leader_hits.py"
+### Community 57 - "artefact_facet_leader_hits.py"
 Cohesion: 0.13
 Nodes (22): prepare_over_corpus(), Prepared, rank_numeric(), Experimental fixed-program artefact arm for a real 72k gold smoke.  Interpreta, Pure retrieval stage, also used for captured-case parity without models., _selected_program(), edge_gate(), inject() (+14 more)
 
-### Community 59 - "facet_counterfactuals.py"
+### Community 58 - "facet_counterfactuals.py"
 Cohesion: 0.18
 Nodes (26): now_iso(), call_once(), _call_with_ladder(), chunk_path(), counterfactual_chunk(), _facet_payload(), failed_path(), lock_path() (+18 more)
 
-### Community 60 - "test_facet_pairs.py"
+### Community 59 - "test_facet_pairs.py"
 Cohesion: 0.11
 Nodes (17): built(), full_record(), The production `build`, on the synthetic corpus, with the corpus-size guard off., read(), small(), test_acquire_refuses_held_out_and_duplicates(), test_control_has_both_orders_and_identical_repeats(), test_counts_and_mix() (+9 more)
 
-### Community 61 - "ragas.py"
+### Community 60 - "ragas.py"
 Cohesion: 0.14
 Nodes (22): _build_metrics(), _claude_verdict(), _codex_usage(), _codex_verdict(), corpus_gold_text(), _encoding_for(), _estimate_tokens(), _gemini_quota_error_row() (+14 more)
 
-### Community 62 - "test_facet_pairs_bootstrap.py"
+### Community 61 - "test_facet_pairs_bootstrap.py"
 Cohesion: 0.10
 Nodes (15): ndarray, _fixed_gap_values(), _obs(), The retrain band: `flip_gap` on synthetic values, the resampling unit, and the t, a single window that happens to fall below the rate must not be read as the cros, One pair per gap: row 2k is the high side, row 2k+1 the low side., test_adding_a_constant_changes_nothing(), test_an_injected_dip_does_not_name_the_band() (+7 more)
+
+### Community 62 - "_layer()"
+Cohesion: 0.14
+Nodes (5): AffinityTests, _chunk_row(), _layer(), RetrieveTests, StatedScopeTests
 
 ### Community 63 - "unpack_generation()"
 Cohesion: 0.12
@@ -759,167 +759,171 @@ Nodes (9): build_values(), One unit vector per exact string, keyed by the sha256
 Cohesion: 0.16
 Nodes (3): DeterministicPlanTests, _S, _Vocab
 
-### Community 119 - "graph_store.py"
+### Community 118 - "test_artefact_v1_relevance_weight.py"
+Cohesion: 0.12
+Nodes (3): ContractTests, GuideTests, RegionTests
+
+### Community 120 - "graph_store.py"
 Cohesion: 0.25
 Nodes (13): chunk_dataset(), load_key(), build(), driver(), ensure_database(), ingest(), load_tags_index(), report_db_size() (+5 more)
 
-### Community 120 - "reconstruct_query_description()"
+### Community 121 - "reconstruct_query_description()"
 Cohesion: 0.23
 Nodes (13): aggregate_route_profiles(), Unfitted nonnegative query reconstruction and explicit route aggregation.  All v, Minimize ||T.T a - d||^2 subject to a>=0, grouping exact duplicate rows.      In, Sum grouped sponsorship times existing profiles [facet,tag,chunk].      Duplicat, reconstruct_query_description(), _spectrum(), Geometry, clone handling and KKT contracts; no retrieval quality claims., test_duplicate_conflicting_profiles_rejected_even_for_zero_mass() (+5 more)
 
-### Community 121 - "test_facet_tradeoff.py"
+### Community 122 - "test_facet_tradeoff.py"
 Cohesion: 0.21
 Nodes (13): comparison_probabilities(), crossfit_nonnegative(), fit_nonnegative(), query_edge_products(), Experimental query-conditioned combination fitting; not wired to retrieval.  The, Convex Davidson likelihood with nonnegative coefficients and L2 penalty.  Outcom, Nested leave-one-group-out selection; returns only outer test predictions.  Ever, Tests of estimation meaning and data separation, not benchmark performance. (+5 more)
 
-### Community 122 - "score_all.py"
+### Community 123 - "score_all.py"
 Cohesion: 0.24
 Nodes (14): main(), merge_shards(), parse_shard(), _previous_scores(), ranks_desc(), Score every graph edge on every facet: ONE encoder pass an edge, five numbers ou, K/N' -> (K, N), 1-based, K in 1..N. '' or '1/1' is the whole corpus., Average ranks, 1 = the largest value. (+6 more)
 
-### Community 123 - "build_structure_names.py"
+### Community 124 - "build_structure_names.py"
 Cohesion: 0.19
 Nodes (12): keys_of(), names(), _pointer(), The structure nodes' names in the graph (his 2026-10-19 "if it's "easy" to find, The part of a JSON document a pointer names (RFC 6901)., The forms a question is matched against: the name, and the id when the node has, Per node (element id): its label, its name and its match keys., verify() (+4 more)
 
-### Community 124 - "clean_tag()"
+### Community 125 - "clean_tag()"
 Cohesion: 0.16
 Nodes (14): clean_tag(), collect_needs(), file_pairs(), file_strings(), machine_of(), Whitespace collapsed and nothing else — `artefact.querytagger.clean_tag`'s defin, Which machine wrote this text's views, from `facet_views.shard_of` alone., §8: case-insensitive whole-phrase match, the span deleted, whitespace collapsed; (+6 more)
 
-### Community 125 - "test_order_facet_layer.py"
+### Community 126 - "test_order_facet_layer.py"
 Cohesion: 0.13
 Nodes (6): ArmRankSource, fake_by_length(), OrderTag, Ranks, order_facet_layer: validation, groups → ranks, windows, and the arm's rank sourc, a stand-in model: longer text is more relevant on every facet, ties on equal len
 
-### Community 126 - "rank_joint_candidate()"
+### Community 127 - "rank_joint_candidate()"
 Cohesion: 0.35
 Nodes (13): rank_joint_candidate(), Return full ranks and route components using supplied graph relations.      All, inputs(), test_absolute_weight_attenuation_changes_relative_query_sponsorship(), test_duplicate_routes_graph_groups_and_identical_query_tags_do_not_vote(), test_fixed_midrank_reference_is_not_rebuilt_when_candidate_added(), test_graph_reaches_description_fit_weak_tag_neighbor_only_and_excludes_self(), test_group_self_exclusion_uses_second_seed_and_singletons_supply_nothing() (+5 more)
 
-### Community 127 - "parse_payload()"
+### Community 128 - "parse_payload()"
 Cohesion: 0.26
 Nodes (5): parse_payload(), The model's object -> {description, tags:[{t, facets}]}, or ValueError.      Des, facets(), Parser, querytagger: what the parser keeps, what it refuses, and what the key answers fo
 
-### Community 128 - "data.py"
+### Community 129 - "data.py"
 Cohesion: 0.21
 Nodes (11): build_table(), load_targets(), load_texts(), main(), The training table: measured targets joined to the original (tag, chunk) text, s, chunk_id -> the original chunk text, from the graph export the teacher ran on., One row per (chunk, tag) with the four facet targets, and the counts of what was, Chunk-disjoint train / validation / test. The order is the sorted chunk ids shuf (+3 more)
 
-### Community 129 - "_PatchSet"
+### Community 130 - "_PatchSet"
 Cohesion: 0.19
 Nodes (4): _Driver, _off(), _PatchSet, PrepareTests
 
-### Community 130 - "Levels"
+### Community 131 - "Levels"
 Cohesion: 0.14
 Nodes (3): Levels, an infinite band is no band: the column vanishes and orders nothing, so a missin, the level rule (SPEC-v2 S5) — steps below the pool's best
 
-### Community 131 - ".pool()"
+### Community 132 - ".pool()"
 Cohesion: 0.23
 Nodes (3): Multirank, order_pool(), one pool through the modes' real level functions and key builder; returns the ch
 
-### Community 132 - "Weighted"
+### Community 133 - "Weighted"
 Cohesion: 0.14
 Nodes (4): the assertion is on the MODE KEY's own column, with g built adversarially: the, under ADJUST=level the two-column key is compared as the walk compares it — the, the two tests above are only worth something if g disagrees with topic — shown, Weighted
 
-### Community 133 - "index.py"
+### Community 134 - "index.py"
 Cohesion: 0.35
 Nodes (12): prepare_over_corpus(), chunk_artifact_ids(), find_tags_npz(), load_artefact_index(), _load_tags_npz(), _load_verified_doc(), _mean_center(), _pointer_get() (+4 more)
 
-### Community 134 - "_load_verified_doc()"
+### Community 135 - "_load_verified_doc()"
 Cohesion: 0.17
 Nodes (13): _load_verified_doc(), _conversations(), _hand_over(), _pointed(), _pointed_records(), _pointer(), The records a chunk's pointer leads to, as they stand in the product's file., A record's time in seconds on one clock; a time with no zone is read as it stand (+5 more)
 
-### Community 135 - "db.py"
+### Community 136 - "db.py"
 Cohesion: 0.29
 Nodes (10): main(), facet_participation(), fetch_tags(), floor_participation(), kmeanspp_init(), main(), memberships(), weighted_spherical_kmeans() (+2 more)
 
-### Community 136 - "embed.py"
+### Community 137 - "embed.py"
 Cohesion: 0.24
 Nodes (10): _cache_path(), _load_tags(), main(), _embed(), _embed_request(), _embedder(), Every embed request since the last take, summed; an evaluation reads it per leg., take_totals() (+2 more)
 
-### Community 137 - "write_vectors.py"
+### Community 138 - "write_vectors.py"
 Cohesion: 0.28
 Nodes (12): compare(), cypher(), load(), main(), Write vectors from a side file onto the graph: the tags' `Tag.emb` or the chunk, Every node's two sums on the graph against the file's, and a seeded sample read, The stored vectors of `ids`, in that order, as the doubles the graph holds., read_vectors() (+4 more)
 
-### Community 138 - "record_text.py"
+### Community 139 - "record_text.py"
 Cohesion: 0.17
 Nodes (6): A corpus record written as text: what lucene and vector index, embed and hand to, sha256 over the units in index order. Per unit: the id, then the text, each as U, units_digest(), CorpusTests, A baseline unit's text is the record written the way the benchmark's own code wr, the corpus the runs read: both baselines build the same units from it
 
-### Community 139 - "RoleTests"
+### Community 140 - "RoleTests"
 Cohesion: 0.17
 Nodes (4): RoleTests, Determinism, FakeSession, stands in for the Neo4j session `scope_chunks` runs its one read query on
 
-### Community 140 - "Walk"
+### Community 141 - "Walk"
 Cohesion: 0.31
 Nodes (4): the whole of _retrieve_forum on a synthetic corpus: no database, no model, no qu, with every band infinite and every weight zero the two modes are the same chain, _u(), Walk
 
-### Community 141 - "test_facet_views_coverage.py"
+### Community 142 - "test_facet_views_coverage.py"
 Cohesion: 0.26
 Nodes (12): cf(), `same-facet` excludes the row itself by tag, so a chunk whose only other row of, `per_edge` is {tag: {facet: (counterfactual text, edits)}}; the rest read unchan, `view_of(body, facet, tag) -> str` for every text the run will look at., The net rule: edit 1 takes `sunset` out of its span, edit 2's replacement puts i, Under `same-facet` the control row must share the facet and differ in tag; `any`, test_a_control_never_comes_from_the_same_tag(), test_a_word_another_edit_puts_back_is_not_removed() (+4 more)
 
-### Community 142 - "test_query_content.py"
+### Community 143 - "test_query_content.py"
 Cohesion: 0.28
 Nodes (11): payload(), test_an_answer_with_question_tags_and_no_description_tag_parses(), test_answers_without_query_tags_still_parse(), test_duplicate_collapse_covers_both_lists(), test_no_silent_repair_of_an_invalid_facet(), test_original_question_survives_and_topic_does_not_lead_by_default(), test_query_tags_parse_as_strictly_as_the_tags(), test_query_tags_parse_beside_the_description_tags() (+3 more)
 
-### Community 143 - "derive_corpus()"
+### Community 144 - "derive_corpus()"
 Cohesion: 0.32
 Nodes (10): derive_corpus(), DeriveReport, _dump(), Path, _full_product(), _make_raw(), test_corpus_view_strips_rag_unsafe_keys_and_copies_rest_verbatim(), test_dataset_without_strip_keys_fails_loud() (+2 more)
 
-### Community 144 - "test_facet_record_assembly.py"
+### Community 145 - "test_facet_record_assembly.py"
 Cohesion: 0.23
 Nodes (9): checked_components(), component_max(), contiguous_order(), Opaque exact-record components as evidence transport or context assembly., Keep existing access; bundle each record at its earliest native nomination., test_component_transport_preserves_streams_and_can_rescue_missing_evidence(), test_contiguous_assembly_changes_order_without_changing_access(), test_record_transport_before_graph_can_enable_otherwise_unreachable_neighbor() (+1 more)
 
-### Community 145 - "form_scope()"
+### Community 146 - "form_scope()"
 Cohesion: 0.32
 Nodes (10): combine(), form_scope(), Compose query-grounded structural routes without corpus content or gold.  Landin, None abstains from scope; an empty set explicitly vetoes scope access.      Rout, scope_catalog(), landing(), test_alias_binding_join_does_not_silently_choose_one_person(), test_default_and_route_intersection_are_different_graph_constructions() (+2 more)
 
-### Community 146 - "querytagger_split_report.py"
+### Community 147 - "querytagger_split_report.py"
 Cohesion: 0.29
 Nodes (11): fmt(), load_calls(), main(), q(), rankdata(), The split check's report: what the forty calls on disk say, with no model call o, ranks with ties averaged, spearman() (+3 more)
 
-### Community 148 - "encode_pairs()"
+### Community 149 - "encode_pairs()"
 Cohesion: 0.18
 Nodes (8): evaluate(), main(), Evaluate one saved checkpoint against the frozen held-out test chunks. Once.  Se, main(), Run a saved facet model over every (tag, chunk) edge and write the facet layer., encode_pairs(), The four-facet cross-encoder: one (tag, chunk) pair in, four signed facet values, test_real_backbone_pair_is_tag_first_and_truncates_only_the_chunk()
 
-### Community 149 - "FacetModel"
+### Community 150 - "FacetModel"
 Cohesion: 0.20
 Nodes (4): FacetModel, Rebuild from the artifact alone: the backbone architecture from the stored confi, Stage A freezes the whole backbone; stage B unfreezes its last two layers only., Path
 
-### Community 150 - "bakeoff_report.py"
+### Community 151 - "bakeoff_report.py"
 Cohesion: 0.32
 Nodes (11): agg_D(), beats(), decide(), diff_se_of(), _f(), main(), The bake-off table and the winner, by the rule PROGRESS.md fixed before any resu, Per chunk: the edge count, the per-facet sum, sum of squares and within-chunk SS (+3 more)
 
-### Community 151 - "build_chunk_times.py"
+### Community 152 - "build_chunk_times.py"
 Cohesion: 0.23
 Nodes (9): Each pool chunk's time in the graph (his 2026-10-17 "well then, build it!" for t, The first date or date-time a text holds, in seconds since 1970-01-01 on one clo, A record's own time in seconds, from the field its kind keeps it in; None when i, chunk id -> its records' times, sorted, over the pool, and per kind (chunks, chu, record_times(), seconds(), time_of(), verify() (+1 more)
 
-### Community 152 - "facet_edits.py"
+### Community 153 - "facet_edits.py"
 Cohesion: 0.27
 Nodes (10): The four facets and the edit-list reconstruction, with no graph or model lane be, main(), q(), random_drop(), The instrument alone: does cos(tag, view) register the removal of the edit's wor, Whole-word, case-insensitive removal of every word in `drop`; whitespace collaps, read_rows(), strike() (+2 more)
 
-### Community 153 - "facet_select_chunks.py"
+### Community 154 - "facet_select_chunks.py"
 Cohesion: 0.29
 Nodes (11): cell(), digest(), fraction(), main(), Pick whole chunks for the counterfactual teacher, by a stated rule and nothing e, The split digest is a different hash from the selection digest. With one hash fo, read_rows(), select() (+3 more)
 
-### Community 154 - "facet_views_coverage.py"
+### Community 155 - "facet_views_coverage.py"
 Cohesion: 0.33
 Nodes (11): all_views_text(), main(), Does a facet view even reach the place a counterfactual edited? A text-level dia, {text sha: views} — chunk: the five strings; edge: {phrase casefold: four string, read_rows(), read_texts(), read_views(), sha256_of() (+3 more)
 
-### Community 155 - "offline_eval.py"
+### Community 156 - "offline_eval.py"
 Cohesion: 0.30
 Nodes (9): load_questions(), main(), stratified_gold(), _cosine(), _embed_texts(), expand_folders(), _folder_question_ids(), main() (+1 more)
 
-### Community 156 - "measure_face_scope.py"
+### Community 157 - "measure_face_scope.py"
 Cohesion: 0.32
 Nodes (11): background(), employee_chunks(), git_commit(), load_graph(), main(), ndarray, Faces and stated-scope shares over the candidate chunks of a finished run.  Gold, _say() (+3 more)
 
-### Community 157 - "Path"
+### Community 158 - "Path"
 Cohesion: 0.32
 Nodes (3): Path, ArchiveManifestTests, RequireStepTests
 
-### Community 159 - "tag.py"
+### Community 160 - "tag.py"
 Cohesion: 0.38
 Nodes (10): _checkpoint_done(), _sample(), smoke(), _spread(), tag_chunk(), tag_corpus(), tagger_view(), _write_build_stats() (+2 more)
 
-### Community 160 - "diagnostics.py"
+### Community 161 - "diagnostics.py"
 Cohesion: 0.29
 Nodes (10): flip_rates(), graph_stats(), main(), majority_orientation(), _p(), What the raw answers look like before any model reads them.  Per facet: the ti, Per facet: order flips (both presentation orders of one pair) and repeat flips., Per unordered edge pair, the majority decided outcome; ties and splits dropped. (+2 more)
 
-### Community 161 - "RunLock"
+### Community 162 - "RunLock"
 Cohesion: 0.25
 Nodes (5): _pid_alive(), RunLock, _selfcheck(), main(), _wide_parallel_judge()
 
@@ -947,83 +951,83 @@ Nodes (9): batches(), evaluate(), forward_batch(), main(), Train the four-facet 
 Cohesion: 0.27
 Nodes (8): build(), judged_edges(), main(), The edge list the backbone bake-off extracts representations for.  PROGRESS.md,, (chunk_id, tag) for every stats row that carries a topic value. The value is dro, edge_id -> (chunk_id, tag) over every judged row of every set., read_stats_edges(), The pairwise facet ranker: a scalar per (tag, chunk, facet) fitted to comparison
 
-### Community 173 - "TagGeometryTests"
+### Community 172 - "TagGeometryTests"
 Cohesion: 0.40
 Nodes (3): _computed(), TagGeometryTests, _vocabulary()
 
-### Community 174 - "test_retrieval_harness.py"
+### Community 173 - "test_retrieval_harness.py"
 Cohesion: 0.33
 Nodes (7): add_shard(), fake_run(), Resume boundaries and reports must not silently change the experiment., test_corrupt_completed_shard_refuses_resume(), test_partial_population_cannot_win_and_nan_precision_is_explicit(), test_second_writer_cannot_remove_first_writers_lock(), test_source_change_refuses_resume_and_releases_own_lock()
 
-### Community 175 - "interval_order()"
+### Community 174 - "interval_order()"
 Cohesion: 0.36
 Nodes (7): interval_order(), Experimental interval-supported ordering, not wired into serving retrieval.  Can, test_cycle_in_naive_fallback_is_avoided(), test_input_permutation_and_dominated_addition_preserve_order(), test_invalid_measurements_are_rejected(), test_no_constraints_uses_fixed_baseline_and_stable_ids(), test_random_orders_preserve_every_interval_constraint()
 
-### Community 177 - "test_graph_layer.py"
+### Community 176 - "test_graph_layer.py"
 Cohesion: 0.28
 Nodes (5): layer(), The facet layer as the graph carries it: `artefact.graph_layer.read` on toy rows, Edge rows as the arm's read returns them, in no order, and the node written with, test_read_lists_the_edges_by_chunk_then_tag_whatever_order_they_come_in(), test_read_refuses_a_graph_that_does_not_carry_the_layer_whole()
 
-### Community 179 - "hybrid.py"
+### Community 178 - "hybrid.py"
 Cohesion: 0.43
 Nodes (6): answer_one_question(), fuse(), _minmax(), prepare_over_corpus(), Prepared, _qid_text()
 
-### Community 181 - "facet_rulers_report.py"
+### Community 180 - "facet_rulers_report.py"
 Cohesion: 0.43
 Nodes (7): fmt(), main(), q(), Read what `facet_rulers` wrote and print the comparison tables, one per candidat, read(), rulers_in(), Path
 
-### Community 182 - "generation_agreement()"
+### Community 181 - "generation_agreement()"
 Cohesion: 0.29
 Nodes (8): fisher_z_se(), generation_agreement(), ranks(), §5 rule (e): the relation is the unit; the shared minuend is broken by taking th, Average ranks, ties shared — `facet_neural/layer_stats.spearman`'s ranking., §5's "naive comparison": the Fisher-z standard error of a Spearman correlation,, spearman(), spearman_boot()
 
-### Community 188 - "install_lane()"
+### Community 186 - "install_lane()"
 Cohesion: 0.25
 Nodes (6): FakeLane, install_lane(), The headless lane, replaced. `replies` is a function of the user message., test_dry_run_calls_nothing(), test_runner_calls_and_resumes(), test_runner_records_a_parse_failure()
 
-### Community 189 - "plant()"
+### Community 187 - "plant()"
 Cohesion: 0.32
 Nodes (8): plant(), Write an answer file for every control row; `decide(pair_key, row) -> 'A'|'B'|'e, A judge that reads topic and slips more often the closer the two edges are., run_control(), test_control_fails_a_coin(), test_control_fails_a_position_bias(), test_control_passes_a_judge_that_follows_topic(), truthful()
 
-### Community 190 - "graph_layer.py"
+### Community 188 - "graph_layer.py"
 Cohesion: 0.38
 Nodes (6): digest(), GraphLayer, The facet layer as the graph carries it. No ranking formula, no file access.  Pe, sha256 over (chunk id, tag, values) rows sorted by (chunk id, tag), one JSON lin, The pool's edges ((tag, chunk id), sorted by (chunk id, tag)) with their five va, read()
 
-### Community 191 - "permute()"
+### Community 189 - "permute()"
 Cohesion: 0.52
 Nodes (6): main(), permute(), The null layer: the round-1 overlay with each of the four columns permuted acros, each non-topic column permuted across the edges with its own generator stream, _sha(), Path
 
-### Community 192 - "to_overlay.py"
+### Community 190 - "to_overlay.py"
 Cohesion: 0.52
 Nodes (6): check_against_graph(), main(), round1 scores.jsonl -> a per-edge facet overlay the arm can read (HERB_FACET_SOU, read_scores(), _sha256(), Path
 
-### Community 193 - "facet_targets.py"
+### Community 191 - "facet_targets.py"
 Cohesion: 0.52
 Nodes (6): main(), noise_of(), q(), Turn the ruler measurements into the supervision targets.  Correction 1 fixes th, read(), Path
 
-### Community 194 - "reembed_herb_eval.py"
+### Community 192 - "reembed_herb_eval.py"
 Cohesion: 0.62
 Nodes (6): drop_legacy(), embed_chunk_descriptions(), embed_tags(), main(), _vector_index(), _write_vectors()
 
-### Community 195 - "sweep_v3.py"
+### Community 193 - "sweep_v3.py"
 Cohesion: 0.48
 Nodes (6): apply(), load_questions(), main(), Path, Sweep the artefact_v3 knobs over a question set, in one process.  Prepares the, recall_id()
 
-### Community 202 - "test_facet_weight_channels.py"
+### Community 201 - "test_facet_weight_channels.py"
 Cohesion: 0.33
 Nodes (3): Narrow numerical parity and boundary checks for selected weight channels., selected_references(), test_matches_full_engine_without_beta_and_does_not_apply_Q()
 
-### Community 203 - "apply_edits()"
+### Community 202 - "apply_edits()"
 Cohesion: 0.33
 Nodes (6): apply_edits(), (reconstructed text, problems). An edit whose `find` is absent from the text, oc, test_apply_edits_leaves_every_untouched_character_alone(), test_apply_edits_refuses_an_absent_anchor(), test_apply_edits_refuses_an_ambiguous_anchor(), test_empty_edit_list_is_the_text_unchanged()
 
-### Community 204 - "facet_reader_gpu.py"
+### Community 203 - "facet_reader_gpu.py"
 Cohesion: 0.53
 Nodes (5): label_index(), main(), Score facet answer/pole pairs on a GPU box. Copied to the desktop and run there:, read_jsonl(), Path
 
-### Community 205 - "read_interventions()"
+### Community 204 - "read_interventions()"
 Cohesion: 0.33
 Nodes (6): cf_path(), gen_label(), `facet_views_texts.split_cf_dir`'s rule: a path under `counterfactuals_repeat` i, The chunk's counterfactual file. `facet_answers.file_stem` names it `<safe id>__, §0: one row per (chunk, tag, facet, generation) with `changed` and `reconstructi, read_interventions()
 
-### Community 206 - "jsonl.py"
+### Community 205 - "jsonl.py"
 Cohesion: 0.53
 Nodes (5): heal(), iter_records(), load(), Yield records, ignoring blank lines and an invalid final nonblank line., _selfcheck()
 
@@ -1090,12 +1094,12 @@ Nodes (3): corpus(), make_corpus(), A rows export and a facet_stats file with th
 ## Knowledge Gaps
 - **13 isolated node(s):** `Metric`, `Path`, `ndarray`, `Path`, `ndarray` (+8 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **62 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **61 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `ModelUsage` connect `ModelUsage` to `artefact_v3.py`, `land()`, `artefact_v1.py`, `index.py`, `artefact_volmax.py`, `artefact_graph.py`, `artefact_v1_five_questions.py`, `contract.py`, `artefact_v2.py`, `_SharedEmbedder`, `artefact_v4.py`, `cut_at_budget()`, `QuestionWithTruth`, `VectorBudgetTests`, `tag.py`, `artefact_v1_det.py`, `artefact_v1_relevance_weight.py`, `FuseTests`, `artefact_composed.py`, `test_artefact_facet_joint.py`, `hybrid.py`, `_JudgeLLM`, `test_artefact_v4.py`, `artefact_facet_joint.py`, `artefact_facet_leader_hits.py`, `ragas.py`, `unpack_generation()`, `artefact_facet_leader_macro.py`, `CallAsSentTests`, `vector.py`, `artefact_cluster.py`, `answer_chunk()`, `_retrieve()`, `ExhaustionRecordTests`, `artefact.py`, `artefact_scope.py`, `lucene.py`, `Path`?**
+- **Why does `ModelUsage` connect `ModelUsage` to `artefact_v3.py`, `land()`, `artefact_v1.py`, `artefact_volmax.py`, `index.py`, `artefact_graph.py`, `artefact_v1_five_questions.py`, `contract.py`, `artefact_v2.py`, `_SharedEmbedder`, `artefact_v4.py`, `cut_at_budget()`, `QuestionWithTruth`, `VectorBudgetTests`, `tag.py`, `artefact_v1_det.py`, `artefact_v1_relevance_weight.py`, `FuseTests`, `artefact_composed.py`, `test_artefact_facet_joint.py`, `hybrid.py`, `_JudgeLLM`, `test_artefact_v4.py`, `artefact_facet_joint.py`, `artefact_facet_leader_hits.py`, `ragas.py`, `unpack_generation()`, `artefact_facet_leader_macro.py`, `CallAsSentTests`, `vector.py`, `artefact_cluster.py`, `answer_chunk()`, `_retrieve()`, `ExhaustionRecordTests`, `artefact.py`, `artefact_scope.py`, `lucene.py`, `Path`?**
   _High betweenness centrality (0.116) - this node is a cross-community bridge._
 - **Why does `_retrieve_concept()` connect `artefact_v3.py` to `cache_round.py`, `artefact_v2.py`, `facet_pairs_select.py`?**
   _High betweenness centrality (0.053) - this node is a cross-community bridge._
