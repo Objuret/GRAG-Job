@@ -171,6 +171,7 @@ The data given away:
 
 How to work with him:
 
+- *"check what the fucking CODE says holy shit"* · *"ALWAYS check the code, how is this unclear? it's the only thing telling the truth."* (2026-10-23, after the order the judge reads was looked for by matching texts in the run's prompts before the code was read) — a question about what the system does is answered from the code first.
 - *"you write a really long thing that needs reflection on, especially by you, then you end it with a semi-irrelevant question, if I answer that, you will pretty much toss out all the other stuff from your prompt.. Doesn't that seem like a really sharp weakness in the harness?"* · *"Good, decided"* (2026-10-02) — a message carrying reflection, analysis or a design ends with no question; a question comes as its own short message after he has reacted.
 - *"you DO know the core concepts we worked with, right? how about instead of dragging up the entire fucking ship and luggage of past ghosts you take a look at the concepts, compare them to what you are doing now or NOT doing now, figure out fitting application of those based on the core concepts i have been hammering for fucking ever"* · *"stop forcing me to course correct every goddamn fucking time"* (2026-10-04)
 - *"so, how can i make you actually guild the fucking thing i want you to build instead of you building your own shit every time?"* (2026-10-05) — what is the agent's own choice in a build is said to him as such.
