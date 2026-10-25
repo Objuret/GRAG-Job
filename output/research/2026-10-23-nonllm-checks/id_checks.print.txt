@@ -1,0 +1,12 @@
+=== lucene
+  records credited per question: mean 75.5; cited per question: mean 39.3
+  context_precision_id (stored mean) 0.055; share of passed characters that belong to cited records: mean 0.042
+  cited records passed only in part (not credited by ID): 0, in 0 questions
+=== vector
+  records credited per question: mean 155.4; cited per question: mean 39.3
+  context_precision_id (stored mean) 0.063; share of passed characters that belong to cited records: mean 0.072
+  cited records passed only in part (not credited by ID): 2, in 2 questions
+=== artefact
+  records credited per question: mean 182.3; cited per question: mean 39.3
+  context_precision_id (stored mean) 0.141; share of passed characters that belong to cited records: mean 0.173
+  cited records passed only in part (not credited by ID): 16, in 15 questions

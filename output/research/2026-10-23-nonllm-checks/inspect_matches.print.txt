@@ -1,0 +1,108 @@
+
+=== lucene
+  recall: cited found only through another record: {"n": 109, "same text (case and spaces aside)": 0, "both at most 60 chars": 1, "median chars a / b": [146.0, 153.0], "similarity 1.0 / 0.8-1 / 0.65-0.8 / 0.5-0.65": [0, 6, 26, 77], "kinds": {"documents->documents": 6, "slack->slack": 97, "meeting_transcripts->meeting_transcripts": 3, "prs->prs": 3}}
+    [0.50 meeting_transcripts] 'Attendees\nAlice Davis, Alice Martinez, Hannah Miller, Hannah Miller, David Johnson, Alice Martinez, Hannah Tay'
+            vs 'Attendees\nAlice Davis, Alice Martinez, Hannah Miller, Hannah Miller, David Johnson, Alice Martinez, Hannah Tay'
+    [0.75 slack] "Hi team, several customers have reported positive things about pAIX. It's great to see such feedback!"
+            vs 'Hi team, several customers have reported positive things about AIX in the latest release!'
+    [0.57 slack] "Same here, I'll keep you all posted. Thanks for the coordination! 🤝"
+            vs "Same here, I'll keep you posted on the TensorFlow findings. 🤖"
+    [0.58 prs] 'Collect and label additional data from the healthcare sector to support the fine-tuning of the BERT model for '
+            vs 'Collect and label additional data from the finance sector to support the fine-tuning of the BERT model for ind'
+    [0.60 slack] 'Hi team, please check my PR for retraining the models with BERT: https://github.com/salesforce/backAIX/pull/10'
+            vs 'Hi team, please check my PR for upgrading TensorFlow to the latest version: https://github.com/salesforce/back'
+    [0.68 slack] "Hi team, several customers have reported positive things about castAIX. It's great to see such positive feedba"
+            vs 'Hi team, several customers have reported positive things about AIX in the latest release!'
+    [0.67 documents] 'Executive Summary: The ectAIX is an AI-powered tool designed to revolutionize the API connection process by au'
+            vs 'Executive Summary: The ectAIX is an AI-powered tool designed to revolutionize the API connection process by au'
+    [0.52 slack] 'Hi team, please check my PR for coordinating with Bob on resource allocation and progress tracking: https://gi'
+            vs 'Hi team, please check my PR for the new dynamic resource allocation strategy: https://github.com/salesforce/ca'
+  precision: passed, not cited, counted relevant: {"n": 880, "same text (case and spaces aside)": 72, "both at most 60 chars": 30, "median chars a / b": [126.0, 126.0], "similarity 1.0 / 0.8-1 / 0.65-0.8 / 0.5-0.65": [72, 216, 187, 405], "kinds": {"slack->slack": 818, "prs->prs": 33, "urls->urls": 27, "meeting_transcripts->meeting_transcripts": 2}}
+    [0.75 slack] "@here here's a short demo highlighting the main features of our last release https://sf-internal.slack.com/arc"
+            vs '@here here’s a quick video showcasing the updates in our last release https://sf-internal.slack.com/archives/p'
+    [0.66 slack] "Hi team, several customers are reporting issues with our ConnectForce product. Let's go through them and assig"
+            vs "Hi team, several customers are reporting issues with ConnectForce that we need to address ASAP. Let's go throu"
+    [0.88 slack] "Hi team, several customers are reporting issues with MonitorForce that need our attention. Let's go through th"
+            vs "Hi team, several customers are reporting issues with MonitorForce that we need to address. Let's go through th"
+    [0.67 slack] 'Hi team, one of the common issues reported for shAIX is the slow performance of the search feature during peak'
+            vs 'Hi team, one of the common issues reported for castAIX is limited integration options with third-party data so'
+    [0.52 slack] 'Thanks for the update, Ian. How did you manage to fix it?'
+            vs "Thanks for the update, Hannah. Could you explain why it's not considered a bug?"
+    [0.68 urls] 'A demo showing how ConvoSuggest works.'
+            vs 'A demo showing how SmartViz AI works.'
+    [0.74 slack] "Great suggestions, everyone. Let's make sure these customer issues are documented in the planning documents fo"
+            vs "Let's make sure these customer issues are documented in our planning documents for the next release of castAIX"
+    [0.72 slack] "Hi team, I've shared the <https://sf-internal.slack.com/archives/docs/toraix_product_requirements_document|Pro"
+            vs "Hi team, I've shared the <https://sf-internal.slack.com/archives/docs/onalizeaix_product_requirements_document"
+
+=== vector
+  recall: cited found only through another record: {"n": 217, "same text (case and spaces aside)": 0, "both at most 60 chars": 15, "median chars a / b": [140.0, 135.0], "similarity 1.0 / 0.8-1 / 0.65-0.8 / 0.5-0.65": [0, 16, 59, 142], "kinds": {"prs->prs": 3, "slack->slack": 200, "meeting_transcripts->meeting_transcripts": 3, "urls->urls": 10, "documents->documents": 1}}
+    [0.57 slack] "Awesome, thanks for taking that on! Lastly, we have an 'API Rate Limiting Causes Delayed Responses' issue. The"
+            vs "Awesome, thanks for taking that on! Lastly, we have a 'UI Rendering Glitch on Mobile Devices'. The UI for pers"
+    [0.55 slack] "Sure thing! I'll dive into the personalization display issue and see what's causing the incorrect data. Let's "
+            vs "Sure thing! I'll dive into the model features and see what's causing the misalignment. Let's get those recomme"
+    [0.66 slack] '@here check full demo of our latest release https://sf-internal.slack.com/archives/pProX/demo_3'
+            vs '@here here’s a quick video showcasing the updates in our last release https://sf-internal.slack.com/archives/p'
+    [0.60 slack] "@eid_76d9cb07 Thanks for the update! I'll start reviewing it now. Excited to see the improvements TLS 1.3 brin"
+            vs "Hey @eid_7fba1318, thanks for sharing! I'll start reviewing it now. Excited to see how this improves our throu"
+    [0.51 slack] 'Hi team, I was reading about InsightBot for Slack, and I thought it would be useful to discuss its strengths a'
+            vs 'Hi team, I was reading about SmartSearch for Slack, and I thought it would be useful to discuss its strengths '
+    [0.71 slack] 'Hi team, the bug about missing data fields in the API payload has been resolved. You can check the details in '
+            vs "Hi team, the bug titled 'Excessive Event Listener Registration' has been resolved. You can check out the detai"
+    [0.66 slack] "Sure thing! I'll dive into the model's training data and parameters to see where the overfitting is happening."
+            vs "Sure thing! I'll dive into the model features and see what's causing the misalignment. Let's get those recomme"
+    [0.57 slack] "Hi @eid_c38fe0e7, I'll review it too. The RBAC integration sounds like a great improvement! 👍"
+            vs "Hey @eid_b6a30126, I'll review it too. Interactive charts sound like a great addition! 📊"
+  precision: passed, not cited, counted relevant: {"n": 2494, "same text (case and spaces aside)": 99, "both at most 60 chars": 23, "median chars a / b": [131.0, 128.0], "similarity 1.0 / 0.8-1 / 0.65-0.8 / 0.5-0.65": [99, 1258, 275, 862], "kinds": {"slack->slack": 2461, "prs->prs": 17, "meeting_transcripts->meeting_transcripts": 6, "urls->urls": 10}}
+    [0.52 slack] "Awesome, thanks everyone for jumping on these issues so quickly. Let's keep the impacted customers in the loop"
+            vs "Awesome, thanks everyone for jumping on these so quickly! Let's keep the communication open if you need any mo"
+    [0.94 slack] "Hi team, several customers are reporting issues with FlowForce that need our attention. Let's go through them "
+            vs "Hi team, several customers are reporting issues with ForecastForce that need our attention. Let's go through t"
+    [0.67 slack] "Hi team, several customers are reporting issues with our ConnectForce product. Let's go through them and assig"
+            vs "Hi team, several customers are reporting issues with SummarizeForce that we need to address. Let's go through "
+    [0.82 slack] "Hi team, several customers are reporting issues with SummarizeForce that we need to address. Let's go through "
+            vs "Hi team, several customers are reporting issues with FeedbackForce that need our attention. Let's go through t"
+    [0.54 slack] 'Hi team, please check my PR for implementing GraphQL for flexible data queries: https://github.com/salesforce/'
+            vs 'Hi team, please check my PR for setting up the GraphQL server for CollaborateForce: https://github.com/salesfo'
+    [0.93 slack] "Hi team, several customers are reporting issues with InsightForce that need our attention. Let's go through th"
+            vs "Hi team, several customers are reporting issues with FeedbackForce that need our attention. Let's go through t"
+    [0.94 slack] "Hi team, several customers are reporting issues with ConnectForce that need our attention. Let's go through th"
+            vs "Hi team, several customers are reporting issues with FeedbackForce that need our attention. Let's go through t"
+    [0.81 slack] "Hi team, several customers are reporting issues with InsightForce that need our attention. Let's go through th"
+            vs "Hi team, several customers are reporting issues with SummarizeForce that we need to address. Let's go through "
+
+=== artefact
+  recall: cited found only through another record: {"n": 363, "same text (case and spaces aside)": 32, "both at most 60 chars": 47, "median chars a / b": [112.0, 112.0], "similarity 1.0 / 0.8-1 / 0.65-0.8 / 0.5-0.65": [32, 70, 96, 165], "kinds": {"documents->documents": 7, "slack->slack": 347, "prs->prs": 4, "meeting_transcripts->meeting_transcripts": 5}}
+    [0.60 slack] 'Hi team, one of the common issues reported for AIX is that the system goes offline unexpectedly. This is impac'
+            vs 'Hi team, one of the common issues reported for AIX is slow performance during peak usage times. This was repor'
+    [0.51 slack] 'Hi team, please check my PR for optimizing the AWS Lambda configuration for our sentiment analysis tasks: http'
+            vs "Hi team, please check my PR for adding configuration options for caching and batching strategies. Here's the l"
+    [0.66 slack] '@here here’s a quick video showcasing the updates in our last release https://sf-internal.slack.com/archives/P'
+            vs '@here check full demo of our latest release https://sf-internal.slack.com/archives/ProX/demo_4'
+    [0.57 slack] 'Hi team, please check my PR for the new error handling and alerting mechanism: https://github.com/salesforce/o'
+            vs 'Hi team, please check my PR for defining data schemas for third-party app interactions: https://github.com/sal'
+    [0.55 slack] 'Hi team, please check my PR for enhancing our microservices to handle increased load: https://github.com/sales'
+            vs 'Hi team, please check my PR for integrating Slack notifications for anomaly alerts: https://github.com/salesfo'
+    [0.58 slack] "Thanks, everyone! Appreciate the quick review and feedback. Let's get this merged! 🚀"
+            vs "Thanks, @eid_e1bcb754 and Alice! I appreciate the quick review and feedback. I'll go ahead and merge the PR. 🎉"
+    [0.65 slack] "Got it! I'll dive into the AI Model & Data Processing Engine to see what's causing the misrepresentation. Than"
+            vs "Got it! I'll dive into the dynamic charts issue and see what's causing the lag. Thanks for the heads-up! 🚀"
+    [0.57 slack] 'Just finished reviewing the serialization and deserialization logic. The implementation is clean, and the mess'
+            vs 'I agree with @eid_9e9883de, the integration looks solid. I ran the code, and the messages are being serialized'
+  precision: passed, not cited, counted relevant: {"n": 1047, "same text (case and spaces aside)": 86, "both at most 60 chars": 110, "median chars a / b": [122.0, 123.0], "similarity 1.0 / 0.8-1 / 0.65-0.8 / 0.5-0.65": [86, 179, 208, 574], "kinds": {"slack->slack": 1005, "meeting_chats->meeting_chats": 28, "meeting_transcripts->meeting_transcripts": 10, "prs->prs": 4}}
+    [0.73 slack] "Got it! I'll dive into the Report Generation & Data Processing to see what's causing the inaccuracies. Thanks "
+            vs "Got it, I'll dive into the report generation and data processing modules to identify the root cause. Thanks fo"
+    [0.56 slack] "Absolutely, thanks for handling this so quickly, Bob. Let me know if there's anything else you need from us."
+            vs "Great, thanks everyone! Let me know if there's anything else you need from my side."
+    [0.55 slack] "Thanks, Ian Smith. I'll review the changes and run some tests to ensure everything is working as expected."
+            vs "Agreed, great job! I'll keep an eye on the alerts to ensure everything is functioning as expected."
+    [0.84 slack] "Hi team, several customers are reporting issues with ContextForce that need our immediate attention. Let's go "
+            vs "Hi team, several customers are reporting issues with ContextForce that we need to address. Let's go through th"
+    [0.75 slack] "Thanks, everyone! Let's keep these open-source solutions in mind as we work on our fixes. Feel free to reach o"
+            vs "Thanks, everyone! Let's keep the impacted customers updated as we make progress. Feel free to reach out if you"
+    [0.69 slack] "Hey @eid_8a2cd06b, thanks for sharing! I'll start reviewing it now. Excited to see how Lambda handles our auth"
+            vs "Hey @eid_b5138dba, thanks for sharing! I'll start reviewing it now. Excited to see how you've implemented the "
+    [0.51 slack] 'Hi team, please check my PR for the updated documentation on API Integration Enhancements: https://github.com/'
+            vs 'Hi team, please check my PR for optimizing the Microsoft Dynamics 365 API: https://github.com/salesforce/Conte'
+    [0.75 slack] "Hey @eid_a8040636, thanks for sharing! I'll take a look at it now. Excited to see how the LSTM models are shap"
+            vs "Hey @eid_a8040636, thanks for sharing! I'll take a look at it now. Excited to see how this improves our foreca"

@@ -181,7 +181,8 @@ def _rehydrate(rec):
     own = rec["retrieval"]
     return ArmOutput(rec["answer"], rec["contexts"], rec["context_ids"],
                      rec["search_time_s"], model_usage_from_dict(rec["generator"]),
-                     model_usage_from_dict(own) if isinstance(own, dict) else ModelUsage())
+                     model_usage_from_dict(own) if isinstance(own, dict) else ModelUsage(),
+                     meta=rec.get("meta"))
 
 
 def retrieval_of(calls, counted=None):

@@ -3907,6 +3907,3033 @@
         "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "untracked_sha256": {}
       }
+    },
+    {
+      "made_at": "2026-10-24T23:22:43.200549+00:00",
+      "ordered_by": "\"ffs, redo them on the gpu\" · \"only the embeddings, because i want the true times\" (2026-10-25, on the final runs' query embeddings made on the CPU)",
+      "what_happened": "The run embedded its queries on the CPU. Each question's query-embedding time is the time the same embeddings take on the desktop's GTX 1080 Ti.",
+      "rule": {
+        "id": "embed-gpu-time/1",
+        "text": "1. The run embedded its queries on the CPU (every embed call record says device cpu).\n  2. Each question's embed entry in retrieval gets request_s = the GPU seconds of its embed calls\n     added, and time_s = request_s + wait_s + retry_s; wait_s and retry_s stay as recorded.\n  3. The question's timing.wall_s changes by the same amount as the embed entry's request_s.\n  4. Each embed call record gets its GPU seconds as encode_s and device cuda. No vector, answer,\n     context, score or other time changes; the vectors are the same (cosine checked)."
+      },
+      "not_changed_and_worth_knowing": [
+        "The GPU times were measured one call after the other in a warm process; the lock waits of the run (wait_s) stay as recorded."
+      ],
+      "changes": [
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.9214395000599325,
+          "corrected": 0.027107000001706183
+        },
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.9214409999549389,
+          "corrected": 0.0271084998967126
+        },
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 17.851925999857485,
+          "corrected": 16.95759349979926
+        },
+        {
+          "where": "arm_outputs.jsonl row 1 (AnomalyForce::a::0)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.3443470001220703,
+          "corrected": 0.02455610001925379
+        },
+        {
+          "where": "arm_outputs.jsonl row 1 (AnomalyForce::a::0)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.3443478997796774,
+          "corrected": 0.02455699967686087
+        },
+        {
+          "where": "arm_outputs.jsonl row 1 (AnomalyForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 6.01016389997676,
+          "corrected": 5.690372999873944
+        },
+        {
+          "where": "arm_outputs.jsonl row 2 (AutoTuneForce::a::0)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.7299027000553906,
+          "corrected": 0.023648299975320697
+        },
+        {
+          "where": "arm_outputs.jsonl row 2 (AutoTuneForce::a::0)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.729903600178659,
+          "corrected": 0.023649200098589063
+        },
+        {
+          "where": "arm_outputs.jsonl row 2 (AutoTuneForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 6.336764900013804,
+          "corrected": 5.6305104999337345
+        },
+        {
+          "where": "arm_outputs.jsonl row 3 (CoachForce::a::5)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.9181677000597119,
+          "corrected": 0.027316999970935285
+        },
+        {
+          "where": "arm_outputs.jsonl row 3 (CoachForce::a::5)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.9181691003032029,
+          "corrected": 0.02731840021442622
+        },
+        {
+          "where": "arm_outputs.jsonl row 3 (CoachForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 7.342884299810976,
+          "corrected": 6.452033599722199
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.7646854999475181,
+          "corrected": 0.02404390007723123
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.7646865998394787,
+          "corrected": 0.02404499996919185
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "timing.wall_s",
+          "recorded": 8.031202499754727,
+          "corrected": 7.29056089988444
+        },
+        {
+          "where": "arm_outputs.jsonl row 5 (CollaborationForce::a::6)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.35928540024906397,
+          "corrected": 0.02626610000152141
+        },
+        {
+          "where": "arm_outputs.jsonl row 5 (CollaborationForce::a::6)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.35928620025515556,
+          "corrected": 0.026266900007613003
+        },
+        {
+          "where": "arm_outputs.jsonl row 5 (CollaborationForce::a::6)",
+          "field": "timing.wall_s",
+          "recorded": 7.188027199823409,
+          "corrected": 6.855007899575867
+        },
+        {
+          "where": "arm_outputs.jsonl row 6 (ConnectForce::a::5)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.4114776998758316,
+          "corrected": 0.025127300061285496
+        },
+        {
+          "where": "arm_outputs.jsonl row 6 (ConnectForce::a::5)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.4114784998819232,
+          "corrected": 0.02512810006737709
+        },
+        {
+          "where": "arm_outputs.jsonl row 6 (ConnectForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 7.457051699981093,
+          "corrected": 7.070701300166547
+        },
+        {
+          "where": "arm_outputs.jsonl row 7 (ContentForce::a::2)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.6567763998173177,
+          "corrected": 0.02435479999985546
+        },
+        {
+          "where": "arm_outputs.jsonl row 7 (ContentForce::a::2)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.6567787998355925,
+          "corrected": 0.024357200018130243
+        },
+        {
+          "where": "arm_outputs.jsonl row 7 (ContentForce::a::2)",
+          "field": "timing.wall_s",
+          "recorded": 6.761922199744731,
+          "corrected": 6.129500599927269
+        },
+        {
+          "where": "arm_outputs.jsonl row 8 (ContextForce::a::1)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.5946043999865651,
+          "corrected": 0.025432700058445334
+        },
+        {
+          "where": "arm_outputs.jsonl row 8 (ContextForce::a::1)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.5946062998846173,
+          "corrected": 0.02543459995649755
+        },
+        {
+          "where": "arm_outputs.jsonl row 8 (ContextForce::a::1)",
+          "field": "timing.wall_s",
+          "recorded": 7.401231999974698,
+          "corrected": 6.832060300046578
+        },
+        {
+          "where": "arm_outputs.jsonl row 9 (EdgeForce::a::2)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.3738724999129772,
+          "corrected": 0.03950409998651594
+        },
+        {
+          "where": "arm_outputs.jsonl row 9 (EdgeForce::a::2)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.3738732999190688,
+          "corrected": 0.039504899992607534
+        },
+        {
+          "where": "arm_outputs.jsonl row 9 (EdgeForce::a::2)",
+          "field": "timing.wall_s",
+          "recorded": 5.562333399895579,
+          "corrected": 5.227964999969117
+        },
+        {
+          "where": "arm_outputs.jsonl row 10 (ExplainabilityForce::a::6)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.6605173000134528,
+          "corrected": 0.02765880001243204
+        },
+        {
+          "where": "arm_outputs.jsonl row 10 (ExplainabilityForce::a::6)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.6605184003710747,
+          "corrected": 0.027659900370053947
+        },
+        {
+          "where": "arm_outputs.jsonl row 10 (ExplainabilityForce::a::6)",
+          "field": "timing.wall_s",
+          "recorded": 8.169692699797451,
+          "corrected": 7.536834199796431
+        },
+        {
+          "where": "arm_outputs.jsonl row 11 (FeedbackForce::a::5)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.33172239968553185,
+          "corrected": 0.025382000021636486
+        },
+        {
+          "where": "arm_outputs.jsonl row 11 (FeedbackForce::a::5)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.3317234995774925,
+          "corrected": 0.025383099913597107
+        },
+        {
+          "where": "arm_outputs.jsonl row 11 (FeedbackForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 8.399264399893582,
+          "corrected": 8.092924000229686
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.8346536997705698,
+          "corrected": 0.02576230000704527
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.8346556997857988,
+          "corrected": 0.025764300022274256
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "timing.wall_s",
+          "recorded": 10.07566240010783,
+          "corrected": 9.266771000344306
+        },
+        {
+          "where": "arm_outputs.jsonl row 13 (ForecastForce::a::4)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.557732299901545,
+          "corrected": 0.02731220005080104
+        },
+        {
+          "where": "arm_outputs.jsonl row 13 (ForecastForce::a::4)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.557734000030905,
+          "corrected": 0.027313900180161
+        },
+        {
+          "where": "arm_outputs.jsonl row 13 (ForecastForce::a::4)",
+          "field": "timing.wall_s",
+          "recorded": 8.542528600431979,
+          "corrected": 8.012108500581235
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.33192909974604845,
+          "corrected": 0.025417099939659238
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.33193060010671616,
+          "corrected": 0.025418600300326943
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 11.985897600185126,
+          "corrected": 11.679385600378737
+        },
+        {
+          "where": "arm_outputs.jsonl row 15 (KnowledgeForce::a::4)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.5053046997636557,
+          "corrected": 0.02454160002525896
+        },
+        {
+          "where": "arm_outputs.jsonl row 15 (KnowledgeForce::a::4)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.5053053996525705,
+          "corrected": 0.024542299914173782
+        },
+        {
+          "where": "arm_outputs.jsonl row 15 (KnowledgeForce::a::4)",
+          "field": "timing.wall_s",
+          "recorded": 10.00826649973169,
+          "corrected": 9.527503399993293
+        },
+        {
+          "where": "arm_outputs.jsonl row 16 (LeadForce::a::5)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.3580669001676142,
+          "corrected": 0.024866799940355122
+        },
+        {
+          "where": "arm_outputs.jsonl row 16 (LeadForce::a::5)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.35806800005957484,
+          "corrected": 0.024867899832315743
+        },
+        {
+          "where": "arm_outputs.jsonl row 16 (LeadForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 6.3460319000296295,
+          "corrected": 6.01283179980237
+        },
+        {
+          "where": "arm_outputs.jsonl row 17 (MonitorForce::a::5)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.43103119963780046,
+          "corrected": 0.028338400064967573
+        },
+        {
+          "where": "arm_outputs.jsonl row 17 (MonitorForce::a::5)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.4310320997610688,
+          "corrected": 0.02833930018823594
+        },
+        {
+          "where": "arm_outputs.jsonl row 17 (MonitorForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 8.861133699771017,
+          "corrected": 8.458440900198184
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.8498750003054738,
+          "corrected": 0.02805979992263019
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.8498774999752641,
+          "corrected": 0.02806229959242046
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 7.333555500023067,
+          "corrected": 6.511740299640223
+        },
+        {
+          "where": "arm_outputs.jsonl row 19 (PitchForce::a::6)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.6791749997064471,
+          "corrected": 0.026219099992886186
+        },
+        {
+          "where": "arm_outputs.jsonl row 19 (PitchForce::a::6)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.6791760995984077,
+          "corrected": 0.026220199884846807
+        },
+        {
+          "where": "arm_outputs.jsonl row 19 (PitchForce::a::6)",
+          "field": "timing.wall_s",
+          "recorded": 6.233839699998498,
+          "corrected": 5.580883800284937
+        },
+        {
+          "where": "arm_outputs.jsonl row 20 (ProposalForce::a::11)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.7404410997405648,
+          "corrected": 0.024297600029967725
+        },
+        {
+          "where": "arm_outputs.jsonl row 20 (ProposalForce::a::11)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.7404432999901474,
+          "corrected": 0.024299800279550254
+        },
+        {
+          "where": "arm_outputs.jsonl row 20 (ProposalForce::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 7.108770600054413,
+          "corrected": 6.392627100343816
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.4012898001819849,
+          "corrected": 0.025722499936819077
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.40129070030525327,
+          "corrected": 0.025723400060087442
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 7.2070698998868465,
+          "corrected": 6.831502599641681
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 1.0026465002447367,
+          "corrected": 0.024235600023530424
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 1.0026481002569199,
+          "corrected": 0.024237200035713613
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 7.886540099978447,
+          "corrected": 6.908129199757241
+        },
+        {
+          "where": "arm_outputs.jsonl row 23 (SecurityForce::a::7)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.37731899973005056,
+          "corrected": 0.025924100074917078
+        },
+        {
+          "where": "arm_outputs.jsonl row 23 (SecurityForce::a::7)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.37731979973614216,
+          "corrected": 0.025924900081008673
+        },
+        {
+          "where": "arm_outputs.jsonl row 23 (SecurityForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 8.304938999935985,
+          "corrected": 7.953544100280851
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.7950864997692406,
+          "corrected": 0.024985000025480986
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.7950881998986006,
+          "corrected": 0.024986700154840946
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "timing.wall_s",
+          "recorded": 6.4994073999114335,
+          "corrected": 5.729305900167674
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.4667834001593292,
+          "corrected": 0.024699299945496023
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.4667845000512898,
+          "corrected": 0.024700399837456644
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 6.937422899994999,
+          "corrected": 6.495338799781166
+        },
+        {
+          "where": "arm_outputs.jsonl row 26 (SupportForce::a::5)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.8924832995980978,
+          "corrected": 0.02442590007558465
+        },
+        {
+          "where": "arm_outputs.jsonl row 26 (SupportForce::a::5)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.8924843999557197,
+          "corrected": 0.024427000433206558
+        },
+        {
+          "where": "arm_outputs.jsonl row 26 (SupportForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 11.457077200058848,
+          "corrected": 10.589019800536335
+        },
+        {
+          "where": "arm_outputs.jsonl row 27 (TrendForce::a::9)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.3654689001850784,
+          "corrected": 0.024336499976925552
+        },
+        {
+          "where": "arm_outputs.jsonl row 27 (TrendForce::a::9)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.36547029996290803,
+          "corrected": 0.0243378997547552
+        },
+        {
+          "where": "arm_outputs.jsonl row 27 (TrendForce::a::9)",
+          "field": "timing.wall_s",
+          "recorded": 7.169243900105357,
+          "corrected": 6.828111499897204
+        },
+        {
+          "where": "arm_outputs.jsonl row 28 (VizForce::a::16)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.38608080008998513,
+          "corrected": 0.024611899978481233
+        },
+        {
+          "where": "arm_outputs.jsonl row 28 (VizForce::a::16)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.3860829998739064,
+          "corrected": 0.024614099762402475
+        },
+        {
+          "where": "arm_outputs.jsonl row 28 (VizForce::a::16)",
+          "field": "timing.wall_s",
+          "recorded": 5.776750100310892,
+          "corrected": 5.415281200199388
+        },
+        {
+          "where": "arm_outputs.jsonl row 29 (WorkFlowGenie::a::11)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.5632128003053367,
+          "corrected": 0.02465399994980544
+        },
+        {
+          "where": "arm_outputs.jsonl row 29 (WorkFlowGenie::a::11)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.5632140999659896,
+          "corrected": 0.024655299610458314
+        },
+        {
+          "where": "arm_outputs.jsonl row 29 (WorkFlowGenie::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 9.398459400050342,
+          "corrected": 8.85990059969481
+        },
+        {
+          "where": "arm_outputs.jsonl row 30 (ActionGenie::a::5)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.7549196002073586,
+          "corrected": 0.024278700002469122
+        },
+        {
+          "where": "arm_outputs.jsonl row 30 (ActionGenie::a::5)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.7549217003397644,
+          "corrected": 0.02428080013487488
+        },
+        {
+          "where": "arm_outputs.jsonl row 30 (ActionGenie::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 14.370073500089347,
+          "corrected": 13.639432599884458
+        },
+        {
+          "where": "arm_outputs.jsonl row 31 (AnomalyForce::a::17)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.3654306000098586,
+          "corrected": 0.02490679989568889
+        },
+        {
+          "where": "arm_outputs.jsonl row 31 (AnomalyForce::a::17)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.3654314996674657,
+          "corrected": 0.02490769955329597
+        },
+        {
+          "where": "arm_outputs.jsonl row 31 (AnomalyForce::a::17)",
+          "field": "timing.wall_s",
+          "recorded": 6.705374599900097,
+          "corrected": 6.364850799785927
+        },
+        {
+          "where": "arm_outputs.jsonl row 32 (AutoTuneForce::a::12)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.3232132000848651,
+          "corrected": 0.024134600069373846
+        },
+        {
+          "where": "arm_outputs.jsonl row 32 (AutoTuneForce::a::12)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.32321419985964894,
+          "corrected": 0.024135599844157696
+        },
+        {
+          "where": "arm_outputs.jsonl row 32 (AutoTuneForce::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 10.8686696998775,
+          "corrected": 10.56959109986201
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.686697400175035,
+          "corrected": 0.025500299991108477
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.6866982001811266,
+          "corrected": 0.025501099997200072
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 10.062599499709904,
+          "corrected": 9.401402399525978
+        },
+        {
+          "where": "arm_outputs.jsonl row 34 (CollaborateForce::a::19)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.5584914996288717,
+          "corrected": 0.024230399983935058
+        },
+        {
+          "where": "arm_outputs.jsonl row 34 (CollaborateForce::a::19)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.5584933999925852,
+          "corrected": 0.02423230034764856
+        },
+        {
+          "where": "arm_outputs.jsonl row 34 (CollaborateForce::a::19)",
+          "field": "timing.wall_s",
+          "recorded": 6.944190099835396,
+          "corrected": 6.409929000190459
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.3548484002240002,
+          "corrected": 0.027289299992844462
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.35485130036249757,
+          "corrected": 0.027292200131341815
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 12.156963999848813,
+          "corrected": 11.829404899617657
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.9547524000518024,
+          "corrected": 0.029066800023429096
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.9547542999498546,
+          "corrected": 0.02906869992148131
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 12.776279299985617,
+          "corrected": 11.850593699957244
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.38661469984799623,
+          "corrected": 0.02481079997960478
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.3866155999712646,
+          "corrected": 0.024811700102873147
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 9.189092500135303,
+          "corrected": 8.827288600266911
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.42884019995108247,
+          "corrected": 0.024555300013162196
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.4288412001915276,
+          "corrected": 0.024556300253607333
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "timing.wall_s",
+          "recorded": 17.54358270019293,
+          "corrected": 17.139297800255008
+        },
+        {
+          "where": "arm_outputs.jsonl row 39 (EdgeForce::a::12)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.3789500999264419,
+          "corrected": 0.023266699980013072
+        },
+        {
+          "where": "arm_outputs.jsonl row 39 (EdgeForce::a::12)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.3789512002840638,
+          "corrected": 0.02326780033763498
+        },
+        {
+          "where": "arm_outputs.jsonl row 39 (EdgeForce::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 8.004983599763364,
+          "corrected": 7.649300199816935
+        },
+        {
+          "where": "arm_outputs.jsonl row 40 (ExplainabilityForce::a::7)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.7601451999507844,
+          "corrected": 0.030018000048585236
+        },
+        {
+          "where": "arm_outputs.jsonl row 40 (ExplainabilityForce::a::7)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.7601463003084064,
+          "corrected": 0.030019100406207144
+        },
+        {
+          "where": "arm_outputs.jsonl row 40 (ExplainabilityForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 7.081742399837822,
+          "corrected": 6.3516151999356225
+        },
+        {
+          "where": "arm_outputs.jsonl row 41 (FeedbackForce::a::6)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.5049066999927163,
+          "corrected": 0.023713600006885827
+        },
+        {
+          "where": "arm_outputs.jsonl row 41 (FeedbackForce::a::6)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.5049074999988079,
+          "corrected": 0.02371440001297742
+        },
+        {
+          "where": "arm_outputs.jsonl row 41 (FeedbackForce::a::6)",
+          "field": "timing.wall_s",
+          "recorded": 7.8120944001711905,
+          "corrected": 7.33090130018536
+        },
+        {
+          "where": "arm_outputs.jsonl row 42 (FlowForce::a::12)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.5833328999578953,
+          "corrected": 0.02661689999513328
+        },
+        {
+          "where": "arm_outputs.jsonl row 42 (FlowForce::a::12)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.5833340999670327,
+          "corrected": 0.026618100004270673
+        },
+        {
+          "where": "arm_outputs.jsonl row 42 (FlowForce::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 9.980299999937415,
+          "corrected": 9.423583999974653
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.33891319995746017,
+          "corrected": 0.033068599994294345
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.3389146998524666,
+          "corrected": 0.033070099889300764
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "timing.wall_s",
+          "recorded": 6.579659100156277,
+          "corrected": 6.273814500193112
+        },
+        {
+          "where": "arm_outputs.jsonl row 44 (InsightForce::a::6)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.33344999980181456,
+          "corrected": 0.02440230001229793
+        },
+        {
+          "where": "arm_outputs.jsonl row 44 (InsightForce::a::6)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.33345119981095195,
+          "corrected": 0.02440350002143532
+        },
+        {
+          "where": "arm_outputs.jsonl row 44 (InsightForce::a::6)",
+          "field": "timing.wall_s",
+          "recorded": 8.729518999811262,
+          "corrected": 8.420471300021745
+        },
+        {
+          "where": "arm_outputs.jsonl row 45 (KnowledgeForce::a::14)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 1.0026166001334786,
+          "corrected": 0.02437979995738715
+        },
+        {
+          "where": "arm_outputs.jsonl row 45 (KnowledgeForce::a::14)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 1.0026183002628386,
+          "corrected": 0.02438150008674711
+        },
+        {
+          "where": "arm_outputs.jsonl row 45 (KnowledgeForce::a::14)",
+          "field": "timing.wall_s",
+          "recorded": 12.561717899981886,
+          "corrected": 11.583481099805795
+        },
+        {
+          "where": "arm_outputs.jsonl row 46 (LeadForce::a::13)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.43619849998503923,
+          "corrected": 0.02563060005195439
+        },
+        {
+          "where": "arm_outputs.jsonl row 46 (LeadForce::a::13)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.4361998001113534,
+          "corrected": 0.025631900178268552
+        },
+        {
+          "where": "arm_outputs.jsonl row 46 (LeadForce::a::13)",
+          "field": "timing.wall_s",
+          "recorded": 8.10357590019703,
+          "corrected": 7.693008000263944
+        },
+        {
+          "where": "arm_outputs.jsonl row 47 (MonitorForce::a::16)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.3067369000054896,
+          "corrected": 0.026131400023587048
+        },
+        {
+          "where": "arm_outputs.jsonl row 47 (MonitorForce::a::16)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.30673789978027344,
+          "corrected": 0.026132399798370898
+        },
+        {
+          "where": "arm_outputs.jsonl row 47 (MonitorForce::a::16)",
+          "field": "timing.wall_s",
+          "recorded": 6.743289600126445,
+          "corrected": 6.462684100144543
+        },
+        {
+          "where": "arm_outputs.jsonl row 48 (PersonalizeForce::a::24)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.9386155996471643,
+          "corrected": 0.03439849999267608
+        },
+        {
+          "where": "arm_outputs.jsonl row 48 (PersonalizeForce::a::24)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.9386171996593475,
+          "corrected": 0.03440010000485927
+        },
+        {
+          "where": "arm_outputs.jsonl row 48 (PersonalizeForce::a::24)",
+          "field": "timing.wall_s",
+          "recorded": 7.305550899822265,
+          "corrected": 6.401333800167777
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.4502020003274083,
+          "corrected": 0.028202999965287745
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.45020340010523796,
+          "corrected": 0.028204399743117392
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "timing.wall_s",
+          "recorded": 10.249674099963158,
+          "corrected": 9.827675099601038
+        },
+        {
+          "where": "arm_outputs.jsonl row 50 (ProposalForce::a::17)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.30245550023391843,
+          "corrected": 0.02340049995109439
+        },
+        {
+          "where": "arm_outputs.jsonl row 50 (ProposalForce::a::17)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.3024568003602326,
+          "corrected": 0.023401800077408552
+        },
+        {
+          "where": "arm_outputs.jsonl row 50 (ProposalForce::a::17)",
+          "field": "timing.wall_s",
+          "recorded": 7.308513899799436,
+          "corrected": 7.029458899516612
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.4876699000597,
+          "corrected": 0.028055400005541742
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.48767240019515157,
+          "corrected": 0.028057900140993297
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "timing.wall_s",
+          "recorded": 6.279093199875206,
+          "corrected": 5.8194786998210475
+        },
+        {
+          "where": "arm_outputs.jsonl row 52 (SearchForce::a::16)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 1.0210990002378821,
+          "corrected": 0.02696220006328076
+        },
+        {
+          "where": "arm_outputs.jsonl row 52 (SearchForce::a::16)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 1.0211010002531111,
+          "corrected": 0.026964200078509748
+        },
+        {
+          "where": "arm_outputs.jsonl row 52 (SearchForce::a::16)",
+          "field": "timing.wall_s",
+          "recorded": 11.157779399771243,
+          "corrected": 10.163642599596642
+        },
+        {
+          "where": "arm_outputs.jsonl row 53 (SentimentForce::a::26)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.32223019981756806,
+          "corrected": 0.024537499994039536
+        },
+        {
+          "where": "arm_outputs.jsonl row 53 (SentimentForce::a::26)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.32223139982670546,
+          "corrected": 0.024538700003176928
+        },
+        {
+          "where": "arm_outputs.jsonl row 53 (SentimentForce::a::26)",
+          "field": "timing.wall_s",
+          "recorded": 13.332203300204128,
+          "corrected": 13.0345106003806
+        },
+        {
+          "where": "arm_outputs.jsonl row 54 (SummarizeForce::a::23)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.30778850009664893,
+          "corrected": 0.024370400002226233
+        },
+        {
+          "where": "arm_outputs.jsonl row 54 (SummarizeForce::a::23)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.30779039999470115,
+          "corrected": 0.02437229990027845
+        },
+        {
+          "where": "arm_outputs.jsonl row 54 (SummarizeForce::a::23)",
+          "field": "timing.wall_s",
+          "recorded": 5.625599899794906,
+          "corrected": 5.342181799700484
+        },
+        {
+          "where": "arm_outputs.jsonl row 55 (SupportForce::a::6)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.8089815001003444,
+          "corrected": 0.02493690000846982
+        },
+        {
+          "where": "arm_outputs.jsonl row 55 (SupportForce::a::6)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.808984000235796,
+          "corrected": 0.024939400143921375
+        },
+        {
+          "where": "arm_outputs.jsonl row 55 (SupportForce::a::6)",
+          "field": "timing.wall_s",
+          "recorded": 10.642415199894458,
+          "corrected": 9.858370599802583
+        },
+        {
+          "where": "arm_outputs.jsonl row 56 (VizForce::a::43)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.42442090017721057,
+          "corrected": 0.023680799989961088
+        },
+        {
+          "where": "arm_outputs.jsonl row 56 (VizForce::a::43)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.42442219983786345,
+          "corrected": 0.023682099650613964
+        },
+        {
+          "where": "arm_outputs.jsonl row 56 (VizForce::a::43)",
+          "field": "timing.wall_s",
+          "recorded": 6.8818704998120666,
+          "corrected": 6.481130399624817
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.3038743999786675,
+          "corrected": 0.0248077999567613
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.3038750998675823,
+          "corrected": 0.024808499845676124
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 8.225181399844587,
+          "corrected": 7.946114799822681
+        },
+        {
+          "where": "arm_outputs.jsonl row 58 (AutoTuneForce::a::13)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.302986899856478,
+          "corrected": 0.024176400038413703
+        },
+        {
+          "where": "arm_outputs.jsonl row 58 (AutoTuneForce::a::13)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.3029875997453928,
+          "corrected": 0.024177099927328527
+        },
+        {
+          "where": "arm_outputs.jsonl row 58 (AutoTuneForce::a::13)",
+          "field": "timing.wall_s",
+          "recorded": 11.00693939998746,
+          "corrected": 10.728128900169395
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.39935060031712055,
+          "corrected": 0.025580300018191338
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.39935149997472763,
+          "corrected": 0.025581199675798416
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "timing.wall_s",
+          "recorded": 13.98973899986595,
+          "corrected": 13.61596869956702
+        },
+        {
+          "where": "arm_outputs.jsonl row 60 (ConnectForce::a::14)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.32732999976724386,
+          "corrected": 0.02845679991878569
+        },
+        {
+          "where": "arm_outputs.jsonl row 60 (ConnectForce::a::14)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.32733089989051223,
+          "corrected": 0.028457700042054057
+        },
+        {
+          "where": "arm_outputs.jsonl row 60 (ConnectForce::a::14)",
+          "field": "timing.wall_s",
+          "recorded": 9.659087100066245,
+          "corrected": 9.360213900217786
+        },
+        {
+          "where": "arm_outputs.jsonl row 61 (ContentForce::a::16)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.7720778002403677,
+          "corrected": 0.024989900062792003
+        },
+        {
+          "where": "arm_outputs.jsonl row 61 (ContentForce::a::16)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.7720789001323283,
+          "corrected": 0.024990999954752624
+        },
+        {
+          "where": "arm_outputs.jsonl row 61 (ContentForce::a::16)",
+          "field": "timing.wall_s",
+          "recorded": 12.055993999820203,
+          "corrected": 11.308906099642627
+        },
+        {
+          "where": "arm_outputs.jsonl row 62 (EdgeForce::a::13)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.40654970007017255,
+          "corrected": 0.025533000007271767
+        },
+        {
+          "where": "arm_outputs.jsonl row 62 (EdgeForce::a::13)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.4065509997308254,
+          "corrected": 0.025534299667924643
+        },
+        {
+          "where": "arm_outputs.jsonl row 62 (EdgeForce::a::13)",
+          "field": "timing.wall_s",
+          "recorded": 8.401536600198597,
+          "corrected": 8.020519900135696
+        },
+        {
+          "where": "arm_outputs.jsonl row 63 (ExplainabilityForce::a::9)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 1.5890001002699137,
+          "corrected": 0.023597200051881373
+        },
+        {
+          "where": "arm_outputs.jsonl row 63 (ExplainabilityForce::a::9)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 1.5890009999275208,
+          "corrected": 0.02359809970948845
+        },
+        {
+          "where": "arm_outputs.jsonl row 63 (ExplainabilityForce::a::9)",
+          "field": "timing.wall_s",
+          "recorded": 9.439017599914223,
+          "corrected": 7.873614699696191
+        },
+        {
+          "where": "arm_outputs.jsonl row 64 (FeedbackForce::a::7)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.681356499902904,
+          "corrected": 0.030256500001996756
+        },
+        {
+          "where": "arm_outputs.jsonl row 64 (FeedbackForce::a::7)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.6813575001433492,
+          "corrected": 0.030257500242441893
+        },
+        {
+          "where": "arm_outputs.jsonl row 64 (FeedbackForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 9.91042280010879,
+          "corrected": 9.259322800207883
+        },
+        {
+          "where": "arm_outputs.jsonl row 65 (FlowForce::a::13)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 1.8329998003318906,
+          "corrected": 0.024091999977827072
+        },
+        {
+          "where": "arm_outputs.jsonl row 65 (FlowForce::a::13)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 1.8330017002299428,
+          "corrected": 0.024093899875879288
+        },
+        {
+          "where": "arm_outputs.jsonl row 65 (FlowForce::a::13)",
+          "field": "timing.wall_s",
+          "recorded": 11.963620100170374,
+          "corrected": 10.15471229981631
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.2970926999114454,
+          "corrected": 0.025230499915778637
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.29709319956600666,
+          "corrected": 0.025230999570339918
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "timing.wall_s",
+          "recorded": 9.86233690008521,
+          "corrected": 9.590474700089544
+        },
+        {
+          "where": "arm_outputs.jsonl row 67 (InsightForce::a::7)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.26191679993644357,
+          "corrected": 0.024285500054247677
+        },
+        {
+          "where": "arm_outputs.jsonl row 67 (InsightForce::a::7)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.2619174001738429,
+          "corrected": 0.024286100291647017
+        },
+        {
+          "where": "arm_outputs.jsonl row 67 (InsightForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 8.672510599717498,
+          "corrected": 8.434879299835302
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.18605100037530065,
+          "corrected": 0.025430400040932
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.18605140037834644,
+          "corrected": 0.025430800043977797
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "timing.wall_s",
+          "recorded": 11.704795600380749,
+          "corrected": 11.54417500004638
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.38689700001850724,
+          "corrected": 0.02487899991683662
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.3868976002559066,
+          "corrected": 0.02487960015423596
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "timing.wall_s",
+          "recorded": 9.915808000136167,
+          "corrected": 9.553790000034496
+        },
+        {
+          "where": "arm_outputs.jsonl row 70 (MonitorForce::a::18)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.1901515000499785,
+          "corrected": 0.025600400054827332
+        },
+        {
+          "where": "arm_outputs.jsonl row 70 (MonitorForce::a::18)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.19015219993889332,
+          "corrected": 0.025601099943742156
+        },
+        {
+          "where": "arm_outputs.jsonl row 70 (MonitorForce::a::18)",
+          "field": "timing.wall_s",
+          "recorded": 5.0511509999632835,
+          "corrected": 4.886599899968132
+        },
+        {
+          "where": "arm_outputs.jsonl row 71 (PersonalizeForce::a::34)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.22424380015581846,
+          "corrected": 0.02639009989798069
+        },
+        {
+          "where": "arm_outputs.jsonl row 71 (PersonalizeForce::a::34)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.22424430027604103,
+          "corrected": 0.02639060001820326
+        },
+        {
+          "where": "arm_outputs.jsonl row 71 (PersonalizeForce::a::34)",
+          "field": "timing.wall_s",
+          "recorded": 6.2385001997463405,
+          "corrected": 6.040646499488503
+        },
+        {
+          "where": "arm_outputs.jsonl row 72 (PitchForce::a::27)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.39354920014739037,
+          "corrected": 0.02826630009803921
+        },
+        {
+          "where": "arm_outputs.jsonl row 72 (PitchForce::a::27)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.3935501999221742,
+          "corrected": 0.02826729987282306
+        },
+        {
+          "where": "arm_outputs.jsonl row 72 (PitchForce::a::27)",
+          "field": "timing.wall_s",
+          "recorded": 11.283970299642533,
+          "corrected": 10.918687399593182
+        },
+        {
+          "where": "arm_outputs.jsonl row 73 (ProposalForce::a::20)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.19705910002812743,
+          "corrected": 0.026351700071245432
+        },
+        {
+          "where": "arm_outputs.jsonl row 73 (ProposalForce::a::20)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.19706009980291128,
+          "corrected": 0.02635269984602928
+        },
+        {
+          "where": "arm_outputs.jsonl row 73 (ProposalForce::a::20)",
+          "field": "timing.wall_s",
+          "recorded": 9.741675300057977,
+          "corrected": 9.570967900101095
+        },
+        {
+          "where": "arm_outputs.jsonl row 74 (SentimentForce::a::27)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.17383149964734912,
+          "corrected": 0.023776100017130375
+        },
+        {
+          "where": "arm_outputs.jsonl row 74 (SentimentForce::a::27)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.17383189965039492,
+          "corrected": 0.023776500020176172
+        },
+        {
+          "where": "arm_outputs.jsonl row 74 (SentimentForce::a::27)",
+          "field": "timing.wall_s",
+          "recorded": 6.091156600043178,
+          "corrected": 5.941101200412959
+        },
+        {
+          "where": "arm_outputs.jsonl row 75 (SummarizeForce::a::24)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.21463859966024756,
+          "corrected": 0.028716800035908818
+        },
+        {
+          "where": "arm_outputs.jsonl row 75 (SummarizeForce::a::24)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.21463930001482368,
+          "corrected": 0.02871750039048493
+        },
+        {
+          "where": "arm_outputs.jsonl row 75 (SummarizeForce::a::24)",
+          "field": "timing.wall_s",
+          "recorded": 5.8082522000186145,
+          "corrected": 5.622330400394276
+        },
+        {
+          "where": "arm_outputs.jsonl row 76 (CollaborateForce::a::31)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.3256506002508104,
+          "corrected": 0.025393599993549287
+        },
+        {
+          "where": "arm_outputs.jsonl row 76 (CollaborateForce::a::31)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.32565120002254844,
+          "corrected": 0.02539419976528734
+        },
+        {
+          "where": "arm_outputs.jsonl row 76 (CollaborateForce::a::31)",
+          "field": "timing.wall_s",
+          "recorded": 5.4596512001007795,
+          "corrected": 5.159394199843518
+        },
+        {
+          "where": "arm_outputs.jsonl row 77 (ConnectForce::a::15)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.558693700004369,
+          "corrected": 0.03391849994659424
+        },
+        {
+          "where": "arm_outputs.jsonl row 77 (ConnectForce::a::15)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.5586947002448142,
+          "corrected": 0.033919500187039375
+        },
+        {
+          "where": "arm_outputs.jsonl row 77 (ConnectForce::a::15)",
+          "field": "timing.wall_s",
+          "recorded": 6.245300900191069,
+          "corrected": 5.720525700133294
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.514728999696672,
+          "corrected": 0.023184899939224124
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.5147300995886326,
+          "corrected": 0.023185999831184745
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "timing.wall_s",
+          "recorded": 7.036750200204551,
+          "corrected": 6.545206100447103
+        },
+        {
+          "where": "arm_outputs.jsonl row 79 (EdgeForce::a::14)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.28901199996471405,
+          "corrected": 0.03361500008031726
+        },
+        {
+          "where": "arm_outputs.jsonl row 79 (EdgeForce::a::14)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.2890129000879824,
+          "corrected": 0.033615900203585625
+        },
+        {
+          "where": "arm_outputs.jsonl row 79 (EdgeForce::a::14)",
+          "field": "timing.wall_s",
+          "recorded": 11.262415200006217,
+          "corrected": 11.00701820012182
+        },
+        {
+          "where": "arm_outputs.jsonl row 80 (ExplainabilityForce::a::11)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.26700930017977953,
+          "corrected": 0.027696099947206676
+        },
+        {
+          "where": "arm_outputs.jsonl row 80 (ExplainabilityForce::a::11)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.26701040007174015,
+          "corrected": 0.027697199839167297
+        },
+        {
+          "where": "arm_outputs.jsonl row 80 (ExplainabilityForce::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 12.125226200092584,
+          "corrected": 11.885912999860011
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.17037109984084964,
+          "corrected": 0.02442539995536208
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.17037170007824898,
+          "corrected": 0.02442600019276142
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 8.860036400146782,
+          "corrected": 8.714090700261295
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.1608763001859188,
+          "corrected": 0.023756399983540177
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.1608767998404801,
+          "corrected": 0.02375689963810146
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "timing.wall_s",
+          "recorded": 9.485684199724346,
+          "corrected": 9.348564299521968
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.17844450008124113,
+          "corrected": 0.02495019999332726
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.1784450002014637,
+          "corrected": 0.02495070011354983
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "timing.wall_s",
+          "recorded": 5.62979430006817,
+          "corrected": 5.476299999980256
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.2590882000513375,
+          "corrected": 0.02649419999215752
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.25908909970894456,
+          "corrected": 0.026495099649764597
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "timing.wall_s",
+          "recorded": 5.748254300095141,
+          "corrected": 5.515660300035961
+        },
+        {
+          "where": "arm_outputs.jsonl row 85 (SentimentForce::a::29)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.7167706997133791,
+          "corrected": 0.026717099943198264
+        },
+        {
+          "where": "arm_outputs.jsonl row 85 (SentimentForce::a::29)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.7167711998336017,
+          "corrected": 0.026717600063420832
+        },
+        {
+          "where": "arm_outputs.jsonl row 85 (SentimentForce::a::29)",
+          "field": "timing.wall_s",
+          "recorded": 13.919420799706131,
+          "corrected": 13.22936719993595
+        },
+        {
+          "where": "arm_outputs.jsonl row 86 (FeedbackForce::a::16)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.17461090022698045,
+          "corrected": 0.02712349989451468
+        },
+        {
+          "where": "arm_outputs.jsonl row 86 (FeedbackForce::a::16)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.1746114999987185,
+          "corrected": 0.027124099666252732
+        },
+        {
+          "where": "arm_outputs.jsonl row 86 (FeedbackForce::a::16)",
+          "field": "timing.wall_s",
+          "recorded": 6.451330999843776,
+          "corrected": 6.3038435995113105
+        },
+        {
+          "where": "arm_outputs.jsonl row 87 (FeedbackForce::a::18)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.18316429993137717,
+          "corrected": 0.028652500011958182
+        },
+        {
+          "where": "arm_outputs.jsonl row 87 (FeedbackForce::a::18)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.18316480005159974,
+          "corrected": 0.02865300013218075
+        },
+        {
+          "where": "arm_outputs.jsonl row 87 (FeedbackForce::a::18)",
+          "field": "timing.wall_s",
+          "recorded": 6.514034199994057,
+          "corrected": 6.359522400074638
+        },
+        {
+          "where": "arm_outputs.jsonl row 88 (ActionGenie::a::1)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.29953800002112985,
+          "corrected": 0.0242003999883309
+        },
+        {
+          "where": "arm_outputs.jsonl row 88 (ActionGenie::a::1)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.29953909991309047,
+          "corrected": 0.02420149988029152
+        },
+        {
+          "where": "arm_outputs.jsonl row 88 (ActionGenie::a::1)",
+          "field": "timing.wall_s",
+          "recorded": 13.484404200222343,
+          "corrected": 13.209066600189544
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.2701338999904692,
+          "corrected": 0.023595000035129488
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.270134299993515,
+          "corrected": 0.023595400038175285
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "timing.wall_s",
+          "recorded": 8.486539300065488,
+          "corrected": 8.240000400110148
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.18575479974970222,
+          "corrected": 0.025158499949611723
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.18575539998710155,
+          "corrected": 0.025159100187011063
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "timing.wall_s",
+          "recorded": 4.872096499893814,
+          "corrected": 4.711500200093724
+        },
+        {
+          "where": "arm_outputs.jsonl row 91 (CoachForce::a::0)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.40062939980998635,
+          "corrected": 0.028038799995556474
+        },
+        {
+          "where": "arm_outputs.jsonl row 91 (CoachForce::a::0)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.4006300000473857,
+          "corrected": 0.028039400232955813
+        },
+        {
+          "where": "arm_outputs.jsonl row 91 (CoachForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 9.70713169965893,
+          "corrected": 9.3345410998445
+        },
+        {
+          "where": "arm_outputs.jsonl row 92 (CollaborateForce::a::0)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.18667839979752898,
+          "corrected": 0.027606099960394204
+        },
+        {
+          "where": "arm_outputs.jsonl row 92 (CollaborateForce::a::0)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.18667900003492832,
+          "corrected": 0.027606700197793543
+        },
+        {
+          "where": "arm_outputs.jsonl row 92 (CollaborateForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 7.196341699920595,
+          "corrected": 7.03726940008346
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.20571970008313656,
+          "corrected": 0.028699300019070506
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.20572020020335913,
+          "corrected": 0.028699800139293075
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 7.342654099687934,
+          "corrected": 7.165633699623868
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.2094290000386536,
+          "corrected": 0.027896199957467616
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.20942990016192198,
+          "corrected": 0.02789710008073598
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 7.328426899854094,
+          "corrected": 7.146894099772908
+        },
+        {
+          "where": "arm_outputs.jsonl row 95 (ContentForce::a::0)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.25081870006397367,
+          "corrected": 0.027766100014559925
+        },
+        {
+          "where": "arm_outputs.jsonl row 95 (ContentForce::a::0)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.25082070007920265,
+          "corrected": 0.02776810002978891
+        },
+        {
+          "where": "arm_outputs.jsonl row 95 (ContentForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 6.085651099681854,
+          "corrected": 5.8625984996324405
+        },
+        {
+          "where": "arm_outputs.jsonl row 96 (ContextForce::a::0)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.1774528999812901,
+          "corrected": 0.027828200021758676
+        },
+        {
+          "where": "arm_outputs.jsonl row 96 (ContextForce::a::0)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.17745359987020493,
+          "corrected": 0.0278288999106735
+        },
+        {
+          "where": "arm_outputs.jsonl row 96 (ContextForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 5.087677100207657,
+          "corrected": 4.938052400248125
+        },
+        {
+          "where": "arm_outputs.jsonl row 97 (EdgeForce::a::0)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.21592170000076294,
+          "corrected": 0.03310959995724261
+        },
+        {
+          "where": "arm_outputs.jsonl row 97 (EdgeForce::a::0)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.21592199988663197,
+          "corrected": 0.033109899843111634
+        },
+        {
+          "where": "arm_outputs.jsonl row 97 (EdgeForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 5.253427400253713,
+          "corrected": 5.070615300210193
+        },
+        {
+          "where": "arm_outputs.jsonl row 98 (ExplainabilityForce::a::0)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.20398039976134896,
+          "corrected": 0.024537199991755188
+        },
+        {
+          "where": "arm_outputs.jsonl row 98 (ExplainabilityForce::a::0)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.20398079976439476,
+          "corrected": 0.024537599994800985
+        },
+        {
+          "where": "arm_outputs.jsonl row 98 (ExplainabilityForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 7.7925657001324,
+          "corrected": 7.613122500362806
+        },
+        {
+          "where": "arm_outputs.jsonl row 99 (FeedbackForce::a::0)",
+          "field": "retrieval.embed.request_s",
+          "recorded": 0.19514380022883415,
+          "corrected": 0.028735500061884522
+        },
+        {
+          "where": "arm_outputs.jsonl row 99 (FeedbackForce::a::0)",
+          "field": "retrieval.embed.time_s",
+          "recorded": 0.19514450011774898,
+          "corrected": 0.028736199950799346
+        },
+        {
+          "where": "arm_outputs.jsonl row 99 (FeedbackForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 7.689826600253582,
+          "corrected": 7.523418300086632
+        },
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.9214395000599325,
+          "corrected": 0.027107000001706183
+        },
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 1 (AnomalyForce::a::0)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.3443470001220703,
+          "corrected": 0.02455610001925379
+        },
+        {
+          "where": "arm_outputs.jsonl row 1 (AnomalyForce::a::0)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 2 (AutoTuneForce::a::0)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.7299027000553906,
+          "corrected": 0.023648299975320697
+        },
+        {
+          "where": "arm_outputs.jsonl row 2 (AutoTuneForce::a::0)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 3 (CoachForce::a::5)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.9181677000597119,
+          "corrected": 0.027316999970935285
+        },
+        {
+          "where": "arm_outputs.jsonl row 3 (CoachForce::a::5)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.7646854999475181,
+          "corrected": 0.02404390007723123
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 5 (CollaborationForce::a::6)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.35928540024906397,
+          "corrected": 0.02626610000152141
+        },
+        {
+          "where": "arm_outputs.jsonl row 5 (CollaborationForce::a::6)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 6 (ConnectForce::a::5)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.4114776998758316,
+          "corrected": 0.025127300061285496
+        },
+        {
+          "where": "arm_outputs.jsonl row 6 (ConnectForce::a::5)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 7 (ContentForce::a::2)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.6567763998173177,
+          "corrected": 0.02435479999985546
+        },
+        {
+          "where": "arm_outputs.jsonl row 7 (ContentForce::a::2)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 8 (ContextForce::a::1)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.5946043999865651,
+          "corrected": 0.025432700058445334
+        },
+        {
+          "where": "arm_outputs.jsonl row 8 (ContextForce::a::1)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 9 (EdgeForce::a::2)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.3738724999129772,
+          "corrected": 0.03950409998651594
+        },
+        {
+          "where": "arm_outputs.jsonl row 9 (EdgeForce::a::2)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 10 (ExplainabilityForce::a::6)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.6605173000134528,
+          "corrected": 0.02765880001243204
+        },
+        {
+          "where": "arm_outputs.jsonl row 10 (ExplainabilityForce::a::6)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 11 (FeedbackForce::a::5)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.33172239968553185,
+          "corrected": 0.025382000021636486
+        },
+        {
+          "where": "arm_outputs.jsonl row 11 (FeedbackForce::a::5)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.8346536997705698,
+          "corrected": 0.02576230000704527
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 13 (ForecastForce::a::4)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.557732299901545,
+          "corrected": 0.02731220005080104
+        },
+        {
+          "where": "arm_outputs.jsonl row 13 (ForecastForce::a::4)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.33192909974604845,
+          "corrected": 0.025417099939659238
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 15 (KnowledgeForce::a::4)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.5053046997636557,
+          "corrected": 0.02454160002525896
+        },
+        {
+          "where": "arm_outputs.jsonl row 15 (KnowledgeForce::a::4)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 16 (LeadForce::a::5)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.3580669001676142,
+          "corrected": 0.024866799940355122
+        },
+        {
+          "where": "arm_outputs.jsonl row 16 (LeadForce::a::5)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 17 (MonitorForce::a::5)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.43103119963780046,
+          "corrected": 0.028338400064967573
+        },
+        {
+          "where": "arm_outputs.jsonl row 17 (MonitorForce::a::5)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.8498750003054738,
+          "corrected": 0.02805979992263019
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 19 (PitchForce::a::6)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.6791749997064471,
+          "corrected": 0.026219099992886186
+        },
+        {
+          "where": "arm_outputs.jsonl row 19 (PitchForce::a::6)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 20 (ProposalForce::a::11)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.7404410997405648,
+          "corrected": 0.024297600029967725
+        },
+        {
+          "where": "arm_outputs.jsonl row 20 (ProposalForce::a::11)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.4012898001819849,
+          "corrected": 0.025722499936819077
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "calls[0].encode_s",
+          "recorded": 1.0026465002447367,
+          "corrected": 0.024235600023530424
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 23 (SecurityForce::a::7)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.37731899973005056,
+          "corrected": 0.025924100074917078
+        },
+        {
+          "where": "arm_outputs.jsonl row 23 (SecurityForce::a::7)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.7950864997692406,
+          "corrected": 0.024985000025480986
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.4667834001593292,
+          "corrected": 0.024699299945496023
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 26 (SupportForce::a::5)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.8924832995980978,
+          "corrected": 0.02442590007558465
+        },
+        {
+          "where": "arm_outputs.jsonl row 26 (SupportForce::a::5)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 27 (TrendForce::a::9)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.3654689001850784,
+          "corrected": 0.024336499976925552
+        },
+        {
+          "where": "arm_outputs.jsonl row 27 (TrendForce::a::9)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 28 (VizForce::a::16)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.38608080008998513,
+          "corrected": 0.024611899978481233
+        },
+        {
+          "where": "arm_outputs.jsonl row 28 (VizForce::a::16)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 29 (WorkFlowGenie::a::11)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.5632128003053367,
+          "corrected": 0.02465399994980544
+        },
+        {
+          "where": "arm_outputs.jsonl row 29 (WorkFlowGenie::a::11)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 30 (ActionGenie::a::5)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.7549196002073586,
+          "corrected": 0.024278700002469122
+        },
+        {
+          "where": "arm_outputs.jsonl row 30 (ActionGenie::a::5)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 31 (AnomalyForce::a::17)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.3654306000098586,
+          "corrected": 0.02490679989568889
+        },
+        {
+          "where": "arm_outputs.jsonl row 31 (AnomalyForce::a::17)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 32 (AutoTuneForce::a::12)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.3232132000848651,
+          "corrected": 0.024134600069373846
+        },
+        {
+          "where": "arm_outputs.jsonl row 32 (AutoTuneForce::a::12)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.686697400175035,
+          "corrected": 0.025500299991108477
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 34 (CollaborateForce::a::19)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.5584914996288717,
+          "corrected": 0.024230399983935058
+        },
+        {
+          "where": "arm_outputs.jsonl row 34 (CollaborateForce::a::19)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.3548484002240002,
+          "corrected": 0.027289299992844462
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.9547524000518024,
+          "corrected": 0.029066800023429096
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.38661469984799623,
+          "corrected": 0.02481079997960478
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.42884019995108247,
+          "corrected": 0.024555300013162196
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 39 (EdgeForce::a::12)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.3789500999264419,
+          "corrected": 0.023266699980013072
+        },
+        {
+          "where": "arm_outputs.jsonl row 39 (EdgeForce::a::12)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 40 (ExplainabilityForce::a::7)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.7601451999507844,
+          "corrected": 0.030018000048585236
+        },
+        {
+          "where": "arm_outputs.jsonl row 40 (ExplainabilityForce::a::7)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 41 (FeedbackForce::a::6)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.5049066999927163,
+          "corrected": 0.023713600006885827
+        },
+        {
+          "where": "arm_outputs.jsonl row 41 (FeedbackForce::a::6)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 42 (FlowForce::a::12)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.5833328999578953,
+          "corrected": 0.02661689999513328
+        },
+        {
+          "where": "arm_outputs.jsonl row 42 (FlowForce::a::12)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.33891319995746017,
+          "corrected": 0.033068599994294345
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 44 (InsightForce::a::6)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.33344999980181456,
+          "corrected": 0.02440230001229793
+        },
+        {
+          "where": "arm_outputs.jsonl row 44 (InsightForce::a::6)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 45 (KnowledgeForce::a::14)",
+          "field": "calls[0].encode_s",
+          "recorded": 1.0026166001334786,
+          "corrected": 0.02437979995738715
+        },
+        {
+          "where": "arm_outputs.jsonl row 45 (KnowledgeForce::a::14)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 46 (LeadForce::a::13)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.43619849998503923,
+          "corrected": 0.02563060005195439
+        },
+        {
+          "where": "arm_outputs.jsonl row 46 (LeadForce::a::13)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 47 (MonitorForce::a::16)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.3067369000054896,
+          "corrected": 0.026131400023587048
+        },
+        {
+          "where": "arm_outputs.jsonl row 47 (MonitorForce::a::16)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 48 (PersonalizeForce::a::24)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.9386155996471643,
+          "corrected": 0.03439849999267608
+        },
+        {
+          "where": "arm_outputs.jsonl row 48 (PersonalizeForce::a::24)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.4502020003274083,
+          "corrected": 0.028202999965287745
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 50 (ProposalForce::a::17)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.30245550023391843,
+          "corrected": 0.02340049995109439
+        },
+        {
+          "where": "arm_outputs.jsonl row 50 (ProposalForce::a::17)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.4876699000597,
+          "corrected": 0.028055400005541742
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 52 (SearchForce::a::16)",
+          "field": "calls[0].encode_s",
+          "recorded": 1.0210990002378821,
+          "corrected": 0.02696220006328076
+        },
+        {
+          "where": "arm_outputs.jsonl row 52 (SearchForce::a::16)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 53 (SentimentForce::a::26)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.32223019981756806,
+          "corrected": 0.024537499994039536
+        },
+        {
+          "where": "arm_outputs.jsonl row 53 (SentimentForce::a::26)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 54 (SummarizeForce::a::23)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.30778850009664893,
+          "corrected": 0.024370400002226233
+        },
+        {
+          "where": "arm_outputs.jsonl row 54 (SummarizeForce::a::23)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 55 (SupportForce::a::6)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.8089815001003444,
+          "corrected": 0.02493690000846982
+        },
+        {
+          "where": "arm_outputs.jsonl row 55 (SupportForce::a::6)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 56 (VizForce::a::43)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.42442090017721057,
+          "corrected": 0.023680799989961088
+        },
+        {
+          "where": "arm_outputs.jsonl row 56 (VizForce::a::43)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.3038743999786675,
+          "corrected": 0.0248077999567613
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 58 (AutoTuneForce::a::13)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.302986899856478,
+          "corrected": 0.024176400038413703
+        },
+        {
+          "where": "arm_outputs.jsonl row 58 (AutoTuneForce::a::13)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.39935060031712055,
+          "corrected": 0.025580300018191338
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 60 (ConnectForce::a::14)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.32732999976724386,
+          "corrected": 0.02845679991878569
+        },
+        {
+          "where": "arm_outputs.jsonl row 60 (ConnectForce::a::14)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 61 (ContentForce::a::16)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.7720778002403677,
+          "corrected": 0.024989900062792003
+        },
+        {
+          "where": "arm_outputs.jsonl row 61 (ContentForce::a::16)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 62 (EdgeForce::a::13)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.40654970007017255,
+          "corrected": 0.025533000007271767
+        },
+        {
+          "where": "arm_outputs.jsonl row 62 (EdgeForce::a::13)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 63 (ExplainabilityForce::a::9)",
+          "field": "calls[0].encode_s",
+          "recorded": 1.5890001002699137,
+          "corrected": 0.023597200051881373
+        },
+        {
+          "where": "arm_outputs.jsonl row 63 (ExplainabilityForce::a::9)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 64 (FeedbackForce::a::7)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.681356499902904,
+          "corrected": 0.030256500001996756
+        },
+        {
+          "where": "arm_outputs.jsonl row 64 (FeedbackForce::a::7)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 65 (FlowForce::a::13)",
+          "field": "calls[0].encode_s",
+          "recorded": 1.8329998003318906,
+          "corrected": 0.024091999977827072
+        },
+        {
+          "where": "arm_outputs.jsonl row 65 (FlowForce::a::13)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.2970926999114454,
+          "corrected": 0.025230499915778637
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 67 (InsightForce::a::7)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.26191679993644357,
+          "corrected": 0.024285500054247677
+        },
+        {
+          "where": "arm_outputs.jsonl row 67 (InsightForce::a::7)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.18605100037530065,
+          "corrected": 0.025430400040932
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.38689700001850724,
+          "corrected": 0.02487899991683662
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 70 (MonitorForce::a::18)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.1901515000499785,
+          "corrected": 0.025600400054827332
+        },
+        {
+          "where": "arm_outputs.jsonl row 70 (MonitorForce::a::18)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 71 (PersonalizeForce::a::34)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.22424380015581846,
+          "corrected": 0.02639009989798069
+        },
+        {
+          "where": "arm_outputs.jsonl row 71 (PersonalizeForce::a::34)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 72 (PitchForce::a::27)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.39354920014739037,
+          "corrected": 0.02826630009803921
+        },
+        {
+          "where": "arm_outputs.jsonl row 72 (PitchForce::a::27)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 73 (ProposalForce::a::20)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.19705910002812743,
+          "corrected": 0.026351700071245432
+        },
+        {
+          "where": "arm_outputs.jsonl row 73 (ProposalForce::a::20)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 74 (SentimentForce::a::27)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.17383149964734912,
+          "corrected": 0.023776100017130375
+        },
+        {
+          "where": "arm_outputs.jsonl row 74 (SentimentForce::a::27)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 75 (SummarizeForce::a::24)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.21463859966024756,
+          "corrected": 0.028716800035908818
+        },
+        {
+          "where": "arm_outputs.jsonl row 75 (SummarizeForce::a::24)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 76 (CollaborateForce::a::31)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.3256506002508104,
+          "corrected": 0.025393599993549287
+        },
+        {
+          "where": "arm_outputs.jsonl row 76 (CollaborateForce::a::31)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 77 (ConnectForce::a::15)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.558693700004369,
+          "corrected": 0.03391849994659424
+        },
+        {
+          "where": "arm_outputs.jsonl row 77 (ConnectForce::a::15)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.514728999696672,
+          "corrected": 0.023184899939224124
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 79 (EdgeForce::a::14)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.28901199996471405,
+          "corrected": 0.03361500008031726
+        },
+        {
+          "where": "arm_outputs.jsonl row 79 (EdgeForce::a::14)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 80 (ExplainabilityForce::a::11)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.26700930017977953,
+          "corrected": 0.027696099947206676
+        },
+        {
+          "where": "arm_outputs.jsonl row 80 (ExplainabilityForce::a::11)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.17037109984084964,
+          "corrected": 0.02442539995536208
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.1608763001859188,
+          "corrected": 0.023756399983540177
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.17844450008124113,
+          "corrected": 0.02495019999332726
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.2590882000513375,
+          "corrected": 0.02649419999215752
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 85 (SentimentForce::a::29)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.7167706997133791,
+          "corrected": 0.026717099943198264
+        },
+        {
+          "where": "arm_outputs.jsonl row 85 (SentimentForce::a::29)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 86 (FeedbackForce::a::16)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.17461090022698045,
+          "corrected": 0.02712349989451468
+        },
+        {
+          "where": "arm_outputs.jsonl row 86 (FeedbackForce::a::16)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 87 (FeedbackForce::a::18)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.18316429993137717,
+          "corrected": 0.028652500011958182
+        },
+        {
+          "where": "arm_outputs.jsonl row 87 (FeedbackForce::a::18)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 88 (ActionGenie::a::1)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.29953800002112985,
+          "corrected": 0.0242003999883309
+        },
+        {
+          "where": "arm_outputs.jsonl row 88 (ActionGenie::a::1)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.2701338999904692,
+          "corrected": 0.023595000035129488
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.18575479974970222,
+          "corrected": 0.025158499949611723
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 91 (CoachForce::a::0)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.40062939980998635,
+          "corrected": 0.028038799995556474
+        },
+        {
+          "where": "arm_outputs.jsonl row 91 (CoachForce::a::0)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 92 (CollaborateForce::a::0)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.18667839979752898,
+          "corrected": 0.027606099960394204
+        },
+        {
+          "where": "arm_outputs.jsonl row 92 (CollaborateForce::a::0)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.20571970008313656,
+          "corrected": 0.028699300019070506
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.2094290000386536,
+          "corrected": 0.027896199957467616
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 95 (ContentForce::a::0)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.25081870006397367,
+          "corrected": 0.027766100014559925
+        },
+        {
+          "where": "arm_outputs.jsonl row 95 (ContentForce::a::0)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 96 (ContextForce::a::0)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.1774528999812901,
+          "corrected": 0.027828200021758676
+        },
+        {
+          "where": "arm_outputs.jsonl row 96 (ContextForce::a::0)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 97 (EdgeForce::a::0)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.21592170000076294,
+          "corrected": 0.03310959995724261
+        },
+        {
+          "where": "arm_outputs.jsonl row 97 (EdgeForce::a::0)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 98 (ExplainabilityForce::a::0)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.20398039976134896,
+          "corrected": 0.024537199991755188
+        },
+        {
+          "where": "arm_outputs.jsonl row 98 (ExplainabilityForce::a::0)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        },
+        {
+          "where": "arm_outputs.jsonl row 99 (FeedbackForce::a::0)",
+          "field": "calls[0].encode_s",
+          "recorded": 0.19514380022883415,
+          "corrected": 0.028735500061884522
+        },
+        {
+          "where": "arm_outputs.jsonl row 99 (FeedbackForce::a::0)",
+          "field": "calls[0].device",
+          "recorded": "cpu",
+          "corrected": "cuda"
+        }
+      ],
+      "evidence": {
+        "file": "gpu_embed_times.json",
+        "sha256": "9ec0c7c85b6a5e9842eb92dd049e33f6a07334814a3cc0dd1af30377557aa064",
+        "what": "per question, each embed call's GPU seconds and the cosine of its vector to the CPU one"
+      },
+      "files": {
+        "arm_outputs.jsonl": {
+          "sha256_before": "8da13b1f348c0d3f64fd2bebfc5140a2919b2c221541ec500e937a8f7c32d4af",
+          "sha256_corrected": "42fb84e1c59806dfdcb0ff709f701cac513ad9cabc5ebcc77d36561dbf527a68",
+          "as_recorded": "arm_outputs.as_recorded.jsonl"
+        }
+      },
+      "script": "correct_embed_gpu_time.py, in this folder"
     }
   ]
 }

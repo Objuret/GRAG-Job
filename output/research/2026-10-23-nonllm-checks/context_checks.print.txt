@@ -1,0 +1,47 @@
+  from ragas.metrics import NonLLMContextPrecisionWithReference, NonLLMContextRecall  # noqa: E402
+  from ragas.metrics import NonLLMContextPrecisionWithReference, NonLLMContextRecall  # noqa: E402
+
+=== lucene: stored scores given again by R0: 200 of 200; pieces {'total': 7655, 'whole': 7555, 'empty_content_dropped_in_R3': 20}
+  id: recall 0.091  precision 0.055
+  R0: recall 0.073  precision 0.176
+  R1: recall 0.073  precision 0.176
+  R2: recall 0.414  precision 0.383
+  R3: recall 0.120  precision 0.256
+  R1 recall trace: {'found: itself, whole': 236, 'not found, not passed': 3631, 'found: only through another record': 5, 'not found, passed whole': 60}
+  R1 precision trace: {'not by text, not cited': 7314, 'relevant by text, cited': 236, 'relevant by text, not cited': 45, 'not by text, cited': 60}
+  R2 recall trace: {'found: itself, whole': 296, 'not found, not passed': 2172, 'found: only through another record': 1464}
+  R2 precision trace: {'not by text, not cited': 3955, 'relevant by text, cited': 296, 'relevant by text, not cited': 3404}
+  R3 recall trace: {'found: itself, whole': 296, 'not found, not passed': 3527, 'found: only through another record': 109}
+  R3 precision trace: {'not by text, not cited': 6459, 'relevant by text, cited': 296, 'relevant by text, not cited': 880}
+  R2 other-record matches: 1464; content alone over 0.5: 100; kinds {'documents->documents': 6, 'slack->slack': 1415, 'meeting_transcripts->meeting_transcripts': 34, 'prs->prs': 9}
+  R3 other-record matches: 109; content alone over 0.5: 109; kinds {'documents->documents': 6, 'slack->slack': 97, 'meeting_transcripts->meeting_transcripts': 3, 'prs->prs': 3}
+
+=== vector: stored scores given again by R0: 200 of 200; pieces {'total': 15643, 'whole': 15543, 'empty_content_dropped_in_R3': 33}
+  id: recall 0.236  precision 0.063
+  R0: recall 0.174  precision 0.195
+  R1: recall 0.174  precision 0.195
+  R2: recall 0.683  precision 0.530
+  R3: recall 0.286  precision 0.305
+  R1 recall trace: {'not found, not passed': 3072, 'found: itself, whole': 638, 'not found, passed whole': 216, 'not found, passed only in part': 2, 'found: only through another record': 4}
+  R1 precision trace: {'not by text, not cited': 14711, 'relevant by text, cited': 641, 'not by text, cited': 215, 'relevant by text, not cited': 76}
+  R2 recall trace: {'not found, not passed': 1187, 'found: only through another record': 1890, 'found: itself, whole': 854, 'not found, passed only in part': 1}
+  R2 precision trace: {'not by text, not cited': 7700, 'relevant by text, not cited': 7087, 'relevant by text, cited': 854, 'not by text, cited': 2}
+  R3 recall trace: {'not found, not passed': 2859, 'found: itself, whole': 854, 'found: only through another record': 217, 'not found, passed only in part': 2}
+  R3 precision trace: {'not by text, not cited': 12260, 'relevant by text, cited': 854, 'relevant by text, not cited': 2494, 'not by text, cited': 2}
+  R2 other-record matches: 1890; content alone over 0.5: 204; kinds {'slack->slack': 1822, 'meeting_transcripts->meeting_transcripts': 44, 'prs->prs': 13, 'urls->urls': 10, 'documents->documents': 1}
+  R3 other-record matches: 217; content alone over 0.5: 217; kinds {'prs->prs': 3, 'slack->slack': 200, 'meeting_transcripts->meeting_transcripts': 3, 'urls->urls': 10, 'documents->documents': 1}
+
+=== artefact: stored scores given again by R0: 200 of 200; pieces {'total': 18373, 'whole': 18227, 'empty_content_dropped_in_R3': 32}
+  id: recall 0.663  precision 0.141
+  R0: recall 0.050  precision 0.173
+  R1: recall 0.444  precision 0.267
+  R2: recall 0.902  precision 0.654
+  R3: recall 0.722  precision 0.356
+  R1 recall trace: {'found: itself, whole': 1446, 'found: only through another record': 27, 'not found, not passed': 1473, 'not found, passed whole': 976, 'not found, passed only in part': 9, 'found: itself, in part': 1}
+  R1 precision trace: {'not by text, not cited': 15880, 'relevant by text, cited': 1463, 'not by text, cited': 982, 'relevant by text, not cited': 48}
+  R2 recall trace: {'found: itself, whole': 2422, 'found: only through another record': 1159, 'not found, not passed': 345, 'found: itself, in part': 3, 'not found, passed only in part': 3}
+  R2 precision trace: {'not by text, not cited': 7681, 'relevant by text, cited': 2427, 'relevant by text, not cited': 8247, 'not by text, cited': 18}
+  R3 recall trace: {'found: itself, whole': 2422, 'found: only through another record': 363, 'not found, not passed': 1140, 'not found, passed only in part': 4, 'found: itself, in part': 3}
+  R3 precision trace: {'not by text, not cited': 14852, 'relevant by text, cited': 2425, 'relevant by text, not cited': 1047, 'not by text, cited': 17}
+  R2 other-record matches: 1159; content alone over 0.5: 348; kinds {'documents->documents': 7, 'slack->slack': 1109, 'meeting_transcripts->meeting_transcripts': 29, 'prs->prs': 14}
+  R3 other-record matches: 363; content alone over 0.5: 363; kinds {'documents->documents': 7, 'slack->slack': 347, 'prs->prs': 4, 'meeting_transcripts->meeting_transcripts': 5}

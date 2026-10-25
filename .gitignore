@@ -57,3 +57,11 @@ logs/
 # Local continuity docs (state/handoff skills) — in-repo but not committed
 docs/state/
 docs/handoff/
+
+# over GitHub's 100 MB limit: copied between the laptop and the desktop, not pushed (his 2026-10-25 "copy them over to both machines for now instead")
+output/k=chars/lucene__answerable715__cb72000__20261023T112745Z/arm_outputs.as_recorded.jsonl
+output/k=chars/lucene__answerable715__cb72000__20261023T112745Z/arm_outputs.jsonl
+output/k=chars/lucene__answerable715__cb72000__20261023T112745Z/eval_calls.jsonl
+output/k=chars/vector__answerable715__cb72000__20261024T004317Z/arm_outputs.as_recorded.jsonl
+output/k=chars/vector__answerable715__cb72000__20261024T004317Z/arm_outputs.jsonl
+output/k=chars/vector__answerable715__cb72000__20261024T004317Z/eval_calls.jsonl

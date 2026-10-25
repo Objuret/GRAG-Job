@@ -1,0 +1,601 @@
+diff --git a/prod/eval/ragas.py b/prod/eval/ragas.py
+index 5929500..8387638 100644
+--- a/prod/eval/ragas.py
++++ b/prod/eval/ragas.py
+@@ -25,6 +25,7 @@ from harness.progress import progress
+ from harness.contract import EvalResult, ModelUsage
+ from eval.ragas_catalog import CATALOG, metrics_to_run
+ from harness.embed import EMBED_BATCH, _embed_request
++from harness.record_text import ARTIFACT_TYPES, record_content, record_header, record_text
+ 
+ # RAGAS posts a usage event to its makers for every score it computes unless this is set; the
+ # evaluation sends nothing anywhere but to the judge
+@@ -512,40 +513,74 @@ def _build_metrics(names, judge, embedder, run_config):
+     return built
+ 
+ 
+-_ARTIFACT_TYPES = ("slack", "documents", "meeting_transcripts", "meeting_chats", "urls", "prs")
++# the non-LLM context scores compare record content with record content (`record_sample`)
++RECORD_LEVEL = ("context_recall_nonllm", "context_precision_nonllm")
+ 
+ 
+-def _string_leaves(value) -> str:
+-    parts: list = []
+-
+-    def walk(v):
+-        if isinstance(v, str):
+-            parts.append(v)
+-        elif isinstance(v, dict):
+-            for w in v.values():
+-                walk(w)
+-        elif isinstance(v, list):
+-            for w in v:
+-                walk(w)
+-
+-    walk(value)
+-    return " ".join(parts).strip()
+-
+-
+-def corpus_gold_text(corpus_root) -> dict:
+-    root = Path(corpus_root)
++def corpus_records(corpus_root) -> dict:
++    """Every corpus record by its id, with its kind: {id: (kind, record)}."""
+     out: dict = {}
+-    for pf in sorted((root / "products").glob("*.json")):
++    for pf in sorted((Path(corpus_root) / "products").glob("*.json")):
+         data = json.loads(pf.read_text(encoding="utf-8"))
+-        for kind in _ARTIFACT_TYPES:
++        for kind in ARTIFACT_TYPES:
+             for rec in data.get(kind, []) or []:
+                 aid = rec.get("id")
+-                if aid is None or aid in out:
+-                    continue
+-                out[aid] = _string_leaves(rec)
++                if aid is not None and str(aid) not in out:
++                    out[str(aid)] = (kind, rec)
+     return out
+ 
+ 
++def contents_handed_over(contexts, context_ids, meta, records) -> list:
++    """The content of every record handed over. Each text is cut into its records: a text of
++    several records is their record_text forms joined by a blank line, or the start of that join
++    where the character budget cut it. Each record's header is taken off; a record cut before its
++    content gives nothing. The records behind each text come from meta's chunk_ids, or else from
++    context_ids with the record cut at the budget last."""
++    meta = meta or {}
++    if "chunk_ids" in meta:
++        id_lists = meta["chunk_ids"]
++    else:
++        cut = (meta.get("char_budget") or {}).get("boundary")
++        id_lists = [[i] for i in list(context_ids or []) + ([cut["id"]] if cut else [])]
++    if len(id_lists) != len(contexts):
++        raise ValueError(f"{len(contexts)} texts but {len(id_lists)} record lists")
++    out = []
++    for text, ids in zip(contexts, id_lists):
++        ids = [str(i) for i in ids]
++        full = [record_text(*records[i]) for i in ids]
++        if len(ids) > 1 and not "\n\n".join(full).startswith(text):
++            raise ValueError("a handed-over text is not its records joined by a blank line")
++        at = 0
++        for i, whole in zip(ids, full):
++            if at >= len(text):
++                break
++            piece = text[at:at + len(whole)] if len(ids) > 1 else text
++            kind, rec = records[i]
++            if piece == whole:
++                content = record_content(kind, rec)
++            else:
++                head = record_header(kind, rec)
++                if piece.startswith(head):
++                    content = piece[len(head):]
++                elif head.startswith(piece):
++                    content = ""
++                else:
++                    raise ValueError(f"the text of record {i} does not start with its header")
++            if content:
++                out.append(content)
++            at += len(whole) + 2
++    return out
++
++
++def record_sample(out, q, records) -> SingleTurnSample:
++    """The sample the non-LLM context scores get: the content of each cited record against the
++    content of each record handed over."""
++    cites = [str(c) for c in (q.citations or [])]
++    return SingleTurnSample(
++        retrieved_contexts=contents_handed_over(out.contexts or [], out.context_ids, out.meta, records),
++        reference_contexts=[record_content(*records[c]) for c in cites if c in records] or None)
++
++
+ def judge_call_info(judge) -> dict | None:
+     """What a judge call is given, once, for the evaluation's manifest: RAGAS's prompt as the only
+     message, and the temperature RAGAS hands its judge for a score that asks for one reply. Each
+@@ -559,10 +594,9 @@ def judge_call_info(judge) -> dict | None:
+             "env_set": call["env_set"], "env_unset": call["env_unset"]}
+ 
+ 
+-def _to_sample(out, q, gold_text) -> SingleTurnSample:
++def _to_sample(out, q) -> SingleTurnSample:
+     gold = [str(g) for g in (q.ground_truth or [])]
+     cites = [str(c) for c in (q.citations or [])]
+-    ref_ctx = [gold_text[c] for c in cites if c in gold_text]
+     return SingleTurnSample(
+         user_input=q.question,
+         response=out.answer or "",
+@@ -570,7 +604,6 @@ def _to_sample(out, q, gold_text) -> SingleTurnSample:
+         retrieved_context_ids=[str(c) for c in (out.context_ids or [])],
+         reference=" ".join(gold),
+         reference_context_ids=cites,
+-        reference_contexts=ref_ctx or None,
+     )
+ 
+ 
+@@ -602,7 +635,7 @@ def score_outputs(outputs, questions, arm="", corpus=None, results_path=None, wo
+         effort = f" effort={JUDGE_REASONING_EFFORT}" if JUDGE_REASONING_EFFORT else ""
+         print(f"ragas judge: {JUDGE_MODEL} backend={JUDGE_BACKEND}{effort} "
+               f"timeout={JUDGE_TIMEOUT_S:g}s tries={JUDGE_MAX_TRIES}")
+-    gold_text = corpus_gold_text(corpus) if corpus else {}
++    records = corpus_records(corpus) if corpus else {}
+     # what this scoring leg ran under, kept with it in the eval manifest; filled in a `finally`
+     # so a leg that is cut short still says what it was and what it had spent
+     import sys
+@@ -626,7 +659,7 @@ def score_outputs(outputs, questions, arm="", corpus=None, results_path=None, wo
+                 "argv": list(sys.argv), "pid": os.getpid(), "python_executable": sys.executable}
+     LAST_JUDGE_SETTINGS = settings
+     try:
+-        results = _score_all(outputs, questions, arm, metrics, gold_text,
++        results = _score_all(outputs, questions, arm, metrics, records,
+                              results_path, workers, embedder, leg_stamp)
+     except BaseException as e:
+         settings["interrupted"] = repr(e)
+@@ -692,7 +725,7 @@ def _prime_embed_cache(embedder, metrics, samples) -> None:
+     print(f"ragas embed: primed in {calls} forward pass(es)", flush=True)
+ 
+ 
+-def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
++def _score_all(outputs, questions, arm, metrics, records, results_path=None,
+                workers=1, embedder=None, leg_stamp=None) -> list:
+     passes = [(lbl, m) for lbl, m in (
+         ("scoring - offline (free)",
+@@ -724,9 +757,12 @@ def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
+             "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in kept), encoding="utf-8")
+         os.replace(tmp, dst)
+ 
+-    sample_of = {q.id: (q, _to_sample(out, q, gold_text))
++    sample_of = {q.id: (q, _to_sample(out, q))
+                  for out, q in zip(outputs, questions)
+                  if selected - done_ok[q.id]}
++    record_sample_of = {q.id: record_sample(out, q, records)
++                        for out, q in zip(outputs, questions)
++                        if q.id in sample_of and selected & set(RECORD_LEVEL)}
+ 
+     # eval_calls.jsonl: every judge call and embed request of the evaluation, whole, one line
+     # each, written as its cell finishes. It holds the prompts, so it holds gold answers.
+@@ -764,7 +800,8 @@ def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
+ 
+     def _score_cell(q, sample, name, metric, on_cell):
+         async def _go():
+-            value, status, comp = await _score_one(metric, sample)
++            value, status, comp = await _score_one(
++                metric, record_sample_of[q.id] if name in RECORD_LEVEL else sample)
+             return EvalResult(q.id, q.type, arm, name, value, status, comp, None)
+         # one cell = one question under one score: its calls are kept with it
+         cap, token = capture.start()
+diff --git a/prod/harness/chat.py b/prod/harness/chat.py
+index 94a5f46..7ed53b9 100644
+--- a/prod/harness/chat.py
++++ b/prod/harness/chat.py
+@@ -127,6 +127,12 @@ def cli_version() -> str | None:
+ # transcripts of the calls land under this folder; they hold gold.
+ _CONFIG_DIR = Path.home() / ".claude-herb-lane"
+ _LOGIN_TOKEN = "CLAUDE_CODE_OAUTH_TOKEN"
++# A limited Claude API key: a try the subscription refuses at its usage limit goes again, the same,
++# with it (his 2026-10-25 "use that if usage runs out from the sub").
++_API_KEY = "CLAUDE_API"
++# Only a run that turns it on may use the key (his 2026-10-25 "the api may never be used, ONLY in
++# this specific instance and case (or when i literally allow it ofc..)").
++_API_FALLBACK = "HERB_CLAUDE_API_FALLBACK"
+ # without it the CLI deletes its transcripts after 30 days
+ _CONFIG_SETTINGS = {"cleanupPeriodDays": 36500}
+ 
+@@ -139,11 +145,20 @@ _ENV_FIXED = {
+     "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",  # no second request, to Haiku, for a session title
+     "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",      # no billing line in front of the system prompt
+     "CLAUDE_CONFIG_DIR": str(_CONFIG_DIR),
++    # the same one-hour prompt cache with the subscription and with the CLAUDE_API key; unset, the
++    # program gives the subscription one hour and a key five minutes. This program (2.1.212) is older
++    # than CLAUDE_CODE_PROMPT_CACHE_TTL and takes this switch (his 2026-10-25 "make sure they are
++    # 'the same' for this use")
++    "ENABLE_PROMPT_CACHING_1H": "1",
+ }
+ # The switches a call sets when it asks for them. One the call does not set is taken out of the
+ # CLI's environment, so a value left in the shell that starts the run never reaches a call.
+ _ENV_PER_CALL = ("CLAUDE_CODE_EFFORT_LEVEL", "MAX_THINKING_TOKENS",
+                  "CLAUDE_CODE_MAX_OUTPUT_TOKENS", "CLAUDE_CODE_EXTRA_BODY")
++# The largest output any current model takes (Anthropic's models overview). A call that names no
++# cap of its own asks for it, and Claude Code lowers it to the model's own cap (his 2026-10-23
++# "That's quite the dumb reason to cap that").
++MODEL_MAX_OUTPUT_TOKENS = 128000
+ # A temperature is sent only to a model on which it was tried and accepted, with thinking off.
+ # claude-sonnet-5 answers 400 to any temperature, with thinking on or off.
+ _TEMPERATURE_ACCEPTED = ("claude-haiku-4-5",)
+@@ -160,12 +175,16 @@ _CLI_ADDS = {
+ 
+ def lane_info() -> dict:
+     """The lane a run's calls went through, for its manifest."""
++    _load_dotenv()
+     return {"exe": _CLAUDE_EXE, "cli_version": cli_version(), "cwd": str(_CLAUDE_CWD),
+             "fixed_flags": ["-p", "--tools", "", "--safe-mode"],
+             "system_prompt": "always passed, empty when the call has no system text",
+             "stdin": "the prompt as UTF-8 bytes",
+             "env_set": dict(_ENV_FIXED),
+-            "login": f"{_LOGIN_TOKEN} of the environment (.env); a call is refused without it",
++            "login": (f"{_LOGIN_TOKEN} of the environment (.env); a call is refused without it. A "
++                      f"try the subscription refuses at its usage limit (HTTP 429) goes again with "
++                      f"{_API_KEY} as ANTHROPIC_API_KEY, only on a run with {_API_FALLBACK}=on; "
++                      f"for this run it is " + ("on" if _api_fallback_on() else "off")),
+             "config_settings": dict(_CONFIG_SETTINGS),
+             "env_per_call": list(_ENV_PER_CALL),
+             "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+@@ -231,6 +250,9 @@ def call_settings(payload: dict) -> dict:
+         for key in ("max_tokens", "temperature"):
+             if payload.get(key) is not None:
+                 not_applied[key] = "sent only on a call that asks for thinking off"
++    if "CLAUDE_CODE_MAX_OUTPUT_TOKENS" not in env_set:
++        env_set["CLAUDE_CODE_MAX_OUTPUT_TOKENS"] = str(MODEL_MAX_OUTPUT_TOKENS)
++        applied["max_output_tokens"] = MODEL_MAX_OUTPUT_TOKENS
+     for key in payload:
+         if key not in _PAYLOAD_KEYS:
+             not_applied[key] = "no such setting in this lane"
+@@ -247,6 +269,33 @@ def _call_env(call: dict) -> dict:
+     return env
+ 
+ 
++def _try_env(call: dict, credential: str) -> dict:
++    """The environment of one try: the subscription's token, or the CLAUDE_API key in its place.
++    The key reaches the program only on a try that uses it."""
++    env = _call_env(call)
++    env.pop(_API_KEY, None)
++    if credential == "api_key":
++        env["ANTHROPIC_API_KEY"] = os.environ[_API_KEY]
++        env.pop(_LOGIN_TOKEN, None)
++    else:
++        env.pop("ANTHROPIC_API_KEY", None)
++    return env
++
++
++def _api_fallback_on() -> bool:
++    """The run turned the CLAUDE_API fallback on and the key is there."""
++    return os.environ.get(_API_FALLBACK) == "on" and bool(os.environ.get(_API_KEY))
++
++
++def _usage_limit(stdout: str) -> bool:
++    """The program's reply says the API refused the call with HTTP 429, the subscription's usage
++    limit."""
++    try:
++        return json.loads(stdout).get("api_error_status") == 429
++    except (ValueError, AttributeError):
++        return False
++
++
+ def _login() -> None:
+     """The token is there and the CLI's own config folder is made, or the call is refused."""
+     _load_dotenv()
+@@ -304,19 +353,21 @@ def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
+            "applied": call["applied"], "not_applied": call["not_applied"],
+            "payload_dropped": sorted(call["not_applied"]),
+            "started_at": capture.now(), "finished_at": None, "attempts": [], "ok": False,
+-           "text": None, "usage": None, "envelope": None, "stream": None,
++           "credential": None, "text": None, "usage": None, "envelope": None, "stream": None,
+            "stderr": None, "error": None}
+ 
+     last = None
+     request_s = retry_s = 0.0
+-    attempts = 0
+-    for attempt in range(max_tries):
++    attempts = counted = 0
++    credential = "subscription"
++    while counted < max_tries:
+         if abort.aborted():
+             rec.update(finished_at=capture.now(), error="aborted before the try")
+             capture.record(rec)
+             raise abort.Aborted("claude call skipped — abort requested (pressed q)")
+         attempts += 1
+-        tried = {"n": attempts, "started_at": capture.now(), "seconds": None, "outcome": None,
++        tried = {"n": attempts, "credential": credential, "started_at": capture.now(),
++                 "seconds": None, "outcome": None,
+                  "returncode": None, "error": None, "stdout": None, "stderr": None}
+         rec["attempts"].append(tried)
+         r0 = time.perf_counter()
+@@ -324,7 +375,7 @@ def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
+             # the prompt goes over as bytes: in text mode Windows turns every line end into
+             # CR LF on the way, and the prompt kept in the record is then not what was sent
+             r = subprocess.run(cmd, input=prompt.encode("utf-8"), capture_output=True,
+-                               timeout=timeout, cwd=_claude_cwd(), env=_call_env(call))
++                               timeout=timeout, cwd=_claude_cwd(), env=_try_env(call, credential))
+         except subprocess.TimeoutExpired as err:
+             retry_s += time.perf_counter() - r0
+             last = err
+@@ -339,6 +390,11 @@ def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
+                 last = RuntimeError(
+                     f"claude exit {r.returncode}: {(errtext or out)[:200]}")
+                 tried.update(outcome="exit", error=repr(last), stdout=out, stderr=errtext)
++                if credential == "subscription" and _usage_limit(out) and _api_fallback_on():
++                    # the same try again with the key; it is not counted against max_tries
++                    tried["outcome"] = "usage_limit"
++                    credential = "api_key"
++                    continue
+             else:
+                 try:
+                     if join_parts:
+@@ -368,7 +424,8 @@ def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
+                             "completion_tokens": int(usage.get("output_tokens") or 0),
+                             "cached_input_tokens": cached}
+                     tried.update(outcome="ok")
+-                    rec.update(finished_at=capture.now(), ok=True, text=result, usage=kept,
++                    rec.update(finished_at=capture.now(), ok=True, credential=credential,
++                               text=result, usage=kept,
+                                envelope=data,
+                                stream=out if join_parts else None, stderr=errtext)
+                     capture.record(rec)
+@@ -380,9 +437,10 @@ def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
+                         "stop_reason": data.get("stop_reason"),
+                         "call": rec,
+                     }
+-        if attempt < max_tries - 1:
++        counted += 1
++        if counted < max_tries:
+             s0 = time.perf_counter()
+-            time.sleep(2 ** attempt)
++            time.sleep(2 ** (counted - 1))
+             retry_s += time.perf_counter() - s0
+             tried["backoff_s"] = time.perf_counter() - s0
+     _record_timing(attempts, request_s, 0.0, retry_s)
+diff --git a/prod/harness/embed.py b/prod/harness/embed.py
+index 7b856f1..7284e28 100644
+--- a/prod/harness/embed.py
++++ b/prod/harness/embed.py
+@@ -1,5 +1,6 @@
+ from __future__ import annotations
+ 
++import os
+ import threading
+ import time
+ from pathlib import Path
+@@ -13,7 +14,8 @@ EMBED_MODEL = "nvidia/llama-nemotron-embed-1b-v2"
+ 
+ EMBED_REVISION = "113abe4acafa848e77ead9c0623205e511932348"
+ 
+-EMBED_DEVICE = "cpu"
++# HERB_EMBED_DEVICE=cuda puts the embedder on the graphics card (the desktop's GTX 1080 Ti)
++EMBED_DEVICE = os.environ.get("HERB_EMBED_DEVICE", "cpu")
+ 
+ EMBED_DTYPE = "float32"
+ 
+diff --git a/prod/harness/fields.py b/prod/harness/fields.py
+index 30e6821..2bb80b6 100644
+--- a/prod/harness/fields.py
++++ b/prod/harness/fields.py
+@@ -47,10 +47,14 @@ USAGE = {
+ 
+ ATTEMPT = {
+     "n": "The try's number within the call, from 1.",
++    "credential": "What the try logged in with: subscription (the lane's token) or api_key (the "
++                  "CLAUDE_API key, sent as ANTHROPIC_API_KEY).",
+     "started_at": "When the try started (UTC).",
+     "seconds": "How long the try took.",
+-    "outcome": "ok (it answered), exit (the program ended with an error), bad_envelope (its reply "
+-               "could not be read), or timeout (cut at timeout_s).",
++    "outcome": "ok (it answered), exit (the program ended with an error), usage_limit (the "
++               "subscription refused it at its usage limit, HTTP 429, and the same try went again "
++               "with the CLAUDE_API key), bad_envelope (its reply could not be read), or timeout "
++               "(cut at timeout_s).",
+     "returncode": "The program's exit code; empty for a timeout.",
+     "error": "The error of a try that did not answer; empty for the try that answered.",
+     "stdout": "What the program printed, kept for a try that did not answer; empty for the try "
+@@ -90,6 +94,8 @@ CALL = {
+     "finished_at": "When the call ended (UTC).",
+     "attempts": sub("Every try of the call, in order.", ATTEMPT),
+     "ok": "Whether the call ended with an answer.",
++    "credential": "What the try that answered logged in with: subscription or api_key; empty when "
++                  "no try answered.",
+     "text": "The reply's text. For an answer call it is the JSON that holds the answer. Empty for "
+             "a call that gave up: no try answered.",
+     "usage": sub("The tokens of the try that answered; empty for a call that gave up.", {
+@@ -715,14 +721,16 @@ SCORES = {
+         "`NonLLMContextRecall` metric is computed using `retrieved_contexts` and "
+         "`reference_contexts` [...] This metrics uses non-LLM string comparison metrics to "
+         "identify if a retrieved context is relevant or not.", "docs, context_recall.md",
+-        "contexts against the text of each gold record; a gold record counts as found when a "
+-        "delivered text is more than 0.5 like it (Levenshtein).", "nothing", False),
++        "the content of each record handed over (record_content; every text cut into its records) "
++        "against the content of each gold record; a gold record counts as found when a delivered "
++        "record's content is more than 0.5 like it (Levenshtein).", "nothing", False),
+     "context_precision_nonllm": (
+         "To determine if a retrieved context is relevant, this method compares each retrieved "
+         "context or chunk in `retrieved_contexts` with every context in `reference_contexts` "
+         "using a non-LLM-based similarity measure.", "docs, context_precision.md",
+-        "each delivered text against the gold records' texts, more than 0.5 alike (Levenshtein), "
+-        "weighted by rank.", "nothing", False),
++        "the content of each record handed over (record_content; every text cut into its records) "
++        "against the gold records' content, 0.5 or more alike (Levenshtein), weighted by rank.",
++        "nothing", False),
+     "context_recall_llm": (
+         "Estimates context recall by estimating TP and FN using annotated answer and retrieved "
+         "context.", "class LLMContextRecall",
+diff --git a/prod/harness/orchestrator.py b/prod/harness/orchestrator.py
+index 9390595..7acba1d 100644
+--- a/prod/harness/orchestrator.py
++++ b/prod/harness/orchestrator.py
+@@ -181,7 +181,8 @@ def _rehydrate(rec):
+     own = rec["retrieval"]
+     return ArmOutput(rec["answer"], rec["contexts"], rec["context_ids"],
+                      rec["search_time_s"], model_usage_from_dict(rec["generator"]),
+-                     model_usage_from_dict(own) if isinstance(own, dict) else ModelUsage())
++                     model_usage_from_dict(own) if isinstance(own, dict) else ModelUsage(),
++                     meta=rec.get("meta"))
+ 
+ 
+ def retrieval_of(calls, counted=None):
+diff --git a/prod/harness/record_text.py b/prod/harness/record_text.py
+index 82dbcf2..11a79cd 100644
+--- a/prod/harness/record_text.py
++++ b/prod/harness/record_text.py
+@@ -10,6 +10,7 @@ document's `type`. A field a form reads is taken by its key, so a record without
+ """
+ from __future__ import annotations
+ 
++import copy
+ import hashlib
+ 
+ ARTIFACT_TYPES = (
+@@ -55,6 +56,42 @@ def record_text(kind: str, rec: dict) -> str:
+     raise KeyError(f"no text form for a record of kind {kind!r}")
+ 
+ 
++# the field each kind's content starts with in record_text
++CONTENT_START = {"slack": ("Message", "User", "text"), "documents": ("content",),
++                 "meeting_transcripts": ("transcript",), "meeting_chats": ("text",),
++                 "urls": ("description",), "prs": ("summary",)}
++
++
++def record_content(kind: str, rec: dict) -> str:
++    """A record's content, without its ids, labels, dates and names: the message, the document
++    and its feedback, the transcript, the chat, the description, or the pull request's summary and
++    review comments."""
++    if kind == "slack":
++        return rec["Message"]["User"]["text"]
++    if kind == "documents":
++        return f"{rec['content']}\n{rec['feedback']}" if rec.get("feedback") else rec["content"]
++    if kind == "meeting_transcripts":
++        return rec["transcript"]
++    if kind == "meeting_chats":
++        return rec["text"]
++    if kind == "urls":
++        return rec["description"]
++    if kind == "prs":
++        return "\n".join([rec["summary"]] + [review["comment"] for review in rec["reviews"]])
++    raise KeyError(f"no content for a record of kind {kind!r}")
++
++
++def record_header(kind: str, rec: dict) -> str:
++    """The start of a record's record_text, before its content."""
++    marked = copy.deepcopy(rec)
++    *path, last = CONTENT_START[kind]
++    holder = marked
++    for key in path:
++        holder = holder[key]
++    holder[last] = "\x00"
++    return record_text(kind, marked).split("\x00")[0]
++
++
+ def units_digest(ids, texts) -> str:
+     """sha256 over the units in index order. Per unit: the id, then the text, each as UTF-8
+     behind its byte length written as 8 bytes, big end first."""
+diff --git a/test/offline_eval.py b/test/offline_eval.py
+index 0e0eb33..aaae65a 100644
+--- a/test/offline_eval.py
++++ b/test/offline_eval.py
+@@ -35,8 +35,9 @@ def _folder_question_ids(folder):
+             if x.strip()]
+ 
+ 
+-def score_folder(folder, by_id, gold_text, metrics, rehydrate, to_sample,
++def score_folder(folder, by_id, records, metrics, rehydrate, to_sample,
+                  run_semantic, gold_emb):
++    from eval.ragas import RECORD_LEVEL, record_sample
+     folder = Path(folder)
+     arm = folder.name.split("__")[0]
+     recs = [json.loads(x) for x in
+@@ -45,10 +46,12 @@ def score_folder(folder, by_id, gold_text, metrics, rehydrate, to_sample,
+     for rec in recs:
+         q = by_id[rec["id"]]
+         out = rehydrate(rec)
+-        sample = to_sample(out, q, gold_text)
++        sample = to_sample(out, q)
++        content_sample = record_sample(out, q, records)
+         for name, metric in metrics.items():
+             try:
+-                value = float(asyncio.run(metric.single_turn_ascore(sample)))
++                value = float(asyncio.run(metric.single_turn_ascore(
++                    content_sample if name in RECORD_LEVEL else sample)))
+                 status, comp = ("ok" if value == value else "nan"), {}
+             except Exception as e:
+                 value, status, comp = float("nan"), "error", {"error": f"{type(e).__name__}: {e}"}
+@@ -132,10 +135,10 @@ def main():
+ 
+     folders = expand_folders(args.folders)
+     from harness.orchestrator import _rehydrate
+-    from eval.ragas import RunConfig, _build_metrics, _to_sample, corpus_gold_text
++    from eval.ragas import RunConfig, _build_metrics, _to_sample, corpus_records
+ 
+     all_qs = {q.id: q for q in load_questions()}
+-    gold_text = corpus_gold_text(Path(args.corpus))
++    records = corpus_records(Path(args.corpus))
+     metrics = _build_metrics(OFFLINE, None, None, RunConfig())
+ 
+     run_semantic = (not args.no_semantic) and ("semantic_similarity" in BATCHED_EMBED)
+@@ -155,7 +158,7 @@ def main():
+ 
+     by_id = all_qs
+     for folder in folders:
+-        score_folder(folder, by_id, gold_text, metrics, _rehydrate, _to_sample,
++        score_folder(folder, by_id, records, metrics, _rehydrate, _to_sample,
+                      run_semantic, gold_emb)
+ 
+ 
+diff --git a/tools/correct_zero_usage.py b/tools/correct_zero_usage.py
+index 03a1c55..daf7758 100644
+--- a/tools/correct_zero_usage.py
++++ b/tools/correct_zero_usage.py
+@@ -65,6 +65,7 @@ def main():
+     p.add_argument("run")
+     p.add_argument("transcripts")
+     p.add_argument("--write", action="store_true")
++    p.add_argument("--ordered-by", default=HIS_WORDS, help="his words that ordered this correction")
+     args = p.parse_args()
+     d = Path(args.run)
+     transcripts = json.loads(Path(args.transcripts).read_text(encoding="utf-8"))
+@@ -144,7 +145,7 @@ def main():
+                if (d / "corrections.json").exists() else [])
+     entry = {
+         "made_at": datetime.now(timezone.utc).isoformat(),
+-        "ordered_by": HIS_WORDS,
++        "ordered_by": args.ordered_by,
+         "what_happened": (f"On {looked} answer calls the CLI's reply held 0 in its usage field and "
+                           "an empty list of iterations, while the same reply's counts per model "
+                           "and the CLI's own transcript of the call held the tokens. The harness "
+diff --git a/tools/export_finished_data.py b/tools/export_finished_data.py
+index 9b448b4..90ce5ad 100644
+--- a/tools/export_finished_data.py
++++ b/tools/export_finished_data.py
+@@ -66,11 +66,14 @@ SCORES = [
+     ("context_entity_recall", "RAGAS ContextEntityRecall. Entities common to the reference answer and the retrieved "
+                               "context / all entities in the reference answer. Entities: the judge's.", "0-1"),
+     ("context_recall_nonllm", "RAGAS NonLLMContextRecall. Relevant contexts retrieved / all reference contexts. "
+-                              "Relevant: Levenshtein similarity to a reference context of 0.5 or more. Reference context: text of a "
+-                              "HERB evidence record.", "0-1"),
++                              "Relevant: Levenshtein similarity to a reference context of more than 0.5. Reference context: the "
++                              "content of a HERB evidence record, without ids, labels, dates and names. Retrieved "
++                              "contexts: the content of each record passed to the answer model.", "0-1"),
+     ("context_precision_nonllm", "RAGAS NonLLMContextPrecisionWithReference. Context precision@K: mean of "
+                                  "precision@k over the ranks k of the relevant retrieved contexts. Relevant: "
+-                                 "Levenshtein similarity to a reference context of 0.5 or more.", "0-1"),
++                                 "Levenshtein similarity to a reference context of 0.5 or more. Reference context: the content "
++                                 "of a HERB evidence record, without ids, labels, dates and names. Retrieved contexts: "
++                                 "the content of each record passed to the answer model.", "0-1"),
+     ("semantic_similarity", "RAGAS SemanticSimilarity. Cosine similarity of the embeddings of the answer and the "
+                             "reference answer.", "0-1"),
+     ("string_similarity", "RAGAS NonLLMStringSimilarity. Levenshtein similarity of the answer and the reference "
+@@ -193,8 +196,9 @@ def rejudged(arm, d, cells, judge_model):
+     run's other scores as the run has them. Their cost is that of the kept cells' judge calls; their
+     time each question's span of calls added, one span per start of the judging."""
+     j = d.parent / (d.name + REJUDGED)
+-    if ({r["id"]: r for r in rows(j / "arm_outputs.jsonl")}
+-            != {r["id"]: r for r in rows(d / "arm_outputs.jsonl")}):
++    judged = lambda f: {r["id"]: (r["question"], r["answer"], r["contexts"], r["context_ids"])  # noqa: E731
++                        for r in rows(f / "arm_outputs.jsonl")}
++    if judged(j) != judged(d):
+         sys.exit(f"{arm}: {j.name} judged other answers than the run's")
+     added, kept = {}, set()
+     for r in rows(j / "eval_results.jsonl"):

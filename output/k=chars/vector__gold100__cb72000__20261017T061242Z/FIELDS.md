@@ -34,11 +34,13 @@ The scores are computed by RAGAS. The quoted sentence of each is RAGAS's own, fr
 |---|---|---|---|
 | `context_recall_id` | "Calculates context recall by directly comparing retrieved context IDs with reference context IDs. The score represents what proportion of the reference IDs were successfully retrieved." (RAGAS, class IDBasedContextRecall) Here: context_ids against the ids of the question's gold records. | nothing | yes |
 | `context_precision_id` | "Calculates context precision by directly comparing retrieved context IDs with reference context IDs. The score represents what proportion of the retrieved context IDs are actually relevant (present in reference)." (RAGAS, class IDBasedContextPrecision) Here: context_ids against the ids of the question's gold records. | nothing | yes |
-| `context_recall_nonllm` | "`NonLLMContextRecall` metric is computed using `retrieved_contexts` and `reference_contexts` [...] This metrics uses non-LLM string comparison metrics to identify if a retrieved context is relevant or not." (RAGAS, docs, context_recall.md) Here: contexts against the text of each gold record; a gold record counts as found when a delivered text is more than 0.5 like it (Levenshtein). | nothing | no, within one arm only |
-| `context_precision_nonllm` | "To determine if a retrieved context is relevant, this method compares each retrieved context or chunk in `retrieved_contexts` with every context in `reference_contexts` using a non-LLM-based similarity measure." (RAGAS, docs, context_precision.md) Here: each delivered text against the gold records' texts, more than 0.5 alike (Levenshtein), weighted by rank. | nothing | no, within one arm only |
+| `context_recall_nonllm` | "`NonLLMContextRecall` metric is computed using `retrieved_contexts` and `reference_contexts` [...] This metrics uses non-LLM string comparison metrics to identify if a retrieved context is relevant or not." (RAGAS, docs, context_recall.md) Here: the content of each record handed over (record_content; every text cut into its records) against the content of each gold record; a gold record counts as found when a delivered record's content is more than 0.5 like it (Levenshtein). | nothing | no, within one arm only |
+| `context_precision_nonllm` | "To determine if a retrieved context is relevant, this method compares each retrieved context or chunk in `retrieved_contexts` with every context in `reference_contexts` using a non-LLM-based similarity measure." (RAGAS, docs, context_precision.md) Here: the content of each record handed over (record_content; every text cut into its records) against the gold records' content, 0.5 or more alike (Levenshtein), weighted by rank. | nothing | no, within one arm only |
 | `context_recall_llm` | "Estimates context recall by estimating TP and FN using annotated answer and retrieved context." (RAGAS, class LLMContextRecall) Here: the gold answer, sentence by sentence, against contexts. | the judge | yes |
 | `faithfulness` | "The **Faithfulness** metric measures how factually consistent a `response` is with the `retrieved context`. [...] A response is considered **faithful** if all its claims can be supported by the retrieved context." (RAGAS, docs, faithfulness.md) Here: the answer's claims against contexts. | the judge | yes |
 | `answer_correctness` | "Measures answer correctness compared to ground truth as a combination of factuality and semantic similarity." (RAGAS, class AnswerCorrectness) Here: the answer against the gold answer: 0.75 times the F1 of the claims the judge finds in both, plus 0.25 times semantic_similarity (RAGAS's own weights). | the judge and the embedder | yes |
+| `factual_correctness` | "It uses claim decomposition and natural language inference (NLI) to verify the claims made in the responses against reference texts." (RAGAS, class FactualCorrectness) Here: the answer against the gold answer: the F1 of the answer's claims the judge finds in the gold answer and the gold answer's claims it finds in the answer (RAGAS's defaults: mode f1, beta 1, atomicity and coverage low), rounded to two decimals. | the judge | yes |
+| `context_entity_recall` | "Calculates recall based on entities present in ground truth and context." (RAGAS, class ContextEntityRecall) Here: the entities the judge finds in the gold answer, found among the entities it finds in contexts joined into one text. | the judge | yes |
 | `semantic_similarity` | "The **Semantic Similarity** metric evaluates the semantic resemblance between a generated response and a reference (ground truth) answer. [...] This metric uses embeddings and cosine similarity" (RAGAS, docs, semantic_similarity.md) Here: the answer against the gold answer, both embedded in passage mode. | the embedder | yes |
 | `string_similarity` | "`NonLLMStringSimilarity` metric measures the similarity between the reference and the response using traditional string distance measures such as Levenshtein, Hamming, and Jaro." (RAGAS, docs, traditional.md) Here: the answer against the gold answer, Levenshtein. | nothing | yes |
 | `bleu` | "It measures the similarity between the response and the reference based on n-gram precision and brevity penalty." (RAGAS, docs, traditional.md) Here: the answer against the gold answer. | nothing | yes |
@@ -247,6 +249,24 @@ What the run was: the arm, its index, the code, the machine, the inputs, and eve
 | `legs.flags` | The switches given on the command line for this start, each by its name with the value it was given; empty when none. What a switch does is the arm's to say (retrieval_flags). |
 | `legs.lane` | How every model call of the start was made. Its fields: see "How model calls were made" below. |
 | `legs.correction` | Only where a stored number was corrected after the run: the rule, the value as recorded and the corrected value, the seconds taken out (taken_out_s), and in the sleep correction each slept try with its number within the call (from 1), its start, its seconds and its timeout in seconds. The folder's corrections.json tells the whole of it, and the files as recorded stand beside the corrected ones. |
+| `legs.source_run` | Only in a folder merged from two runs (merge.json): the run this start belongs to, by its folder's name; that folder is kept whole under halves/. |
+| `legs.source_leg` | Only in a merged folder: the start's number in that run. |
+| `legs.environment` | Only in a merged folder: the machine and the software of that run. |
+| `legs.environment.host` | The machine's name. |
+| `legs.environment.platform` | Its operating system. |
+| `legs.environment.python` | The Python version. |
+| `legs.environment.python_executable` | The Python that ran. |
+| `legs.environment.cpu` | The processor. |
+| `legs.environment.cpu_count` | How many processor threads it has. |
+| `legs.environment.ram_bytes` | How much memory it has. |
+| `legs.environment.packages` | The versions of the packages the run rests on most. |
+| `legs.environment.packages_all` | Every installed package with its version. |
+| `legs.environment.embedder` | The embedding model the run is set to use. |
+| `legs.environment.embedder.model` | Its name. |
+| `legs.environment.embedder.revision` | Its exact version. |
+| `legs.environment.embedder.device` | Where it runs. |
+| `legs.environment.embedder.dtype` | The number type it computes in. |
+| `legs.env` | Only in a merged folder: that run's environment variables that can change what a run or a model call does, by name. A secret shows as <set>. |
 | `legs.index` | What the arm's index is. Its fields: see "The arm's index" below. |
 | `workers` | How many questions were worked on at once in the last start. |
 | `lane` | How every model call was made. Its fields: see "How model calls were made" below. |
@@ -289,6 +309,7 @@ What the scoring was: the judge, its settings, and what it cost.
 | `judge_legs.usage` | What the start's judge calls cost. Its fields: see "What a model's work cost" below. |
 | `judge_legs.elapsed_s` | Seconds the start took. |
 | `judge_legs.settings` | What the start ran under. Its fields: see "What a scoring start ran under" below. |
+| `judge_legs.source_run` | Only in a folder merged from two runs (merge.json): the run this scoring start belongs to, by its folder's name. |
 | `judge_settings` | What the last scoring start ran under. Its fields: see "What a scoring start ran under" below. |
 
 ## `failures.jsonl`
@@ -549,7 +570,11 @@ A record with `kind` chat is a call to a language model; one with `kind` embed i
 
 ## Fields without a word
 
-None: every file and every field of this folder is described above.
+3 have none:
+
+- `correct_embed_gpu_time.py (the file)`
+- `corrections.json: corrections.evidence.*`
+- `gpu_embed_times.json (the file)`
 
 ## The fields as they stand in this folder
 
@@ -673,6 +698,7 @@ Counted from the files themselves when this was written. A record is a line of a
 | `corrections.changes` | array | 1 | 0 |
 | `corrections.checks` | array | 1 | 0 |
 | `corrections.code` | object | 1 | 0 |
+| `corrections.evidence` | object | 1 | 0 |
 | `corrections.files` | object | 1 | 0 |
 | `corrections.made_at` | string | 1 | 0 |
 | `corrections.not_changed_and_worth_knowing` | array | 1 | 0 |
@@ -1101,18 +1127,20 @@ The file holds no record.
 | `workers` | integer | 1 | 0 |
 
 ---
-Written from `prod/harness/fields.py`, sha256 `a6e488ec9f0cf39e93c1de76159f2c816df362e4ee3311a56ad250f78704aeb6`.
+Written from `prod/harness/fields.py`, sha256 `12d365b7a2e639663ee75cb75eb4ace80a04fca90f6637f4d70f3f4920840590`.
 
 The files as they stood when this was written, their line ends as git holds them (LF):
 
 - `arm_outputs.as_recorded.jsonl` sha256 `6460b7dc48dc7ba35af7d9c1db7a3a0579b959d1bafbce3becfb2d6d423f4506`
-- `arm_outputs.jsonl` sha256 `52a36ac7fd21e7e6043c1c00c938d25403f1092303b4429d5e760430bcc92050`
+- `arm_outputs.jsonl` sha256 `42fb84e1c59806dfdcb0ff709f701cac513ad9cabc5ebcc77d36561dbf527a68`
+- `correct_embed_gpu_time.py` sha256 `84c6299aea0bbcf3589428bb2fe36ae8831ecd5a973ae14721cb956f5e1e24d7`
 - `correct_usage_by_model.py` sha256 `28d2357c693e407a2d4739241d1fddca55751553f0c9d4f42eedcf5a79a0d299`
-- `corrections.json` sha256 `24dd1c9170868236f56e581199c7d592cfdf4b23e582f1757c7f2d4157597cc4`
+- `corrections.json` sha256 `33f28d1f0a19bf42c5ec5165ef235f8f0bc2d1c3b943c5faf76fc8a3cf24a738`
 - `eval_calls.jsonl` sha256 `4ec50f85bad7cde7b3c39c812ec031d4bf0ec8830428addffe9d6d31cd643370`
 - `eval_failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - `eval_manifest.json` sha256 `74b5e3841b986a72fa1d2757ab1be28329bef4990e907d4d4b5645ea1262335e`
 - `eval_results.jsonl` sha256 `d7e6f883e246a1868e3d1a9266d20516f47099529ce59053afc7caf7affc9370`
 - `failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- `gpu_embed_times.json` sha256 `12fe727356eb1fbeefdb1b5837d467b6503700083c418e72634598dfa1d9f546`
 - `run_manifest.as_recorded.json` sha256 `3bf70b5a70cffde5ff62a426940b39fdedd70cddbaf30efdd256f74919f58c8d`
 - `run_manifest.json` sha256 `02fad0e3f1ad76e782e3a1365270bf5c9a61fcd7c005ac04e6f534dc899484e1`

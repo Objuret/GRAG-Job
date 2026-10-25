@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import threading
 import time
 from pathlib import Path
@@ -13,7 +14,8 @@ EMBED_MODEL = "nvidia/llama-nemotron-embed-1b-v2"
 
 EMBED_REVISION = "113abe4acafa848e77ead9c0623205e511932348"
 
-EMBED_DEVICE = "cpu"
+# HERB_EMBED_DEVICE=cuda puts the embedder on the graphics card (the desktop's GTX 1080 Ti)
+EMBED_DEVICE = os.environ.get("HERB_EMBED_DEVICE", "cpu")
 
 EMBED_DTYPE = "float32"
 

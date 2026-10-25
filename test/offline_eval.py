@@ -35,8 +35,9 @@ def _folder_question_ids(folder):
             if x.strip()]
 
 
-def score_folder(folder, by_id, gold_text, metrics, rehydrate, to_sample,
+def score_folder(folder, by_id, records, metrics, rehydrate, to_sample,
                  run_semantic, gold_emb):
+    from eval.ragas import RECORD_LEVEL, record_sample
     folder = Path(folder)
     arm = folder.name.split("__")[0]
     recs = [json.loads(x) for x in
@@ -45,10 +46,12 @@ def score_folder(folder, by_id, gold_text, metrics, rehydrate, to_sample,
     for rec in recs:
         q = by_id[rec["id"]]
         out = rehydrate(rec)
-        sample = to_sample(out, q, gold_text)
+        sample = to_sample(out, q)
+        content_sample = record_sample(out, q, records)
         for name, metric in metrics.items():
             try:
-                value = float(asyncio.run(metric.single_turn_ascore(sample)))
+                value = float(asyncio.run(metric.single_turn_ascore(
+                    content_sample if name in RECORD_LEVEL else sample)))
                 status, comp = ("ok" if value == value else "nan"), {}
             except Exception as e:
                 value, status, comp = float("nan"), "error", {"error": f"{type(e).__name__}: {e}"}
@@ -132,10 +135,10 @@ def main():
 
     folders = expand_folders(args.folders)
     from harness.orchestrator import _rehydrate
-    from eval.ragas import RunConfig, _build_metrics, _to_sample, corpus_gold_text
+    from eval.ragas import RunConfig, _build_metrics, _to_sample, corpus_records
 
     all_qs = {q.id: q for q in load_questions()}
-    gold_text = corpus_gold_text(Path(args.corpus))
+    records = corpus_records(Path(args.corpus))
     metrics = _build_metrics(OFFLINE, None, None, RunConfig())
 
     run_semantic = (not args.no_semantic) and ("semantic_similarity" in BATCHED_EMBED)
@@ -155,7 +158,7 @@ def main():
 
     by_id = all_qs
     for folder in folders:
-        score_folder(folder, by_id, gold_text, metrics, _rehydrate, _to_sample,
+        score_folder(folder, by_id, records, metrics, _rehydrate, _to_sample,
                      run_semantic, gold_emb)
 
 

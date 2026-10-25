@@ -47,10 +47,14 @@ USAGE = {
 
 ATTEMPT = {
     "n": "The try's number within the call, from 1.",
+    "credential": "What the try logged in with: subscription (the lane's token) or api_key (the "
+                  "CLAUDE_API key, sent as ANTHROPIC_API_KEY).",
     "started_at": "When the try started (UTC).",
     "seconds": "How long the try took.",
-    "outcome": "ok (it answered), exit (the program ended with an error), bad_envelope (its reply "
-               "could not be read), or timeout (cut at timeout_s).",
+    "outcome": "ok (it answered), exit (the program ended with an error), usage_limit (the "
+               "subscription refused it at its usage limit, HTTP 429, and the same try went again "
+               "with the CLAUDE_API key), bad_envelope (its reply could not be read), or timeout "
+               "(cut at timeout_s).",
     "returncode": "The program's exit code; empty for a timeout.",
     "error": "The error of a try that did not answer; empty for the try that answered.",
     "stdout": "What the program printed, kept for a try that did not answer; empty for the try "
@@ -90,6 +94,8 @@ CALL = {
     "finished_at": "When the call ended (UTC).",
     "attempts": sub("Every try of the call, in order.", ATTEMPT),
     "ok": "Whether the call ended with an answer.",
+    "credential": "What the try that answered logged in with: subscription or api_key; empty when "
+                  "no try answered.",
     "text": "The reply's text. For an answer call it is the JSON that holds the answer. Empty for "
             "a call that gave up: no try answered.",
     "usage": sub("The tokens of the try that answered; empty for a call that gave up.", {
@@ -715,14 +721,16 @@ SCORES = {
         "`NonLLMContextRecall` metric is computed using `retrieved_contexts` and "
         "`reference_contexts` [...] This metrics uses non-LLM string comparison metrics to "
         "identify if a retrieved context is relevant or not.", "docs, context_recall.md",
-        "contexts against the text of each gold record; a gold record counts as found when a "
-        "delivered text is more than 0.5 like it (Levenshtein).", "nothing", False),
+        "the content of each record handed over (record_content; every text cut into its records) "
+        "against the content of each gold record; a gold record counts as found when a delivered "
+        "record's content is more than 0.5 like it (Levenshtein).", "nothing", False),
     "context_precision_nonllm": (
         "To determine if a retrieved context is relevant, this method compares each retrieved "
         "context or chunk in `retrieved_contexts` with every context in `reference_contexts` "
         "using a non-LLM-based similarity measure.", "docs, context_precision.md",
-        "each delivered text against the gold records' texts, more than 0.5 alike (Levenshtein), "
-        "weighted by rank.", "nothing", False),
+        "the content of each record handed over (record_content; every text cut into its records) "
+        "against the gold records' content, 0.5 or more alike (Levenshtein), weighted by rank.",
+        "nothing", False),
     "context_recall_llm": (
         "Estimates context recall by estimating TP and FN using annotated answer and retrieved "
         "context.", "class LLMContextRecall",

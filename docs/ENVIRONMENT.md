@@ -205,8 +205,10 @@ prompt) · `--system-prompt` always, empty when the call has none (without the f
 own system prompt goes along, about 15,400 characters) · `--effort <level>` when the caller
 names one, else `CLAUDE_CODE_EFFORT_LEVEL=auto` so none is sent (`--safe-mode` does not skip
 `~/.claude/settings.json`, and its `effortLevel` went along on the answer calls until then) ·
-`MAX_THINKING_TOKENS=0`, `CLAUDE_CODE_MAX_OUTPUT_TOKENS` and, for Haiku, a temperature through
-`CLAUDE_CODE_EXTRA_BODY` on a call that asks for thinking off. What the CLI still adds by
+`MAX_THINKING_TOKENS=0` and, for Haiku, a temperature through `CLAUDE_CODE_EXTRA_BODY` on a call
+that asks for thinking off · `CLAUDE_CODE_MAX_OUTPUT_TOKENS`: the call's own cap where a call that
+asks for thinking off names one, else 128000, which Claude Code lowers to the model's own cap (the
+CLI's own default for Haiku 4.5 is 32,000). What the CLI still adds by
 itself: the line "You are a Claude agent, built on Anthropic's Claude Agent SDK." first in the
 system prompt, and a `<system-reminder>` block in front of the prompt with the e-mail address
 of the login stored in `~/.claude.json` and the day's date. The date has no switch.
@@ -219,6 +221,18 @@ date alone. A call without the token is refused, so **a machine that is to make 
 needs the token in its `.env`**. The CLI's own transcripts of the lane's calls land under
 `~/.claude-herb-lane/projects/` from then on (the earlier ones stay under `~/.claude/projects/`);
 `settings.json` in that folder keeps them (`cleanupPeriodDays` 36500).
+
+**Since 2026-10-25 the lane also sets** `ENABLE_PROMPT_CACHING_1H=1` on every call: unset, the CLI gives
+the subscription a one-hour prompt cache and an API key five minutes, and 2.1.212 predates
+`CLAUDE_CODE_PROMPT_CACHE_TTL`. A run with `HERB_CLAUDE_API_FALLBACK=on` sends a try that the subscription
+refuses at its usage limit (HTTP 429) again, unchanged, with the `CLAUDE_API` key of `.env` as
+`ANTHROPIC_API_KEY`; the key reaches the CLI only on such a try, and each try and call records its
+`credential`. Measured that day with the request logging below, on a made-up question (scripts and
+prints in `output/research/2026-10-25-credential-sameness/`): the logged requests under the two
+credentials are equal in every field (model, system, messages, tools, thinking, max_tokens,
+temperature, stream) but the subscription's own `oauth-2025-04-20` beta and `metadata.user_id`; the
+replies carry the same fields, token counts, per-model usage and timings, and the CLI keeps its
+transcript of the call under both.
 
 **Seeing what the CLI really sends:** `CLAUDE_CODE_ENABLE_TELEMETRY=1 OTEL_LOGS_EXPORTER=console
 OTEL_METRICS_EXPORTER=none OTEL_TRACES_EXPORTER=none OTEL_LOG_RAW_API_BODIES=file:<dir>` writes
@@ -269,7 +283,8 @@ re-smudging; restore via `git cat-file blob` writes.
 desktop every fucking time you do anything"*): a clean clone `A:\exjobbet\GRAG-Job` on branch
 artefact-v4-iteration (`git pull --ff-only` with `GIT_LFS_SKIP_SMUDGE=1`); `A:\exjobbet\repo` is the
 old v3 checkout with a stash and stays untouched. Its `.venv` is installed from the laptop's
-`pip freeze` (same 170 packages; Python 3.12.6 against the laptop's 3.12.7); `.env` is the
+`pip freeze` (same 170 packages but `torch`, 2.14.1+cu126 here against the laptop's 2.14.0+cpu; Python 3.12.6
+against the laptop's 3.12.7); `.env` is the
 laptop's. Neo4j: `A:\exjobbet\neo4j-2026.04.0`, a copy of the laptop's 2026.04.0 enterprise
 program files with the same Java, the database `herb-eval-volmax` loaded from the laptop's dump
 (the same census sha256 as the laptop and the final run); start it detached with
@@ -287,8 +302,10 @@ installed via winget, port 22 opened in the firewall, the laptop's public key
 `C:\Users\jocke\.ssh\id_ed25519.pub` in `C:\ProgramData\ssh\administrators_authorized_keys`,
 ACL set with the SIDs `*S-1-5-32-544` / `*S-1-5-18` — the Swedish Windows has no group named
 "Administrators"). The desktop account has no Windows password, so password SSH is out.
-**GPU:** GTX 1080 Ti, 11 GB, driver 581.57; the desktop venv's torch is `2.6.0+cu124` with
-`sm_61` in its arch list, so Pascal runs. Load fp16 checkpoints as `dtype=torch.float32`
+**GPU:** GTX 1080 Ti, 11 GB, driver 581.57. GRAG-Job's `.venv` here carries `torch` 2.14.1+cu126
+(PyTorch's cu126 index, `--no-deps`) and the old `A:\exjobbet\repo\.venv` 2.6.0+cu124, both with
+`sm_61` in their arch lists, so Pascal runs; `HERB_EMBED_DEVICE=cuda` puts the harness's embedder on
+the card (it is `cpu` otherwise). Load fp16 checkpoints as `dtype=torch.float32`
 (Pascal has no fast fp16; `MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli` measured 501 pairs/s
 at batch 128 in fp32 vs 17 on the laptop CPU). **Claude CLI over SSH does not work:** the
 CLI (2.1.201) is installed and `~/.claude.json` carries the account, but the OAuth credential

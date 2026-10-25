@@ -1,0 +1,4880 @@
+{
+ "vector__gold100__cb72000__20261017T061242Z": {
+  "ActionGenie::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.027107000001706183,
+    "recorded_encode_s": 0.9214395000599325,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "AnomalyForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.02455610001925379,
+    "recorded_encode_s": 0.3443470001220703,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "AutoTuneForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.023648299975320697,
+    "recorded_encode_s": 0.7299027000553906,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "CoachForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.027316999970935285,
+    "recorded_encode_s": 0.9181677000597119,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "CollaborateForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.02404390007723123,
+    "recorded_encode_s": 0.7646854999475181,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "CollaborationForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.02626610000152141,
+    "recorded_encode_s": 0.35928540024906397,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "ConnectForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.025127300061285496,
+    "recorded_encode_s": 0.4114776998758316,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "ContentForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.02435479999985546,
+    "recorded_encode_s": 0.6567763998173177,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "ContextForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.025432700058445334,
+    "recorded_encode_s": 0.5946043999865651,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "EdgeForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.03950409998651594,
+    "recorded_encode_s": 0.3738724999129772,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "ExplainabilityForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.02765880001243204,
+    "recorded_encode_s": 0.6605173000134528,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "FeedbackForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.025382000021636486,
+    "recorded_encode_s": 0.33172239968553185,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "FlowForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.02576230000704527,
+    "recorded_encode_s": 0.8346536997705698,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "ForecastForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.02731220005080104,
+    "recorded_encode_s": 0.557732299901545,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "InsightForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.025417099939659238,
+    "recorded_encode_s": 0.33192909974604845,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "KnowledgeForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.02454160002525896,
+    "recorded_encode_s": 0.5053046997636557,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "LeadForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.024866799940355122,
+    "recorded_encode_s": 0.3580669001676142,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "MonitorForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.028338400064967573,
+    "recorded_encode_s": 0.43103119963780046,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "PersonalizeForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.02805979992263019,
+    "recorded_encode_s": 0.8498750003054738,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "PitchForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.026219099992886186,
+    "recorded_encode_s": 0.6791749997064471,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "ProposalForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.024297600029967725,
+    "recorded_encode_s": 0.7404410997405648,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "SearchFlow::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.025722499936819077,
+    "recorded_encode_s": 0.4012898001819849,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "SearchForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.024235600023530424,
+    "recorded_encode_s": 1.0026465002447367,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "SecurityForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.025924100074917078,
+    "recorded_encode_s": 0.37731899973005056,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "SentimentForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.024985000025480986,
+    "recorded_encode_s": 0.7950864997692406,
+    "cosine_to_stored_cpu": 0.9999999403953552
+   }
+  ],
+  "SummarizeForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.024699299945496023,
+    "recorded_encode_s": 0.4667834001593292,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "SupportForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.02442590007558465,
+    "recorded_encode_s": 0.8924832995980978,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "TrendForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.024336499976925552,
+    "recorded_encode_s": 0.3654689001850784,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "VizForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.024611899978481233,
+    "recorded_encode_s": 0.38608080008998513,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "WorkFlowGenie::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.02465399994980544,
+    "recorded_encode_s": 0.5632128003053367,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "ActionGenie::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.024278700002469122,
+    "recorded_encode_s": 0.7549196002073586,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "AnomalyForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.02490679989568889,
+    "recorded_encode_s": 0.3654306000098586,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "AutoTuneForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.024134600069373846,
+    "recorded_encode_s": 0.3232132000848651,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "CoachForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.025500299991108477,
+    "recorded_encode_s": 0.686697400175035,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "CollaborateForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.024230399983935058,
+    "recorded_encode_s": 0.5584914996288717,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "CollaborationForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.027289299992844462,
+    "recorded_encode_s": 0.3548484002240002,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "ConnectForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.029066800023429096,
+    "recorded_encode_s": 0.9547524000518024,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "ContentForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.02481079997960478,
+    "recorded_encode_s": 0.38661469984799623,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "ContextForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.024555300013162196,
+    "recorded_encode_s": 0.42884019995108247,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "EdgeForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.023266699980013072,
+    "recorded_encode_s": 0.3789500999264419,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "ExplainabilityForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.030018000048585236,
+    "recorded_encode_s": 0.7601451999507844,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "FeedbackForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.023713600006885827,
+    "recorded_encode_s": 0.5049066999927163,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "FlowForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.02661689999513328,
+    "recorded_encode_s": 0.5833328999578953,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "ForecastForce::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.033068599994294345,
+    "recorded_encode_s": 0.33891319995746017,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "InsightForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.02440230001229793,
+    "recorded_encode_s": 0.33344999980181456,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "KnowledgeForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.02437979995738715,
+    "recorded_encode_s": 1.0026166001334786,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "LeadForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.02563060005195439,
+    "recorded_encode_s": 0.43619849998503923,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "MonitorForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.026131400023587048,
+    "recorded_encode_s": 0.3067369000054896,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "PersonalizeForce::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.03439849999267608,
+    "recorded_encode_s": 0.9386155996471643,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "PitchForce::a::25": [
+   {
+    "seq": 0,
+    "encode_s": 0.028202999965287745,
+    "recorded_encode_s": 0.4502020003274083,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "ProposalForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.02340049995109439,
+    "recorded_encode_s": 0.30245550023391843,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "SearchFlow::a::33": [
+   {
+    "seq": 0,
+    "encode_s": 0.028055400005541742,
+    "recorded_encode_s": 0.4876699000597,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "SearchForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.02696220006328076,
+    "recorded_encode_s": 1.0210990002378821,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "SentimentForce::a::26": [
+   {
+    "seq": 0,
+    "encode_s": 0.024537499994039536,
+    "recorded_encode_s": 0.32223019981756806,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "SummarizeForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.024370400002226233,
+    "recorded_encode_s": 0.30778850009664893,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "SupportForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.02493690000846982,
+    "recorded_encode_s": 0.8089815001003444,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "VizForce::a::43": [
+   {
+    "seq": 0,
+    "encode_s": 0.023680799989961088,
+    "recorded_encode_s": 0.42442090017721057,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "ActionGenie::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.0248077999567613,
+    "recorded_encode_s": 0.3038743999786675,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "AutoTuneForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.024176400038413703,
+    "recorded_encode_s": 0.302986899856478,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "CollaborateForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.025580300018191338,
+    "recorded_encode_s": 0.39935060031712055,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "ConnectForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.02845679991878569,
+    "recorded_encode_s": 0.32732999976724386,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "ContentForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.024989900062792003,
+    "recorded_encode_s": 0.7720778002403677,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "EdgeForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.025533000007271767,
+    "recorded_encode_s": 0.40654970007017255,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "ExplainabilityForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.023597200051881373,
+    "recorded_encode_s": 1.5890001002699137,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "FeedbackForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.030256500001996756,
+    "recorded_encode_s": 0.681356499902904,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "FlowForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.024091999977827072,
+    "recorded_encode_s": 1.8329998003318906,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "ForecastForce::a::26": [
+   {
+    "seq": 0,
+    "encode_s": 0.025230499915778637,
+    "recorded_encode_s": 0.2970926999114454,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "InsightForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.024285500054247677,
+    "recorded_encode_s": 0.26191679993644357,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "KnowledgeForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.025430400040932,
+    "recorded_encode_s": 0.18605100037530065,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "LeadForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.02487899991683662,
+    "recorded_encode_s": 0.38689700001850724,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "MonitorForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.025600400054827332,
+    "recorded_encode_s": 0.1901515000499785,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "PersonalizeForce::a::34": [
+   {
+    "seq": 0,
+    "encode_s": 0.02639009989798069,
+    "recorded_encode_s": 0.22424380015581846,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "PitchForce::a::27": [
+   {
+    "seq": 0,
+    "encode_s": 0.02826630009803921,
+    "recorded_encode_s": 0.39354920014739037,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "ProposalForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.026351700071245432,
+    "recorded_encode_s": 0.19705910002812743,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "SentimentForce::a::27": [
+   {
+    "seq": 0,
+    "encode_s": 0.023776100017130375,
+    "recorded_encode_s": 0.17383149964734912,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "SummarizeForce::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.028716800035908818,
+    "recorded_encode_s": 0.21463859966024756,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "CollaborateForce::a::31": [
+   {
+    "seq": 0,
+    "encode_s": 0.025393599993549287,
+    "recorded_encode_s": 0.3256506002508104,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "ConnectForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.03391849994659424,
+    "recorded_encode_s": 0.558693700004369,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "ContentForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.023184899939224124,
+    "recorded_encode_s": 0.514728999696672,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "EdgeForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.03361500008031726,
+    "recorded_encode_s": 0.28901199996471405,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "ExplainabilityForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.027696099947206676,
+    "recorded_encode_s": 0.26700930017977953,
+    "cosine_to_stored_cpu": 0.9999999403953552
+   }
+  ],
+  "FeedbackForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.02442539995536208,
+    "recorded_encode_s": 0.17037109984084964,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "InsightForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.023756399983540177,
+    "recorded_encode_s": 0.1608763001859188,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "LeadForce::a::28": [
+   {
+    "seq": 0,
+    "encode_s": 0.02495019999332726,
+    "recorded_encode_s": 0.17844450008124113,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "MonitorForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.02649419999215752,
+    "recorded_encode_s": 0.2590882000513375,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "SentimentForce::a::29": [
+   {
+    "seq": 0,
+    "encode_s": 0.026717099943198264,
+    "recorded_encode_s": 0.7167706997133791,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "FeedbackForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.02712349989451468,
+    "recorded_encode_s": 0.17461090022698045,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "FeedbackForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.028652500011958182,
+    "recorded_encode_s": 0.18316429993137717,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "ActionGenie::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.0242003999883309,
+    "recorded_encode_s": 0.29953800002112985,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "AnomalyForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.023595000035129488,
+    "recorded_encode_s": 0.2701338999904692,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "AutoTuneForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.025158499949611723,
+    "recorded_encode_s": 0.18575479974970222,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "CoachForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.028038799995556474,
+    "recorded_encode_s": 0.40062939980998635,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "CollaborateForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.027606099960394204,
+    "recorded_encode_s": 0.18667839979752898,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "CollaborationForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.028699300019070506,
+    "recorded_encode_s": 0.20571970008313656,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "ConnectForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.027896199957467616,
+    "recorded_encode_s": 0.2094290000386536,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "ContentForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.027766100014559925,
+    "recorded_encode_s": 0.25081870006397367,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "ContextForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.027828200021758676,
+    "recorded_encode_s": 0.1774528999812901,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "EdgeForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.03310959995724261,
+    "recorded_encode_s": 0.21592170000076294,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ],
+  "ExplainabilityForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.024537199991755188,
+    "recorded_encode_s": 0.20398039976134896,
+    "cosine_to_stored_cpu": 1.0
+   }
+  ],
+  "FeedbackForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.028735500061884522,
+    "recorded_encode_s": 0.19514380022883415,
+    "cosine_to_stored_cpu": 1.0000001192092896
+   }
+  ]
+ },
+ "artefact_v4__gold100__cb72000__20261020T041923Z": {
+  "ActionGenie::a::0": [
+   {
+    "seq": 1,
+    "encode_s": 0.028637400013394654,
+    "recorded_encode_s": 3.8760581999085844
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.03613739996217191,
+    "recorded_encode_s": 0.6138043003156781
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.030622099991887808,
+    "recorded_encode_s": 0.461908099707216
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.03347779996693134,
+    "recorded_encode_s": 0.4203618001192808
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.029785400023683906,
+    "recorded_encode_s": 0.45928659988567233
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.02890619996469468,
+    "recorded_encode_s": 1.0824202001094818
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.023504000040702522,
+    "recorded_encode_s": 0.6427205000072718
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.02386549999937415,
+    "recorded_encode_s": 0.3698448003269732
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.025745499995537102,
+    "recorded_encode_s": 0.5815058001317084
+   }
+  ],
+  "AnomalyForce::a::0": [
+   {
+    "seq": 1,
+    "encode_s": 0.02291880000848323,
+    "recorded_encode_s": 0.44878550013527274
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.022995300008915365,
+    "recorded_encode_s": 0.37694199988618493
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.030537000042386353,
+    "recorded_encode_s": 0.41309039993211627
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.024211800075136125,
+    "recorded_encode_s": 0.3614734001457691
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.028215899947099388,
+    "recorded_encode_s": 0.6706635998561978
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.024832700029946864,
+    "recorded_encode_s": 0.4329067999497056
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02288629999384284,
+    "recorded_encode_s": 0.2556675001978874
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.025870999903418124,
+    "recorded_encode_s": 0.2491915002465248
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.02499740000348538,
+    "recorded_encode_s": 0.43326300010085106
+   }
+  ],
+  "AutoTuneForce::a::0": [
+   {
+    "seq": 1,
+    "encode_s": 0.022063000011257827,
+    "recorded_encode_s": 0.32139910012483597
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.030032900045625865,
+    "recorded_encode_s": 0.23976269969716668
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.024497200036421418,
+    "recorded_encode_s": 0.2421500999480486
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.023886000039055943,
+    "recorded_encode_s": 0.2698352998122573
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023382500046864152,
+    "recorded_encode_s": 0.28324919985607266
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.03001889993902296,
+    "recorded_encode_s": 0.9669919000007212
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.025283100083470345,
+    "recorded_encode_s": 0.5192517000250518
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.023396600037813187,
+    "recorded_encode_s": 0.35713319992646575
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.023192499997094274,
+    "recorded_encode_s": 0.4224380999803543
+   }
+  ],
+  "CoachForce::a::5": [
+   {
+    "seq": 1,
+    "encode_s": 0.02348209999036044,
+    "recorded_encode_s": 0.5212165997363627
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.023924299981445074,
+    "recorded_encode_s": 0.3375581996515393
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.02347480005118996,
+    "recorded_encode_s": 0.3827096000313759
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.022996600018814206,
+    "recorded_encode_s": 0.32592919981107116
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023727499996311963,
+    "recorded_encode_s": 0.3322276999242604
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.027685599983669817,
+    "recorded_encode_s": 0.3469385001808405
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.022196999983862042,
+    "recorded_encode_s": 0.28915979992598295
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.027749300003051758,
+    "recorded_encode_s": 0.9408825999125838
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.023799799964763224,
+    "recorded_encode_s": 0.5460934997536242
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.022903200006112456,
+    "recorded_encode_s": 0.33631790010258555
+   },
+   {
+    "seq": 11,
+    "encode_s": 0.02291129995137453,
+    "recorded_encode_s": 0.33758299984037876
+   },
+   {
+    "seq": 12,
+    "encode_s": 0.02431770006660372,
+    "recorded_encode_s": 0.30252210004255176
+   },
+   {
+    "seq": 13,
+    "encode_s": 0.026805999921634793,
+    "recorded_encode_s": 0.289973400067538
+   },
+   {
+    "seq": 14,
+    "encode_s": 0.03588440001476556,
+    "recorded_encode_s": 0.5766443996690214
+   }
+  ],
+  "CollaborateForce::a::1": [
+   {
+    "seq": 1,
+    "encode_s": 0.03882829996291548,
+    "recorded_encode_s": 0.37556650023907423
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.03511719999369234,
+    "recorded_encode_s": 0.27516959980130196
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.032105799997225404,
+    "recorded_encode_s": 0.25606280006468296
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.032356000039726496,
+    "recorded_encode_s": 0.4669337999075651
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.028058699914254248,
+    "recorded_encode_s": 0.3842409001663327
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.028165499912574887,
+    "recorded_encode_s": 0.23931790003553033
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.03169770003296435,
+    "recorded_encode_s": 0.3373056002892554
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.03593190002720803,
+    "recorded_encode_s": 0.32413330022245646
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.043764300062321126,
+    "recorded_encode_s": 0.5492754001170397
+   }
+  ],
+  "CollaborationForce::a::6": [
+   {
+    "seq": 1,
+    "encode_s": 0.03228299994952977,
+    "recorded_encode_s": 0.34272800013422966
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.03327730007003993,
+    "recorded_encode_s": 0.24717620015144348
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.02955360000487417,
+    "recorded_encode_s": 0.27184469997882843
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.027299399953335524,
+    "recorded_encode_s": 0.2596188997849822
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.027370500029064715,
+    "recorded_encode_s": 0.26419669995084405
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.029038900043815374,
+    "recorded_encode_s": 0.7047578003257513
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.029804399935528636,
+    "recorded_encode_s": 0.43018219992518425
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.024527499917894602,
+    "recorded_encode_s": 0.2748142001219094
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.02355640009045601,
+    "recorded_encode_s": 0.28260429995134473
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.02361379994545132,
+    "recorded_encode_s": 0.2775355000048876
+   },
+   {
+    "seq": 11,
+    "encode_s": 0.029875700012780726,
+    "recorded_encode_s": 0.3205840000882745
+   },
+   {
+    "seq": 12,
+    "encode_s": 0.023550900048576295,
+    "recorded_encode_s": 0.6564070996828377
+   }
+  ],
+  "ConnectForce::a::5": [
+   {
+    "seq": 1,
+    "encode_s": 0.023426100029610097,
+    "recorded_encode_s": 0.26876309979707
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.024373500025831163,
+    "recorded_encode_s": 0.24349070014432073
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.023801099974662066,
+    "recorded_encode_s": 0.26350869983434677
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.024137499975040555,
+    "recorded_encode_s": 0.26655880035832524
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02341710007749498,
+    "recorded_encode_s": 0.2773703997954726
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.023522099945694208,
+    "recorded_encode_s": 0.25073610013350844
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02236510009970516,
+    "recorded_encode_s": 0.3283086000010371
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.02940349990967661,
+    "recorded_encode_s": 0.9978473000228405
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.025226199999451637,
+    "recorded_encode_s": 0.6877307998947799
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.025135900010354817,
+    "recorded_encode_s": 0.3264778000302613
+   },
+   {
+    "seq": 11,
+    "encode_s": 0.024483999935910106,
+    "recorded_encode_s": 0.37191000021994114
+   },
+   {
+    "seq": 12,
+    "encode_s": 0.02481390000320971,
+    "recorded_encode_s": 0.3081275997683406
+   },
+   {
+    "seq": 13,
+    "encode_s": 0.023503699922002852,
+    "recorded_encode_s": 0.3046473995782435
+   },
+   {
+    "seq": 14,
+    "encode_s": 0.023992000031284988,
+    "recorded_encode_s": 0.34281110018491745
+   },
+   {
+    "seq": 15,
+    "encode_s": 0.023003699956461787,
+    "recorded_encode_s": 0.7984849000349641
+   }
+  ],
+  "ContentForce::a::2": [
+   {
+    "seq": 1,
+    "encode_s": 0.023564600036479533,
+    "recorded_encode_s": 0.18742849957197905
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.025024699978530407,
+    "recorded_encode_s": 0.18453980004414916
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.022662099916487932,
+    "recorded_encode_s": 0.18045450001955032
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.024172399891540408,
+    "recorded_encode_s": 0.19119520019739866
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02388799993786961,
+    "recorded_encode_s": 0.18524500029161572
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.026269300025887787,
+    "recorded_encode_s": 0.22945210011675954
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02813120000064373,
+    "recorded_encode_s": 0.6152511001564562
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.024679900030605495,
+    "recorded_encode_s": 0.5611308999359608
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.023752099950797856,
+    "recorded_encode_s": 0.3073622998781502
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.02536940004210919,
+    "recorded_encode_s": 0.28790170000866055
+   },
+   {
+    "seq": 11,
+    "encode_s": 0.024109399993903935,
+    "recorded_encode_s": 0.4786521000787616
+   }
+  ],
+  "ContextForce::a::1": [
+   {
+    "seq": 2,
+    "encode_s": 0.026906599989160895,
+    "recorded_encode_s": 0.2556059998460114
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.023104800027795136,
+    "recorded_encode_s": 0.18104130029678345
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.022627500002272427,
+    "recorded_encode_s": 0.2184609998948872
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02291320008225739,
+    "recorded_encode_s": 0.22943020006641746
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.027572799939662218,
+    "recorded_encode_s": 0.5567201999947429
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02388980006799102,
+    "recorded_encode_s": 0.4145335997454822
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.023389699985273182,
+    "recorded_encode_s": 0.46563120000064373
+   }
+  ],
+  "EdgeForce::a::2": [
+   {
+    "seq": 1,
+    "encode_s": 0.025159799959510565,
+    "recorded_encode_s": 0.2717059999704361
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.02417989994864911,
+    "recorded_encode_s": 0.18978679971769452
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.02490600000601262,
+    "recorded_encode_s": 0.2077166000381112
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.029334000078961253,
+    "recorded_encode_s": 0.23919899994507432
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.027398300007916987,
+    "recorded_encode_s": 0.6277963002212346
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.02378719998523593,
+    "recorded_encode_s": 0.41447050031274557
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.0239826999604702,
+    "recorded_encode_s": 0.3643176998011768
+   }
+  ],
+  "ExplainabilityForce::a::6": [
+   {
+    "seq": 1,
+    "encode_s": 0.02427480008918792,
+    "recorded_encode_s": 0.21721809962764382
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.023442899924702942,
+    "recorded_encode_s": 0.20294969994574785
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.02325959992595017,
+    "recorded_encode_s": 0.21129840007051826
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02354860003106296,
+    "recorded_encode_s": 0.2722785002551973
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.027382000000216067,
+    "recorded_encode_s": 0.9384107999503613
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.023276600055396557,
+    "recorded_encode_s": 0.6400732998736203
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.0222269999794662,
+    "recorded_encode_s": 0.33685729978606105
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.023430899949744344,
+    "recorded_encode_s": 0.33461260003969073
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.02234829997178167,
+    "recorded_encode_s": 0.3088057995773852
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.028666800004430115,
+    "recorded_encode_s": 0.6506840996444225
+   }
+  ],
+  "FeedbackForce::a::5": [
+   {
+    "seq": 1,
+    "encode_s": 0.027745199971832335,
+    "recorded_encode_s": 0.372000299859792
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.025224699988029897,
+    "recorded_encode_s": 0.2841729000210762
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.025798399932682514,
+    "recorded_encode_s": 0.27484160009771585
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02571760001592338,
+    "recorded_encode_s": 0.2666499000042677
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023189599975012243,
+    "recorded_encode_s": 0.3088353001512587
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.02391309989616275,
+    "recorded_encode_s": 0.3077507000416517
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.026879399898461998,
+    "recorded_encode_s": 0.6705120000988245
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.024258499965071678,
+    "recorded_encode_s": 0.35685390001162887
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.02296470000874251,
+    "recorded_encode_s": 0.2899855999276042
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.030152700026519597,
+    "recorded_encode_s": 0.26785749988630414
+   },
+   {
+    "seq": 11,
+    "encode_s": 0.023226500023156404,
+    "recorded_encode_s": 0.42733610002323985
+   }
+  ],
+  "FlowForce::a::3": [
+   {
+    "seq": 1,
+    "encode_s": 0.023399199941195548,
+    "recorded_encode_s": 0.2619986003264785
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.024419199908152223,
+    "recorded_encode_s": 0.1875479002483189
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.02495019999332726,
+    "recorded_encode_s": 0.18302550027146935
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.023746500024572015,
+    "recorded_encode_s": 0.45002290001139045
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.029883199953474104,
+    "recorded_encode_s": 0.4786719996482134
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.02606010006275028,
+    "recorded_encode_s": 0.26783369993790984
+   }
+  ],
+  "ForecastForce::a::4": [
+   {
+    "seq": 1,
+    "encode_s": 0.023571799974888563,
+    "recorded_encode_s": 0.36614729976281524
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.02283589995931834,
+    "recorded_encode_s": 0.3123630001209676
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.023872000048868358,
+    "recorded_encode_s": 0.28379140002653
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.023650099989026785,
+    "recorded_encode_s": 0.25826509995386004
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.024124399991706014,
+    "recorded_encode_s": 0.24354239972308278
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.023153399932198226,
+    "recorded_encode_s": 0.2559059001505375
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.022998000029474497,
+    "recorded_encode_s": 0.2444326002150774
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.027831100043840706,
+    "recorded_encode_s": 0.6616663997992873
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.023438500007614493,
+    "recorded_encode_s": 0.3573583997786045
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.023551799939014018,
+    "recorded_encode_s": 0.267404000274837
+   },
+   {
+    "seq": 11,
+    "encode_s": 0.0233322000131011,
+    "recorded_encode_s": 0.24531450029462576
+   },
+   {
+    "seq": 12,
+    "encode_s": 0.025296200066804886,
+    "recorded_encode_s": 0.41303789988160133
+   }
+  ],
+  "InsightForce::a::5": [
+   {
+    "seq": 1,
+    "encode_s": 0.030628099921159446,
+    "recorded_encode_s": 0.21980119962245226
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.023165899910964072,
+    "recorded_encode_s": 0.17465939978137612
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.023402799968607724,
+    "recorded_encode_s": 0.2010783003643155
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.023712199996225536,
+    "recorded_encode_s": 0.20965219987556338
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.022903000004589558,
+    "recorded_encode_s": 0.2402929002419114
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.02403780003078282,
+    "recorded_encode_s": 0.19529369985684752
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.022691600024700165,
+    "recorded_encode_s": 0.2853124001994729
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.02283719996921718,
+    "recorded_encode_s": 0.30598170030862093
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.023242800030857325,
+    "recorded_encode_s": 0.20125949988141656
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.022416300023905933,
+    "recorded_encode_s": 0.1978309997357428
+   },
+   {
+    "seq": 11,
+    "encode_s": 0.024724300019443035,
+    "recorded_encode_s": 0.18811589991673827
+   },
+   {
+    "seq": 12,
+    "encode_s": 0.023351100040599704,
+    "recorded_encode_s": 0.18970589991658926
+   },
+   {
+    "seq": 13,
+    "encode_s": 0.022812900017015636,
+    "recorded_encode_s": 0.27794859977439046
+   }
+  ],
+  "KnowledgeForce::a::4": [
+   {
+    "seq": 1,
+    "encode_s": 0.023525999975390732,
+    "recorded_encode_s": 0.2684589000418782
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.02817249996587634,
+    "recorded_encode_s": 0.17640519980341196
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.023275000043213367,
+    "recorded_encode_s": 0.17432789970189333
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02262150007300079,
+    "recorded_encode_s": 0.1925244997255504
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023000799934379756,
+    "recorded_encode_s": 0.2051236000843346
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.02733720000833273,
+    "recorded_encode_s": 0.3533107000403106
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.024417400010861456,
+    "recorded_encode_s": 0.27422149991616607
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.023706400068476796,
+    "recorded_encode_s": 0.24354090029373765
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.024473899975419044,
+    "recorded_encode_s": 0.23925029998645186
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.02447040006518364,
+    "recorded_encode_s": 0.40816890029236674
+   }
+  ],
+  "LeadForce::a::5": [
+   {
+    "seq": 1,
+    "encode_s": 0.02281979995314032,
+    "recorded_encode_s": 0.32808890007436275
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.024262199993245304,
+    "recorded_encode_s": 0.23010129993781447
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.02388650004286319,
+    "recorded_encode_s": 0.28724819980561733
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.03459189995191991,
+    "recorded_encode_s": 0.3218179000541568
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023007299983873963,
+    "recorded_encode_s": 0.3130983002483845
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.026990899932570755,
+    "recorded_encode_s": 0.6798483999446034
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.024631000007502735,
+    "recorded_encode_s": 0.44948840001598
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.02426839992403984,
+    "recorded_encode_s": 0.34368319995701313
+   }
+  ],
+  "MonitorForce::a::5": [
+   {
+    "seq": 1,
+    "encode_s": 0.022661500028334558,
+    "recorded_encode_s": 0.4528578999452293
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.022283799946308136,
+    "recorded_encode_s": 0.29441320011392236
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.023306699935346842,
+    "recorded_encode_s": 0.31088990019634366
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.022780900006182492,
+    "recorded_encode_s": 0.30083819990977645
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02750610001385212,
+    "recorded_encode_s": 0.7248641001060605
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.028699700022116303,
+    "recorded_encode_s": 0.520675899926573
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.023615899961441755,
+    "recorded_encode_s": 0.2276264000684023
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.022828999906778336,
+    "recorded_encode_s": 0.5167608000338078
+   }
+  ],
+  "PersonalizeForce::a::7": [
+   {
+    "seq": 1,
+    "encode_s": 0.022476300015114248,
+    "recorded_encode_s": 0.2710331999696791
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.022933400003239512,
+    "recorded_encode_s": 0.17502420023083687
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.022572399931959808,
+    "recorded_encode_s": 0.1716265003196895
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.024084500037133694,
+    "recorded_encode_s": 0.1909146998077631
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02765549998730421,
+    "recorded_encode_s": 0.4955690000206232
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.02501680003479123,
+    "recorded_encode_s": 0.46728690015152097
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02423480001743883,
+    "recorded_encode_s": 0.309846100397408
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.02458119997754693,
+    "recorded_encode_s": 0.2956952000968158
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.0242510000243783,
+    "recorded_encode_s": 0.26684889988973737
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.024373400025069714,
+    "recorded_encode_s": 0.4465699000284076
+   }
+  ],
+  "PitchForce::a::6": [
+   {
+    "seq": 1,
+    "encode_s": 0.02520789997652173,
+    "recorded_encode_s": 0.394837100058794
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.02596530003938824,
+    "recorded_encode_s": 0.31286800000816584
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.025487800012342632,
+    "recorded_encode_s": 0.2791015999391675
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.025777000002563,
+    "recorded_encode_s": 0.3497802000492811
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.027038400061428547,
+    "recorded_encode_s": 0.7999793998897076
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.028207900002598763,
+    "recorded_encode_s": 0.5900006000883877
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02321240003220737,
+    "recorded_encode_s": 0.3112774998880923
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.027153900009579957,
+    "recorded_encode_s": 0.3446749998256564
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.02360049996059388,
+    "recorded_encode_s": 0.655791100114584
+   }
+  ],
+  "ProposalForce::a::11": [
+   {
+    "seq": 1,
+    "encode_s": 0.023052899981848896,
+    "recorded_encode_s": 0.4230437995865941
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.022456600097939372,
+    "recorded_encode_s": 0.34139190008863807
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.023193400003947318,
+    "recorded_encode_s": 0.3806516998447478
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02277959999628365,
+    "recorded_encode_s": 0.3416768996976316
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.028099299990572035,
+    "recorded_encode_s": 0.8901582998223603
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.02303889999166131,
+    "recorded_encode_s": 0.4391558999195695
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.022978599998168647,
+    "recorded_encode_s": 0.30079539958387613
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.027714199968613684,
+    "recorded_encode_s": 0.2603727001696825
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.023146799998357892,
+    "recorded_encode_s": 0.4006661004386842
+   }
+  ],
+  "SearchFlow::a::12": [
+   {
+    "seq": 1,
+    "encode_s": 0.024084200034849346,
+    "recorded_encode_s": 0.29375019995495677
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.02266989997588098,
+    "recorded_encode_s": 0.21210369979962707
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.023961000028066337,
+    "recorded_encode_s": 0.20541639998555183
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.025273899897001684,
+    "recorded_encode_s": 0.22001680033281446
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023603999987244606,
+    "recorded_encode_s": 0.2351482999511063
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.022742999950423837,
+    "recorded_encode_s": 0.2558047999627888
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02745110006071627,
+    "recorded_encode_s": 0.6912270998582244
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.02312789997085929,
+    "recorded_encode_s": 0.32924319989979267
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.022435700055211782,
+    "recorded_encode_s": 0.2949032001197338
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.02260149992071092,
+    "recorded_encode_s": 0.30292530031874776
+   }
+  ],
+  "SearchForce::a::7": [
+   {
+    "seq": 1,
+    "encode_s": 0.025431100046262145,
+    "recorded_encode_s": 0.26838430017232895
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.023468100000172853,
+    "recorded_encode_s": 0.18011519964784384
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.022150799981318414,
+    "recorded_encode_s": 0.18117670016363263
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02226420002989471,
+    "recorded_encode_s": 0.2611441002227366
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02433539996854961,
+    "recorded_encode_s": 0.2596490001305938
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.023114199982956052,
+    "recorded_encode_s": 0.1953304000198841
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.025112799950875342,
+    "recorded_encode_s": 0.21387670002877712
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.02543299994431436,
+    "recorded_encode_s": 0.40682699996978045
+   }
+  ],
+  "SecurityForce::a::7": [
+   {
+    "seq": 1,
+    "encode_s": 0.0234065999975428,
+    "recorded_encode_s": 0.38785979989916086
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.02465809998102486,
+    "recorded_encode_s": 0.31453940039500594
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.028326700092293322,
+    "recorded_encode_s": 0.7459214003756642
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.023422300000675023,
+    "recorded_encode_s": 0.3495435998775065
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023761500022374094,
+    "recorded_encode_s": 0.2703960002399981
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.023035499965772033,
+    "recorded_encode_s": 0.3267971002496779
+   }
+  ],
+  "SentimentForce::a::8": [
+   {
+    "seq": 1,
+    "encode_s": 0.023363800020888448,
+    "recorded_encode_s": 0.2964846002869308
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.027342600049450994,
+    "recorded_encode_s": 0.23585080029442906
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.022208099951967597,
+    "recorded_encode_s": 0.21675960021093488
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02796510001644492,
+    "recorded_encode_s": 0.7434714999981225
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02273990004323423,
+    "recorded_encode_s": 0.578994800336659
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.030143000069074333,
+    "recorded_encode_s": 0.4194497000426054
+   }
+  ],
+  "SummarizeForce::a::11": [
+   {
+    "seq": 1,
+    "encode_s": 0.03814649989362806,
+    "recorded_encode_s": 0.25548799987882376
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.028117600013501942,
+    "recorded_encode_s": 0.1925217998214066
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.03143219999037683,
+    "recorded_encode_s": 0.17883399967104197
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.030316899996250868,
+    "recorded_encode_s": 0.18920059967786074
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.03174340003170073,
+    "recorded_encode_s": 0.4529837998561561
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.025892799952998757,
+    "recorded_encode_s": 0.33935970021411777
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02781420003157109,
+    "recorded_encode_s": 0.22676629992201924
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.04346920002717525,
+    "recorded_encode_s": 0.2871983996592462
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.05318169994279742,
+    "recorded_encode_s": 0.30157599970698357
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.02524649992119521,
+    "recorded_encode_s": 0.566261800006032
+   }
+  ],
+  "SupportForce::a::5": [
+   {
+    "seq": 1,
+    "encode_s": 0.02932990004774183,
+    "recorded_encode_s": 0.32187570026144385
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.023470600019209087,
+    "recorded_encode_s": 0.24773060018196702
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.02504059998318553,
+    "recorded_encode_s": 0.27517269970849156
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.022995300008915365,
+    "recorded_encode_s": 0.2951185996644199
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02461530000437051,
+    "recorded_encode_s": 0.26894549978896976
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.027237200061790645,
+    "recorded_encode_s": 0.6415861998684704
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.028673200053162873,
+    "recorded_encode_s": 0.45228799991309643
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.02637380000669509,
+    "recorded_encode_s": 0.3076165998354554
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.023484200006350875,
+    "recorded_encode_s": 0.3708820999599993
+   }
+  ],
+  "TrendForce::a::9": [
+   {
+    "seq": 1,
+    "encode_s": 0.02703459991607815,
+    "recorded_encode_s": 0.3131594997830689
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.023661599960178137,
+    "recorded_encode_s": 0.24117850000038743
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.024788100039586425,
+    "recorded_encode_s": 0.23879319988191128
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.030599899939261377,
+    "recorded_encode_s": 0.757147999946028
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.0254731000168249,
+    "recorded_encode_s": 0.4339204002171755
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.02412780001759529,
+    "recorded_encode_s": 0.45309520000591874
+   }
+  ],
+  "VizForce::a::16": [
+   {
+    "seq": 1,
+    "encode_s": 0.024137699976563454,
+    "recorded_encode_s": 0.290414999704808
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.023420299985446036,
+    "recorded_encode_s": 0.1863144002854824
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.02356749994214624,
+    "recorded_encode_s": 0.1733615999110043
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.022509499918669462,
+    "recorded_encode_s": 0.23742630006745458
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.025725499959662557,
+    "recorded_encode_s": 0.27491459995508194
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.027992499992251396,
+    "recorded_encode_s": 0.8499460997991264
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.024130300036631525,
+    "recorded_encode_s": 0.39212699979543686
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.02310870005749166,
+    "recorded_encode_s": 0.24263540003448725
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.024075299967080355,
+    "recorded_encode_s": 0.38547229999676347
+   }
+  ],
+  "WorkFlowGenie::a::11": [
+   {
+    "seq": 1,
+    "encode_s": 0.023032800061628222,
+    "recorded_encode_s": 0.27329580020159483
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.0246910999994725,
+    "recorded_encode_s": 0.18869870016351342
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.02361389994621277,
+    "recorded_encode_s": 0.23470869986340404
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.024565399973653257,
+    "recorded_encode_s": 0.25167210027575493
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.027610599994659424,
+    "recorded_encode_s": 0.7108457996509969
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.022651099949143827,
+    "recorded_encode_s": 0.5760397999547422
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02429990004748106,
+    "recorded_encode_s": 0.36143309995532036
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.02286999998614192,
+    "recorded_encode_s": 0.70180459972471
+   }
+  ],
+  "ActionGenie::a::5": [
+   {
+    "seq": 1,
+    "encode_s": 0.024447200004942715,
+    "recorded_encode_s": 0.23417120007798076
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.022801600047387183,
+    "recorded_encode_s": 0.2829172001220286
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.023906399961560965,
+    "recorded_encode_s": 0.27957529993727803
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.023011600016616285,
+    "recorded_encode_s": 0.33256280003115535
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023819099995307624,
+    "recorded_encode_s": 0.33693329989910126
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.02396479994058609,
+    "recorded_encode_s": 0.3326102001592517
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.027130500064231455,
+    "recorded_encode_s": 0.6805044002830982
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.02332189993467182,
+    "recorded_encode_s": 0.5948349996469915
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.022734099999070168,
+    "recorded_encode_s": 0.31616060016676784
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.02648959995713085,
+    "recorded_encode_s": 0.5109334997832775
+   }
+  ],
+  "AnomalyForce::a::17": [
+   {
+    "seq": 1,
+    "encode_s": 0.023689000052399933,
+    "recorded_encode_s": 0.47016260027885437
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.02369229996111244,
+    "recorded_encode_s": 0.3667414002120495
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.022866500075906515,
+    "recorded_encode_s": 0.3628700003027916
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.027173099922947586,
+    "recorded_encode_s": 0.30124570010229945
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02388159988913685,
+    "recorded_encode_s": 0.2817780999466777
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.027689999900758266,
+    "recorded_encode_s": 0.7128798002377152
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.027641900000162423,
+    "recorded_encode_s": 0.4803086002357304
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.029025699943304062,
+    "recorded_encode_s": 0.28563820011913776
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.024441800080239773,
+    "recorded_encode_s": 0.340476400218904
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.02278570004273206,
+    "recorded_encode_s": 0.3154131998308003
+   },
+   {
+    "seq": 11,
+    "encode_s": 0.023230399936437607,
+    "recorded_encode_s": 0.4000439001247287
+   }
+  ],
+  "AutoTuneForce::a::12": [
+   {
+    "seq": 1,
+    "encode_s": 0.024031000095419586,
+    "recorded_encode_s": 0.258856900036335
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.0219586999155581,
+    "recorded_encode_s": 0.18531240010634065
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.022132799960672855,
+    "recorded_encode_s": 0.19235240016132593
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.028759000007994473,
+    "recorded_encode_s": 0.3259527999907732
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02438570000231266,
+    "recorded_encode_s": 0.37067650025710464
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.0229780999943614,
+    "recorded_encode_s": 0.2747798999771476
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02307429991196841,
+    "recorded_encode_s": 0.4186915000900626
+   }
+  ],
+  "CoachForce::a::11": [
+   {
+    "seq": 1,
+    "encode_s": 0.023455000016838312,
+    "recorded_encode_s": 0.28773669991642237
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.027028399985283613,
+    "recorded_encode_s": 0.2389050000347197
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.024127199896611273,
+    "recorded_encode_s": 0.2365136002190411
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.028149399906396866,
+    "recorded_encode_s": 0.8653718000277877
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023099600104615092,
+    "recorded_encode_s": 0.4134892001748085
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.02423749992158264,
+    "recorded_encode_s": 0.25039259996265173
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.024275699979625642,
+    "recorded_encode_s": 0.3550005997531116
+   }
+  ],
+  "CollaborateForce::a::19": [
+   {
+    "seq": 1,
+    "encode_s": 0.022634899942204356,
+    "recorded_encode_s": 0.2819251003675163
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.02956540009472519,
+    "recorded_encode_s": 0.2839782000519335
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.028118399903178215,
+    "recorded_encode_s": 1.1784136998467147
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02244629990309477,
+    "recorded_encode_s": 1.025211500003934
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023778899922035635,
+    "recorded_encode_s": 0.34982809983193874
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.026125900098122656,
+    "recorded_encode_s": 0.28719320008531213
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02332769997883588,
+    "recorded_encode_s": 0.3124176999554038
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.024624999961815774,
+    "recorded_encode_s": 0.6010506004095078
+   }
+  ],
+  "CollaborationForce::a::12": [
+   {
+    "seq": 1,
+    "encode_s": 0.023001700057648122,
+    "recorded_encode_s": 0.25997860031202435
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.025389599963091314,
+    "recorded_encode_s": 0.16940149990841746
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.022804100066423416,
+    "recorded_encode_s": 0.21249010041356087
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.023500300012528896,
+    "recorded_encode_s": 0.18847630033269525
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02249210001900792,
+    "recorded_encode_s": 0.1786642000079155
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.022021500044502318,
+    "recorded_encode_s": 0.18316430039703846
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.023627799935638905,
+    "recorded_encode_s": 0.186287899967283
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.02413530007470399,
+    "recorded_encode_s": 0.16940260026603937
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.025391999981366098,
+    "recorded_encode_s": 0.19113950012251735
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.027742399950511754,
+    "recorded_encode_s": 0.37667329981923103
+   },
+   {
+    "seq": 11,
+    "encode_s": 0.023858700064010918,
+    "recorded_encode_s": 0.19871690031141043
+   },
+   {
+    "seq": 12,
+    "encode_s": 0.023913900018669665,
+    "recorded_encode_s": 0.19815339986234903
+   },
+   {
+    "seq": 13,
+    "encode_s": 0.0246095999609679,
+    "recorded_encode_s": 0.1910363999195397
+   },
+   {
+    "seq": 14,
+    "encode_s": 0.022416400024667382,
+    "recorded_encode_s": 0.23558680014684796
+   },
+   {
+    "seq": 15,
+    "encode_s": 0.0232700000051409,
+    "recorded_encode_s": 0.31915879994630814
+   }
+  ],
+  "ConnectForce::a::7": [
+   {
+    "seq": 1,
+    "encode_s": 0.027925800066441298,
+    "recorded_encode_s": 0.22094930009916425
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.023195600020699203,
+    "recorded_encode_s": 0.18318789964541793
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.024149199947714806,
+    "recorded_encode_s": 0.19969729986041784
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.022748899995349348,
+    "recorded_encode_s": 0.2550082001835108
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.024832900031469762,
+    "recorded_encode_s": 0.2744109001941979
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.026156799984164536,
+    "recorded_encode_s": 0.34833090007305145
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.027746499981731176,
+    "recorded_encode_s": 0.5903285001404583
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.02231150004081428,
+    "recorded_encode_s": 0.5164394997991621
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.022897299961186945,
+    "recorded_encode_s": 0.25682449992746115
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.023325500078499317,
+    "recorded_encode_s": 0.2612930997274816
+   }
+  ],
+  "ContentForce::a::11": [
+   {
+    "seq": 1,
+    "encode_s": 0.023091199924238026,
+    "recorded_encode_s": 0.27724620001390576
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.025407900102436543,
+    "recorded_encode_s": 0.24191189976409078
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.023014099919237196,
+    "recorded_encode_s": 0.2855679001659155
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02755339990835637,
+    "recorded_encode_s": 0.6592501001432538
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.029554700013250113,
+    "recorded_encode_s": 0.45540420012548566
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.0233246999559924,
+    "recorded_encode_s": 0.3611499001272023
+   }
+  ],
+  "ContextForce::a::22": [
+   {
+    "seq": 1,
+    "encode_s": 0.024068100028671324,
+    "recorded_encode_s": 0.3261104002594948
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.024364299955777824,
+    "recorded_encode_s": 0.30570000037550926
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.028715600026771426,
+    "recorded_encode_s": 0.29625430004671216
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02241219999268651,
+    "recorded_encode_s": 0.2961389999836683
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02789999998640269,
+    "recorded_encode_s": 0.31594419991597533
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.022637999965809286,
+    "recorded_encode_s": 0.31048089964315295
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.022039500065147877,
+    "recorded_encode_s": 0.31359639996662736
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.027398400008678436,
+    "recorded_encode_s": 0.6376979001797736
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.022836199961602688,
+    "recorded_encode_s": 0.4516376997344196
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.02672069997061044,
+    "recorded_encode_s": 0.24268129980191588
+   },
+   {
+    "seq": 11,
+    "encode_s": 0.02371149999089539,
+    "recorded_encode_s": 0.23382840026170015
+   },
+   {
+    "seq": 12,
+    "encode_s": 0.024605599930509925,
+    "recorded_encode_s": 0.27059240033850074
+   },
+   {
+    "seq": 13,
+    "encode_s": 0.023112499970011413,
+    "recorded_encode_s": 0.2710636998526752
+   },
+   {
+    "seq": 14,
+    "encode_s": 0.024066200014203787,
+    "recorded_encode_s": 0.4870526003651321
+   }
+  ],
+  "EdgeForce::a::12": [
+   {
+    "seq": 1,
+    "encode_s": 0.02308209997136146,
+    "recorded_encode_s": 0.26145350001752377
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.023605199996381998,
+    "recorded_encode_s": 0.2679281998425722
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.02695470000617206,
+    "recorded_encode_s": 0.71832330012694
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02585680002812296,
+    "recorded_encode_s": 0.635478800162673
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02307320002000779,
+    "recorded_encode_s": 0.5088380998931825
+   }
+  ],
+  "ExplainabilityForce::a::7": [
+   {
+    "seq": 1,
+    "encode_s": 0.023210400016978383,
+    "recorded_encode_s": 0.4802622003480792
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.022901599993929267,
+    "recorded_encode_s": 0.284663800150156
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.02847530005965382,
+    "recorded_encode_s": 1.082555599976331
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.027022300055250525,
+    "recorded_encode_s": 0.607453899923712
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023906400077976286,
+    "recorded_encode_s": 0.26105999993160367
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.022548199980519712,
+    "recorded_encode_s": 0.25524890003725886
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.027711500064469874,
+    "recorded_encode_s": 0.5624530999921262
+   }
+  ],
+  "FeedbackForce::a::6": [
+   {
+    "seq": 1,
+    "encode_s": 0.023109599947929382,
+    "recorded_encode_s": 0.2930906997062266
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.023840900044888258,
+    "recorded_encode_s": 0.44304449995979667
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.025029500015079975,
+    "recorded_encode_s": 0.368486899882555
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.022260400000959635,
+    "recorded_encode_s": 0.29433169960975647
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023142899968661368,
+    "recorded_encode_s": 0.34911089995875955
+   }
+  ],
+  "FlowForce::a::12": [
+   {
+    "seq": 1,
+    "encode_s": 0.02268199995160103,
+    "recorded_encode_s": 0.27883620001375675
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.023116500000469387,
+    "recorded_encode_s": 0.21165690012276173
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.023368799942545593,
+    "recorded_encode_s": 0.2323471000418067
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02810440002940595,
+    "recorded_encode_s": 0.6625486998818815
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023307299939915538,
+    "recorded_encode_s": 0.34443960012868047
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.023945099906995893,
+    "recorded_encode_s": 0.2736234003677964
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.023829100071452558,
+    "recorded_encode_s": 0.36289869993925095
+   }
+  ],
+  "ForecastForce::a::24": [
+   {
+    "seq": 1,
+    "encode_s": 0.026121099945157766,
+    "recorded_encode_s": 0.2644000998698175
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.025190699961967766,
+    "recorded_encode_s": 0.19725289987400174
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.022793399984948337,
+    "recorded_encode_s": 0.18648459995165467
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.024401300004683435,
+    "recorded_encode_s": 0.1865738001652062
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023979000048711896,
+    "recorded_encode_s": 0.16542419977486134
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.02872529998421669,
+    "recorded_encode_s": 0.1708941999822855
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02875060006044805,
+    "recorded_encode_s": 0.39207240007817745
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.02396769996266812,
+    "recorded_encode_s": 0.2382229999639094
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.023300400003790855,
+    "recorded_encode_s": 0.182194699998945
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.02554409997537732,
+    "recorded_encode_s": 0.16740880021825433
+   },
+   {
+    "seq": 11,
+    "encode_s": 0.02278120000846684,
+    "recorded_encode_s": 0.19269799999892712
+   },
+   {
+    "seq": 12,
+    "encode_s": 0.023696000105701387,
+    "recorded_encode_s": 0.17926059989258647
+   },
+   {
+    "seq": 13,
+    "encode_s": 0.02288930001668632,
+    "recorded_encode_s": 0.35238509997725487
+   }
+  ],
+  "InsightForce::a::6": [
+   {
+    "seq": 1,
+    "encode_s": 0.02477079990785569,
+    "recorded_encode_s": 0.2858743001706898
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.022006699931807816,
+    "recorded_encode_s": 0.201976100448519
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.02360220008995384,
+    "recorded_encode_s": 0.22306389966979623
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.024047399987466633,
+    "recorded_encode_s": 0.2583819003775716
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.026220700005069375,
+    "recorded_encode_s": 0.3033233000896871
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.027498400071635842,
+    "recorded_encode_s": 0.82981300028041
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.025273599894717336,
+    "recorded_encode_s": 0.5309398001991212
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.03606919990852475,
+    "recorded_encode_s": 0.5676354002207518
+   }
+  ],
+  "KnowledgeForce::a::14": [
+   {
+    "seq": 1,
+    "encode_s": 0.024637899943627417,
+    "recorded_encode_s": 0.2457019998691976
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.024066200014203787,
+    "recorded_encode_s": 0.22947779996320605
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.027326100040227175,
+    "recorded_encode_s": 0.6123816999606788
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02325399999972433,
+    "recorded_encode_s": 0.3872879999689758
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023815100081264973,
+    "recorded_encode_s": 0.2984957997687161
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.026276499964296818,
+    "recorded_encode_s": 0.3690531998872757
+   }
+  ],
+  "LeadForce::a::13": [
+   {
+    "seq": 1,
+    "encode_s": 0.028202799963764846,
+    "recorded_encode_s": 0.27457140013575554
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.023692000075243413,
+    "recorded_encode_s": 0.20366190001368523
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.0278599999146536,
+    "recorded_encode_s": 0.4711182997561991
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.023223199998028576,
+    "recorded_encode_s": 0.43074490036815405
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.031646500108763576,
+    "recorded_encode_s": 0.33301799977198243
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.023975000018253922,
+    "recorded_encode_s": 0.5607447996735573
+   }
+  ],
+  "MonitorForce::a::16": [
+   {
+    "seq": 1,
+    "encode_s": 0.026795199955813587,
+    "recorded_encode_s": 0.31124439975246787
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.022254299954511225,
+    "recorded_encode_s": 0.2507167998701334
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.02333370002452284,
+    "recorded_encode_s": 0.2519127996638417
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02183280000463128,
+    "recorded_encode_s": 0.3109185001812875
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.022669200086966157,
+    "recorded_encode_s": 0.3264024001546204
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.027529199956916273,
+    "recorded_encode_s": 0.5986985000781715
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02296480000950396,
+    "recorded_encode_s": 0.45374260004609823
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.024587800027802587,
+    "recorded_encode_s": 0.43845259957015514
+   }
+  ],
+  "PersonalizeForce::a::24": [
+   {
+    "seq": 1,
+    "encode_s": 0.023331800010055304,
+    "recorded_encode_s": 0.2986018997617066
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.0232271000277251,
+    "recorded_encode_s": 0.2454941002652049
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.02293239999562502,
+    "recorded_encode_s": 0.25245090015232563
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02291870000772178,
+    "recorded_encode_s": 0.2674926999025047
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.024140199995599687,
+    "recorded_encode_s": 0.32600140012800694
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.023370099952444434,
+    "recorded_encode_s": 0.317185599822551
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.023686000029556453,
+    "recorded_encode_s": 0.32483729999512434
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.027138000004924834,
+    "recorded_encode_s": 0.7647247998975217
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.030474600032903254,
+    "recorded_encode_s": 0.522838200442493
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.02446710004005581,
+    "recorded_encode_s": 0.28141279984265566
+   },
+   {
+    "seq": 11,
+    "encode_s": 0.028333399910479784,
+    "recorded_encode_s": 0.4852609997615218
+   }
+  ],
+  "PitchForce::a::25": [
+   {
+    "seq": 1,
+    "encode_s": 0.03148750006221235,
+    "recorded_encode_s": 0.3075191001407802
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.029527700040489435,
+    "recorded_encode_s": 0.31317299976944923
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.023535499931313097,
+    "recorded_encode_s": 0.27774340007454157
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.0299185001058504,
+    "recorded_encode_s": 0.28434789972379804
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023153599933721125,
+    "recorded_encode_s": 0.31099480018019676
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.026666500023566186,
+    "recorded_encode_s": 0.29758300026878715
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02483340003527701,
+    "recorded_encode_s": 0.34208260010927916
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.023053199984133244,
+    "recorded_encode_s": 0.2621514000929892
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.07942369999364018,
+    "recorded_encode_s": 0.9324847999960184
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.0271314000710845,
+    "recorded_encode_s": 0.5304002999328077
+   },
+   {
+    "seq": 11,
+    "encode_s": 0.024444499984383583,
+    "recorded_encode_s": 0.30275500006973743
+   },
+   {
+    "seq": 12,
+    "encode_s": 0.02256940002553165,
+    "recorded_encode_s": 0.24865709990262985
+   },
+   {
+    "seq": 13,
+    "encode_s": 0.023755399975925684,
+    "recorded_encode_s": 0.2762523000128567
+   },
+   {
+    "seq": 14,
+    "encode_s": 0.022911300067789853,
+    "recorded_encode_s": 0.3034115000627935
+   },
+   {
+    "seq": 15,
+    "encode_s": 0.022445800015702844,
+    "recorded_encode_s": 0.260393800213933
+   },
+   {
+    "seq": 16,
+    "encode_s": 0.02774419996421784,
+    "recorded_encode_s": 0.49865979980677366
+   }
+  ],
+  "ProposalForce::a::17": [
+   {
+    "seq": 1,
+    "encode_s": 0.029720299993641675,
+    "recorded_encode_s": 0.27875979989767075
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.023032800061628222,
+    "recorded_encode_s": 0.2998225996270776
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.023718199925497174,
+    "recorded_encode_s": 0.35635200003162026
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.022976299980655313,
+    "recorded_encode_s": 0.3157485998235643
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023153600050136447,
+    "recorded_encode_s": 0.6458613998256624
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.024331099935807288,
+    "recorded_encode_s": 0.39648590004071593
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.026366400066763163,
+    "recorded_encode_s": 0.45503799989819527
+   }
+  ],
+  "SearchFlow::a::33": [
+   {
+    "seq": 1,
+    "encode_s": 0.023574199993163347,
+    "recorded_encode_s": 0.2829975998029113
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.02319890004582703,
+    "recorded_encode_s": 0.19982399977743626
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.024677200010046363,
+    "recorded_encode_s": 0.21174059994518757
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.022941699950024486,
+    "recorded_encode_s": 0.2382327001541853
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.022761100088246167,
+    "recorded_encode_s": 0.25437340000644326
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.0300275000045076,
+    "recorded_encode_s": 0.7710847998969257
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.028082899982109666,
+    "recorded_encode_s": 0.7086513000540435
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.023114799987524748,
+    "recorded_encode_s": 0.26428639981895685
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.023567300057038665,
+    "recorded_encode_s": 0.29150740010663867
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.027027899981476367,
+    "recorded_encode_s": 0.5907358000986278
+   }
+  ],
+  "SearchForce::a::16": [
+   {
+    "seq": 1,
+    "encode_s": 0.022594099980778992,
+    "recorded_encode_s": 0.30565920006483793
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.022898100083693862,
+    "recorded_encode_s": 0.27026529982686043
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.028401299961842597,
+    "recorded_encode_s": 0.7063136999495327
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.0266647000098601,
+    "recorded_encode_s": 0.4295990001410246
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023961500031873584,
+    "recorded_encode_s": 0.25896670017391443
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.023851800011470914,
+    "recorded_encode_s": 0.39707119995728135
+   }
+  ],
+  "SentimentForce::a::26": [
+   {
+    "seq": 1,
+    "encode_s": 0.025400999933481216,
+    "recorded_encode_s": 0.26691280025988817
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.027225600089877844,
+    "recorded_encode_s": 0.20084080006927252
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.025090700015425682,
+    "recorded_encode_s": 0.18925420008599758
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.023245299933478236,
+    "recorded_encode_s": 0.20703290030360222
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.024311699904501438,
+    "recorded_encode_s": 0.22299680020660162
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.023333400022238493,
+    "recorded_encode_s": 0.20291429990902543
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02871780004352331,
+    "recorded_encode_s": 0.8468454000540078
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.03427709999959916,
+    "recorded_encode_s": 0.558831499889493
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.029142300016246736,
+    "recorded_encode_s": 0.34239580016583204
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.02302409999538213,
+    "recorded_encode_s": 0.31926279980689287
+   },
+   {
+    "seq": 11,
+    "encode_s": 0.02440830005798489,
+    "recorded_encode_s": 0.2833189000375569
+   },
+   {
+    "seq": 12,
+    "encode_s": 0.02321370004210621,
+    "recorded_encode_s": 0.4626786997541785
+   }
+  ],
+  "SummarizeForce::a::23": [
+   {
+    "seq": 1,
+    "encode_s": 0.02258989994879812,
+    "recorded_encode_s": 0.3715217001736164
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.024089300073683262,
+    "recorded_encode_s": 0.2666814997792244
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.022772999946027994,
+    "recorded_encode_s": 0.2944765002466738
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.028168100048787892,
+    "recorded_encode_s": 0.701292600017041
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02339760004542768,
+    "recorded_encode_s": 0.37375420005992055
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.025002799928188324,
+    "recorded_encode_s": 0.26367050036787987
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02331590000540018,
+    "recorded_encode_s": 0.2849945002235472
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.024156700004823506,
+    "recorded_encode_s": 0.3622613996267319
+   }
+  ],
+  "SupportForce::a::6": [
+   {
+    "seq": 1,
+    "encode_s": 0.02285649999976158,
+    "recorded_encode_s": 0.33546669967472553
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.0225308999652043,
+    "recorded_encode_s": 0.262899000197649
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.023428100044839084,
+    "recorded_encode_s": 0.3667695000767708
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02276950003579259,
+    "recorded_encode_s": 0.31999910017475486
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.024218800012022257,
+    "recorded_encode_s": 0.3219965002499521
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.02320179995149374,
+    "recorded_encode_s": 0.503987000323832
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.027912700083106756,
+    "recorded_encode_s": 0.3850993998348713
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.027782700024545193,
+    "recorded_encode_s": 0.667996899690479
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.02425680006854236,
+    "recorded_encode_s": 0.4700456000864506
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.02568640001118183,
+    "recorded_encode_s": 0.3527889000251889
+   }
+  ],
+  "VizForce::a::43": [
+   {
+    "seq": 1,
+    "encode_s": 0.024427699972875416,
+    "recorded_encode_s": 0.26779629988595843
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.02311599999666214,
+    "recorded_encode_s": 0.2970910998992622
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.029494700022041798,
+    "recorded_encode_s": 0.33732559997588396
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02954160002991557,
+    "recorded_encode_s": 0.32869499968364835
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02391009998973459,
+    "recorded_encode_s": 0.3461798997595906
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.028252399992197752,
+    "recorded_encode_s": 0.8334690001793206
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.025992400012910366,
+    "recorded_encode_s": 0.6372007001191378
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.0298602000111714,
+    "recorded_encode_s": 0.2616522000171244
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.021770299994386733,
+    "recorded_encode_s": 0.26578229991719127
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.02567790006287396,
+    "recorded_encode_s": 0.26052309991791844
+   },
+   {
+    "seq": 11,
+    "encode_s": 0.023787999991327524,
+    "recorded_encode_s": 0.4661636999808252
+   }
+  ],
+  "ActionGenie::a::7": [
+   {
+    "seq": 1,
+    "encode_s": 0.023448499967344105,
+    "recorded_encode_s": 0.35825669998303056
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.022900099982507527,
+    "recorded_encode_s": 0.35201280005276203
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.023743400000967085,
+    "recorded_encode_s": 0.9530383995734155
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.022844999912194908,
+    "recorded_encode_s": 0.6777038997970521
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.023671699920669198,
+    "recorded_encode_s": 0.5583897000178695
+   }
+  ],
+  "AutoTuneForce::a::13": [
+   {
+    "seq": 1,
+    "encode_s": 0.02948120003566146,
+    "recorded_encode_s": 0.2744007003493607
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.023832299979403615,
+    "recorded_encode_s": 0.19305029977113008
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.025828000041656196,
+    "recorded_encode_s": 0.17940910020843148
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.024515700060874224,
+    "recorded_encode_s": 0.1916860998608172
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.036597999976947904,
+    "recorded_encode_s": 0.6074035996571183
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.033278999966569245,
+    "recorded_encode_s": 0.479702599812299
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.031127700000070035,
+    "recorded_encode_s": 0.5067501002922654
+   }
+  ],
+  "CollaborateForce::a::21": [
+   {
+    "seq": 1,
+    "encode_s": 0.027415100019425154,
+    "recorded_encode_s": 0.4075548998080194
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.025029700016602874,
+    "recorded_encode_s": 0.261776200029999
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.023655700031667948,
+    "recorded_encode_s": 0.18818499986082315
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.025403100065886974,
+    "recorded_encode_s": 0.3733854000456631
+   }
+  ],
+  "ConnectForce::a::14": [
+   {
+    "seq": 1,
+    "encode_s": 0.023854299914091825,
+    "recorded_encode_s": 0.1736053000204265
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.025501800002530217,
+    "recorded_encode_s": 0.21547310007736087
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.023373399977572262,
+    "recorded_encode_s": 0.1822914001531899
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.023355199955403805,
+    "recorded_encode_s": 0.18555529974400997
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.027603099937550724,
+    "recorded_encode_s": 0.5750210001133382
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.0274467000272125,
+    "recorded_encode_s": 0.5818896000273526
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02383439999539405,
+    "recorded_encode_s": 0.3263709000311792
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.026442000060342252,
+    "recorded_encode_s": 0.30631389981135726
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.024243899970315397,
+    "recorded_encode_s": 0.25146420020610094
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.025192600092850626,
+    "recorded_encode_s": 0.28344570007175207
+   }
+  ],
+  "ContentForce::a::16": [
+   {
+    "seq": 1,
+    "encode_s": 0.022887300001457334,
+    "recorded_encode_s": 0.3189487997442484
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.02482869999948889,
+    "recorded_encode_s": 0.40925069991499186
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.032496499945409596,
+    "recorded_encode_s": 0.514746000058949
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.024687300086952746,
+    "recorded_encode_s": 0.3480773000046611
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.030215299921110272,
+    "recorded_encode_s": 0.9431990999728441
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.02484179998282343,
+    "recorded_encode_s": 0.35788620030507445
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02975500002503395,
+    "recorded_encode_s": 0.33309900015592575
+   }
+  ],
+  "EdgeForce::a::13": [
+   {
+    "seq": 1,
+    "encode_s": 0.03000239992979914,
+    "recorded_encode_s": 0.2575582996942103
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.029386600013822317,
+    "recorded_encode_s": 0.1883478001691401
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.03455089998897165,
+    "recorded_encode_s": 0.19968899991363287
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.026151299942284822,
+    "recorded_encode_s": 0.1969691002741456
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.030925199971534312,
+    "recorded_encode_s": 0.1968295997940004
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.029548199963755906,
+    "recorded_encode_s": 0.19055559998378158
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02567909995559603,
+    "recorded_encode_s": 0.18319169990718365
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.02486549993045628,
+    "recorded_encode_s": 0.1839105999097228
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.029239900060929358,
+    "recorded_encode_s": 0.3641560999676585
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.02456960000563413,
+    "recorded_encode_s": 0.3695203000679612
+   },
+   {
+    "seq": 11,
+    "encode_s": 0.031619600020349026,
+    "recorded_encode_s": 0.2775143003091216
+   },
+   {
+    "seq": 12,
+    "encode_s": 0.041729799937456846,
+    "recorded_encode_s": 0.42192979995161295
+   }
+  ],
+  "ExplainabilityForce::a::9": [
+   {
+    "seq": 1,
+    "encode_s": 0.02656669996213168,
+    "recorded_encode_s": 0.2804212002083659
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.026984900003299117,
+    "recorded_encode_s": 0.22539070015773177
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.02526109991595149,
+    "recorded_encode_s": 0.23592059966176748
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02860079996753484,
+    "recorded_encode_s": 0.703031999990344
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.024203800014220178,
+    "recorded_encode_s": 0.5353875998407602
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.02305540000088513,
+    "recorded_encode_s": 0.3315884000621736
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.022199900005944073,
+    "recorded_encode_s": 0.3030699002556503
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.029155900003388524,
+    "recorded_encode_s": 0.48373290011659265
+   }
+  ],
+  "FeedbackForce::a::7": [
+   {
+    "seq": 1,
+    "encode_s": 0.028185200062580407,
+    "recorded_encode_s": 0.3151928000152111
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.027696500066667795,
+    "recorded_encode_s": 0.3109536999836564
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.02793109999038279,
+    "recorded_encode_s": 0.2967950999736786
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.028975000022910535,
+    "recorded_encode_s": 0.3420930001884699
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02485659997910261,
+    "recorded_encode_s": 0.3265996999107301
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.035240700002759695,
+    "recorded_encode_s": 0.31829720037057996
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.05488910002168268,
+    "recorded_encode_s": 0.7886828002519906
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.03557499998714775,
+    "recorded_encode_s": 0.43851839983835816
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.03702779999002814,
+    "recorded_encode_s": 0.42184239998459816
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.03364040004089475,
+    "recorded_encode_s": 0.3307608999311924
+   },
+   {
+    "seq": 11,
+    "encode_s": 0.03566629998385906,
+    "recorded_encode_s": 0.3206343003548682
+   },
+   {
+    "seq": 12,
+    "encode_s": 0.03042039996944368,
+    "recorded_encode_s": 0.3476295000873506
+   }
+  ],
+  "FlowForce::a::13": [
+   {
+    "seq": 1,
+    "encode_s": 0.02990480000153184,
+    "recorded_encode_s": 0.3703346997499466
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.02993449999485165,
+    "recorded_encode_s": 0.5884040999226272
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.03744960005860776,
+    "recorded_encode_s": 0.46636190032586455
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.04944830003660172,
+    "recorded_encode_s": 0.3712110002525151
+   }
+  ],
+  "ForecastForce::a::26": [
+   {
+    "seq": 1,
+    "encode_s": 0.09317119990009815,
+    "recorded_encode_s": 0.26276150019839406
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.040051399962976575,
+    "recorded_encode_s": 0.18537710001692176
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.07753420004155487,
+    "recorded_encode_s": 0.20251600025221705
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.06366730004083365,
+    "recorded_encode_s": 0.708838100079447
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.07362179993651807,
+    "recorded_encode_s": 0.5450146999210119
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.045133600011467934,
+    "recorded_encode_s": 0.36612149979919195
+   }
+  ],
+  "InsightForce::a::7": [
+   {
+    "seq": 1,
+    "encode_s": 0.03777519997674972,
+    "recorded_encode_s": 0.2950034001842141
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.08042179991025478,
+    "recorded_encode_s": 0.2314197001978755
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.07370050007011741,
+    "recorded_encode_s": 0.2494068997912109
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.030381200020201504,
+    "recorded_encode_s": 0.26095549995079637
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.029187300009652972,
+    "recorded_encode_s": 0.5848515997640789
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.02382869995199144,
+    "recorded_encode_s": 0.3629402997903526
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.03589739999733865,
+    "recorded_encode_s": 0.3729166002012789
+   }
+  ],
+  "KnowledgeForce::a::15": [
+   {
+    "seq": 1,
+    "encode_s": 0.03502250008750707,
+    "recorded_encode_s": 0.248032100033015
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.03008519997820258,
+    "recorded_encode_s": 0.18845880031585693
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.03716800000984222,
+    "recorded_encode_s": 0.1908093998208642
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.028345300001092255,
+    "recorded_encode_s": 0.18955220002681017
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.033428699942305684,
+    "recorded_encode_s": 0.32326490012928843
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.03253710002172738,
+    "recorded_encode_s": 0.23229049984365702
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02895060006994754,
+    "recorded_encode_s": 0.17562490003183484
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.033926500007510185,
+    "recorded_encode_s": 0.24313850002363324
+   }
+  ],
+  "LeadForce::a::20": [
+   {
+    "seq": 1,
+    "encode_s": 0.030865499982610345,
+    "recorded_encode_s": 0.3105886997655034
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.0314797000028193,
+    "recorded_encode_s": 0.2607619999907911
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.0351154999807477,
+    "recorded_encode_s": 0.25870659993961453
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.030600500060245395,
+    "recorded_encode_s": 0.2560330000706017
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.030434099957346916,
+    "recorded_encode_s": 0.61880540009588
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.029148400062695146,
+    "recorded_encode_s": 0.6423189998604357
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.049036100041121244,
+    "recorded_encode_s": 0.28499520011246204
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.03182279993779957,
+    "recorded_encode_s": 0.2900825999677181
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.034873399999924004,
+    "recorded_encode_s": 0.47937209997326136
+   }
+  ],
+  "MonitorForce::a::18": [
+   {
+    "seq": 1,
+    "encode_s": 0.0431885999860242,
+    "recorded_encode_s": 0.2363365995697677
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.032445100019685924,
+    "recorded_encode_s": 0.1796582001261413
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.025547600002028048,
+    "recorded_encode_s": 0.20032860012724996
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.03073320002295077,
+    "recorded_encode_s": 0.4433909999206662
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.027218000032007694,
+    "recorded_encode_s": 0.3347281999886036
+   }
+  ],
+  "PersonalizeForce::a::34": [
+   {
+    "seq": 1,
+    "encode_s": 0.026782599976286292,
+    "recorded_encode_s": 0.26083690021187067
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.0267848001094535,
+    "recorded_encode_s": 0.23713750019669533
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.029879999929107726,
+    "recorded_encode_s": 0.5576441003941
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.024986900039948523,
+    "recorded_encode_s": 0.4508829000405967
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02712840004824102,
+    "recorded_encode_s": 0.23879949981346726
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.03318400005809963,
+    "recorded_encode_s": 0.3025150001049042
+   }
+  ],
+  "PitchForce::a::27": [
+   {
+    "seq": 1,
+    "encode_s": 0.02813829993829131,
+    "recorded_encode_s": 0.25310089997947216
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.028163000009953976,
+    "recorded_encode_s": 0.16561320004984736
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.027254600077867508,
+    "recorded_encode_s": 0.17731790011748672
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.029961199965327978,
+    "recorded_encode_s": 0.18017900036647916
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.028108200058341026,
+    "recorded_encode_s": 0.3459614999592304
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.028990899911150336,
+    "recorded_encode_s": 0.3883584998548031
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.027952800039201975,
+    "recorded_encode_s": 0.738092599902302
+   }
+  ],
+  "ProposalForce::a::20": [
+   {
+    "seq": 1,
+    "encode_s": 0.03187219996470958,
+    "recorded_encode_s": 0.2777932998724282
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.02638149994891137,
+    "recorded_encode_s": 0.19633670011535287
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.027968899928964674,
+    "recorded_encode_s": 0.20286440011113882
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.024657499976456165,
+    "recorded_encode_s": 0.24494019988924265
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02689109998755157,
+    "recorded_encode_s": 0.27136579994112253
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.03113869996741414,
+    "recorded_encode_s": 0.8481688001193106
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.02930169994942844,
+    "recorded_encode_s": 0.5186414998024702
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.030066700070165098,
+    "recorded_encode_s": 0.29044640017673373
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.029160199919715524,
+    "recorded_encode_s": 0.2921756999567151
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.02747060009278357,
+    "recorded_encode_s": 0.26245779963210225
+   },
+   {
+    "seq": 11,
+    "encode_s": 0.027947800001129508,
+    "recorded_encode_s": 0.43180290004238486
+   }
+  ],
+  "SentimentForce::a::27": [
+   {
+    "seq": 1,
+    "encode_s": 0.02920799993444234,
+    "recorded_encode_s": 0.6085568000562489
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.025248400052078068,
+    "recorded_encode_s": 0.3477609995752573
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.028881600010208786,
+    "recorded_encode_s": 0.30011430010199547
+   }
+  ],
+  "SummarizeForce::a::24": [
+   {
+    "seq": 1,
+    "encode_s": 0.026856199954636395,
+    "recorded_encode_s": 0.18103029998019338
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.024181599961593747,
+    "recorded_encode_s": 0.24287019995972514
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.027887699892744422,
+    "recorded_encode_s": 0.6574165998026729
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02885150001384318,
+    "recorded_encode_s": 0.5250993999652565
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.036753199994564056,
+    "recorded_encode_s": 0.35342680010944605
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.025327200070023537,
+    "recorded_encode_s": 0.35618819994851947
+   }
+  ],
+  "CollaborateForce::a::31": [
+   {
+    "seq": 1,
+    "encode_s": 0.024625999969430268,
+    "recorded_encode_s": 0.18892139988020062
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.02872820000629872,
+    "recorded_encode_s": 0.46301120007410645
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.0266645000083372,
+    "recorded_encode_s": 0.5577708999626338
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.023733300040476024,
+    "recorded_encode_s": 0.3497249004431069
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.026063699973747134,
+    "recorded_encode_s": 0.32909000013023615
+   }
+  ],
+  "ConnectForce::a::15": [
+   {
+    "seq": 1,
+    "encode_s": 0.026685600052587688,
+    "recorded_encode_s": 0.30334109999239445
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.028564699925482273,
+    "recorded_encode_s": 0.8499564998783171
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.02923210000153631,
+    "recorded_encode_s": 0.4700370002537966
+   }
+  ],
+  "ContentForce::a::17": [
+   {
+    "seq": 1,
+    "encode_s": 0.03168750007171184,
+    "recorded_encode_s": 0.2630445002578199
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.039414500002749264,
+    "recorded_encode_s": 0.2202701000496745
+   }
+  ],
+  "EdgeForce::a::14": [
+   {
+    "seq": 1,
+    "encode_s": 0.03056410001590848,
+    "recorded_encode_s": 0.2630607997998595
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.026653000037185848,
+    "recorded_encode_s": 0.1908081998117268
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.029044099966995418,
+    "recorded_encode_s": 0.2210805001668632
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.027496399939991534,
+    "recorded_encode_s": 0.24023219989612699
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.027464200044050813,
+    "recorded_encode_s": 0.23841039976105094
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.029563800082542002,
+    "recorded_encode_s": 0.6084389998577535
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.029905700008384883,
+    "recorded_encode_s": 0.4193289000540972
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.027763099991716444,
+    "recorded_encode_s": 0.26628620037809014
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.026791700045578182,
+    "recorded_encode_s": 0.2682643001899123
+   },
+   {
+    "seq": 10,
+    "encode_s": 0.029502799967303872,
+    "recorded_encode_s": 0.4767851000651717
+   }
+  ],
+  "ExplainabilityForce::a::11": [
+   {
+    "seq": 1,
+    "encode_s": 0.03175500000361353,
+    "recorded_encode_s": 0.2569979000836611
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.039860600023530424,
+    "recorded_encode_s": 0.20573490019887686
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.03411569993477315,
+    "recorded_encode_s": 0.22092460002750158
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.048798899981193244,
+    "recorded_encode_s": 0.28693340020254254
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.04108600004110485,
+    "recorded_encode_s": 0.6785054001957178
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.03104400006122887,
+    "recorded_encode_s": 0.5528107001446187
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.03511890000663698,
+    "recorded_encode_s": 0.3071642997674644
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.03197660006117076,
+    "recorded_encode_s": 0.26267690025269985
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.035584399942308664,
+    "recorded_encode_s": 0.7331292000599205
+   }
+  ],
+  "FeedbackForce::a::12": [
+   {
+    "seq": 1,
+    "encode_s": 0.034634800045751035,
+    "recorded_encode_s": 0.2575711999088526
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.04604539996944368,
+    "recorded_encode_s": 0.4796199998818338
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.035935599938966334,
+    "recorded_encode_s": 0.25976449996232986
+   }
+  ],
+  "InsightForce::a::8": [
+   {
+    "seq": 1,
+    "encode_s": 0.03693020006176084,
+    "recorded_encode_s": 0.3274968001060188
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.03682199993636459,
+    "recorded_encode_s": 0.326753499917686
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.03559580002911389,
+    "recorded_encode_s": 0.3115932000800967
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.03457920008804649,
+    "recorded_encode_s": 0.3530925000086427
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.029764900100417435,
+    "recorded_encode_s": 0.6029127002693713
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.028835399891249835,
+    "recorded_encode_s": 0.5150252999737859
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.027446799911558628,
+    "recorded_encode_s": 0.31556509993970394
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.027007300057448447,
+    "recorded_encode_s": 0.5386779997497797
+   }
+  ],
+  "LeadForce::a::28": [
+   {
+    "seq": 1,
+    "encode_s": 0.026830799994058907,
+    "recorded_encode_s": 0.3043362000025809
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.029149699956178665,
+    "recorded_encode_s": 0.7249923003837466
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.027325900038704276,
+    "recorded_encode_s": 0.38628540001809597
+   }
+  ],
+  "MonitorForce::a::19": [
+   {
+    "seq": 1,
+    "encode_s": 0.02898299996741116,
+    "recorded_encode_s": 0.5160113000310957
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.031213400070555508,
+    "recorded_encode_s": 0.40352570032700896
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.030765999923460186,
+    "recorded_encode_s": 0.260895200073719
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.03249480004888028,
+    "recorded_encode_s": 0.272690299898386
+   }
+  ],
+  "SentimentForce::a::29": [
+   {
+    "seq": 1,
+    "encode_s": 0.03154090000316501,
+    "recorded_encode_s": 0.32312009995803237
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.04032289993483573,
+    "recorded_encode_s": 0.3099424000829458
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.034936900017783046,
+    "recorded_encode_s": 0.2909086998552084
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.05464350001420826,
+    "recorded_encode_s": 0.2962027997709811
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.048604900017380714,
+    "recorded_encode_s": 0.3135116002522409
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.03926510002929717,
+    "recorded_encode_s": 0.24044089997187257
+   },
+   {
+    "seq": 7,
+    "encode_s": 0.037222899962216616,
+    "recorded_encode_s": 0.8567142002284527
+   },
+   {
+    "seq": 8,
+    "encode_s": 0.0356683999998495,
+    "recorded_encode_s": 0.4035681001842022
+   },
+   {
+    "seq": 9,
+    "encode_s": 0.028442800045013428,
+    "recorded_encode_s": 0.3055056999437511
+   }
+  ],
+  "FeedbackForce::a::16": [
+   {
+    "seq": 1,
+    "encode_s": 0.028709699981845915,
+    "recorded_encode_s": 0.7950173998251557
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.027028199983760715,
+    "recorded_encode_s": 0.4833423001691699
+   }
+  ],
+  "FeedbackForce::a::18": [
+   {
+    "seq": 1,
+    "encode_s": 0.029738200013525784,
+    "recorded_encode_s": 0.2742478000000119
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.02865590003784746,
+    "recorded_encode_s": 0.9899529996328056
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.03132720000576228,
+    "recorded_encode_s": 0.43329610023647547
+   }
+  ],
+  "ActionGenie::a::1": [
+   {
+    "seq": 1,
+    "encode_s": 0.031076999963261187,
+    "recorded_encode_s": 0.2139634001068771
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.029086199938319623,
+    "recorded_encode_s": 0.3836631001904607
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.028037600102834404,
+    "recorded_encode_s": 0.4726591999642551
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.025998099939897656,
+    "recorded_encode_s": 0.4317427002824843
+   }
+  ],
+  "AnomalyForce::a::1": [
+   {
+    "seq": 1,
+    "encode_s": 0.026859599980525672,
+    "recorded_encode_s": 0.34796519996598363
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.02555620006751269,
+    "recorded_encode_s": 0.29845339991152287
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.029890900012105703,
+    "recorded_encode_s": 0.7352037997916341
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.026914299931377172,
+    "recorded_encode_s": 0.42950369976460934
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.025104700005613267,
+    "recorded_encode_s": 0.31188130006194115
+   }
+  ],
+  "AutoTuneForce::a::1": [
+   {
+    "seq": 1,
+    "encode_s": 0.028655899921432137,
+    "recorded_encode_s": 0.2623075000010431
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.03047370002605021,
+    "recorded_encode_s": 0.27980229957029223
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.028132000006735325,
+    "recorded_encode_s": 0.7836966998875141
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.026911100023426116,
+    "recorded_encode_s": 0.5914988000877202
+   }
+  ],
+  "CoachForce::a::0": [
+   {
+    "seq": 1,
+    "encode_s": 0.03226460004225373,
+    "recorded_encode_s": 0.2594651998952031
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.028329099994152784,
+    "recorded_encode_s": 0.3334115999750793
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.03610359993763268,
+    "recorded_encode_s": 0.7737979996018112
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.06081219995394349,
+    "recorded_encode_s": 0.5478730001486838
+   }
+  ],
+  "CollaborateForce::a::0": [
+   {
+    "seq": 1,
+    "encode_s": 0.043582199956290424,
+    "recorded_encode_s": 0.6883113002404571
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.05011089995969087,
+    "recorded_encode_s": 0.46321940002962947
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.043794100056402385,
+    "recorded_encode_s": 0.2883921000175178
+   }
+  ],
+  "CollaborationForce::a::0": [
+   {
+    "seq": 1,
+    "encode_s": 0.029112600022926927,
+    "recorded_encode_s": 0.34792109997943044
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.037218599929474294,
+    "recorded_encode_s": 0.284854999743402
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.029069500043988228,
+    "recorded_encode_s": 0.2905401000753045
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.02818310004658997,
+    "recorded_encode_s": 0.792649700306356
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.028249099967069924,
+    "recorded_encode_s": 0.5326735000126064
+   }
+  ],
+  "ConnectForce::a::0": [
+   {
+    "seq": 2,
+    "encode_s": 0.029135999968275428,
+    "recorded_encode_s": 0.26780640007928014
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.03820449998602271,
+    "recorded_encode_s": 0.20687909983098507
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.028283299994654953,
+    "recorded_encode_s": 0.3977379002608359
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.037152100005187094,
+    "recorded_encode_s": 0.4305763002485037
+   }
+  ],
+  "ContentForce::a::0": [
+   {
+    "seq": 1,
+    "encode_s": 0.055172499967738986,
+    "recorded_encode_s": 0.27382300002500415
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.0504603999434039,
+    "recorded_encode_s": 0.2020181999541819
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.03029300004709512,
+    "recorded_encode_s": 0.18875289987772703
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.029354099999181926,
+    "recorded_encode_s": 0.5376856001093984
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.028870100039057434,
+    "recorded_encode_s": 0.458771999925375
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.031107399961911142,
+    "recorded_encode_s": 0.28497879998758435
+   }
+  ],
+  "ContextForce::a::0": [
+   {
+    "seq": 1,
+    "encode_s": 0.03892439999617636,
+    "recorded_encode_s": 0.28858410008251667
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.04434899997431785,
+    "recorded_encode_s": 0.20697610033676028
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.03221720003057271,
+    "recorded_encode_s": 0.2730225999839604
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.027735200012102723,
+    "recorded_encode_s": 0.3470544000156224
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.03255080000963062,
+    "recorded_encode_s": 0.993066499941051
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.03159130003768951,
+    "recorded_encode_s": 0.5077606998383999
+   }
+  ],
+  "EdgeForce::a::0": [
+   {
+    "seq": 1,
+    "encode_s": 0.034087999956682324,
+    "recorded_encode_s": 0.2817772999405861
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.03165050002280623,
+    "recorded_encode_s": 0.20846339967101812
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.033425600035116076,
+    "recorded_encode_s": 0.24000059999525547
+   },
+   {
+    "seq": 4,
+    "encode_s": 0.025600100052542984,
+    "recorded_encode_s": 0.3071719999425113
+   },
+   {
+    "seq": 5,
+    "encode_s": 0.02820850000716746,
+    "recorded_encode_s": 0.7100573000498116
+   },
+   {
+    "seq": 6,
+    "encode_s": 0.024814800010062754,
+    "recorded_encode_s": 0.48451949981972575
+   }
+  ],
+  "ExplainabilityForce::a::0": [
+   {
+    "seq": 1,
+    "encode_s": 0.028049600077793002,
+    "recorded_encode_s": 0.5911213997751474
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.027277000015601516,
+    "recorded_encode_s": 0.6162525000981987
+   }
+  ],
+  "FeedbackForce::a::0": [
+   {
+    "seq": 1,
+    "encode_s": 0.03601939999498427,
+    "recorded_encode_s": 0.25988849997520447
+   },
+   {
+    "seq": 2,
+    "encode_s": 0.04626620002090931,
+    "recorded_encode_s": 0.4866899000480771
+   },
+   {
+    "seq": 3,
+    "encode_s": 0.04492909996770322,
+    "recorded_encode_s": 0.43721230002120137
+   }
+  ]
+ },
+ "artefact_cpu_check": {
+  "texts": 40,
+  "min_cosine": 0.9999999403953552
+ }
+}

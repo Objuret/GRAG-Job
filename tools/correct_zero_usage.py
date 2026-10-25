@@ -65,6 +65,7 @@ def main():
     p.add_argument("run")
     p.add_argument("transcripts")
     p.add_argument("--write", action="store_true")
+    p.add_argument("--ordered-by", default=HIS_WORDS, help="his words that ordered this correction")
     args = p.parse_args()
     d = Path(args.run)
     transcripts = json.loads(Path(args.transcripts).read_text(encoding="utf-8"))
@@ -144,7 +145,7 @@ def main():
                if (d / "corrections.json").exists() else [])
     entry = {
         "made_at": datetime.now(timezone.utc).isoformat(),
-        "ordered_by": HIS_WORDS,
+        "ordered_by": args.ordered_by,
         "what_happened": (f"On {looked} answer calls the CLI's reply held 0 in its usage field and "
                           "an empty list of iterations, while the same reply's counts per model "
                           "and the CLI's own transcript of the call held the tokens. The harness "

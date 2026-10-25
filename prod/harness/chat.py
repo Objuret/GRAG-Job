@@ -127,6 +127,12 @@ def cli_version() -> str | None:
 # transcripts of the calls land under this folder; they hold gold.
 _CONFIG_DIR = Path.home() / ".claude-herb-lane"
 _LOGIN_TOKEN = "CLAUDE_CODE_OAUTH_TOKEN"
+# A limited Claude API key: a try the subscription refuses at its usage limit goes again, the same,
+# with it (his 2026-10-25 "use that if usage runs out from the sub").
+_API_KEY = "CLAUDE_API"
+# Only a run that turns it on may use the key (his 2026-10-25 "the api may never be used, ONLY in
+# this specific instance and case (or when i literally allow it ofc..)").
+_API_FALLBACK = "HERB_CLAUDE_API_FALLBACK"
 # without it the CLI deletes its transcripts after 30 days
 _CONFIG_SETTINGS = {"cleanupPeriodDays": 36500}
 
@@ -139,11 +145,20 @@ _ENV_FIXED = {
     "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",  # no second request, to Haiku, for a session title
     "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",      # no billing line in front of the system prompt
     "CLAUDE_CONFIG_DIR": str(_CONFIG_DIR),
+    # the same one-hour prompt cache with the subscription and with the CLAUDE_API key; unset, the
+    # program gives the subscription one hour and a key five minutes. This program (2.1.212) is older
+    # than CLAUDE_CODE_PROMPT_CACHE_TTL and takes this switch (his 2026-10-25 "make sure they are
+    # 'the same' for this use")
+    "ENABLE_PROMPT_CACHING_1H": "1",
 }
 # The switches a call sets when it asks for them. One the call does not set is taken out of the
 # CLI's environment, so a value left in the shell that starts the run never reaches a call.
 _ENV_PER_CALL = ("CLAUDE_CODE_EFFORT_LEVEL", "MAX_THINKING_TOKENS",
                  "CLAUDE_CODE_MAX_OUTPUT_TOKENS", "CLAUDE_CODE_EXTRA_BODY")
+# The largest output any current model takes (Anthropic's models overview). A call that names no
+# cap of its own asks for it, and Claude Code lowers it to the model's own cap (his 2026-10-23
+# "That's quite the dumb reason to cap that").
+MODEL_MAX_OUTPUT_TOKENS = 128000
 # A temperature is sent only to a model on which it was tried and accepted, with thinking off.
 # claude-sonnet-5 answers 400 to any temperature, with thinking on or off.
 _TEMPERATURE_ACCEPTED = ("claude-haiku-4-5",)
@@ -160,12 +175,16 @@ _CLI_ADDS = {
 
 def lane_info() -> dict:
     """The lane a run's calls went through, for its manifest."""
+    _load_dotenv()
     return {"exe": _CLAUDE_EXE, "cli_version": cli_version(), "cwd": str(_CLAUDE_CWD),
             "fixed_flags": ["-p", "--tools", "", "--safe-mode"],
             "system_prompt": "always passed, empty when the call has no system text",
             "stdin": "the prompt as UTF-8 bytes",
             "env_set": dict(_ENV_FIXED),
-            "login": f"{_LOGIN_TOKEN} of the environment (.env); a call is refused without it",
+            "login": (f"{_LOGIN_TOKEN} of the environment (.env); a call is refused without it. A "
+                      f"try the subscription refuses at its usage limit (HTTP 429) goes again with "
+                      f"{_API_KEY} as ANTHROPIC_API_KEY, only on a run with {_API_FALLBACK}=on; "
+                      f"for this run it is " + ("on" if _api_fallback_on() else "off")),
             "config_settings": dict(_CONFIG_SETTINGS),
             "env_per_call": list(_ENV_PER_CALL),
             "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
@@ -231,6 +250,9 @@ def call_settings(payload: dict) -> dict:
         for key in ("max_tokens", "temperature"):
             if payload.get(key) is not None:
                 not_applied[key] = "sent only on a call that asks for thinking off"
+    if "CLAUDE_CODE_MAX_OUTPUT_TOKENS" not in env_set:
+        env_set["CLAUDE_CODE_MAX_OUTPUT_TOKENS"] = str(MODEL_MAX_OUTPUT_TOKENS)
+        applied["max_output_tokens"] = MODEL_MAX_OUTPUT_TOKENS
     for key in payload:
         if key not in _PAYLOAD_KEYS:
             not_applied[key] = "no such setting in this lane"
@@ -245,6 +267,33 @@ def _call_env(call: dict) -> dict:
     env = {k: v for k, v in os.environ.items() if k.upper() not in call["env_unset"]}
     env.update(call["env_set"])
     return env
+
+
+def _try_env(call: dict, credential: str) -> dict:
+    """The environment of one try: the subscription's token, or the CLAUDE_API key in its place.
+    The key reaches the program only on a try that uses it."""
+    env = _call_env(call)
+    env.pop(_API_KEY, None)
+    if credential == "api_key":
+        env["ANTHROPIC_API_KEY"] = os.environ[_API_KEY]
+        env.pop(_LOGIN_TOKEN, None)
+    else:
+        env.pop("ANTHROPIC_API_KEY", None)
+    return env
+
+
+def _api_fallback_on() -> bool:
+    """The run turned the CLAUDE_API fallback on and the key is there."""
+    return os.environ.get(_API_FALLBACK) == "on" and bool(os.environ.get(_API_KEY))
+
+
+def _usage_limit(stdout: str) -> bool:
+    """The program's reply says the API refused the call with HTTP 429, the subscription's usage
+    limit."""
+    try:
+        return json.loads(stdout).get("api_error_status") == 429
+    except (ValueError, AttributeError):
+        return False
 
 
 def _login() -> None:
@@ -304,19 +353,21 @@ def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
            "applied": call["applied"], "not_applied": call["not_applied"],
            "payload_dropped": sorted(call["not_applied"]),
            "started_at": capture.now(), "finished_at": None, "attempts": [], "ok": False,
-           "text": None, "usage": None, "envelope": None, "stream": None,
+           "credential": None, "text": None, "usage": None, "envelope": None, "stream": None,
            "stderr": None, "error": None}
 
     last = None
     request_s = retry_s = 0.0
-    attempts = 0
-    for attempt in range(max_tries):
+    attempts = counted = 0
+    credential = "subscription"
+    while counted < max_tries:
         if abort.aborted():
             rec.update(finished_at=capture.now(), error="aborted before the try")
             capture.record(rec)
             raise abort.Aborted("claude call skipped — abort requested (pressed q)")
         attempts += 1
-        tried = {"n": attempts, "started_at": capture.now(), "seconds": None, "outcome": None,
+        tried = {"n": attempts, "credential": credential, "started_at": capture.now(),
+                 "seconds": None, "outcome": None,
                  "returncode": None, "error": None, "stdout": None, "stderr": None}
         rec["attempts"].append(tried)
         r0 = time.perf_counter()
@@ -324,7 +375,7 @@ def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
             # the prompt goes over as bytes: in text mode Windows turns every line end into
             # CR LF on the way, and the prompt kept in the record is then not what was sent
             r = subprocess.run(cmd, input=prompt.encode("utf-8"), capture_output=True,
-                               timeout=timeout, cwd=_claude_cwd(), env=_call_env(call))
+                               timeout=timeout, cwd=_claude_cwd(), env=_try_env(call, credential))
         except subprocess.TimeoutExpired as err:
             retry_s += time.perf_counter() - r0
             last = err
@@ -339,6 +390,11 @@ def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
                 last = RuntimeError(
                     f"claude exit {r.returncode}: {(errtext or out)[:200]}")
                 tried.update(outcome="exit", error=repr(last), stdout=out, stderr=errtext)
+                if credential == "subscription" and _usage_limit(out) and _api_fallback_on():
+                    # the same try again with the key; it is not counted against max_tries
+                    tried["outcome"] = "usage_limit"
+                    credential = "api_key"
+                    continue
             else:
                 try:
                     if join_parts:
@@ -368,7 +424,8 @@ def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
                             "completion_tokens": int(usage.get("output_tokens") or 0),
                             "cached_input_tokens": cached}
                     tried.update(outcome="ok")
-                    rec.update(finished_at=capture.now(), ok=True, text=result, usage=kept,
+                    rec.update(finished_at=capture.now(), ok=True, credential=credential,
+                               text=result, usage=kept,
                                envelope=data,
                                stream=out if join_parts else None, stderr=errtext)
                     capture.record(rec)
@@ -380,9 +437,10 @@ def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
                         "stop_reason": data.get("stop_reason"),
                         "call": rec,
                     }
-        if attempt < max_tries - 1:
+        counted += 1
+        if counted < max_tries:
             s0 = time.perf_counter()
-            time.sleep(2 ** attempt)
+            time.sleep(2 ** (counted - 1))
             retry_s += time.perf_counter() - s0
             tried["backoff_s"] = time.perf_counter() - s0
     _record_timing(attempts, request_s, 0.0, retry_s)

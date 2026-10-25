@@ -10,6 +10,7 @@ document's `type`. A field a form reads is taken by its key, so a record without
 """
 from __future__ import annotations
 
+import copy
 import hashlib
 
 ARTIFACT_TYPES = (
@@ -53,6 +54,42 @@ def record_text(kind: str, rec: dict) -> str:
                      f"{review['submitted_at']}: {review['comment']}\n")
         return text
     raise KeyError(f"no text form for a record of kind {kind!r}")
+
+
+# the field each kind's content starts with in record_text
+CONTENT_START = {"slack": ("Message", "User", "text"), "documents": ("content",),
+                 "meeting_transcripts": ("transcript",), "meeting_chats": ("text",),
+                 "urls": ("description",), "prs": ("summary",)}
+
+
+def record_content(kind: str, rec: dict) -> str:
+    """A record's content, without its ids, labels, dates and names: the message, the document
+    and its feedback, the transcript, the chat, the description, or the pull request's summary and
+    review comments."""
+    if kind == "slack":
+        return rec["Message"]["User"]["text"]
+    if kind == "documents":
+        return f"{rec['content']}\n{rec['feedback']}" if rec.get("feedback") else rec["content"]
+    if kind == "meeting_transcripts":
+        return rec["transcript"]
+    if kind == "meeting_chats":
+        return rec["text"]
+    if kind == "urls":
+        return rec["description"]
+    if kind == "prs":
+        return "\n".join([rec["summary"]] + [review["comment"] for review in rec["reviews"]])
+    raise KeyError(f"no content for a record of kind {kind!r}")
+
+
+def record_header(kind: str, rec: dict) -> str:
+    """The start of a record's record_text, before its content."""
+    marked = copy.deepcopy(rec)
+    *path, last = CONTENT_START[kind]
+    holder = marked
+    for key in path:
+        holder = holder[key]
+    holder[last] = "\x00"
+    return record_text(kind, marked).split("\x00")[0]
 
 
 def units_digest(ids, texts) -> str:

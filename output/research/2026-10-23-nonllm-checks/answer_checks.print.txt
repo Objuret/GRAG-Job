@@ -1,0 +1,62 @@
+stored scores given again by RAGAS on these inputs: {'lucene': '600 of 600', 'vector': '600 of 600', 'artefact': '600 of 600'}
+reference answer (HERB's ground_truth joined by spaces): median 96 chars, gold items median 1 (max 11)
+
+=== lucene
+  answer: median 549 chars, median 2 sentences ('. '); first sentence = 31% of the answer (median)
+  string_similarity    mean 0.1307
+  bleu                 mean 0.0249
+  rouge                mean 0.0967
+  chrf                 mean 0.2099
+  exact_match          mean 0.0000
+  string_presence      mean 0.0100
+  semantic_similarity  mean 0.3270
+  bleu_whole_answer    mean 0.0347
+  length_bound         mean 0.2364
+  exact_match 1s: 0; string_presence 1s: 1
+
+=== vector
+  answer: median 797 chars, median 3 sentences ('. '); first sentence = 24% of the answer (median)
+  string_similarity    mean 0.1133
+  bleu                 mean 0.0186
+  rouge                mean 0.1027
+  chrf                 mean 0.2184
+  exact_match          mean 0.0000
+  string_presence      mean 0.0600
+  semantic_similarity  mean 0.3295
+  bleu_whole_answer    mean 0.0359
+  length_bound         mean 0.1802
+  exact_match 1s: 0; string_presence 1s: 6
+
+=== artefact
+  answer: median 778 chars, median 2 sentences ('. '); first sentence = 21% of the answer (median)
+  string_similarity    mean 0.1167
+  bleu                 mean 0.0239
+  rouge                mean 0.1308
+  chrf                 mean 0.2651
+  exact_match          mean 0.0000
+  string_presence      mean 0.1000
+  semantic_similarity  mean 0.3822
+  bleu_whole_answer    mean 0.0465
+  length_bound         mean 0.1787
+  exact_match 1s: 0; string_presence 1s: 10
+
+Spearman correlation over all 300 answers
+  string_similarity    with answer_correctness +0.39 | with answer length -0.03 | with the length bound min/max +0.95
+  bleu                 with answer_correctness +0.39 | with answer length +0.13 | with the length bound min/max +0.28
+  rouge                with answer_correctness +0.77 | with answer length +0.32 | with the length bound min/max +0.53
+  chrf                 with answer_correctness +0.73 | with answer length +0.35 | with the length bound min/max +0.59
+  exact_match          with answer_correctness +nan | with answer length +nan | with the length bound min/max +nan
+  string_presence      with answer_correctness +0.06 | with answer length +0.11 | with the length bound min/max -0.31
+  semantic_similarity  with answer_correctness +0.74 | with answer length +0.34 | with the length bound min/max +0.50
+  bleu_whole_answer    with answer_correctness +0.70 | with answer length +0.25 | with the length bound min/max +0.27
+
+arm order (best first):
+  string_similarity    lucene > artefact > vector
+  bleu                 lucene > artefact > vector
+  rouge                artefact > vector > lucene
+  chrf                 artefact > vector > lucene
+  exact_match          lucene > vector > artefact
+  string_presence      artefact > vector > lucene
+  semantic_similarity  artefact > vector > lucene
+  bleu_whole_answer    artefact > vector > lucene
+  answer_correctness   artefact > vector > lucene

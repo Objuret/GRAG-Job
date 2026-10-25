@@ -66,11 +66,14 @@ SCORES = [
     ("context_entity_recall", "RAGAS ContextEntityRecall. Entities common to the reference answer and the retrieved "
                               "context / all entities in the reference answer. Entities: the judge's.", "0-1"),
     ("context_recall_nonllm", "RAGAS NonLLMContextRecall. Relevant contexts retrieved / all reference contexts. "
-                              "Relevant: Levenshtein similarity to a reference context of 0.5 or more. Reference context: text of a "
-                              "HERB evidence record.", "0-1"),
+                              "Relevant: Levenshtein similarity to a reference context of more than 0.5. Reference context: the "
+                              "content of a HERB evidence record, without ids, labels, dates and names. Retrieved "
+                              "contexts: the content of each record passed to the answer model.", "0-1"),
     ("context_precision_nonllm", "RAGAS NonLLMContextPrecisionWithReference. Context precision@K: mean of "
                                  "precision@k over the ranks k of the relevant retrieved contexts. Relevant: "
-                                 "Levenshtein similarity to a reference context of 0.5 or more.", "0-1"),
+                                 "Levenshtein similarity to a reference context of 0.5 or more. Reference context: the content "
+                                 "of a HERB evidence record, without ids, labels, dates and names. Retrieved contexts: "
+                                 "the content of each record passed to the answer model.", "0-1"),
     ("semantic_similarity", "RAGAS SemanticSimilarity. Cosine similarity of the embeddings of the answer and the "
                             "reference answer.", "0-1"),
     ("string_similarity", "RAGAS NonLLMStringSimilarity. Levenshtein similarity of the answer and the reference "
@@ -193,8 +196,9 @@ def rejudged(arm, d, cells, judge_model):
     run's other scores as the run has them. Their cost is that of the kept cells' judge calls; their
     time each question's span of calls added, one span per start of the judging."""
     j = d.parent / (d.name + REJUDGED)
-    if ({r["id"]: r for r in rows(j / "arm_outputs.jsonl")}
-            != {r["id"]: r for r in rows(d / "arm_outputs.jsonl")}):
+    judged = lambda f: {r["id"]: (r["question"], r["answer"], r["contexts"], r["context_ids"])  # noqa: E731
+                        for r in rows(f / "arm_outputs.jsonl")}
+    if judged(j) != judged(d):
         sys.exit(f"{arm}: {j.name} judged other answers than the run's")
     added, kept = {}, set()
     for r in rows(j / "eval_results.jsonl"):

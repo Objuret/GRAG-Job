@@ -25,6 +25,7 @@ from harness.progress import progress
 from harness.contract import EvalResult, ModelUsage
 from eval.ragas_catalog import CATALOG, metrics_to_run
 from harness.embed import EMBED_BATCH, _embed_request
+from harness.record_text import ARTIFACT_TYPES, record_content, record_header, record_text
 
 # RAGAS posts a usage event to its makers for every score it computes unless this is set; the
 # evaluation sends nothing anywhere but to the judge
@@ -512,38 +513,72 @@ def _build_metrics(names, judge, embedder, run_config):
     return built
 
 
-_ARTIFACT_TYPES = ("slack", "documents", "meeting_transcripts", "meeting_chats", "urls", "prs")
+# the non-LLM context scores compare record content with record content (`record_sample`)
+RECORD_LEVEL = ("context_recall_nonllm", "context_precision_nonllm")
 
 
-def _string_leaves(value) -> str:
-    parts: list = []
-
-    def walk(v):
-        if isinstance(v, str):
-            parts.append(v)
-        elif isinstance(v, dict):
-            for w in v.values():
-                walk(w)
-        elif isinstance(v, list):
-            for w in v:
-                walk(w)
-
-    walk(value)
-    return " ".join(parts).strip()
-
-
-def corpus_gold_text(corpus_root) -> dict:
-    root = Path(corpus_root)
+def corpus_records(corpus_root) -> dict:
+    """Every corpus record by its id, with its kind: {id: (kind, record)}."""
     out: dict = {}
-    for pf in sorted((root / "products").glob("*.json")):
+    for pf in sorted((Path(corpus_root) / "products").glob("*.json")):
         data = json.loads(pf.read_text(encoding="utf-8"))
-        for kind in _ARTIFACT_TYPES:
+        for kind in ARTIFACT_TYPES:
             for rec in data.get(kind, []) or []:
                 aid = rec.get("id")
-                if aid is None or aid in out:
-                    continue
-                out[aid] = _string_leaves(rec)
+                if aid is not None and str(aid) not in out:
+                    out[str(aid)] = (kind, rec)
     return out
+
+
+def contents_handed_over(contexts, context_ids, meta, records) -> list:
+    """The content of every record handed over. Each text is cut into its records: a text of
+    several records is their record_text forms joined by a blank line, or the start of that join
+    where the character budget cut it. Each record's header is taken off; a record cut before its
+    content gives nothing. The records behind each text come from meta's chunk_ids, or else from
+    context_ids with the record cut at the budget last."""
+    meta = meta or {}
+    if "chunk_ids" in meta:
+        id_lists = meta["chunk_ids"]
+    else:
+        cut = (meta.get("char_budget") or {}).get("boundary")
+        id_lists = [[i] for i in list(context_ids or []) + ([cut["id"]] if cut else [])]
+    if len(id_lists) != len(contexts):
+        raise ValueError(f"{len(contexts)} texts but {len(id_lists)} record lists")
+    out = []
+    for text, ids in zip(contexts, id_lists):
+        ids = [str(i) for i in ids]
+        full = [record_text(*records[i]) for i in ids]
+        if len(ids) > 1 and not "\n\n".join(full).startswith(text):
+            raise ValueError("a handed-over text is not its records joined by a blank line")
+        at = 0
+        for i, whole in zip(ids, full):
+            if at >= len(text):
+                break
+            piece = text[at:at + len(whole)] if len(ids) > 1 else text
+            kind, rec = records[i]
+            if piece == whole:
+                content = record_content(kind, rec)
+            else:
+                head = record_header(kind, rec)
+                if piece.startswith(head):
+                    content = piece[len(head):]
+                elif head.startswith(piece):
+                    content = ""
+                else:
+                    raise ValueError(f"the text of record {i} does not start with its header")
+            if content:
+                out.append(content)
+            at += len(whole) + 2
+    return out
+
+
+def record_sample(out, q, records) -> SingleTurnSample:
+    """The sample the non-LLM context scores get: the content of each cited record against the
+    content of each record handed over."""
+    cites = [str(c) for c in (q.citations or [])]
+    return SingleTurnSample(
+        retrieved_contexts=contents_handed_over(out.contexts or [], out.context_ids, out.meta, records),
+        reference_contexts=[record_content(*records[c]) for c in cites if c in records] or None)
 
 
 def judge_call_info(judge) -> dict | None:
@@ -559,10 +594,9 @@ def judge_call_info(judge) -> dict | None:
             "env_set": call["env_set"], "env_unset": call["env_unset"]}
 
 
-def _to_sample(out, q, gold_text) -> SingleTurnSample:
+def _to_sample(out, q) -> SingleTurnSample:
     gold = [str(g) for g in (q.ground_truth or [])]
     cites = [str(c) for c in (q.citations or [])]
-    ref_ctx = [gold_text[c] for c in cites if c in gold_text]
     return SingleTurnSample(
         user_input=q.question,
         response=out.answer or "",
@@ -570,7 +604,6 @@ def _to_sample(out, q, gold_text) -> SingleTurnSample:
         retrieved_context_ids=[str(c) for c in (out.context_ids or [])],
         reference=" ".join(gold),
         reference_context_ids=cites,
-        reference_contexts=ref_ctx or None,
     )
 
 
@@ -602,7 +635,7 @@ def score_outputs(outputs, questions, arm="", corpus=None, results_path=None, wo
         effort = f" effort={JUDGE_REASONING_EFFORT}" if JUDGE_REASONING_EFFORT else ""
         print(f"ragas judge: {JUDGE_MODEL} backend={JUDGE_BACKEND}{effort} "
               f"timeout={JUDGE_TIMEOUT_S:g}s tries={JUDGE_MAX_TRIES}")
-    gold_text = corpus_gold_text(corpus) if corpus else {}
+    records = corpus_records(corpus) if corpus else {}
     # what this scoring leg ran under, kept with it in the eval manifest; filled in a `finally`
     # so a leg that is cut short still says what it was and what it had spent
     import sys
@@ -626,7 +659,7 @@ def score_outputs(outputs, questions, arm="", corpus=None, results_path=None, wo
                 "argv": list(sys.argv), "pid": os.getpid(), "python_executable": sys.executable}
     LAST_JUDGE_SETTINGS = settings
     try:
-        results = _score_all(outputs, questions, arm, metrics, gold_text,
+        results = _score_all(outputs, questions, arm, metrics, records,
                              results_path, workers, embedder, leg_stamp)
     except BaseException as e:
         settings["interrupted"] = repr(e)
@@ -692,7 +725,7 @@ def _prime_embed_cache(embedder, metrics, samples) -> None:
     print(f"ragas embed: primed in {calls} forward pass(es)", flush=True)
 
 
-def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
+def _score_all(outputs, questions, arm, metrics, records, results_path=None,
                workers=1, embedder=None, leg_stamp=None) -> list:
     passes = [(lbl, m) for lbl, m in (
         ("scoring - offline (free)",
@@ -724,9 +757,12 @@ def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
             "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in kept), encoding="utf-8")
         os.replace(tmp, dst)
 
-    sample_of = {q.id: (q, _to_sample(out, q, gold_text))
+    sample_of = {q.id: (q, _to_sample(out, q))
                  for out, q in zip(outputs, questions)
                  if selected - done_ok[q.id]}
+    record_sample_of = {q.id: record_sample(out, q, records)
+                        for out, q in zip(outputs, questions)
+                        if q.id in sample_of and selected & set(RECORD_LEVEL)}
 
     # eval_calls.jsonl: every judge call and embed request of the evaluation, whole, one line
     # each, written as its cell finishes. It holds the prompts, so it holds gold answers.
@@ -764,7 +800,8 @@ def _score_all(outputs, questions, arm, metrics, gold_text, results_path=None,
 
     def _score_cell(q, sample, name, metric, on_cell):
         async def _go():
-            value, status, comp = await _score_one(metric, sample)
+            value, status, comp = await _score_one(
+                metric, record_sample_of[q.id] if name in RECORD_LEVEL else sample)
             return EvalResult(q.id, q.type, arm, name, value, status, comp, None)
         # one cell = one question under one score: its calls are kept with it
         cap, token = capture.start()

@@ -1,0 +1,22 @@
+{
+  "pid": 75060,
+  "host": "Fräsh",
+  "started": "2026-10-22T10:31:55.339799+00:00",
+  "argv": [
+    "prod\\run.py",
+    "--arm",
+    "artefact_v4",
+    "--set",
+    "output/split/gold100_s9/gold100.b.jsonl",
+    "--char-budget",
+    "72000",
+    "--workers",
+    "29",
+    "--flag",
+    "HERB_V4_OFFLINE=on",
+    "--flag",
+    "HERB_V4_CACHE=A:/exjobbet/grag_setup/final_store",
+    "--out",
+    "output/split/gold100_s9/artefact_v4__gold100.b__cb72000__20261022T103136Z_desktop"
+  ]
+}

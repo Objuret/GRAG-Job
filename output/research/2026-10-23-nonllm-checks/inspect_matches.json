@@ -1,0 +1,135 @@
+{
+ "lucene": {
+  "recall: cited found only through another record": {
+   "n": 109,
+   "same text (case and spaces aside)": 0,
+   "both at most 60 chars": 1,
+   "median chars a / b": [
+    146.0,
+    153.0
+   ],
+   "similarity 1.0 / 0.8-1 / 0.65-0.8 / 0.5-0.65": [
+    0,
+    6,
+    26,
+    77
+   ],
+   "kinds": {
+    "documents->documents": 6,
+    "slack->slack": 97,
+    "meeting_transcripts->meeting_transcripts": 3,
+    "prs->prs": 3
+   }
+  },
+  "precision: passed, not cited, counted relevant": {
+   "n": 880,
+   "same text (case and spaces aside)": 72,
+   "both at most 60 chars": 30,
+   "median chars a / b": [
+    126.0,
+    126.0
+   ],
+   "similarity 1.0 / 0.8-1 / 0.65-0.8 / 0.5-0.65": [
+    72,
+    216,
+    187,
+    405
+   ],
+   "kinds": {
+    "slack->slack": 818,
+    "prs->prs": 33,
+    "urls->urls": 27,
+    "meeting_transcripts->meeting_transcripts": 2
+   }
+  }
+ },
+ "vector": {
+  "recall: cited found only through another record": {
+   "n": 217,
+   "same text (case and spaces aside)": 0,
+   "both at most 60 chars": 15,
+   "median chars a / b": [
+    140.0,
+    135.0
+   ],
+   "similarity 1.0 / 0.8-1 / 0.65-0.8 / 0.5-0.65": [
+    0,
+    16,
+    59,
+    142
+   ],
+   "kinds": {
+    "prs->prs": 3,
+    "slack->slack": 200,
+    "meeting_transcripts->meeting_transcripts": 3,
+    "urls->urls": 10,
+    "documents->documents": 1
+   }
+  },
+  "precision: passed, not cited, counted relevant": {
+   "n": 2494,
+   "same text (case and spaces aside)": 99,
+   "both at most 60 chars": 23,
+   "median chars a / b": [
+    131.0,
+    128.0
+   ],
+   "similarity 1.0 / 0.8-1 / 0.65-0.8 / 0.5-0.65": [
+    99,
+    1258,
+    275,
+    862
+   ],
+   "kinds": {
+    "slack->slack": 2461,
+    "prs->prs": 17,
+    "meeting_transcripts->meeting_transcripts": 6,
+    "urls->urls": 10
+   }
+  }
+ },
+ "artefact": {
+  "recall: cited found only through another record": {
+   "n": 363,
+   "same text (case and spaces aside)": 32,
+   "both at most 60 chars": 47,
+   "median chars a / b": [
+    112.0,
+    112.0
+   ],
+   "similarity 1.0 / 0.8-1 / 0.65-0.8 / 0.5-0.65": [
+    32,
+    70,
+    96,
+    165
+   ],
+   "kinds": {
+    "documents->documents": 7,
+    "slack->slack": 347,
+    "prs->prs": 4,
+    "meeting_transcripts->meeting_transcripts": 5
+   }
+  },
+  "precision: passed, not cited, counted relevant": {
+   "n": 1047,
+   "same text (case and spaces aside)": 86,
+   "both at most 60 chars": 110,
+   "median chars a / b": [
+    122.0,
+    123.0
+   ],
+   "similarity 1.0 / 0.8-1 / 0.65-0.8 / 0.5-0.65": [
+    86,
+    179,
+    208,
+    574
+   ],
+   "kinds": {
+    "slack->slack": 1005,
+    "meeting_chats->meeting_chats": 28,
+    "meeting_transcripts->meeting_transcripts": 10,
+    "prs->prs": 4
+   }
+  }
+ }
+}
