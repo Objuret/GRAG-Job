@@ -77,6 +77,8 @@ closeness through the tags as the order used it, its nearness on each side, how 
 the chosen chunks and the records behind it.
 
 HERB_V4_OFFLINE=on reads the first call's answer from the cache and raises where it is missing.
+Off, a start holds its store (HERB_V4_CACHE) and first moves out every first call in it that
+failed, cannot be read or was cut off, so that the call is asked again (`_open_store`).
 """
 from __future__ import annotations
 
@@ -98,6 +100,7 @@ from harness.char_budget import FIELDS as BUDGET_FIELDS, cut_at_budget
 from harness.contract import ArmOutput, BuildStats, ModelUsage, unpack_generation
 from harness.fields import sub, whole
 from harness.progress import say
+from harness.run_lock import RunLock
 from artefact import query_content as Q
 from artefact import graph_layer as GL
 from artefact import v4_walk as WK
@@ -240,7 +243,8 @@ CUSTOMER_EDGE_CYPHER = 'MATCH (:Customer)-[r:chunk]->(:Chunk) RETURN count(r) AS
 RETRIEVAL_FLAGS = {
     'interpreter_model': INTERPRET_MODEL,
     'offline': 'HERB_V4_OFFLINE=on reads the first call\'s answer from the cache and raises where '
-               'it is missing; off asks the model on a miss.',
+               'it is missing; off asks the model on a miss, and again where an earlier start\'s '
+               'first call failed or was cut off.',
     'retrieval': (
         'Everything the order is made of is asked of the graph for each question (`_ask_graph`): '
         "the border's chunks with their pointers, the eligible tags on them with their edges' "
@@ -369,7 +373,10 @@ FIELDS = {
                 'cache_hit': 'Whether its answer was read from the cache instead of asked.',
                 'key': "The cache key: the sha256 of the call's instruction, message, schema "
                        'and model.',
-                'asks': 'How many times the call was made for this question.',
+                'asks': 'How many times the start that wrote this row tried the call; a read '
+                        'from the cache counts as one. A try of an earlier start that failed '
+                        'or was cut off is kept in the store, in querytag/failed/ under the '
+                        'same key.',
                 'offline': 'Whether the run refused to ask the model.',
                 'duplicate_tags_dropped': 'How many tags of the answer were left out because '
                                           'the same phrase stood there twice.',
@@ -686,6 +693,61 @@ def cache_root():
                                str(ROOT / 'output/private/artefact_v4_cache')))
 
 
+_STORE = []
+
+
+def _open_store(cache):
+    """A live start holds its store until the process ends (`.run.lock`, as a run folder), so no
+    other live start writes into it at the same time. Then every first call in it whose answer
+    failed or cannot be read, and every attempt cut off before its answer was written (a
+    `.started.json` with no answer), is moved to the stage's `failed/` folder, so that it is
+    asked again (his 2026-10-26 "fix the store so failed first calls get asked again"). A good
+    answer stays where it is."""
+    if _STORE:
+        return
+    lock = RunLock(cache)
+    try:
+        lock.__enter__()
+    except RuntimeError as busy:
+        raise RuntimeError(f'artefact_v4: the store {cache} is held by another live run') from busy
+    _STORE.append(lock)
+    atexit.register(lock.__exit__, None, None, None)
+    failed = cut = 0
+    for stage in STAGE_NAMES:
+        folder = Path(cache) / stage
+        if not folder.is_dir():
+            continue
+        for marker in sorted(folder.glob('*.started.json')):
+            if not marker.with_name(marker.name[:-len('.started.json')] + '.json').exists():
+                _set_aside(marker)
+                cut += 1
+        for path in sorted(folder.glob('*.json')):
+            if path.name.endswith('.started.json'):
+                continue
+            try:
+                good = json.loads(path.read_text(encoding='utf-8')).get('ok')
+            except (OSError, ValueError, AttributeError):
+                good = False  # empty or broken, as a crash of the machine can leave it
+            if not good:
+                _set_aside(path)
+                marker = path.with_suffix('.started.json')
+                if marker.exists():
+                    _set_aside(marker)
+                failed += 1
+    say(f'artefact_v4: store {cache}: {failed} failed and {cut} cut-off first calls moved to '
+        'failed/, to be asked again')
+
+
+def _set_aside(path):
+    """A store file moved into its stage's `failed/` folder, numbered, never over another one."""
+    folder = path.parent / 'failed'
+    folder.mkdir(exist_ok=True)
+    stem, n = path.name[:-len('.json')], 1
+    while (folder / f'{stem}.{n}.json').exists():
+        n += 1
+    os.replace(path, folder / f'{stem}.{n}.json')
+
+
 def _add(a, b):
     return ModelUsage(**{name: getattr(a, name) + getattr(b, name)
                          for name in ModelUsage.__dataclass_fields__})
@@ -955,7 +1017,9 @@ def index_info(prepared):
             'build_cost': json.loads(raw.decode('utf-8')) if raw else None,
             'build_cost_file_sha256': _sha(_as_in_git(raw)) if raw else None,
             'first_call': f'at query time, {INTERPRET_MODEL} through the lane; an answer already '
-                          'in the store (HERB_V4_CACHE) is read from it and counted as no call',
+                          'in the store (HERB_V4_CACHE) is read from it and counted as no call; '
+                          'with HERB_V4_OFFLINE off, a failed or cut-off one is moved to failed/ '
+                          'at the start and asked again',
             'question_embedding': 'at query time, local embedder, query mode; a text embedded '
                                   'before is read from output/query_embed_cache and counted as '
                                   'no call',
@@ -1137,12 +1201,14 @@ def prepare_over_corpus(corpus) -> Prepared:
     two vectors in the graph; and the structure names, the customer edges and the chunks' times
     must be in the graph. A
     graph tag that is a product's name is structure, not a tag to match: the products' names
-    are kept to leave those tags out."""
+    are kept to leave those tags out. A live start also opens its store (`_open_store`)."""
     started = time.perf_counter()
     RETRIEVAL_FLAGS['offline_at_prepare'] = _offline()
     from graph.db import _driver
     say(f'artefact_v4: checking {DATABASE}')
     cache = cache_root()
+    if not RETRIEVAL_FLAGS['offline_at_prepare']:
+        _open_store(cache)
     driver = _driver()
     try:
         with driver.session(database=DATABASE, default_access_mode='READ') as session:
@@ -1217,7 +1283,7 @@ def prepare_over_corpus(corpus) -> Prepared:
 
 def _collapse_duplicate_tags(raw):
     """The model sometimes writes one tag twice in a list; the first stays, the rest are
-    dropped and counted, so a repeated phrase does not fail the question for good in the cache.
+    dropped and counted, so a repeated phrase does not fail the question.
     Each list (tags, query_tags) is collapsed on its own."""
     if not isinstance(raw, dict) or not isinstance(raw.get('tags'), list):
         return raw, 0
@@ -1271,8 +1337,9 @@ def _ask(stage, request, validate, cache_dir, offline):
                                                INTERPRET_MODEL, schema)
             break
         except RuntimeError as failure:
-            # The transport caches a failed answer (no JSON, a refusal) for good. One
-            # re-ask: the cached failure is removed and the question asked again once.
+            # The transport keeps a failed answer (no JSON, a refusal) in the store. One
+            # re-ask in this start: the failure is moved to failed/ and the question asked
+            # again once; a failure an earlier start left is moved at the start (`_open_store`).
             if offline or tries >= 2:
                 raise
             key = str(failure).split('key=')[-1].split(';')[0].strip()
@@ -1284,9 +1351,9 @@ def _ask(stage, request, validate, cache_dir, offline):
             saved = json.loads(path.read_text(encoding='utf-8'))
             if saved.get('ok'):
                 raise  # a good answer the arm's own validation rejected: not a re-ask case
-            path.unlink()
+            _set_aside(path)
             if marker.exists():
-                marker.unlink()
+                _set_aside(marker)
             say(f'artefact_v4: {STAGE_NAMES[stage]} answer unusable ({failure}); asking once '
                 'more')
     if offline and (not cache['cache_hit'] or cache['key'] != offline_key or used.calls):
