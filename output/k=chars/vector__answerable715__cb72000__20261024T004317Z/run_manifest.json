@@ -31,8 +31,8 @@
   },
   "char_budget": 72000,
   "code_version": {
-    "commit": null,
-    "branch": null,
+    "commit": "02b207864dd542eb40ba4da6143ebb746203ad93",
+    "branch": "artefact-v4-iteration",
     "dirty": null
   },
   "environment": {
@@ -278,8 +278,8 @@
       "evaluator": "ragas",
       "peak_memory_bytes": 8622211072,
       "code_version": {
-        "commit": null,
-        "branch": null,
+        "commit": "02b207864dd542eb40ba4da6143ebb746203ad93",
+        "branch": "artefact-v4-iteration",
         "dirty": null
       },
       "code_state": {
@@ -384,8 +384,8 @@
       "evaluator": "ragas",
       "peak_memory_bytes": 8643350528,
       "code_version": {
-        "commit": null,
-        "branch": null,
+        "commit": "02b207864dd542eb40ba4da6143ebb746203ad93",
+        "branch": "artefact-v4-iteration",
         "dirty": null
       },
       "code_state": {
@@ -490,8 +490,8 @@
       "evaluator": "ragas",
       "peak_memory_bytes": 8639066112,
       "code_version": {
-        "commit": null,
-        "branch": null,
+        "commit": "02b207864dd542eb40ba4da6143ebb746203ad93",
+        "branch": "artefact-v4-iteration",
         "dirty": null
       },
       "code_state": {
@@ -597,8 +597,8 @@
       "evaluator": "ragas",
       "peak_memory_bytes": 8635961344,
       "code_version": {
-        "commit": null,
-        "branch": null,
+        "commit": "02b207864dd542eb40ba4da6143ebb746203ad93",
+        "branch": "artefact-v4-iteration",
         "dirty": null
       },
       "code_state": {
@@ -704,8 +704,8 @@
       "evaluator": "ragas",
       "peak_memory_bytes": 8634314752,
       "code_version": {
-        "commit": null,
-        "branch": null,
+        "commit": "02b207864dd542eb40ba4da6143ebb746203ad93",
+        "branch": "artefact-v4-iteration",
         "dirty": null
       },
       "code_state": {
@@ -811,8 +811,8 @@
       "evaluator": "ragas",
       "peak_memory_bytes": 8641728512,
       "code_version": {
-        "commit": null,
-        "branch": null,
+        "commit": "02b207864dd542eb40ba4da6143ebb746203ad93",
+        "branch": "artefact-v4-iteration",
         "dirty": null
       },
       "code_state": {
@@ -1043,8 +1043,8 @@
       "evaluator": "ragas",
       "peak_memory_bytes": 8687517696,
       "code_version": {
-        "commit": null,
-        "branch": null,
+        "commit": "02b207864dd542eb40ba4da6143ebb746203ad93",
+        "branch": "artefact-v4-iteration",
         "dirty": null
       },
       "code_state": {
@@ -1150,8 +1150,8 @@
       "evaluator": "ragas",
       "peak_memory_bytes": 8670310400,
       "code_version": {
-        "commit": null,
-        "branch": null,
+        "commit": "02b207864dd542eb40ba4da6143ebb746203ad93",
+        "branch": "artefact-v4-iteration",
         "dirty": null
       },
       "code_state": {

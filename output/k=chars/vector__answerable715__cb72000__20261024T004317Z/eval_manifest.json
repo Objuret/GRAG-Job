@@ -7,16 +7,16 @@
   "judge_backend": "claude-cli",
   "judge_effort": null,
   "judge_usage": {
-    "calls": 5970,
-    "tokens_in": 41889108,
-    "cached_input_tokens": 1127164,
-    "tokens_out": 6623329,
+    "calls": 8756,
+    "tokens_in": 63286359,
+    "cached_input_tokens": 2332118,
+    "tokens_out": 10370806,
     "reasoning_tokens": 0,
-    "time_s": 160768.3059735943,
-    "attempts": 8887,
-    "request_s": 117250.49314269665,
+    "time_s": 246856.96620859427,
+    "attempts": 13117,
+    "request_s": 181877.5864483958,
     "wait_s": 0.0,
-    "retry_s": 43501.46695099966
+    "retry_s": 64962.19428909823
   },
   "judge_elapsed_s": 8471.722491999844,
   "judge_legs": [
@@ -311,6 +311,66 @@
       }
     },
     {
+      "timestamp": null,
+      "judge_model": "claude-haiku-4-5-20251001",
+      "judge_backend": "claude-cli",
+      "usage": {
+        "calls": 1216,
+        "tokens_in": 8933709,
+        "cached_input_tokens": 372397,
+        "tokens_out": 1332040,
+        "reasoning_tokens": 0,
+        "time_s": 27242.465202999996,
+        "attempts": 1216,
+        "request_s": 27242.220106801717,
+        "wait_s": 0.0,
+        "retry_s": 0.0
+      },
+      "elapsed_s": null,
+      "settings": {
+        "started_at": "2026-10-25T00:54:56.094456+00:00",
+        "finished_at": null,
+        "interrupted": "the start wrote no entry; rebuilt from its records in eval_calls.jsonl by correction missing-judge-legs/2 (corrections.json)",
+        "embedding": {
+          "requests": 1074,
+          "texts": 1074,
+          "tokens_in": 121385,
+          "lock_wait_s": 0.0004917001351714134,
+          "encode_s": 64.86083010118455
+        }
+      }
+    },
+    {
+      "timestamp": null,
+      "judge_model": "claude-haiku-4-5-20251001",
+      "judge_backend": "claude-cli",
+      "usage": {
+        "calls": 126,
+        "tokens_in": 927397,
+        "cached_input_tokens": 341287,
+        "tokens_out": 96529,
+        "reasoning_tokens": 0,
+        "time_s": 2514.3124939999993,
+        "attempts": 126,
+        "request_s": 2514.2712090992136,
+        "wait_s": 0.0,
+        "retry_s": 0.0
+      },
+      "elapsed_s": null,
+      "settings": {
+        "started_at": "2026-10-25T01:10:16.757790+00:00",
+        "finished_at": null,
+        "interrupted": "the start wrote no entry; rebuilt from its records in eval_calls.jsonl by correction missing-judge-legs/2 (corrections.json)",
+        "embedding": {
+          "requests": 894,
+          "texts": 894,
+          "tokens_in": 102290,
+          "lock_wait_s": 0.0004023006185889244,
+          "encode_s": 55.07698159629945
+        }
+      }
+    },
+    {
       "timestamp": "2026-10-25T01:29:19.214132+00:00",
       "judge_model": "claude-haiku-4-5-20251001",
       "judge_backend": "claude-cli",
@@ -455,6 +515,36 @@
           "tokens_in": 100318,
           "lock_wait_s": 0.00038980005774647,
           "encode_s": 52.70991859876085
+        }
+      }
+    },
+    {
+      "timestamp": null,
+      "judge_model": "claude-haiku-4-5-20251001",
+      "judge_backend": "claude-cli",
+      "usage": {
+        "calls": 1444,
+        "tokens_in": 11536145,
+        "cached_input_tokens": 491270,
+        "tokens_out": 2318908,
+        "reasoning_tokens": 0,
+        "time_s": 56331.882537999954,
+        "attempts": 2888,
+        "request_s": 34870.60198979825,
+        "wait_s": 0.0,
+        "retry_s": 21460.72733809857
+      },
+      "elapsed_s": null,
+      "settings": {
+        "started_at": "2026-10-25T01:32:17.557515+00:00",
+        "finished_at": null,
+        "interrupted": "the start wrote no entry; rebuilt from its records in eval_calls.jsonl by correction missing-judge-legs/2 (corrections.json)",
+        "embedding": {
+          "requests": 752,
+          "texts": 752,
+          "tokens_in": 86819,
+          "lock_wait_s": 0.0003076000139117241,
+          "encode_s": 44.56302380049601
         }
       }
     },

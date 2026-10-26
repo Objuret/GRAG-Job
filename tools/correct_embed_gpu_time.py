@@ -10,12 +10,15 @@ seconds and the cosine of its vector to the CPU one. Without --write it only pri
 change. It keeps the rows as recorded as arm_outputs.as_recorded.jsonl on the first write of any
 correction, never changed after.
 
-Rule "embed-gpu-time/1".
-  1. The run embedded its queries on the CPU (every embed call record says device cpu).
-  2. Each question's embed entry in retrieval gets request_s = the GPU seconds of its embed calls
-     added, and time_s = request_s + wait_s + retry_s; wait_s and retry_s stay as recorded.
+Rule "embed-gpu-time/2".
+  1. An embed call record that says device cpu is corrected; a record that says cuda ran on the
+     graphics card and stays as recorded. The evidence file names, per question, exactly the
+     records of rule 1, by their seq.
+  2. Each question with such records gets in its embed entry in retrieval request_s = the GPU
+     seconds of its embed calls added, and time_s = request_s + wait_s + retry_s; wait_s and
+     retry_s stay as recorded.
   3. The question's timing.wall_s changes by the same amount as the embed entry's request_s.
-  4. Each embed call record gets its GPU seconds as encode_s and device cuda. No vector, answer,
+  4. Each record of rule 1 gets its GPU seconds as encode_s and device cuda. No vector, answer,
      context, score or other time changes; the vectors are the same (cosine checked).
 """
 import argparse
@@ -26,14 +29,15 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-RULE = "embed-gpu-time/1"
+RULE = "embed-gpu-time/2"
 SCRIPT = "correct_embed_gpu_time.py"
 EVIDENCE = "gpu_embed_times.json"
 HIS_WORDS = ("\"ffs, redo them on the gpu\" · \"only the embeddings, because i want the true times\" "
              "(2026-10-25, on the final runs' query embeddings made on the CPU)")
 MIN_COSINE = 0.9999
 REPO = Path(__file__).resolve().parents[1]
-sys.path[:0] = [str(REPO / "prod")]
+# the arms are in prod/ and test/: FIELDS.md takes an arm's own words from its file
+sys.path[:0] = [str(REPO / "prod"), str(REPO / "test")]
 
 
 def sha(path):
@@ -55,10 +59,15 @@ def main():
         if not line.strip():
             continue
         row = json.loads(line)
-        calls = [c for c in row["calls"] if c.get("kind") == "embed"]
-        gpu = times[row["id"]]
-        if [c["seq"] for c in calls] != [t["seq"] for t in gpu] or any(c["device"] != "cpu" for c in calls):
+        calls = [c for c in row["calls"] if c.get("kind") == "embed" and c.get("device") == "cpu"]
+        gpu = times.get(row["id"], [])
+        # rule 1: the evidence names exactly the row's CPU embed calls; a row without any is left
+        if [c["seq"] for c in calls] != [t["seq"] for t in gpu]:
             raise SystemExit(f"row {n} ({row['id']}): the GPU times are not for this row's CPU embed calls")
+        if not calls:
+            continue
+        if any(c.get("kind") == "embed" and c.get("device") != "cpu" for c in row["calls"]):
+            raise SystemExit(f"row {n} ({row['id']}): the row has embed calls on another device too")
         low = [t["cosine_to_stored_cpu"] for t in gpu if t.get("cosine_to_stored_cpu", 1.0) < MIN_COSINE]
         if low:
             raise SystemExit(f"row {n} ({row['id']}): a GPU vector differs from the CPU one (cosine {low[0]})")
@@ -105,12 +114,15 @@ def main():
     entry = {
         "made_at": datetime.now(timezone.utc).isoformat(),
         "ordered_by": HIS_WORDS,
-        "what_happened": ("The run embedded its queries on the CPU. Each question's query-embedding "
-                          "time is the time the same embeddings take on the desktop's GTX 1080 Ti."),
+        "what_happened": ("The run embedded queries on the CPU. Each such question's query-embedding "
+                          "time is the time the same embeddings take on the desktop's GTX 1080 Ti; "
+                          "the questions the run embedded on that card keep their recorded times."),
         "rule": {"id": RULE, "text": __doc__.split(f'Rule "{RULE}".', 1)[1].strip()},
         "not_changed_and_worth_knowing": [
             "The GPU times were measured one call after the other in a warm process; the lock "
             "waits of the run (wait_s) stay as recorded.",
+            "Questions the run embedded on the graphics card keep the times recorded then, while other "
+            "questions of the run were under way at the same time.",
         ],
         "changes": changes,
         "evidence": {"file": EVIDENCE, "sha256": sha(d / EVIDENCE),

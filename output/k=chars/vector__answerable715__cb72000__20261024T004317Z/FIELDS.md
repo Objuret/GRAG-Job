@@ -3,7 +3,7 @@
 One run of one retrieval method, **vector**, over 715 questions: for each question the texts the method delivered, one answer written from them, and the scores of that answer and of what was delivered. Each answer was written once and judged once.
 
 - Answers by `claude-sonnet-5`, judged by `claude-haiku-4-5-20251001`.
-- Code: commit `None`; code paths that differed from it: 0.
+- Code: commit `02b207864dd542eb40ba4da6143ebb746203ad93`; code paths that differed from it: 0.
 - Starts of this folder: 9, the first at 2026-10-24T00:43:34.547841+00:00.
 
 **This folder holds the questions and, inside the judge's prompts, the gold answers.** It must not be given to a model or an agent that works on the retrieval method, and it is not for a public repository.
@@ -22,7 +22,15 @@ One run of one retrieval method, **vector**, over 715 questions: for each questi
 | `eval_failures.jsonl` | One line per score cell that failed. Empty when none did. | question_id + metric |
 | `code.acb4fb450f447926.diff` | The difference between the code that ran and its commit, when there was one. | its name is in code_state.diff_file |
 | `corrections.json` | Only in a folder whose stored numbers were corrected after the run: what was changed, by which rule, on whose word. |  |
-| `arm_outputs.as_recorded.jsonl` | A file exactly as the run wrote it, kept when a correction changed the file of the same name. |  |
+| `eval_manifest.as_recorded.json` | eval_manifest.json exactly as the scoring wrote it, kept by the first correction that changed it (corrections.json names it). |  |
+| `eval_results.as_recorded.jsonl` | eval_results.jsonl exactly as the scoring wrote it, kept by the first correction that changed it (corrections.json names it). |  |
+| `arm_outputs.as_recorded.jsonl`, `run_manifest.as_recorded.json` | A file exactly as the run wrote it, kept when a correction changed the file of the same name. |  |
+| `correct_zero_usage.py` | The script that made the zero-usage correction (the tokens of the answer calls whose Claude program reply held 0 in its usage field); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
+| `cli_transcript_usage.json` | The evidence of the zero-usage correction: the Claude program's own transcript counts of each answer call it changed, by session id, read on the machine that made the calls. | session id = calls[].envelope.session_id of arm_outputs.jsonl |
+| `correct_missing_judge_legs.py` | The script that made the missing-judge-legs correction (an entry in judge_legs for each scoring start that wrote none, built from its records in eval_calls.jsonl, and judge_usage as the sum of the entries); run on the files from before it, it gives the corrected files again. |  |
+| `correct_nonllm_record_content.py` | The script that made the non-LLM record-content correction (context_recall_nonllm and context_precision_nonllm calculated again, record content against record content); run on the files from before it, with the code named in its entry, it gives the corrected files again. |  |
+| `correct_code_version_from_reflog.py` | The script that made the code-version correction (the commit each start ran on, by its clone's own reflog, where git gave no answer when the start began); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
+| `code_reflog.txt` | The evidence of the code-version correction: the reflog of the clone the run ran in, written on that machine: each move of HEAD, its commit, time and why. |  |
 
 Times are seconds (`_s`), milliseconds (`_ms`) or UTC stamps (`_at`; every other time text carries its own zone). Sizes are tokens, characters (`chars`) or bytes. A count (calls, attempts, requests, texts, records, edges, refits, and the like) is a plain number of the things it names. A price (`usd`, `USD`) is the Claude program's own, in US dollars; no number of this harness uses it. The evaluation's scores run from 0 to 1 and higher is more; a score an arm ranks by says its own scale.
 
@@ -55,7 +63,7 @@ No stored score is called a hit rate. Whether a question got any gold record at 
 
 ## What was left out, and on whose word
 
-- The questions: every run answers the 100 questions of data/gold100.jsonl (inputs.ids_sha256). How these 100 were chosen from the benchmark's questions: no rule in his words is recorded. The set was first added on 2026-05-19 (commit 0b98b12, "Scale gold set to n=100 (balanced) + statistically robust result"); his messages from 2026-05-15 to 2026-05-27 are not in the canon, because that work was done in Cursor.
+- The questions: this run answers the 715 questions of data/answerable715.jsonl (inputs.ids_sha256): every question of HERB that has an answer ("::a::" in its id) and is not one of the 100 of data/gold100.jsonl, so that the runs on the two sets answer each of HERB's 815 such questions once (his 2026-10-25 "the fucking point is to have a full ragas-herb test done finally"). HERB's 699 questions with no answer ("::u::") are in neither set: no rule in his words is recorded.
 - The directory files: the corpus's three directory files (people, teams, customers) are not embedded beside the product records (retrieval_flags.HERB_BASELINE_METADATA off). No rule in his words is recorded.
 
 ## Easy to read wrongly
@@ -251,6 +259,11 @@ What the run was: the arm, its index, the code, the machine, the inputs, and eve
 | `legs.correction` | Only where a stored number was corrected after the run: the rule, the value as recorded and the corrected value, the seconds taken out (taken_out_s), and in the sleep correction each slept try with its number within the call (from 1), its start, its seconds and its timeout in seconds. The folder's corrections.json tells the whole of it, and the files as recorded stand beside the corrected ones. |
 | `legs.source_run` | Only in a folder merged from two runs (merge.json): the run this start belongs to, by its folder's name; that folder is kept whole under halves/. |
 | `legs.source_leg` | Only in a merged folder: the start's number in that run. |
+| `legs.from_its_log` | Only in an entry rebuilt by correction unrecorded-starts/1 (corrections.json) for a start that wrote rows and no entry: what the start's own log says; the entry's other fields that the log cannot give are empty. |
+| `legs.from_its_log.log` | The start's log, by its path in the folder the correction was made in. |
+| `legs.from_its_log.embedder_device` | The device the log says the embedder loaded on; empty when it loaded none. |
+| `legs.from_its_log.last_lines` | The log's last lines that name no question. |
+| `legs.from_its_log.rule` | The correction's rule. |
 | `legs.environment` | Only in a merged folder: the machine and the software of that run. |
 | `legs.environment.host` | The machine's name. |
 | `legs.environment.platform` | Its operating system. |
@@ -353,13 +366,14 @@ Only in a folder whose stored numbers were corrected after the run: what was cha
 | `corrections.not_changed_and_worth_knowing` | What the correction left as recorded and a reader should know. |
 | `corrections.slept_tries` | Only in the sleep correction: the tries the rule found, each with its question, its row (the line of arm_outputs.jsonl, counted from 0), its try (its number within the call, from 1), its start (UTC), its recorded seconds, its timeout in seconds, the seconds of low power the machine logged inside it, whether a whole reply had come back, and that reply's tokens. |
 | `corrections.changes` | Every changed value: where it is, the value before and the corrected value, and what was taken out (taken_out: seconds in the sleep correction; in the clean-up correction the embedder's seconds and the seconds of refused first calls). The value before is empty where the field was not there before the correction. A copied value keeps its empty parts; its own field's words say why they are empty. |
-| `corrections.checks` | Only in the clean-up correction: what was checked against the call records and the graph, whether it held, and how many places were looked at. |
+| `corrections.checks` | What the correction checked before it changed anything (in the clean-up correction against the call records and the graph), whether it held, and how many places were looked at. |
+| `corrections.evidence` | Only in a correction that rests on a file it keeps in this folder: the file (or the files), its sha256 where given, and what it holds; in the sleep correction, the file that holds the machine's own record. |
+| `corrections.before` | Only in the non-LLM record-content correction: the method that made the stored scores (method, and what_it_did), found by running each method the evaluation has used on the folder's own inputs; how many stored scores each method gives again, per score; and how many stored scores there were, per score. |
 | `corrections.judge_calls_with_logged_low_power_time_inside_them` | Only in the sleep correction: judge calls the machine's own sleep record touches, not changed; each try as [its number from 1, its outcome, its seconds]. |
 | `corrections.low_power_intervals_the_machine_logged` | Only in the sleep correction: the machine's own record of when it slept: start and end (UTC), seconds, and what the machine said. |
 | `corrections.files` | The sha256 of each corrected file, before and after the correction, and where the file from before is kept. The sleep correction's are of the bytes on the disk that ran it; the clean-up correction's are of the files with the line ends git holds (LF), as line_ends says. |
-| `corrections.evidence` | The file that holds the machine's own record. |
 | `corrections.script` | The script that made the correction. |
-| `corrections.code` | Only in the clean-up correction: the code the script ran on, which it imports its harness and arms from: the commit, whether anything differed from it, and what. |
+| `corrections.code` | The code the script ran on, which it imports its harness and arms from: the commit, whether anything differed from it, and what. |
 
 ## Groups of fields that stand in several places
 
@@ -572,11 +586,7 @@ A record with `kind` chat is a call to a language model; one with `kind` embed i
 
 ## Fields without a word
 
-3 have none:
-
-- `cli_transcript_usage.json (the file)`
-- `correct_zero_usage.py (the file)`
-- `corrections.json: corrections.evidence.*`
+None: every file and every field of this folder is described above.
 
 ## The fields as they stand in this folder
 
@@ -698,8 +708,10 @@ Counted from the files themselves when this was written. A record is a line of a
 | Field | Types | Records that hold it | Of those, empty |
 |---|---|---|---|
 | `corrections` | array | 1 | 0 |
+| `corrections.before` | object | 1 | 0 |
 | `corrections.changes` | array | 1 | 0 |
 | `corrections.checks` | array | 1 | 0 |
+| `corrections.code` | object | 1 | 0 |
 | `corrections.evidence` | object | 1 | 0 |
 | `corrections.files` | object | 1 | 0 |
 | `corrections.made_at` | string | 1 | 0 |
@@ -808,7 +820,7 @@ Counted from the files themselves when this was written. A record is a line of a
 | `judge_effort` | null | 1 | 1 |
 | `judge_elapsed_s` | number | 1 | 0 |
 | `judge_legs` | array | 1 | 0 |
-| `judge_legs.elapsed_s` | number | 1 | 0 |
+| `judge_legs.elapsed_s` | null, number | 1 | 1 |
 | `judge_legs.judge_backend` | string | 1 | 0 |
 | `judge_legs.judge_model` | null, string | 1 | 1 |
 | `judge_legs.settings` | object | 1 | 0 |
@@ -822,7 +834,7 @@ Counted from the files themselves when this was written. A record is a line of a
 | `judge_legs.settings.embedding.requests` | integer | 1 | 0 |
 | `judge_legs.settings.embedding.texts` | integer | 1 | 0 |
 | `judge_legs.settings.embedding.tokens_in` | integer | 1 | 0 |
-| `judge_legs.settings.finished_at` | string | 1 | 0 |
+| `judge_legs.settings.finished_at` | null, string | 1 | 1 |
 | `judge_legs.settings.interrupted` | null, string | 1 | 1 |
 | `judge_legs.settings.judge_backend` | string | 1 | 0 |
 | `judge_legs.settings.judge_call` | object | 1 | 0 |
@@ -867,7 +879,7 @@ Counted from the files themselves when this was written. A record is a line of a
 | `judge_legs.settings.started_at` | string | 1 | 0 |
 | `judge_legs.settings.wall_s` | number | 1 | 0 |
 | `judge_legs.settings.workers` | integer | 1 | 0 |
-| `judge_legs.timestamp` | string | 1 | 0 |
+| `judge_legs.timestamp` | null, string | 1 | 1 |
 | `judge_legs.usage` | object | 1 | 0 |
 | `judge_legs.usage.attempts` | integer | 1 | 0 |
 | `judge_legs.usage.cached_input_tokens` | integer | 1 | 0 |
@@ -1009,8 +1021,8 @@ The file holds no record.
 | `code_state.status` | null | 1 | 1 |
 | `code_state.untracked_sha256` | object | 1 | 1 |
 | `code_version` | object | 1 | 0 |
-| `code_version.branch` | null | 1 | 1 |
-| `code_version.commit` | null | 1 | 1 |
+| `code_version.branch` | string | 1 | 0 |
+| `code_version.commit` | string | 1 | 0 |
 | `code_version.dirty` | null | 1 | 1 |
 | `env` | object | 1 | 0 |
 | `environment` | object | 1 | 0 |
@@ -1089,8 +1101,8 @@ The file holds no record.
 | `legs.code_state.status` | array, null | 1 | 1 |
 | `legs.code_state.untracked_sha256` | object | 1 | 1 |
 | `legs.code_version` | object | 1 | 0 |
-| `legs.code_version.branch` | null, string | 1 | 1 |
-| `legs.code_version.commit` | null, string | 1 | 1 |
+| `legs.code_version.branch` | string | 1 | 0 |
+| `legs.code_version.commit` | string | 1 | 0 |
 | `legs.code_version.dirty` | boolean, null | 1 | 1 |
 | `legs.embedder_load_s` | number | 1 | 0 |
 | `legs.evaluator` | string | 1 | 0 |
@@ -1154,7 +1166,7 @@ The file holds no record.
 | `workers` | integer | 1 | 0 |
 
 ---
-Written from `prod/harness/fields.py`, sha256 `0d4d13704166c9c488f3c6ae57fb15b33150ff5e52f74d7452167473f200f1c6`.
+Written from `prod/harness/fields.py`, sha256 `ef5841854ddd95ae01da262ccf6ad2581936e1712178ac04ef32733a2a37ac92`.
 
 The files as they stood when this was written, their line ends as git holds them (LF):
 
@@ -1162,11 +1174,18 @@ The files as they stood when this was written, their line ends as git holds them
 - `arm_outputs.jsonl` sha256 `36ef1235495666b4c5bd552856635f531e325253cf861b85744cea5f898a6c20`
 - `cli_transcript_usage.json` sha256 `6bd0d1f65ff278b3215ac2da72d1e09cffd09b6cdfa6690095a80d4ed2edb803`
 - `code.acb4fb450f447926.diff` sha256 `acb4fb450f4479261d2bd5dd2c523c2ee90272df3795e2299c477c8b2c8a2ea9`
+- `code_reflog.txt` sha256 `3afbde103bd3a20f21192f2128ed8a23ccd4dae9caa4683448649069ab195df5`
+- `correct_code_version_from_reflog.py` sha256 `fa6dbcf7a2a2d8eb84900653a531b52b04d441fd8cfa1ce4dd37f3547f2b15e3`
+- `correct_missing_judge_legs.py` sha256 `e8adbbbe26fed551172e08ae67d12df25490d0ef05585d445acabee4d6e8c71e`
+- `correct_nonllm_record_content.py` sha256 `22f302c2e645d3aecbf87ab8735b64b356695a43362ab1cad39ce406d6d59f75`
 - `correct_zero_usage.py` sha256 `8f1cb37eec34d6b58c927e2098d3ce47bc603c6594227751e2ac01211f8b3c97`
-- `corrections.json` sha256 `e8af6d46097dfcfa30b68bdea03c9cbbb171e76b43cf4150aa83738c960c0189`
+- `corrections.json` sha256 `5f17a72d43242f1946701e99dfd8b9cdf4b4193f67644fa4ac96c014a21df8dd`
 - `eval_calls.jsonl` sha256 `f2e5b9aae2aba418b5c7e04e09840323155afaee6ceecf58e8fcfa08c1530d18`
 - `eval_failures.jsonl` sha256 `695aa78b36c95732d50f62d3fc5579d69830d0c5542ee3a5200986865fa094ac`
-- `eval_manifest.json` sha256 `cd3ede15ba4052ab14d2fbf8444a535af002ee817f4001629d372a7e6cfd797b`
-- `eval_results.jsonl` sha256 `c9200739e3245fdd0cd14104035f96d3cc99235fb2213da0999541f3e89f21b2`
+- `eval_manifest.as_recorded.json` sha256 `cd3ede15ba4052ab14d2fbf8444a535af002ee817f4001629d372a7e6cfd797b`
+- `eval_manifest.json` sha256 `79e0c49407a08269e751ae3cf1edf2b678a1fa63bf94d5a93c332f1333f1512c`
+- `eval_results.as_recorded.jsonl` sha256 `c9200739e3245fdd0cd14104035f96d3cc99235fb2213da0999541f3e89f21b2`
+- `eval_results.jsonl` sha256 `7244c058e48bd1cdab19801ee844153bddd65a0d8a060f3ab74f1223b4424f40`
 - `failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
-- `run_manifest.json` sha256 `0d12385a20b96bc564b83fee935563e07651f9295f108073f3491c75aa951b6d`
+- `run_manifest.as_recorded.json` sha256 `0d12385a20b96bc564b83fee935563e07651f9295f108073f3491c75aa951b6d`
+- `run_manifest.json` sha256 `b7782a78827d3eda1e5ca7d74f81ebffacdadf71fae96e7d82789afaef76cd1c`

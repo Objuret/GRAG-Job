@@ -1,0 +1,9 @@
+desktop rows 550, laptop rows 550, in both 550
+  first call keys the same: 550 of 550
+  context_ids the same: 550 of 550
+  contexts the same: 550 of 550
+  query vectors the same (sha256): 360 of 550
+  by the desktop row's embed device (device, ids same, vectors same): count
+    ('cpu', True, True): 293
+    ('cuda', True, False): 190
+    ('none', True, True): 67

@@ -1479,6 +1479,1473 @@
         }
       },
       "script": "correct_zero_usage.py, in this folder"
+    },
+    {
+      "made_at": "2026-10-25T22:08:17.883332+00:00",
+      "ordered_by": "\"no, my answer suggest that i will tell the analyhst to drop them, he'll still be getting the correct fucking data\" (2026-10-25) · \"do the fucking non-llm, dude, why is this a question\" (2026-10-25)",
+      "what_happened": "The two non-LLM context scores compared each gold record, written as its string values joined by spaces, with the texts handed over, written in HERB's own form, so the same record did not match itself; and they compared the artefact's whole chunks with single records, which never match.",
+      "before": {
+        "method": "string-leaves",
+        "what_it_did": "each gold record as all of its string values joined by spaces, against the texts as handed over (eval/ragas.py at the commits that scored the three final runs on the hundred)",
+        "gives_the_stored_scores_again": {
+          "string-leaves": {
+            "context_recall_nonllm": 100,
+            "context_precision_nonllm": 100
+          },
+          "record-text": {
+            "context_recall_nonllm": 0,
+            "context_precision_nonllm": 0
+          }
+        },
+        "stored_scores": {
+          "context_recall_nonllm": 100,
+          "context_precision_nonllm": 100
+        }
+      },
+      "rule": {
+        "id": "nonllm-record-content/1",
+        "text": "1. The evaluation compared gold records and handed-over texts in two forms that are not the\n     same. The code that scored the three final runs on the hundred wrote each gold record as all\n     of its string values joined by spaces, while every arm hands its records over in HERB's own\n     form (harness.record_text), with ids, labels, dates and names around the content, so the\n     same record did not match itself as a string. The code that scored the runs on the 715\n     answerable questions wrote each gold record in record_text form, so the ids, labels, dates\n     and names of the form were counted in how alike two records are.\n  2. The artefact hands over chunks of several records; a whole chunk was compared with single\n     gold records and never matched one.\n  3. Both sides are reduced to record content (harness.record_content): each gold record's\n     content, against the content of each record handed over, every text cut into its records\n     (eval.ragas.contents_handed_over).\n  4. context_recall_nonllm and context_precision_nonllm are calculated again by RAGAS's own\n     NonLLMContextRecall and NonLLMContextPrecisionWithReference on those contents; every other\n     score and every other file stays as it is."
+      },
+      "not_changed_and_worth_knowing": [
+        "No answer, context, context_ids, other score or judge call is changed; arm_outputs.jsonl is as it was. The content is taken out only for these two scores; the answer model and the judge got the texts as they were handed over.",
+        "Content against content still counts different records as alike when their text is more than half the same, as HERB's templated Slack messages often are (output/research/2026-10-23-nonllm-checks)."
+      ],
+      "changes": [
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ActionGenie::a::0",
+          "field": "context_recall_nonllm",
+          "recorded": 0.23529411764705882,
+          "corrected": 0.8235294117647058
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ActionGenie::a::0",
+          "field": "context_precision_nonllm",
+          "recorded": 0.4499999999775,
+          "corrected": 0.5777492924687527
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AnomalyForce::a::0",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.7692307692307693
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AnomalyForce::a::0",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.20911321926740017
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AutoTuneForce::a::0",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.6428571428571429
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AutoTuneForce::a::0",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.09571684075013434
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CoachForce::a::5",
+          "field": "context_recall_nonllm",
+          "recorded": 0.15384615384615385,
+          "corrected": 0.8076923076923077
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CoachForce::a::5",
+          "field": "context_precision_nonllm",
+          "recorded": 0.4081871344927193,
+          "corrected": 0.2753542133730685
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::1",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 1.0
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::1",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.16432921086185498
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborationForce::a::6",
+          "field": "context_recall_nonllm",
+          "recorded": 0.10638297872340426,
+          "corrected": 0.7659574468085106
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborationForce::a::6",
+          "field": "context_precision_nonllm",
+          "recorded": 0.38424242423473937,
+          "corrected": 0.33157385866697686
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::5",
+          "field": "context_recall_nonllm",
+          "recorded": 0.03125,
+          "corrected": 0.5625
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::5",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0909090909,
+          "corrected": 0.3109007557433317
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContentForce::a::2",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 1.0
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContentForce::a::2",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.36688473426775137
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContextForce::a::1",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.5625
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContextForce::a::1",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.9999999999888889
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::2",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.6428571428571429
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::2",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.05553279336072888
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::6",
+          "field": "context_recall_nonllm",
+          "recorded": 0.11764705882352941,
+          "corrected": 0.8823529411764706
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::6",
+          "field": "context_precision_nonllm",
+          "recorded": 0.18333333332416668,
+          "corrected": 0.11972862737701612
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::5",
+          "field": "context_recall_nonllm",
+          "recorded": 0.11428571428571428,
+          "corrected": 0.45714285714285713
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::5",
+          "field": "context_precision_nonllm",
+          "recorded": 0.3541208791120261,
+          "corrected": 0.35374589238940246
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ForecastForce::a::4",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.8426966292134831
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ForecastForce::a::4",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.8388976661301182
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "InsightForce::a::5",
+          "field": "context_recall_nonllm",
+          "recorded": 0.10714285714285714,
+          "corrected": 0.8214285714285714
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "InsightForce::a::5",
+          "field": "context_precision_nonllm",
+          "recorded": 0.6249999999791667,
+          "corrected": 0.25784701165604956
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "KnowledgeForce::a::4",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.7692307692307693
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "KnowledgeForce::a::4",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.42591194953363665
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "LeadForce::a::5",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.8641975308641975
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "LeadForce::a::5",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.7528732434361713
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "MonitorForce::a::5",
+          "field": "context_recall_nonllm",
+          "recorded": 0.1875,
+          "corrected": 0.8125
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "MonitorForce::a::5",
+          "field": "context_precision_nonllm",
+          "recorded": 0.18253968253359787,
+          "corrected": 0.2450674276162883
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PersonalizeForce::a::7",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 1.0
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PersonalizeForce::a::7",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.23831208325856013
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PitchForce::a::6",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.8222222222222222
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PitchForce::a::6",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.8749418607110555
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ProposalForce::a::11",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 1.0
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ProposalForce::a::11",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.1772147626750028
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SearchFlow::a::12",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.8333333333333334
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SearchFlow::a::12",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.4309788987251162
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SearchForce::a::7",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.8444444444444444
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SearchForce::a::7",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.7875253249254683
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SecurityForce::a::7",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.5189873417721519
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SecurityForce::a::7",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.40508573442048773
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::8",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.5494505494505495
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::8",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.8952599485353869
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SummarizeForce::a::11",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 1.0
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SummarizeForce::a::11",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.3759693808669836
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SupportForce::a::5",
+          "field": "context_recall_nonllm",
+          "recorded": 0.1875,
+          "corrected": 0.25
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SupportForce::a::5",
+          "field": "context_precision_nonllm",
+          "recorded": 0.2611111111024074,
+          "corrected": 0.3189743589679795
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "TrendForce::a::9",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.7954545454545454
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "TrendForce::a::9",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.5420328078009671
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "VizForce::a::16",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.7586206896551724
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "VizForce::a::16",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.4601351593901989
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "WorkFlowGenie::a::11",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.7916666666666666
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "WorkFlowGenie::a::11",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.167703965273475
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ActionGenie::a::5",
+          "field": "context_recall_nonllm",
+          "recorded": 0.07692307692307693,
+          "corrected": 0.7692307692307693
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ActionGenie::a::5",
+          "field": "context_precision_nonllm",
+          "recorded": 0.21574074073354935,
+          "corrected": 0.4077667279789971
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AnomalyForce::a::17",
+          "field": "context_recall_nonllm",
+          "recorded": 0.022727272727272728,
+          "corrected": 0.6893939393939394
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AnomalyForce::a::17",
+          "field": "context_precision_nonllm",
+          "recorded": 0.5909090908893939,
+          "corrected": 0.6478119734341753
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AutoTuneForce::a::12",
+          "field": "context_recall_nonllm",
+          "recorded": 0.08108108108108109,
+          "corrected": 0.7297297297297297
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AutoTuneForce::a::12",
+          "field": "context_precision_nonllm",
+          "recorded": 0.7555555555303703,
+          "corrected": 0.30739390416617285
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CoachForce::a::11",
+          "field": "context_recall_nonllm",
+          "recorded": 0.17073170731707318,
+          "corrected": 0.5853658536585366
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CoachForce::a::11",
+          "field": "context_precision_nonllm",
+          "recorded": 0.6828231292419461,
+          "corrected": 0.2766617723868043
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::19",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.7368421052631579
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::19",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.6835356788650441
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborationForce::a::12",
+          "field": "context_recall_nonllm",
+          "recorded": 0.007462686567164179,
+          "corrected": 0.16417910447761194
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborationForce::a::12",
+          "field": "context_precision_nonllm",
+          "recorded": 0.1249999999875,
+          "corrected": 0.026568616558915428
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::7",
+          "field": "context_recall_nonllm",
+          "recorded": 0.10714285714285714,
+          "corrected": 0.8571428571428571
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::7",
+          "field": "context_precision_nonllm",
+          "recorded": 0.3166666666561111,
+          "corrected": 0.19915179032629513
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContentForce::a::11",
+          "field": "context_recall_nonllm",
+          "recorded": 0.16666666666666666,
+          "corrected": 0.3888888888888889
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContentForce::a::11",
+          "field": "context_precision_nonllm",
+          "recorded": 0.5666666666477778,
+          "corrected": 0.2675629309842762
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContextForce::a::22",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.7317073170731707
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContextForce::a::22",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.5064352666690356
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::12",
+          "field": "context_recall_nonllm",
+          "recorded": 0.13333333333333333,
+          "corrected": 0.7333333333333333
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::12",
+          "field": "context_precision_nonllm",
+          "recorded": 0.23611111109930555,
+          "corrected": 0.1080361429168326
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::7",
+          "field": "context_recall_nonllm",
+          "recorded": 0.03333333333333333,
+          "corrected": 0.8
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::7",
+          "field": "context_precision_nonllm",
+          "recorded": 0.11111111109999999,
+          "corrected": 0.31520332477832164
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::6",
+          "field": "context_recall_nonllm",
+          "recorded": 0.10714285714285714,
+          "corrected": 0.21428571428571427
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::6",
+          "field": "context_precision_nonllm",
+          "recorded": 0.4777777777618519,
+          "corrected": 0.368025255886926
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FlowForce::a::12",
+          "field": "context_recall_nonllm",
+          "recorded": 0.125,
+          "corrected": 0.75
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FlowForce::a::12",
+          "field": "context_precision_nonllm",
+          "recorded": 0.21111111110055555,
+          "corrected": 0.20865343565437064
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ForecastForce::a::24",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.6888888888888889
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ForecastForce::a::24",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.271748428338655
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "InsightForce::a::6",
+          "field": "context_recall_nonllm",
+          "recorded": 0.10638297872340426,
+          "corrected": 0.6808510638297872
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "InsightForce::a::6",
+          "field": "context_precision_nonllm",
+          "recorded": 0.39551226550435525,
+          "corrected": 0.28878770420424127
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "KnowledgeForce::a::14",
+          "field": "context_recall_nonllm",
+          "recorded": 0.13157894736842105,
+          "corrected": 0.23684210526315788
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "KnowledgeForce::a::14",
+          "field": "context_precision_nonllm",
+          "recorded": 0.6638888888756111,
+          "corrected": 0.42682524603246785
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "LeadForce::a::13",
+          "field": "context_recall_nonllm",
+          "recorded": 0.07142857142857142,
+          "corrected": 0.42857142857142855
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "LeadForce::a::13",
+          "field": "context_precision_nonllm",
+          "recorded": 0.499999999975,
+          "corrected": 0.1264431520961805
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "MonitorForce::a::16",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.8632478632478633
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "MonitorForce::a::16",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.5936424438224723
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PersonalizeForce::a::24",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.9565217391304348
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PersonalizeForce::a::24",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.6406046141879039
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PitchForce::a::25",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.7413793103448276
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PitchForce::a::25",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.5482200150579393
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ProposalForce::a::17",
+          "field": "context_recall_nonllm",
+          "recorded": 0.10256410256410256,
+          "corrected": 0.7435897435897436
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ProposalForce::a::17",
+          "field": "context_precision_nonllm",
+          "recorded": 0.6464285714124107,
+          "corrected": 0.3724422848545777
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SearchFlow::a::33",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.88
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SearchFlow::a::33",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.4666664756921382
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SearchForce::a::16",
+          "field": "context_recall_nonllm",
+          "recorded": 0.07692307692307693,
+          "corrected": 0.8461538461538461
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SearchForce::a::16",
+          "field": "context_precision_nonllm",
+          "recorded": 0.12916666666020832,
+          "corrected": 0.8422192721314293
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::26",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.25
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::26",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.029397929435070882
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SummarizeForce::a::23",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.7692307692307693
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SummarizeForce::a::23",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.17063632522516098
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SupportForce::a::6",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.8484848484848485
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SupportForce::a::6",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.4725633974801436
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "VizForce::a::43",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.6496062992125984
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "VizForce::a::43",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.5896389733919146
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ActionGenie::a::7",
+          "field": "context_recall_nonllm",
+          "recorded": 0.08,
+          "corrected": 0.52
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ActionGenie::a::7",
+          "field": "context_precision_nonllm",
+          "recorded": 0.458333333321875,
+          "corrected": 0.24730973326703207
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AutoTuneForce::a::13",
+          "field": "context_recall_nonllm",
+          "recorded": 0.08333333333333333,
+          "corrected": 0.20833333333333334
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AutoTuneForce::a::13",
+          "field": "context_precision_nonllm",
+          "recorded": 0.35297619046736606,
+          "corrected": 0.17488981997833805
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::21",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.5333333333333333
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::21",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.06580201775164785
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::14",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.875
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::14",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.4480262959494047
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContentForce::a::16",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.8695652173913043
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContentForce::a::16",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.2910415219854231
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::13",
+          "field": "context_recall_nonllm",
+          "recorded": 0.13513513513513514,
+          "corrected": 0.7027027027027027
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::13",
+          "field": "context_precision_nonllm",
+          "recorded": 0.6053968253847174,
+          "corrected": 0.3535605840715468
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::9",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.7040816326530612
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::9",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.4823610088614335
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::7",
+          "field": "context_recall_nonllm",
+          "recorded": 0.12,
+          "corrected": 0.28
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::7",
+          "field": "context_precision_nonllm",
+          "recorded": 0.42063492062089947,
+          "corrected": 0.26038148710587083
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FlowForce::a::13",
+          "field": "context_recall_nonllm",
+          "recorded": 0.1111111111111111,
+          "corrected": 0.5925925925925926
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FlowForce::a::13",
+          "field": "context_precision_nonllm",
+          "recorded": 0.2888888888792593,
+          "corrected": 0.19182586041440008
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ForecastForce::a::26",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.88
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ForecastForce::a::26",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.1649672702335519
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "InsightForce::a::7",
+          "field": "context_recall_nonllm",
+          "recorded": 0.125,
+          "corrected": 0.725
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "InsightForce::a::7",
+          "field": "context_precision_nonllm",
+          "recorded": 0.99999999998,
+          "corrected": 0.4942961695810139
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "KnowledgeForce::a::15",
+          "field": "context_recall_nonllm",
+          "recorded": 0.09859154929577464,
+          "corrected": 0.8028169014084507
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "KnowledgeForce::a::15",
+          "field": "context_precision_nonllm",
+          "recorded": 0.4760437508268662,
+          "corrected": 0.33450459143383054
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "LeadForce::a::20",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.5714285714285714
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "LeadForce::a::20",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.08623786287047797
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "MonitorForce::a::18",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.7857142857142857
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "MonitorForce::a::18",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.1621193451262788
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PersonalizeForce::a::34",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.8780487804878049
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PersonalizeForce::a::34",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.6313699922710981
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PitchForce::a::27",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.8653846153846154
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PitchForce::a::27",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.28804094229857113
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ProposalForce::a::20",
+          "field": "context_recall_nonllm",
+          "recorded": 0.04,
+          "corrected": 0.72
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ProposalForce::a::20",
+          "field": "context_precision_nonllm",
+          "recorded": 0.14285714284285714,
+          "corrected": 0.15639493375753188
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::27",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.88
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::27",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.16360257748100285
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SummarizeForce::a::24",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.75
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SummarizeForce::a::24",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.1483054216462618
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::31",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.7857142857142857
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::31",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.360754669449435
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::15",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.7857142857142857
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::15",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.35430427444990475
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContentForce::a::17",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.7857142857142857
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContentForce::a::17",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.16411475089344368
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::14",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.574468085106383
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::14",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.2632063131917645
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::11",
+          "field": "context_recall_nonllm",
+          "recorded": 0.07692307692307693,
+          "corrected": 0.8076923076923077
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::11",
+          "field": "context_precision_nonllm",
+          "recorded": 0.5833333333041666,
+          "corrected": 0.7523389668719107
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::12",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.8695652173913043
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::12",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.6099033392757672
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "InsightForce::a::8",
+          "field": "context_recall_nonllm",
+          "recorded": 0.047058823529411764,
+          "corrected": 0.6941176470588235
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "InsightForce::a::8",
+          "field": "context_precision_nonllm",
+          "recorded": 0.5821428571283036,
+          "corrected": 0.4335430150041464
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "LeadForce::a::28",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.8
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "LeadForce::a::28",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.1129395847672732
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "MonitorForce::a::19",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.7692307692307693
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "MonitorForce::a::19",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.19457660984532382
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::29",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.88
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::29",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.14588022757204805
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::16",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.8125
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::16",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.19095623468092895
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::18",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.8
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::18",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.08897094346549644
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ActionGenie::a::1",
+          "field": "context_recall_nonllm",
+          "recorded": 0.23529411764705882,
+          "corrected": 0.8235294117647058
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ActionGenie::a::1",
+          "field": "context_precision_nonllm",
+          "recorded": 0.4999999999875,
+          "corrected": 0.559138308303071
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AnomalyForce::a::1",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.7692307692307693
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AnomalyForce::a::1",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.41893484704089223
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AutoTuneForce::a::1",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.5625
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AutoTuneForce::a::1",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.17147947332669047
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CoachForce::a::0",
+          "field": "context_recall_nonllm",
+          "recorded": 0.23529411764705882,
+          "corrected": 0.8235294117647058
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CoachForce::a::0",
+          "field": "context_precision_nonllm",
+          "recorded": 0.3472222222106481,
+          "corrected": 0.25851063506273864
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::0",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 1.0
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::0",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.2059014507122789
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborationForce::a::0",
+          "field": "context_recall_nonllm",
+          "recorded": 0.2,
+          "corrected": 0.85
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborationForce::a::0",
+          "field": "context_precision_nonllm",
+          "recorded": 0.3873015872886772,
+          "corrected": 0.6536778537272762
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::0",
+          "field": "context_recall_nonllm",
+          "recorded": 0.2222222222222222,
+          "corrected": 0.8333333333333334
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::0",
+          "field": "context_precision_nonllm",
+          "recorded": 0.3595238095118254,
+          "corrected": 0.5277303483447281
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContentForce::a::0",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 1.0
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContentForce::a::0",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.38991892440193004
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContextForce::a::0",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.6428571428571429
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContextForce::a::0",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.0682450110864281
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::0",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.6428571428571429
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::0",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.13920223653727729
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::0",
+          "field": "context_recall_nonllm",
+          "recorded": 0.23529411764705882,
+          "corrected": 0.8235294117647058
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::0",
+          "field": "context_precision_nonllm",
+          "recorded": 0.3833333333205555,
+          "corrected": 0.4558378443706037
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::0",
+          "field": "context_recall_nonllm",
+          "recorded": 0.23529411764705882,
+          "corrected": 1.0
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::0",
+          "field": "context_precision_nonllm",
+          "recorded": 0.8095238094968253,
+          "corrected": 0.7029306167805176
+        }
+      ],
+      "checks": [
+        {
+          "what": "the questions file read here is the one the run read (its sha256 in the run manifest's inputs)",
+          "holds": true,
+          "looked_at": 1
+        },
+        {
+          "what": "the corpus read here is the one the run read (its digest in the run manifest's inputs)",
+          "holds": true,
+          "looked_at": 1
+        },
+        {
+          "what": "one method in BEFORE gives every stored score again (string-leaves)",
+          "holds": true,
+          "looked_at": 200
+        },
+        {
+          "what": "every stored score was calculated again",
+          "holds": true,
+          "looked_at": 200
+        },
+        {
+          "what": "every text is its records in record_text form, joined by a blank line (1583 texts handed over, 18341 records with content)",
+          "holds": true,
+          "looked_at": 1583
+        }
+      ],
+      "files": {
+        "eval_results.jsonl": {
+          "sha256_before": "9604529333bdad767083d3a8b284ba99f8cb0b1d8ea7bf154b7723e07e24a24e",
+          "sha256_corrected": "8117611496019f40c8a73c3b304c8aa5b917f4c6816c529fee8cba06f3ccc98b"
+        }
+      },
+      "script": "correct_nonllm_record_content.py, in this folder; run on the files from before it, with the code named in code, it gives these files again",
+      "code": {
+        "commit": "4518897d18ab86fa25bc398d2efafa9a2635de93",
+        "branch": "artefact-v4-iteration",
+        "dirty": true,
+        "status": [
+          " M tools/correct_nonllm_record_content.py",
+          " M tools/export_finished_data.py",
+          "?? tools/correct_missing_judge_legs.py"
+        ],
+        "diff_sha256": "dfeed126428fd6c8806e868951a08cef2fb8f9473145d01ab62aaca677bd1690",
+        "untracked_sha256": {
+          "tools/correct_missing_judge_legs.py": "f51373b6eb716617f047223f3e4ae1a514d4778016628cf63fc88c5aabe91e96"
+        }
+      }
     }
   ]
 }

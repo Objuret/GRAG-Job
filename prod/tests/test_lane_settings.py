@@ -94,16 +94,20 @@ class CallSettingsTests(unittest.TestCase):
         self.assertEqual(json.loads(call["env_set"]["CLAUDE_CODE_EXTRA_BODY"]),
                          {"temperature": 0.01})
         self.assertEqual(call["applied"], {"effort": NO_EFFORT, "thinking": "off",
-                                           "temperature": 0.01})
+                                           "temperature": 0.01,
+                                           "max_output_tokens": chat.MODEL_MAX_OUTPUT_TOKENS})
         self.assertEqual(call["not_applied"], {})
 
     def test_a_cap_or_a_temperature_without_thinking_off_is_said_not_applied(self):
         call = chat.call_settings({"model": HAIKU, "messages": _user(), "temperature": 0,
                                    "max_tokens": 4000})
-        for name in ("MAX_THINKING_TOKENS", "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
-                     "CLAUDE_CODE_EXTRA_BODY"):
+        for name in ("MAX_THINKING_TOKENS", "CLAUDE_CODE_EXTRA_BODY"):
             self.assertNotIn(name, call["env_set"])
             self.assertIn(name, call["env_unset"])
+        # a cap the call cannot carry leaves it with no cap of its own: the model's own maximum
+        self.assertEqual(call["env_set"]["CLAUDE_CODE_MAX_OUTPUT_TOKENS"],
+                         str(chat.MODEL_MAX_OUTPUT_TOKENS))
+        self.assertEqual(call["applied"]["max_output_tokens"], chat.MODEL_MAX_OUTPUT_TOKENS)
         self.assertEqual(call["applied"]["thinking"], "the model decides")
         self.assertEqual(sorted(call["not_applied"]), ["max_tokens", "temperature"])
 
@@ -175,17 +179,18 @@ class CallAsSentTests(unittest.TestCase):
                  "HERB_KEPT": "yes"}
         seen, rec = self._sent({"model": SONNET, "messages": _user()}, shell)
         env = seen["env"]
-        for name in ("MAX_THINKING_TOKENS", "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
-                     "CLAUDE_CODE_EXTRA_BODY"):
+        for name in ("MAX_THINKING_TOKENS", "CLAUDE_CODE_EXTRA_BODY"):
             self.assertNotIn(name, env)
+        # the call's own cap, the model's maximum, not the shell's
+        self.assertEqual(env["CLAUDE_CODE_MAX_OUTPUT_TOKENS"], str(chat.MODEL_MAX_OUTPUT_TOKENS))
         self.assertEqual(env["CLAUDE_CODE_EFFORT_LEVEL"], "auto")
         self.assertEqual(env["CLAUDE_CODE_DISABLE_TERMINAL_TITLE"], "1")
         self.assertEqual(env["CLAUDE_CODE_ATTRIBUTION_HEADER"], "0")
         self.assertEqual(env["MEMPALACE_HOOKS_AUTO_SAVE"], "false")
         self.assertEqual(env["HERB_KEPT"], "yes")
-        self.assertEqual(rec["env_set"], {**chat._ENV_FIXED, "CLAUDE_CODE_EFFORT_LEVEL": "auto"})
-        self.assertEqual(rec["env_unset"], ["MAX_THINKING_TOKENS", "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
-                                            "CLAUDE_CODE_EXTRA_BODY"])
+        self.assertEqual(rec["env_set"], {**chat._ENV_FIXED, "CLAUDE_CODE_EFFORT_LEVEL": "auto",
+                                          "CLAUDE_CODE_MAX_OUTPUT_TOKENS": str(chat.MODEL_MAX_OUTPUT_TOKENS)})
+        self.assertEqual(rec["env_unset"], ["MAX_THINKING_TOKENS", "CLAUDE_CODE_EXTRA_BODY"])
 
     def test_the_kept_call_says_what_was_applied_and_what_was_not(self):
         seen, rec = self._sent({"model": SONNET, **orchestrator._GENERATOR_SETTINGS,
@@ -233,7 +238,8 @@ class JudgeCallTests(unittest.TestCase):
         info = scorer.judge_call_info(scorer._JudgeLLM(model=HAIKU))
         self.assertEqual((info["model"], info["system"]), (HAIKU, ""))
         self.assertEqual(info["applied"], {"effort": NO_EFFORT, "thinking": "off",
-                                           "temperature": 0.01})
+                                           "temperature": 0.01,
+                                           "max_output_tokens": chat.MODEL_MAX_OUTPUT_TOKENS})
         self.assertEqual(info["not_applied"], {})
         self.assertEqual(scorer._judge_profile(HAIKU)["tries"], 1)
         self.assertEqual(os.environ["RAGAS_DO_NOT_TRACK"], "true")

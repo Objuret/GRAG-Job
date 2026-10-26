@@ -2597,6 +2597,892 @@
         "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "untracked_sha256": {}
       }
+    },
+    {
+      "made_at": "2026-10-25T22:02:20.627933+00:00",
+      "ordered_by": "\"no, my answer suggest that i will tell the analyhst to drop them, he'll still be getting the correct fucking data\" (2026-10-25) · \"do the fucking non-llm, dude, why is this a question\" (2026-10-25)",
+      "what_happened": "The two non-LLM context scores compared each gold record, written as its string values joined by spaces, with the texts handed over, written in HERB's own form, so the same record did not match itself.",
+      "before": {
+        "method": "string-leaves",
+        "what_it_did": "each gold record as all of its string values joined by spaces, against the texts as handed over (eval/ragas.py at the commits that scored the three final runs on the hundred)",
+        "gives_the_stored_scores_again": {
+          "string-leaves": {
+            "context_recall_nonllm": 100,
+            "context_precision_nonllm": 100
+          },
+          "record-text": {
+            "context_recall_nonllm": 25,
+            "context_precision_nonllm": 23
+          }
+        },
+        "stored_scores": {
+          "context_recall_nonllm": 100,
+          "context_precision_nonllm": 100
+        }
+      },
+      "rule": {
+        "id": "nonllm-record-content/1",
+        "text": "1. The evaluation compared gold records and handed-over texts in two forms that are not the\n     same. The code that scored the three final runs on the hundred wrote each gold record as all\n     of its string values joined by spaces, while every arm hands its records over in HERB's own\n     form (harness.record_text), with ids, labels, dates and names around the content, so the\n     same record did not match itself as a string. The code that scored the runs on the 715\n     answerable questions wrote each gold record in record_text form, so the ids, labels, dates\n     and names of the form were counted in how alike two records are.\n  2. The artefact hands over chunks of several records; a whole chunk was compared with single\n     gold records and never matched one.\n  3. Both sides are reduced to record content (harness.record_content): each gold record's\n     content, against the content of each record handed over, every text cut into its records\n     (eval.ragas.contents_handed_over).\n  4. context_recall_nonllm and context_precision_nonllm are calculated again by RAGAS's own\n     NonLLMContextRecall and NonLLMContextPrecisionWithReference on those contents; every other\n     score and every other file stays as it is."
+      },
+      "not_changed_and_worth_knowing": [
+        "No answer, context, context_ids, other score or judge call is changed; arm_outputs.jsonl is as it was. The content is taken out only for these two scores; the answer model and the judge got the texts as they were handed over.",
+        "Content against content still counts different records as alike when their text is more than half the same, as HERB's templated Slack messages often are (output/research/2026-10-23-nonllm-checks)."
+      ],
+      "changes": [
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AnomalyForce::a::0",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.07692307692307693
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AnomalyForce::a::0",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.04761904761428571
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CoachForce::a::5",
+          "field": "context_recall_nonllm",
+          "recorded": 0.15384615384615385,
+          "corrected": 0.19230769230769232
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CoachForce::a::5",
+          "field": "context_precision_nonllm",
+          "recorded": 0.093737373735499,
+          "corrected": 0.21667984792713943
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborationForce::a::6",
+          "field": "context_recall_nonllm",
+          "recorded": 0.14893617021276595,
+          "corrected": 0.2127659574468085
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborationForce::a::6",
+          "field": "context_precision_nonllm",
+          "recorded": 0.6985850041671297,
+          "corrected": 0.671747076014995
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContentForce::a::2",
+          "field": "context_precision_nonllm",
+          "recorded": 0.33647060959784425,
+          "corrected": 0.35718562792946484
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::5",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.08571428571428572
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::5",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.499999999975
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ForecastForce::a::4",
+          "field": "context_recall_nonllm",
+          "recorded": 0.056179775280898875,
+          "corrected": 0.20224719101123595
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ForecastForce::a::4",
+          "field": "context_precision_nonllm",
+          "recorded": 0.026090799047623625,
+          "corrected": 0.38372673165500126
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "InsightForce::a::5",
+          "field": "context_precision_nonllm",
+          "recorded": 0.3355442176822814,
+          "corrected": 0.39394841269348835
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "KnowledgeForce::a::4",
+          "field": "context_precision_nonllm",
+          "recorded": 0.2476086956459837,
+          "corrected": 0.262115565590082
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "LeadForce::a::5",
+          "field": "context_recall_nonllm",
+          "recorded": 0.012345679012345678,
+          "corrected": 0.024691358024691357
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "LeadForce::a::5",
+          "field": "context_precision_nonllm",
+          "recorded": 0.04545454545,
+          "corrected": 0.780918674974368
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PersonalizeForce::a::7",
+          "field": "context_precision_nonllm",
+          "recorded": 0.08922561432056725,
+          "corrected": 0.10620778996675226
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PitchForce::a::6",
+          "field": "context_recall_nonllm",
+          "recorded": 0.03333333333333333,
+          "corrected": 0.17777777777777778
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PitchForce::a::6",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0262881428345741,
+          "corrected": 0.2246218546990286
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SearchForce::a::7",
+          "field": "context_recall_nonllm",
+          "recorded": 0.07777777777777778,
+          "corrected": 0.14444444444444443
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SearchForce::a::7",
+          "field": "context_precision_nonllm",
+          "recorded": 0.04674406383005458,
+          "corrected": 0.45639821302079603
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SecurityForce::a::7",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0759493670886076,
+          "corrected": 0.08860759493670886
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SecurityForce::a::7",
+          "field": "context_precision_nonllm",
+          "recorded": 0.3474803756600343,
+          "corrected": 0.3192240638794512
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::8",
+          "field": "context_recall_nonllm",
+          "recorded": 0.03296703296703297,
+          "corrected": 0.08791208791208792
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::8",
+          "field": "context_precision_nonllm",
+          "recorded": 0.1293650793607672,
+          "corrected": 0.8804542622034883
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "TrendForce::a::9",
+          "field": "context_recall_nonllm",
+          "recorded": 0.022727272727272728,
+          "corrected": 0.06818181818181818
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "TrendForce::a::9",
+          "field": "context_precision_nonllm",
+          "recorded": 0.39544807964542433,
+          "corrected": 0.4511183408292922
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "VizForce::a::16",
+          "field": "context_precision_nonllm",
+          "recorded": 0.11291824193063293,
+          "corrected": 0.36135812278133844
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ActionGenie::a::5",
+          "field": "context_recall_nonllm",
+          "recorded": 0.1282051282051282,
+          "corrected": 0.1794871794871795
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ActionGenie::a::5",
+          "field": "context_precision_nonllm",
+          "recorded": 0.5878160919422667,
+          "corrected": 0.4312191217933595
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AutoTuneForce::a::12",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.08108108108108109
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "AutoTuneForce::a::12",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.1223776223715035
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CoachForce::a::11",
+          "field": "context_recall_nonllm",
+          "recorded": 0.07317073170731707,
+          "corrected": 0.14634146341463414
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CoachForce::a::11",
+          "field": "context_precision_nonllm",
+          "recorded": 0.08453826874597713,
+          "corrected": 0.26060343165085115
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::19",
+          "field": "context_recall_nonllm",
+          "recorded": 0.05263157894736842,
+          "corrected": 0.10526315789473684
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::19",
+          "field": "context_precision_nonllm",
+          "recorded": 0.03272682147346198,
+          "corrected": 0.4970190366225908
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::7",
+          "field": "context_recall_nonllm",
+          "recorded": 0.07142857142857142,
+          "corrected": 0.10714285714285714
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::7",
+          "field": "context_precision_nonllm",
+          "recorded": 0.08116883116477272,
+          "corrected": 0.11093073592703823
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContextForce::a::22",
+          "field": "context_recall_nonllm",
+          "recorded": 0.04878048780487805,
+          "corrected": 0.06097560975609756
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContextForce::a::22",
+          "field": "context_precision_nonllm",
+          "recorded": 0.1845539087428433,
+          "corrected": 0.22689054137200068
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::7",
+          "field": "context_recall_nonllm",
+          "recorded": 0.1,
+          "corrected": 0.13333333333333333
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::7",
+          "field": "context_precision_nonllm",
+          "recorded": 0.11346469621953476,
+          "corrected": 0.3307583447579622
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FlowForce::a::12",
+          "field": "context_precision_nonllm",
+          "recorded": 0.38596491226783625,
+          "corrected": 0.34847658361009454
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ForecastForce::a::24",
+          "field": "context_recall_nonllm",
+          "recorded": 0.044444444444444446,
+          "corrected": 0.15555555555555556
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ForecastForce::a::24",
+          "field": "context_precision_nonllm",
+          "recorded": 0.2855050504993404,
+          "corrected": 0.3435106848839781
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "KnowledgeForce::a::14",
+          "field": "context_recall_nonllm",
+          "recorded": 0.05263157894736842,
+          "corrected": 0.10526315789473684
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "KnowledgeForce::a::14",
+          "field": "context_precision_nonllm",
+          "recorded": 0.4166666666458333,
+          "corrected": 0.4027777777643518
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "MonitorForce::a::16",
+          "field": "context_recall_nonllm",
+          "recorded": 0.11965811965811966,
+          "corrected": 0.24786324786324787
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "MonitorForce::a::16",
+          "field": "context_precision_nonllm",
+          "recorded": 0.15712964242865657,
+          "corrected": 0.4314621951681499
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PersonalizeForce::a::24",
+          "field": "context_recall_nonllm",
+          "recorded": 0.11594202898550725,
+          "corrected": 0.14492753623188406
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PitchForce::a::25",
+          "field": "context_recall_nonllm",
+          "recorded": 0.10344827586206896,
+          "corrected": 0.1206896551724138
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PitchForce::a::25",
+          "field": "context_precision_nonllm",
+          "recorded": 0.60945048308163,
+          "corrected": 0.6129227053052536
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ProposalForce::a::17",
+          "field": "context_recall_nonllm",
+          "recorded": 0.07692307692307693,
+          "corrected": 0.10256410256410256
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ProposalForce::a::17",
+          "field": "context_precision_nonllm",
+          "recorded": 0.10688259108955465,
+          "corrected": 0.19746141013015625
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SearchFlow::a::33",
+          "field": "context_precision_nonllm",
+          "recorded": 0.40833333332516664,
+          "corrected": 0.6777777777664814
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SearchForce::a::16",
+          "field": "context_recall_nonllm",
+          "recorded": 0.11538461538461539,
+          "corrected": 0.15384615384615385
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SearchForce::a::16",
+          "field": "context_precision_nonllm",
+          "recorded": 0.063510781669042,
+          "corrected": 0.08665283173443829
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::26",
+          "field": "context_recall_nonllm",
+          "recorded": 0.041666666666666664,
+          "corrected": 0.08333333333333333
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::26",
+          "field": "context_precision_nonllm",
+          "recorded": 0.02264313025570365,
+          "corrected": 0.06806382212377474
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SummarizeForce::a::23",
+          "field": "context_recall_nonllm",
+          "recorded": 0.15384615384615385,
+          "corrected": 0.3076923076923077
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SummarizeForce::a::23",
+          "field": "context_precision_nonllm",
+          "recorded": 0.39017857141881696,
+          "corrected": 0.4361887668425392
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SupportForce::a::6",
+          "field": "context_recall_nonllm",
+          "recorded": 0.06060606060606061,
+          "corrected": 0.07575757575757576
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SupportForce::a::6",
+          "field": "context_precision_nonllm",
+          "recorded": 0.1886699507341995,
+          "corrected": 0.46854679802018573
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ActionGenie::a::7",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.06
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ActionGenie::a::7",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.058823529405882355
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::21",
+          "field": "context_recall_nonllm",
+          "recorded": 0.13333333333333333,
+          "corrected": 0.2
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::21",
+          "field": "context_precision_nonllm",
+          "recorded": 0.26666666665333333,
+          "corrected": 0.23660130718165578
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::14",
+          "field": "context_recall_nonllm",
+          "recorded": 0.041666666666666664,
+          "corrected": 0.20833333333333334
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::14",
+          "field": "context_precision_nonllm",
+          "recorded": 0.018002322879471542,
+          "corrected": 0.09813261702198232
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContentForce::a::16",
+          "field": "context_recall_nonllm",
+          "recorded": 0.043478260869565216,
+          "corrected": 0.2608695652173913
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContentForce::a::16",
+          "field": "context_precision_nonllm",
+          "recorded": 0.017418495378340695,
+          "corrected": 0.27055468579272934
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::13",
+          "field": "context_recall_nonllm",
+          "recorded": 0.16216216216216217,
+          "corrected": 0.21621621621621623
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::13",
+          "field": "context_precision_nonllm",
+          "recorded": 0.16715682146477837,
+          "corrected": 0.17368134292993256
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::9",
+          "field": "context_recall_nonllm",
+          "recorded": 0.04081632653061224,
+          "corrected": 0.061224489795918366
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::9",
+          "field": "context_precision_nonllm",
+          "recorded": 0.40624999998984374,
+          "corrected": 0.5348165459965426
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::7",
+          "field": "context_recall_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.04
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::7",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0,
+          "corrected": 0.06436925647237399
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ForecastForce::a::26",
+          "field": "context_recall_nonllm",
+          "recorded": 0.04,
+          "corrected": 0.16
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ForecastForce::a::26",
+          "field": "context_precision_nonllm",
+          "recorded": 0.023861875046020276,
+          "corrected": 0.23617473678061607
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "KnowledgeForce::a::15",
+          "field": "context_recall_nonllm",
+          "recorded": 0.18309859154929578,
+          "corrected": 0.2112676056338028
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "KnowledgeForce::a::15",
+          "field": "context_precision_nonllm",
+          "recorded": 0.46568877922419954,
+          "corrected": 0.4811459312418285
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "MonitorForce::a::18",
+          "field": "context_recall_nonllm",
+          "recorded": 0.21428571428571427,
+          "corrected": 0.35714285714285715
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "MonitorForce::a::18",
+          "field": "context_precision_nonllm",
+          "recorded": 0.26705653020552306,
+          "corrected": 0.3856391783901912
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PersonalizeForce::a::34",
+          "field": "context_recall_nonllm",
+          "recorded": 0.21951219512195122,
+          "corrected": 0.4634146341463415
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PersonalizeForce::a::34",
+          "field": "context_precision_nonllm",
+          "recorded": 0.2684707723232931,
+          "corrected": 0.4100216436449181
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PitchForce::a::27",
+          "field": "context_recall_nonllm",
+          "recorded": 0.09615384615384616,
+          "corrected": 0.1346153846153846
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "PitchForce::a::27",
+          "field": "context_precision_nonllm",
+          "recorded": 0.30367880484920184,
+          "corrected": 0.283232181756873
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ProposalForce::a::20",
+          "field": "context_precision_nonllm",
+          "recorded": 0.16666666665,
+          "corrected": 0.11509521709003329
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::27",
+          "field": "context_recall_nonllm",
+          "recorded": 0.04,
+          "corrected": 0.12
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::27",
+          "field": "context_precision_nonllm",
+          "recorded": 0.022272387387924048,
+          "corrected": 0.1057478310666256
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SummarizeForce::a::24",
+          "field": "context_recall_nonllm",
+          "recorded": 0.25,
+          "corrected": 0.4166666666666667
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SummarizeForce::a::24",
+          "field": "context_precision_nonllm",
+          "recorded": 0.3225595238030726,
+          "corrected": 0.4116361652376184
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::31",
+          "field": "context_recall_nonllm",
+          "recorded": 0.07142857142857142,
+          "corrected": 0.21428571428571427
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "CollaborateForce::a::31",
+          "field": "context_precision_nonllm",
+          "recorded": 0.21260221259512588,
+          "corrected": 0.3705695944491675
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::15",
+          "field": "context_recall_nonllm",
+          "recorded": 0.14285714285714285,
+          "corrected": 0.21428571428571427
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::15",
+          "field": "context_precision_nonllm",
+          "recorded": 0.40404040402693603,
+          "corrected": 0.7222861625218671
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContentForce::a::17",
+          "field": "context_recall_nonllm",
+          "recorded": 0.07142857142857142,
+          "corrected": 0.2857142857142857
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ContentForce::a::17",
+          "field": "context_precision_nonllm",
+          "recorded": 0.07692307691538462,
+          "corrected": 0.43348965263026495
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::14",
+          "field": "context_recall_nonllm",
+          "recorded": 0.10638297872340426,
+          "corrected": 0.1276595744680851
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "EdgeForce::a::14",
+          "field": "context_precision_nonllm",
+          "recorded": 0.0683711999490078,
+          "corrected": 0.12755726970856177
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::11",
+          "field": "context_recall_nonllm",
+          "recorded": 0.11538461538461539,
+          "corrected": 0.15384615384615385
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ExplainabilityForce::a::11",
+          "field": "context_precision_nonllm",
+          "recorded": 0.8055555555287036,
+          "corrected": 0.4912813330390206
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::12",
+          "field": "context_recall_nonllm",
+          "recorded": 0.043478260869565216,
+          "corrected": 0.17391304347826086
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::12",
+          "field": "context_precision_nonllm",
+          "recorded": 0.011494252872413792,
+          "corrected": 0.09790879210355653
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "InsightForce::a::8",
+          "field": "context_recall_nonllm",
+          "recorded": 0.047058823529411764,
+          "corrected": 0.08235294117647059
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "LeadForce::a::28",
+          "field": "context_recall_nonllm",
+          "recorded": 0.13333333333333333,
+          "corrected": 0.2
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "LeadForce::a::28",
+          "field": "context_precision_nonllm",
+          "recorded": 0.05609284332408124,
+          "corrected": 0.4168722619178354
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "MonitorForce::a::19",
+          "field": "context_recall_nonllm",
+          "recorded": 0.15384615384615385,
+          "corrected": 0.46153846153846156
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "MonitorForce::a::19",
+          "field": "context_precision_nonllm",
+          "recorded": 0.3499999999825,
+          "corrected": 0.38573583940886225
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::29",
+          "field": "context_recall_nonllm",
+          "recorded": 0.04,
+          "corrected": 0.12
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "SentimentForce::a::29",
+          "field": "context_precision_nonllm",
+          "recorded": 0.022272387387924048,
+          "corrected": 0.10824783357539947
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::16",
+          "field": "context_recall_nonllm",
+          "recorded": 0.125,
+          "corrected": 0.3125
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::16",
+          "field": "context_precision_nonllm",
+          "recorded": 0.5833333333041666,
+          "corrected": 0.6045748966773774
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::18",
+          "field": "context_recall_nonllm",
+          "recorded": 0.13333333333333333,
+          "corrected": 0.26666666666666666
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "FeedbackForce::a::18",
+          "field": "context_precision_nonllm",
+          "recorded": 0.37499999998125,
+          "corrected": 0.6138685724102152
+        },
+        {
+          "where": "eval_results.jsonl",
+          "question_id": "ConnectForce::a::0",
+          "field": "context_recall_nonllm",
+          "recorded": 0.1111111111111111,
+          "corrected": 0.16666666666666666
+        }
+      ],
+      "checks": [
+        {
+          "what": "the questions file read here is the one the run read (its sha256 in the run manifest's inputs)",
+          "holds": true,
+          "looked_at": 1
+        },
+        {
+          "what": "the corpus read here is the one the run read (its digest in the run manifest's inputs)",
+          "holds": true,
+          "looked_at": 1
+        },
+        {
+          "what": "one method in BEFORE gives every stored score again (string-leaves)",
+          "holds": true,
+          "looked_at": 200
+        },
+        {
+          "what": "every stored score was calculated again",
+          "holds": true,
+          "looked_at": 200
+        },
+        {
+          "what": "every text is its records in record_text form, joined by a blank line (7655 texts handed over, 7635 records with content)",
+          "holds": true,
+          "looked_at": 7655
+        }
+      ],
+      "files": {
+        "eval_results.jsonl": {
+          "sha256_before": "2a5679cab7203d0d2b82f99d6eab95c41bff26f2ef0742006d6dd7ecc20fe5bd",
+          "sha256_corrected": "da800b7e000cab9dbc202fffb990359d99d76b67aab8aa5a4648029be1861937"
+        }
+      },
+      "script": "correct_nonllm_record_content.py, in this folder; run on the files from before it, with the code named in code, it gives these files again",
+      "code": {
+        "commit": "4518897d18ab86fa25bc398d2efafa9a2635de93",
+        "branch": "artefact-v4-iteration",
+        "dirty": true,
+        "status": [
+          " M tools/correct_nonllm_record_content.py",
+          " M tools/export_finished_data.py",
+          "?? tools/correct_missing_judge_legs.py"
+        ],
+        "diff_sha256": "dfeed126428fd6c8806e868951a08cef2fb8f9473145d01ab62aaca677bd1690",
+        "untracked_sha256": {
+          "tools/correct_missing_judge_legs.py": "f51373b6eb716617f047223f3e4ae1a514d4778016628cf63fc88c5aabe91e96"
+        }
+      }
     }
   ]
 }

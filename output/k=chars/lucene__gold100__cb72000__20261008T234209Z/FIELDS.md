@@ -21,10 +21,12 @@ One run of one retrieval method, **lucene**, over 100 questions: for each questi
 | `failures.jsonl` | One line per try at a question that failed. Empty when none did. A question that failed and was answered in a later start has a line here and a row. | id |
 | `eval_failures.jsonl` | One line per score cell that failed. Empty when none did. | question_id + metric |
 | `corrections.json` | Only in a folder whose stored numbers were corrected after the run: what was changed, by which rule, on whose word. |  |
+| `eval_results.as_recorded.jsonl` | eval_results.jsonl exactly as the scoring wrote it, kept by the first correction that changed it (corrections.json names it). |  |
 | `arm_outputs.as_recorded.jsonl`, `run_manifest.as_recorded.json` | A file exactly as the run wrote it, kept when a correction changed the file of the same name. |  |
 | `machine_sleep_events.txt` | The machine's own record of when it slept and woke, which a correction rests on. |  |
 | `correct_slept_tries.py` | The script that made the sleep correction; run on the files as recorded it gives the files it corrected again. |  |
 | `correct_usage_by_model.py` | The script that made the clean-up correction (the cost per model, the search time without the model calls, the build cost per model, the graph as counted); run on the files from before it, it gives the corrected files again. |  |
+| `correct_nonllm_record_content.py` | The script that made the non-LLM record-content correction (context_recall_nonllm and context_precision_nonllm calculated again, record content against record content); run on the files from before it, with the code named in its entry, it gives the corrected files again. |  |
 
 Times are seconds (`_s`), milliseconds (`_ms`) or UTC stamps (`_at`; every other time text carries its own zone). Sizes are tokens, characters (`chars`) or bytes. A count (calls, attempts, requests, texts, records, edges, refits, and the like) is a plain number of the things it names. A price (`usd`, `USD`) is the Claude program's own, in US dollars; no number of this harness uses it. The evaluation's scores run from 0 to 1 and higher is more; a score an arm ranks by says its own scale.
 
@@ -36,11 +38,13 @@ The scores are computed by RAGAS. The quoted sentence of each is RAGAS's own, fr
 |---|---|---|---|
 | `context_recall_id` | "Calculates context recall by directly comparing retrieved context IDs with reference context IDs. The score represents what proportion of the reference IDs were successfully retrieved." (RAGAS, class IDBasedContextRecall) Here: context_ids against the ids of the question's gold records. | nothing | yes |
 | `context_precision_id` | "Calculates context precision by directly comparing retrieved context IDs with reference context IDs. The score represents what proportion of the retrieved context IDs are actually relevant (present in reference)." (RAGAS, class IDBasedContextPrecision) Here: context_ids against the ids of the question's gold records. | nothing | yes |
-| `context_recall_nonllm` | "`NonLLMContextRecall` metric is computed using `retrieved_contexts` and `reference_contexts` [...] This metrics uses non-LLM string comparison metrics to identify if a retrieved context is relevant or not." (RAGAS, docs, context_recall.md) Here: contexts against the text of each gold record; a gold record counts as found when a delivered text is more than 0.5 like it (Levenshtein). | nothing | no, within one arm only |
-| `context_precision_nonllm` | "To determine if a retrieved context is relevant, this method compares each retrieved context or chunk in `retrieved_contexts` with every context in `reference_contexts` using a non-LLM-based similarity measure." (RAGAS, docs, context_precision.md) Here: each delivered text against the gold records' texts, more than 0.5 alike (Levenshtein), weighted by rank. | nothing | no, within one arm only |
+| `context_recall_nonllm` | "`NonLLMContextRecall` metric is computed using `retrieved_contexts` and `reference_contexts` [...] This metrics uses non-LLM string comparison metrics to identify if a retrieved context is relevant or not." (RAGAS, docs, context_recall.md) Here: the content of each record handed over (record_content; every text cut into its records) against the content of each gold record; a gold record counts as found when a delivered record's content is more than 0.5 like it (Levenshtein). | nothing | no, within one arm only |
+| `context_precision_nonllm` | "To determine if a retrieved context is relevant, this method compares each retrieved context or chunk in `retrieved_contexts` with every context in `reference_contexts` using a non-LLM-based similarity measure." (RAGAS, docs, context_precision.md) Here: the content of each record handed over (record_content; every text cut into its records) against the gold records' content, 0.5 or more alike (Levenshtein), weighted by rank. | nothing | no, within one arm only |
 | `context_recall_llm` | "Estimates context recall by estimating TP and FN using annotated answer and retrieved context." (RAGAS, class LLMContextRecall) Here: the gold answer, sentence by sentence, against contexts. | the judge | yes |
 | `faithfulness` | "The **Faithfulness** metric measures how factually consistent a `response` is with the `retrieved context`. [...] A response is considered **faithful** if all its claims can be supported by the retrieved context." (RAGAS, docs, faithfulness.md) Here: the answer's claims against contexts. | the judge | yes |
 | `answer_correctness` | "Measures answer correctness compared to ground truth as a combination of factuality and semantic similarity." (RAGAS, class AnswerCorrectness) Here: the answer against the gold answer: 0.75 times the F1 of the claims the judge finds in both, plus 0.25 times semantic_similarity (RAGAS's own weights). | the judge and the embedder | yes |
+| `factual_correctness` | "It uses claim decomposition and natural language inference (NLI) to verify the claims made in the responses against reference texts." (RAGAS, class FactualCorrectness) Here: the answer against the gold answer: the F1 of the answer's claims the judge finds in the gold answer and the gold answer's claims it finds in the answer (RAGAS's defaults: mode f1, beta 1, atomicity and coverage low), rounded to two decimals. | the judge | yes |
+| `context_entity_recall` | "Calculates recall based on entities present in ground truth and context." (RAGAS, class ContextEntityRecall) Here: the entities the judge finds in the gold answer, found among the entities it finds in contexts joined into one text. | the judge | yes |
 | `semantic_similarity` | "The **Semantic Similarity** metric evaluates the semantic resemblance between a generated response and a reference (ground truth) answer. [...] This metric uses embeddings and cosine similarity" (RAGAS, docs, semantic_similarity.md) Here: the answer against the gold answer, both embedded in passage mode. | the embedder | yes |
 | `string_similarity` | "`NonLLMStringSimilarity` metric measures the similarity between the reference and the response using traditional string distance measures such as Levenshtein, Hamming, and Jaro." (RAGAS, docs, traditional.md) Here: the answer against the gold answer, Levenshtein. | nothing | yes |
 | `bleu` | "It measures the similarity between the response and the reference based on n-gram precision and brevity penalty." (RAGAS, docs, traditional.md) Here: the answer against the gold answer. | nothing | yes |
@@ -249,6 +253,29 @@ What the run was: the arm, its index, the code, the machine, the inputs, and eve
 | `legs.flags` | The switches given on the command line for this start, each by its name with the value it was given; empty when none. What a switch does is the arm's to say (retrieval_flags). |
 | `legs.lane` | How every model call of the start was made. Its fields: see "How model calls were made" below. |
 | `legs.correction` | Only where a stored number was corrected after the run: the rule, the value as recorded and the corrected value, the seconds taken out (taken_out_s), and in the sleep correction each slept try with its number within the call (from 1), its start, its seconds and its timeout in seconds. The folder's corrections.json tells the whole of it, and the files as recorded stand beside the corrected ones. |
+| `legs.source_run` | Only in a folder merged from two runs (merge.json): the run this start belongs to, by its folder's name; that folder is kept whole under halves/. |
+| `legs.source_leg` | Only in a merged folder: the start's number in that run. |
+| `legs.from_its_log` | Only in an entry rebuilt by correction unrecorded-starts/1 (corrections.json) for a start that wrote rows and no entry: what the start's own log says; the entry's other fields that the log cannot give are empty. |
+| `legs.from_its_log.log` | The start's log, by its path in the folder the correction was made in. |
+| `legs.from_its_log.embedder_device` | The device the log says the embedder loaded on; empty when it loaded none. |
+| `legs.from_its_log.last_lines` | The log's last lines that name no question. |
+| `legs.from_its_log.rule` | The correction's rule. |
+| `legs.environment` | Only in a merged folder: the machine and the software of that run. |
+| `legs.environment.host` | The machine's name. |
+| `legs.environment.platform` | Its operating system. |
+| `legs.environment.python` | The Python version. |
+| `legs.environment.python_executable` | The Python that ran. |
+| `legs.environment.cpu` | The processor. |
+| `legs.environment.cpu_count` | How many processor threads it has. |
+| `legs.environment.ram_bytes` | How much memory it has. |
+| `legs.environment.packages` | The versions of the packages the run rests on most. |
+| `legs.environment.packages_all` | Every installed package with its version. |
+| `legs.environment.embedder` | The embedding model the run is set to use. |
+| `legs.environment.embedder.model` | Its name. |
+| `legs.environment.embedder.revision` | Its exact version. |
+| `legs.environment.embedder.device` | Where it runs. |
+| `legs.environment.embedder.dtype` | The number type it computes in. |
+| `legs.env` | Only in a merged folder: that run's environment variables that can change what a run or a model call does, by name. A secret shows as <set>. |
 | `legs.index` | What the arm's index is. Its fields: see "The arm's index" below. |
 | `workers` | How many questions were worked on at once in the last start. |
 | `lane` | How every model call was made. Its fields: see "How model calls were made" below. |
@@ -291,6 +318,7 @@ What the scoring was: the judge, its settings, and what it cost.
 | `judge_legs.usage` | What the start's judge calls cost. Its fields: see "What a model's work cost" below. |
 | `judge_legs.elapsed_s` | Seconds the start took. |
 | `judge_legs.settings` | What the start ran under. Its fields: see "What a scoring start ran under" below. |
+| `judge_legs.source_run` | Only in a folder merged from two runs (merge.json): the run this scoring start belongs to, by its folder's name. |
 | `judge_settings` | What the last scoring start ran under. Its fields: see "What a scoring start ran under" below. |
 
 ## `failures.jsonl`
@@ -334,13 +362,14 @@ Only in a folder whose stored numbers were corrected after the run: what was cha
 | `corrections.not_changed_and_worth_knowing` | What the correction left as recorded and a reader should know. |
 | `corrections.slept_tries` | Only in the sleep correction: the tries the rule found, each with its question, its row (the line of arm_outputs.jsonl, counted from 0), its try (its number within the call, from 1), its start (UTC), its recorded seconds, its timeout in seconds, the seconds of low power the machine logged inside it, whether a whole reply had come back, and that reply's tokens. |
 | `corrections.changes` | Every changed value: where it is, the value before and the corrected value, and what was taken out (taken_out: seconds in the sleep correction; in the clean-up correction the embedder's seconds and the seconds of refused first calls). The value before is empty where the field was not there before the correction. A copied value keeps its empty parts; its own field's words say why they are empty. |
-| `corrections.checks` | Only in the clean-up correction: what was checked against the call records and the graph, whether it held, and how many places were looked at. |
+| `corrections.checks` | What the correction checked before it changed anything (in the clean-up correction against the call records and the graph), whether it held, and how many places were looked at. |
+| `corrections.evidence` | Only in a correction that rests on a file it keeps in this folder: the file (or the files), its sha256 where given, and what it holds; in the sleep correction, the file that holds the machine's own record. |
+| `corrections.before` | Only in the non-LLM record-content correction: the method that made the stored scores (method, and what_it_did), found by running each method the evaluation has used on the folder's own inputs; how many stored scores each method gives again, per score; and how many stored scores there were, per score. |
 | `corrections.judge_calls_with_logged_low_power_time_inside_them` | Only in the sleep correction: judge calls the machine's own sleep record touches, not changed; each try as [its number from 1, its outcome, its seconds]. |
 | `corrections.low_power_intervals_the_machine_logged` | Only in the sleep correction: the machine's own record of when it slept: start and end (UTC), seconds, and what the machine said. |
 | `corrections.files` | The sha256 of each corrected file, before and after the correction, and where the file from before is kept. The sleep correction's are of the bytes on the disk that ran it; the clean-up correction's are of the files with the line ends git holds (LF), as line_ends says. |
-| `corrections.evidence` | The file that holds the machine's own record. |
 | `corrections.script` | The script that made the correction. |
-| `corrections.code` | Only in the clean-up correction: the code the script ran on, which it imports its harness and arms from: the commit, whether anything differed from it, and what. |
+| `corrections.code` | The code the script ran on, which it imports its harness and arms from: the commit, whether anything differed from it, and what. |
 
 ## Groups of fields that stand in several places
 
@@ -397,9 +426,10 @@ Only in a folder whose stored numbers were corrected after the run: what was cha
 | `payload_dropped` | The names of the settings in not_applied. |
 | `attempts` | Every try of the call, in order. |
 | `attempts.n` | The try's number within the call, from 1. |
+| `attempts.credential` | What the try logged in with: subscription (the lane's token) or api_key (the CLAUDE_API key, sent as ANTHROPIC_API_KEY). |
 | `attempts.started_at` | When the try started (UTC). |
 | `attempts.seconds` | How long the try took. |
-| `attempts.outcome` | ok (it answered), exit (the program ended with an error), bad_envelope (its reply could not be read), or timeout (cut at timeout_s). |
+| `attempts.outcome` | ok (it answered), exit (the program ended with an error), usage_limit (the subscription refused it at its usage limit, HTTP 429, and the same try went again with the CLAUDE_API key), bad_envelope (its reply could not be read), or timeout (cut at timeout_s). |
 | `attempts.returncode` | The program's exit code; empty for a timeout. |
 | `attempts.error` | The error of a try that did not answer; empty for the try that answered. |
 | `attempts.stdout` | What the program printed, kept for a try that did not answer; empty for the try that answered, whose reply is in text and envelope. |
@@ -407,6 +437,7 @@ Only in a folder whose stored numbers were corrected after the run: what was cha
 | `attempts.backoff_s` | The pause after a try that did not answer, before the next one. |
 | `attempts.machine_asleep` | Only where a correction marked the try: the machine slept under it. See corrections.json. |
 | `ok` | Whether the call ended with an answer. |
+| `credential` | What the try that answered logged in with: subscription or api_key; empty when no try answered. |
 | `text` | The reply's text. For an answer call it is the JSON that holds the answer. Empty for a call that gave up: no try answered. |
 | `usage` | The tokens of the try that answered; empty for a call that gave up. |
 | `usage.prompt_tokens` | Tokens sent: fresh input, plus what was written to the prompt cache, plus what was read from it. |
@@ -651,6 +682,7 @@ Counted from the files themselves when this was written. A record is a line of a
 | Field | Types | Records that hold it | Of those, empty |
 |---|---|---|---|
 | `corrections` | array | 1 | 0 |
+| `corrections.before` | object | 1 | 0 |
 | `corrections.changes` | array | 1 | 0 |
 | `corrections.checks` | array | 1 | 0 |
 | `corrections.code` | object | 1 | 0 |
@@ -1077,19 +1109,21 @@ The file holds no record.
 | `workers` | integer | 1 | 0 |
 
 ---
-Written from `prod/harness/fields.py`, sha256 `a6e488ec9f0cf39e93c1de76159f2c816df362e4ee3311a56ad250f78704aeb6`.
+Written from `prod/harness/fields.py`, sha256 `bd121e0a2cb46d6c89216b24d24db0e97fe15fba3a887562d427a38bfaf3360d`.
 
 The files as they stood when this was written, their line ends as git holds them (LF):
 
 - `arm_outputs.as_recorded.jsonl` sha256 `8a4338f33912763e24165504fb88119fa7aba162e51a1d5901a37110ee0db69b`
 - `arm_outputs.jsonl` sha256 `ec7a7c427294692bdd9a0aa3f5ddca97d62100400a060d642c49cf451a77060d`
+- `correct_nonllm_record_content.py` sha256 `f915dd944ce45f6b5927efc63e4fa0edd73af4be036e20f304c0180aea64877a`
 - `correct_slept_tries.py` sha256 `ce777075aef50ec5b4e9a4cb33bff71194ff002b212bec526a8bc7b6e8ffc249`
 - `correct_usage_by_model.py` sha256 `28d2357c693e407a2d4739241d1fddca55751553f0c9d4f42eedcf5a79a0d299`
-- `corrections.json` sha256 `dbe50eda3d9b4bc0e0bd70b3c56061d9d0613808da7f5a2bc665eb6f45924a05`
+- `corrections.json` sha256 `2282d5da09ce0be48a09f689b17a82eabb0f7d74a5efd5996109a907d916fa99`
 - `eval_calls.jsonl` sha256 `a50318c9117ec70553fd416b35cfa1b82df625c970e8ee546a6706f30b8a6ef2`
 - `eval_failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - `eval_manifest.json` sha256 `907105921cfce22af3bf5bc5a0273986ed1ed295aacfb11e7dbaaf6418e64922`
-- `eval_results.jsonl` sha256 `2a5679cab7203d0d2b82f99d6eab95c41bff26f2ef0742006d6dd7ecc20fe5bd`
+- `eval_results.as_recorded.jsonl` sha256 `2a5679cab7203d0d2b82f99d6eab95c41bff26f2ef0742006d6dd7ecc20fe5bd`
+- `eval_results.jsonl` sha256 `da800b7e000cab9dbc202fffb990359d99d76b67aab8aa5a4648029be1861937`
 - `failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - `machine_sleep_events.txt` sha256 `f6151dcfe0be5bcc2272c609a71f2d1b8caac65142580b934fd87dfa8de0f72d`
 - `run_manifest.as_recorded.json` sha256 `9475f6a33f12778be1d08fa5c9f32e6e230fcdae54c1ecea412d8d096bc27058`

@@ -1,0 +1,16 @@
+flags: HERB_V4_OFFLINE=on  HERB_V4_CACHE=C:/Users/jocke/AppData/Local/Temp/claude/c--Coding-exjobbet-GRAG-Job/9c164e78-008e-41e9-85f3-58c55027a64c/scratchpad/store_b
+artefact_v2: concentration modifier on (HERB_STR_CONCENTRATION=1.0)
+artefact_v2: agreement modifier on (HERB_STR_AGREEMENT=1.0)
+artefact_v2: the raw question probes beside the interpreted plan (HERB_RAW_QUESTION=1)
+artefact_v4 | set=output/split/answerable715/answerable715.b.jsonl | 550 questions | char-budget=72000 | k=50 | 4 workers | retrieval only (no generation)
+  ->  C:\Users\jocke\AppData\Local\Temp\claude\c--Coding-exjobbet-GRAG-Job\9c164e78-008e-41e9-85f3-58c55027a64c\scratchpad\repro_b
+running - press q to abort
+
+artefact_v4: checking herb-eval-volmax
+artefact_v4: reading the tag-to-chunk edges to check the facet layer they carry
+artefact_v4: counting the pool in the graph
+artefact_v4: names to match the question against: {'Channel': 302, 'Company': 10, 'Customer': 120, 'Employee': 530, 'Product': 30}; 1043 customer edges to chunks
+artefact_v4: prepared: 4808 chunks, 16654 tags and 61018 edges in the graph, checked in 24.7s
+embedder: loading nvidia/llama-nemotron-embed-1b-v2 @ 113abe4acafa on cpu (float32) — first use
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+embedder: ready in 24s (2048 dim, 8192-token context)

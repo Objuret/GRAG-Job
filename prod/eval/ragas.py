@@ -517,17 +517,32 @@ def _build_metrics(names, judge, embedder, run_config):
 RECORD_LEVEL = ("context_recall_nonllm", "context_precision_nonllm")
 
 
+class CorpusRecords(dict):
+    """{id: (kind, record)}, the first record of each id, and `versions`: every distinct record of
+    an id, since an id can stand in two products with different contents (28 url ids in HERB)."""
+    versions: dict
+
+
 def corpus_records(corpus_root) -> dict:
     """Every corpus record by its id, with its kind: {id: (kind, record)}."""
-    out: dict = {}
+    out = CorpusRecords()
+    out.versions = {}
     for pf in sorted((Path(corpus_root) / "products").glob("*.json")):
         data = json.loads(pf.read_text(encoding="utf-8"))
         for kind in ARTIFACT_TYPES:
             for rec in data.get(kind, []) or []:
                 aid = rec.get("id")
-                if aid is not None and str(aid) not in out:
-                    out[str(aid)] = (kind, rec)
+                if aid is None:
+                    continue
+                out.setdefault(str(aid), (kind, rec))
+                held = out.versions.setdefault(str(aid), [])
+                if (kind, rec) not in held:
+                    held.append((kind, rec))
     return out
+
+
+def _versions(records, i) -> list:
+    return getattr(records, "versions", {}).get(i) or [records[i]]
 
 
 def contents_handed_over(contexts, context_ids, meta, records) -> list:
@@ -547,16 +562,15 @@ def contents_handed_over(contexts, context_ids, meta, records) -> list:
     out = []
     for text, ids in zip(contexts, id_lists):
         ids = [str(i) for i in ids]
-        full = [record_text(*records[i]) for i in ids]
-        if len(ids) > 1 and not "\n\n".join(full).startswith(text):
-            raise ValueError("a handed-over text is not its records joined by a blank line")
-        at = 0
-        for i, whole in zip(ids, full):
-            if at >= len(text):
-                break
-            piece = text[at:at + len(whole)] if len(ids) > 1 else text
-            kind, rec = records[i]
-            if piece == whole:
+        if len(ids) == 1:
+            # of an id with several versions, the one whose header the text starts with
+            versions = _versions(records, ids[0])
+            version = next((v for v in versions if text.startswith(record_header(*v))), versions[0])
+            behind = [(ids[0], text, version)]
+        else:
+            behind = _records_in_text(text, ids, records)
+        for i, piece, (kind, rec) in behind:
+            if piece == record_text(kind, rec):
                 content = record_content(kind, rec)
             else:
                 head = record_header(kind, rec)
@@ -568,8 +582,38 @@ def contents_handed_over(contexts, context_ids, meta, records) -> list:
                     raise ValueError(f"the text of record {i} does not start with its header")
             if content:
                 out.append(content)
-            at += len(whole) + 2
     return out
+
+
+def _records_in_text(text, ids, records) -> list:
+    """The records a text of several records holds, in its order, with each one's piece of the
+    text and the version of it the text holds: their record_text forms joined by a blank line, the
+    last one cut where the budget cut it. A record whose chunk points at it twice is in the text
+    twice (the artefact writes every record of a chunk's pointer, its ids list each record once),
+    so a record may come again."""
+    behind, at, expected, seen = [], 0, list(ids), []
+    while at < len(text):
+        rest = text[at:]
+        found = None
+        # the next record in the listed order first, then a record that comes again
+        for i in expected[:1] + seen + expected[1:]:
+            for version in _versions(records, i):
+                whole = record_text(*version)
+                # whole and followed by the next, or the text ends inside it or inside the blank line
+                if rest.startswith(whole + "\n\n") or (whole + "\n\n").startswith(rest):
+                    found = (i, version, whole)
+                    break
+            if found:
+                break
+        if found is None:
+            raise ValueError("a handed-over text is not its records joined by a blank line")
+        i, version, whole = found
+        if i in expected:
+            expected.remove(i)
+            seen.append(i)
+        behind.append((i, rest[:len(whole)], version))
+        at += len(whole) + 2
+    return behind
 
 
 def record_sample(out, q, records) -> SingleTurnSample:

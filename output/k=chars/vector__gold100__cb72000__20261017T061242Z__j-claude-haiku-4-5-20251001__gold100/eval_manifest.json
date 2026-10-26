@@ -7,19 +7,49 @@
   "judge_backend": "claude-cli",
   "judge_effort": null,
   "judge_usage": {
-    "calls": 557,
-    "tokens_in": 2891146,
+    "calls": 612,
+    "tokens_in": 3084429,
     "cached_input_tokens": 426190,
-    "tokens_out": 743396,
+    "tokens_out": 789099,
     "reasoning_tokens": 0,
-    "time_s": 8905.009874498122,
-    "attempts": 557,
-    "request_s": 8903.986160201253,
+    "time_s": 9499.641484498123,
+    "attempts": 612,
+    "request_s": 9498.603855601046,
     "wait_s": 0.0,
     "retry_s": 0.0
   },
   "judge_elapsed_s": 1369.398707299959,
   "judge_legs": [
+    {
+      "timestamp": null,
+      "judge_model": "claude-haiku-4-5-20251001",
+      "judge_backend": "claude-cli",
+      "usage": {
+        "calls": 55,
+        "tokens_in": 193283,
+        "cached_input_tokens": 0,
+        "tokens_out": 45703,
+        "reasoning_tokens": 0,
+        "time_s": 594.6316099999998,
+        "attempts": 55,
+        "request_s": 594.6176953997929,
+        "wait_s": 0.0,
+        "retry_s": 0.0
+      },
+      "elapsed_s": null,
+      "settings": {
+        "started_at": "2026-10-23T05:27:38.679624+00:00",
+        "finished_at": null,
+        "interrupted": "the start wrote no entry; rebuilt from its records in eval_calls.jsonl by correction missing-judge-legs/2 (corrections.json)",
+        "embedding": {
+          "requests": 0,
+          "texts": 0,
+          "tokens_in": 0,
+          "lock_wait_s": 0,
+          "encode_s": 0
+        }
+      }
+    },
     {
       "timestamp": "2026-10-23T05:48:14.851666+00:00",
       "judge_model": "claude-haiku-4-5-20251001",
@@ -37,7 +67,9 @@
         "retry_s": 0.0
       },
       "elapsed_s": 1009.600506799994,
-      "settings": null
+      "settings": {
+        "started_at": "2026-10-23T05:31:25.250597+00:00"
+      }
     },
     {
       "timestamp": "2026-10-23T05:56:49.505830+00:00",
@@ -56,7 +88,9 @@
         "retry_s": 0.0
       },
       "elapsed_s": 359.7982004999649,
-      "settings": null
+      "settings": {
+        "started_at": "2026-10-23T05:50:49.707571+00:00"
+      }
     }
   ],
   "judge_settings": null

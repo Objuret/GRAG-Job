@@ -37,6 +37,8 @@ _CODE_PATHS = ("prod", "test", "tools", "data", "pytest.ini", "refresh_graph.py"
 _SETTING_PREFIXES = ("RAGAS_", "HERB_", "NEO4J_", "CLAUDE", "ANTHROPIC_", "MAX_THINKING",
                      "MAX_STRUCTURED", "DISABLE_", "OTEL_", "API_TIMEOUT")
 _SECRET_WORDS = ("PASSWORD", "TOKEN", "KEY", "SECRET")
+# a credential whose name holds none of the words: the lane's API key (harness.chat._API_KEY)
+_SECRET_NAMES = ("CLAUDE_API",)
 
 
 def code_state() -> dict:
@@ -76,7 +78,8 @@ def settings_env() -> dict:
         if not name.startswith(_SETTING_PREFIXES):
             continue
         # a limit counted in tokens (MAX_THINKING_TOKENS) is a number, not a credential
-        secret = any(w in name for w in _SECRET_WORDS) and not name.endswith("_TOKENS")
+        secret = name in _SECRET_NAMES or (any(w in name for w in _SECRET_WORDS)
+                                           and not name.endswith("_TOKENS"))
         out[name] = "<set>" if secret else value
     return out
 

@@ -1,7 +1,7 @@
 """Split a question set in two for two machines, and merge the two run folders into one.
 
     python tools/merge_split_run.py split --set gold|10smoke|FILE [--first N] --out-dir DIR
-    python tools/merge_split_run.py merge --set gold|10smoke|FILE --out DIR RUN_A RUN_B
+    python tools/merge_split_run.py merge --set gold|10smoke|FILE --out DIR [--accept FILE] RUN_A RUN_B
 
 split writes DIR/<set>.a.jsonl (the first N ids of the set, half of them when N is not given) and
 DIR/<set>.b.jsonl (the rest), each line {"id": ...} with LF line ends, so the same command gives the
@@ -13,7 +13,13 @@ merge takes the two run folders made from those two files and writes one run fol
     graph as counted, the arm's index, build_stats, the character budget, the flags, the arm's
     switches, the models, the corpus and questions files (sha256), the installed packages, the
     embedder, or the scoring's settings (judge, RAGAS version, timeouts, tries, scores); and when
-    the two id files are not the two halves of the set as split writes them;
+    the two id files are not the two halves of the set as split writes them. What a machine has of
+    its own is not compared and is kept per run in merge.json (machine_facts): the build of torch,
+    which follows the machine's hardware, the embedder's device, and how many judge calls a scoring
+    start had in flight. A difference in how the code differed from the commit (code_state, of the
+    runs or of their starts) goes through only when --accept names it in a file, {"accept": [{"path":
+    "code_state" or "legs[].code_state", "why": ..., "checked": ...}]}, and is kept in merge.json
+    (accepted_differences) with each run's or start's value;
   - arm_outputs, failures, eval_results, eval_calls and eval_failures in the order of the set's
     questions; each start of both runs one leg, in the order they began, numbered again, with its
     run's machine (environment) and switches (env) in it; a row's leg the new number;
@@ -50,9 +56,29 @@ SAME_RUN_HOMED = ("generator",)
 # per-machine top-level fields: kept when the two runs agree, else left empty and kept per run in
 # merge.json (and per leg in the manifest's legs)
 PER_MACHINE = ("questions_file", "environment", "env", "lane", "workers", "code_version")
-# a scoring start's settings that belong to that start or that machine, not to how it scored
+# a scoring start's settings that belong to that start or that machine, not to how it scored; how
+# many judge calls it had in flight is the machine's, like its workers
 SETTINGS_OWN = ("started_at", "finished_at", "interrupted", "workers", "argv", "pid",
-                "python_executable", "wall_s", "embedding", "cells")
+                "python_executable", "wall_s", "embedding", "cells", "judge_inflight")
+# a machine's own, not compared and kept per run in merge.json: torch's build follows its hardware
+# (the CPU or a graphics card), and so does the device the embedder runs on (his 2026-10-22 "i want
+# to do this on both the laptop and desktop every fucking time"; his 2026-10-25 "i keep fucking
+# trying to force you to do thegoddamn vectors on the GPU!")
+MACHINE_PACKAGES = ("torch",)
+MACHINE_EMBEDDER = ("device",)
+# the differences --accept can let through, each with why and what was checked
+ACCEPTABLE = ("code_state", "legs[].code_state")
+
+
+def _without_machine(path, value):
+    """A compared field with a machine's own facts taken out (MACHINE_PACKAGES, MACHINE_EMBEDDER)."""
+    if path == "environment.packages" and isinstance(value, dict):
+        return {k: v for k, v in value.items() if k not in MACHINE_PACKAGES}
+    if path == "environment.packages_all" and isinstance(value, list):
+        return [p for p in value if str(p).split("==")[0].lower() not in MACHINE_PACKAGES]
+    if path == "environment.embedder" and isinstance(value, dict):
+        return {k: v for k, v in value.items() if k not in MACHINE_EMBEDDER}
+    return value
 
 
 def _ids_file(qset):
@@ -271,6 +297,13 @@ def merge(args):
     if runs[0].dir.resolve() == runs[1].dir.resolve():
         raise SystemExit("the two runs are one folder")
     problems = []
+    accept, accepted = {}, []
+    if args.accept:
+        for a in json.loads(Path(args.accept).read_text(encoding="utf-8")).get("accept") or []:
+            if a.get("path") not in ACCEPTABLE or not a.get("why") or not a.get("checked"):
+                raise SystemExit(f"{args.accept}: an entry must name one of {ACCEPTABLE} as path, with "
+                                 "why and checked; nothing written")
+            accept[a["path"]] = a
 
     # the two id files must be the two halves of the set, as split writes them
     shas = [_get(r.manifest, "inputs.ids_sha256") for r in runs]
@@ -309,6 +342,15 @@ def merge(args):
         if path == "code_state":
             va, vb = (_run_code(x) for x in (va, vb))
             checked.append("code_state (files the run loads: prod/, test/)")
+            if va != vb and path in accept:
+                accepted.append({"path": path, "why": accept[path]["why"],
+                                 "checked": accept[path]["checked"],
+                                 "values": {r.name: _get(r.manifest, path) for r in runs}})
+                continue
+        elif path in ("environment.packages", "environment.packages_all", "environment.embedder"):
+            va, vb = (_without_machine(path, x) for x in (va, vb))
+            checked.append(path + " (but " + ", ".join(
+                MACHINE_EMBEDDER if path.endswith("embedder") else MACHINE_PACKAGES) + ")")
         elif path == "flags":
             # a flag that names a folder on the machine: the same flag set on both, its path kept
             # per run; the folder's content is the operator's to check before the merge
@@ -330,12 +372,23 @@ def merge(args):
     if runs[0].manifest.get("graph") is not None and not census:
         problems.append("the graph was not counted (graph.census_sha256 is empty)")
     first_leg = runs[0].manifest["legs"][0]
+    let_through = []
     for r in runs:
         for leg in r.manifest.get("legs") or []:
-            if (_get(leg, "code_version.commit") != _get(first_leg, "code_version.commit")
-                    or _run_code(leg.get("code_state")) != _run_code(first_leg.get("code_state"))):
+            commit_differs = _get(leg, "code_version.commit") != _get(first_leg, "code_version.commit")
+            state_differs = _run_code(leg.get("code_state")) != _run_code(first_leg.get("code_state"))
+            # a start rebuilt from its log holds no code version: its state is the one let through
+            rebuilt = leg.get("from_its_log") is not None and leg.get("code_version") is None
+            if state_differs and "legs[].code_state" in accept and (rebuilt or not commit_differs):
+                let_through.append({"run": r.name, "leg": leg.get("leg"),
+                                    "code_state": leg.get("code_state")})
+            elif commit_differs or state_differs:
                 problems.append(f"{r.name} leg {leg.get('leg')}: the code differs from the first "
                                 "start's")
+    if let_through:
+        a = accept["legs[].code_state"]
+        accepted.append({"path": "legs[].code_state", "why": a["why"], "checked": a["checked"],
+                         "values": let_through})
     checked.append("legs[].code_version.commit, legs[].code_state")
 
     # the scoring
@@ -448,6 +501,15 @@ def merge(args):
                       "n_questions": len(ids)},
         "split_after": cut,
         "checked_equal": checked,
+        "machine_facts": {r.name: {
+            "host": _get(r.manifest, "environment.host"),
+            **{p: (_get(r.manifest, "environment.packages") or {}).get(p) for p in MACHINE_PACKAGES},
+            **{f"embedder_{k}": (_get(r.manifest, "environment.embedder") or {}).get(k)
+               for k in MACHINE_EMBEDDER},
+            "judge_inflight": sorted({(leg.get("settings") or {}).get("judge_inflight")
+                                      for leg in r.judge_legs()} - {None}),
+        } for r in runs},
+        "accepted_differences": accepted,
         "left_empty": left_empty,
         "judge_settings_left_empty": settings_left_empty,
         "sources": [{
@@ -525,6 +587,8 @@ def main():
     m.add_argument("--set", dest="qset", required=True, metavar="gold|10smoke|FILE",
                    help="the whole set the two id files were split from")
     m.add_argument("--out", required=True, metavar="DIR", help="the merged folder (new)")
+    m.add_argument("--accept", default=None, metavar="FILE",
+                   help="the code differences to let through, each with why and what was checked")
     m.add_argument("run_a", metavar="RUN_A")
     m.add_argument("run_b", metavar="RUN_B")
     args = p.parse_args()

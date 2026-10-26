@@ -21,9 +21,12 @@ One run of one retrieval method, **artefact_v4**, over 100 questions: for each q
 | `failures.jsonl` | One line per try at a question that failed. Empty when none did. A question that failed and was answered in a later start has a line here and a row. | id |
 | `eval_failures.jsonl` | One line per score cell that failed. Empty when none did. | question_id + metric |
 | `corrections.json` | Only in a folder whose stored numbers were corrected after the run: what was changed, by which rule, on whose word. |  |
-| `arm_outputs.as_recorded.jsonl`, `eval_results.as_recorded.jsonl`, `run_manifest.as_recorded.json` | A file exactly as the run wrote it, kept when a correction changed the file of the same name. |  |
+| `eval_results.as_recorded.jsonl` | eval_results.jsonl exactly as the scoring wrote it, kept by the first correction that changed it (corrections.json names it). |  |
+| `arm_outputs.as_recorded.jsonl`, `run_manifest.as_recorded.json` | A file exactly as the run wrote it, kept when a correction changed the file of the same name. |  |
 | `correct_usage_by_model.py` | The script that made the clean-up correction (the cost per model, the search time without the model calls, the build cost per model, the graph as counted); run on the files from before it, it gives the corrected files again. |  |
 | `correct_cut_chunk_records.py` | The script that made the cut-chunk correction (the records of the cut chunk handed over whole counted in the two id-based scores); run on the files from before it, it gives the corrected files again. |  |
+| `correct_embed_gpu_time.py` | The script that made the GPU-time correction (the query embeddings made on the CPU given the time the same embeddings take on the desktop's graphics card); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
+| `gpu_embed_times.json` | The evidence of the GPU-time correction: per run and question, each embed call's seconds on the graphics card, its recorded seconds and the cosine of its vector to the one the run made. | question id = id of arm_outputs.jsonl; seq = calls[].seq |
 
 Times are seconds (`_s`), milliseconds (`_ms`) or UTC stamps (`_at`; every other time text carries its own zone). Sizes are tokens, characters (`chars`) or bytes. A count (calls, attempts, requests, texts, records, edges, refits, and the like) is a plain number of the things it names. A price (`usd`, `USD`) is the Claude program's own, in US dollars; no number of this harness uses it. The evaluation's scores run from 0 to 1 and higher is more; a score an arm ranks by says its own scale.
 
@@ -57,6 +60,9 @@ No stored score is called a hit rate. Whether a question got any gold record at 
 ## What was left out, and on whose word
 
 - The questions: every run answers the 100 questions of data/gold100.jsonl (inputs.ids_sha256). How these 100 were chosen from the benchmark's questions: no rule in his words is recorded. The set was first added on 2026-05-19 (commit 0b98b12, "Scale gold set to n=100 (balanced) + statistically robust result"); his messages from 2026-05-15 to 2026-05-27 are not in the canon, because that work was done in Cursor.
+- The graph: the 974 chunks of the benchmark's question, unanswerable-question and product-profile sections were dropped from the graph on 2026-05-19 (5,843 chunks made, 4,869 kept). No rule in his words is recorded; his messages of those days are not in the canon.
+- The pool: the 61 chunks of the three metadata files (employee.json, salesforce_team.json, customers_data.json) are out of the pool (4,869 chunks in the graph, 4,808 in the pool). His words: "eh.. vector and lucene sure as fuck shoulw never use the artefact or the graph DB, and there is a fucking reason thoes 3 files or off for the artefact" (2026-09-13T01:00:57Z) · "just dont use those chunks, ffs, and yeah, i did ask for their fucking removal a million times but whatever" (2026-09-13T01:10:35Z).
+- The tags: 4,111 tags and their 5,470 edges were removed from the graph copy herb-eval-v2 on 2026-08-12 (output/graph_build/herb-eval-v2/step_cleanup.json, with its predicate). His words: "ok, so, lets do this then, draft a new design based on these thoughts and herb-eval, including removing the pr-titles and url's" (2026-08-12T19:14:05Z) · "well then, if you feel this is the way, construct another db using this, aka use the current as template and "fix it" and add these things, right?" (2026-08-12T19:52:05Z). Which tags fall in the removed classes is the agent's rule, written in the predicate.
 
 ## Easy to read wrongly
 
@@ -104,8 +110,170 @@ One line per question: what was delivered, the answer, and everything the questi
 | `timing` | The clock of the whole question: ranking and answering. Its fields: see "A clock" below. |
 | `calls` | Every model call and every embedder request the question made, whole. Its fields: see "A call record" below. |
 | `correction` | Only where a stored number was corrected after the run: the rule, the value as recorded and the corrected value, the seconds taken out (taken_out_s), and in the sleep correction each slept try with its number within the call (from 1), its start, its seconds and its timeout in seconds. The folder's corrections.json tells the whole of it, and the files as recorded stand beside the corrected ones. |
-
-`meta` is written by the arm. The arm `artefact_v4` gives no words for it.
+| `meta` | What the arm recorded about this question's retrieval. |
+| `meta.provenance` | The graph the retrieval asked, checked and counted once when the run started. Every question asks the graph for its own chunks, tags and closeness; nothing here is what a question was ordered from. |
+| `meta.provenance.database` | The graph database that was read. |
+| `meta.provenance.run_id` | The run of tag-to-chunk edges read from it. |
+| `meta.provenance.corpus_argument` | The corpus the harness named when it started the arm. The arm reads the graph, not that corpus. |
+| `meta.provenance.interpreter_model` | The model of the first call. |
+| `meta.provenance.facet_layer` | The graph's FacetLayer node as it stood: what the facet values on the tag-to-chunk edges were made from: its name and run, the four facets with their retrain flip gaps (equal_gap) and the pooled one (pooled_flip_gap), on the scale of the facet values on the edges and read from the bootstrap's BANDS.md (the columns named), how many refits the values are the mean of, how many edges carry them, when it was written, and the sha256 of its source files. |
+| `meta.provenance.topic_on_the_edge_against_the_vectors_max_abs` | The largest difference, over the edges, between the topic value on the edge and the cosine of the tag's vector and the chunk description's vector. |
+| `meta.provenance.counts` | What the graph held, counted in it. |
+| `meta.provenance.counts.chunks` | Chunks in the pool. |
+| `meta.provenance.counts.graph_tags` | Tags that sit on a chunk of the pool. |
+| `meta.provenance.counts.edges` | Tag-to-chunk edges into the pool. |
+| `meta.provenance.counts.products` | Products. |
+| `meta.provenance.counts.eligible_graph_tags` | Tags that are not a product's name; only those are compared with the query tags. |
+| `meta.provenance.counts.eligible_edges` | Edges that carry such a tag. |
+| `meta.provenance.counts.product_named_tags` | Tags that are a product's name and are never compared. |
+| `meta.provenance.counts.chunks_with_an_eligible_edge` | Chunks of the pool that carry an eligible tag. |
+| `meta.provenance.counts.named_structure_nodes` | Per kind of structure node (Product, Channel, Employee, Customer, Company), how many carry name_keys the question is matched against. |
+| `meta.provenance.counts.customer_chunk_edges` | Edges from a customer to a chunk whose records carry the customer's id. |
+| `meta.provenance.counts.chunks_with_a_time` | Chunks of the pool that carry their records' own times in the graph (times). |
+| `meta.provenance.counts.channels_apart` | Only in runs before 2026-10-23 (commit 751a72d): channels the graph's people set apart: a channel with employees none of whom is tied to another channel or to a meeting of its product. |
+| `meta.provenance.counts.people` | Only in runs before 2026-10-23 (commit 751a72d): employees tied to a product's channel that is not apart or to its meetings, counted once a product. |
+| `meta.provenance.source_sha256` | The sha256 of each code file the retrieval ran from, by path, its line ends as git holds them (LF), so that it is the sha256 of the commit's file whatever the checkout wrote. |
+| `meta.interpreter` | The first call and what was embedded for the query side. |
+| `meta.interpreter.model` | The model of the first call. |
+| `meta.interpreter.stages` | One entry a model call of the query side. |
+| `meta.interpreter.stages.stage` | Which call: querytag is the first call. |
+| `meta.interpreter.stages.cache_hit` | Whether its answer was read from the cache instead of asked. |
+| `meta.interpreter.stages.key` | The cache key: the sha256 of the call's instruction, message, schema and model. |
+| `meta.interpreter.stages.asks` | How many times the call was made for this question. |
+| `meta.interpreter.stages.offline` | Whether the run refused to ask the model. |
+| `meta.interpreter.stages.duplicate_tags_dropped` | How many tags of the answer were left out because the same phrase stood there twice. |
+| `meta.interpreter.description_side_tags` | How many query tags the first call wrote from the content it described. |
+| `meta.interpreter.question_side_tags` | How many it wrote from the question's own words. |
+| `meta.interpreter.embeddings` | What was embedded, each in the query role. |
+| `meta.interpreter.embeddings.description_side_tags` | The description and the tags written from it. |
+| `meta.interpreter.embeddings.description_side_tags.tags` | How many tags. |
+| `meta.interpreter.embeddings.description_side_tags.text_chars` | The description's length in characters. |
+| `meta.interpreter.embeddings.description_side_tags.embedding` | The sha256 of the vectors. |
+| `meta.interpreter.embeddings.question` | The question as asked. |
+| `meta.interpreter.embeddings.question.text_chars` | Its length in characters. |
+| `meta.interpreter.embeddings.question.embedding` | The sha256 of its vector. |
+| `meta.interpreter.embeddings.question_side_tags` | The tags written from the question's own words. |
+| `meta.interpreter.embeddings.question_side_tags.tags` | How many tags. |
+| `meta.interpreter.embeddings.question_side_tags.embedding` | The sha256 of the vectors. |
+| `meta.interpreter.embeddings.question_without_the_names` | The question with the names that made the border taken out, each replaced by "the" and the word for its kind (product, channel, person, customer, company). The chunk side is compared with this. |
+| `meta.interpreter.embeddings.question_without_the_names.text_chars` | Its length in characters. |
+| `meta.interpreter.embeddings.question_without_the_names.embedding` | The sha256 of its vector. |
+| `meta.scope` | The border, and the scope inside it. |
+| `meta.scope.names_in_the_question` | One entry a structure name that stands in the question word for word. |
+| `meta.scope.names_in_the_question.name` | The name as the graph holds it (for a match on an id, the name of the node the id belongs to). |
+| `meta.scope.names_in_the_question.key` | The plain form that was matched: lower case, everything but letters and digits one space. |
+| `meta.scope.names_in_the_question.labels` | The kinds of node that carry it. |
+| `meta.scope.names_in_the_question.nodes` | How many nodes carry it (one name several employees share is one name). |
+| `meta.scope.names_in_the_question.chunks` | Pool chunks of the scope those nodes pick: a product's or a channel's chunks; for a person, a customer or a company, every chunk under the parents of the chunks it is tied to. |
+| `meta.scope.names_in_the_question.set_aside` | Whether it was left out of the border because its kind would have left nothing. |
+| `meta.scope.nothing_cut` | Whether no name made a border, so every chunk stayed in the pool. |
+| `meta.scope.chunks_under_the_names` | Chunks inside the border. |
+| `meta.scope.chunks_kept` | Chunks the order was made of. |
+| `meta.scope.chunks_cut` | Chunks left out of the pool by the border. |
+| `meta.scope.delivered_under_the_names` | How many of the delivered chunks lie inside the border. |
+| `meta.scope.combo` | The two clouds and the scope gauged from them. A side's cloud is the chunks before the knee of its closeness sorted from the nearest, as many as the closeness shows. |
+| `meta.scope.combo.chunks` | Chunks of the border. |
+| `meta.scope.combo.clouds` | Chunks in each side's cloud. |
+| `meta.scope.combo.clouds.tags` | Of the chunks' closeness through their tags, as many as its knee gives, taken by level moved by the facets. |
+| `meta.scope.combo.clouds.description` | Of the chunk descriptions' closeness to the question without the names. |
+| `meta.scope.combo.chunks_on_each_step` | How many chunks stand on each step: 2 in both clouds, 3 in one, 4 in neither. |
+| `meta.scope.combo.scope_gauged_from_chunks` | How many chunks the scope was gauged from: those in a cloud. |
+| `meta.scope.combo.scopes_taken` | The parents that hold the majority of those chunks. A parent is a channel, a product's whole documents, transcripts, pull requests, links or chats, or the parts of one document or one transcript. |
+| `meta.scope.combo.chunks_in_scope` | Chunks of the border under those parents. |
+| `meta.scope.combo.tags_cloud_by_the_facets` | What the facets' standing did to the tags' cloud. |
+| `meta.scope.combo.tags_cloud_by_the_facets.nearer` | Chunks moved one level of closeness nearer. |
+| `meta.scope.combo.tags_cloud_by_the_facets.farther` | Chunks moved one level farther. |
+| `meta.scope.combo.tags_cloud_by_the_facets.changed` | Chunks in the tags' cloud that were not in it by closeness alone. |
+| `meta.scope.facets` | The query's facets read relative to the tag: each chunk's edge to its closest tag against the same graph tag's other edges on chunks of its kind, in the facet the first call named for the query tag; the standing moves the chunk one level of closeness at the tags' cloud's edge. |
+| `meta.scope.facets.per_query_tag` | One entry a query tag, in the order of the two tag lists (a phrase written in both lists stands twice). |
+| `meta.scope.facets.per_query_tag.phrase` | The query tag as the first call wrote it. |
+| `meta.scope.facets.per_query_tag.facet` | The one facet the first call named as mattering most for it. |
+| `meta.scope.facets.per_query_tag.matters` | Whether the first call said that facet matters for it at all; only then does the facet give a standing. |
+| `meta.scope.facets.query_tags_with_a_facet` | How many query tags have a facet that matters. |
+| `meta.scope.facets.chunks_standing` | Chunks of the border by their closest edge's standing. |
+| `meta.scope.facets.chunks_standing.above` | Standing above the same tag's other edges of their kind. |
+| `meta.scope.facets.chunks_standing.below` | Standing below them. |
+| `meta.scope.facets.own_phrase_edges_kept_from_below` | Chunks whose closest tag is the query tag's own phrase and that would have stood below. |
+| `meta.scope.facets.tags_cloud_by_the_facets` | What the standing did to the tags' cloud. |
+| `meta.scope.facets.tags_cloud_by_the_facets.nearer` | Chunks moved one level of closeness nearer. |
+| `meta.scope.facets.tags_cloud_by_the_facets.farther` | Chunks moved one level farther. |
+| `meta.scope.facets.tags_cloud_by_the_facets.changed` | Chunks in the tags' cloud that were not in it by closeness alone. |
+| `meta.scope.storyline` | The 4-combo: the chosen chunks (those in both clouds; with none, those of the lowest step) and how the other chunks of the clouds are tied to them, asked of the graph for this question. A pair is a chosen chunk and another chunk of the clouds; it is tied by scope (the same parent), entities (a person tied to both), time (the smallest gap between a record of the one and a record of the other, before the knee of the upper half of the pairs' gaps) and nearness (their closeness to the query tags pointing the same way, before the knee of the upper half of the pairs' correlations). |
+| `meta.scope.storyline.chosen_chunk_ids` | The chosen chunks, by chunk id. |
+| `meta.scope.storyline.chunks_in_the_clouds` | Chunks in at least one side's cloud: the only chunks the 4-combo reorders. |
+| `meta.scope.storyline.chosen_chunks` | How many chunks were chosen. |
+| `meta.scope.storyline.pairs` | How many pairs were asked of the graph. |
+| `meta.scope.storyline.pairs_tied` | Per way, how many pairs it ties. |
+| `meta.scope.storyline.pairs_by_ways` | How many pairs are tied in 0, 1, 2, 3 and 4 ways. |
+| `meta.scope.storyline.time_near_up_to_seconds` | The largest gap in time, in seconds, that counts as near; empty when no pair counts as near in time. |
+| `meta.scope.storyline.nearness_from_correlation` | The lowest correlation that counts as near; empty when no pair counts as near. |
+| `meta.scope.storyline.chunks_reached` | How many chunks are tied to a chosen chunk in at least one way. |
+| `meta.ranking` | The order, and what lies behind each delivered chunk. The lists that start with delivered_ have one entry a delivered chunk, in the arm's order (the answer model read the texts in pointer order, reading_order). |
+| `meta.ranking.ordered_chunk_ids` | Every chunk of the border in the arm's order, by chunk id. |
+| `meta.ranking.delivered_chunk_ids` | The chunks whose text, what was handed over of them, went in whole before the budget ended, by chunk id. A text can also hold records of other chunks, the rest of a conversation (delivered_records_of_other_chunks); those records are named in chunk_ids by record id. A chosen part of a split record is its whole record; any other part is only that part. |
+| `meta.ranking.delivered_step` | The chunk's step: its two levels added, 2 in both clouds, 3 in one, 4 in neither. |
+| `meta.ranking.delivered_tags_level` | 1 when it is in the tags side's cloud, 2 when it is not. |
+| `meta.ranking.delivered_description_level` | 1 when it is in the description side's cloud, 2 when it is not. |
+| `meta.ranking.delivered_in_scope` | Whether it sits under a parent of the scope. |
+| `meta.ranking.delivered_middle_rank` | The middle of its two ranks over the border, the tags side's and the description side's: the order inside a step. Every rank here counts from 1, the best; equal values share the mean of their places, so a rank can be a fraction. |
+| `meta.ranking.delivered_tags_rank` | Its tags side's rank over the border, from its place (from 1). |
+| `meta.ranking.delivered_description_rank` | Its description side's rank over the border, by closeness (from 1). |
+| `meta.ranking.delivered_tags_place` | Its tags side's place: the best place a query tag gives it (from 1). |
+| `meta.ranking.delivered_closeness_rank` | Under that query tag, its rank by closeness among the border's chunks (from 1; a chunk with no edge to the tag stands after every chunk that has one). |
+| `meta.ranking.delivered_standing` | Its closest edge's standing in the named facet against the same graph tag's other edges on chunks of its kind: 1 above, 0 the same or no facet, -1 below; it moves the chunk one level of closeness at the tags' cloud's edge. |
+| `meta.ranking.delivered_named_facet` | The facet the first call named for that query tag; empty where the first call said it does not matter. |
+| `meta.ranking.delivered_tags_nearness` | The cosine of its closest tag to a query tag. |
+| `meta.ranking.delivered_description_nearness` | The cosine of its description to the question without the names. |
+| `meta.ranking.delivered_query_description_nearness` | The cosine of its description to the first call's description. It does not enter the order. |
+| `meta.ranking.delivered_question_nearness` | The cosine of its description to the question as asked. It does not enter the order. |
+| `meta.ranking.delivered_query_tags` | The query tag that gave its place, counted from 0 over the two tag lists; -1 for a chunk with no eligible tag. |
+| `meta.ranking.delivered_graph_tags` | The graph tag of its closest edge to that query tag, by name; empty for such a chunk. |
+| `meta.ranking.delivered_query_tag_phrases` | That query tag as the first call wrote it; empty for such a chunk. |
+| `meta.ranking.delivered_chosen` | Whether it is one of the chosen chunks. |
+| `meta.ranking.delivered_storyline_strength` | How strongly it is tied to the chosen chunks: the ways it is tied, added over the chosen chunks. The order is the chosen chunks first, then this, the higher the earlier. |
+| `meta.ranking.delivered_storyline_ways` | Per way, how many chosen chunks it is tied to that way. |
+| `meta.ranking.delivered_storyline_ways.scope` | Under the same parent. |
+| `meta.ranking.delivered_storyline_ways.entities` | A person tied to both. |
+| `meta.ranking.delivered_storyline_ways.time` | Near in time. |
+| `meta.ranking.delivered_storyline_ways.nearness` | Near each other in what the query asks about. |
+| `meta.ranking.delivered_records` | How many records were handed over with the chunk. |
+| `meta.ranking.delivered_records_of_other_chunks` | How many of those lie in another chunk: the rest of a conversation this chunk holds a part of. |
+| `meta.ranking.delivered_records_not_handed_over` | How many of the chunk's own records were not handed over with it: they went in before, with another chunk. |
+| `meta.handed_over` | What of the ordered chunks was handed over. The counts are over the chunks gone through until the budget was full. |
+| `meta.handed_over.chunks_gone_through` | How many chunks of the order were gone through. |
+| `meta.handed_over.chunks_with_nothing_handed_over` | Of those, the chunks nothing was handed over of. |
+| `meta.handed_over.chunks_with_nothing_handed_over.conversations_handed_over_before` | A batch of messages whose conversations all went in before, with another chunk. |
+| `meta.handed_over.chunks_with_nothing_handed_over.record_handed_over_before` | A part of a split document or transcript whose whole record went in before. |
+| `meta.handed_over.chunks_with_nothing_handed_over.in_a_channel_apart` | Only in runs before 2026-10-23 (commit 751a72d): all its messages lie in a channel apart. |
+| `meta.handed_over.chunks_with_nothing_handed_over.no_own_pull_request` | Only in runs before 2026-10-23 (commit 751a72d): a batch of pull requests none of which is the product's own. |
+| `meta.handed_over.chunks_with_nothing_handed_over.no_conversation_left` | Only in runs before 2026-10-23 (commit 751a72d): a batch of messages whose conversations are about another project's pull request or were handed over before with another chunk. |
+| `meta.handed_over.products` | Only in runs before 2026-10-23 (commit 751a72d): per product of the border, what the graph's people say: the ids of its channels apart, and how many people the product has. |
+| `meta.handed_over.records_left_out` | Only in runs before 2026-10-23 (commit 751a72d): records of those chunks left out: a channel apart and other projects' pull requests by the graph's people, talk about another project's pull request by the links in its messages. |
+| `meta.handed_over.records_left_out.messages_of_a_channel_apart` | Messages of a channel apart. |
+| `meta.handed_over.records_left_out.pull_requests_of_other_projects` | Pull requests whose author is not one of the product's people. |
+| `meta.handed_over.records_left_out.messages_about_another_projects_pull_request` | Messages of a conversation that links to another project's pull request and to no own pull request or document. |
+| `meta.handed_over.conversations_handed_over` | Conversations handed over whole, in the texts that went in whole (not the one cut at the budget). |
+| `meta.handed_over.conversations_reaching_into_another_chunk` | Of those, the conversations with messages in another chunk than the one they first showed in. |
+| `meta.diagnostics` | Counts that say how the order came about. |
+| `meta.diagnostics.credited_delivered_rows` | How many texts went in whole before the budget ended. |
+| `meta.diagnostics.boundary_chunk_id_not_credited` | The chunk id of the text that was cut where the budget ended; empty when none was. |
+| `meta.diagnostics.query_tags` | Query tags in the two lists together. |
+| `meta.diagnostics.phrases_standing_in_both_tag_lists` | Phrases the first call wrote in both lists. |
+| `meta.diagnostics.query_tag_closest_graph_tag` | Per query tag, the cosine of its closest eligible graph tag on the border's chunks. |
+| `meta.diagnostics.delivered_on_each_step` | How many of the delivered chunks stand on each step. |
+| `meta.diagnostics.delivered_in_scope` | How many of the delivered chunks are in scope. |
+| `meta.chunk_ids` | The record ids behind each text handed over, one list a text, in the order of contexts: the arm's order. |
+| `meta.reading_order` | The order the answer model read the texts in, pointer order, as positions in contexts (0 the first). |
+| `meta.returned` | How many texts were handed over, the one cut at the budget counted. |
+| `meta.char_budget` | How the character budget was filled. |
+| `meta.char_budget.budget` | The character budget. |
+| `meta.char_budget.chars` | How many characters were handed over. |
+| `meta.char_budget.kept` | How many units were handed over whole. |
+| `meta.char_budget.boundary` | The unit that was cut where the budget ended. Empty when the budget ended exactly at a unit's end, or when the ranking ran out first. |
+| `meta.char_budget.boundary.id` | The id of its record. |
+| `meta.char_budget.boundary.chars_kept` | How many of its characters were handed over. |
+| `meta.char_budget.boundary.chars_full` | How many characters it has. |
+| `meta.char_budget.exhausted` | Whether the ranking ran out before the budget was full. |
 
 ## `eval_results.jsonl`
 
@@ -237,6 +405,11 @@ What the run was: the arm, its index, the code, the machine, the inputs, and eve
 | `legs.correction` | Only where a stored number was corrected after the run: the rule, the value as recorded and the corrected value, the seconds taken out (taken_out_s), and in the sleep correction each slept try with its number within the call (from 1), its start, its seconds and its timeout in seconds. The folder's corrections.json tells the whole of it, and the files as recorded stand beside the corrected ones. |
 | `legs.source_run` | Only in a folder merged from two runs (merge.json): the run this start belongs to, by its folder's name; that folder is kept whole under halves/. |
 | `legs.source_leg` | Only in a merged folder: the start's number in that run. |
+| `legs.from_its_log` | Only in an entry rebuilt by correction unrecorded-starts/1 (corrections.json) for a start that wrote rows and no entry: what the start's own log says; the entry's other fields that the log cannot give are empty. |
+| `legs.from_its_log.log` | The start's log, by its path in the folder the correction was made in. |
+| `legs.from_its_log.embedder_device` | The device the log says the embedder loaded on; empty when it loaded none. |
+| `legs.from_its_log.last_lines` | The log's last lines that name no question. |
+| `legs.from_its_log.rule` | The correction's rule. |
 | `legs.environment` | Only in a merged folder: the machine and the software of that run. |
 | `legs.environment.host` | The machine's name. |
 | `legs.environment.platform` | Its operating system. |
@@ -253,6 +426,7 @@ What the run was: the arm, its index, the code, the machine, the inputs, and eve
 | `legs.environment.embedder.device` | Where it runs. |
 | `legs.environment.embedder.dtype` | The number type it computes in. |
 | `legs.env` | Only in a merged folder: that run's environment variables that can change what a run or a model call does, by name. A secret shows as <set>. |
+| `legs.index` | What the arm's index is: the graph it reads, and what building that graph cost, as the build records give it. Its fields: see "The arm's index" below. |
 | `workers` | How many questions were worked on at once in the last start. |
 | `lane` | How every model call was made. Its fields: see "How model calls were made" below. |
 | `generator` | What every answer call is given. |
@@ -268,8 +442,8 @@ What the run was: the arm, its index, the code, the machine, the inputs, and eve
 | `generator.timeout_s` | The longest a try may take. |
 | `code_state` | How the code differed from the commit. Its fields: see "How the code differed from its commit" below. |
 | `env` | The environment variables of the run that can change what a run or a model call does, by name. A secret shows as <set>. |
-
-`index` and `retrieval_flags` are written by the arm. The arm `artefact_v4` gives no words for them.
+| `index` | What the arm's index is: the graph it reads, and what building that graph cost, as the build records give it. Its fields: see "The arm's index" below. |
+| `retrieval_flags` | The arm's switches in the arm's own words, by name: what each one does, not what it was set to. What was set on the command line is in flags; the entries that end in _at_prepare say what the run started with. |
 
 ## `eval_manifest.json`
 
@@ -337,13 +511,14 @@ Only in a folder whose stored numbers were corrected after the run: what was cha
 | `corrections.not_changed_and_worth_knowing` | What the correction left as recorded and a reader should know. |
 | `corrections.slept_tries` | Only in the sleep correction: the tries the rule found, each with its question, its row (the line of arm_outputs.jsonl, counted from 0), its try (its number within the call, from 1), its start (UTC), its recorded seconds, its timeout in seconds, the seconds of low power the machine logged inside it, whether a whole reply had come back, and that reply's tokens. |
 | `corrections.changes` | Every changed value: where it is, the value before and the corrected value, and what was taken out (taken_out: seconds in the sleep correction; in the clean-up correction the embedder's seconds and the seconds of refused first calls). The value before is empty where the field was not there before the correction. A copied value keeps its empty parts; its own field's words say why they are empty. |
-| `corrections.checks` | Only in the clean-up correction: what was checked against the call records and the graph, whether it held, and how many places were looked at. |
+| `corrections.checks` | What the correction checked before it changed anything (in the clean-up correction against the call records and the graph), whether it held, and how many places were looked at. |
+| `corrections.evidence` | Only in a correction that rests on a file it keeps in this folder: the file (or the files), its sha256 where given, and what it holds; in the sleep correction, the file that holds the machine's own record. |
+| `corrections.before` | Only in the non-LLM record-content correction: the method that made the stored scores (method, and what_it_did), found by running each method the evaluation has used on the folder's own inputs; how many stored scores each method gives again, per score; and how many stored scores there were, per score. |
 | `corrections.judge_calls_with_logged_low_power_time_inside_them` | Only in the sleep correction: judge calls the machine's own sleep record touches, not changed; each try as [its number from 1, its outcome, its seconds]. |
 | `corrections.low_power_intervals_the_machine_logged` | Only in the sleep correction: the machine's own record of when it slept: start and end (UTC), seconds, and what the machine said. |
 | `corrections.files` | The sha256 of each corrected file, before and after the correction, and where the file from before is kept. The sleep correction's are of the bytes on the disk that ran it; the clean-up correction's are of the files with the line ends git holds (LF), as line_ends says. |
-| `corrections.evidence` | The file that holds the machine's own record. |
 | `corrections.script` | The script that made the correction. |
-| `corrections.code` | Only in the clean-up correction: the code the script ran on, which it imports its harness and arms from: the commit, whether anything differed from it, and what. |
+| `corrections.code` | The code the script ran on, which it imports its harness and arms from: the commit, whether anything differed from it, and what. |
 
 ## Groups of fields that stand in several places
 
@@ -400,9 +575,10 @@ Only in a folder whose stored numbers were corrected after the run: what was cha
 | `payload_dropped` | The names of the settings in not_applied. |
 | `attempts` | Every try of the call, in order. |
 | `attempts.n` | The try's number within the call, from 1. |
+| `attempts.credential` | What the try logged in with: subscription (the lane's token) or api_key (the CLAUDE_API key, sent as ANTHROPIC_API_KEY). |
 | `attempts.started_at` | When the try started (UTC). |
 | `attempts.seconds` | How long the try took. |
-| `attempts.outcome` | ok (it answered), exit (the program ended with an error), bad_envelope (its reply could not be read), or timeout (cut at timeout_s). |
+| `attempts.outcome` | ok (it answered), exit (the program ended with an error), usage_limit (the subscription refused it at its usage limit, HTTP 429, and the same try went again with the CLAUDE_API key), bad_envelope (its reply could not be read), or timeout (cut at timeout_s). |
 | `attempts.returncode` | The program's exit code; empty for a timeout. |
 | `attempts.error` | The error of a try that did not answer; empty for the try that answered. |
 | `attempts.stdout` | What the program printed, kept for a try that did not answer; empty for the try that answered, whose reply is in text and envelope. |
@@ -410,6 +586,7 @@ Only in a folder whose stored numbers were corrected after the run: what was cha
 | `attempts.backoff_s` | The pause after a try that did not answer, before the next one. |
 | `attempts.machine_asleep` | Only where a correction marked the try: the machine slept under it. See corrections.json. |
 | `ok` | Whether the call ended with an answer. |
+| `credential` | What the try that answered logged in with: subscription or api_key; empty when no try answered. |
 | `text` | The reply's text. For an answer call it is the JSON that holds the answer. Empty for a call that gave up: no try answered. |
 | `usage` | The tokens of the try that answered; empty for a call that gave up. |
 | `usage.prompt_tokens` | Tokens sent: fresh input, plus what was written to the prompt cache, plus what was read from it. |
@@ -534,17 +711,22 @@ A record with `kind` chat is a call to a language model; one with `kind` embed i
 | `embed_tokens` | Their tokens. |
 | `embed_s` | Seconds the embedder worked on them. |
 
+### The arm's index
+
+| Field | What it holds |
+|---|---|
+| `graph` | The Neo4j database the arm reads. |
+| `facet_layer_run` | The run id of the facet values on the tag-to-chunk edges. |
+| `counts` | What the start of the run counted in the graph (as in provenance). |
+| `build_cost` | Per build step of the graph: what it made, when, with which model or device, its calls, tokens in and out and seconds where the step's own record gives them, the records it is read from, and what those records do not give. Collected from the records into `test/graph/build_cost.json`; nothing in it is estimated except the chunks' token estimate, which the chunker itself wrote. Every number in it was recounted from its record on 2026-10-20 (`test/graph/build_cost_check.json`). |
+| `build_cost_file_sha256` | The sha256 of that file, its line ends as git holds them (LF), which identifies the build cost given. |
+| `first_call` | When and how the first call is made. |
+| `question_embedding` | When and how the query tags, the description and the question are embedded. |
+| `unit_text` | The form a record is written in for the answer model, and where that form is from; what a part of a split record brings; the order the texts reach the model in. |
+
 ## Fields without a word
 
-7 have none:
-
-- `arm_outputs.jsonl: meta`
-- `correct_embed_gpu_time.py (the file)`
-- `corrections.json: corrections.evidence.*`
-- `gpu_embed_times.json (the file)`
-- `run_manifest.json: index`
-- `run_manifest.json: legs.index`
-- `run_manifest.json: retrieval_flags`
+None: every file and every field of this folder is described above.
 
 ## The fields as they stand in this folder
 
@@ -624,6 +806,167 @@ Counted from the files themselves when this was written. A record is a line of a
 | `generator.wait_s` | number | 100 | 0 |
 | `id` | string | 100 | 0 |
 | `leg` | integer | 100 | 0 |
+| `meta` | object | 100 | 0 |
+| `meta.char_budget` | object | 100 | 0 |
+| `meta.char_budget.boundary` | null, object | 100 | 7 |
+| `meta.char_budget.boundary.chars_full` | integer | 93 | 0 |
+| `meta.char_budget.boundary.chars_kept` | integer | 93 | 0 |
+| `meta.char_budget.boundary.id` | string | 93 | 0 |
+| `meta.char_budget.budget` | integer | 100 | 0 |
+| `meta.char_budget.chars` | integer | 100 | 0 |
+| `meta.char_budget.exhausted` | boolean | 100 | 0 |
+| `meta.char_budget.kept` | integer | 100 | 0 |
+| `meta.chunk_ids` | array | 100 | 0 |
+| `meta.diagnostics` | object | 100 | 0 |
+| `meta.diagnostics.boundary_chunk_id_not_credited` | null, string | 100 | 7 |
+| `meta.diagnostics.credited_delivered_rows` | integer | 100 | 0 |
+| `meta.diagnostics.delivered_in_scope` | integer | 100 | 0 |
+| `meta.diagnostics.delivered_on_each_step` | object | 100 | 0 |
+| `meta.diagnostics.phrases_standing_in_both_tag_lists` | integer | 100 | 0 |
+| `meta.diagnostics.query_tag_closest_graph_tag` | array | 100 | 0 |
+| `meta.diagnostics.query_tags` | integer | 100 | 0 |
+| `meta.handed_over` | object | 100 | 0 |
+| `meta.handed_over.chunks_gone_through` | integer | 100 | 0 |
+| `meta.handed_over.chunks_with_nothing_handed_over` | object | 100 | 0 |
+| `meta.handed_over.chunks_with_nothing_handed_over.in_a_channel_apart` | integer | 100 | 0 |
+| `meta.handed_over.chunks_with_nothing_handed_over.no_conversation_left` | integer | 100 | 0 |
+| `meta.handed_over.chunks_with_nothing_handed_over.no_own_pull_request` | integer | 100 | 0 |
+| `meta.handed_over.conversations_handed_over` | integer | 100 | 0 |
+| `meta.handed_over.conversations_reaching_into_another_chunk` | integer | 100 | 0 |
+| `meta.handed_over.products` | object | 100 | 0 |
+| `meta.handed_over.records_left_out` | object | 100 | 0 |
+| `meta.handed_over.records_left_out.messages_about_another_projects_pull_request` | integer | 100 | 0 |
+| `meta.handed_over.records_left_out.messages_of_a_channel_apart` | integer | 100 | 0 |
+| `meta.handed_over.records_left_out.pull_requests_of_other_projects` | integer | 100 | 0 |
+| `meta.interpreter` | object | 100 | 0 |
+| `meta.interpreter.description_side_tags` | integer | 100 | 0 |
+| `meta.interpreter.embeddings` | object | 100 | 0 |
+| `meta.interpreter.embeddings.description_side_tags` | object | 100 | 0 |
+| `meta.interpreter.embeddings.description_side_tags.embedding` | string | 100 | 0 |
+| `meta.interpreter.embeddings.description_side_tags.tags` | integer | 100 | 0 |
+| `meta.interpreter.embeddings.description_side_tags.text_chars` | integer | 100 | 0 |
+| `meta.interpreter.embeddings.question` | object | 100 | 0 |
+| `meta.interpreter.embeddings.question.embedding` | string | 100 | 0 |
+| `meta.interpreter.embeddings.question.text_chars` | integer | 100 | 0 |
+| `meta.interpreter.embeddings.question_side_tags` | object | 100 | 0 |
+| `meta.interpreter.embeddings.question_side_tags.embedding` | string | 100 | 0 |
+| `meta.interpreter.embeddings.question_side_tags.tags` | integer | 100 | 0 |
+| `meta.interpreter.embeddings.question_without_the_names` | object | 100 | 0 |
+| `meta.interpreter.embeddings.question_without_the_names.embedding` | string | 100 | 0 |
+| `meta.interpreter.embeddings.question_without_the_names.text_chars` | integer | 100 | 0 |
+| `meta.interpreter.model` | string | 100 | 0 |
+| `meta.interpreter.question_side_tags` | integer | 100 | 0 |
+| `meta.interpreter.stages` | array | 100 | 0 |
+| `meta.interpreter.stages.asks` | integer | 100 | 0 |
+| `meta.interpreter.stages.cache_hit` | boolean | 100 | 0 |
+| `meta.interpreter.stages.duplicate_tags_dropped` | integer | 100 | 0 |
+| `meta.interpreter.stages.key` | string | 100 | 0 |
+| `meta.interpreter.stages.offline` | boolean | 100 | 0 |
+| `meta.interpreter.stages.stage` | string | 100 | 0 |
+| `meta.provenance` | object | 100 | 0 |
+| `meta.provenance.corpus_argument` | string | 100 | 0 |
+| `meta.provenance.counts` | object | 100 | 0 |
+| `meta.provenance.counts.channels_apart` | integer | 100 | 0 |
+| `meta.provenance.counts.chunks` | integer | 100 | 0 |
+| `meta.provenance.counts.chunks_with_a_time` | integer | 100 | 0 |
+| `meta.provenance.counts.chunks_with_an_eligible_edge` | integer | 100 | 0 |
+| `meta.provenance.counts.customer_chunk_edges` | integer | 100 | 0 |
+| `meta.provenance.counts.edges` | integer | 100 | 0 |
+| `meta.provenance.counts.eligible_edges` | integer | 100 | 0 |
+| `meta.provenance.counts.eligible_graph_tags` | integer | 100 | 0 |
+| `meta.provenance.counts.graph_tags` | integer | 100 | 0 |
+| `meta.provenance.counts.named_structure_nodes` | object | 100 | 0 |
+| `meta.provenance.counts.people` | integer | 100 | 0 |
+| `meta.provenance.counts.product_named_tags` | integer | 100 | 0 |
+| `meta.provenance.counts.products` | integer | 100 | 0 |
+| `meta.provenance.database` | string | 100 | 0 |
+| `meta.provenance.facet_layer` | object | 100 | 0 |
+| `meta.provenance.interpreter_model` | string | 100 | 0 |
+| `meta.provenance.run_id` | string | 100 | 0 |
+| `meta.provenance.source_sha256` | object | 100 | 0 |
+| `meta.provenance.topic_on_the_edge_against_the_vectors_max_abs` | number | 100 | 0 |
+| `meta.ranking` | object | 100 | 0 |
+| `meta.ranking.delivered_chosen` | array | 100 | 0 |
+| `meta.ranking.delivered_chunk_ids` | array | 100 | 0 |
+| `meta.ranking.delivered_closeness_rank` | array | 100 | 0 |
+| `meta.ranking.delivered_description_level` | array | 100 | 0 |
+| `meta.ranking.delivered_description_nearness` | array | 100 | 0 |
+| `meta.ranking.delivered_description_rank` | array | 100 | 0 |
+| `meta.ranking.delivered_graph_tags` | array | 100 | 0 |
+| `meta.ranking.delivered_in_scope` | array | 100 | 0 |
+| `meta.ranking.delivered_middle_rank` | array | 100 | 0 |
+| `meta.ranking.delivered_named_facet` | array | 100 | 0 |
+| `meta.ranking.delivered_query_description_nearness` | array | 100 | 0 |
+| `meta.ranking.delivered_query_tag_phrases` | array | 100 | 0 |
+| `meta.ranking.delivered_query_tags` | array | 100 | 0 |
+| `meta.ranking.delivered_question_nearness` | array | 100 | 0 |
+| `meta.ranking.delivered_records` | array | 100 | 0 |
+| `meta.ranking.delivered_records_not_handed_over` | array | 100 | 0 |
+| `meta.ranking.delivered_records_of_other_chunks` | array | 100 | 0 |
+| `meta.ranking.delivered_standing` | array | 100 | 0 |
+| `meta.ranking.delivered_step` | array | 100 | 0 |
+| `meta.ranking.delivered_storyline_strength` | array | 100 | 0 |
+| `meta.ranking.delivered_storyline_ways` | object | 100 | 0 |
+| `meta.ranking.delivered_storyline_ways.entities` | array | 100 | 0 |
+| `meta.ranking.delivered_storyline_ways.nearness` | array | 100 | 0 |
+| `meta.ranking.delivered_storyline_ways.scope` | array | 100 | 0 |
+| `meta.ranking.delivered_storyline_ways.time` | array | 100 | 0 |
+| `meta.ranking.delivered_tags_level` | array | 100 | 0 |
+| `meta.ranking.delivered_tags_nearness` | array | 100 | 0 |
+| `meta.ranking.delivered_tags_place` | array | 100 | 0 |
+| `meta.ranking.delivered_tags_rank` | array | 100 | 0 |
+| `meta.ranking.ordered_chunk_ids` | array | 100 | 0 |
+| `meta.returned` | integer | 100 | 0 |
+| `meta.scope` | object | 100 | 0 |
+| `meta.scope.chunks_cut` | integer | 100 | 0 |
+| `meta.scope.chunks_kept` | integer | 100 | 0 |
+| `meta.scope.chunks_under_the_names` | integer | 100 | 0 |
+| `meta.scope.combo` | object | 100 | 0 |
+| `meta.scope.combo.chunks` | integer | 100 | 0 |
+| `meta.scope.combo.chunks_in_scope` | integer | 100 | 0 |
+| `meta.scope.combo.chunks_on_each_step` | object | 100 | 0 |
+| `meta.scope.combo.clouds` | object | 100 | 0 |
+| `meta.scope.combo.clouds.description` | integer | 100 | 0 |
+| `meta.scope.combo.clouds.tags` | integer | 100 | 0 |
+| `meta.scope.combo.scope_gauged_from_chunks` | integer | 100 | 0 |
+| `meta.scope.combo.scopes_taken` | array | 100 | 0 |
+| `meta.scope.combo.tags_cloud_by_the_facets` | object | 100 | 0 |
+| `meta.scope.combo.tags_cloud_by_the_facets.changed` | integer | 100 | 0 |
+| `meta.scope.combo.tags_cloud_by_the_facets.farther` | integer | 100 | 0 |
+| `meta.scope.combo.tags_cloud_by_the_facets.nearer` | integer | 100 | 0 |
+| `meta.scope.delivered_under_the_names` | integer | 100 | 0 |
+| `meta.scope.facets` | object | 100 | 0 |
+| `meta.scope.facets.chunks_standing` | object | 100 | 0 |
+| `meta.scope.facets.chunks_standing.above` | integer | 100 | 0 |
+| `meta.scope.facets.chunks_standing.below` | integer | 100 | 0 |
+| `meta.scope.facets.own_phrase_edges_kept_from_below` | integer | 100 | 0 |
+| `meta.scope.facets.per_query_tag` | array | 100 | 0 |
+| `meta.scope.facets.per_query_tag.facet` | string | 100 | 0 |
+| `meta.scope.facets.per_query_tag.matters` | boolean | 100 | 0 |
+| `meta.scope.facets.per_query_tag.phrase` | string | 100 | 0 |
+| `meta.scope.facets.query_tags_with_a_facet` | integer | 100 | 0 |
+| `meta.scope.facets.tags_cloud_by_the_facets` | object | 100 | 0 |
+| `meta.scope.facets.tags_cloud_by_the_facets.changed` | integer | 100 | 0 |
+| `meta.scope.facets.tags_cloud_by_the_facets.farther` | integer | 100 | 0 |
+| `meta.scope.facets.tags_cloud_by_the_facets.nearer` | integer | 100 | 0 |
+| `meta.scope.names_in_the_question` | array | 100 | 0 |
+| `meta.scope.names_in_the_question.chunks` | integer | 100 | 0 |
+| `meta.scope.names_in_the_question.key` | string | 100 | 0 |
+| `meta.scope.names_in_the_question.labels` | array | 100 | 0 |
+| `meta.scope.names_in_the_question.name` | string | 100 | 0 |
+| `meta.scope.names_in_the_question.nodes` | integer | 100 | 0 |
+| `meta.scope.names_in_the_question.set_aside` | boolean | 100 | 0 |
+| `meta.scope.nothing_cut` | boolean | 100 | 0 |
+| `meta.scope.storyline` | object | 100 | 0 |
+| `meta.scope.storyline.chosen_chunk_ids` | array | 100 | 0 |
+| `meta.scope.storyline.chosen_chunks` | integer | 100 | 0 |
+| `meta.scope.storyline.chunks_in_the_clouds` | integer | 100 | 0 |
+| `meta.scope.storyline.chunks_reached` | integer | 100 | 0 |
+| `meta.scope.storyline.nearness_from_correlation` | null, number | 100 | 25 |
+| `meta.scope.storyline.pairs` | integer | 100 | 0 |
+| `meta.scope.storyline.pairs_by_ways` | object | 100 | 0 |
+| `meta.scope.storyline.pairs_tied` | object | 100 | 0 |
+| `meta.scope.storyline.time_near_up_to_seconds` | null, number | 100 | 17 |
 | `question` | string | 100 | 0 |
 | `retrieval` | array | 100 | 0 |
 | `retrieval.attempts` | integer | 100 | 0 |
@@ -983,6 +1326,14 @@ The file holds no record.
 | `graph.graph_version` | string | 1 | 0 |
 | `graph.removed_tags_sha256` | null | 1 | 1 |
 | `graph.source_database` | string | 1 | 0 |
+| `index` | object | 1 | 0 |
+| `index.build_cost` | object | 1 | 0 |
+| `index.build_cost_file_sha256` | string | 1 | 0 |
+| `index.counts` | object | 1 | 0 |
+| `index.facet_layer_run` | string | 1 | 0 |
+| `index.first_call` | string | 1 | 0 |
+| `index.graph` | string | 1 | 0 |
+| `index.question_embedding` | string | 1 | 0 |
 | `inputs` | object | 1 | 0 |
 | `inputs.corpus` | object | 1 | 0 |
 | `inputs.corpus.n_files` | integer | 1 | 0 |
@@ -1023,6 +1374,14 @@ The file holds no record.
 | `legs.finished_at` | string | 1 | 0 |
 | `legs.flags` | null | 1 | 1 |
 | `legs.ids_file` | string | 1 | 0 |
+| `legs.index` | object | 1 | 0 |
+| `legs.index.build_cost` | object | 1 | 0 |
+| `legs.index.build_cost_file_sha256` | string | 1 | 0 |
+| `legs.index.counts` | object | 1 | 0 |
+| `legs.index.facet_layer_run` | string | 1 | 0 |
+| `legs.index.first_call` | string | 1 | 0 |
+| `legs.index.graph` | string | 1 | 0 |
+| `legs.index.question_embedding` | string | 1 | 0 |
 | `legs.lane` | object | 1 | 0 |
 | `legs.lane.cli_adds` | object | 1 | 0 |
 | `legs.lane.cli_adds.in_front_of_the_prompt` | string | 1 | 0 |
@@ -1059,12 +1418,13 @@ The file holds no record.
 | `n_questions` | integer | 1 | 0 |
 | `n_ran` | integer | 1 | 0 |
 | `questions_file` | string | 1 | 0 |
+| `retrieval_flags` | object | 1 | 0 |
 | `timestamp` | string | 1 | 0 |
 | `top_k` | integer | 1 | 0 |
 | `workers` | integer | 1 | 0 |
 
 ---
-Written from `prod/harness/fields.py`, sha256 `12d365b7a2e639663ee75cb75eb4ace80a04fca90f6637f4d70f3f4920840590`.
+Written from `prod/harness/fields.py`, sha256 `bd121e0a2cb46d6c89216b24d24db0e97fe15fba3a887562d427a38bfaf3360d`.
 
 The files as they stood when this was written, their line ends as git holds them (LF):
 

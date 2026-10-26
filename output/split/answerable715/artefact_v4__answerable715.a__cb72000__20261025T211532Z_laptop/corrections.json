@@ -1,0 +1,33 @@
+{
+  "corrections": [
+    {
+      "made_at": "2026-10-26T12:23:50.776478+00:00",
+      "ordered_by": "\"resume and finish them, make sure they are all finished, correct, complete with all data, metadata and so on\" (2026-10-26)",
+      "what_happened": "The run's manifest copied the value of the lane's API key, CLAUDE_API, because harness.provenance.settings_env took a secret only by the words in its name. The value is now \"<set>\", as the harness writes every secret.",
+      "rule": {
+        "id": "secret-env/1",
+        "text": "1. A value is a credential when its name is CLAUDE_API (harness.chat._API_KEY), or holds\n     PASSWORD, TOKEN, KEY or SECRET and does not end in _TOKENS (a limit counted in tokens), the\n     names harness.provenance.settings_env names \"<set>\".\n  2. Every such value in run_manifest.json and eval_manifest.json that is not \"<set>\" becomes\n     \"<set>\", wherever in the file it stands; no other value changes.\n  3. The value as recorded is kept nowhere, since it is a credential; each change names its place,\n     and the sha256 of each file before and after are kept.\n  4. After the change no file of the folder holds the value; otherwise nothing is written."
+      },
+      "not_changed_and_worth_knowing": [
+        "The value as recorded is kept in no file: it is a credential. The files' sha256 before the change are kept.",
+        "No other value of any file changes."
+      ],
+      "changes": [
+        {
+          "where": "run_manifest.json",
+          "field": "env.CLAUDE_API",
+          "recorded": "a credential (not kept)",
+          "corrected": "<set>"
+        }
+      ],
+      "files": {
+        "run_manifest.json": {
+          "sha256_before": "a71b3eb509ccb421d494a69a810f55ed9b266263fb42308e52bfd27d73828fde",
+          "sha256_corrected": "19814ccf874d9f69d79514752fd808c477c546da4d692769edc7791baea54f00",
+          "as_recorded": null
+        }
+      },
+      "script": "correct_secret_env.py, in this folder"
+    }
+  ]
+}

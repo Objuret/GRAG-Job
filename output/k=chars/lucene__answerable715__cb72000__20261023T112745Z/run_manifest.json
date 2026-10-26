@@ -18,8 +18,8 @@
   },
   "char_budget": 72000,
   "code_version": {
-    "commit": null,
-    "branch": null,
+    "commit": "02b207864dd542eb40ba4da6143ebb746203ad93",
+    "branch": "artefact-v4-iteration",
     "dirty": null
   },
   "environment": {
@@ -265,8 +265,8 @@
       "evaluator": "ragas",
       "peak_memory_bytes": 950521856,
       "code_version": {
-        "commit": null,
-        "branch": null,
+        "commit": "02b207864dd542eb40ba4da6143ebb746203ad93",
+        "branch": "artefact-v4-iteration",
         "dirty": null
       },
       "code_state": {
@@ -361,8 +361,8 @@
       "evaluator": "ragas",
       "peak_memory_bytes": 1548161024,
       "code_version": {
-        "commit": null,
-        "branch": null,
+        "commit": "02b207864dd542eb40ba4da6143ebb746203ad93",
+        "branch": "artefact-v4-iteration",
         "dirty": null
       },
       "code_state": {
@@ -457,8 +457,8 @@
       "evaluator": "ragas",
       "peak_memory_bytes": 3089027072,
       "code_version": {
-        "commit": null,
-        "branch": null,
+        "commit": "02b207864dd542eb40ba4da6143ebb746203ad93",
+        "branch": "artefact-v4-iteration",
         "dirty": null
       },
       "code_state": {

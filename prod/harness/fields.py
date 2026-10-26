@@ -352,6 +352,16 @@ LEG = {
     "source_run": "Only in a folder merged from two runs (merge.json): the run this start belongs "
                   "to, by its folder's name; that folder is kept whole under halves/.",
     "source_leg": "Only in a merged folder: the start's number in that run.",
+    "from_its_log": sub("Only in an entry rebuilt by correction unrecorded-starts/1 "
+                        "(corrections.json) for a start that wrote rows and no entry: what the "
+                        "start's own log says; the entry's other fields that the log cannot give "
+                        "are empty.", {
+        "log": "The start's log, by its path in the folder the correction was made in.",
+        "embedder_device": "The device the log says the embedder loaded on; empty when it "
+                           "loaded none.",
+        "last_lines": "The log's last lines that name no question.",
+        "rule": "The correction's rule.",
+    }),
     "environment": sub("Only in a merged folder: the machine and the software of that run.",
                        ENVIRONMENT),
     "env": whole("Only in a merged folder: that run's environment variables that can change what "
@@ -580,8 +590,16 @@ CORRECTION_ENTRY = {
                      "calls). The value before is empty where the field was not there before the "
                      "correction. A copied value keeps its empty parts; its own field's words say "
                      "why they are empty."),
-    "checks": whole("Only in the clean-up correction: what was checked against the call records "
-                    "and the graph, whether it held, and how many places were looked at."),
+    "checks": whole("What the correction checked before it changed anything (in the clean-up "
+                    "correction against the call records and the graph), whether it held, and how "
+                    "many places were looked at."),
+    "evidence": whole("Only in a correction that rests on a file it keeps in this folder: the file "
+                      "(or the files), its sha256 where given, and what it holds; in the sleep "
+                      "correction, the file that holds the machine's own record."),
+    "before": whole("Only in the non-LLM record-content correction: the method that made the stored "
+                    "scores (method, and what_it_did), found by running each method the evaluation "
+                    "has used on the folder's own inputs; how many stored scores each method gives "
+                    "again, per score; and how many stored scores there were, per score."),
     "judge_calls_with_logged_low_power_time_inside_them": whole("Only in the sleep correction: "
                                                                "judge calls the machine's own "
                                                                "sleep record touches, not changed; "
@@ -594,11 +612,9 @@ CORRECTION_ENTRY = {
                    "where the file from before is kept. The sleep correction's are of the bytes "
                    "on the disk that ran it; the clean-up correction's are of the files with the "
                    "line ends git holds (LF), as line_ends says."),
-    "evidence": "The file that holds the machine's own record.",
     "script": "The script that made the correction.",
-    "code": whole("Only in the clean-up correction: the code the script ran on, which it imports "
-                  "its harness and arms from: the commit, whether anything differed from it, and "
-                  "what."),
+    "code": whole("The code the script ran on, which it imports its harness and arms from: the "
+                  "commit, whether anything differed from it, and what."),
 }
 
 CORRECTIONS = {
@@ -620,6 +636,23 @@ MERGE = {
                    "holds.",
     "checked_equal": "The fields checked to be the same in both runs before the merge; the merge "
                      "stops and writes nothing when one differs.",
+    "machine_facts": whole("What each run's machine has of its own, by the run's folder name, and "
+                           "the merge does not compare: the machine (host), torch's build, which "
+                           "follows the machine's hardware (the CPU or a graphics card), the device "
+                           "the embedder loaded on at the run's last start, and how many judge calls "
+                           "its scoring starts had in flight. Each embed call's own record names the "
+                           "device it ran on."),
+    "accepted_differences": sub("The differences in how the code differed from the commit, of the "
+                                "runs (code_state) or of their starts (legs[].code_state), that the "
+                                "merge let through because a file given to it (--accept) named them; "
+                                "empty when there were none.", {
+        "path": "The field that differed.",
+        "why": "Why the difference was let through, as the file says.",
+        "checked": "What was checked to show the difference changes nothing it computed, as the "
+                   "file says.",
+        "values": whole("Each run's value of the field, by its folder name, or each start's: its "
+                        "run, its number in the run and its code_state."),
+    }),
     "left_empty": "The top-level fields of run_manifest.json left empty because their value "
                   "differed between the two runs.",
     "judge_settings_left_empty": "The fields of eval_manifest.json's judge_settings left empty "
@@ -678,6 +711,12 @@ FILES = {
     ".run.lock": ("There only while a run is writing into the folder.", "", None),
     "corrections.json": ("Only in a folder whose stored numbers were corrected after the run: "
                          "what was changed, by which rule, on whose word.", "", CORRECTIONS),
+    "eval_manifest.as_recorded.json": ("eval_manifest.json exactly as the scoring wrote it, kept by the "
+                                       "first correction that changed it (corrections.json names it).",
+                                       "", None),
+    "eval_results.as_recorded.jsonl": ("eval_results.jsonl exactly as the scoring wrote it, kept by the "
+                                       "first correction that changed it (corrections.json names it).",
+                                       "", None),
     "*.as_recorded.*": ("A file exactly as the run wrote it, kept when a correction changed the "
                         "file of the same name.", "", None),
     "machine_sleep_events.txt": ("The machine's own record of when it slept and woke, which a "
@@ -692,6 +731,58 @@ FILES = {
                                      "of the cut chunk handed over whole counted in the two "
                                      "id-based scores); run on the files from before it, it gives "
                                      "the corrected files again.", "", None),
+    "correct_zero_usage.py": ("The script that made the zero-usage correction (the tokens of the answer "
+                              "calls whose Claude program reply held 0 in its usage field); run on the "
+                              "files from before it, with its evidence file, it gives the corrected "
+                              "files again.", "", None),
+    "cli_transcript_usage.json": ("The evidence of the zero-usage correction: the Claude program's own "
+                                  "transcript counts of each answer call it changed, by session id, read "
+                                  "on the machine that made the calls.", "session id = "
+                                  "calls[].envelope.session_id of arm_outputs.jsonl", None),
+    "correct_missing_judge_legs.py": ("The script that made the missing-judge-legs correction (an entry in "
+                                      "judge_legs for each scoring start that wrote none, built from its "
+                                      "records in eval_calls.jsonl, and judge_usage as the sum of the "
+                                      "entries); run on the files from before it, it gives the corrected "
+                                      "files again.", "", None),
+    "correct_nonllm_record_content.py": ("The script that made the non-LLM record-content correction "
+                                         "(context_recall_nonllm and context_precision_nonllm calculated "
+                                         "again, record content against record content); run on the files "
+                                         "from before it, with the code named in its entry, it gives the "
+                                         "corrected files again.", "", None),
+    "correct_embed_gpu_time.py": ("The script that made the GPU-time correction (the query "
+                                  "embeddings made on the CPU given the time the same embeddings "
+                                  "take on the desktop's graphics card); run on the files from "
+                                  "before it, with its evidence file, it gives the corrected files "
+                                  "again.", "", None),
+    "gpu_embed_times.json": ("The evidence of the GPU-time correction: per run and question, each "
+                             "embed call's seconds on the graphics card, its recorded seconds and "
+                             "the cosine of its vector to the one the run made.",
+                             "question id = id of arm_outputs.jsonl; seq = calls[].seq", None),
+    "measure_gpu_embed_times.py": ("The script that measured the GPU-time correction's evidence on the "
+                                   "desktop's graphics card.", "", None),
+    "correct_secret_env.py": ("The script that made the credential correction (a credential a "
+                              "manifest had copied written as <set>); the value as recorded is "
+                              "kept nowhere.", "", None),
+    "correct_unrecorded_starts.py": ("The script that made the unrecorded-starts correction (an entry "
+                                     "in legs for each start that wrote rows and no entry, from its "
+                                     "own log under starts/, and each row's and failure's leg); run "
+                                     "on the files from before it, with starts/, it gives the "
+                                     "corrected files again.", "", None),
+    "correct_store_hit_calls.py": ("The script that made the store-hit correction (the record of each "
+                                   "first call a row read from the run's own store); run on the files "
+                                   "from before it, with its evidence file, it gives the corrected "
+                                   "files again.", "", None),
+    "correct_code_version_from_reflog.py": ("The script that made the code-version correction (the commit "
+                                            "each start ran on, by its clone's own reflog, where git gave "
+                                            "no answer when the start began); run on the files from before "
+                                            "it, with its evidence file, it gives the corrected files again.",
+                                            "", None),
+    "code_reflog.txt": ("The evidence of the code-version correction: the reflog of the clone the run "
+                        "ran in, written on that machine: each move of HEAD, its commit, time and why.",
+                        "", None),
+    "first_call_records.jsonl": ("The evidence of the store-hit correction: one line per record it "
+                                 "gave a row, with the row's id, the stage, the key and the store's "
+                                 "whole file.", "id = id of arm_outputs.jsonl", None),
     "merge.json": ("Only in a folder merged from two runs over the two halves of one question set, "
                    "made at the same commit, on one machine or two (tools/merge_split_run.py): "
                    "what was merged, what was checked to be the same in both, and the sha256 of "
@@ -790,14 +881,37 @@ SCORES = {
 _ARM_OWNED = ("meta", "index", "retrieval_flags")
 
 # What was left out of the data the runs rest on, and on whose word: his words quoted with their
-# time, or that no rule of his is recorded. An arm adds its own in its LEFT_OUT.
-LEFT_OUT = [
-    "The questions: every run answers the 100 questions of data/gold100.jsonl "
-    "(inputs.ids_sha256). How these 100 were chosen from the benchmark's questions: no rule in "
-    "his words is recorded. The set was first added on 2026-05-19 (commit 0b98b12, \"Scale gold "
-    "set to n=100 (balanced) + statistically robust result\"); his messages from 2026-05-15 to "
-    "2026-05-27 are not in the canon, because that work was done in Cursor.",
-]
+# time, or that no rule of his is recorded. An arm adds its own in its LEFT_OUT. The questions'
+# line is that of the run's set, the id file whose sha256 is the run's inputs.ids_sha256.
+_REPO = Path(__file__).resolve().parents[2]
+QUESTION_SETS = {
+    "data/gold100.jsonl": (
+        "The questions: every run answers the 100 questions of data/gold100.jsonl "
+        "(inputs.ids_sha256). How these 100 were chosen from the benchmark's questions: no rule in "
+        "his words is recorded. The set was first added on 2026-05-19 (commit 0b98b12, \"Scale gold "
+        "set to n=100 (balanced) + statistically robust result\"); his messages from 2026-05-15 to "
+        "2026-05-27 are not in the canon, because that work was done in Cursor."),
+    "data/answerable715.jsonl": (
+        "The questions: this run answers the 715 questions of data/answerable715.jsonl "
+        "(inputs.ids_sha256): every question of HERB that has an answer (\"::a::\" in its id) and is "
+        "not one of the 100 of data/gold100.jsonl, so that the runs on the two sets answer each of "
+        "HERB's 815 such questions once (his 2026-10-25 \"the fucking point is to have a full "
+        "ragas-herb test done finally\"). HERB's 699 questions with no answer (\"::u::\") are in "
+        "neither set: no rule in his words is recorded."),
+}
+
+
+def questions_left_out(man: dict) -> list:
+    """The questions' line of what was left out: that of the set the run answered, found by the
+    sha256 of its id file, or that the run's id file is none of the sets (a half of a split run, a
+    smoke)."""
+    sha = (man.get("inputs") or {}).get("ids_sha256")
+    for rel, line in QUESTION_SETS.items():
+        path = _REPO / rel
+        if sha and path.is_file() and hashlib.sha256(path.read_bytes()).hexdigest() == sha:
+            return [line]
+    return ["The questions: the run answers the questions of its id file (inputs.ids_sha256), which "
+            f"is none of {', '.join(QUESTION_SETS)}: a half of a split run, or a smaller set."]
 
 
 def arm_left_out(arm: str | None) -> list:
@@ -903,7 +1017,8 @@ def _json(path: Path) -> dict:
 
 
 def _arm_of(d: Path) -> str | None:
-    return _json(d / "run_manifest.json").get("arm")
+    # a folder that judged a run's answers again has no run manifest; its eval manifest names the arm
+    return _json(d / "run_manifest.json").get("arm") or _json(d / "eval_manifest.json").get("arm")
 
 
 def _lines(path: Path) -> list:
@@ -950,11 +1065,21 @@ def relations(folder) -> list:
              if c.get("kind") == "chat" and c.get("ok") and c.get("model") is not None]
     answer = [(r, c) for r, c in chats
               if c["usage"]["prompt_tokens"] == r["generator"]["tokens_in"]]
-    add("generator.tokens_in is the envelope's input + cache creation + cache read tokens",
-        sum(1 for r, c in answer if r["generator"]["tokens_in"] != sum(
-            int((c["envelope"].get("usage") or {}).get(k) or 0) for k in
-            ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens"))),
-        len(answer))
+
+    def envelope_in(c):
+        # a reply whose usage field held no tokens and no iterations is counted from its own
+        # counts per model (correction zero-usage/1, corrections.json), as the correction counts it
+        use = c["envelope"].get("usage") or {}
+        keys = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")
+        if any(use.get(k) for k in keys + ("output_tokens",)) or use.get("iterations"):
+            return sum(int(use.get(k) or 0) for k in keys)
+        per = (c["envelope"].get("modelUsage") or {}).get(c["model"]) or {}
+        return sum(int(per.get(k) or 0) for k in
+                   ("inputTokens", "cacheCreationInputTokens", "cacheReadInputTokens"))
+
+    add("generator.tokens_in is the envelope's input + cache creation + cache read tokens (its "
+        "counts per model where its usage field held none, as correction zero-usage/1 counts them)",
+        sum(1 for r, c in answer if r["generator"]["tokens_in"] != envelope_in(c)), len(answer))
     add("generator.time_s is request_s + wait_s + retry_s, to within half a second",
         sum(1 for r in rows if abs(r["generator"]["time_s"] - sum(
             r["generator"][k] for k in ("request_s", "wait_s", "retry_s"))) > 0.5), len(rows))
@@ -995,15 +1120,59 @@ def relations(folder) -> list:
             sum(1 for qs in per.values() if qs != ids), len(per))
         try:
             ev = _json(d / "eval_manifest.json")
-            cells = [(r.get("components") or {}).get("usage") or {} for r in res]
-            add("the score rows' judge tokens add up to eval_manifest's judge_usage",
-                int((sum(c.get("tokens_in", 0) for c in cells),
-                     sum(c.get("tokens_out", 0) for c in cells),
-                     sum(c.get("chat_calls", 0) for c in cells))
-                    != (ev["judge_usage"]["tokens_in"], ev["judge_usage"]["tokens_out"],
-                        ev["judge_usage"]["calls"])), 1)
+            calls = _lines(d / "eval_calls.jsonl")
+            ok = [c for c in calls if c.get("kind") == "chat" and c.get("ok")]
+
+            def tokens(cs):
+                return (len(cs), sum(int((c.get("usage") or {}).get("prompt_tokens") or 0) for c in cs),
+                        sum(int((c.get("usage") or {}).get("completion_tokens") or 0) for c in cs))
+            if calls:
+                # judge_usage is all judge calls, a cell a start dropped or that failed included; a
+                # start cut short can have counted calls whose cell wrote no record before it stopped
+                u, legs = ev["judge_usage"], ev.get("judge_legs") or []
+                by_start = {}
+                for c in ok:
+                    by_start.setdefault(c.get("eval_leg"), []).append(c)
+                named = [(leg.get("settings") or {}).get("started_at") for leg in legs]
+                off = sum(1 for start, leg in zip(named, legs)
+                          if (lambda e, r: e != r and not ((leg.get("settings") or {}).get("interrupted")
+                                                           and all(a >= b for a, b in zip(e, r))))(
+                              ((leg.get("usage") or {}).get("calls", 0), (leg.get("usage") or {}).get("tokens_in", 0),
+                               (leg.get("usage") or {}).get("tokens_out", 0)), tokens(by_start.get(start, []))))
+                off += len({c.get("eval_leg") for c in calls} - set(named))
+                off += int(tuple(sum((leg.get("usage") or {}).get(k, 0) for leg in legs)
+                                 for k in ("calls", "tokens_in", "tokens_out"))
+                           != (u["calls"], u["tokens_in"], u["tokens_out"]))
+                add("eval_manifest's judge_usage is the sum of judge_legs, every scoring start in "
+                    "eval_calls.jsonl has its entry, and each entry holds its start's judge calls that "
+                    "answered (an entry of a start that was cut short may hold more: calls whose cell "
+                    "wrote no record before it stopped)", off, len(legs))
+                by_cell = {}
+                for c in ok:
+                    by_cell.setdefault((c.get("question_id"), c.get("score"), c.get("eval_leg")), []).append(c)
+                # a folder that judged a run's answers again holds the run's other scores, judged
+                # by the run's own starts, whose calls are in the run's folder
+                starts = {c.get("eval_leg") for c in calls}
+                mine = [r for r in res if ((r.get("components") or {}).get("usage") or {}).get("eval_leg")
+                        in starts]
+                add("each score row judged by this folder's starts holds the calls and tokens of its own "
+                    "judge calls",
+                    sum(1 for r in mine if (lambda us: (us.get("chat_calls", 0), us.get("tokens_in", 0),
+                                                        us.get("tokens_out", 0)))(r["components"]["usage"])
+                        != tokens(by_cell.get((r["question_id"], r["metric"],
+                                               r["components"]["usage"]["eval_leg"]), []))), len(mine))
+            else:
+                cells = [(r.get("components") or {}).get("usage") or {} for r in res]
+                add("the score rows' judge tokens add up to eval_manifest's judge_usage",
+                    int((sum(c.get("tokens_in", 0) for c in cells),
+                         sum(c.get("tokens_out", 0) for c in cells),
+                         sum(c.get("chat_calls", 0) for c in cells))
+                        != (ev["judge_usage"]["tokens_in"], ev["judge_usage"]["tokens_out"],
+                            ev["judge_usage"]["calls"])), 1)
         except (OSError, ValueError, KeyError, TypeError):
-            add("the score rows' judge tokens add up to eval_manifest's judge_usage", 1, 1)
+            add("eval_manifest's judge_usage is the sum of judge_legs, every scoring start in "
+                "eval_calls.jsonl has its entry, and each entry holds its start's judge calls that "
+                "answered", 1, 1)
     return out
 
 
@@ -1172,7 +1341,11 @@ def render(folder=None, arm: str | None = None, stamp_files: bool = False) -> st
             "No stored score is called a hit rate. Whether a question got any gold record at all "
             "can be read from `context_recall_id` being above 0.", "",
             "## What was left out, and on whose word", ""]
-    out += [f"- {line}" for line in LEFT_OUT + arm_left_out(arm)]
+    # a folder that judged a run's answers again holds no run_manifest.json; its run is the folder
+    # its eval_manifest.json names (source_run)
+    run_man = man or (_json(_REPO / ev["source_run"].replace("\\", "/") / "run_manifest.json")
+                      if ev.get("source_run") else {})
+    out += [f"- {line}" for line in questions_left_out(run_man or {}) + arm_left_out(arm)]
     out += ["",
             "## Easy to read wrongly", "",
             "- `top_k` in the manifest is not used by a run with a character budget.",

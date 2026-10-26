@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2853 turns, chronological. Verbatim text; no edits.
+2923 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -20608,4 +20608,349 @@ check what the fucking CODE says holy shit
 ## 2026-10-23 02:57 · 0e1c7bb4-f4e5-4954-8079-fec00e6d4ce4.jsonl
 
 ALWAYS check the code, how is this unclear? it's the only thing telling the truth.
+
+## 2026-10-24 22:41 · fabb6455-8870-408e-9fe9-c36186df0d2c.jsonl
+
+so, if i up my sub to 20x from 5x.. will i actually get more usage? or just more usage PER WINDOW, but not more TOTAL usage? (yes, you , claude)
+
+## 2026-10-24 22:46 · fabb6455-8870-408e-9fe9-c36186df0d2c.jsonl
+
+wait.. even YOU can't find the actual fucking information of what i am buying!?
+
+## 2026-10-24 22:46 · fabb6455-8870-408e-9fe9-c36186df0d2c.jsonl
+
+*queued while an agent was working*
+
+but you should fucking know if i get more actual usage from 20x or not..
+
+## 2026-10-24 22:46 · fabb6455-8870-408e-9fe9-c36186df0d2c.jsonl
+
+*queued while an agent was working*
+
+how on earth can this not be clear
+
+## 2026-10-24 22:46 · fabb6455-8870-408e-9fe9-c36186df0d2c.jsonl
+
+*queued while an agent was working*
+
+what a actual piece of shit company
+
+## 2026-10-24 22:47 · fabb6455-8870-408e-9fe9-c36186df0d2c.jsonl
+
+but if the weekly fucking cap is the same, its NOT more usage tho, IS IT
+
+## 2026-10-24 22:47 · fabb6455-8870-408e-9fe9-c36186df0d2c.jsonl
+
+but IS the weekly cap the same? that is what i am fucking asking you
+
+## 2026-10-24 22:48 · fabb6455-8870-408e-9fe9-c36186df0d2c.jsonl
+
+information CANNOT be older than 1 month
+
+## 2026-10-24 22:50 · fabb6455-8870-408e-9fe9-c36186df0d2c.jsonl
+
+search reddit
+
+## 2026-10-25 08:44 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+Status of the full run on the desktop?
+
+## 2026-10-25 08:45 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+*queued while an agent was working*
+
+Use the corporate api tokens for usage
+
+## 2026-10-25 08:45 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+It would change who pays for this query..
+
+## 2026-10-25 08:46 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+The api token is in the env.. Check how much has been used from yesterday
+
+## 2026-10-25 08:47 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+It's my key..
+
+## 2026-10-25 08:47 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+Yes, the console
+
+## 2026-10-25 08:48 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+Is it done or still going?
+
+## 2026-10-25 08:50 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+Yes, killresume
+
+## 2026-10-25 08:51 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+*queued while an agent was working*
+
+Okay but make sure you use the way the desktop used it, meaning API key usage, meaning all of the API format stuff has been activated. It made a whole script about it.
+
+## 2026-10-25 19:30 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+ok, so, check on this again, it may have actually ran the full vector now, can you confirm?
+
+## 2026-10-25 19:44 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+nope, i only want you to onfirm and make sure the data is actually correct, the run was correct etc etc, analyze all methods, the code , the returned data everything,
+
+## 2026-10-25 19:53 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+*queued while an agent was working*
+
+use what you need
+
+## 2026-10-25 20:06 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+soo..?
+
+## 2026-10-25 20:18 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+commit, correct answer tokens, , make sure this is the same quality as all my previous runs and can be added to the workbook, also, make sure all of these things are available to both the desktop and laptop
+
+## 2026-10-25 20:22 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+*prompt-box answer*
+
+[prompt-box question: This run's eval_calls.jsonl (293 MB) and its two arm_outputs files (117 MB each) are over GitHub's 100 MB limit. How do they go into git?]
+copy them over to both machines for now instead
+
+## 2026-10-25 20:51 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+closed
+
+## 2026-10-25 21:03 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+of, do the fucking non-llm, dude, why is this a question, any of these tbh.. where they go? the same place as the 100? wtf do you mean? are they NOT the same in kind you mean? the fucking point is to have a full ragas-herb test done finally.. it's just the artefact left to run, correct?
+
+## 2026-10-25 21:13 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+gogogogo
+
+## 2026-10-25 21:51 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+*queued while an agent was working*
+
+status?
+
+## 2026-10-25 21:54 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+apparently you are running too many workers at once and that makes the desktop crash
+
+## 2026-10-25 21:55 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+*queued while an agent was working*
+
+well 27 should be fine tho
+
+## 2026-10-25 21:55 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+*queued while an agent was working*
+
+say 25 then
+
+## 2026-10-25 21:58 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+*queued while an agent was working*
+
+ok, i hope its robus so you dont redo the entire fucking run..
+
+## 2026-10-25 21:59 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+*queued while an agent was working*
+
+it also has a 11gb videocard.. cant that be used somehow also?
+
+## 2026-10-25 22:00 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+you fucking retard, i keep fucking trying to force you to do thegoddamn vectors on the GPU! shesus fucking christ
+
+## 2026-10-25 22:00 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+*queued while an agent was working*
+
+i takes almost 100x the time doing it on the fucking cpu!
+
+## 2026-10-25 22:09 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+wait, you did a dryrun and tested it and ran it on the 100.. THEN dryrun on the 715 too? what?
+
+## 2026-10-25 22:10 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+so you say the dryrun is "the same".. then both throw away the results and tell it to run the "real" instead? wtf dude?
+
+## 2026-10-25 22:10 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+...
+
+## 2026-10-25 22:19 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+*queued while an agent was working*
+
+just let the artefact get done first, you are flooding with too much work
+
+## 2026-10-25 22:23 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+*queued while an agent was working*
+
+dude WHAT are you doing now?
+
+## 2026-10-25 22:23 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+*queued while an agent was working*
+
+pause
+
+## 2026-10-25 22:24 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+*queued while an agent was working*
+
+why the fuck would only the desktop half fail?
+
+## 2026-10-25 22:28 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+?
+
+## 2026-10-25 23:36 · 408d8d26-8fe4-4068-a06f-143bbcec3ffa.jsonl
+
+status?
+
+## 2026-10-25 23:55 · e46411e8-cd79-4afb-b880-e9513800e3dd.jsonl
+
+ok, something is retarded here, cursor keeps crashing when i try to use my last chat.. just trying to get a status update on wtf is happening with the final runs..
+
+## 2026-10-26 00:09 · 15d73c13-aaed-45ac-9864-77f9b4741c9b.jsonl
+
+ok, for some fucked up reason have the desktop rebooted AGAIN, AND this shit becomes 100% unresponsive when i try to figure out what the fuck is happening with my runs
+
+## 2026-10-26 00:21 · 12fbf182-719e-4649-8599-30543820a11e.jsonl
+
+ok, lets try again then, keep me updated the entire time so i can see when/if you crash.. check the latest run on the desktop..
+
+## 2026-10-26 01:00 · 9cf6864d-1797-4caa-bc88-aed098347bc2.jsonl
+
+why the fuck does this shit keep freezing and locking up!?
+
+## 2026-10-26 01:32 · 557627a4-cbb7-490e-a551-1a07c6a56be0.jsonl
+
+ok, pick back up the runs we were doing with the desktop, the 715+ runs etc
+
+## 2026-10-26 01:38 · 39678a31-21e4-4eea-8e12-950619b01b42.jsonl
+
+i mean, you can finish the runs from here tho, right?
+
+## 2026-10-26 01:44 · 557627a4-cbb7-490e-a551-1a07c6a56be0.jsonl
+
+resume
+
+## 2026-10-26 01:54 · 557627a4-cbb7-490e-a551-1a07c6a56be0.jsonl
+
+continue
+
+## 2026-10-26 02:31 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+lets resume the final runs
+
+## 2026-10-26 10:21 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+o ffs.. you froze..
+
+## 2026-10-26 10:22 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+oh, so the laptops run is actually fully complete?
+
+## 2026-10-26 11:19 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+another agent was working on the broken store
+
+## 2026-10-26 11:20 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+communicate with the other agent on the desktop so you guys know what the other did
+
+## 2026-10-26 11:33 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+what is even happening tho, i ran almost the full run, went to sleep and while sleeping, something you did broke everything (or something on the computers.. but whatever) and then it could not work again..? i am somewhat curious as to how this enormous work you are doing is ACTUALLY the correct and reasonable fix, did you even diagnose what actually happened that made it all break?
+
+## 2026-10-26 11:41 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+i mean, cant you have workers be adaptive? meaning, it only starts a new worker if there is reasonable space left + some windows function overhead?
+
+## 2026-10-26 11:43 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+well then it doesnt matter
+
+## 2026-10-26 11:43 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+i mean my idea, not the issue
+
+## 2026-10-26 12:25 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+Nothing is offline. The desktop is not offline. The laptop had a spike of offline time because I switched networks to my mobile because I brought the laptop with me. That's the only disconnect that actually happened.
+
+## 2026-10-26 12:28 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+Why wait?
+
+## 2026-10-26 12:29 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+Are you saying I can't finish this work until I get home again?
+
+## 2026-10-26 12:30 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+Okay but if it's just sending files, we can manage that.
+
+## 2026-10-26 12:30 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+We can even use OneDrive or Google Drive or something, right?
+
+## 2026-10-26 12:30 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+Oh, nice
+
+## 2026-10-26 12:31 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+Okay but if we can shove these because they're so small, you can just give them to the desktop and it will merge. Make sure everything is absolutely fucking correct. Make the workbook, share the workbook, or you just save everything in OneDrive instead, which everyone can access, right?
+
+## 2026-10-26 12:32 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+Don't zip, have a good network. Don't worry, it's free.
+
+## 2026-10-26 12:32 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+I have infinite surf.
 

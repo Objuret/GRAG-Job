@@ -21,8 +21,12 @@ One run of one retrieval method, **vector**, over 100 questions: for each questi
 | `failures.jsonl` | One line per try at a question that failed. Empty when none did. A question that failed and was answered in a later start has a line here and a row. | id |
 | `eval_failures.jsonl` | One line per score cell that failed. Empty when none did. | question_id + metric |
 | `corrections.json` | Only in a folder whose stored numbers were corrected after the run: what was changed, by which rule, on whose word. |  |
+| `eval_results.as_recorded.jsonl` | eval_results.jsonl exactly as the scoring wrote it, kept by the first correction that changed it (corrections.json names it). |  |
 | `arm_outputs.as_recorded.jsonl`, `run_manifest.as_recorded.json` | A file exactly as the run wrote it, kept when a correction changed the file of the same name. |  |
 | `correct_usage_by_model.py` | The script that made the clean-up correction (the cost per model, the search time without the model calls, the build cost per model, the graph as counted); run on the files from before it, it gives the corrected files again. |  |
+| `correct_nonllm_record_content.py` | The script that made the non-LLM record-content correction (context_recall_nonllm and context_precision_nonllm calculated again, record content against record content); run on the files from before it, with the code named in its entry, it gives the corrected files again. |  |
+| `correct_embed_gpu_time.py` | The script that made the GPU-time correction (the query embeddings made on the CPU given the time the same embeddings take on the desktop's graphics card); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
+| `gpu_embed_times.json` | The evidence of the GPU-time correction: per run and question, each embed call's seconds on the graphics card, its recorded seconds and the cosine of its vector to the one the run made. | question id = id of arm_outputs.jsonl; seq = calls[].seq |
 
 Times are seconds (`_s`), milliseconds (`_ms`) or UTC stamps (`_at`; every other time text carries its own zone). Sizes are tokens, characters (`chars`) or bytes. A count (calls, attempts, requests, texts, records, edges, refits, and the like) is a plain number of the things it names. A price (`usd`, `USD`) is the Claude program's own, in US dollars; no number of this harness uses it. The evaluation's scores run from 0 to 1 and higher is more; a score an arm ranks by says its own scale.
 
@@ -251,6 +255,11 @@ What the run was: the arm, its index, the code, the machine, the inputs, and eve
 | `legs.correction` | Only where a stored number was corrected after the run: the rule, the value as recorded and the corrected value, the seconds taken out (taken_out_s), and in the sleep correction each slept try with its number within the call (from 1), its start, its seconds and its timeout in seconds. The folder's corrections.json tells the whole of it, and the files as recorded stand beside the corrected ones. |
 | `legs.source_run` | Only in a folder merged from two runs (merge.json): the run this start belongs to, by its folder's name; that folder is kept whole under halves/. |
 | `legs.source_leg` | Only in a merged folder: the start's number in that run. |
+| `legs.from_its_log` | Only in an entry rebuilt by correction unrecorded-starts/1 (corrections.json) for a start that wrote rows and no entry: what the start's own log says; the entry's other fields that the log cannot give are empty. |
+| `legs.from_its_log.log` | The start's log, by its path in the folder the correction was made in. |
+| `legs.from_its_log.embedder_device` | The device the log says the embedder loaded on; empty when it loaded none. |
+| `legs.from_its_log.last_lines` | The log's last lines that name no question. |
+| `legs.from_its_log.rule` | The correction's rule. |
 | `legs.environment` | Only in a merged folder: the machine and the software of that run. |
 | `legs.environment.host` | The machine's name. |
 | `legs.environment.platform` | Its operating system. |
@@ -353,13 +362,14 @@ Only in a folder whose stored numbers were corrected after the run: what was cha
 | `corrections.not_changed_and_worth_knowing` | What the correction left as recorded and a reader should know. |
 | `corrections.slept_tries` | Only in the sleep correction: the tries the rule found, each with its question, its row (the line of arm_outputs.jsonl, counted from 0), its try (its number within the call, from 1), its start (UTC), its recorded seconds, its timeout in seconds, the seconds of low power the machine logged inside it, whether a whole reply had come back, and that reply's tokens. |
 | `corrections.changes` | Every changed value: where it is, the value before and the corrected value, and what was taken out (taken_out: seconds in the sleep correction; in the clean-up correction the embedder's seconds and the seconds of refused first calls). The value before is empty where the field was not there before the correction. A copied value keeps its empty parts; its own field's words say why they are empty. |
-| `corrections.checks` | Only in the clean-up correction: what was checked against the call records and the graph, whether it held, and how many places were looked at. |
+| `corrections.checks` | What the correction checked before it changed anything (in the clean-up correction against the call records and the graph), whether it held, and how many places were looked at. |
+| `corrections.evidence` | Only in a correction that rests on a file it keeps in this folder: the file (or the files), its sha256 where given, and what it holds; in the sleep correction, the file that holds the machine's own record. |
+| `corrections.before` | Only in the non-LLM record-content correction: the method that made the stored scores (method, and what_it_did), found by running each method the evaluation has used on the folder's own inputs; how many stored scores each method gives again, per score; and how many stored scores there were, per score. |
 | `corrections.judge_calls_with_logged_low_power_time_inside_them` | Only in the sleep correction: judge calls the machine's own sleep record touches, not changed; each try as [its number from 1, its outcome, its seconds]. |
 | `corrections.low_power_intervals_the_machine_logged` | Only in the sleep correction: the machine's own record of when it slept: start and end (UTC), seconds, and what the machine said. |
 | `corrections.files` | The sha256 of each corrected file, before and after the correction, and where the file from before is kept. The sleep correction's are of the bytes on the disk that ran it; the clean-up correction's are of the files with the line ends git holds (LF), as line_ends says. |
-| `corrections.evidence` | The file that holds the machine's own record. |
 | `corrections.script` | The script that made the correction. |
-| `corrections.code` | Only in the clean-up correction: the code the script ran on, which it imports its harness and arms from: the commit, whether anything differed from it, and what. |
+| `corrections.code` | The code the script ran on, which it imports its harness and arms from: the commit, whether anything differed from it, and what. |
 
 ## Groups of fields that stand in several places
 
@@ -416,9 +426,10 @@ Only in a folder whose stored numbers were corrected after the run: what was cha
 | `payload_dropped` | The names of the settings in not_applied. |
 | `attempts` | Every try of the call, in order. |
 | `attempts.n` | The try's number within the call, from 1. |
+| `attempts.credential` | What the try logged in with: subscription (the lane's token) or api_key (the CLAUDE_API key, sent as ANTHROPIC_API_KEY). |
 | `attempts.started_at` | When the try started (UTC). |
 | `attempts.seconds` | How long the try took. |
-| `attempts.outcome` | ok (it answered), exit (the program ended with an error), bad_envelope (its reply could not be read), or timeout (cut at timeout_s). |
+| `attempts.outcome` | ok (it answered), exit (the program ended with an error), usage_limit (the subscription refused it at its usage limit, HTTP 429, and the same try went again with the CLAUDE_API key), bad_envelope (its reply could not be read), or timeout (cut at timeout_s). |
 | `attempts.returncode` | The program's exit code; empty for a timeout. |
 | `attempts.error` | The error of a try that did not answer; empty for the try that answered. |
 | `attempts.stdout` | What the program printed, kept for a try that did not answer; empty for the try that answered, whose reply is in text and envelope. |
@@ -426,6 +437,7 @@ Only in a folder whose stored numbers were corrected after the run: what was cha
 | `attempts.backoff_s` | The pause after a try that did not answer, before the next one. |
 | `attempts.machine_asleep` | Only where a correction marked the try: the machine slept under it. See corrections.json. |
 | `ok` | Whether the call ended with an answer. |
+| `credential` | What the try that answered logged in with: subscription or api_key; empty when no try answered. |
 | `text` | The reply's text. For an answer call it is the JSON that holds the answer. Empty for a call that gave up: no try answered. |
 | `usage` | The tokens of the try that answered; empty for a call that gave up. |
 | `usage.prompt_tokens` | Tokens sent: fresh input, plus what was written to the prompt cache, plus what was read from it. |
@@ -570,11 +582,7 @@ A record with `kind` chat is a call to a language model; one with `kind` embed i
 
 ## Fields without a word
 
-3 have none:
-
-- `correct_embed_gpu_time.py (the file)`
-- `corrections.json: corrections.evidence.*`
-- `gpu_embed_times.json (the file)`
+None: every file and every field of this folder is described above.
 
 ## The fields as they stand in this folder
 
@@ -695,6 +703,7 @@ Counted from the files themselves when this was written. A record is a line of a
 | Field | Types | Records that hold it | Of those, empty |
 |---|---|---|---|
 | `corrections` | array | 1 | 0 |
+| `corrections.before` | object | 1 | 0 |
 | `corrections.changes` | array | 1 | 0 |
 | `corrections.checks` | array | 1 | 0 |
 | `corrections.code` | object | 1 | 0 |
@@ -1127,19 +1136,21 @@ The file holds no record.
 | `workers` | integer | 1 | 0 |
 
 ---
-Written from `prod/harness/fields.py`, sha256 `12d365b7a2e639663ee75cb75eb4ace80a04fca90f6637f4d70f3f4920840590`.
+Written from `prod/harness/fields.py`, sha256 `bd121e0a2cb46d6c89216b24d24db0e97fe15fba3a887562d427a38bfaf3360d`.
 
 The files as they stood when this was written, their line ends as git holds them (LF):
 
 - `arm_outputs.as_recorded.jsonl` sha256 `6460b7dc48dc7ba35af7d9c1db7a3a0579b959d1bafbce3becfb2d6d423f4506`
 - `arm_outputs.jsonl` sha256 `42fb84e1c59806dfdcb0ff709f701cac513ad9cabc5ebcc77d36561dbf527a68`
 - `correct_embed_gpu_time.py` sha256 `84c6299aea0bbcf3589428bb2fe36ae8831ecd5a973ae14721cb956f5e1e24d7`
+- `correct_nonllm_record_content.py` sha256 `22f302c2e645d3aecbf87ab8735b64b356695a43362ab1cad39ce406d6d59f75`
 - `correct_usage_by_model.py` sha256 `28d2357c693e407a2d4739241d1fddca55751553f0c9d4f42eedcf5a79a0d299`
-- `corrections.json` sha256 `33f28d1f0a19bf42c5ec5165ef235f8f0bc2d1c3b943c5faf76fc8a3cf24a738`
+- `corrections.json` sha256 `a11198ad930d0fdf79d63ea4fee6e94a34d9dc02b35af12956bd0cf03ddf3170`
 - `eval_calls.jsonl` sha256 `4ec50f85bad7cde7b3c39c812ec031d4bf0ec8830428addffe9d6d31cd643370`
 - `eval_failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - `eval_manifest.json` sha256 `74b5e3841b986a72fa1d2757ab1be28329bef4990e907d4d4b5645ea1262335e`
-- `eval_results.jsonl` sha256 `d7e6f883e246a1868e3d1a9266d20516f47099529ce59053afc7caf7affc9370`
+- `eval_results.as_recorded.jsonl` sha256 `d7e6f883e246a1868e3d1a9266d20516f47099529ce59053afc7caf7affc9370`
+- `eval_results.jsonl` sha256 `e9cf69e318539cf60bf66db28089a835e8cc6ede9a800cb8890668520aaac55b`
 - `failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - `gpu_embed_times.json` sha256 `12fe727356eb1fbeefdb1b5837d467b6503700083c418e72634598dfa1d9f546`
 - `run_manifest.as_recorded.json` sha256 `3bf70b5a70cffde5ff62a426940b39fdedd70cddbaf30efdd256f74919f58c8d`

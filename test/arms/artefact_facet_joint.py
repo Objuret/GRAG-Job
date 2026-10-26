@@ -374,7 +374,9 @@ def _query_cosines(description, tags, prepared, role='query'):
         torch.set_num_threads(4)
         if (embed.EMBED_MODEL != 'nvidia/llama-nemotron-embed-1b-v2'
                 or embed.EMBED_REVISION != '113abe4acafa848e77ead9c0623205e511932348'
-                or embed.EMBED_DEVICE != 'cpu' or embed.EMBED_DTYPE != 'float32'
+                # the graphics card where there is one (his 2026-10-25 "i keep fucking trying to
+                # force you to do thegoddamn vectors on the GPU"); the device is in the recipe
+                or embed.EMBED_DEVICE not in ('cpu', 'cuda') or embed.EMBED_DTYPE != 'float32'
                 or embed.EMBED_PREFIX != {'query': 'query: ', 'passage': 'passage: '}):
             raise ValueError('Pinned embedding recipe differs')
         texts = _query_embedding_texts(description, tags)

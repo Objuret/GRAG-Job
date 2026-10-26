@@ -348,6 +348,14 @@ FIELDS = {
                                         "the customer's id.",
                 'chunks_with_a_time': "Chunks of the pool that carry their records' own times in "
                                       'the graph (times).',
+                # written only by runs before the hand-over of commit 751a72d (his 2026-10-23
+                # "yes, remove them"); kept so that their folders stay described
+                'channels_apart': "Only in runs before 2026-10-23 (commit 751a72d): channels the "
+                                  "graph's people set apart: a channel with employees none of whom "
+                                  'is tied to another channel or to a meeting of its product.',
+                'people': "Only in runs before 2026-10-23 (commit 751a72d): employees tied to a "
+                          "product's channel that is not apart or to its meetings, counted once a "
+                          'product.',
             }),
             'source_sha256': whole('The sha256 of each code file the retrieval ran from, by '
                                    'path, its line ends as git holds them (LF), so that it is '
@@ -565,6 +573,28 @@ FIELDS = {
                                                     'all went in before, with another chunk.',
                 'record_handed_over_before': 'A part of a split document or transcript whose '
                                              'whole record went in before.',
+                'in_a_channel_apart': 'Only in runs before 2026-10-23 (commit 751a72d): all its '
+                                      'messages lie in a channel apart.',
+                'no_own_pull_request': 'Only in runs before 2026-10-23 (commit 751a72d): a batch of '
+                                       "pull requests none of which is the product's own.",
+                'no_conversation_left': 'Only in runs before 2026-10-23 (commit 751a72d): a batch of '
+                                        "messages whose conversations are about another project's "
+                                        'pull request or were handed over before with another '
+                                        'chunk.',
+            }),
+            'products': whole("Only in runs before 2026-10-23 (commit 751a72d): per product of the "
+                              "border, what the graph's people say: the ids of its channels apart, "
+                              'and how many people the product has.'),
+            'records_left_out': sub("Only in runs before 2026-10-23 (commit 751a72d): records of "
+                                    "those chunks left out: a channel apart and other projects' pull "
+                                    "requests by the graph's people, talk about another project's "
+                                    'pull request by the links in its messages.', {
+                'messages_of_a_channel_apart': 'Messages of a channel apart.',
+                'pull_requests_of_other_projects': "Pull requests whose author is not one of the "
+                                                   "product's people.",
+                'messages_about_another_projects_pull_request':
+                    "Messages of a conversation that links to another project's pull request and "
+                    'to no own pull request or document.',
             }),
             'conversations_handed_over': 'Conversations handed over whole, in the texts that '
                                          'went in whole (not the one cut at the budget).',

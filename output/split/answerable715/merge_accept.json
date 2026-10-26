@@ -1,0 +1,14 @@
+{
+  "accept": [
+    {
+      "path": "code_state",
+      "why": "The desktop half's last start (2026-10-26T10:51:47Z) ran with two files changed from commit 4518897. test/arms/artefact_facet_joint.py: its check of the embedding recipe also lets the embedder run on the graphics card (his 2026-10-25 \"i keep fucking trying to force you to do thegoddamn vectors on the GPU!\"); the check is the one line changed, and on the CPU every line that runs is the same. prod/eval/ragas.py: contents_handed_over takes every version of an id that stands in two products with different content (28 url ids of HERB) and walks a text record by record; without it the desktop half's judging stopped on 6 rows. The laptop half ran on the commit with no file under prod/ or test/ changed.",
+      "checked": "On every one of the laptop half's 165 rows, contents_handed_over of commit 4518897 and of the changed prod/eval/ragas.py give the same records (165 the same, 0 different, 0 refused; output/research/2026-10-26-artefact715-merge/); the laptop half was judged with the commit's code. Every score of the desktop half was judged with the changed prod/eval/ragas.py: its one earlier judging start (2026-10-25T22:09Z) stopped before it scored a cell."
+    },
+    {
+      "path": "legs[].code_state",
+      "why": "The desktop half's starts of 2026-10-25T22:01:55Z (test/arms/artefact_facet_joint.py changed, as in code_state) and 2026-10-26T10:51:47Z (that file and prod/eval/ragas.py changed, as in code_state); and its four starts that wrote rows and no entry, rebuilt from their logs by correction unrecorded-starts/1, which hold no code state. Those four were launched between 2026-10-25T21:27Z and 21:58Z, before his words of 22:00:13Z that the change of test/arms/artefact_facet_joint.py followed.",
+      "checked": "Every embed call of the four rebuilt starts' rows ran on the CPU (their call records), where the changed check runs as before; none of them judged a cell. The two starts with changed files are those of code_state, checked there."
+    }
+  ]
+}
