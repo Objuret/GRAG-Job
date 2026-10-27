@@ -1,0 +1,83 @@
+{
+  "recorded_at": "2026-10-27T00:01:24.114182+00:00",
+  "host": "FRÄSH",
+  "starts": [
+    {
+      "log": "answerable715_b_20261025T211532Z_cuda_aborted.log",
+      "sha256": "7fca796ca04ff5315576c9f9c8c1597328ddb2cdba4d2147c851dee181fcea2c",
+      "created": "2026-10-25T21:16:15.364721+00:00",
+      "last_written": "2026-10-25T21:18:12.447502+00:00",
+      "bytes": 7173
+    },
+    {
+      "log": "answerable715_b_20261025T211532Z_before_reboot1.log",
+      "sha256": "759b5f308f7a5f11c060e5e6b5f6ca62a57e7adcab8c181096febde6b0b15284",
+      "created": "2026-10-25T21:27:05.440848+00:00",
+      "last_written": "2026-10-25T21:37:07.959436+00:00",
+      "bytes": 67489
+    },
+    {
+      "log": "answerable715_b_20261025T211532Z_orphan_markers_stop.log",
+      "sha256": "ef4b08680cbb528076a85779c10176e8cb475406caacc9b2c900c2ef2a44b0b5",
+      "created": "2026-10-25T21:40:58.995647+00:00",
+      "last_written": "2026-10-25T21:45:07.201646+00:00",
+      "bytes": 18178
+    },
+    {
+      "log": "answerable715_b_20261025T211532Z_27workers.log",
+      "sha256": "d35c36f7cd4dffde5c79b46c8ca6a9d7bc083b96b9a045777af8dd34629ba704",
+      "created": "2026-10-25T21:50:36.857147+00:00",
+      "last_written": "2026-10-25T21:55:49.820146+00:00",
+      "bytes": 29768
+    },
+    {
+      "log": "answerable715_b_20261025T211532Z_16workers.log",
+      "sha256": "49eb5c8a9e0449345500d16d022e110ecde3709797b13bf08c3009973428becb",
+      "created": "2026-10-25T21:55:56.291146+00:00",
+      "last_written": "2026-10-25T21:57:34.802645+00:00",
+      "bytes": 13351
+    },
+    {
+      "log": "answerable715_b_20261025T211532Z_25workers_cpu.log",
+      "sha256": "1128a49ac9c375eb9769db8ba42dbb35774afc128edea4e9c230ba0687f0561c",
+      "created": "2026-10-25T21:57:48.207146+00:00",
+      "last_written": "2026-10-25T22:01:28.808646+00:00",
+      "bytes": 20637
+    },
+    {
+      "log": "answerable715_b_20261025T211532Z_judging_crash.log",
+      "sha256": "dcc6e1049afe45493d2dbfb961a4aa2be032e95e0e79e6791daec3f9aa9508b6",
+      "created": "2026-10-25T22:01:35.068147+00:00",
+      "last_written": "2026-10-25T22:09:12.899146+00:00",
+      "bytes": 65687
+    },
+    {
+      "log": "answerable715_b_20261025T211532Z.log",
+      "sha256": "30612a9c6c646886d256bec4e81b58b927cb2d053e01dc219351cd469ec22351",
+      "created": "2026-10-26T10:50:55.698775+00:00",
+      "last_written": "2026-10-26T22:44:41.945309+00:00",
+      "bytes": 3786
+    },
+    {
+      "log": "leg_b_rejudge.log",
+      "sha256": "65f149942ea8356e2843e61a48393b31cb5e196c696ea580029bd25e56880e77",
+      "created": "2026-10-26T23:35:39.648755+00:00",
+      "last_written": "2026-10-26T23:35:47.461802+00:00",
+      "bytes": 1730
+    },
+    {
+      "log": "leg_b_rejudge2.log",
+      "sha256": "6c4a1a9da23caca0b61384f5b8f5a21e45fdd3c98376522452f89a653842499e",
+      "created": "2026-10-26T23:36:23.762002+00:00",
+      "last_written": "2026-10-26T23:38:22.933713+00:00",
+      "bytes": 1614
+    },
+    {
+      "log": "leg_b_rejudge3.log",
+      "sha256": "908496cd593d4692ec4fa61bc5645d376ee227ad684397e0a946746727c8dbcf",
+      "created": "2026-10-26T23:40:54.458542+00:00",
+      "last_written": "2026-10-26T23:42:47.223347+00:00",
+      "bytes": 2657
+    }
+  ]
+}

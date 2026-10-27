@@ -153,7 +153,10 @@ def main():
     kept = d / "eval_results.as_recorded.jsonl"
     src = d / "eval_results.jsonl"
     results = rows(src)
-    qfile = Path(man["questions_file"]) if Path(man["questions_file"]).exists() else repo / "data/questions.jsonl"
+    # a run merged from two machines names no questions file (each half named its own path): the
+    # repo's copy, checked by its sha256 below
+    named = man.get("questions_file")
+    qfile = Path(named) if named and Path(named).exists() else repo / "data/questions.jsonl"
     checks.append({"what": "the questions file read here is the one the run read (its sha256 in the run "
                            "manifest's inputs)",
                    "holds": hashlib.sha256(qfile.read_bytes()).hexdigest() == man["inputs"]["questions_sha256"],

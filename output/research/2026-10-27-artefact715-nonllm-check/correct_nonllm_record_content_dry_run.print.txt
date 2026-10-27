@@ -1,0 +1,16 @@
+  before-method string-leaves: gives the stored score again on 3 of 715 context_recall_nonllm, 3 of 715 context_precision_nonllm
+  before-method record-text: gives the stored score again on 107 of 715 context_recall_nonllm, 1 of 715 context_precision_nonllm
+artefact_v4__answerable715__cb72000__20261025T211532Z; from eval_results.jsonl
+  [ok] the questions file read here is the one the run read (its sha256 in the run manifest's inputs) | 1 looked at
+  [ok] the corpus read here is the one the run read (its digest in the run manifest's inputs) | 1 looked at
+  [NO] one method in BEFORE gives every stored score again (none does) | 1430 looked at
+  [ok] every stored score was calculated again | 1430 looked at
+  [ok] every text is its records in record_text form, joined by a blank line (11449 texts handed over, 154974 records with content) | 11449 looked at
+  context_recall_nonllm: up on 0, down on 0, the same on 715; mean 0.7588 -> 0.7588
+  context_precision_nonllm: up on 0, down on 0, the same on 715; mean 0.4155 -> 0.4155
+  not given again by string-leaves: 712 context_recall_nonllm, 712 context_precision_nonllm
+  not given again by record-text: 608 context_recall_nonllm, 714 context_precision_nonllm
+a check does not hold: nothing is written
+[ended 00:45:40Z]
+
+[exited with code 0]

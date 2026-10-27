@@ -1,0 +1,2665 @@
+{
+  "corrections": [
+    {
+      "made_at": "2026-10-26T23:57:54.820851+00:00",
+      "ordered_by": "\"resume and finish them, make sure they are all finished, correct, complete with all data, metadata and so on\" (2026-10-26)",
+      "what_happened": "The run's manifest copied the value of the lane's API key, CLAUDE_API, because harness.provenance.settings_env took a secret only by the words in its name. The value is now \"<set>\", as the harness writes every secret.",
+      "rule": {
+        "id": "secret-env/1",
+        "text": "1. A value is a credential when its name is CLAUDE_API (harness.chat._API_KEY), or holds\n     PASSWORD, TOKEN, KEY or SECRET and does not end in _TOKENS (a limit counted in tokens), the\n     names harness.provenance.settings_env names \"<set>\".\n  2. Every such value in run_manifest.json and eval_manifest.json that is not \"<set>\" becomes\n     \"<set>\", wherever in the file it stands; no other value changes.\n  3. The value as recorded is kept nowhere, since it is a credential; each change names its place,\n     and the sha256 of each file before and after are kept.\n  4. After the change no file of the folder holds the value; otherwise nothing is written."
+      },
+      "not_changed_and_worth_knowing": [
+        "The value as recorded is kept in no file: it is a credential. The files' sha256 before the change are kept.",
+        "No other value of any file changes."
+      ],
+      "changes": [
+        {
+          "where": "run_manifest.json",
+          "field": "env.CLAUDE_API",
+          "recorded": "a credential (not kept)",
+          "corrected": "<set>"
+        }
+      ],
+      "files": {
+        "run_manifest.json": {
+          "sha256_before": "98234d741734f419dd03a6bd5a2d9c97b5e28bd8c887d8185f11d01fddefd617",
+          "sha256_corrected": "f4a33a0954500406de3dadb2f423e6ca2ec4c1f11e05549b4ce071358f31e3e0",
+          "as_recorded": null
+        }
+      },
+      "script": "correct_secret_env.py, in this folder"
+    },
+    {
+      "made_at": "2026-10-27T00:15:23.816336+00:00",
+      "ordered_by": "\"resume and finish them, make sure they are all finished, correct, complete with all data, metadata and so on\" (2026-10-26)",
+      "what_happened": "4 starts of the run answered questions and wrote no entry in legs: their processes were stopped, or their machine stopped, before they ended. Their rows carried the number of the next start that wrote an entry, so legs named fewer starts than wrote rows and gave those rows another start's settings.",
+      "rule": {
+        "id": "unrecorded-starts/1",
+        "text": "1. A start is one log of starts.json: it began when its log was created and ended before the\n     next start's log was created. A written entry belongs to the start whose span holds its\n     started_at; each start holds at most one.\n  2. A row belongs to the start whose span holds its timing.finished_at, a failure to the one whose\n     span holds its failed_at, and must carry the number that start gave itself (rule above);\n     otherwise nothing is written. The rows a start with an entry answered must be its n_answered.\n  3. A start with no entry gets one: started_at the creation of its log, finished_at its last\n     write, workers the number its log's first line names, n_answered its rows, aborted how its\n     log ends (a process stopped from outside writes \"exit -1\" or no exit line), and from_its_log:\n     the log, its embedder device and its last lines that name no question. Every other field of\n     an entry is empty: not recorded.\n  4. The entries are numbered again in the order of their starts; each row's and failure's leg is\n     the new number of its start. No other value changes."
+      },
+      "not_changed_and_worth_knowing": [
+        "A rebuilt entry's started_at is when its command was launched (its log's creation), before the harness began; a written entry's started_at is when the harness began.",
+        "A rebuilt entry's code, flags, switches and settings are not recorded and stay empty; the rows' own call records hold the device each embedding ran on.",
+        "No answer, context, score, call record or time changes."
+      ],
+      "changes": [
+        {
+          "where": "run_manifest.json legs",
+          "field": "the entry of the start of 2026-10-25T21:27:05.440848+00:00",
+          "recorded": null,
+          "corrected": {
+            "aborted": "the start wrote no entry; its log has no exit line: the process, or its machine, stopped before it wrote one",
+            "argv": null,
+            "code_state": null,
+            "code_version": null,
+            "embedder_load_s": null,
+            "evaluator": null,
+            "finished_at": "2026-10-25T21:37:07.959436+00:00",
+            "flags": null,
+            "ids_file": null,
+            "index": null,
+            "lane": null,
+            "leg": 2,
+            "n_answered": 195,
+            "n_chosen": null,
+            "n_todo": null,
+            "n_unanswered_after": null,
+            "peak_memory_bytes": null,
+            "pid": null,
+            "prepare_s": null,
+            "process_cpu_s": null,
+            "python_executable": null,
+            "retrieval_only": null,
+            "started_at": "2026-10-25T21:27:05.440848+00:00",
+            "wall_s": null,
+            "workers": 27,
+            "from_its_log": {
+              "log": "starts/answerable715_b_20261025T211532Z_before_reboot1.log",
+              "embedder_device": "cpu",
+              "last_lines": [
+                "embedder: loading nvidia/llama-nemotron-embed-1b-v2 @ 113abe4acafa on cpu (float32) — first use",
+                "embedder: ready in 8s (2048 dim, 8192-token context)",
+                "artefact_v4: querytagger answer unusable (Facet interpreter querytag failed; key=bad9598207e2133b8ce551672a4907d7d898a10e0aa492d35a72bc848b2ea179; no retry); asking once more"
+              ],
+              "rule": "unrecorded-starts/1"
+            }
+          }
+        },
+        {
+          "where": "run_manifest.json legs",
+          "field": "the entry of the start of 2026-10-25T21:40:58.995647+00:00: leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "run_manifest.json legs",
+          "field": "the entry of the start of 2026-10-25T21:50:36.857147+00:00",
+          "recorded": null,
+          "corrected": {
+            "aborted": "the start wrote no entry; its log ends in \"exit -1\": the process was stopped from outside",
+            "argv": null,
+            "code_state": null,
+            "code_version": null,
+            "embedder_load_s": null,
+            "evaluator": null,
+            "finished_at": "2026-10-25T21:55:49.820146+00:00",
+            "flags": null,
+            "ids_file": null,
+            "index": null,
+            "lane": null,
+            "leg": 4,
+            "n_answered": 72,
+            "n_chosen": null,
+            "n_todo": null,
+            "n_unanswered_after": null,
+            "peak_memory_bytes": null,
+            "pid": null,
+            "prepare_s": null,
+            "process_cpu_s": null,
+            "python_executable": null,
+            "retrieval_only": null,
+            "started_at": "2026-10-25T21:50:36.857147+00:00",
+            "wall_s": null,
+            "workers": 27,
+            "from_its_log": {
+              "log": "starts/answerable715_b_20261025T211532Z_27workers.log",
+              "embedder_device": "cpu",
+              "last_lines": [
+                "embedder: loading nvidia/llama-nemotron-embed-1b-v2 @ 113abe4acafa on cpu (float32) — first use",
+                "embedder: ready in 14s (2048 dim, 8192-token context)",
+                "exit -1 "
+              ],
+              "rule": "unrecorded-starts/1"
+            }
+          }
+        },
+        {
+          "where": "run_manifest.json legs",
+          "field": "the entry of the start of 2026-10-25T21:55:56.291146+00:00",
+          "recorded": null,
+          "corrected": {
+            "aborted": "the start wrote no entry; its log has no exit line: the process, or its machine, stopped before it wrote one",
+            "argv": null,
+            "code_state": null,
+            "code_version": null,
+            "embedder_load_s": null,
+            "evaluator": null,
+            "finished_at": "2026-10-25T21:57:34.802645+00:00",
+            "flags": null,
+            "ids_file": null,
+            "index": null,
+            "lane": null,
+            "leg": 5,
+            "n_answered": 27,
+            "n_chosen": null,
+            "n_todo": null,
+            "n_unanswered_after": null,
+            "peak_memory_bytes": null,
+            "pid": null,
+            "prepare_s": null,
+            "process_cpu_s": null,
+            "python_executable": null,
+            "retrieval_only": null,
+            "started_at": "2026-10-25T21:55:56.291146+00:00",
+            "wall_s": null,
+            "workers": 16,
+            "from_its_log": {
+              "log": "starts/answerable715_b_20261025T211532Z_16workers.log",
+              "embedder_device": "cpu",
+              "last_lines": [
+                "artefact_v4: prepared: 4808 chunks, 16654 tags and 61018 edges in the graph, checked in 8.8s",
+                "embedder: loading nvidia/llama-nemotron-embed-1b-v2 @ 113abe4acafa on cpu (float32) — first use",
+                "embedder: ready in 8s (2048 dim, 8192-token context)"
+              ],
+              "rule": "unrecorded-starts/1"
+            }
+          }
+        },
+        {
+          "where": "run_manifest.json legs",
+          "field": "the entry of the start of 2026-10-25T21:57:48.207146+00:00",
+          "recorded": null,
+          "corrected": {
+            "aborted": "the start wrote no entry; its log ends in \"exit -1\": the process was stopped from outside",
+            "argv": null,
+            "code_state": null,
+            "code_version": null,
+            "embedder_load_s": null,
+            "evaluator": null,
+            "finished_at": "2026-10-25T22:01:28.808646+00:00",
+            "flags": null,
+            "ids_file": null,
+            "index": null,
+            "lane": null,
+            "leg": 6,
+            "n_answered": 47,
+            "n_chosen": null,
+            "n_todo": null,
+            "n_unanswered_after": null,
+            "peak_memory_bytes": null,
+            "pid": null,
+            "prepare_s": null,
+            "process_cpu_s": null,
+            "python_executable": null,
+            "retrieval_only": null,
+            "started_at": "2026-10-25T21:57:48.207146+00:00",
+            "wall_s": null,
+            "workers": 25,
+            "from_its_log": {
+              "log": "starts/answerable715_b_20261025T211532Z_25workers_cpu.log",
+              "embedder_device": "cpu",
+              "last_lines": [
+                "embedder: ready in 10s (2048 dim, 8192-token context)",
+                "artefact_v4: querytagger answer unusable (Facet interpreter querytag failed; key=64a781230139d7ca4562d185ad6776b1a80ff6d453625781e0e1c9e325d6bb13; no retry); asking once more",
+                "exit -1 "
+              ],
+              "rule": "unrecorded-starts/1"
+            }
+          }
+        },
+        {
+          "where": "run_manifest.json legs",
+          "field": "the entry of the start of 2026-10-25T22:01:35.068147+00:00: leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "run_manifest.json legs",
+          "field": "the entry of the start of 2026-10-26T10:50:55.698775+00:00: leg",
+          "recorded": 4,
+          "corrected": 8
+        },
+        {
+          "where": "run_manifest.json legs",
+          "field": "the entry of the start of 2026-10-26T23:36:23.762002+00:00: leg",
+          "recorded": 5,
+          "corrected": 9
+        },
+        {
+          "where": "run_manifest.json legs",
+          "field": "the entry of the start of 2026-10-26T23:40:54.458542+00:00: leg",
+          "recorded": 6,
+          "corrected": 10
+        },
+        {
+          "where": "arm_outputs.jsonl line 195 (LeadForce::a::26)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 196 (LeadForce::a::27)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 197 (MonitorForce::a::0)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 198 (MonitorForce::a::1)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 199 (MonitorForce::a::2)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 200 (MonitorForce::a::3)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 201 (MonitorForce::a::4)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 202 (MonitorForce::a::6)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 203 (MonitorForce::a::7)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 204 (MonitorForce::a::8)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 205 (MonitorForce::a::9)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 206 (MonitorForce::a::10)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 207 (MonitorForce::a::11)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 208 (MonitorForce::a::12)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 209 (MonitorForce::a::13)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 210 (MonitorForce::a::14)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 211 (MonitorForce::a::15)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 212 (MonitorForce::a::17)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 213 (PersonalizeForce::a::0)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "arm_outputs.jsonl line 214 (PersonalizeForce::a::4)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 215 (PersonalizeForce::a::5)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 216 (PersonalizeForce::a::6)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 217 (PersonalizeForce::a::8)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 218 (PersonalizeForce::a::9)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 219 (PersonalizeForce::a::10)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 220 (PersonalizeForce::a::11)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 221 (PersonalizeForce::a::12)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 222 (PersonalizeForce::a::13)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 223 (PersonalizeForce::a::14)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 224 (PersonalizeForce::a::15)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 225 (PersonalizeForce::a::16)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 226 (PersonalizeForce::a::17)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 227 (PersonalizeForce::a::18)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 228 (PersonalizeForce::a::19)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 229 (PersonalizeForce::a::20)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 230 (PersonalizeForce::a::21)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 231 (PersonalizeForce::a::22)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 232 (PersonalizeForce::a::23)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 233 (PersonalizeForce::a::25)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 234 (PersonalizeForce::a::26)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 235 (PersonalizeForce::a::27)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 236 (PersonalizeForce::a::28)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 237 (PersonalizeForce::a::29)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 238 (PersonalizeForce::a::30)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 239 (PersonalizeForce::a::31)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 240 (PersonalizeForce::a::32)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 241 (PersonalizeForce::a::33)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 242 (PersonalizeForce::a::35)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 243 (PersonalizeForce::a::36)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 244 (PersonalizeForce::a::37)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 245 (PersonalizeForce::a::38)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 246 (PitchForce::a::0)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 247 (PitchForce::a::1)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 248 (PitchForce::a::2)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 249 (PitchForce::a::3)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 250 (PitchForce::a::4)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 251 (PitchForce::a::5)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 252 (PitchForce::a::7)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 253 (PitchForce::a::8)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 254 (PitchForce::a::9)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 255 (PitchForce::a::10)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 256 (PitchForce::a::11)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 257 (PitchForce::a::12)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 258 (PitchForce::a::13)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 259 (PitchForce::a::14)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 260 (PitchForce::a::15)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 261 (PitchForce::a::16)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 262 (PitchForce::a::17)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 263 (PitchForce::a::18)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 264 (PitchForce::a::19)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 265 (PitchForce::a::20)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 266 (PitchForce::a::21)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 267 (PitchForce::a::22)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 268 (PitchForce::a::23)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 269 (PitchForce::a::24)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 270 (PitchForce::a::26)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 271 (PitchForce::a::28)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 272 (PitchForce::a::29)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 273 (PitchForce::a::30)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 274 (PitchForce::a::31)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 275 (PitchForce::a::32)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 276 (PitchForce::a::33)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 277 (PitchForce::a::34)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 278 (PitchForce::a::35)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 279 (PitchForce::a::36)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 280 (PitchForce::a::37)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 281 (PitchForce::a::38)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 282 (ProposalForce::a::0)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 283 (ProposalForce::a::1)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 284 (ProposalForce::a::2)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 285 (ProposalForce::a::3)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "arm_outputs.jsonl line 286 (ProposalForce::a::4)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 287 (ProposalForce::a::5)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 288 (ProposalForce::a::6)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 289 (ProposalForce::a::7)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 290 (ProposalForce::a::8)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 291 (ProposalForce::a::9)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 292 (ProposalForce::a::10)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 293 (ProposalForce::a::12)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 294 (ProposalForce::a::13)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 295 (ProposalForce::a::14)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 296 (ProposalForce::a::15)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 297 (ProposalForce::a::16)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 298 (ProposalForce::a::18)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 299 (ProposalForce::a::19)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 300 (ProposalForce::a::21)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 301 (ProposalForce::a::22)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 302 (ProposalForce::a::23)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 303 (ProposalForce::a::24)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 304 (ProposalForce::a::25)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 305 (SearchFlow::a::0)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 306 (SearchFlow::a::1)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 307 (SearchFlow::a::2)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 308 (SearchFlow::a::3)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 309 (SearchFlow::a::4)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 310 (SearchFlow::a::5)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 311 (SearchFlow::a::6)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 312 (SearchFlow::a::7)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "arm_outputs.jsonl line 313 (SearchFlow::a::8)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 314 (SearchFlow::a::9)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 315 (SearchFlow::a::10)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 316 (SearchFlow::a::11)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 317 (SearchFlow::a::13)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 318 (SearchFlow::a::14)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 319 (SearchFlow::a::15)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 320 (SearchFlow::a::16)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 321 (SearchFlow::a::17)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 322 (SearchFlow::a::18)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 323 (SearchFlow::a::19)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 324 (SearchFlow::a::20)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 325 (SearchFlow::a::21)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 326 (SearchFlow::a::22)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 327 (SearchFlow::a::23)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 328 (SearchFlow::a::24)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 329 (SearchFlow::a::25)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 330 (SearchFlow::a::26)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 331 (SearchFlow::a::27)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 332 (SearchFlow::a::28)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 333 (SearchFlow::a::29)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 334 (SearchFlow::a::30)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 335 (SearchFlow::a::31)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 336 (SearchFlow::a::32)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 337 (SearchFlow::a::34)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 338 (SearchFlow::a::35)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 339 (SearchFlow::a::36)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 340 (SearchFlow::a::37)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 341 (SearchFlow::a::38)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 342 (SearchFlow::a::39)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 343 (SearchFlow::a::40)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 344 (SearchFlow::a::41)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 345 (SearchFlow::a::42)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 346 (SearchForce::a::0)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 347 (SearchForce::a::1)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 348 (SearchForce::a::2)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 349 (SearchForce::a::3)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 350 (SearchForce::a::4)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 351 (SearchForce::a::5)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 352 (SearchForce::a::6)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 353 (SearchForce::a::8)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 354 (SearchForce::a::9)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 355 (SearchForce::a::10)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 356 (SearchForce::a::11)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 357 (SearchForce::a::12)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 358 (SearchForce::a::13)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 359 (SearchForce::a::14)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "arm_outputs.jsonl line 360 (SearchForce::a::15)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 361 (SearchForce::a::17)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 362 (SearchForce::a::18)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 363 (SearchForce::a::19)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 364 (SearchForce::a::20)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 365 (SearchForce::a::21)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 366 (SearchForce::a::22)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 367 (SearchForce::a::23)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 368 (SearchForce::a::24)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 369 (SecurityForce::a::0)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 370 (SecurityForce::a::1)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 371 (SecurityForce::a::2)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 372 (SecurityForce::a::3)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 373 (SecurityForce::a::4)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 374 (SecurityForce::a::5)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 375 (SecurityForce::a::6)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 376 (SecurityForce::a::8)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 377 (SecurityForce::a::9)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 378 (SecurityForce::a::10)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 379 (SecurityForce::a::11)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 380 (SecurityForce::a::12)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 381 (SecurityForce::a::13)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 382 (SecurityForce::a::14)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 383 (SecurityForce::a::15)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 384 (SecurityForce::a::16)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 385 (SecurityForce::a::17)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 386 (SecurityForce::a::18)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 387 (SecurityForce::a::19)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 388 (SecurityForce::a::20)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 389 (SecurityForce::a::21)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 390 (SecurityForce::a::22)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 391 (SecurityForce::a::23)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 392 (SecurityForce::a::24)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 393 (SecurityForce::a::25)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 394 (SentimentForce::a::0)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 395 (SentimentForce::a::1)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 396 (SentimentForce::a::2)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 397 (SentimentForce::a::3)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 398 (SentimentForce::a::4)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 399 (SentimentForce::a::5)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 400 (SentimentForce::a::6)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 401 (SentimentForce::a::7)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 402 (SentimentForce::a::9)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 403 (SentimentForce::a::10)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 404 (SentimentForce::a::11)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 405 (SentimentForce::a::12)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 406 (SentimentForce::a::13)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 407 (SentimentForce::a::14)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 408 (SentimentForce::a::15)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 409 (SentimentForce::a::16)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 410 (SentimentForce::a::17)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 411 (SentimentForce::a::18)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 412 (SentimentForce::a::19)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 413 (SentimentForce::a::20)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 414 (SentimentForce::a::21)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 415 (SentimentForce::a::22)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 416 (SentimentForce::a::23)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 417 (SentimentForce::a::24)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 418 (SentimentForce::a::25)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 419 (SentimentForce::a::28)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 420 (SentimentForce::a::30)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 421 (SummarizeForce::a::0)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 422 (SummarizeForce::a::1)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 423 (SummarizeForce::a::2)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 424 (SummarizeForce::a::3)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 425 (SummarizeForce::a::4)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 426 (SummarizeForce::a::5)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 427 (SummarizeForce::a::6)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 428 (SummarizeForce::a::7)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 429 (SummarizeForce::a::8)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 430 (SummarizeForce::a::9)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 431 (SummarizeForce::a::10)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 432 (SummarizeForce::a::12)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 433 (SummarizeForce::a::13)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 434 (SummarizeForce::a::14)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 435 (SummarizeForce::a::15)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 436 (SummarizeForce::a::16)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 437 (SummarizeForce::a::17)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 438 (SummarizeForce::a::18)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 439 (SummarizeForce::a::19)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 440 (SummarizeForce::a::20)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 441 (SummarizeForce::a::21)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 442 (SummarizeForce::a::22)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 443 (SupportForce::a::0)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 444 (SupportForce::a::1)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 445 (SupportForce::a::2)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 446 (SupportForce::a::3)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 447 (SupportForce::a::4)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 448 (SupportForce::a::7)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 449 (SupportForce::a::8)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 450 (SupportForce::a::9)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 451 (SupportForce::a::10)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 452 (SupportForce::a::11)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 453 (SupportForce::a::12)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 454 (SupportForce::a::13)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 455 (SupportForce::a::14)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 456 (SupportForce::a::15)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 457 (SupportForce::a::16)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 458 (SupportForce::a::17)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 459 (SupportForce::a::18)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 460 (SupportForce::a::19)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 461 (SupportForce::a::20)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 462 (SupportForce::a::21)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 463 (SupportForce::a::22)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 464 (SupportForce::a::23)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 465 (SupportForce::a::24)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 466 (TrendForce::a::0)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 467 (TrendForce::a::1)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 468 (TrendForce::a::2)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 469 (TrendForce::a::3)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 470 (TrendForce::a::4)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 471 (TrendForce::a::5)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 472 (TrendForce::a::6)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 473 (TrendForce::a::7)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 474 (TrendForce::a::8)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 475 (TrendForce::a::10)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 476 (TrendForce::a::11)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 477 (TrendForce::a::12)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 478 (TrendForce::a::13)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 479 (TrendForce::a::14)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 480 (TrendForce::a::15)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 481 (TrendForce::a::16)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 482 (TrendForce::a::17)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 483 (TrendForce::a::18)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 484 (TrendForce::a::19)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 485 (TrendForce::a::20)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 486 (TrendForce::a::21)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 487 (TrendForce::a::22)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 488 (TrendForce::a::23)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 489 (VizForce::a::0)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 490 (VizForce::a::1)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 491 (VizForce::a::2)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 492 (VizForce::a::3)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 493 (VizForce::a::4)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 494 (VizForce::a::5)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 495 (VizForce::a::6)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 496 (VizForce::a::7)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 497 (VizForce::a::8)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 498 (VizForce::a::9)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 499 (VizForce::a::10)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 500 (VizForce::a::11)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 501 (VizForce::a::12)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 502 (VizForce::a::13)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 503 (VizForce::a::14)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 504 (VizForce::a::15)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 505 (VizForce::a::17)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 506 (VizForce::a::18)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 507 (VizForce::a::19)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 508 (VizForce::a::20)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 509 (VizForce::a::21)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 510 (VizForce::a::22)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 511 (VizForce::a::23)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 512 (VizForce::a::24)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 513 (VizForce::a::25)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 514 (VizForce::a::26)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 515 (VizForce::a::27)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 516 (VizForce::a::28)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 517 (VizForce::a::29)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 518 (VizForce::a::30)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 519 (VizForce::a::31)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 520 (VizForce::a::32)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 521 (VizForce::a::33)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 522 (VizForce::a::34)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 523 (VizForce::a::35)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 524 (VizForce::a::36)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 525 (VizForce::a::37)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 526 (VizForce::a::38)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 527 (VizForce::a::39)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 528 (VizForce::a::40)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 529 (VizForce::a::41)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 530 (VizForce::a::42)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 531 (WorkFlowGenie::a::0)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 532 (WorkFlowGenie::a::1)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 533 (WorkFlowGenie::a::2)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 534 (WorkFlowGenie::a::3)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 535 (WorkFlowGenie::a::4)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 536 (WorkFlowGenie::a::5)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 537 (WorkFlowGenie::a::6)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 538 (WorkFlowGenie::a::7)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 539 (WorkFlowGenie::a::8)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 540 (WorkFlowGenie::a::9)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 541 (WorkFlowGenie::a::10)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 542 (WorkFlowGenie::a::12)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 543 (WorkFlowGenie::a::13)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 544 (WorkFlowGenie::a::14)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 545 (WorkFlowGenie::a::15)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 546 (WorkFlowGenie::a::16)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "arm_outputs.jsonl line 547 (PersonalizeForce::a::1)",
+          "field": "leg",
+          "recorded": 4,
+          "corrected": 8
+        },
+        {
+          "where": "arm_outputs.jsonl line 548 (PersonalizeForce::a::2)",
+          "field": "leg",
+          "recorded": 4,
+          "corrected": 8
+        },
+        {
+          "where": "arm_outputs.jsonl line 549 (PersonalizeForce::a::3)",
+          "field": "leg",
+          "recorded": 4,
+          "corrected": 8
+        },
+        {
+          "where": "failures.jsonl line 10 (PersonalizeForce::a::1)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "failures.jsonl line 11 (PersonalizeForce::a::2)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "failures.jsonl line 12 (PersonalizeForce::a::3)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "failures.jsonl line 13 (PersonalizeForce::a::4)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "failures.jsonl line 14 (PersonalizeForce::a::5)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "failures.jsonl line 15 (PersonalizeForce::a::6)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "failures.jsonl line 16 (PersonalizeForce::a::8)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "failures.jsonl line 17 (PersonalizeForce::a::9)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "failures.jsonl line 18 (PersonalizeForce::a::10)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "failures.jsonl line 19 (PersonalizeForce::a::11)",
+          "field": "leg",
+          "recorded": 2,
+          "corrected": 3
+        },
+        {
+          "where": "failures.jsonl line 20 (PersonalizeForce::a::1)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "failures.jsonl line 21 (PersonalizeForce::a::2)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "failures.jsonl line 22 (PersonalizeForce::a::3)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 4
+        },
+        {
+          "where": "failures.jsonl line 23 (PersonalizeForce::a::1)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "failures.jsonl line 24 (PersonalizeForce::a::2)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "failures.jsonl line 25 (PersonalizeForce::a::3)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 5
+        },
+        {
+          "where": "failures.jsonl line 26 (PersonalizeForce::a::1)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "failures.jsonl line 27 (PersonalizeForce::a::2)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "failures.jsonl line 28 (PersonalizeForce::a::3)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 6
+        },
+        {
+          "where": "failures.jsonl line 29 (PersonalizeForce::a::1)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "failures.jsonl line 30 (PersonalizeForce::a::2)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        },
+        {
+          "where": "failures.jsonl line 31 (PersonalizeForce::a::3)",
+          "field": "leg",
+          "recorded": 3,
+          "corrected": 7
+        }
+      ],
+      "checks": [
+        {
+          "what": "each written entry's n_answered is the rows of its start",
+          "holds": true,
+          "looked_at": 6
+        },
+        {
+          "what": "every row and failure is in one start's span and carries that start's own number",
+          "holds": true,
+          "looked_at": 582
+        },
+        {
+          "what": "starts with no entry, no row and no failure (left out: they wrote nothing)",
+          "holds": true,
+          "looked_at": 1,
+          "starts": [
+            "leg_b_rejudge.log"
+          ]
+        }
+      ],
+      "evidence": {
+        "starts": "starts/starts.json",
+        "logs": [
+          "starts/answerable715_b_20261025T211532Z_cuda_aborted.log",
+          "starts/answerable715_b_20261025T211532Z_before_reboot1.log",
+          "starts/answerable715_b_20261025T211532Z_orphan_markers_stop.log",
+          "starts/answerable715_b_20261025T211532Z_27workers.log",
+          "starts/answerable715_b_20261025T211532Z_16workers.log",
+          "starts/answerable715_b_20261025T211532Z_25workers_cpu.log",
+          "starts/answerable715_b_20261025T211532Z_judging_crash.log",
+          "starts/answerable715_b_20261025T211532Z.log",
+          "starts/leg_b_rejudge.log",
+          "starts/leg_b_rejudge2.log",
+          "starts/leg_b_rejudge3.log"
+        ]
+      },
+      "files": {
+        "arm_outputs.jsonl": {
+          "sha256_before": "fbcbb5ff4716faaf41212332ac69b9a82e7a7eb05d5ae1baf8599ff20cc74784",
+          "sha256_corrected": "6ad557d36048b7cb3490b95480fb55c97f5910bfabd478ba1b0b4685a5fb3f50",
+          "as_recorded": "arm_outputs.as_recorded.jsonl"
+        },
+        "failures.jsonl": {
+          "sha256_before": "c732d88e40163042dc339ad3e5d457aaaa3e0e8bf08e8be98bb677bc7bb3a207",
+          "sha256_corrected": "8e8423b9f1b7117a59102e3ec73e3036fc644c5a3c1cc8d7d605c7c90bc8293a",
+          "as_recorded": "failures.as_recorded.jsonl"
+        },
+        "run_manifest.json": {
+          "sha256_before": "f4a33a0954500406de3dadb2f423e6ca2ec4c1f11e05549b4ce071358f31e3e0",
+          "sha256_corrected": "1496cb40f2d356549ef0b47674a977eb128dcc3f1045564157ab575faf58e3b4",
+          "as_recorded": "run_manifest.as_recorded.json"
+        }
+      },
+      "script": "correct_unrecorded_starts.py, in this folder"
+    },
+    {
+      "made_at": "2026-10-27T00:16:02.675233+00:00",
+      "ordered_by": "\"resume and finish them, make sure they are all finished, correct, complete with all data, metadata and so on\" (2026-10-26)",
+      "what_happened": "The run's starts recorded no code version: git gave no answer in the shell they ran in on the desktop. The commit each one ran on is the one its clone's HEAD named when it began, by the clone's own reflog.",
+      "rule": {
+        "id": "code-version-reflog/1",
+        "text": "1. A start (an entry of legs) is corrected when its code_version.commit is empty.\n  2. Its commit is the one the clone's HEAD moved to last before the start's started_at, by the\n     reflog, and its branch the one the reflog's last checkout before then moved to. dirty and\n     code_state stay empty: whether the working copy differed from the commit, and how, is not\n     recorded.\n  3. A start that recorded its commit must be the commit rule 2 gives for it; otherwise nothing is\n     written.\n  4. The run's top-level code_version is its last start's, as the harness writes it."
+      },
+      "not_changed_and_worth_knowing": [
+        "Whether a start's working copy differed from its commit, and how, is not recorded: dirty and code_state stay empty. A start whose git answered may show that it did."
+      ],
+      "changes": [
+        {
+          "where": "run_manifest.json legs[1] (leg 2)",
+          "field": "code_version",
+          "recorded": {},
+          "corrected": {
+            "commit": "4518897d18ab86fa25bc398d2efafa9a2635de93",
+            "branch": "artefact-v4-iteration",
+            "dirty": null
+          }
+        },
+        {
+          "where": "run_manifest.json legs[3] (leg 4)",
+          "field": "code_version",
+          "recorded": {},
+          "corrected": {
+            "commit": "4518897d18ab86fa25bc398d2efafa9a2635de93",
+            "branch": "artefact-v4-iteration",
+            "dirty": null
+          }
+        },
+        {
+          "where": "run_manifest.json legs[4] (leg 5)",
+          "field": "code_version",
+          "recorded": {},
+          "corrected": {
+            "commit": "4518897d18ab86fa25bc398d2efafa9a2635de93",
+            "branch": "artefact-v4-iteration",
+            "dirty": null
+          }
+        },
+        {
+          "where": "run_manifest.json legs[5] (leg 6)",
+          "field": "code_version",
+          "recorded": {},
+          "corrected": {
+            "commit": "4518897d18ab86fa25bc398d2efafa9a2635de93",
+            "branch": "artefact-v4-iteration",
+            "dirty": null
+          }
+        },
+        {
+          "where": "run_manifest.json legs[8] (leg 9)",
+          "field": "code_version",
+          "recorded": {
+            "commit": null,
+            "branch": null,
+            "dirty": null
+          },
+          "corrected": {
+            "commit": "4518897d18ab86fa25bc398d2efafa9a2635de93",
+            "branch": "artefact-v4-iteration",
+            "dirty": null
+          }
+        },
+        {
+          "where": "run_manifest.json legs[9] (leg 10)",
+          "field": "code_version",
+          "recorded": {
+            "commit": null,
+            "branch": null,
+            "dirty": null
+          },
+          "corrected": {
+            "commit": "4518897d18ab86fa25bc398d2efafa9a2635de93",
+            "branch": "artefact-v4-iteration",
+            "dirty": null
+          }
+        }
+      ],
+      "checks": [
+        {
+          "what": "rule 3: each start that recorded its commit is the commit the reflog gives for it",
+          "holds": true,
+          "looked_at": 4
+        }
+      ],
+      "evidence": {
+        "file": "code_reflog.txt",
+        "sha256": "3afbde103bd3a20f21192f2128ed8a23ccd4dae9caa4683448649069ab195df5",
+        "what": "the clone's reflog, written on the machine that ran the starts"
+      },
+      "files": {
+        "run_manifest.json": {
+          "sha256_before": "1496cb40f2d356549ef0b47674a977eb128dcc3f1045564157ab575faf58e3b4",
+          "sha256_corrected": "6aaa1899207fa15553a7df9752c05dd2d17b34d0089251867bbde88081fbb33d",
+          "as_recorded": "run_manifest.as_recorded.json"
+        }
+      },
+      "script": "correct_code_version_from_reflog.py, in this folder"
+    }
+  ]
+}

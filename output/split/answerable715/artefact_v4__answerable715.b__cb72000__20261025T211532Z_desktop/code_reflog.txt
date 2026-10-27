@@ -1,0 +1,16 @@
+4518897d18ab86fa25bc398d2efafa9a2635de93|HEAD@{2026-10-25T21:23:55+01:00}|commit: the vector and lucene runs on the 715 answerable questions, the vector run's 612 zero answer-call token counts corrected; the lane's API-key fallback on HTTP 429, the 128000 output cap and the 1h cache; the GPU embedding-time corrections of the final runs; the non-LLM record-content tools; the six files over 100 MB kept out (copied between the machines)
+02b207864dd542eb40ba4da6143ebb746203ad93|HEAD@{2026-10-23T13:17:41+02:00}|commit (merge): Merge remote-tracking branch 'origin/artefact-v4-iteration' into artefact-v4-iteration
+da1cfa0ad62bbc085e37ae5db2279fb37c56d28c|HEAD@{2026-10-23T08:00:22+02:00}|commit: navigation graph refreshed
+a1ba071006e47fa9a406ec091841b5e0a714b281|HEAD@{2026-10-23T07:59:14+02:00}|commit: factual_correctness and context_entity_recall on the three final runs' answers, judged by --rejudge into the folder beside each run; the export reads them there and adds their judging to each run's; the scorer primes embeddings only for scores with cells left to score; the workbook made again
+082620b3561626d04d8714ccc8298e79fea2fbe5|HEAD@{2026-10-23T07:12:37+02:00}|commit: export: results carries HERB's reference answer and evidence record ids (reference_answer, reference_context_ids), read from data/questions.jsonl, which every final run read by its hash
+3f3ca4f464ad23e9f1f27801c69dd17362ce7279|HEAD@{2026-10-23T04:47:10+02:00}|pull -q --ff-only: Fast-forward
+cc95dcd47ceab1743f1c1e2ec02ccac22bb2a5f9|HEAD@{2026-10-23T04:43:24+02:00}|pull -q --ff-only: Fast-forward
+751a72d3f932ac39b2e79c20cf3b96c40065c499|HEAD@{2026-10-23T04:13:09+02:00}|pull -q --ff-only: Fast-forward
+2bd25342b3479b7914446b6a261198c204e70a50|HEAD@{2026-10-22T21:33:21+02:00}|pull --ff-only origin artefact-v4-iteration: Fast-forward
+52b00b5defd4c60ebfc4e221f26c079e6f400def|HEAD@{2026-10-22T12:31:22+02:00}|pull -q --ff-only: Fast-forward
+c29becbc3782cab4c54e7dd643f63d3726338b2a|HEAD@{2026-10-22T12:31:20+02:00}|checkout: moving from artefact-v4-links to artefact-v4-iteration
+7ebb93d010510953398322a0e08af9fc35f76300|HEAD@{2026-10-22T10:10:11+02:00}|checkout: moving from artefact-v4-iteration to artefact-v4-links
+c29becbc3782cab4c54e7dd643f63d3726338b2a|HEAD@{2026-10-22T07:56:26+02:00}|pull --ff-only -q: Fast-forward
+ff5012370e57d4093551a763d8439fe67c0146ac|HEAD@{2026-10-22T07:32:19+02:00}|pull --ff-only -q: Fast-forward
+9f0e7f13893fe2cd279f230807fe26851af18217|HEAD@{2026-10-22T07:30:08+02:00}|pull --ff-only -q: Fast-forward
+b5b1cfbe529f53858569db30f7fc0c16aaf4688d|HEAD@{2026-10-22T06:47:32+02:00}|clone: from https://github.com/Objuret/GRAG-Job.git

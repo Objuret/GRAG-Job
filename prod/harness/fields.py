@@ -789,6 +789,17 @@ FILES = {
     "first_call_records.jsonl": ("The evidence of the store-hit correction: one line per record it "
                                  "gave a row, with the row's id, the stage, the key and the store's "
                                  "whole file.", "id = id of arm_outputs.jsonl", None),
+    "judge_calls_without_record.json": ("Judge calls that answered and that no line of eval_calls.jsonl "
+                                        "holds, found in the Claude program's own transcripts on the "
+                                        "machine that made them: each a call of a score cell that had "
+                                        "failed, which answered after the cell had ended. Its scoring "
+                                        "start's entry in judge_legs counts them. Per scoring start: the "
+                                        "transcripts in its span, and each such call's session id, first "
+                                        "and last event, model, assistant messages and tokens.",
+                                        "starts = judge_legs[].settings.started_at", None),
+    "judge_calls_without_record.py": ("The script that found judge_calls_without_record.json, run on the "
+                                      "machine that made the calls; it reads no content and makes no "
+                                      "model call.", "", None),
     "merge.json": ("Only in a folder merged from two runs over the two halves of one question set, "
                    "made at the same commit, on one machine or two (tools/merge_split_run.py): "
                    "what was merged, what was checked to be the same in both, and the sha256 of "
@@ -1142,25 +1153,38 @@ def relations(folder) -> list:
                         sum(int((c.get("usage") or {}).get("completion_tokens") or 0) for c in cs))
             if calls:
                 # judge_usage is all judge calls, a cell a start dropped or that failed included; a
-                # start cut short can have counted calls whose cell wrote no record before it stopped
+                # start cut short can have counted calls whose cell wrote no record before it stopped,
+                # and a call of a cell that had failed can have answered after the cell ended, which
+                # judge_calls_without_record.json names per start
                 u, legs = ev["judge_usage"], ev.get("judge_legs") or []
                 by_start = {}
                 for c in ok:
                     by_start.setdefault(c.get("eval_leg"), []).append(c)
                 named = [(leg.get("settings") or {}).get("started_at") for leg in legs]
-                off = sum(1 for start, leg in zip(named, legs)
-                          if (lambda e, r: e != r and not ((leg.get("settings") or {}).get("interrupted")
-                                                           and all(a >= b for a, b in zip(e, r))))(
-                              ((leg.get("usage") or {}).get("calls", 0), (leg.get("usage") or {}).get("tokens_in", 0),
-                               (leg.get("usage") or {}).get("tokens_out", 0)), tokens(by_start.get(start, []))))
+                found = (_json(d / "judge_calls_without_record.json").get("starts") or {}
+                         if (d / "judge_calls_without_record.json").exists() else {})
+
+                def without_record(start):
+                    xs = (found.get(start) or {}).get("named_by_no_record") or []
+                    return (len(xs), sum(x["input_tokens"] + x["cache_creation_input_tokens"]
+                                         + x["cache_read_input_tokens"] for x in xs),
+                            sum(x["output_tokens"] for x in xs))
+
+                def entry_holds(start, leg):
+                    e = tuple((leg.get("usage") or {}).get(k, 0) for k in ("calls", "tokens_in", "tokens_out"))
+                    r = tuple(a + b for a, b in zip(tokens(by_start.get(start, [])), without_record(start)))
+                    return e == r or bool((leg.get("settings") or {}).get("interrupted")
+                                          and all(a >= b for a, b in zip(e, r)))
+                off = sum(1 for start, leg in zip(named, legs) if not entry_holds(start, leg))
                 off += len({c.get("eval_leg") for c in calls} - set(named))
                 off += int(tuple(sum((leg.get("usage") or {}).get(k, 0) for leg in legs)
                                  for k in ("calls", "tokens_in", "tokens_out"))
                            != (u["calls"], u["tokens_in"], u["tokens_out"]))
                 add("eval_manifest's judge_usage is the sum of judge_legs, every scoring start in "
                     "eval_calls.jsonl has its entry, and each entry holds its start's judge calls that "
-                    "answered (an entry of a start that was cut short may hold more: calls whose cell "
-                    "wrote no record before it stopped)", off, len(legs))
+                    "answered and those judge_calls_without_record.json names for it (an entry of a start "
+                    "that was cut short may hold more: calls whose cell wrote no record before it "
+                    "stopped)", off, len(legs))
                 by_cell = {}
                 for c in ok:
                     by_cell.setdefault((c.get("question_id"), c.get("score"), c.get("eval_leg")), []).append(c)

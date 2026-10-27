@@ -221,7 +221,7 @@ def judging_seconds(calls, ids, what):
     return sum((b - a).total_seconds() - out.get(k, 0.0) for k, (a, b) in spans.items()), sum(out.values())
 
 
-def judge_cost(folder, ev, calls, cells):
+def judge_cost(folder, ev, calls, cells, d):
     """judge_usage, checked against the scoring starts and the call records: every start in the call
     records has its entry in judge_legs, each entry's counts are those of its start's judge calls that
     answered (counted as tools/correct_missing_judge_legs.py counts them), judge_usage is the entries'
@@ -236,8 +236,22 @@ def judge_cost(folder, ev, calls, cells):
     if not all(starts) or set(by_leg) - set(starts):
         sys.exit(f"{folder}: the scoring starts {sorted(set(by_leg) - set(starts))} are in eval_calls.jsonl "
                  f"and have no entry in judge_legs, or an entry names no start")
+    found = (read(d / "judge_calls_without_record.json").get("starts") or {}
+             if (d / "judge_calls_without_record.json").is_file() else {})
     for start, leg in zip(starts, legs):
         records = judge_records.usage_of(by_leg.get(start, []))
+        xs = (found.get(start) or {}).get("named_by_no_record") or []
+        if xs:
+            # calls of a cell that had failed, which answered after the cell had ended: no record holds
+            # them, the lane's own transcripts on the machine that made them name them
+            records = dict(records, calls=records["calls"] + len(xs), attempts=records["attempts"] + len(xs),
+                           tokens_in=records["tokens_in"] + sum(x["input_tokens"] + x["cache_creation_input_tokens"]
+                                                                + x["cache_read_input_tokens"] for x in xs),
+                           cached_input_tokens=records["cached_input_tokens"]
+                           + sum(x["cache_read_input_tokens"] for x in xs),
+                           tokens_out=records["tokens_out"] + sum(x["output_tokens"] for x in xs))
+            print(f"{folder}: the entry of scoring start {start} holds {len(xs)} judge calls that no record holds, "
+                  f"named in judge_calls_without_record.json")
         diff = judge_records.differs(leg["usage"], records, counts)
         # a written entry stays as recorded. A start that was cut short can have counted calls whose cell
         # wrote no record before it stopped, so its entry may hold more than its records; it may never hold
@@ -297,7 +311,7 @@ def environment(d, man):
     if man["environment"] is not None:
         return man["environment"]
     envs = [h["environment"] for h in halves(d, "run_manifest.json")]
-    if len(envs) != len(man["legs"]) or len({e["embedder"]["model"] for e in envs}) != 1:
+    if not envs or len({e["embedder"]["model"] for e in envs}) != 1:
         sys.exit(f"{d.name}: the halves do not name one embedding model")
     return envs[0]
 
@@ -384,7 +398,7 @@ def runs_tables(arm, folder, refs, sets, by_sha):
     for r in rows(d / "eval_results.jsonl"):
         cells.setdefault(r["question_id"], {})[r["metric"]] = r
     calls = rows(d / "eval_calls.jsonl")
-    judge, embedded = judge_cost(folder, ev, calls, cells)
+    judge, embedded = judge_cost(folder, ev, calls, cells, d)
     seconds, failed_judging = judging_seconds(calls, set(cells), folder)
     added, added_seconds, added_in, added_out, added_failed = rejudged(arm, d, cells, ev["judge_model"], set_name)
     for qid, scores in added.items():
