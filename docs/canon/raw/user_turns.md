@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2923 turns, chronological. Verbatim text; no edits.
+2942 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -20953,4 +20953,90 @@ Don't zip, have a good network. Don't worry, it's free.
 *queued while an agent was working*
 
 I have infinite surf.
+
+## 2026-10-26 12:34 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+Stop using the api key then
+
+## 2026-10-26 12:34 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+It's done with that now
+
+## 2026-10-26 14:17 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+well, how is it going?
+
+## 2026-10-26 14:58 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+is anyone working now?
+
+## 2026-10-26 14:58 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+because you are giving me "sitting on my hands" vibes
+
+## 2026-10-26 14:59 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+i mean, it's "you".. its claude there too so i am pretty fucking sure you can either yourself or ask other agents to check it
+
+## 2026-10-26 15:13 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+wait.. the work is not using the gpu now? dude? what? it takes for fucking ever to do the embeddings with cpu..
+
+## 2026-10-26 15:14 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+ok, is it running on the desktop now then?
+
+## 2026-10-26 17:10 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+did you read it?
+
+## 2026-10-26 17:12 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+wbhat exactly are you expecting the desktop to do and run? what have you told it?
+
+## 2026-10-26 17:14 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+what are you on about? we want it to finish the actual run? or IS it done already?
+
+## 2026-10-26 17:15 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+it feels like you are making this into a fucking mess
+
+## 2026-10-26 17:50 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+well, tell the agent that, dude, i told you two to communicate with eachother, how fucking come you actually dont even read messages taht is sent to you..
+
+## 2026-10-26 17:52 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+earlier there came one you ignored,  now i told YOU to send one
+
+## 2026-10-26 18:00 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+"recieved message frmo another session" it says here, you cant see that it comes in?
+
+## 2026-10-26 20:04 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+dude, you can read this resuming final runs, its a cloud chat AND visible in this harness
+
+## 2026-10-26 20:06 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+go
+
+## 2026-10-26 23:08 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+did you tell it?
+
+## 2026-10-26 23:13 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+i mean NOW, after you r last stuff
 

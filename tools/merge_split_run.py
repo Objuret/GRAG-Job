@@ -17,9 +17,11 @@ merge takes the two run folders made from those two files and writes one run fol
     its own is not compared and is kept per run in merge.json (machine_facts): the build of torch,
     which follows the machine's hardware, the embedder's device, and how many judge calls a scoring
     start had in flight. A difference in how the code differed from the commit (code_state, of the
-    runs or of their starts) goes through only when --accept names it in a file, {"accept": [{"path":
-    "code_state" or "legs[].code_state", "why": ..., "checked": ...}]}, and is kept in merge.json
-    (accepted_differences) with each run's or start's value;
+    runs or of their starts), or in a scoring start's lane (its login line, which says whether the
+    API fallback was on, and the CLI's version), goes through only when --accept names it in a file,
+    {"accept": [{"path": one of ACCEPTABLE, "why": ..., "checked": ...}]}, and is kept in merge.json
+    (accepted_differences) with each run's or start's value; a lane field the scoring starts differ
+    in is left empty in the merged judge_settings;
   - arm_outputs, failures, eval_results, eval_calls and eval_failures in the order of the set's
     questions; each start of both runs one leg, in the order they began, numbered again, with its
     run's machine (environment) and switches (env) in it; a row's leg the new number;
@@ -67,7 +69,8 @@ SETTINGS_OWN = ("started_at", "finished_at", "interrupted", "workers", "argv", "
 MACHINE_PACKAGES = ("torch",)
 MACHINE_EMBEDDER = ("device",)
 # the differences --accept can let through, each with why and what was checked
-ACCEPTABLE = ("code_state", "legs[].code_state")
+ACCEPTABLE = ("code_state", "legs[].code_state",
+              "judge_legs[].settings.lane.login", "judge_legs[].settings.lane.cli_version")
 
 
 def _without_machine(path, value):
@@ -247,6 +250,15 @@ def _merged_settings(settings):
              if k not in ("started_at", "finished_at", "interrupted", "embedding", "cells")]
     for k in empty:
         out[k] = None
+    # a lane field the starts differ in (each machine's program path and folder, or a field
+    # --accept let through) is each start's own
+    lanes = [s["lane"] for s in settings if s.get("lane") is not None]
+    if lanes:
+        out["lane"] = dict(out.get("lane") or {})
+        for k in dict.fromkeys(k for lane in lanes for k in lane):
+            if any(lane.get(k) != lanes[0].get(k) for lane in lanes):
+                out["lane"][k] = None
+                empty.append(f"lane.{k}")
     return out, empty
 
 
@@ -400,15 +412,32 @@ def merge(args):
             if runs[0].eval.get(key) != runs[1].eval.get(key):
                 problems.append(f"eval_manifest {key} differs")
             checked.append(f"eval_manifest.{key}")
-        ref = None
+        ref = first = None
+        lane_through = {}
         for r in runs:
             for leg in r.judge_legs():
                 s = _scoring_settings(leg.get("settings"), r.home)
+                began = (leg.get("settings") or {}).get("started_at")
                 if ref is None:
-                    ref = s
-                elif s != ref:
-                    diff = sorted(k for k in set(s) | set(ref) if s.get(k) != ref.get(k))
-                    problems.append(f"{r.name}: a scoring start ran under other settings: {diff}")
+                    ref, first = s, {"run": r.name, "started_at": began}
+                    continue
+                if s == ref:
+                    continue
+                diff = sorted(k for k in set(s) | set(ref) if s.get(k) != ref.get(k))
+                if diff == ["lane"]:
+                    la, lb = ref.get("lane") or {}, s.get("lane") or {}
+                    diff = [f"lane.{k}" for k in sorted(set(la) | set(lb)) if la.get(k) != lb.get(k)]
+                    if all(f"judge_legs[].settings.{d}" in accept for d in diff):
+                        for d in diff:
+                            k = d[len("lane."):]
+                            lane_through.setdefault(d, [dict(first, value=la.get(k))]).append(
+                                {"run": r.name, "started_at": began, "value": lb.get(k)})
+                        continue
+                problems.append(f"{r.name}: a scoring start ran under other settings: {diff}")
+        for d, values in lane_through.items():
+            a = accept[f"judge_legs[].settings.{d}"]
+            accepted.append({"path": f"judge_legs[].settings.{d}", "why": a["why"],
+                             "checked": a["checked"], "values": values})
         checked.append("judge_legs[].settings (all but " + ", ".join(SETTINGS_OWN)
                        + ", lane.exe, lane.cwd; home folder taken out)")
     if problems:

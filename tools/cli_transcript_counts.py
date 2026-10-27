@@ -8,7 +8,9 @@ the usage of every assistant message of the session summed, one message (by its 
 It runs on the machine that made the calls: the lane's transcripts are under its own config folder
 (~/.claude-herb-lane/projects). A run whose answers two machines made is counted on each; the
 counts of the other machine, given as <other json>, are joined in, each session counted on one
-machine only. Nothing is sent to a model; nothing of the run is written.
+machine only. A transcript with a line that holds NUL bytes (the machine stopped while the CLI
+wrote the file) gets no count, since the lost line may have held a message; its session is listed.
+Nothing is sent to a model; nothing of the run is written.
 """
 import json
 import sys
@@ -23,7 +25,7 @@ def main():
     by_name = {}
     for f in root.rglob("*.jsonl"):
         by_name.setdefault(f.stem, []).append(f)
-    counts, missing, several = {}, [], []
+    counts, missing, several, damaged = {}, [], [], []
     sessions = []
     for line in (run / "arm_outputs.jsonl").read_text(encoding="utf-8").splitlines():
         if not line.strip():
@@ -38,15 +40,21 @@ def main():
             continue
         if len(files) > 1:
             several.append(qid)
-        msgs = {}
+        msgs, lost = {}, 0
         for t in files:
             for x in t.read_text(encoding="utf-8").splitlines():
+                if "\x00" in x:
+                    lost += 1
+                    continue
                 if not x.strip():
                     continue
                 ev = json.loads(x)
                 m = ev.get("message") or {}
                 if ev.get("type") == "assistant" and m.get("usage"):
                     msgs[m.get("id") or ev.get("uuid")] = m["usage"]
+        if lost:
+            damaged.append((qid, sid, lost))
+            continue
         counts[sid] = {k: sum(int(u.get(k) or 0) for u in msgs.values()) for k in KEYS}
     here = len(counts)
     for other in others:
@@ -57,7 +65,10 @@ def main():
         counts.update(theirs)
     out.write_text(json.dumps(counts, indent=1), encoding="utf-8")
     print(f"model calls {len(sessions)}; sessions counted here {here}; no transcript here {len(missing)}; "
-          f"more than one transcript file {len(several)}; sessions in the file {len(counts)}")
+          f"more than one transcript file {len(several)}; a line of NUL bytes, so no count "
+          f"{len(damaged)}; sessions in the file {len(counts)}")
+    for qid, sid, lost in damaged:
+        print(f"  no count: {qid} session {sid} ({lost} line(s) of NUL bytes)")
 
 
 if __name__ == "__main__":

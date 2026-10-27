@@ -643,7 +643,10 @@ MERGE = {
                            "its scoring starts had in flight. Each embed call's own record names the "
                            "device it ran on."),
     "accepted_differences": sub("The differences in how the code differed from the commit, of the "
-                                "runs (code_state) or of their starts (legs[].code_state), that the "
+                                "runs (code_state) or of their starts (legs[].code_state), or in a "
+                                "scoring start's lane (judge_legs[].settings.lane.login, the login "
+                                "line, which says whether the API fallback was on; "
+                                "judge_legs[].settings.lane.cli_version, the CLI's version), that the "
                                 "merge let through because a file given to it (--accept) named them; "
                                 "empty when there were none.", {
         "path": "The field that differed.",
@@ -651,13 +654,16 @@ MERGE = {
         "checked": "What was checked to show the difference changes nothing it computed, as the "
                    "file says.",
         "values": whole("Each run's value of the field, by its folder name, or each start's: its "
-                        "run, its number in the run and its code_state."),
+                        "run, its number in the run and its code_state; for a field of a scoring "
+                        "start's lane, the first scoring start's value and that of each start whose "
+                        "value differs: its run, its started_at and its value."),
     }),
     "left_empty": "The top-level fields of run_manifest.json left empty because their value "
                   "differed between the two runs.",
     "judge_settings_left_empty": "The fields of eval_manifest.json's judge_settings left empty "
                                  "because each scoring start has its own; each start's value is "
-                                 "in judge_legs[].settings. Of the others, started_at is the "
+                                 "in judge_legs[].settings. A field of the lane the starts differ "
+                                 "in is named lane.<field>. Of the others, started_at is the "
                                  "first start, finished_at the last end, and embedding and cells "
                                  "the starts' counts added.",
     "sources": sub("The two runs, the first half first.", {
@@ -1094,9 +1100,17 @@ def relations(folder) -> list:
                                     for c in r.get("calls") or []
                                     if c.get("role") == "answer" and c.get("ok")]
             != [r["generator"]["tokens_in"]]), len(answered))
+    def made_before(r, e):
+        # a first call read from the run's own store, its record given back by correction
+        # store-hit-calls/1, was made by an earlier start, outside the row's span
+        stages = ((r.get("meta") or {}).get("interpreter") or {}).get("stages") or []
+        return e["kind"] == "chat" and bool(stages) and all(s.get("cache_hit") for s in stages)
+
     add("no second is counted twice: search_time_s, the retrieval's time_s and generator.time_s "
-        "add up to no more than timing.wall_s, half a second allowed",
-        sum(1 for r in own if r["search_time_s"] + sum(e["time_s"] for e in r["retrieval"])
+        "add up to no more than timing.wall_s, half a second allowed (a first call an earlier start "
+        "made, given back by correction store-hit-calls/1, is outside the row's span)",
+        sum(1 for r in own if r["search_time_s"]
+            + sum(e["time_s"] for e in r["retrieval"] if not made_before(r, e))
             + r["generator"]["time_s"] > r["timing"]["wall_s"] + 0.5), len(own))
     cut = [r for r in rows if (r.get("meta") or {}).get("char_budget")]
     try:
