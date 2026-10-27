@@ -1,0 +1,708 @@
+{
+ "R": 16500,
+ "bend": 886126.5972843313,
+ "bend_5_95": [
+  838628.9496145248,
+  941432.6959494237
+ ],
+ "relations": {
+  "answer|lucene": [
+   1.5211285176622564,
+   0.010940905389966348
+  ],
+  "answer|vector": [
+   1.6378979494374624,
+   0.009901507961840202
+  ],
+  "answer|artefact": [
+   1.954351968241948,
+   0.009265885863800477
+  ],
+  "first|artefact": [
+   0.47037728195390605,
+   0.010751095358988041
+  ]
+ },
+ "calls": [
+  {
+   "final": "lucene715",
+   "id": "InsightForce::a::14",
+   "role": "answer",
+   "start": 1792755290.410415,
+   "out": 56,
+   "server": 20.771
+  },
+  {
+   "final": "lucene715",
+   "id": "MonitorForce::a::2",
+   "role": "answer",
+   "start": 1792755361.014496,
+   "out": 106,
+   "server": 42.006
+  },
+  {
+   "final": "lucene715",
+   "id": "FlowForce::a::29",
+   "role": "answer",
+   "start": 1792755209.231079,
+   "out": 119,
+   "server": 23.25
+  },
+  {
+   "final": "lucene715",
+   "id": "SearchForce::a::6",
+   "role": "answer",
+   "start": 1792755602.211036,
+   "out": 141,
+   "server": 196.289
+  },
+  {
+   "final": "lucene715",
+   "id": "CoachForce::a::1",
+   "role": "answer",
+   "start": 1792754916.678985,
+   "out": 158,
+   "server": 3.44
+  },
+  {
+   "final": "lucene715",
+   "id": "TrendForce::a::18",
+   "role": "answer",
+   "start": 1792755800.68995,
+   "out": 168,
+   "server": 108.819
+  },
+  {
+   "final": "lucene715",
+   "id": "SummarizeForce::a::8",
+   "role": "answer",
+   "start": 1792755719.519451,
+   "out": 183,
+   "server": 13.687
+  },
+  {
+   "final": "lucene715",
+   "id": "ContextForce::a::5",
+   "role": "answer",
+   "start": 1792755065.603776,
+   "out": 193,
+   "server": 13.145
+  },
+  {
+   "final": "lucene715",
+   "id": "WorkFlowGenie::a::14",
+   "role": "answer",
+   "start": 1792755892.262434,
+   "out": 204,
+   "server": 23.963
+  },
+  {
+   "final": "lucene715",
+   "id": "TrendForce::a::15",
+   "role": "answer",
+   "start": 1792755799.55895,
+   "out": 214,
+   "server": 23.385
+  },
+  {
+   "final": "lucene715",
+   "id": "VizForce::a::41",
+   "role": "answer",
+   "start": 1792755875.255698,
+   "out": 227,
+   "server": 13.912
+  },
+  {
+   "final": "lucene715",
+   "id": "LeadForce::a::27",
+   "role": "answer",
+   "start": 1792755360.165496,
+   "out": 242,
+   "server": 22.362
+  },
+  {
+   "final": "lucene715",
+   "id": "MonitorForce::a::11",
+   "role": "answer",
+   "start": 1792755365.318996,
+   "out": 260,
+   "server": 15.203
+  },
+  {
+   "final": "lucene715",
+   "id": "PitchForce::a::30",
+   "role": "answer",
+   "start": 1792755475.402473,
+   "out": 276,
+   "server": 24.34
+  },
+  {
+   "final": "lucene715",
+   "id": "TrendForce::a::6",
+   "role": "answer",
+   "start": 1792755783.990751,
+   "out": 294,
+   "server": 14.609
+  },
+  {
+   "final": "lucene715",
+   "id": "CoachForce::a::16",
+   "role": "answer",
+   "start": 1792754929.193985,
+   "out": 310,
+   "server": 45.809
+  },
+  {
+   "final": "lucene715",
+   "id": "SearchFlow::a::20",
+   "role": "answer",
+   "start": 1792755560.406057,
+   "out": 333,
+   "server": 24.155
+  },
+  {
+   "final": "lucene715",
+   "id": "VizForce::a::12",
+   "role": "answer",
+   "start": 1792755831.547523,
+   "out": 347,
+   "server": 7.226
+  },
+  {
+   "final": "lucene715",
+   "id": "SecurityForce::a::25",
+   "role": "answer",
+   "start": 1792755659.211743,
+   "out": 376,
+   "server": 11.505
+  },
+  {
+   "final": "lucene715",
+   "id": "SummarizeForce::a::15",
+   "role": "answer",
+   "start": 1792755731.895468,
+   "out": 405,
+   "server": 16.514
+  },
+  {
+   "final": "lucene715",
+   "id": "SecurityForce::a::6",
+   "role": "answer",
+   "start": 1792755639.131388,
+   "out": 446,
+   "server": 17.135
+  },
+  {
+   "final": "lucene715",
+   "id": "TrendForce::a::20",
+   "role": "answer",
+   "start": 1792755801.491449,
+   "out": 489,
+   "server": 26.256
+  },
+  {
+   "final": "lucene715",
+   "id": "InsightForce::a::12",
+   "role": "answer",
+   "start": 1792755267.772662,
+   "out": 577,
+   "server": 27.094
+  },
+  {
+   "final": "lucene715",
+   "id": "SecurityForce::a::20",
+   "role": "answer",
+   "start": 1792755656.632242,
+   "out": 672,
+   "server": 20.018
+  },
+  {
+   "final": "lucene715",
+   "id": "ContextForce::a::4",
+   "role": "answer",
+   "start": 1792755063.817775,
+   "out": 1333,
+   "server": 21.513
+  },
+  {
+   "final": "vector715",
+   "id": "SentimentForce::a::1",
+   "role": "answer",
+   "start": 1792803561.152877,
+   "out": 88,
+   "server": 179.014
+  },
+  {
+   "final": "vector715",
+   "id": "TrendForce::a::0",
+   "role": "answer",
+   "start": 1792803684.233023,
+   "out": 133,
+   "server": 12.651
+  },
+  {
+   "final": "vector715",
+   "id": "SecurityForce::a::2",
+   "role": "answer",
+   "start": 1792803514.649091,
+   "out": 157,
+   "server": 23.179
+  },
+  {
+   "final": "vector715",
+   "id": "SupportForce::a::13",
+   "role": "answer",
+   "start": 1792803656.461794,
+   "out": 174,
+   "server": 22.725
+  },
+  {
+   "final": "vector715",
+   "id": "EdgeForce::a::3",
+   "role": "answer",
+   "start": 1792802883.582985,
+   "out": 196,
+   "server": 148.743
+  },
+  {
+   "final": "vector715",
+   "id": "SearchFlow::a::31",
+   "role": "answer",
+   "start": 1792803451.659897,
+   "out": 221,
+   "server": 4.726
+  },
+  {
+   "final": "vector715",
+   "id": "TrendForce::a::3",
+   "role": "answer",
+   "start": 1792803698.973743,
+   "out": 240,
+   "server": 24.491
+  },
+  {
+   "final": "vector715",
+   "id": "FlowForce::a::19",
+   "role": "answer",
+   "start": 1792803011.923155,
+   "out": 261,
+   "server": 4.325
+  },
+  {
+   "final": "vector715",
+   "id": "CollaborateForce::a::7",
+   "role": "answer",
+   "start": 1792802701.356061,
+   "out": 283,
+   "server": 40.109
+  },
+  {
+   "final": "vector715",
+   "id": "EdgeForce::a::10",
+   "role": "answer",
+   "start": 1792802885.963985,
+   "out": 298,
+   "server": 24.656
+  },
+  {
+   "final": "vector715",
+   "id": "VizForce::a::8",
+   "role": "answer",
+   "start": 1792803745.322421,
+   "out": 321,
+   "server": 22.532
+  },
+  {
+   "final": "vector715",
+   "id": "ContentForce::a::5",
+   "role": "answer",
+   "start": 1792802807.294661,
+   "out": 346,
+   "server": 77.732
+  },
+  {
+   "final": "vector715",
+   "id": "ContextForce::a::15",
+   "role": "answer",
+   "start": 1792802858.449132,
+   "out": 364,
+   "server": 24.613
+  },
+  {
+   "final": "vector715",
+   "id": "ProposalForce::a::1",
+   "role": "answer",
+   "start": 1792803346.743175,
+   "out": 386,
+   "server": 26.264
+  },
+  {
+   "final": "vector715",
+   "id": "CollaborateForce::a::13",
+   "role": "answer",
+   "start": 1792802705.642061,
+   "out": 408,
+   "server": 151.777
+  },
+  {
+   "final": "vector715",
+   "id": "CollaborateForce::a::28",
+   "role": "answer",
+   "start": 1792802740.981519,
+   "out": 441,
+   "server": 8.41
+  },
+  {
+   "final": "vector715",
+   "id": "SupportForce::a::12",
+   "role": "answer",
+   "start": 1792803656.269295,
+   "out": 471,
+   "server": 24.974
+  },
+  {
+   "final": "vector715",
+   "id": "FlowForce::a::14",
+   "role": "answer",
+   "start": 1792802992.875021,
+   "out": 502,
+   "server": 25.388
+  },
+  {
+   "final": "vector715",
+   "id": "SearchForce::a::19",
+   "role": "answer",
+   "start": 1792803496.445163,
+   "out": 531,
+   "server": 18.077
+  },
+  {
+   "final": "vector715",
+   "id": "LeadForce::a::4",
+   "role": "answer",
+   "start": 1792803144.039197,
+   "out": 568,
+   "server": 113.292
+  },
+  {
+   "final": "vector715",
+   "id": "FlowForce::a::28",
+   "role": "answer",
+   "start": 1792803020.244657,
+   "out": 622,
+   "server": 13.223
+  },
+  {
+   "final": "vector715",
+   "id": "PitchForce::a::17",
+   "role": "answer",
+   "start": 1792803308.289335,
+   "out": 700,
+   "server": 17.769
+  },
+  {
+   "final": "vector715",
+   "id": "SearchForce::a::18",
+   "role": "answer",
+   "start": 1792803495.040163,
+   "out": 801,
+   "server": 20.388
+  },
+  {
+   "final": "vector715",
+   "id": "CollaborateForce::a::20",
+   "role": "answer",
+   "start": 1792802711.119562,
+   "out": 977,
+   "server": 30.05
+  },
+  {
+   "final": "vector715",
+   "id": "AnomalyForce::a::34",
+   "role": "answer",
+   "start": 1792802651.325972,
+   "out": 1760,
+   "server": 18.536
+  },
+  {
+   "final": "artefact715",
+   "id": "CollaborationForce::a::19",
+   "role": "answer",
+   "start": 1792965914.434929,
+   "out": 100,
+   "server": 3.312
+  },
+  {
+   "final": "artefact715",
+   "id": "ConnectForce::a::2",
+   "role": "answer",
+   "start": 1792966056.589882,
+   "out": 138,
+   "server": 3.175
+  },
+  {
+   "final": "artefact100",
+   "id": "MonitorForce::a::18",
+   "role": "answer",
+   "start": 1792721780.352439,
+   "out": 155,
+   "server": 13.552
+  },
+  {
+   "final": "artefact715",
+   "id": "VizForce::a::30",
+   "role": "answer",
+   "start": 1792966013.813147,
+   "out": 171,
+   "server": 3.09
+  },
+  {
+   "final": "artefact715",
+   "id": "WorkFlowGenie::a::6",
+   "role": "answer",
+   "start": 1792966067.459646,
+   "out": 194,
+   "server": 3.708
+  },
+  {
+   "final": "artefact100",
+   "id": "SentimentForce::a::29",
+   "role": "answer",
+   "start": 1792721791.332939,
+   "out": 217,
+   "server": 4.228
+  },
+  {
+   "final": "artefact715",
+   "id": "CollaborationForce::a::20",
+   "role": "answer",
+   "start": 1792965962.563044,
+   "out": 241,
+   "server": 3.721
+  },
+  {
+   "final": "artefact715",
+   "id": "SentimentForce::a::10",
+   "role": "answer",
+   "start": 1792965795.281649,
+   "out": 252,
+   "server": 4.397
+  },
+  {
+   "final": "artefact715",
+   "id": "VizForce::a::33",
+   "role": "answer",
+   "start": 1792966009.583145,
+   "out": 269,
+   "server": 6.515
+  },
+  {
+   "final": "artefact100",
+   "id": "EdgeForce::a::0",
+   "role": "answer",
+   "start": 1792721806.58331,
+   "out": 287,
+   "server": 24.186
+  },
+  {
+   "final": "artefact715",
+   "id": "SupportForce::a::0",
+   "role": "answer",
+   "start": 1792965857.345145,
+   "out": 310,
+   "server": 5.0
+  },
+  {
+   "final": "artefact715",
+   "id": "VizForce::a::10",
+   "role": "answer",
+   "start": 1792965973.428646,
+   "out": 330,
+   "server": 5.739
+  },
+  {
+   "final": "artefact100",
+   "id": "SummarizeForce::a::23",
+   "role": "answer",
+   "start": 1792721767.27994,
+   "out": 343,
+   "server": 4.268
+  },
+  {
+   "final": "artefact715",
+   "id": "SummarizeForce::a::13",
+   "role": "answer",
+   "start": 1792965843.397146,
+   "out": 354,
+   "server": 5.534
+  },
+  {
+   "final": "artefact100",
+   "id": "PersonalizeForce::a::24",
+   "role": "answer",
+   "start": 1792721764.478441,
+   "out": 376,
+   "server": 5.011
+  },
+  {
+   "final": "artefact100",
+   "id": "ActionGenie::a::7",
+   "role": "answer",
+   "start": 1792721769.17994,
+   "out": 405,
+   "server": 5.586
+  },
+  {
+   "final": "artefact715",
+   "id": "TrendForce::a::3",
+   "role": "answer",
+   "start": 1792965943.770647,
+   "out": 420,
+   "server": 9.232
+  },
+  {
+   "final": "artefact715",
+   "id": "TrendForce::a::10",
+   "role": "answer",
+   "start": 1792965897.499647,
+   "out": 449,
+   "server": 16.204
+  },
+  {
+   "final": "artefact715",
+   "id": "SentimentForce::a::21",
+   "role": "answer",
+   "start": 1792965821.175648,
+   "out": 497,
+   "server": 6.347
+  },
+  {
+   "final": "artefact100",
+   "id": "InsightForce::a::6",
+   "role": "answer",
+   "start": 1792721760.687939,
+   "out": 523,
+   "server": 7.069
+  },
+  {
+   "final": "artefact100",
+   "id": "EdgeForce::a::13",
+   "role": "answer",
+   "start": 1792721773.882442,
+   "out": 555,
+   "server": 85.508
+  },
+  {
+   "final": "artefact715",
+   "id": "SentimentForce::a::12",
+   "role": "answer",
+   "start": 1792965801.243146,
+   "out": 595,
+   "server": 8.004
+  },
+  {
+   "final": "artefact715",
+   "id": "SupportForce::a::23",
+   "role": "answer",
+   "start": 1792965880.675647,
+   "out": 684,
+   "server": 8.333
+  },
+  {
+   "final": "artefact100",
+   "id": "InsightForce::a::7",
+   "role": "answer",
+   "start": 1792721778.93644,
+   "out": 808,
+   "server": 20.438
+  },
+  {
+   "final": "artefact715",
+   "id": "SupportForce::a::24",
+   "role": "answer",
+   "start": 1792965883.916147,
+   "out": 1487,
+   "server": 15.447
+  },
+  {
+   "final": "artefact715",
+   "id": "SupportForce::a::22",
+   "role": null,
+   "start": 1792965865.728145,
+   "out": 277,
+   "server": 46.47
+  },
+  {
+   "final": "artefact715",
+   "id": "SummarizeForce::a::10",
+   "role": null,
+   "start": 1792965810.645646,
+   "out": 468,
+   "server": 5.837
+  },
+  {
+   "final": "artefact715",
+   "id": "TrendForce::a::0",
+   "role": null,
+   "start": 1792965869.618148,
+   "out": 612,
+   "server": 45.507
+  },
+  {
+   "final": "artefact715",
+   "id": "SummarizeForce::a::7",
+   "role": null,
+   "start": 1792965809.334147,
+   "out": 776,
+   "server": 8.465
+  },
+  {
+   "final": "artefact715",
+   "id": "SummarizeForce::a::17",
+   "role": null,
+   "start": 1792965821.730647,
+   "out": 878,
+   "server": 9.408
+  },
+  {
+   "final": "artefact715",
+   "id": "VizForce::a::32",
+   "role": null,
+   "start": 1792965990.067647,
+   "out": 992,
+   "server": 25.759
+  },
+  {
+   "final": "artefact715",
+   "id": "WorkFlowGenie::a::7",
+   "role": null,
+   "start": 1792966022.505148,
+   "out": 1101,
+   "server": 21.267
+  },
+  {
+   "final": "artefact715",
+   "id": "ConnectForce::a::6",
+   "role": null,
+   "start": 1792966020.148462,
+   "out": 1273,
+   "server": 33.759
+  },
+  {
+   "final": "artefact715",
+   "id": "VizForce::a::5",
+   "role": null,
+   "start": 1792965934.321646,
+   "out": 1517,
+   "server": 55.561
+  },
+  {
+   "final": "artefact715",
+   "id": "VizForce::a::25",
+   "role": null,
+   "start": 1792965975.589146,
+   "out": 2867,
+   "server": 47.451
+  }
+ ]
+}

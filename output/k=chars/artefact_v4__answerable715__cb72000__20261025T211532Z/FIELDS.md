@@ -22,11 +22,16 @@ One run of one retrieval method, **artefact_v4**, over 715 questions: for each q
 | `eval_failures.jsonl` | One line per score cell that failed. Empty when none did. | question_id + metric |
 | `code.4e2351e29711898c.diff`, `code.b5c2065d7bee317b.diff`, `code.db302bf35b9664da.diff` | The difference between the code that ran and its commit, when there was one. | its name is in code_state.diff_file |
 | `corrections.json` | Only in a folder whose stored numbers were corrected after the run: what was changed, by which rule, on whose word. |  |
-| `arm_outputs.as_recorded.jsonl` | A file exactly as the run wrote it, kept when a correction changed the file of the same name. |  |
+| `arm_outputs.as_recorded.jsonl`, `eval_calls.as_recorded.jsonl` | A file exactly as the run wrote it, kept when a correction changed the file of the same name. |  |
 | `correct_zero_usage.py` | The script that made the zero-usage correction (the tokens of the answer calls whose Claude program reply held 0 in its usage field); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
 | `cli_transcript_usage.json` | The evidence of the zero-usage correction: the Claude program's own transcript counts of each answer call it changed, by session id, read on the machine that made the calls. | session id = calls[].envelope.session_id of arm_outputs.jsonl |
 | `correct_embed_gpu_time.py` | The script that made the GPU-time correction (the query embeddings made on the CPU given the time the same embeddings take on the desktop's graphics card); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
 | `gpu_embed_times.json` | The evidence of the GPU-time correction: per run and question, each embed call's seconds on the graphics card, its recorded seconds and the cosine of its vector to the one the run made. | question id = id of arm_outputs.jsonl; seq = calls[].seq |
+| `correct_search_time.py` | The script that made the search-time correction (each question's search time the time of the same retrieval made again with one question at a time on the laptop, and a question's wait for the embedder's lock out); run on the files from before it, with the re-made run its entry names, it gives the corrected files again. |  |
+| `correct_judge_embed_gpu_time.py` | The script that made the judging's GPU-time correction (RAGAS's own embedding requests made on the CPU given the time the same requests take on the desktop's graphics card); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
+| `judge_embed_gpu_times.json` | The evidence of the judging's GPU-time correction: per RAGAS embedding request that the six final runs' judging made on the CPU, its seconds on the graphics card, its recorded seconds, texts and tokens. | run = the run folder; line = the record's line in eval_calls.jsonl, from 0; question_id, eval_leg, seq = the record's own |
+| `correct_model_call_time.py` | The script that made the model-call-time correction (each answer call and first call given its answering try's server time, and a call started past the login's limit its arm's clean relation at its own output tokens); run on the files from before it, over the same run folders, it gives the corrected files again. |  |
+| `model_call_times.json` | The evidence of the model-call-time correction: the login's backlog of claude-sonnet-5 input tokens (its rate, its limit, the files it was read from with their sha256), the clean relation of each arm and kind of call, and per corrected call its server time, backlog, relation time and time; with the check of the relations on calls sent again one at a time. | question_id = id of arm_outputs.jsonl; record = the call's place in calls; seq = calls[].seq |
 | `correct_store_hit_calls.py` | The script that made the store-hit correction (the record of each first call a row read from the run's own store); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
 | `first_call_records.jsonl` | The evidence of the store-hit correction: one line per record it gave a row, with the row's id, the stage, the key and the store's whole file. | id = id of arm_outputs.jsonl |
 | `judge_calls_without_record.json` | Judge calls that answered and that no line of eval_calls.jsonl holds, found in the Claude program's own transcripts on the machine that made them: each a call of a score cell that had failed, which answered after the cell had ended. Its scoring start's entry in judge_legs counts them. Per scoring start: the transcripts in its span, and each such call's session id, first and last event, model, assistant messages and tokens. | starts = judge_legs[].settings.started_at |
@@ -144,7 +149,7 @@ One line per question: what was delivered, the answer, and everything the questi
 | `meta.interpreter.stages.stage` | Which call: querytag is the first call. |
 | `meta.interpreter.stages.cache_hit` | Whether its answer was read from the cache instead of asked. |
 | `meta.interpreter.stages.key` | The cache key: the sha256 of the call's instruction, message, schema and model. |
-| `meta.interpreter.stages.asks` | How many times the call was made for this question. |
+| `meta.interpreter.stages.asks` | How many times the start that wrote this row tried the call; a read from the cache counts as one. A try of an earlier start that failed or was cut off is kept in the store, in querytag/failed/ under the same key. |
 | `meta.interpreter.stages.offline` | Whether the run refused to ask the model. |
 | `meta.interpreter.stages.duplicate_tags_dropped` | How many tags of the answer were left out because the same phrase stood there twice. |
 | `meta.interpreter.description_side_tags` | How many query tags the first call wrote from the content it described. |
@@ -1583,21 +1588,25 @@ Counted from the files themselves when this was written. A record is a line of a
 | `workers` | null | 1 | 1 |
 
 ---
-Written from `prod/harness/fields.py`, sha256 `8cd12dbc6fcf11ff45d3cfbe4ac092ade29ce218777d0ae8b368f66cc07785c9`.
+Written from `prod/harness/fields.py`, sha256 `b31598ca597e06561a7975020a896d13469eff0733d92f0ad778f832b659ac80`.
 
 The files as they stood when this was written, their line ends as git holds them (LF):
 
 - `arm_outputs.as_recorded.jsonl` sha256 `c5b388cf53b3b3d7424ee0c094e02f7cada0e3846f3e10f9daf454b03cca297e`
-- `arm_outputs.jsonl` sha256 `856a3388689a0c891f09cfb6f63b5d67b7613b66275a5ef2f133547c52bbe931`
+- `arm_outputs.jsonl` sha256 `9c81463e678557af3dcf213600f36249691dc9d71f9ae93e5d0527f71ca1b467`
 - `cli_transcript_usage.json` sha256 `33affc7ffd2c80e079f64123166c5bebd6e7f05479ebf1a5ce59da1e6181c49f`
 - `code.4e2351e29711898c.diff` sha256 `4e2351e29711898c684ebd0a8afbb773f1729be4113347ca478dc0deb157cee8`
 - `code.b5c2065d7bee317b.diff` sha256 `b5c2065d7bee317bf988edd095a7847034575f4a527f7a3ddd2fc1a999e85489`
 - `code.db302bf35b9664da.diff` sha256 `db302bf35b9664da25a82872af665f0453f6d1e772451821ad707ed47a64e5ed`
 - `correct_embed_gpu_time.py` sha256 `9583abff4129657c4aa4e511ef013ac5f918a1eab733b55c7fbd2e65735164cd`
+- `correct_judge_embed_gpu_time.py` sha256 `22823e15cb005f752c66af694f22e085e3081ca13bb30553de0945c2975fc64d`
+- `correct_model_call_time.py` sha256 `f3e49a6b4fbfc779bba8d6793c98897415fbd7693202b2ff89f4e68771420a5c`
+- `correct_search_time.py` sha256 `fedae7c39d863737ad1e3f472a5b17bf38fa838b114a2204ee582a89fcf9f0bb`
 - `correct_store_hit_calls.py` sha256 `1dcf4f52fc8d0dcc187a147da819147fe92bcd707a95bbdb303fb2576e014e78`
 - `correct_zero_usage.py` sha256 `e45cb59963924f46ba88507894903c897e6c3966f40295cdefc64a118927e2ef`
-- `corrections.json` sha256 `7fffb4684aa24767f36e9bcdae00a05078ca018b2253e2b7337c9d4d0a644367`
-- `eval_calls.jsonl` sha256 `54f5f903e708371559f0436abb36d73c1b27e87ac6b5b3d45d8724ad80c434d5`
+- `corrections.json` sha256 `7b502a31dda328cb8b6c21809f4fa2a0510b383aafc01ea26c104f8f67932918`
+- `eval_calls.as_recorded.jsonl` sha256 `54f5f903e708371559f0436abb36d73c1b27e87ac6b5b3d45d8724ad80c434d5`
+- `eval_calls.jsonl` sha256 `d81539b2c3b45d5dd1d1370d13344279089a231fbf873c742ae142789f8df9f1`
 - `eval_failures.jsonl` sha256 `244a17e18d6d57d9b1406f4a22773bd4319bd18740eb8637da70118e2628cbdc`
 - `eval_manifest.json` sha256 `8238816ecef8a24889936fec753446f2111d8146d059b7efa245a859e8435689`
 - `eval_results.jsonl` sha256 `c2437e3e8e66b988a5118eaec4824c45f8db022a37116c6ef402bf66a45fde9d`
@@ -1606,5 +1615,7 @@ The files as they stood when this was written, their line ends as git holds them
 - `gpu_embed_times.json` sha256 `be11fea152120c379e58fc6c38e6bc6e166b661d18f218439a8404d61b07f543`
 - `judge_calls_without_record.json` sha256 `03ab987e646b3e5080b5794275127d8aa6af5a79ae5e0727ac1a85ce76bcc1f0`
 - `judge_calls_without_record.py` sha256 `08b2a12ad18133a82fbd15017416f4fb0e7935bfa2df1ae8b9349eebdb01329f`
+- `judge_embed_gpu_times.json` sha256 `72aa41ffeb48a6228a901c06cbb90094fcdad07911147faef29efb1d1b1c9267`
 - `merge.json` sha256 `1002d53d9321ccc6f774a0687b9086b1b62c977a5a9921f789dfac0b6a73b83d`
+- `model_call_times.json` sha256 `58c4f9c5659a09fbb794d00397210e7edfb2c36bf9c5a168af3e9cc806160d3a`
 - `run_manifest.json` sha256 `adb19ca256158811af95677427dc88419478aed2e01e002ac7fa9aeb334e2186`

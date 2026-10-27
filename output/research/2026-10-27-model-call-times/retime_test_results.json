@@ -1,0 +1,1052 @@
+[
+ {
+  "group": "control: lucene, hundred (clean)",
+  "id": "LeadForce::a::28",
+  "orig_out": 97,
+  "orig_server": 2.482,
+  "fix_value": 2.630549893472759,
+  "new_out": 322,
+  "new_server": 4.375,
+  "new_cli": 4.642,
+  "new_wall": 6.477867999987211,
+  "predicted_new": 5.160256603463838,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "control: lucene, hundred (clean)",
+  "id": "TrendForce::a::9",
+  "orig_out": 136,
+  "orig_server": 2.84,
+  "fix_value": 3.0690323898712126,
+  "new_out": 174,
+  "new_server": 3.661,
+  "new_cli": 3.832,
+  "new_wall": 5.2153848000161815,
+  "predicted_new": 3.4962717453363727,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "control: lucene, hundred (clean)",
+  "id": "ContentForce::a::17",
+  "orig_out": 181,
+  "orig_server": 3.537,
+  "fix_value": 3.5749737318694286,
+  "new_out": 415,
+  "new_server": 6.279,
+  "new_cli": 6.419,
+  "new_wall": 7.878054200002225,
+  "predicted_new": 6.205868710260151,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "control: lucene, hundred (clean)",
+  "id": "ExplainabilityForce::a::0",
+  "orig_out": 210,
+  "orig_server": 4.842,
+  "fix_value": 3.9010248189349452,
+  "new_out": 129,
+  "new_server": 3.135,
+  "new_cli": 3.375,
+  "new_wall": 5.6417118000099435,
+  "predicted_new": 2.990330403338157,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "control: lucene, hundred (clean)",
+  "id": "CollaborateForce::a::0",
+  "orig_out": 245,
+  "orig_server": 4.203,
+  "fix_value": 4.294534751600224,
+  "new_out": 209,
+  "new_server": 3.97,
+  "new_cli": 4.238,
+  "new_wall": 6.143141400010791,
+  "predicted_new": 3.889781678001652,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "control: lucene, hundred (clean)",
+  "id": "CollaborationForce::a::6",
+  "orig_out": 282,
+  "orig_server": 4.623,
+  "fix_value": 4.71053096613209,
+  "new_out": 271,
+  "new_server": 4.891,
+  "new_cli": 5.108,
+  "new_wall": 7.074188400001731,
+  "predicted_new": 4.58685641586586,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "control: lucene, hundred (clean)",
+  "id": "InsightForce::a::6",
+  "orig_out": 361,
+  "orig_server": 5.049,
+  "fix_value": 5.598739099862292,
+  "new_out": 290,
+  "new_server": 4.406,
+  "new_cli": 4.626,
+  "new_wall": 6.52453590001096,
+  "predicted_new": 4.800476093598441,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "control: lucene, hundred (clean)",
+  "id": "SupportForce::a::5",
+  "orig_out": 435,
+  "orig_server": 6.927,
+  "fix_value": 6.4307315289260245,
+  "new_out": 750,
+  "new_server": 9.519,
+  "new_cli": 9.722,
+  "new_wall": 11.601776600000449,
+  "predicted_new": 9.972320922913536,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "control: lucene, hundred (clean)",
+  "id": "SearchFlow::a::33",
+  "orig_out": 537,
+  "orig_server": 7.282,
+  "fix_value": 7.57753190412198,
+  "new_out": 503,
+  "new_server": 6.408,
+  "new_cli": 6.808,
+  "new_wall": 9.978988499991829,
+  "predicted_new": 7.195265112389995,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "control: lucene, hundred (clean)",
+  "id": "CollaborationForce::a::12",
+  "orig_out": 1023,
+  "orig_server": 13.394,
+  "fix_value": 13.041698397702712,
+  "new_out": 927,
+  "new_server": 11.781,
+  "new_cli": 12.286,
+  "new_wall": 15.68641339999158,
+  "predicted_new": 11.962356868106518,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "InsightForce::a::14",
+  "orig_out": 56,
+  "orig_server": 20.771,
+  "fix_value": 2.169581115207718,
+  "new_out": 179,
+  "new_server": 3.8,
+  "new_cli": 4.436,
+  "new_wall": 8.178138899995247,
+  "predicted_new": 3.5524874500028414,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "LeadForce::a::7",
+  "orig_out": 105,
+  "orig_server": 12.64,
+  "fix_value": 2.7204950209391083,
+  "new_out": 108,
+  "new_server": 2.856,
+  "new_cli": 3.102,
+  "new_wall": 6.3605874000058975,
+  "predicted_new": 2.7542244437389893,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "WorkFlowGenie::a::1",
+  "orig_out": 117,
+  "orig_server": 13.379,
+  "fix_value": 2.855412712138633,
+  "new_out": 113,
+  "new_server": 2.768,
+  "new_cli": 3.002,
+  "new_wall": 5.029734500014456,
+  "predicted_new": 2.810440148405458,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "SearchFlow::a::8",
+  "orig_out": 139,
+  "orig_server": 23.562,
+  "fix_value": 3.102761812671094,
+  "new_out": 231,
+  "new_server": 2.869,
+  "new_cli": 3.045,
+  "new_wall": 4.654178700002376,
+  "predicted_new": 4.137130778534113,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "PitchForce::a::22",
+  "orig_out": 155,
+  "orig_server": 148.63,
+  "fix_value": 3.2826520676037925,
+  "new_out": 265,
+  "new_server": 4.548,
+  "new_cli": 4.732,
+  "new_wall": 6.284405500016874,
+  "predicted_new": 4.519397570266098,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "CollaborationForce::a::4",
+  "orig_out": 166,
+  "orig_server": 22.341,
+  "fix_value": 3.4063266178700236,
+  "new_out": 142,
+  "new_server": 3.228,
+  "new_cli": 3.346,
+  "new_wall": 4.682376699987799,
+  "predicted_new": 3.1364912354709746,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "SentimentForce::a::18",
+  "orig_out": 178,
+  "orig_server": 21.592,
+  "fix_value": 3.5412443090695476,
+  "new_out": 168,
+  "new_server": 2.925,
+  "new_cli": 3.042,
+  "new_wall": 4.378179999999702,
+  "predicted_new": 3.4288128997366107,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "ContentForce::a::12",
+  "orig_out": 187,
+  "orig_server": 13.675,
+  "fix_value": 3.6424325774691906,
+  "new_out": 171,
+  "new_server": 3.216,
+  "new_cli": 3.397,
+  "new_wall": 4.685796100005973,
+  "predicted_new": 3.4625423225364917,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "SearchFlow::a::1",
+  "orig_out": 197,
+  "orig_server": 23.217,
+  "fix_value": 3.7548639868021274,
+  "new_out": 199,
+  "new_server": 4.017,
+  "new_cli": 4.21,
+  "new_wall": 5.819044400006533,
+  "predicted_new": 3.777350268668715,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "SupportForce::a::23",
+  "orig_out": 206,
+  "orig_server": 8.986,
+  "fix_value": 3.856052255201771,
+  "new_out": 236,
+  "new_server": 5.189,
+  "new_cli": 5.328,
+  "new_wall": 6.659709399973508,
+  "predicted_new": 4.193346483200582,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "PersonalizeForce::a::18",
+  "orig_out": 216,
+  "orig_server": 23.663,
+  "fix_value": 3.9684836645347077,
+  "new_out": 214,
+  "new_server": 3.789,
+  "new_cli": 3.922,
+  "new_wall": 5.289563800004544,
+  "predicted_new": 3.94599738266812,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "SentimentForce::a::13",
+  "orig_out": 228,
+  "orig_server": 14.483,
+  "fix_value": 4.103401355734231,
+  "new_out": 221,
+  "new_server": 6.43,
+  "new_cli": 6.623,
+  "new_wall": 7.987452000001213,
+  "predicted_new": 4.024699369201176,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "CollaborateForce::a::15",
+  "orig_out": 242,
+  "orig_server": 44.154,
+  "fix_value": 4.260805328800343,
+  "new_out": 253,
+  "new_server": 4.513,
+  "new_cli": 4.635,
+  "new_wall": 5.950672500010114,
+  "predicted_new": 4.384479879066574,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "SearchFlow::a::17",
+  "orig_out": 257,
+  "orig_server": 42.99,
+  "fix_value": 4.429452442799748,
+  "new_out": 284,
+  "new_server": 4.108,
+  "new_cli": 4.251,
+  "new_wall": 5.5823799000063445,
+  "predicted_new": 4.733017247998678,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "ExplainabilityForce::a::3",
+  "orig_out": 275,
+  "orig_server": 9.658,
+  "fix_value": 4.631828979599035,
+  "new_out": 259,
+  "new_server": 4.046,
+  "new_cli": 4.189,
+  "new_wall": 5.499567399994703,
+  "predicted_new": 4.451938724666336,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "CollaborateForce::a::13",
+  "orig_out": 289,
+  "orig_server": 24.164,
+  "fix_value": 4.789232952665147,
+  "new_out": 235,
+  "new_server": 3.957,
+  "new_cli": 4.077,
+  "new_wall": 5.390857899998082,
+  "predicted_new": 4.182103342267288,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "TrendForce::a::11",
+  "orig_out": 302,
+  "orig_server": 25.045,
+  "fix_value": 4.935393784797965,
+  "new_out": 309,
+  "new_server": 4.141,
+  "new_cli": 4.267,
+  "new_wall": 5.637909899989609,
+  "predicted_new": 5.01409577133102,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "ProposalForce::a::12",
+  "orig_out": 322,
+  "orig_server": 23.536,
+  "fix_value": 5.160256603463838,
+  "new_out": 310,
+  "new_server": 4.522,
+  "new_cli": 5.023,
+  "new_wall": 6.365331500011962,
+  "predicted_new": 5.0253389122643135,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "TrendForce::a::13",
+  "orig_out": 342,
+  "orig_server": 23.425,
+  "fix_value": 5.385119422129712,
+  "new_out": 270,
+  "new_server": 4.904,
+  "new_cli": 5.018,
+  "new_wall": 6.3294295000087,
+  "predicted_new": 4.575613274932566,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "SecurityForce::a::25",
+  "orig_out": 376,
+  "orig_server": 11.505,
+  "fix_value": 5.767386213861697,
+  "new_out": 469,
+  "new_server": 7.427,
+  "new_cli": 7.606,
+  "new_wall": 9.137186500011012,
+  "predicted_new": 6.81299832065801,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "ProposalForce::a::15",
+  "orig_out": 404,
+  "orig_server": 26.78,
+  "fix_value": 6.082194159993921,
+  "new_out": 248,
+  "new_server": 4.82,
+  "new_cli": 4.98,
+  "new_wall": 6.59517070002039,
+  "predicted_new": 4.328264174400106,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "SentimentForce::a::28",
+  "orig_out": 442,
+  "orig_server": 82.095,
+  "fix_value": 6.50943351545908,
+  "new_out": 290,
+  "new_server": 4.403,
+  "new_cli": 4.54,
+  "new_wall": 5.8642612999829,
+  "predicted_new": 4.800476093598441,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "SearchFlow::a::38",
+  "orig_out": 506,
+  "orig_server": 16.64,
+  "fix_value": 7.228994535189877,
+  "new_out": 406,
+  "new_server": 5.371,
+  "new_cli": 5.5,
+  "new_wall": 6.877324600005522,
+  "predicted_new": 6.104680441860508,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "PersonalizeForce::a::25",
+  "orig_out": 597,
+  "orig_server": 42.696,
+  "fix_value": 8.252120360119601,
+  "new_out": 656,
+  "new_server": 7.061,
+  "new_cli": 7.184,
+  "new_wall": 8.54588920000242,
+  "predicted_new": 8.91546567518393,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "lucene, 715 (slowed)",
+  "id": "PersonalizeForce::a::22",
+  "orig_out": 941,
+  "orig_server": 156.03,
+  "fix_value": 12.11976084117263,
+  "new_out": 742,
+  "new_server": 8.606,
+  "new_cli": 8.727,
+  "new_wall": 10.06904050000594,
+  "predicted_new": 9.882375795447187,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "SentimentForce::a::1",
+  "orig_out": 88,
+  "orig_server": 179.014,
+  "fix_value": 2.501995356586734,
+  "new_out": 147,
+  "new_server": 3.071,
+  "new_cli": 3.207,
+  "new_wall": 4.5696896000008564,
+  "predicted_new": 3.085337703697271,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "EdgeForce::a::5",
+  "orig_out": 124,
+  "orig_server": 23.157,
+  "fix_value": 2.8579330599084174,
+  "new_out": 118,
+  "new_server": 3.096,
+  "new_cli": 3.247,
+  "new_wall": 4.624371399986558,
+  "predicted_new": 2.7986101093548035,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "KnowledgeForce::a::8",
+  "orig_out": 152,
+  "orig_server": 22.59,
+  "fix_value": 3.134773495825282,
+  "new_out": 151,
+  "new_server": 3.11,
+  "new_cli": 3.256,
+  "new_wall": 4.59564300000784,
+  "predicted_new": 3.12488633739968,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "PersonalizeForce::a::37",
+  "orig_out": 168,
+  "orig_server": 22.656,
+  "fix_value": 3.2929680306349196,
+  "new_out": 244,
+  "new_server": 4.368,
+  "new_cli": 4.484,
+  "new_wall": 5.8421459000092,
+  "predicted_new": 4.044392070980696,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "VizForce::a::15",
+  "orig_out": 190,
+  "orig_server": 23.535,
+  "fix_value": 3.5104855159981705,
+  "new_out": 361,
+  "new_server": 6.454,
+  "new_cli": 6.584,
+  "new_wall": 7.919171199988341,
+  "predicted_new": 5.201189606776167,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "SummarizeForce::a::21",
+  "orig_out": 207,
+  "orig_server": 38.84,
+  "fix_value": 3.6785672092334103,
+  "new_out": 168,
+  "new_server": 3.429,
+  "new_cli": 3.571,
+  "new_wall": 4.933753099991009,
+  "predicted_new": 3.2929680306349196,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "SupportForce::a::2",
+  "orig_out": 230,
+  "orig_server": 120.735,
+  "fix_value": 3.9059718530222636,
+  "new_out": 323,
+  "new_server": 4.809,
+  "new_cli": 4.971,
+  "new_wall": 6.284602800005814,
+  "predicted_new": 4.825477586603279,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "ExplainabilityForce::a::4",
+  "orig_out": 249,
+  "orig_server": 40.985,
+  "fix_value": 4.093827863108707,
+  "new_out": 323,
+  "new_server": 5.336,
+  "new_cli": 5.471,
+  "new_wall": 6.800569600018207,
+  "predicted_new": 4.825477586603279,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "PersonalizeForce::a::25",
+  "orig_out": 268,
+  "orig_server": 154.867,
+  "fix_value": 4.281683873195152,
+  "new_out": 671,
+  "new_server": 7.804,
+  "new_cli": 7.966,
+  "new_wall": 9.295009299996309,
+  "predicted_new": 8.266208718712887,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "PitchForce::a::21",
+  "orig_out": 287,
+  "orig_server": 9.022,
+  "fix_value": 4.469539883281596,
+  "new_out": 282,
+  "new_server": 4.706,
+  "new_cli": 4.836,
+  "new_wall": 6.162162400025409,
+  "predicted_new": 4.4201040911535845,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "ForecastForce::a::28",
+  "orig_out": 304,
+  "orig_server": 41.15,
+  "fix_value": 4.637621576516835,
+  "new_out": 293,
+  "new_server": 4.642,
+  "new_cli": 4.76,
+  "new_wall": 6.120321900001727,
+  "predicted_new": 4.52886283383521,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "InsightForce::a::9",
+  "orig_out": 326,
+  "orig_server": 116.912,
+  "fix_value": 4.855139061880086,
+  "new_out": 252,
+  "new_server": 4.08,
+  "new_cli": 4.204,
+  "new_wall": 5.579184999980498,
+  "predicted_new": 4.1234893383855145,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "KnowledgeForce::a::7",
+  "orig_out": 350,
+  "orig_server": 23.045,
+  "fix_value": 5.092430864094542,
+  "new_out": 248,
+  "new_server": 3.747,
+  "new_cli": 3.902,
+  "new_wall": 5.250293899996905,
+  "predicted_new": 4.083940704683105,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "SecurityForce::a::14",
+  "orig_out": 366,
+  "orig_server": 24.486,
+  "fix_value": 5.250625398904179,
+  "new_out": 387,
+  "new_server": 4.281,
+  "new_cli": 4.515,
+  "new_wall": 5.915881699998863,
+  "predicted_new": 5.458255725841828,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "CollaborateForce::a::5",
+  "orig_out": 385,
+  "orig_server": 113.787,
+  "fix_value": 5.438481408990623,
+  "new_out": 125,
+  "new_server": 3.571,
+  "new_cli": 3.713,
+  "new_wall": 5.117205799993826,
+  "predicted_new": 2.86782021833402,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "SupportForce::a::1",
+  "orig_out": 404,
+  "orig_server": 149.811,
+  "fix_value": 5.626337419077068,
+  "new_out": 345,
+  "new_server": 5.325,
+  "new_cli": 5.457,
+  "new_wall": 6.789104399998905,
+  "predicted_new": 5.04299507196653,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "CollaborationForce::a::8",
+  "orig_out": 435,
+  "orig_server": 26.015,
+  "fix_value": 5.932839330270739,
+  "new_out": 429,
+  "new_server": 5.943,
+  "new_cli": 6.091,
+  "new_wall": 7.486712099984288,
+  "predicted_new": 5.873516379717126,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "TrendForce::a::4",
+  "orig_out": 462,
+  "orig_server": 25.515,
+  "fix_value": 6.199792607762002,
+  "new_out": 563,
+  "new_server": 8.208,
+  "new_cli": 8.329,
+  "new_wall": 9.63318080001045,
+  "predicted_new": 7.198395608747837,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "VizForce::a::1",
+  "orig_out": 484,
+  "orig_server": 15.743,
+  "fix_value": 6.417310093125253,
+  "new_out": 321,
+  "new_server": 4.381,
+  "new_cli": 4.515,
+  "new_wall": 5.861100499983877,
+  "predicted_new": 4.805703269752074,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "InsightForce::a::4",
+  "orig_out": 511,
+  "orig_server": 150.663,
+  "fix_value": 6.684263370616516,
+  "new_out": 171,
+  "new_server": 3.301,
+  "new_cli": 3.553,
+  "new_wall": 4.903510700009065,
+  "predicted_new": 3.322629505911727,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "FeedbackForce::a::4",
+  "orig_out": 553,
+  "orig_server": 84.164,
+  "fix_value": 7.099524024491814,
+  "new_out": 484,
+  "new_server": 6.224,
+  "new_cli": 6.34,
+  "new_wall": 7.716813900013221,
+  "predicted_new": 6.417310093125253,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "ExplainabilityForce::a::12",
+  "orig_out": 611,
+  "orig_server": 45.397,
+  "fix_value": 7.672979213176748,
+  "new_out": 707,
+  "new_server": 8.537,
+  "new_cli": 8.666,
+  "new_wall": 10.00607570001739,
+  "predicted_new": 8.62214642203457,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "SearchForce::a::4",
+  "orig_out": 693,
+  "orig_server": 118.232,
+  "fix_value": 8.483726204076138,
+  "new_out": 376,
+  "new_server": 5.673,
+  "new_cli": 5.819,
+  "new_wall": 7.162888499995461,
+  "predicted_new": 5.349496983160202,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "SentimentForce::a::19",
+  "orig_out": 855,
+  "orig_server": 157.979,
+  "fix_value": 10.085445869023713,
+  "new_out": 427,
+  "new_server": 6.44,
+  "new_cli": 6.568,
+  "new_wall": 7.900006499985466,
+  "predicted_new": 5.853742062865921,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "vector, 715 (slowed)",
+  "id": "PitchForce::a::38",
+  "orig_out": 1671,
+  "orig_server": 200.762,
+  "fix_value": 18.153367144315208,
+  "new_out": 1007,
+  "new_server": 11.875,
+  "new_cli": 12.05,
+  "new_wall": 13.374954500002787,
+  "predicted_new": 11.588293949715267,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "artefact, hundred (slowed tail)",
+  "id": "LeadForce::a::20",
+  "orig_out": 355,
+  "orig_server": 77.308,
+  "fix_value": 5.326644423389524,
+  "new_out": 369,
+  "new_server": 6.019,
+  "new_cli": 6.172,
+  "new_wall": 7.552524099999573,
+  "predicted_new": 5.465970910346004,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "artefact, hundred (slowed tail)",
+  "id": "FeedbackForce::a::18",
+  "orig_out": 197,
+  "orig_server": 41.462,
+  "fix_value": 3.754245499166398,
+  "new_out": 227,
+  "new_server": 3.349,
+  "new_cli": 3.472,
+  "new_wall": 4.792286799987778,
+  "predicted_new": 4.052802256930282,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "artefact, hundred (slowed tail)",
+  "id": "ContextForce::a::0",
+  "orig_out": 201,
+  "orig_server": 40.011,
+  "fix_value": 3.7940530668682495,
+  "new_out": 410,
+  "new_server": 10.963,
+  "new_cli": 11.106,
+  "new_wall": 12.483283000008669,
+  "predicted_new": 5.8739984792899795,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "artefact, hundred (slowed tail)",
+  "id": "CollaborateForce::a::0",
+  "orig_out": 220,
+  "orig_server": 39.345,
+  "fix_value": 3.9831390134520426,
+  "new_out": 259,
+  "new_server": 4.854,
+  "new_cli": 5.009,
+  "new_wall": 6.334870499995304,
+  "predicted_new": 4.371262798545093,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "artefact, hundred (slowed tail)",
+  "id": "ActionGenie::a::1",
+  "orig_out": 256,
+  "orig_server": 44.609,
+  "fix_value": 4.341407122768705,
+  "new_out": 281,
+  "new_server": 5.022,
+  "new_cli": 5.288,
+  "new_wall": 6.6085844000044744,
+  "predicted_new": 4.590204420905275,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "artefact, hundred (slowed tail)",
+  "id": "CoachForce::a::0",
+  "orig_out": 286,
+  "orig_server": 43.3,
+  "fix_value": 4.63996388053259,
+  "new_out": 276,
+  "new_server": 5.728,
+  "new_cli": 5.865,
+  "new_wall": 7.178727800026536,
+  "predicted_new": 4.540444961277961,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "artefact, hundred (slowed tail)",
+  "id": "CollaborationForce::a::0",
+  "orig_out": 283,
+  "orig_server": 40.433,
+  "fix_value": 4.610108204756201,
+  "new_out": 447,
+  "new_server": 7.389,
+  "new_cli": 7.539,
+  "new_wall": 8.861421299981885,
+  "predicted_new": 6.242218480532104,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "artefact, hundred (slowed tail)",
+  "id": "ConnectForce::a::0",
+  "orig_out": 303,
+  "orig_server": 42.857,
+  "fix_value": 4.809146043265457,
+  "new_out": 336,
+  "new_server": 6.272,
+  "new_cli": 6.418,
+  "new_wall": 7.786749299993971,
+  "predicted_new": 5.13755847680573,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "artefact, hundred (slowed tail)",
+  "id": "AutoTuneForce::a::1",
+  "orig_out": 338,
+  "orig_server": 43.595,
+  "fix_value": 5.157462260656656,
+  "new_out": 220,
+  "new_server": 3.683,
+  "new_cli": 3.825,
+  "new_wall": 5.159424899989972,
+  "predicted_new": 3.9831390134520426,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ },
+ {
+  "group": "artefact, hundred (slowed tail)",
+  "id": "AnomalyForce::a::1",
+  "orig_out": 331,
+  "orig_server": 41.214,
+  "fix_value": 5.087799017178416,
+  "new_out": 417,
+  "new_server": 8.115,
+  "new_cli": 8.276,
+  "new_wall": 9.596837499993853,
+  "predicted_new": 5.943661722768219,
+  "env_diff": [
+   "ENABLE_PROMPT_CACHING_1H"
+  ]
+ }
+]

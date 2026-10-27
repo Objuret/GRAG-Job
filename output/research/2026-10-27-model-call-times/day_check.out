@@ -1,0 +1,14 @@
+ 1/10 | recorded on 10-25:   3.5 s (94 tok) | now:   3.7 s (145 tok)
+ 2/10 | recorded on 10-25:   3.2 s (177 tok) | now:   4.1 s (228 tok)
+ 3/10 | recorded on 10-25:   4.4 s (235 tok) | now:   3.5 s (167 tok)
+ 4/10 | recorded on 10-25:   4.8 s (277 tok) | now:   4.6 s (307 tok)
+ 5/10 | recorded on 10-25:   4.5 s (321 tok) | now:   7.2 s (489 tok)
+ 6/10 | recorded on 10-25:   4.6 s (359 tok) | now:   5.0 s (336 tok)
+ 7/10 | recorded on 10-25:   5.4 s (404 tok) | now:   4.6 s (292 tok)
+ 8/10 | recorded on 10-25:   6.1 s (480 tok) | now:   7.6 s (585 tok)
+ 9/10 | recorded on 10-25:   7.8 s (617 tok) | now:   7.0 s (550 tok)
+10/10 | recorded on 10-25:  17.7 s (1975 tok) | now:  11.0 s (981 tok)
+server seconds per 1000 output tokens, median: recorded on 10-25 13.6 | now 14.9
+seconds, median: recorded 4.70 | now 4.78
+
+[exited with code 0]

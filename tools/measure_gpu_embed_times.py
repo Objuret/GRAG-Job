@@ -1,14 +1,16 @@
 """Measure, on the graphics card, the time each query-embedding call a run made on the CPU takes:
 the evidence file of correction embed-gpu-time (tools/correct_embed_gpu_time.py).
 
-    HERB_EMBED_DEVICE=cuda python tools/measure_gpu_embed_times.py <run folder> <out.json> <cpu vector folder> [...]
+    HERB_EMBED_DEVICE=cuda python tools/measure_gpu_embed_times.py <run folder> <out.json> [--all] [<cpu vector folder> ...]
 
 For each row of the run's arm_outputs.jsonl, each embed call record that says device cpu is made
 again with the harness's own request function (harness.embed._embed_request), on the same texts in
 the same input type, one call after the other in one warm process; its time is the record's encode_s
-as the harness takes it (the encoding inside the lock). Each text's vector is compared with the one
-the run kept on the side on the CPU (output/query_embed_cache/<model>@<revision>__float32__cpu, the
-folders given), by its cosine. Nothing is sent to a model; nothing of the run is written.
+as the harness takes it (the encoding inside the lock). With --all every embed call record is made
+again, also one the run made on the graphics card while other questions were under way. Each text's
+vector is compared with the one the run kept on the side on the CPU (output/query_embed_cache/
+<model>@<revision>__float32__cpu, the folders given), by its cosine, where it kept one. Nothing is
+sent to a model; nothing of the run is written.
 """
 import hashlib
 import json
@@ -25,15 +27,18 @@ WARM = 20
 
 
 def main():
-    run, out, folders = Path(sys.argv[1]), Path(sys.argv[2]), [Path(p) for p in sys.argv[3:]]
+    run, out = Path(sys.argv[1]), Path(sys.argv[2])
+    every = "--all" in sys.argv[3:]
+    folders = [Path(p) for p in sys.argv[3:] if p != "--all"]
     if os.environ.get("HERB_EMBED_DEVICE") != "cuda":
         raise SystemExit("set HERB_EMBED_DEVICE=cuda: the times are the graphics card's")
     from harness import capture, embed
     rows = [json.loads(x) for x in (run / "arm_outputs.jsonl").read_text(encoding="utf-8").splitlines()
             if x.strip()]
     work = [(r["id"], c) for r in rows for c in r.get("calls") or []
-            if c.get("kind") == "embed" and c.get("device") == "cpu"]
-    print(f"{run.name}: {len(rows)} rows, {len(work)} embed calls made on the CPU", flush=True)
+            if c.get("kind") == "embed" and (every or c.get("device") == "cpu")]
+    print(f"{run.name}: {len(rows)} rows, {len(work)} embed calls "
+          f"{'in all' if every else 'made on the CPU'}", flush=True)
     # a warm process: the model loaded and its kernels run before anything is timed
     for _, c in work[:WARM]:
         embed._embed_request(c["texts"], c["input_type"])
@@ -67,7 +72,7 @@ def main():
     result = {run.name: times,
               "measured": {"device": embed.EMBED_DEVICE, "model": embed.EMBED_MODEL,
                            "revision": embed.EMBED_REVISION, "dtype": embed.EMBED_DTYPE,
-                           "calls": len(work), "warm_up_calls": min(WARM, len(work)),
+                           "calls": len(work), "all_records": every, "warm_up_calls": min(WARM, len(work)),
                            "texts_without_a_kept_cpu_vector": missing,
                            "min_cosine_to_stored_cpu": min(cosines) if cosines else None,
                            "script": "tools/measure_gpu_embed_times.py",

@@ -1,0 +1,105 @@
+chat calls read (1-27 Oct, deduplicated): 37287; by model: {'claude-sonnet-5': 4106, 'claude-haiku-4-5-20251001': 33181}
+roles in the six final runs: {('lucene100', 'answer', 'claude-sonnet-5'): 100, ('vector100', 'answer', 'claude-sonnet-5'): 100, ('artefact100', 'answer', 'claude-sonnet-5'): 100, ('lucene715', 'answer', 'claude-sonnet-5'): 715, ('vector715', 'answer', 'claude-sonnet-5'): 715, ('artefact715', None, 'claude-sonnet-5'): 720, ('artefact715', 'answer', 'claude-sonnet-5'): 715}
+
+== sonnet answer calls: 2890; server seconds per 1,000 output tokens by the login's input tokens per second
+   by load_sonnet:
+          0k-   2k:   184 calls | median   15.2 | p75   17.6 | p90   21.2
+          2k-   4k:   204 calls | median   15.2 | p75   17.8 | p90   20.3
+          4k-   6k:   151 calls | median   15.6 | p75   18.2 | p90   23.1
+          6k-   8k:    68 calls | median   14.0 | p75   16.7 | p90   21.8
+          8k-  10k:   100 calls | median   15.1 | p75   17.1 | p90   20.2
+         10k-  12k:   125 calls | median   16.3 | p75   19.0 | p90   21.4
+         12k-  14k:   227 calls | median   16.3 | p75   24.0 | p90   99.7
+         14k-  16k:   373 calls | median   38.7 | p75   82.1 | p90  269.5
+         16k-  18k:   554 calls | median   57.9 | p75  118.6 | p90  235.6
+         18k-  20k:   372 calls | median   58.0 | p75  108.4 | p90  223.9
+         20k-  25k:   256 calls | median   23.1 | p75   78.9 | p90  143.2
+         25k-  30k:   142 calls | median   16.4 | p75   24.6 | p90   50.0
+         30k-  40k:    96 calls | median   76.9 | p75  188.8 | p90  316.1
+         40k- infk:    38 calls | median   91.3 | p75  134.5 | p90  303.8
+      rank correlation with seconds per 1,000 tokens: +0.401
+   by load_all:
+          0k-   2k:   180 calls | median   15.2 | p75   17.6 | p90   21.4
+          2k-   4k:   207 calls | median   15.2 | p75   17.8 | p90   20.3
+          4k-   6k:   152 calls | median   15.6 | p75   18.2 | p90   23.1
+          6k-   8k:    68 calls | median   14.0 | p75   16.7 | p90   21.8
+          8k-  10k:   100 calls | median   15.1 | p75   17.1 | p90   20.2
+         10k-  12k:   125 calls | median   16.3 | p75   19.0 | p90   21.4
+         12k-  14k:   227 calls | median   16.3 | p75   24.0 | p90   99.7
+         14k-  16k:   373 calls | median   38.7 | p75   82.1 | p90  269.5
+         16k-  18k:   554 calls | median   57.9 | p75  118.6 | p90  235.6
+         18k-  20k:   372 calls | median   58.0 | p75  108.4 | p90  223.9
+         20k-  25k:   256 calls | median   23.1 | p75   78.9 | p90  143.2
+         25k-  30k:   142 calls | median   16.4 | p75   24.6 | p90   50.0
+         30k-  40k:    96 calls | median   76.9 | p75  188.8 | p90  316.1
+         40k- infk:    38 calls | median   91.3 | p75  134.5 | p90  303.8
+      rank correlation with seconds per 1,000 tokens: +0.401
+   by load_haiku:
+          0k-   2k:  2890 calls | median   20.6 | p75   67.5 | p90  154.7
+      rank correlation with seconds per 1,000 tokens: +0.069
+   by load_spread:
+          0k-   2k:   140 calls | median   15.1 | p75   18.0 | p90   21.1
+          2k-   4k:   241 calls | median   15.1 | p75   17.6 | p90   20.4
+          4k-   6k:    27 calls | median   17.2 | p75   22.0 | p90   26.3
+          6k-   8k:    96 calls | median   14.5 | p75   16.2 | p90   21.4
+          8k-  10k:   155 calls | median   15.1 | p75   17.3 | p90   19.6
+         10k-  12k:   167 calls | median   14.7 | p75   17.5 | p90   20.8
+         12k-  14k:   217 calls | median   15.9 | p75   23.1 | p90   80.3
+         14k-  16k:   491 calls | median   31.7 | p75   84.7 | p90  186.0
+         16k-  18k:   609 calls | median   67.3 | p75  138.1 | p90  333.4
+         18k-  20k:   275 calls | median   63.8 | p75  105.8 | p90  161.7
+         20k-  25k:   401 calls | median   18.1 | p75   44.5 | p90  147.8
+         25k-  30k:    71 calls | median   28.6 | p75   76.1 | p90  181.6
+      rank correlation with seconds per 1,000 tokens: +0.407
+
+== haiku calls: 32656; roles: {None: 32656}
+   by load_haiku:
+          0k-   2k:  2323 calls | median   10.1 | p75   14.8 | p90   22.7
+          2k-   4k:   603 calls | median    9.2 | p75   13.9 | p90   21.3
+          4k-   6k:  1455 calls | median    9.5 | p75   13.4 | p90   20.8
+          6k-   8k:  4767 calls | median    9.8 | p75   15.1 | p90   25.3
+          8k-  10k:  4301 calls | median    9.9 | p75   15.7 | p90   27.2
+         10k-  12k:  7341 calls | median   10.0 | p75   16.2 | p90   26.5
+         12k-  14k:  5123 calls | median    9.8 | p75   15.2 | p90   24.0
+         14k-  16k:  4503 calls | median    9.7 | p75   14.7 | p90   21.7
+         16k-  18k:  1156 calls | median    9.1 | p75   13.3 | p90   20.0
+         18k-  20k:   606 calls | median    9.1 | p75   13.1 | p90   18.8
+         20k-  25k:   326 calls | median    9.3 | p75   13.8 | p90   19.5
+         25k-  30k:   139 calls | median    9.4 | p75   12.0 | p90   18.3
+         30k-  40k:    12 calls | median    9.4 | p75   11.6 | p90   16.6
+         40k- infk:     1 calls | median    6.9 | p75    6.9 | p90    6.9
+      rank correlation with seconds per 1,000 tokens: -0.036
+   by load_all:
+          0k-   2k:  2282 calls | median   10.2 | p75   14.8 | p90   22.8
+          2k-   4k:   612 calls | median    9.2 | p75   13.9 | p90   21.3
+          4k-   6k:  1478 calls | median    9.4 | p75   13.3 | p90   20.5
+          6k-   8k:  4776 calls | median    9.8 | p75   15.1 | p90   25.2
+          8k-  10k:  4301 calls | median    9.9 | p75   15.7 | p90   27.2
+         10k-  12k:  7341 calls | median   10.0 | p75   16.2 | p90   26.5
+         12k-  14k:  5123 calls | median    9.8 | p75   15.2 | p90   24.0
+         14k-  16k:  4503 calls | median    9.7 | p75   14.7 | p90   21.7
+         16k-  18k:  1156 calls | median    9.1 | p75   13.3 | p90   20.0
+         18k-  20k:   606 calls | median    9.1 | p75   13.1 | p90   18.8
+         20k-  25k:   326 calls | median    9.3 | p75   13.8 | p90   19.5
+         25k-  30k:   139 calls | median    9.4 | p75   12.0 | p90   18.3
+         30k-  40k:    12 calls | median    9.4 | p75   11.6 | p90   16.6
+         40k- infk:     1 calls | median    6.9 | p75    6.9 | p90    6.9
+      rank correlation with seconds per 1,000 tokens: -0.036
+   by load_sonnet:
+          0k-   2k: 32604 calls | median    9.8 | p75   15.1 | p90   24.0
+          2k-   4k:    41 calls | median    8.4 | p75   10.6 | p90   19.2
+          4k-   6k:    11 calls | median    9.8 | p75   11.0 | p90   19.4
+      rank correlation with seconds per 1,000 tokens: +0.020
+
+== the six final runs: their sonnet calls by the sonnet load at the start (input tokens per second, 60 s before)
+   lucene100    answer          100 calls | 0k+:49 4k+:51 8k+:0 10k+:0 12k+:0 14k+:0 16k+:0 20k+:0
+   vector100    answer          100 calls | 0k+:76 4k+:24 8k+:0 10k+:0 12k+:0 14k+:0 16k+:0 20k+:0
+   artefact100  answer          100 calls | 0k+:7 4k+:8 8k+:4 10k+:4 12k+:4 14k+:3 16k+:8 20k+:62
+   lucene715    answer          715 calls | 0k+:9 4k+:9 8k+:5 10k+:6 12k+:28 14k+:133 16k+:427 20k+:98
+   vector715    answer          715 calls | 0k+:7 4k+:8 8k+:6 10k+:17 12k+:57 14k+:119 16k+:353 20k+:148
+   artefact715  None            720 calls | 0k+:120 4k+:80 8k+:43 10k+:54 12k+:79 14k+:92 16k+:138 20k+:114
+   artefact715  answer          715 calls | 0k+:82 4k+:85 8k+:74 10k+:85 12k+:94 14k+:72 16k+:105 20k+:118
+
+per-call table: C:\Users\jocke\AppData\Local\Temp\claude\c--Coding-exjobbet-GRAG-Job\9c164e78-008e-41e9-85f3-58c55027a64c\scratchpad\load_per_call.json (4106 calls)
+
+[exited with code 0]

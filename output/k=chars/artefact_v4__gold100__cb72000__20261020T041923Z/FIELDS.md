@@ -27,6 +27,8 @@ One run of one retrieval method, **artefact_v4**, over 100 questions: for each q
 | `correct_cut_chunk_records.py` | The script that made the cut-chunk correction (the records of the cut chunk handed over whole counted in the two id-based scores); run on the files from before it, it gives the corrected files again. |  |
 | `correct_embed_gpu_time.py` | The script that made the GPU-time correction (the query embeddings made on the CPU given the time the same embeddings take on the desktop's graphics card); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
 | `gpu_embed_times.json` | The evidence of the GPU-time correction: per run and question, each embed call's seconds on the graphics card, its recorded seconds and the cosine of its vector to the one the run made. | question id = id of arm_outputs.jsonl; seq = calls[].seq |
+| `correct_model_call_time.py` | The script that made the model-call-time correction (each answer call and first call given its answering try's server time, and a call started past the login's limit its arm's clean relation at its own output tokens); run on the files from before it, over the same run folders, it gives the corrected files again. |  |
+| `model_call_times.json` | The evidence of the model-call-time correction: the login's backlog of claude-sonnet-5 input tokens (its rate, its limit, the files it was read from with their sha256), the clean relation of each arm and kind of call, and per corrected call its server time, backlog, relation time and time; with the check of the relations on calls sent again one at a time. | question_id = id of arm_outputs.jsonl; record = the call's place in calls; seq = calls[].seq |
 
 Times are seconds (`_s`), milliseconds (`_ms`) or UTC stamps (`_at`; every other time text carries its own zone). Sizes are tokens, characters (`chars`) or bytes. A count (calls, attempts, requests, texts, records, edges, refits, and the like) is a plain number of the things it names. A price (`usd`, `USD`) is the Claude program's own, in US dollars; no number of this harness uses it. The evaluation's scores run from 0 to 1 and higher is more; a score an arm ranks by says its own scale.
 
@@ -139,7 +141,7 @@ One line per question: what was delivered, the answer, and everything the questi
 | `meta.interpreter.stages.stage` | Which call: querytag is the first call. |
 | `meta.interpreter.stages.cache_hit` | Whether its answer was read from the cache instead of asked. |
 | `meta.interpreter.stages.key` | The cache key: the sha256 of the call's instruction, message, schema and model. |
-| `meta.interpreter.stages.asks` | How many times the call was made for this question. |
+| `meta.interpreter.stages.asks` | How many times the start that wrote this row tried the call; a read from the cache counts as one. A try of an earlier start that failed or was cut off is kept in the store, in querytag/failed/ under the same key. |
 | `meta.interpreter.stages.offline` | Whether the run refused to ask the model. |
 | `meta.interpreter.stages.duplicate_tags_dropped` | How many tags of the answer were left out because the same phrase stood there twice. |
 | `meta.interpreter.description_side_tags` | How many query tags the first call wrote from the content it described. |
@@ -1424,16 +1426,17 @@ The file holds no record.
 | `workers` | integer | 1 | 0 |
 
 ---
-Written from `prod/harness/fields.py`, sha256 `bd121e0a2cb46d6c89216b24d24db0e97fe15fba3a887562d427a38bfaf3360d`.
+Written from `prod/harness/fields.py`, sha256 `6e23f7c5f7999b58e2b931e4cfd134304c9acfaadeb25cc1ce0b9aa46006f05b`.
 
 The files as they stood when this was written, their line ends as git holds them (LF):
 
 - `arm_outputs.as_recorded.jsonl` sha256 `44e0ce70ddecb7d85dfcd70d03ac3ca5c1a60c22ec5125e91768b543266cebf1`
-- `arm_outputs.jsonl` sha256 `b4cc6f6839598f237f755462d9fe707b00e39de7f81d06dc9a4509e06dcdce25`
+- `arm_outputs.jsonl` sha256 `7132d3a92b07f6bb3ca75c3a98a0bf69cfdca658c3a389f4c0a562cb3933c111`
 - `correct_cut_chunk_records.py` sha256 `b26fd7de0e2ca9257dabf2d0f9a78dfeee96352d39c25ee3cff5592b03a8416f`
 - `correct_embed_gpu_time.py` sha256 `84c6299aea0bbcf3589428bb2fe36ae8831ecd5a973ae14721cb956f5e1e24d7`
+- `correct_model_call_time.py` sha256 `f3e49a6b4fbfc779bba8d6793c98897415fbd7693202b2ff89f4e68771420a5c`
 - `correct_usage_by_model.py` sha256 `28d2357c693e407a2d4739241d1fddca55751553f0c9d4f42eedcf5a79a0d299`
-- `corrections.json` sha256 `a65aeee63638c35e5dac0ce6f352954c99ad6abd17da43b01bd2895b64441a59`
+- `corrections.json` sha256 `7cb2164dca7b5ae45731cbe6454935cae69f03123af81fa35a7ea64ee63dd71b`
 - `eval_calls.jsonl` sha256 `2f871893c3e9c9bd29b8c6b5868fdd1d314881b1f01de5b04e8f386ebc1a18c0`
 - `eval_failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - `eval_manifest.json` sha256 `7b1aa73548f408b7be4236a740627467d16d2a2703b77b9a7c86038b152659ef`
@@ -1441,5 +1444,6 @@ The files as they stood when this was written, their line ends as git holds them
 - `eval_results.jsonl` sha256 `e0016f962d7ad7f332183c1dafe15e0b7b8dcf1539fbb89983b15ff9c90c9e78`
 - `failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - `gpu_embed_times.json` sha256 `12fe727356eb1fbeefdb1b5837d467b6503700083c418e72634598dfa1d9f546`
+- `model_call_times.json` sha256 `d360b60b39d38dbed18646462bce944117f863b6b1952399f480fa23b6bbc759`
 - `run_manifest.as_recorded.json` sha256 `074ad6669751a97e11f744e7cd3eb2d08d0138d8d016bc42ab4551070e79819b`
 - `run_manifest.json` sha256 `7e8f8f531b37a72a27735e2df905388e8480eb35068679272a1fc279fee8bf40`

@@ -1,7 +1,7 @@
 # Graph Report - .  (2026-10-27)
 
 ## Corpus Check
-- 272 files · ~410,421 words
+- 272 files · ~410,758 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -1026,7 +1026,7 @@ Nodes (6): cf_path(), gen_label(), `facet_views_texts.split_cf_dir`'s rule: a pa
 
 ### Community 208 - "spec_for()"
 Cohesion: 0.33
-Nodes (6): arm_fields(), A dict, or a list of dicts, whose own fields are described one by one., The words an arm gives for what only it writes; empty when it gives none., file -> the fields of that file, with the arm's own words put in their places., spec_for(), sub()
+Nodes (6): arm_fields(), file -> the fields of that file, with the arm's own words put in their places., A dict, or a list of dicts, whose own fields are described one by one., The words an arm gives for what only it writes; empty when it gives none., spec_for(), sub()
 
 ### Community 209 - "jsonl.py"
 Cohesion: 0.53

@@ -1,0 +1,35 @@
+rank corr by refill R (answers): 10k:0.657 11k:0.660 12k:0.661 13k:0.662 14k:0.664 15k:0.670 16k:0.680 17k:0.684 18k:0.540 19k:0.333 20k:0.250 21k:0.214 22k:0.200
+best R = 16500 tokens/s (rank corr answers 0.690, first calls +0.116)
+bend at a backlog of 886,127 tokens (bootstrap 5-95%: 838,629 to 941,433); level before it 15.6 s per 1,000 tokens
+   by the bend: answers past it 1633 | median s/1k past 58.0, before 15.0 | before it but over 30: 12 | past it and under 20: 320
+   by the bend's lower 5% end: answers past it 1659 | median s/1k past 56.2, before 15.0 | before it but over 30: 12 | past it and under 20: 344
+
+== clean relations (calls before the bend): server s = a + b per 1,000 output tokens; leave-one-out |error| median, p90
+   answer lucene   n= 145 (from ['lucene100', 'lucene715']) | a  1.52 s, b 10.94 s per 1,000 | LOO 0.30, 0.78 s | output tokens median 267, range 97-1023
+   answer vector   n= 137 (from ['vector100', 'vector715']) | a  1.64 s, b  9.90 s per 1,000 | LOO 0.39, 1.05 s | output tokens median 397, range 98-1318
+   answer artefact n= 580 (from ['artefact100', 'artefact715']) | a  1.95 s, b  9.27 s per 1,000 | LOO 0.36, 0.97 s | output tokens median 332, range 90-1975
+   first  artefact n= 651 (from ['artefact100_first_calls', 'artefact715']) | a  0.47 s, b 10.75 s per 1,000 | LOO 0.39, 1.21 s | output tokens median 953, range 363-3342
+
+== the arms' answer relations at the same lengths (seconds), bootstrap 5-95%
+     200 tokens: lucene  3.71 (3.64-3.77) | vector  3.62 (3.51-3.76) | artefact  3.81 (3.74-3.86)
+     400 tokens: lucene  5.90 (5.81-5.98) | vector  5.60 (5.52-5.69) | artefact  5.66 (5.61-5.70)
+     800 tokens: lucene 10.27 (10.03-10.50) | vector  9.56 (9.25-9.79) | artefact  9.37 (9.19-9.54)
+    1500 tokens: lucene 17.93 (17.31-18.55) | vector 16.49 (15.90-17.13) | artefact 15.85 (15.50-16.30)
+
+== the 715's own clean answer calls against the relation from the hundred (drift check): residual median, n
+   lucene   hundred n=100, 715 clean n=45: residual median -0.32 s, |res| median 0.38
+   vector   hundred n=100, 715 clean n=37: residual median +0.01 s, |res| median 0.48
+   artefact hundred n=41, 715 clean n=539: residual median -0.02 s, |res| median 0.35
+
+== past the bend, per final run (answer calls | first calls)
+   lucene100                answers 0 of 100 | first calls 0 of 0
+   vector100                answers 0 of 100 | first calls 0 of 0
+   artefact100              answers 59 of 100 | first calls 0 of 0
+   artefact100_first_calls  answers 0 of 100 | first calls 0 of 102
+   lucene715                answers 670 of 715 | first calls 0 of 0
+   vector715                answers 678 of 715 | first calls 0 of 0
+   artefact715              answers 176 of 715 | first calls 167 of 720
+
+picked for the check: 85 calls past the bend, spread over length (25 answers per arm, 10 first calls) -> check_selection.json
+
+[exited with code 0]

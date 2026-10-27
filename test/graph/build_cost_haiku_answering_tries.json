@@ -1,0 +1,36 @@
+{
+ "what": "seconds of the claude-haiku-4-5 calls that described and tagged the graph's 4,869 chunks, by their answering tries",
+ "seconds": 14311.174796517833,
+ "rule": "1. a record answered on its first try counts by its duration_ms;\n  2. a record that never answered (no usage) counts with nothing;\n  3. a record answered on a later try holds its failed tries and the pauses after them as well: it\n     counts by a + b x its output tokens, fitted (least squares) on the records of rule 1.",
+ "answered_on_the_first_try": {
+  "calls": 4852,
+  "seconds": 14234.445
+ },
+ "answered_on_a_later_try": {
+  "calls": 26,
+  "recorded_seconds_with_their_failed_tries": 287.962,
+  "seconds_by_the_relation": 76.72979651783332
+ },
+ "never_answered": {
+  "records": 14,
+  "recorded_seconds_left_out": 169.398
+ },
+ "relation": {
+  "a_seconds": 1.5890190123296903,
+  "b_seconds_per_output_token": 0.003919356152862039,
+  "fitted_on": 4852,
+  "leave_one_out_abs_error_median_s_every_7th": 0.2966344354969286
+ },
+ "as_build_cost_json_had_it": 14691.8,
+ "records": {
+  "commit": "bcc3156",
+  "path": "backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip",
+  "sha256": "ab3785da7a63125ee16bc64e63bd1c9acdb803dd18eee8fc9a684324f77e40b2",
+  "files": [
+   "io.jsonl",
+   "recovery_io.jsonl"
+  ],
+  "stage": "extract"
+ },
+ "script": "tools/recount_haiku_answering_tries.py"
+}

@@ -1,0 +1,44 @@
+judge  lucene__gold100__cb72000__20261008T234209Z          n=   600 in flight median    1
+        0-   2 in flight:    600 calls | ours   5.8 s | CLI total   3.9 | server   3.6 | ours minus server, median   1.6, p90   3.8
+judge  vector__gold100__cb72000__20261017T061242Z          n=   600 in flight median    1
+        0-   2 in flight:    600 calls | ours   5.0 s | CLI total   3.6 | server   3.5 | ours minus server, median   1.6, p90   2.0
+judge  artefact_v4__gold100__cb72000__20261023T021439Z     n=   600 in flight median   27
+       20-  40 in flight:    575 calls | ours  12.1 s | CLI total   5.2 | server   3.8 | ours minus server, median   8.0, p90   9.8
+judge  lucene__answerable715__cb72000__20261023T112745Z    n=  8604 in flight median   32
+        8-  20 in flight:     27 calls | ours  14.0 s | CLI total   4.6 | server   2.6 | ours minus server, median  10.8, p90  13.5
+       20-  40 in flight:   8559 calls | ours  10.7 s | CLI total   3.9 | server   2.7 | ours minus server, median   7.6, p90   9.4
+judge  vector__answerable715__cb72000__20261024T004317Z    n=  8755 in flight median   36
+        2-   8 in flight:     43 calls | ours  17.1 s | CLI total   5.7 | server   2.4 | ours minus server, median  14.5, p90  18.7
+        8-  20 in flight:     97 calls | ours  18.5 s | CLI total   6.0 | server   2.6 | ours minus server, median  14.5, p90  17.8
+       20-  40 in flight:   6059 calls | ours  14.2 s | CLI total   5.0 | server   3.0 | ours minus server, median  10.4, p90  12.6
+       40-1000 in flight:   2549 calls | ours  15.3 s | CLI total   5.2 | server   3.0 | ours minus server, median  11.6, p90  14.0
+judge  artefact_v4__answerable715__cb72000__20261025T21153 n=  8591 in flight median   24
+        2-   8 in flight:     26 calls | ours  11.3 s | CLI total   4.6 | server   2.7 | ours minus server, median   8.2, p90  11.7
+        8-  20 in flight:   2015 calls | ours   7.5 s | CLI total   3.6 | server   2.9 | ours minus server, median   4.2, p90   5.7
+       20-  40 in flight:   6548 calls | ours   9.8 s | CLI total   4.1 | server   2.9 | ours minus server, median   6.4, p90   8.4
+judge  artefact_v4__gold100__cb72000__20261023T021439Z__j- n=   601 in flight median    9
+        2-   8 in flight:     92 calls | ours   6.4 s | CLI total   2.8 | server   2.2 | ours minus server, median   3.1, p90   5.1
+        8-  20 in flight:    506 calls | ours   9.5 s | CLI total   3.4 | server   2.3 | ours minus server, median   6.7, p90   8.4
+judge  lucene__gold100__cb72000__20261008T234209Z__j-claud n=   603 in flight median    9
+        2-   8 in flight:     85 calls | ours   6.3 s | CLI total   2.8 | server   2.3 | ours minus server, median   2.9, p90   6.3
+        8-  20 in flight:    515 calls | ours   8.7 s | CLI total   3.2 | server   2.2 | ours minus server, median   6.0, p90   8.2
+judge  vector__gold100__cb72000__20261017T061242Z__j-claud n=   612 in flight median    8
+        2-   8 in flight:    255 calls | ours   8.5 s | CLI total   3.2 | server   2.2 | ours minus server, median   5.8, p90   8.1
+        8-  20 in flight:    355 calls | ours   8.6 s | CLI total   3.2 | server   2.4 | ours minus server, median   3.7, p90   7.9
+answer lucene__gold100__cb72000__20261008T234209Z          n=   100 in flight median    1
+        0-   2 in flight:    100 calls | ours   6.1 s | CLI total   4.7 | server   4.5 | ours minus server, median   1.5, p90   1.9
+answer vector__gold100__cb72000__20261017T061242Z          n=   100 in flight median    1
+        0-   2 in flight:    100 calls | ours   7.5 s | CLI total   5.4 | server   5.3 | ours minus server, median   2.2, p90   2.6
+answer artefact_v4__gold100__cb72000__20261023T021439Z     n=   100 in flight median   20
+        8-  20 in flight:     37 calls | ours  15.2 s | CLI total   8.0 | server   5.8 | ours minus server, median   9.1, p90  10.6
+       20-  40 in flight:     56 calls | ours  17.6 s | CLI total  10.1 | server   8.5 | ours minus server, median   9.0, p90  10.9
+answer lucene__answerable715__cb72000__20261023T112745Z    n=   715 in flight median   27
+       20-  40 in flight:    697 calls | ours  17.7 s | CLI total  15.5 | server  15.2 | ours minus server, median   2.6, p90   6.4
+answer vector__answerable715__cb72000__20261024T004317Z    n=   715 in flight median   33
+       20-  40 in flight:    696 calls | ours  28.1 s | CLI total  25.1 | server  24.6 | ours minus server, median   2.9, p90   6.8
+answer artefact_v4__answerable715__cb72000__20261025T21153 n=   715 in flight median    7
+        0-   2 in flight:     38 calls | ours  10.3 s | CLI total   6.0 | server   5.4 | ours minus server, median   3.8, p90  13.6
+        2-   8 in flight:    362 calls | ours   9.5 s | CLI total   6.0 | server   5.1 | ours minus server, median   3.5, p90   9.2
+        8-  20 in flight:    299 calls | ours  11.8 s | CLI total   6.6 | server   5.5 | ours minus server, median   5.6, p90   9.5
+
+[exited with code 0]

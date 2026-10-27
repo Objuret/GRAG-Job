@@ -18961,6 +18961,3643 @@
         }
       },
       "script": "correct_embed_gpu_time.py, in this folder"
+    },
+    {
+      "made_at": "2026-10-27T20:23:58.747069+00:00",
+      "ordered_by": "\"answer seconds looks really fucked up btw, there is litterally no chance those times are correct for real.. take a serious look at them\" · \"do a selected test/fix for a bunch and see if its the correct way\" · \"doit\" (2026-10-27)",
+      "what_happened": "A model call's time was our clock around the whole CLI program, which holds the program's start on our machine (longer with more calls at once), and the calls that started while the login's backlog of claude-sonnet-5 input tokens was past its limit were slowed by the server. Each answer call and first call now has the server's own time for its answering try, and a call past the limit the time its arm's calls take for an answer of that length below it.",
+      "rule": {
+        "id": "model-call-time/1",
+        "text": "1. A call is an answer call (role answer) or a first call (the artefact's call without a role) on\n     claude-sonnet-5 that answered. Its time is its answering try's server time: the CLI's own\n     duration_api_ms, the time spent with the model, without the program's start on our machine.\n  2. The login's backlog: every claude-sonnet-5 chat call that started from 1 to 26 October (UTC), in\n     any run folder under output/k=chars, adds its input tokens at its start; between two starts the\n     backlog drops by R tokens per second and never below 0. R is the rate, from 10,000 to 22,000 by\n     500, whose backlog ranks the answer calls' server seconds per 1,000 output tokens best (rank\n     correlation); the limit is the backlog at which log(seconds per 1,000 output tokens) against the\n     backlog bends (two straight segments, least squares, the bend at one of 181 quantiles from 5% to\n     95%).\n  3. A call that started at or past the limit gets the time of its arm's clean relation at its own\n     output tokens: seconds = a + b * output tokens, fitted on the server times of the arm's calls of\n     the same kind (answer, first call) in the final runs that started below the limit (for the first\n     calls, with the run they were read from). Every call past the limit gets it, whatever its own\n     server time.\n  4. In the row, the call's entry (generator for the answer call, the retrieval entry of kind chat for\n     the first call) gets request_s = the time of rules 1 and 3, and time_s = request_s + wait_s +\n     retry_s; wait_s and retry_s stay as recorded, and the harness's own time in the call is out.\n  5. The question's timing.wall_s changes by the same amount as the entry's time_s for a call made\n     inside the row's span; a first call read from the run's store, made by an earlier start before\n     the row's span began, changes no wall_s. No call record, answer, context, score or token count\n     changes."
+      },
+      "not_changed_and_worth_knowing": [
+        "Every call record keeps each try's seconds as our clock measured them; only the row's entries and wall_s change.",
+        "The backlog holds the calls of the run folders on this laptop; a call on the login that no folder here holds (another machine's own folders, an interactive session) is not in it.",
+        "The judge calls are not changed: their server time shows no slowing at any load.",
+        "0 of the run's 200 calls are past the limit and hold the relation's time."
+      ],
+      "changes": [
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "generator.request_s",
+          "recorded": 9.80566389998421,
+          "corrected": 6.474
+        },
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "generator.time_s",
+          "recorded": 9.811737000010908,
+          "corrected": 6.474
+        },
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 59.458881499711424,
+          "corrected": 56.12114449970052
+        },
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 20.10597170004621,
+          "corrected": 16.161
+        },
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 20.10597170004621,
+          "corrected": 16.161
+        },
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 56.12114449970052,
+          "corrected": 52.17617279965431
+        },
+        {
+          "where": "arm_outputs.jsonl row 1 (AnomalyForce::a::0)",
+          "field": "generator.request_s",
+          "recorded": 5.626189900096506,
+          "corrected": 3.566
+        },
+        {
+          "where": "arm_outputs.jsonl row 1 (AnomalyForce::a::0)",
+          "field": "generator.time_s",
+          "recorded": 5.627229200210422,
+          "corrected": 3.566
+        },
+        {
+          "where": "arm_outputs.jsonl row 1 (AnomalyForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 23.60380269959569,
+          "corrected": 21.542573499385266
+        },
+        {
+          "where": "arm_outputs.jsonl row 1 (AnomalyForce::a::0)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 15.193156599998474,
+          "corrected": 13.583
+        },
+        {
+          "where": "arm_outputs.jsonl row 1 (AnomalyForce::a::0)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 15.193156599998474,
+          "corrected": 13.583
+        },
+        {
+          "where": "arm_outputs.jsonl row 1 (AnomalyForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 21.542573499385266,
+          "corrected": 19.932416899386794
+        },
+        {
+          "where": "arm_outputs.jsonl row 2 (AutoTuneForce::a::0)",
+          "field": "generator.request_s",
+          "recorded": 4.854183699935675,
+          "corrected": 3.017
+        },
+        {
+          "where": "arm_outputs.jsonl row 2 (AutoTuneForce::a::0)",
+          "field": "generator.time_s",
+          "recorded": 4.855408400297165,
+          "corrected": 3.017
+        },
+        {
+          "where": "arm_outputs.jsonl row 2 (AutoTuneForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 21.767826400813647,
+          "corrected": 19.92941800051648
+        },
+        {
+          "where": "arm_outputs.jsonl row 2 (AutoTuneForce::a::0)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 14.70663239993155,
+          "corrected": 12.848
+        },
+        {
+          "where": "arm_outputs.jsonl row 2 (AutoTuneForce::a::0)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 14.70663239993155,
+          "corrected": 12.848
+        },
+        {
+          "where": "arm_outputs.jsonl row 2 (AutoTuneForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 19.92941800051648,
+          "corrected": 18.070785600584934
+        },
+        {
+          "where": "arm_outputs.jsonl row 3 (CoachForce::a::5)",
+          "field": "generator.request_s",
+          "recorded": 6.747484799940139,
+          "corrected": 3.955
+        },
+        {
+          "where": "arm_outputs.jsonl row 3 (CoachForce::a::5)",
+          "field": "generator.time_s",
+          "recorded": 6.74879219988361,
+          "corrected": 3.955
+        },
+        {
+          "where": "arm_outputs.jsonl row 3 (CoachForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 21.286096401163377,
+          "corrected": 18.492304201279765
+        },
+        {
+          "where": "arm_outputs.jsonl row 3 (CoachForce::a::5)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 11.806916899979115,
+          "corrected": 10.172
+        },
+        {
+          "where": "arm_outputs.jsonl row 3 (CoachForce::a::5)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 11.806916899979115,
+          "corrected": 10.172
+        },
+        {
+          "where": "arm_outputs.jsonl row 3 (CoachForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 18.492304201279765,
+          "corrected": 16.85738730130065
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "generator.request_s",
+          "recorded": 8.830796900205314,
+          "corrected": 7.013
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "generator.time_s",
+          "recorded": 8.832207299768925,
+          "corrected": 7.013
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "timing.wall_s",
+          "recorded": 27.891547898878343,
+          "corrected": 26.072340599109417
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 16.642419900279492,
+          "corrected": 15.123
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 16.642419900279492,
+          "corrected": 15.123
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "timing.wall_s",
+          "recorded": 26.072340599109417,
+          "corrected": 24.552920698829922
+        },
+        {
+          "where": "arm_outputs.jsonl row 5 (CollaborationForce::a::6)",
+          "field": "generator.request_s",
+          "recorded": 7.904097199905664,
+          "corrected": 4.999
+        },
+        {
+          "where": "arm_outputs.jsonl row 5 (CollaborationForce::a::6)",
+          "field": "generator.time_s",
+          "recorded": 7.905712800100446,
+          "corrected": 4.999
+        },
+        {
+          "where": "arm_outputs.jsonl row 5 (CollaborationForce::a::6)",
+          "field": "timing.wall_s",
+          "recorded": 27.78260280005634,
+          "corrected": 24.87588999995589
+        },
+        {
+          "where": "arm_outputs.jsonl row 5 (CollaborationForce::a::6)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 16.48198439972475,
+          "corrected": 15.039
+        },
+        {
+          "where": "arm_outputs.jsonl row 5 (CollaborationForce::a::6)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 16.48198439972475,
+          "corrected": 15.039
+        },
+        {
+          "where": "arm_outputs.jsonl row 5 (CollaborationForce::a::6)",
+          "field": "timing.wall_s",
+          "recorded": 24.87588999995589,
+          "corrected": 23.432905600231138
+        },
+        {
+          "where": "arm_outputs.jsonl row 6 (ConnectForce::a::5)",
+          "field": "generator.request_s",
+          "recorded": 7.6951909000054,
+          "corrected": 5.466
+        },
+        {
+          "where": "arm_outputs.jsonl row 6 (ConnectForce::a::5)",
+          "field": "generator.time_s",
+          "recorded": 7.696025699842721,
+          "corrected": 5.466
+        },
+        {
+          "where": "arm_outputs.jsonl row 6 (ConnectForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 18.196731200092472,
+          "corrected": 15.966705500249752
+        },
+        {
+          "where": "arm_outputs.jsonl row 6 (ConnectForce::a::5)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 7.620915299747139,
+          "corrected": 5.888
+        },
+        {
+          "where": "arm_outputs.jsonl row 6 (ConnectForce::a::5)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 7.620915299747139,
+          "corrected": 5.888
+        },
+        {
+          "where": "arm_outputs.jsonl row 6 (ConnectForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 15.966705500249752,
+          "corrected": 14.233790200502613
+        },
+        {
+          "where": "arm_outputs.jsonl row 7 (ContentForce::a::2)",
+          "field": "generator.request_s",
+          "recorded": 5.42303130030632,
+          "corrected": 3.344
+        },
+        {
+          "where": "arm_outputs.jsonl row 7 (ContentForce::a::2)",
+          "field": "generator.time_s",
+          "recorded": 5.424490999896079,
+          "corrected": 3.344
+        },
+        {
+          "where": "arm_outputs.jsonl row 7 (ContentForce::a::2)",
+          "field": "timing.wall_s",
+          "recorded": 20.90214399958495,
+          "corrected": 18.821652999688872
+        },
+        {
+          "where": "arm_outputs.jsonl row 7 (ContentForce::a::2)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 13.271230599842966,
+          "corrected": 11.719
+        },
+        {
+          "where": "arm_outputs.jsonl row 7 (ContentForce::a::2)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 13.271230599842966,
+          "corrected": 11.719
+        },
+        {
+          "where": "arm_outputs.jsonl row 7 (ContentForce::a::2)",
+          "field": "timing.wall_s",
+          "recorded": 18.821652999688872,
+          "corrected": 17.269422399845908
+        },
+        {
+          "where": "arm_outputs.jsonl row 8 (ContextForce::a::1)",
+          "field": "generator.request_s",
+          "recorded": 4.968024099711329,
+          "corrected": 3.024
+        },
+        {
+          "where": "arm_outputs.jsonl row 8 (ContextForce::a::1)",
+          "field": "generator.time_s",
+          "recorded": 4.968859800137579,
+          "corrected": 3.024
+        },
+        {
+          "where": "arm_outputs.jsonl row 8 (ContextForce::a::1)",
+          "field": "timing.wall_s",
+          "recorded": 19.54091250000056,
+          "corrected": 17.59605269986298
+        },
+        {
+          "where": "arm_outputs.jsonl row 8 (ContextForce::a::1)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 8.987940199673176,
+          "corrected": 6.899
+        },
+        {
+          "where": "arm_outputs.jsonl row 8 (ContextForce::a::1)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 12.674152999650687,
+          "corrected": 10.585212799977512
+        },
+        {
+          "where": "arm_outputs.jsonl row 8 (ContextForce::a::1)",
+          "field": "timing.wall_s",
+          "recorded": 17.59605269986298,
+          "corrected": 15.507112500189805
+        },
+        {
+          "where": "arm_outputs.jsonl row 9 (EdgeForce::a::2)",
+          "field": "generator.request_s",
+          "recorded": 4.478034199681133,
+          "corrected": 2.443
+        },
+        {
+          "where": "arm_outputs.jsonl row 9 (EdgeForce::a::2)",
+          "field": "generator.time_s",
+          "recorded": 4.4787918999791145,
+          "corrected": 2.443
+        },
+        {
+          "where": "arm_outputs.jsonl row 9 (EdgeForce::a::2)",
+          "field": "timing.wall_s",
+          "recorded": 17.31943870021496,
+          "corrected": 15.283646800235845
+        },
+        {
+          "where": "arm_outputs.jsonl row 9 (EdgeForce::a::2)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 11.043843599967659,
+          "corrected": 9.475
+        },
+        {
+          "where": "arm_outputs.jsonl row 9 (EdgeForce::a::2)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 11.043843599967659,
+          "corrected": 9.475
+        },
+        {
+          "where": "arm_outputs.jsonl row 9 (EdgeForce::a::2)",
+          "field": "timing.wall_s",
+          "recorded": 15.283646800235845,
+          "corrected": 13.714803200268186
+        },
+        {
+          "where": "arm_outputs.jsonl row 10 (ExplainabilityForce::a::6)",
+          "field": "generator.request_s",
+          "recorded": 8.683252800256014,
+          "corrected": 6.764
+        },
+        {
+          "where": "arm_outputs.jsonl row 10 (ExplainabilityForce::a::6)",
+          "field": "generator.time_s",
+          "recorded": 8.683993900194764,
+          "corrected": 6.764
+        },
+        {
+          "where": "arm_outputs.jsonl row 10 (ExplainabilityForce::a::6)",
+          "field": "timing.wall_s",
+          "recorded": 25.48358180152718,
+          "corrected": 23.563587901332415
+        },
+        {
+          "where": "arm_outputs.jsonl row 10 (ExplainabilityForce::a::6)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 13.11727110017091,
+          "corrected": 11.54
+        },
+        {
+          "where": "arm_outputs.jsonl row 10 (ExplainabilityForce::a::6)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 13.11727110017091,
+          "corrected": 11.54
+        },
+        {
+          "where": "arm_outputs.jsonl row 10 (ExplainabilityForce::a::6)",
+          "field": "timing.wall_s",
+          "recorded": 23.563587901332415,
+          "corrected": 21.986316801161504
+        },
+        {
+          "where": "arm_outputs.jsonl row 11 (FeedbackForce::a::5)",
+          "field": "generator.request_s",
+          "recorded": 7.138137999922037,
+          "corrected": 5.112
+        },
+        {
+          "where": "arm_outputs.jsonl row 11 (FeedbackForce::a::5)",
+          "field": "generator.time_s",
+          "recorded": 7.139190900139511,
+          "corrected": 5.112
+        },
+        {
+          "where": "arm_outputs.jsonl row 11 (FeedbackForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 15.36396379955113,
+          "corrected": 13.336772899411619
+        },
+        {
+          "where": "arm_outputs.jsonl row 11 (FeedbackForce::a::5)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 5.970233500003815,
+          "corrected": 4.405
+        },
+        {
+          "where": "arm_outputs.jsonl row 11 (FeedbackForce::a::5)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 5.970233500003815,
+          "corrected": 4.405
+        },
+        {
+          "where": "arm_outputs.jsonl row 11 (FeedbackForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 13.336772899411619,
+          "corrected": 11.771539399407803
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "generator.request_s",
+          "recorded": 10.187530300114304,
+          "corrected": 8.473
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "generator.time_s",
+          "recorded": 10.188334099948406,
+          "corrected": 8.473
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "timing.wall_s",
+          "recorded": 28.4940357998712,
+          "corrected": 26.77870169992279
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 14.760501699987799,
+          "corrected": 12.762
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 14.760501699987799,
+          "corrected": 12.762
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "timing.wall_s",
+          "recorded": 26.77870169992279,
+          "corrected": 24.780199999934993
+        },
+        {
+          "where": "arm_outputs.jsonl row 13 (ForecastForce::a::4)",
+          "field": "generator.request_s",
+          "recorded": 6.924578499980271,
+          "corrected": 4.678
+        },
+        {
+          "where": "arm_outputs.jsonl row 13 (ForecastForce::a::4)",
+          "field": "generator.time_s",
+          "recorded": 6.925566200166941,
+          "corrected": 4.678
+        },
+        {
+          "where": "arm_outputs.jsonl row 13 (ForecastForce::a::4)",
+          "field": "timing.wall_s",
+          "recorded": 18.026485800161026,
+          "corrected": 15.778919599994087
+        },
+        {
+          "where": "arm_outputs.jsonl row 13 (ForecastForce::a::4)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 8.962914399802685,
+          "corrected": 7.459
+        },
+        {
+          "where": "arm_outputs.jsonl row 13 (ForecastForce::a::4)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 8.962914399802685,
+          "corrected": 7.459
+        },
+        {
+          "where": "arm_outputs.jsonl row 13 (ForecastForce::a::4)",
+          "field": "timing.wall_s",
+          "recorded": 15.778919599994087,
+          "corrected": 14.275005200191401
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "generator.request_s",
+          "recorded": 9.006172699853778,
+          "corrected": 6.917
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "generator.time_s",
+          "recorded": 9.006928199902177,
+          "corrected": 6.917
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 36.95309290057048,
+          "corrected": 34.86316470066831
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 26.396738999988884,
+          "corrected": 24.533
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 26.396738999988884,
+          "corrected": 24.533
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 34.86316470066831,
+          "corrected": 32.999425700679424
+        },
+        {
+          "where": "arm_outputs.jsonl row 15 (KnowledgeForce::a::4)",
+          "field": "generator.request_s",
+          "recorded": 6.616694299969822,
+          "corrected": 4.839
+        },
+        {
+          "where": "arm_outputs.jsonl row 15 (KnowledgeForce::a::4)",
+          "field": "generator.time_s",
+          "recorded": 6.617467999923974,
+          "corrected": 4.839
+        },
+        {
+          "where": "arm_outputs.jsonl row 15 (KnowledgeForce::a::4)",
+          "field": "timing.wall_s",
+          "recorded": 24.501336700399406,
+          "corrected": 22.72286870047543
+        },
+        {
+          "where": "arm_outputs.jsonl row 15 (KnowledgeForce::a::4)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 15.99699700018391,
+          "corrected": 14.361
+        },
+        {
+          "where": "arm_outputs.jsonl row 15 (KnowledgeForce::a::4)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 15.99699700018391,
+          "corrected": 14.361
+        },
+        {
+          "where": "arm_outputs.jsonl row 15 (KnowledgeForce::a::4)",
+          "field": "timing.wall_s",
+          "recorded": 22.72286870047543,
+          "corrected": 21.08687170029152
+        },
+        {
+          "where": "arm_outputs.jsonl row 16 (LeadForce::a::5)",
+          "field": "generator.request_s",
+          "recorded": 8.044420999940485,
+          "corrected": 6.107
+        },
+        {
+          "where": "arm_outputs.jsonl row 16 (LeadForce::a::5)",
+          "field": "generator.time_s",
+          "recorded": 8.045243400149047,
+          "corrected": 6.107
+        },
+        {
+          "where": "arm_outputs.jsonl row 16 (LeadForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 20.934063499909826,
+          "corrected": 18.995820099760778
+        },
+        {
+          "where": "arm_outputs.jsonl row 16 (LeadForce::a::5)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 10.841374500188977,
+          "corrected": 8.788
+        },
+        {
+          "where": "arm_outputs.jsonl row 16 (LeadForce::a::5)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 10.841374500188977,
+          "corrected": 8.788
+        },
+        {
+          "where": "arm_outputs.jsonl row 16 (LeadForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 18.995820099760778,
+          "corrected": 16.9424455995718
+        },
+        {
+          "where": "arm_outputs.jsonl row 17 (MonitorForce::a::5)",
+          "field": "generator.request_s",
+          "recorded": 7.836279000155628,
+          "corrected": 5.845
+        },
+        {
+          "where": "arm_outputs.jsonl row 17 (MonitorForce::a::5)",
+          "field": "generator.time_s",
+          "recorded": 7.837128899991512,
+          "corrected": 5.845
+        },
+        {
+          "where": "arm_outputs.jsonl row 17 (MonitorForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 27.702634799527004,
+          "corrected": 25.71050589953549
+        },
+        {
+          "where": "arm_outputs.jsonl row 17 (MonitorForce::a::5)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 17.680513000115752,
+          "corrected": 16.096
+        },
+        {
+          "where": "arm_outputs.jsonl row 17 (MonitorForce::a::5)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 17.680513000115752,
+          "corrected": 16.096
+        },
+        {
+          "where": "arm_outputs.jsonl row 17 (MonitorForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 25.71050589953549,
+          "corrected": 24.12599289941974
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "generator.request_s",
+          "recorded": 4.790969699621201,
+          "corrected": 2.925
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "generator.time_s",
+          "recorded": 4.7916949996724725,
+          "corrected": 2.925
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 23.023750699474476,
+          "corrected": 21.157055699802005
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 16.529933399986476,
+          "corrected": 14.974
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 16.529933399986476,
+          "corrected": 14.974
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 21.157055699802005,
+          "corrected": 19.60112229981553
+        },
+        {
+          "where": "arm_outputs.jsonl row 19 (PitchForce::a::6)",
+          "field": "generator.request_s",
+          "recorded": 6.6986328000202775,
+          "corrected": 4.303
+        },
+        {
+          "where": "arm_outputs.jsonl row 19 (PitchForce::a::6)",
+          "field": "generator.time_s",
+          "recorded": 6.699510499835014,
+          "corrected": 4.303
+        },
+        {
+          "where": "arm_outputs.jsonl row 19 (PitchForce::a::6)",
+          "field": "timing.wall_s",
+          "recorded": 15.786882000276819,
+          "corrected": 13.390371500441805
+        },
+        {
+          "where": "arm_outputs.jsonl row 19 (PitchForce::a::6)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 6.374825599603355,
+          "corrected": 4.777
+        },
+        {
+          "where": "arm_outputs.jsonl row 19 (PitchForce::a::6)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 6.374825599603355,
+          "corrected": 4.777
+        },
+        {
+          "where": "arm_outputs.jsonl row 19 (PitchForce::a::6)",
+          "field": "timing.wall_s",
+          "recorded": 13.390371500441805,
+          "corrected": 11.792545900838451
+        },
+        {
+          "where": "arm_outputs.jsonl row 20 (ProposalForce::a::11)",
+          "field": "generator.request_s",
+          "recorded": 6.721218000166118,
+          "corrected": 4.785
+        },
+        {
+          "where": "arm_outputs.jsonl row 20 (ProposalForce::a::11)",
+          "field": "generator.time_s",
+          "recorded": 6.722088800277561,
+          "corrected": 4.785
+        },
+        {
+          "where": "arm_outputs.jsonl row 20 (ProposalForce::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 16.75462340086233,
+          "corrected": 14.817534600584768
+        },
+        {
+          "where": "arm_outputs.jsonl row 20 (ProposalForce::a::11)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 7.916779899969697,
+          "corrected": 5.518
+        },
+        {
+          "where": "arm_outputs.jsonl row 20 (ProposalForce::a::11)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 7.916779899969697,
+          "corrected": 5.518
+        },
+        {
+          "where": "arm_outputs.jsonl row 20 (ProposalForce::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 14.817534600584768,
+          "corrected": 12.418754700615072
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "generator.request_s",
+          "recorded": 9.185279799625278,
+          "corrected": 7.4
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "generator.time_s",
+          "recorded": 9.186084900051355,
+          "corrected": 7.4
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 21.10714219987858,
+          "corrected": 19.321057299827224
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 10.058928499929607,
+          "corrected": 8.157
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 10.058928499929607,
+          "corrected": 8.157
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 19.321057299827224,
+          "corrected": 17.419128799897617
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "generator.request_s",
+          "recorded": 5.478590699844062,
+          "corrected": 3.689
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "generator.time_s",
+          "recorded": 5.4792972998693585,
+          "corrected": 3.689
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 24.59204309969209,
+          "corrected": 22.801745799822733
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 17.548495499882847,
+          "corrected": 16.133
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 17.548495499882847,
+          "corrected": 16.133
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 22.801745799822733,
+          "corrected": 21.386250299939885
+        },
+        {
+          "where": "arm_outputs.jsonl row 23 (SecurityForce::a::7)",
+          "field": "generator.request_s",
+          "recorded": 8.75836049998179,
+          "corrected": 6.818
+        },
+        {
+          "where": "arm_outputs.jsonl row 23 (SecurityForce::a::7)",
+          "field": "generator.time_s",
+          "recorded": 8.759150300174952,
+          "corrected": 6.818
+        },
+        {
+          "where": "arm_outputs.jsonl row 23 (SecurityForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 22.013649998698384,
+          "corrected": 20.07249969852343
+        },
+        {
+          "where": "arm_outputs.jsonl row 23 (SecurityForce::a::7)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 11.71755180042237,
+          "corrected": 10.249
+        },
+        {
+          "where": "arm_outputs.jsonl row 23 (SecurityForce::a::7)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 11.71755180042237,
+          "corrected": 10.249
+        },
+        {
+          "where": "arm_outputs.jsonl row 23 (SecurityForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 20.07249969852343,
+          "corrected": 18.60394789810106
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "generator.request_s",
+          "recorded": 6.762269800063223,
+          "corrected": 5.039
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "generator.time_s",
+          "recorded": 6.763116900343448,
+          "corrected": 5.039
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "timing.wall_s",
+          "recorded": 23.35965909890365,
+          "corrected": 21.635542198560202
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 12.997539899777621,
+          "corrected": 11.481
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 12.997539899777621,
+          "corrected": 11.481
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "timing.wall_s",
+          "recorded": 21.635542198560202,
+          "corrected": 20.119002298782583
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "generator.request_s",
+          "recorded": 8.441363799851388,
+          "corrected": 6.075
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "generator.time_s",
+          "recorded": 8.44228840013966,
+          "corrected": 6.075
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 25.75050490128342,
+          "corrected": 23.38321650114376
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 15.262032500002533,
+          "corrected": 13.652
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 15.262032500002533,
+          "corrected": 13.652
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 23.38321650114376,
+          "corrected": 21.773184001141225
+        },
+        {
+          "where": "arm_outputs.jsonl row 26 (SupportForce::a::5)",
+          "field": "generator.request_s",
+          "recorded": 9.173819199670106,
+          "corrected": 7.231
+        },
+        {
+          "where": "arm_outputs.jsonl row 26 (SupportForce::a::5)",
+          "field": "generator.time_s",
+          "recorded": 9.17565119965002,
+          "corrected": 7.231
+        },
+        {
+          "where": "arm_outputs.jsonl row 26 (SupportForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 20.235767000936903,
+          "corrected": 18.291115801286885
+        },
+        {
+          "where": "arm_outputs.jsonl row 26 (SupportForce::a::5)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 9.171779800206423,
+          "corrected": 7.492
+        },
+        {
+          "where": "arm_outputs.jsonl row 26 (SupportForce::a::5)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 9.171779800206423,
+          "corrected": 7.492
+        },
+        {
+          "where": "arm_outputs.jsonl row 26 (SupportForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 18.291115801286885,
+          "corrected": 16.611336001080463
+        },
+        {
+          "where": "arm_outputs.jsonl row 27 (TrendForce::a::9)",
+          "field": "generator.request_s",
+          "recorded": 5.680821700021625,
+          "corrected": 3.52
+        },
+        {
+          "where": "arm_outputs.jsonl row 27 (TrendForce::a::9)",
+          "field": "generator.time_s",
+          "recorded": 5.6821422995999455,
+          "corrected": 3.52
+        },
+        {
+          "where": "arm_outputs.jsonl row 27 (TrendForce::a::9)",
+          "field": "timing.wall_s",
+          "recorded": 26.874653000035323,
+          "corrected": 24.712510700435377
+        },
+        {
+          "where": "arm_outputs.jsonl row 27 (TrendForce::a::9)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 19.494535200297832,
+          "corrected": 17.277
+        },
+        {
+          "where": "arm_outputs.jsonl row 27 (TrendForce::a::9)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 19.494535200297832,
+          "corrected": 17.277
+        },
+        {
+          "where": "arm_outputs.jsonl row 27 (TrendForce::a::9)",
+          "field": "timing.wall_s",
+          "recorded": 24.712510700435377,
+          "corrected": 22.494975500137546
+        },
+        {
+          "where": "arm_outputs.jsonl row 28 (VizForce::a::16)",
+          "field": "generator.request_s",
+          "recorded": 5.307934999931604,
+          "corrected": 3.591
+        },
+        {
+          "where": "arm_outputs.jsonl row 28 (VizForce::a::16)",
+          "field": "generator.time_s",
+          "recorded": 5.308604500256479,
+          "corrected": 3.591
+        },
+        {
+          "where": "arm_outputs.jsonl row 28 (VizForce::a::16)",
+          "field": "timing.wall_s",
+          "recorded": 21.925124700530432,
+          "corrected": 20.207520200273954
+        },
+        {
+          "where": "arm_outputs.jsonl row 28 (VizForce::a::16)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 14.637080100364983,
+          "corrected": 12.507
+        },
+        {
+          "where": "arm_outputs.jsonl row 28 (VizForce::a::16)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 14.637080100364983,
+          "corrected": 12.507
+        },
+        {
+          "where": "arm_outputs.jsonl row 28 (VizForce::a::16)",
+          "field": "timing.wall_s",
+          "recorded": 20.207520200273954,
+          "corrected": 18.07744009990897
+        },
+        {
+          "where": "arm_outputs.jsonl row 29 (WorkFlowGenie::a::11)",
+          "field": "generator.request_s",
+          "recorded": 6.211553500033915,
+          "corrected": 4.386
+        },
+        {
+          "where": "arm_outputs.jsonl row 29 (WorkFlowGenie::a::11)",
+          "field": "generator.time_s",
+          "recorded": 6.2122434000484645,
+          "corrected": 4.386
+        },
+        {
+          "where": "arm_outputs.jsonl row 29 (WorkFlowGenie::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 21.03040609997697,
+          "corrected": 19.204162699928506
+        },
+        {
+          "where": "arm_outputs.jsonl row 29 (WorkFlowGenie::a::11)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 12.459300700109452,
+          "corrected": 10.953
+        },
+        {
+          "where": "arm_outputs.jsonl row 29 (WorkFlowGenie::a::11)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 12.459300700109452,
+          "corrected": 10.953
+        },
+        {
+          "where": "arm_outputs.jsonl row 29 (WorkFlowGenie::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 19.204162699928506,
+          "corrected": 17.697861999819054
+        },
+        {
+          "where": "arm_outputs.jsonl row 30 (ActionGenie::a::5)",
+          "field": "generator.request_s",
+          "recorded": 7.28457560017705,
+          "corrected": 4.692
+        },
+        {
+          "where": "arm_outputs.jsonl row 30 (ActionGenie::a::5)",
+          "field": "generator.time_s",
+          "recorded": 7.285466399975121,
+          "corrected": 4.692
+        },
+        {
+          "where": "arm_outputs.jsonl row 30 (ActionGenie::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 15.864615399739705,
+          "corrected": 13.271148999764584
+        },
+        {
+          "where": "arm_outputs.jsonl row 30 (ActionGenie::a::5)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 6.1897539999336,
+          "corrected": 4.777
+        },
+        {
+          "where": "arm_outputs.jsonl row 30 (ActionGenie::a::5)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 6.1897539999336,
+          "corrected": 4.777
+        },
+        {
+          "where": "arm_outputs.jsonl row 30 (ActionGenie::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 13.271148999764584,
+          "corrected": 11.858394999830985
+        },
+        {
+          "where": "arm_outputs.jsonl row 31 (AnomalyForce::a::17)",
+          "field": "generator.request_s",
+          "recorded": 7.979791100136936,
+          "corrected": 5.555
+        },
+        {
+          "where": "arm_outputs.jsonl row 31 (AnomalyForce::a::17)",
+          "field": "generator.time_s",
+          "recorded": 7.980592200066894,
+          "corrected": 5.555
+        },
+        {
+          "where": "arm_outputs.jsonl row 31 (AnomalyForce::a::17)",
+          "field": "timing.wall_s",
+          "recorded": 22.905254098353907,
+          "corrected": 20.479661898287013
+        },
+        {
+          "where": "arm_outputs.jsonl row 31 (AnomalyForce::a::17)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 12.800495299976319,
+          "corrected": 10.844
+        },
+        {
+          "where": "arm_outputs.jsonl row 31 (AnomalyForce::a::17)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 12.800495299976319,
+          "corrected": 10.844
+        },
+        {
+          "where": "arm_outputs.jsonl row 31 (AnomalyForce::a::17)",
+          "field": "timing.wall_s",
+          "recorded": 20.479661898287013,
+          "corrected": 18.523166598310695
+        },
+        {
+          "where": "arm_outputs.jsonl row 32 (AutoTuneForce::a::12)",
+          "field": "generator.request_s",
+          "recorded": 9.582307800184935,
+          "corrected": 7.655
+        },
+        {
+          "where": "arm_outputs.jsonl row 32 (AutoTuneForce::a::12)",
+          "field": "generator.time_s",
+          "recorded": 9.583596600219607,
+          "corrected": 7.655
+        },
+        {
+          "where": "arm_outputs.jsonl row 32 (AutoTuneForce::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 22.564262098982,
+          "corrected": 20.635665498762393
+        },
+        {
+          "where": "arm_outputs.jsonl row 32 (AutoTuneForce::a::12)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 11.180747699923813,
+          "corrected": 9.741
+        },
+        {
+          "where": "arm_outputs.jsonl row 32 (AutoTuneForce::a::12)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 11.180747699923813,
+          "corrected": 9.741
+        },
+        {
+          "where": "arm_outputs.jsonl row 32 (AutoTuneForce::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 20.635665498762393,
+          "corrected": 19.19591779883858
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "generator.request_s",
+          "recorded": 6.607917599845678,
+          "corrected": 4.959
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "generator.time_s",
+          "recorded": 6.608555399812758,
+          "corrected": 4.959
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 24.408035699860193,
+          "corrected": 22.758480300047434
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 16.096921400167048,
+          "corrected": 13.763
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 16.096921400167048,
+          "corrected": 13.763
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 22.758480300047434,
+          "corrected": 20.424558899880388
+        },
+        {
+          "where": "arm_outputs.jsonl row 34 (CollaborateForce::a::19)",
+          "field": "generator.request_s",
+          "recorded": 7.793741500005126,
+          "corrected": 5.888
+        },
+        {
+          "where": "arm_outputs.jsonl row 34 (CollaborateForce::a::19)",
+          "field": "generator.time_s",
+          "recorded": 7.794590000063181,
+          "corrected": 5.888
+        },
+        {
+          "where": "arm_outputs.jsonl row 34 (CollaborateForce::a::19)",
+          "field": "timing.wall_s",
+          "recorded": 24.98826749937143,
+          "corrected": 23.08167749930825
+        },
+        {
+          "where": "arm_outputs.jsonl row 34 (CollaborateForce::a::19)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 15.077315700240433,
+          "corrected": 13.419
+        },
+        {
+          "where": "arm_outputs.jsonl row 34 (CollaborateForce::a::19)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 15.077315700240433,
+          "corrected": 13.419
+        },
+        {
+          "where": "arm_outputs.jsonl row 34 (CollaborateForce::a::19)",
+          "field": "timing.wall_s",
+          "recorded": 23.08167749930825,
+          "corrected": 21.423361799067816
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "generator.request_s",
+          "recorded": 11.01372030004859,
+          "corrected": 9.159
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "generator.time_s",
+          "recorded": 11.014846299774945,
+          "corrected": 9.159
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 38.10098399873823,
+          "corrected": 36.24513769896328
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 25.356674099806696,
+          "corrected": 23.771
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 25.356674099806696,
+          "corrected": 23.771
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 36.24513769896328,
+          "corrected": 34.65946359915659
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "generator.request_s",
+          "recorded": 7.879127399995923,
+          "corrected": 5.728
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "generator.time_s",
+          "recorded": 7.880013800226152,
+          "corrected": 5.728
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 27.246917900280096,
+          "corrected": 25.094904100053945
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 15.51890020025894,
+          "corrected": 13.933
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 15.51890020025894,
+          "corrected": 13.933
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 25.094904100053945,
+          "corrected": 23.509003899795005
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "generator.request_s",
+          "recorded": 6.275389300193638,
+          "corrected": 4.084
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "generator.time_s",
+          "recorded": 6.276256899815053,
+          "corrected": 4.084
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 38.123462699353695,
+          "corrected": 35.931205799538645
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 30.103393600322306,
+          "corrected": 28.546
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 30.103393600322306,
+          "corrected": 28.546
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 35.931205799538645,
+          "corrected": 34.37381219921634
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "generator.request_s",
+          "recorded": 7.634895700030029,
+          "corrected": 5.894
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "generator.time_s",
+          "recorded": 7.635614900384098,
+          "corrected": 5.894
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "timing.wall_s",
+          "recorded": 28.86457559885457,
+          "corrected": 27.12296069847047
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 19.254491799976677,
+          "corrected": 17.579
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 19.254491799976677,
+          "corrected": 17.579
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "timing.wall_s",
+          "recorded": 27.12296069847047,
+          "corrected": 25.447468898493796
+        },
+        {
+          "where": "arm_outputs.jsonl row 39 (EdgeForce::a::12)",
+          "field": "generator.request_s",
+          "recorded": 7.875071200076491,
+          "corrected": 5.638
+        },
+        {
+          "where": "arm_outputs.jsonl row 39 (EdgeForce::a::12)",
+          "field": "generator.time_s",
+          "recorded": 7.875971099827439,
+          "corrected": 5.638
+        },
+        {
+          "where": "arm_outputs.jsonl row 39 (EdgeForce::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 17.866085000219755,
+          "corrected": 15.628113900392316
+        },
+        {
+          "where": "arm_outputs.jsonl row 39 (EdgeForce::a::12)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 8.093798999674618,
+          "corrected": 6.652
+        },
+        {
+          "where": "arm_outputs.jsonl row 39 (EdgeForce::a::12)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 8.093798999674618,
+          "corrected": 6.652
+        },
+        {
+          "where": "arm_outputs.jsonl row 39 (EdgeForce::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 15.628113900392316,
+          "corrected": 14.186314900717697
+        },
+        {
+          "where": "arm_outputs.jsonl row 40 (ExplainabilityForce::a::7)",
+          "field": "generator.request_s",
+          "recorded": 12.220504699740559,
+          "corrected": 10.277
+        },
+        {
+          "where": "arm_outputs.jsonl row 40 (ExplainabilityForce::a::7)",
+          "field": "generator.time_s",
+          "recorded": 12.221271499991417,
+          "corrected": 10.277
+        },
+        {
+          "where": "arm_outputs.jsonl row 40 (ExplainabilityForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 21.56756669981405,
+          "corrected": 19.623295199822635
+        },
+        {
+          "where": "arm_outputs.jsonl row 40 (ExplainabilityForce::a::7)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 7.149222100153565,
+          "corrected": 5.522
+        },
+        {
+          "where": "arm_outputs.jsonl row 40 (ExplainabilityForce::a::7)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 7.149222100153565,
+          "corrected": 5.522
+        },
+        {
+          "where": "arm_outputs.jsonl row 40 (ExplainabilityForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 19.623295199822635,
+          "corrected": 17.99607309966907
+        },
+        {
+          "where": "arm_outputs.jsonl row 41 (FeedbackForce::a::6)",
+          "field": "generator.request_s",
+          "recorded": 8.654641999863088,
+          "corrected": 6.621
+        },
+        {
+          "where": "arm_outputs.jsonl row 41 (FeedbackForce::a::6)",
+          "field": "generator.time_s",
+          "recorded": 8.65607549995184,
+          "corrected": 6.621
+        },
+        {
+          "where": "arm_outputs.jsonl row 41 (FeedbackForce::a::6)",
+          "field": "timing.wall_s",
+          "recorded": 16.762113900505938,
+          "corrected": 14.727038400554099
+        },
+        {
+          "where": "arm_outputs.jsonl row 41 (FeedbackForce::a::6)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 6.417862600181252,
+          "corrected": 4.991
+        },
+        {
+          "where": "arm_outputs.jsonl row 41 (FeedbackForce::a::6)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 6.417862600181252,
+          "corrected": 4.991
+        },
+        {
+          "where": "arm_outputs.jsonl row 41 (FeedbackForce::a::6)",
+          "field": "timing.wall_s",
+          "recorded": 14.727038400554099,
+          "corrected": 13.300175800372847
+        },
+        {
+          "where": "arm_outputs.jsonl row 42 (FlowForce::a::12)",
+          "field": "generator.request_s",
+          "recorded": 7.193377000279725,
+          "corrected": 5.34
+        },
+        {
+          "where": "arm_outputs.jsonl row 42 (FlowForce::a::12)",
+          "field": "generator.time_s",
+          "recorded": 7.194078200031072,
+          "corrected": 5.34
+        },
+        {
+          "where": "arm_outputs.jsonl row 42 (FlowForce::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 22.70168989931699,
+          "corrected": 20.847611699285917
+        },
+        {
+          "where": "arm_outputs.jsonl row 42 (FlowForce::a::12)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 14.099318800028414,
+          "corrected": 12.628
+        },
+        {
+          "where": "arm_outputs.jsonl row 42 (FlowForce::a::12)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 14.099318800028414,
+          "corrected": 12.628
+        },
+        {
+          "where": "arm_outputs.jsonl row 42 (FlowForce::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 20.847611699285917,
+          "corrected": 19.376292899257503
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "generator.request_s",
+          "recorded": 5.403817600104958,
+          "corrected": 3.86
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "generator.time_s",
+          "recorded": 5.404716100078076,
+          "corrected": 3.86
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "timing.wall_s",
+          "recorded": 38.65896860009525,
+          "corrected": 37.11425250001717
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 31.514673999976367,
+          "corrected": 30.232
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 31.514673999976367,
+          "corrected": 30.232
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "timing.wall_s",
+          "recorded": 37.11425250001717,
+          "corrected": 35.831578500040806
+        },
+        {
+          "where": "arm_outputs.jsonl row 44 (InsightForce::a::6)",
+          "field": "generator.request_s",
+          "recorded": 7.25656979996711,
+          "corrected": 5.204
+        },
+        {
+          "where": "arm_outputs.jsonl row 44 (InsightForce::a::6)",
+          "field": "generator.time_s",
+          "recorded": 7.257602700032294,
+          "corrected": 5.204
+        },
+        {
+          "where": "arm_outputs.jsonl row 44 (InsightForce::a::6)",
+          "field": "timing.wall_s",
+          "recorded": 19.89202009816654,
+          "corrected": 17.838417398134247
+        },
+        {
+          "where": "arm_outputs.jsonl row 44 (InsightForce::a::6)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 10.271470400039107,
+          "corrected": 8.39
+        },
+        {
+          "where": "arm_outputs.jsonl row 44 (InsightForce::a::6)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 10.271470400039107,
+          "corrected": 8.39
+        },
+        {
+          "where": "arm_outputs.jsonl row 44 (InsightForce::a::6)",
+          "field": "timing.wall_s",
+          "recorded": 17.838417398134247,
+          "corrected": 15.956946998095141
+        },
+        {
+          "where": "arm_outputs.jsonl row 45 (KnowledgeForce::a::14)",
+          "field": "generator.request_s",
+          "recorded": 7.469340700190514,
+          "corrected": 5.728
+        },
+        {
+          "where": "arm_outputs.jsonl row 45 (KnowledgeForce::a::14)",
+          "field": "generator.time_s",
+          "recorded": 7.470112000126392,
+          "corrected": 5.728
+        },
+        {
+          "where": "arm_outputs.jsonl row 45 (KnowledgeForce::a::14)",
+          "field": "timing.wall_s",
+          "recorded": 22.327050300780684,
+          "corrected": 20.584938300654294
+        },
+        {
+          "where": "arm_outputs.jsonl row 45 (KnowledgeForce::a::14)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 13.42517519975081,
+          "corrected": 11.779
+        },
+        {
+          "where": "arm_outputs.jsonl row 45 (KnowledgeForce::a::14)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 13.42517519975081,
+          "corrected": 11.779
+        },
+        {
+          "where": "arm_outputs.jsonl row 45 (KnowledgeForce::a::14)",
+          "field": "timing.wall_s",
+          "recorded": 20.584938300654294,
+          "corrected": 18.938763100903483
+        },
+        {
+          "where": "arm_outputs.jsonl row 46 (LeadForce::a::13)",
+          "field": "generator.request_s",
+          "recorded": 7.9207715997472405,
+          "corrected": 5.878
+        },
+        {
+          "where": "arm_outputs.jsonl row 46 (LeadForce::a::13)",
+          "field": "generator.time_s",
+          "recorded": 7.922251699957997,
+          "corrected": 5.878
+        },
+        {
+          "where": "arm_outputs.jsonl row 46 (LeadForce::a::13)",
+          "field": "timing.wall_s",
+          "recorded": 22.15225010039285,
+          "corrected": 20.10799840043485
+        },
+        {
+          "where": "arm_outputs.jsonl row 46 (LeadForce::a::13)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 12.020681499969214,
+          "corrected": 10.494
+        },
+        {
+          "where": "arm_outputs.jsonl row 46 (LeadForce::a::13)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 12.020681499969214,
+          "corrected": 10.494
+        },
+        {
+          "where": "arm_outputs.jsonl row 46 (LeadForce::a::13)",
+          "field": "timing.wall_s",
+          "recorded": 20.10799840043485,
+          "corrected": 18.581316900465637
+        },
+        {
+          "where": "arm_outputs.jsonl row 47 (MonitorForce::a::16)",
+          "field": "generator.request_s",
+          "recorded": 5.319910500198603,
+          "corrected": 2.878
+        },
+        {
+          "where": "arm_outputs.jsonl row 47 (MonitorForce::a::16)",
+          "field": "generator.time_s",
+          "recorded": 5.32081349985674,
+          "corrected": 2.878
+        },
+        {
+          "where": "arm_outputs.jsonl row 47 (MonitorForce::a::16)",
+          "field": "timing.wall_s",
+          "recorded": 21.63550510047935,
+          "corrected": 19.19269160062261
+        },
+        {
+          "where": "arm_outputs.jsonl row 47 (MonitorForce::a::16)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 10.937442999798805,
+          "corrected": 9.325
+        },
+        {
+          "where": "arm_outputs.jsonl row 47 (MonitorForce::a::16)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 10.937442999798805,
+          "corrected": 9.325
+        },
+        {
+          "where": "arm_outputs.jsonl row 47 (MonitorForce::a::16)",
+          "field": "timing.wall_s",
+          "recorded": 19.19269160062261,
+          "corrected": 17.580248600823804
+        },
+        {
+          "where": "arm_outputs.jsonl row 48 (PersonalizeForce::a::24)",
+          "field": "generator.request_s",
+          "recorded": 5.094925300218165,
+          "corrected": 3.04
+        },
+        {
+          "where": "arm_outputs.jsonl row 48 (PersonalizeForce::a::24)",
+          "field": "generator.time_s",
+          "recorded": 5.097393000032753,
+          "corrected": 3.04
+        },
+        {
+          "where": "arm_outputs.jsonl row 48 (PersonalizeForce::a::24)",
+          "field": "timing.wall_s",
+          "recorded": 21.16951719985809,
+          "corrected": 19.112124199825338
+        },
+        {
+          "where": "arm_outputs.jsonl row 48 (PersonalizeForce::a::24)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 13.957352300174534,
+          "corrected": 11.781
+        },
+        {
+          "where": "arm_outputs.jsonl row 48 (PersonalizeForce::a::24)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 13.957352300174534,
+          "corrected": 11.781
+        },
+        {
+          "where": "arm_outputs.jsonl row 48 (PersonalizeForce::a::24)",
+          "field": "timing.wall_s",
+          "recorded": 19.112124199825338,
+          "corrected": 16.935771899650803
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "generator.request_s",
+          "recorded": 6.232437800150365,
+          "corrected": 4.247
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "generator.time_s",
+          "recorded": 6.2332242000848055,
+          "corrected": 4.247
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "timing.wall_s",
+          "recorded": 23.573641799855977,
+          "corrected": 21.58741759977117
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 14.87909029982984,
+          "corrected": 12.531
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 14.87909029982984,
+          "corrected": 12.531
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "timing.wall_s",
+          "recorded": 21.58741759977117,
+          "corrected": 19.23932729994133
+        },
+        {
+          "where": "arm_outputs.jsonl row 50 (ProposalForce::a::17)",
+          "field": "generator.request_s",
+          "recorded": 11.463969700038433,
+          "corrected": 9.407
+        },
+        {
+          "where": "arm_outputs.jsonl row 50 (ProposalForce::a::17)",
+          "field": "generator.time_s",
+          "recorded": 11.466211299877614,
+          "corrected": 9.407
+        },
+        {
+          "where": "arm_outputs.jsonl row 50 (ProposalForce::a::17)",
+          "field": "timing.wall_s",
+          "recorded": 19.20349240093492,
+          "corrected": 17.144281101057306
+        },
+        {
+          "where": "arm_outputs.jsonl row 50 (ProposalForce::a::17)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 5.823845100123435,
+          "corrected": 4.22
+        },
+        {
+          "where": "arm_outputs.jsonl row 50 (ProposalForce::a::17)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 5.823845100123435,
+          "corrected": 4.22
+        },
+        {
+          "where": "arm_outputs.jsonl row 50 (ProposalForce::a::17)",
+          "field": "timing.wall_s",
+          "recorded": 17.144281101057306,
+          "corrected": 15.54043600093387
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "generator.request_s",
+          "recorded": 5.9732399000786245,
+          "corrected": 4.23
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "generator.time_s",
+          "recorded": 5.9739449000917375,
+          "corrected": 4.23
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "timing.wall_s",
+          "recorded": 25.093591800541617,
+          "corrected": 23.34964690044988
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 16.999198699835688,
+          "corrected": 15.54
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 16.999198699835688,
+          "corrected": 15.54
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "timing.wall_s",
+          "recorded": 23.34964690044988,
+          "corrected": 21.89044820061419
+        },
+        {
+          "where": "arm_outputs.jsonl row 52 (SearchForce::a::16)",
+          "field": "generator.request_s",
+          "recorded": 6.378629199694842,
+          "corrected": 4.531
+        },
+        {
+          "where": "arm_outputs.jsonl row 52 (SearchForce::a::16)",
+          "field": "generator.time_s",
+          "recorded": 6.379401700105518,
+          "corrected": 4.531
+        },
+        {
+          "where": "arm_outputs.jsonl row 52 (SearchForce::a::16)",
+          "field": "timing.wall_s",
+          "recorded": 23.224032300175168,
+          "corrected": 21.37563060006965
+        },
+        {
+          "where": "arm_outputs.jsonl row 52 (SearchForce::a::16)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 14.956080000381917,
+          "corrected": 13.497
+        },
+        {
+          "where": "arm_outputs.jsonl row 52 (SearchForce::a::16)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 14.956080000381917,
+          "corrected": 13.497
+        },
+        {
+          "where": "arm_outputs.jsonl row 52 (SearchForce::a::16)",
+          "field": "timing.wall_s",
+          "recorded": 21.37563060006965,
+          "corrected": 19.91655059968773
+        },
+        {
+          "where": "arm_outputs.jsonl row 53 (SentimentForce::a::26)",
+          "field": "generator.request_s",
+          "recorded": 5.912720400374383,
+          "corrected": 3.788
+        },
+        {
+          "where": "arm_outputs.jsonl row 53 (SentimentForce::a::26)",
+          "field": "generator.time_s",
+          "recorded": 5.914382399991155,
+          "corrected": 3.788
+        },
+        {
+          "where": "arm_outputs.jsonl row 53 (SentimentForce::a::26)",
+          "field": "timing.wall_s",
+          "recorded": 22.6321015994763,
+          "corrected": 20.505719199485146
+        },
+        {
+          "where": "arm_outputs.jsonl row 53 (SentimentForce::a::26)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 14.148394499905407,
+          "corrected": 12.509
+        },
+        {
+          "where": "arm_outputs.jsonl row 53 (SentimentForce::a::26)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 14.148394499905407,
+          "corrected": 12.509
+        },
+        {
+          "where": "arm_outputs.jsonl row 53 (SentimentForce::a::26)",
+          "field": "timing.wall_s",
+          "recorded": 20.505719199485146,
+          "corrected": 18.86632469957974
+        },
+        {
+          "where": "arm_outputs.jsonl row 54 (SummarizeForce::a::23)",
+          "field": "generator.request_s",
+          "recorded": 7.153867000248283,
+          "corrected": 5.079
+        },
+        {
+          "where": "arm_outputs.jsonl row 54 (SummarizeForce::a::23)",
+          "field": "generator.time_s",
+          "recorded": 7.156461200211197,
+          "corrected": 5.079
+        },
+        {
+          "where": "arm_outputs.jsonl row 54 (SummarizeForce::a::23)",
+          "field": "timing.wall_s",
+          "recorded": 19.970547699718736,
+          "corrected": 17.89308649950754
+        },
+        {
+          "where": "arm_outputs.jsonl row 54 (SummarizeForce::a::23)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 11.246887399815023,
+          "corrected": 9.545
+        },
+        {
+          "where": "arm_outputs.jsonl row 54 (SummarizeForce::a::23)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 11.246887399815023,
+          "corrected": 9.545
+        },
+        {
+          "where": "arm_outputs.jsonl row 54 (SummarizeForce::a::23)",
+          "field": "timing.wall_s",
+          "recorded": 17.89308649950754,
+          "corrected": 16.19119909969252
+        },
+        {
+          "where": "arm_outputs.jsonl row 55 (SupportForce::a::6)",
+          "field": "generator.request_s",
+          "recorded": 6.248419300187379,
+          "corrected": 4.292
+        },
+        {
+          "where": "arm_outputs.jsonl row 55 (SupportForce::a::6)",
+          "field": "generator.time_s",
+          "recorded": 6.2494715000502765,
+          "corrected": 4.292
+        },
+        {
+          "where": "arm_outputs.jsonl row 55 (SupportForce::a::6)",
+          "field": "timing.wall_s",
+          "recorded": 17.046379000181332,
+          "corrected": 15.088907500131056
+        },
+        {
+          "where": "arm_outputs.jsonl row 55 (SupportForce::a::6)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 8.799929200205952,
+          "corrected": 6.626
+        },
+        {
+          "where": "arm_outputs.jsonl row 55 (SupportForce::a::6)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 8.799929200205952,
+          "corrected": 6.626
+        },
+        {
+          "where": "arm_outputs.jsonl row 55 (SupportForce::a::6)",
+          "field": "timing.wall_s",
+          "recorded": 15.088907500131056,
+          "corrected": 12.914978299925103
+        },
+        {
+          "where": "arm_outputs.jsonl row 56 (VizForce::a::43)",
+          "field": "generator.request_s",
+          "recorded": 11.552255499642342,
+          "corrected": 9.583
+        },
+        {
+          "where": "arm_outputs.jsonl row 56 (VizForce::a::43)",
+          "field": "generator.time_s",
+          "recorded": 11.553314100019634,
+          "corrected": 9.583
+        },
+        {
+          "where": "arm_outputs.jsonl row 56 (VizForce::a::43)",
+          "field": "timing.wall_s",
+          "recorded": 24.720618800725788,
+          "corrected": 22.750304700706153
+        },
+        {
+          "where": "arm_outputs.jsonl row 56 (VizForce::a::43)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 10.789895800407976,
+          "corrected": 9.205
+        },
+        {
+          "where": "arm_outputs.jsonl row 56 (VizForce::a::43)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 10.789895800407976,
+          "corrected": 9.205
+        },
+        {
+          "where": "arm_outputs.jsonl row 56 (VizForce::a::43)",
+          "field": "timing.wall_s",
+          "recorded": 22.750304700706153,
+          "corrected": 21.165408900298175
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "generator.request_s",
+          "recorded": 7.4652579999528825,
+          "corrected": 5.182
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "generator.time_s",
+          "recorded": 7.467356500215828,
+          "corrected": 5.182
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 20.60951460013166,
+          "corrected": 18.324158099915834
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 11.046468900050968,
+          "corrected": 9.459
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 11.046468900050968,
+          "corrected": 9.459
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 18.324158099915834,
+          "corrected": 16.736689199864866
+        },
+        {
+          "where": "arm_outputs.jsonl row 58 (AutoTuneForce::a::13)",
+          "field": "generator.request_s",
+          "recorded": 8.001282500103116,
+          "corrected": 5.85
+        },
+        {
+          "where": "arm_outputs.jsonl row 58 (AutoTuneForce::a::13)",
+          "field": "generator.time_s",
+          "recorded": 8.00235000019893,
+          "corrected": 5.85
+        },
+        {
+          "where": "arm_outputs.jsonl row 58 (AutoTuneForce::a::13)",
+          "field": "timing.wall_s",
+          "recorded": 22.098459800123237,
+          "corrected": 19.946109799924308
+        },
+        {
+          "where": "arm_outputs.jsonl row 58 (AutoTuneForce::a::13)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 12.137472399976104,
+          "corrected": 10.31
+        },
+        {
+          "where": "arm_outputs.jsonl row 58 (AutoTuneForce::a::13)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 12.137472399976104,
+          "corrected": 10.31
+        },
+        {
+          "where": "arm_outputs.jsonl row 58 (AutoTuneForce::a::13)",
+          "field": "timing.wall_s",
+          "recorded": 19.946109799924308,
+          "corrected": 18.118637399948206
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "generator.request_s",
+          "recorded": 13.849103999789804,
+          "corrected": 12.118
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "generator.time_s",
+          "recorded": 13.849802500102669,
+          "corrected": 12.118
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "timing.wall_s",
+          "recorded": 33.60280290036462,
+          "corrected": 31.871000400261956
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 15.719150700140744,
+          "corrected": 14.185
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 15.719150700140744,
+          "corrected": 14.185
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "timing.wall_s",
+          "recorded": 31.871000400261956,
+          "corrected": 30.336849700121213
+        },
+        {
+          "where": "arm_outputs.jsonl row 60 (ConnectForce::a::14)",
+          "field": "generator.request_s",
+          "recorded": 6.02406149962917,
+          "corrected": 3.822
+        },
+        {
+          "where": "arm_outputs.jsonl row 60 (ConnectForce::a::14)",
+          "field": "generator.time_s",
+          "recorded": 6.0248598996549845,
+          "corrected": 3.822
+        },
+        {
+          "where": "arm_outputs.jsonl row 60 (ConnectForce::a::14)",
+          "field": "timing.wall_s",
+          "recorded": 20.80188229982741,
+          "corrected": 18.599022400172426
+        },
+        {
+          "where": "arm_outputs.jsonl row 60 (ConnectForce::a::14)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 13.530749499797821,
+          "corrected": 11.985
+        },
+        {
+          "where": "arm_outputs.jsonl row 60 (ConnectForce::a::14)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 13.530749499797821,
+          "corrected": 11.985
+        },
+        {
+          "where": "arm_outputs.jsonl row 60 (ConnectForce::a::14)",
+          "field": "timing.wall_s",
+          "recorded": 18.599022400172426,
+          "corrected": 17.053272900374605
+        },
+        {
+          "where": "arm_outputs.jsonl row 61 (ContentForce::a::16)",
+          "field": "generator.request_s",
+          "recorded": 7.351876699831337,
+          "corrected": 5.32
+        },
+        {
+          "where": "arm_outputs.jsonl row 61 (ContentForce::a::16)",
+          "field": "generator.time_s",
+          "recorded": 7.354463600087911,
+          "corrected": 5.32
+        },
+        {
+          "where": "arm_outputs.jsonl row 61 (ContentForce::a::16)",
+          "field": "timing.wall_s",
+          "recorded": 21.926736999768764,
+          "corrected": 19.892273399680853
+        },
+        {
+          "where": "arm_outputs.jsonl row 61 (ContentForce::a::16)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 13.144029299728572,
+          "corrected": 11.45
+        },
+        {
+          "where": "arm_outputs.jsonl row 61 (ContentForce::a::16)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 13.144029299728572,
+          "corrected": 11.45
+        },
+        {
+          "where": "arm_outputs.jsonl row 61 (ContentForce::a::16)",
+          "field": "timing.wall_s",
+          "recorded": 19.892273399680853,
+          "corrected": 18.19824409995228
+        },
+        {
+          "where": "arm_outputs.jsonl row 62 (EdgeForce::a::13)",
+          "field": "generator.request_s",
+          "recorded": 7.952382700052112,
+          "corrected": 5.573
+        },
+        {
+          "where": "arm_outputs.jsonl row 62 (EdgeForce::a::13)",
+          "field": "generator.time_s",
+          "recorded": 7.953455700073391,
+          "corrected": 5.573
+        },
+        {
+          "where": "arm_outputs.jsonl row 62 (EdgeForce::a::13)",
+          "field": "timing.wall_s",
+          "recorded": 34.05159229959827,
+          "corrected": 31.67113659952488
+        },
+        {
+          "where": "arm_outputs.jsonl row 62 (EdgeForce::a::13)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 23.59082549996674,
+          "corrected": 21.299
+        },
+        {
+          "where": "arm_outputs.jsonl row 62 (EdgeForce::a::13)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 23.59082549996674,
+          "corrected": 21.299
+        },
+        {
+          "where": "arm_outputs.jsonl row 62 (EdgeForce::a::13)",
+          "field": "timing.wall_s",
+          "recorded": 31.67113659952488,
+          "corrected": 29.379311099558137
+        },
+        {
+          "where": "arm_outputs.jsonl row 63 (ExplainabilityForce::a::9)",
+          "field": "generator.request_s",
+          "recorded": 6.564772799611092,
+          "corrected": 4.214
+        },
+        {
+          "where": "arm_outputs.jsonl row 63 (ExplainabilityForce::a::9)",
+          "field": "generator.time_s",
+          "recorded": 6.565668700262904,
+          "corrected": 4.214
+        },
+        {
+          "where": "arm_outputs.jsonl row 63 (ExplainabilityForce::a::9)",
+          "field": "timing.wall_s",
+          "recorded": 26.206917099421844,
+          "corrected": 23.85524839915894
+        },
+        {
+          "where": "arm_outputs.jsonl row 63 (ExplainabilityForce::a::9)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 17.14895089995116,
+          "corrected": 15.275
+        },
+        {
+          "where": "arm_outputs.jsonl row 63 (ExplainabilityForce::a::9)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 17.14895089995116,
+          "corrected": 15.275
+        },
+        {
+          "where": "arm_outputs.jsonl row 63 (ExplainabilityForce::a::9)",
+          "field": "timing.wall_s",
+          "recorded": 23.85524839915894,
+          "corrected": 21.981297499207777
+        },
+        {
+          "where": "arm_outputs.jsonl row 64 (FeedbackForce::a::7)",
+          "field": "generator.request_s",
+          "recorded": 8.496261599939317,
+          "corrected": 6.147
+        },
+        {
+          "where": "arm_outputs.jsonl row 64 (FeedbackForce::a::7)",
+          "field": "generator.time_s",
+          "recorded": 8.497314299922436,
+          "corrected": 6.147
+        },
+        {
+          "where": "arm_outputs.jsonl row 64 (FeedbackForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 26.36270639928989,
+          "corrected": 24.012392099367453
+        },
+        {
+          "where": "arm_outputs.jsonl row 64 (FeedbackForce::a::7)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 14.529854100197554,
+          "corrected": 12.589
+        },
+        {
+          "where": "arm_outputs.jsonl row 64 (FeedbackForce::a::7)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 14.529854100197554,
+          "corrected": 12.589
+        },
+        {
+          "where": "arm_outputs.jsonl row 64 (FeedbackForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 24.012392099367453,
+          "corrected": 22.071537999169898
+        },
+        {
+          "where": "arm_outputs.jsonl row 65 (FlowForce::a::13)",
+          "field": "generator.request_s",
+          "recorded": 8.290328699629754,
+          "corrected": 6.442
+        },
+        {
+          "where": "arm_outputs.jsonl row 65 (FlowForce::a::13)",
+          "field": "generator.time_s",
+          "recorded": 8.291574399918318,
+          "corrected": 6.442
+        },
+        {
+          "where": "arm_outputs.jsonl row 65 (FlowForce::a::13)",
+          "field": "timing.wall_s",
+          "recorded": 18.003591799992137,
+          "corrected": 16.15401740007382
+        },
+        {
+          "where": "arm_outputs.jsonl row 65 (FlowForce::a::13)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 7.91539609991014,
+          "corrected": 5.951
+        },
+        {
+          "where": "arm_outputs.jsonl row 65 (FlowForce::a::13)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 7.91539609991014,
+          "corrected": 5.951
+        },
+        {
+          "where": "arm_outputs.jsonl row 65 (FlowForce::a::13)",
+          "field": "timing.wall_s",
+          "recorded": 16.15401740007382,
+          "corrected": 14.18962130016368
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "generator.request_s",
+          "recorded": 8.606070599984378,
+          "corrected": 6.727
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "generator.time_s",
+          "recorded": 8.60685080010444,
+          "corrected": 6.727
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "timing.wall_s",
+          "recorded": 24.846216599806212,
+          "corrected": 22.966365799701773
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 14.17368909996003,
+          "corrected": 12.574
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 14.17368909996003,
+          "corrected": 12.574
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "timing.wall_s",
+          "recorded": 22.966365799701773,
+          "corrected": 21.366676699741745
+        },
+        {
+          "where": "arm_outputs.jsonl row 67 (InsightForce::a::7)",
+          "field": "generator.request_s",
+          "recorded": 8.260132399853319,
+          "corrected": 6.448
+        },
+        {
+          "where": "arm_outputs.jsonl row 67 (InsightForce::a::7)",
+          "field": "generator.time_s",
+          "recorded": 8.261249700095505,
+          "corrected": 6.448
+        },
+        {
+          "where": "arm_outputs.jsonl row 67 (InsightForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 22.868195800110698,
+          "corrected": 21.054946100015194
+        },
+        {
+          "where": "arm_outputs.jsonl row 67 (InsightForce::a::7)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 12.363930999767035,
+          "corrected": 10.809
+        },
+        {
+          "where": "arm_outputs.jsonl row 67 (InsightForce::a::7)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 12.363930999767035,
+          "corrected": 10.809
+        },
+        {
+          "where": "arm_outputs.jsonl row 67 (InsightForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 21.054946100015194,
+          "corrected": 19.500015100248156
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "generator.request_s",
+          "recorded": 8.529943500179797,
+          "corrected": 7.029
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "generator.time_s",
+          "recorded": 8.530845300294459,
+          "corrected": 7.029
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "timing.wall_s",
+          "recorded": 44.34961879986804,
+          "corrected": 42.84777349957358
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 34.37051049992442,
+          "corrected": 32.8
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 34.37051049992442,
+          "corrected": 32.8
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "timing.wall_s",
+          "recorded": 42.84777349957358,
+          "corrected": 41.27726299964915
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "generator.request_s",
+          "recorded": 7.7658851002343,
+          "corrected": 5.784
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "generator.time_s",
+          "recorded": 7.766626100055873,
+          "corrected": 5.784
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "timing.wall_s",
+          "recorded": 19.804309399914928,
+          "corrected": 17.821683299859053
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 9.623882499989122,
+          "corrected": 7.904
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 9.623882499989122,
+          "corrected": 7.904
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "timing.wall_s",
+          "recorded": 17.821683299859053,
+          "corrected": 16.10180079986993
+        },
+        {
+          "where": "arm_outputs.jsonl row 70 (MonitorForce::a::18)",
+          "field": "generator.request_s",
+          "recorded": 6.068035800009966,
+          "corrected": 4.324
+        },
+        {
+          "where": "arm_outputs.jsonl row 70 (MonitorForce::a::18)",
+          "field": "generator.time_s",
+          "recorded": 6.068762100301683,
+          "corrected": 4.324
+        },
+        {
+          "where": "arm_outputs.jsonl row 70 (MonitorForce::a::18)",
+          "field": "timing.wall_s",
+          "recorded": 23.722210500738584,
+          "corrected": 21.9774484004369
+        },
+        {
+          "where": "arm_outputs.jsonl row 70 (MonitorForce::a::18)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 14.657543399836868,
+          "corrected": 13.258
+        },
+        {
+          "where": "arm_outputs.jsonl row 70 (MonitorForce::a::18)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 14.657543399836868,
+          "corrected": 13.258
+        },
+        {
+          "where": "arm_outputs.jsonl row 70 (MonitorForce::a::18)",
+          "field": "timing.wall_s",
+          "recorded": 21.9774484004369,
+          "corrected": 20.57790500060003
+        },
+        {
+          "where": "arm_outputs.jsonl row 71 (PersonalizeForce::a::34)",
+          "field": "generator.request_s",
+          "recorded": 6.076763099990785,
+          "corrected": 4.35
+        },
+        {
+          "where": "arm_outputs.jsonl row 71 (PersonalizeForce::a::34)",
+          "field": "generator.time_s",
+          "recorded": 6.077504499815404,
+          "corrected": 4.35
+        },
+        {
+          "where": "arm_outputs.jsonl row 71 (PersonalizeForce::a::34)",
+          "field": "timing.wall_s",
+          "recorded": 21.483109399327077,
+          "corrected": 19.755604899511674
+        },
+        {
+          "where": "arm_outputs.jsonl row 71 (PersonalizeForce::a::34)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 13.991113599855453,
+          "corrected": 12.544
+        },
+        {
+          "where": "arm_outputs.jsonl row 71 (PersonalizeForce::a::34)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 13.991113599855453,
+          "corrected": 12.544
+        },
+        {
+          "where": "arm_outputs.jsonl row 71 (PersonalizeForce::a::34)",
+          "field": "timing.wall_s",
+          "recorded": 19.755604899511674,
+          "corrected": 18.30849129965622
+        },
+        {
+          "where": "arm_outputs.jsonl row 72 (PitchForce::a::27)",
+          "field": "generator.request_s",
+          "recorded": 6.498605200089514,
+          "corrected": 4.501
+        },
+        {
+          "where": "arm_outputs.jsonl row 72 (PitchForce::a::27)",
+          "field": "generator.time_s",
+          "recorded": 6.499498500023037,
+          "corrected": 4.501
+        },
+        {
+          "where": "arm_outputs.jsonl row 72 (PitchForce::a::27)",
+          "field": "timing.wall_s",
+          "recorded": 22.5028447995428,
+          "corrected": 20.504346299519764
+        },
+        {
+          "where": "arm_outputs.jsonl row 72 (PitchForce::a::27)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 13.638220000080764,
+          "corrected": 12.158
+        },
+        {
+          "where": "arm_outputs.jsonl row 72 (PitchForce::a::27)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 13.638220000080764,
+          "corrected": 12.158
+        },
+        {
+          "where": "arm_outputs.jsonl row 72 (PitchForce::a::27)",
+          "field": "timing.wall_s",
+          "recorded": 20.504346299519764,
+          "corrected": 19.024126299438997
+        },
+        {
+          "where": "arm_outputs.jsonl row 73 (ProposalForce::a::20)",
+          "field": "generator.request_s",
+          "recorded": 6.995960799977183,
+          "corrected": 5.265
+        },
+        {
+          "where": "arm_outputs.jsonl row 73 (ProposalForce::a::20)",
+          "field": "generator.time_s",
+          "recorded": 6.996618499979377,
+          "corrected": 5.265
+        },
+        {
+          "where": "arm_outputs.jsonl row 73 (ProposalForce::a::20)",
+          "field": "timing.wall_s",
+          "recorded": 19.47851510043256,
+          "corrected": 17.746896600453184
+        },
+        {
+          "where": "arm_outputs.jsonl row 73 (ProposalForce::a::20)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 10.577564899809659,
+          "corrected": 9.167
+        },
+        {
+          "where": "arm_outputs.jsonl row 73 (ProposalForce::a::20)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 10.577564899809659,
+          "corrected": 9.167
+        },
+        {
+          "where": "arm_outputs.jsonl row 73 (ProposalForce::a::20)",
+          "field": "timing.wall_s",
+          "recorded": 17.746896600453184,
+          "corrected": 16.336331700643527
+        },
+        {
+          "where": "arm_outputs.jsonl row 74 (SentimentForce::a::27)",
+          "field": "generator.request_s",
+          "recorded": 7.6456712000072,
+          "corrected": 5.39
+        },
+        {
+          "where": "arm_outputs.jsonl row 74 (SentimentForce::a::27)",
+          "field": "generator.time_s",
+          "recorded": 7.648073299787939,
+          "corrected": 5.39
+        },
+        {
+          "where": "arm_outputs.jsonl row 74 (SentimentForce::a::27)",
+          "field": "timing.wall_s",
+          "recorded": 17.65652460057754,
+          "corrected": 15.398451300789603
+        },
+        {
+          "where": "arm_outputs.jsonl row 74 (SentimentForce::a::27)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 8.647497800178826,
+          "corrected": 6.687
+        },
+        {
+          "where": "arm_outputs.jsonl row 74 (SentimentForce::a::27)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 8.647497800178826,
+          "corrected": 6.687
+        },
+        {
+          "where": "arm_outputs.jsonl row 74 (SentimentForce::a::27)",
+          "field": "timing.wall_s",
+          "recorded": 15.398451300789603,
+          "corrected": 13.437953500610778
+        },
+        {
+          "where": "arm_outputs.jsonl row 75 (SummarizeForce::a::24)",
+          "field": "generator.request_s",
+          "recorded": 6.321264199912548,
+          "corrected": 4.267
+        },
+        {
+          "where": "arm_outputs.jsonl row 75 (SummarizeForce::a::24)",
+          "field": "generator.time_s",
+          "recorded": 6.323186499997973,
+          "corrected": 4.267
+        },
+        {
+          "where": "arm_outputs.jsonl row 75 (SummarizeForce::a::24)",
+          "field": "timing.wall_s",
+          "recorded": 14.72817629983183,
+          "corrected": 12.671989799833856
+        },
+        {
+          "where": "arm_outputs.jsonl row 75 (SummarizeForce::a::24)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 6.828543799929321,
+          "corrected": 4.97
+        },
+        {
+          "where": "arm_outputs.jsonl row 75 (SummarizeForce::a::24)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 6.828543799929321,
+          "corrected": 4.97
+        },
+        {
+          "where": "arm_outputs.jsonl row 75 (SummarizeForce::a::24)",
+          "field": "timing.wall_s",
+          "recorded": 12.671989799833856,
+          "corrected": 10.813445999904534
+        },
+        {
+          "where": "arm_outputs.jsonl row 76 (CollaborateForce::a::31)",
+          "field": "generator.request_s",
+          "recorded": 5.277223499957472,
+          "corrected": 3.407
+        },
+        {
+          "where": "arm_outputs.jsonl row 76 (CollaborateForce::a::31)",
+          "field": "generator.time_s",
+          "recorded": 5.277929800096899,
+          "corrected": 3.407
+        },
+        {
+          "where": "arm_outputs.jsonl row 76 (CollaborateForce::a::31)",
+          "field": "timing.wall_s",
+          "recorded": 12.332805499900132,
+          "corrected": 10.461875699803233
+        },
+        {
+          "where": "arm_outputs.jsonl row 76 (CollaborateForce::a::31)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 6.005569499917328,
+          "corrected": 4.208
+        },
+        {
+          "where": "arm_outputs.jsonl row 76 (CollaborateForce::a::31)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 6.005569499917328,
+          "corrected": 4.208
+        },
+        {
+          "where": "arm_outputs.jsonl row 76 (CollaborateForce::a::31)",
+          "field": "timing.wall_s",
+          "recorded": 10.461875699803233,
+          "corrected": 8.664306199885905
+        },
+        {
+          "where": "arm_outputs.jsonl row 77 (ConnectForce::a::15)",
+          "field": "generator.request_s",
+          "recorded": 5.34987540030852,
+          "corrected": 3.499
+        },
+        {
+          "where": "arm_outputs.jsonl row 77 (ConnectForce::a::15)",
+          "field": "generator.time_s",
+          "recorded": 5.350650999695063,
+          "corrected": 3.499
+        },
+        {
+          "where": "arm_outputs.jsonl row 77 (ConnectForce::a::15)",
+          "field": "timing.wall_s",
+          "recorded": 16.925389199750498,
+          "corrected": 15.073738200055436
+        },
+        {
+          "where": "arm_outputs.jsonl row 77 (ConnectForce::a::15)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 10.374325800221413,
+          "corrected": 8.9
+        },
+        {
+          "where": "arm_outputs.jsonl row 77 (ConnectForce::a::15)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 10.374325800221413,
+          "corrected": 8.9
+        },
+        {
+          "where": "arm_outputs.jsonl row 77 (ConnectForce::a::15)",
+          "field": "timing.wall_s",
+          "recorded": 15.073738200055436,
+          "corrected": 13.599412399834023
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "generator.request_s",
+          "recorded": 5.532870600000024,
+          "corrected": 3.875
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "generator.time_s",
+          "recorded": 5.533583699725568,
+          "corrected": 3.875
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "timing.wall_s",
+          "recorded": 19.119637499330565,
+          "corrected": 17.461053799604997
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 12.655335100367665,
+          "corrected": 11.188
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 12.655335100367665,
+          "corrected": 11.188
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "timing.wall_s",
+          "recorded": 17.461053799604997,
+          "corrected": 15.993718699237332
+        },
+        {
+          "where": "arm_outputs.jsonl row 79 (EdgeForce::a::14)",
+          "field": "generator.request_s",
+          "recorded": 10.04295999975875,
+          "corrected": 7.799
+        },
+        {
+          "where": "arm_outputs.jsonl row 79 (EdgeForce::a::14)",
+          "field": "generator.time_s",
+          "recorded": 10.044258799869567,
+          "corrected": 7.799
+        },
+        {
+          "where": "arm_outputs.jsonl row 79 (EdgeForce::a::14)",
+          "field": "timing.wall_s",
+          "recorded": 23.35150380001869,
+          "corrected": 21.106245000149123
+        },
+        {
+          "where": "arm_outputs.jsonl row 79 (EdgeForce::a::14)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 10.702714600134641,
+          "corrected": 9.188
+        },
+        {
+          "where": "arm_outputs.jsonl row 79 (EdgeForce::a::14)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 10.702714600134641,
+          "corrected": 9.188
+        },
+        {
+          "where": "arm_outputs.jsonl row 79 (EdgeForce::a::14)",
+          "field": "timing.wall_s",
+          "recorded": 21.106245000149123,
+          "corrected": 19.591530400014484
+        },
+        {
+          "where": "arm_outputs.jsonl row 80 (ExplainabilityForce::a::11)",
+          "field": "generator.request_s",
+          "recorded": 10.246577700134367,
+          "corrected": 8.364
+        },
+        {
+          "where": "arm_outputs.jsonl row 80 (ExplainabilityForce::a::11)",
+          "field": "generator.time_s",
+          "recorded": 10.247418100014329,
+          "corrected": 8.364
+        },
+        {
+          "where": "arm_outputs.jsonl row 80 (ExplainabilityForce::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 26.571353699313477,
+          "corrected": 24.68793559929915
+        },
+        {
+          "where": "arm_outputs.jsonl row 80 (ExplainabilityForce::a::11)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 13.860973400063813,
+          "corrected": 12.194
+        },
+        {
+          "where": "arm_outputs.jsonl row 80 (ExplainabilityForce::a::11)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 13.860973400063813,
+          "corrected": 12.194
+        },
+        {
+          "where": "arm_outputs.jsonl row 80 (ExplainabilityForce::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 24.68793559929915,
+          "corrected": 23.020962199235335
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "generator.request_s",
+          "recorded": 5.425392000004649,
+          "corrected": 3.857
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "generator.time_s",
+          "recorded": 5.426102299708873,
+          "corrected": 3.857
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 25.23901110026054,
+          "corrected": 23.669908800551667
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 19.17686750041321,
+          "corrected": 17.868
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 19.17686750041321,
+          "corrected": 17.868
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 23.669908800551667,
+          "corrected": 22.361041300138456
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "generator.request_s",
+          "recorded": 7.82820410002023,
+          "corrected": 6.01
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "generator.time_s",
+          "recorded": 7.828951200004667,
+          "corrected": 6.01
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "timing.wall_s",
+          "recorded": 20.924707000143826,
+          "corrected": 19.105755800139157
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 10.91742300009355,
+          "corrected": 9.27
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 10.91742300009355,
+          "corrected": 9.27
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "timing.wall_s",
+          "recorded": 19.105755800139157,
+          "corrected": 17.458332800045607
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "generator.request_s",
+          "recorded": 5.6219024998135865,
+          "corrected": 3.721
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "generator.time_s",
+          "recorded": 5.622593900188804,
+          "corrected": 3.721
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "timing.wall_s",
+          "recorded": 26.839316799654625,
+          "corrected": 24.93772289946582
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 20.115157899912447,
+          "corrected": 18.405
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 20.115157899912447,
+          "corrected": 18.405
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "timing.wall_s",
+          "recorded": 24.93772289946582,
+          "corrected": 23.227564999553376
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "generator.request_s",
+          "recorded": 5.484369399957359,
+          "corrected": 3.608
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "generator.time_s",
+          "recorded": 5.485001199878752,
+          "corrected": 3.608
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "timing.wall_s",
+          "recorded": 18.678812699508853,
+          "corrected": 16.8018114996301
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 10.343911200296134,
+          "corrected": 8.661
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 10.343911200296134,
+          "corrected": 8.661
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "timing.wall_s",
+          "recorded": 16.8018114996301,
+          "corrected": 15.118900299333967
+        },
+        {
+          "where": "arm_outputs.jsonl row 85 (SentimentForce::a::29)",
+          "field": "generator.request_s",
+          "recorded": 6.5681193000636995,
+          "corrected": 4.757
+        },
+        {
+          "where": "arm_outputs.jsonl row 85 (SentimentForce::a::29)",
+          "field": "generator.time_s",
+          "recorded": 6.5688537997193635,
+          "corrected": 4.757
+        },
+        {
+          "where": "arm_outputs.jsonl row 85 (SentimentForce::a::29)",
+          "field": "timing.wall_s",
+          "recorded": 22.61658570007421,
+          "corrected": 20.804731900354845
+        },
+        {
+          "where": "arm_outputs.jsonl row 85 (SentimentForce::a::29)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 14.525018099695444,
+          "corrected": 12.565
+        },
+        {
+          "where": "arm_outputs.jsonl row 85 (SentimentForce::a::29)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 14.525018099695444,
+          "corrected": 12.565
+        },
+        {
+          "where": "arm_outputs.jsonl row 85 (SentimentForce::a::29)",
+          "field": "timing.wall_s",
+          "recorded": 20.804731900354845,
+          "corrected": 18.8447138006594
+        },
+        {
+          "where": "arm_outputs.jsonl row 86 (FeedbackForce::a::16)",
+          "field": "generator.request_s",
+          "recorded": 5.735667000059038,
+          "corrected": 3.706
+        },
+        {
+          "where": "arm_outputs.jsonl row 86 (FeedbackForce::a::16)",
+          "field": "generator.time_s",
+          "recorded": 5.736405599862337,
+          "corrected": 3.706
+        },
+        {
+          "where": "arm_outputs.jsonl row 86 (FeedbackForce::a::16)",
+          "field": "timing.wall_s",
+          "recorded": 21.107205800130032,
+          "corrected": 19.076800200267694
+        },
+        {
+          "where": "arm_outputs.jsonl row 86 (FeedbackForce::a::16)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 13.959763300139457,
+          "corrected": 12.249
+        },
+        {
+          "where": "arm_outputs.jsonl row 86 (FeedbackForce::a::16)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 13.959763300139457,
+          "corrected": 12.249
+        },
+        {
+          "where": "arm_outputs.jsonl row 86 (FeedbackForce::a::16)",
+          "field": "timing.wall_s",
+          "recorded": 19.076800200267694,
+          "corrected": 17.366036900128236
+        },
+        {
+          "where": "arm_outputs.jsonl row 87 (FeedbackForce::a::18)",
+          "field": "generator.request_s",
+          "recorded": 5.705772600136697,
+          "corrected": 3.451
+        },
+        {
+          "where": "arm_outputs.jsonl row 87 (FeedbackForce::a::18)",
+          "field": "generator.time_s",
+          "recorded": 5.706468399614096,
+          "corrected": 3.451
+        },
+        {
+          "where": "arm_outputs.jsonl row 87 (FeedbackForce::a::18)",
+          "field": "timing.wall_s",
+          "recorded": 18.47790780046489,
+          "corrected": 16.222439400850796
+        },
+        {
+          "where": "arm_outputs.jsonl row 87 (FeedbackForce::a::18)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 11.649193099699914,
+          "corrected": 9.795
+        },
+        {
+          "where": "arm_outputs.jsonl row 87 (FeedbackForce::a::18)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 11.649193099699914,
+          "corrected": 9.795
+        },
+        {
+          "where": "arm_outputs.jsonl row 87 (FeedbackForce::a::18)",
+          "field": "timing.wall_s",
+          "recorded": 16.222439400850796,
+          "corrected": 14.368246301150881
+        },
+        {
+          "where": "arm_outputs.jsonl row 88 (ActionGenie::a::1)",
+          "field": "generator.request_s",
+          "recorded": 6.609323299955577,
+          "corrected": 4.721
+        },
+        {
+          "where": "arm_outputs.jsonl row 88 (ActionGenie::a::1)",
+          "field": "generator.time_s",
+          "recorded": 6.610311500262469,
+          "corrected": 4.721
+        },
+        {
+          "where": "arm_outputs.jsonl row 88 (ActionGenie::a::1)",
+          "field": "timing.wall_s",
+          "recorded": 23.15502739942167,
+          "corrected": 21.2657158991592
+        },
+        {
+          "where": "arm_outputs.jsonl row 88 (ActionGenie::a::1)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 14.745883299969137,
+          "corrected": 13.081
+        },
+        {
+          "where": "arm_outputs.jsonl row 88 (ActionGenie::a::1)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 14.745883299969137,
+          "corrected": 13.081
+        },
+        {
+          "where": "arm_outputs.jsonl row 88 (ActionGenie::a::1)",
+          "field": "timing.wall_s",
+          "recorded": 21.2657158991592,
+          "corrected": 19.600832599190063
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "generator.request_s",
+          "recorded": 7.760454200208187,
+          "corrected": 5.859
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "generator.time_s",
+          "recorded": 7.761277500074357,
+          "corrected": 5.859
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "timing.wall_s",
+          "recorded": 19.40733360045124,
+          "corrected": 17.505056100376883
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 9.92442229995504,
+          "corrected": 7.887
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 9.92442229995504,
+          "corrected": 7.887
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "timing.wall_s",
+          "recorded": 17.505056100376883,
+          "corrected": 15.467633800421844
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "generator.request_s",
+          "recorded": 5.111212799791247,
+          "corrected": 3.036
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "generator.time_s",
+          "recorded": 5.1121967998333275,
+          "corrected": 3.036
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "timing.wall_s",
+          "recorded": 22.36254590016324,
+          "corrected": 20.286349100329915
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 15.087698600254953,
+          "corrected": 13.022
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 15.087698600254953,
+          "corrected": 13.022
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "timing.wall_s",
+          "recorded": 20.286349100329915,
+          "corrected": 18.22065050007496
+        },
+        {
+          "where": "arm_outputs.jsonl row 91 (CoachForce::a::0)",
+          "field": "generator.request_s",
+          "recorded": 6.478699299972504,
+          "corrected": 4.325
+        },
+        {
+          "where": "arm_outputs.jsonl row 91 (CoachForce::a::0)",
+          "field": "generator.time_s",
+          "recorded": 6.480119799729437,
+          "corrected": 4.325
+        },
+        {
+          "where": "arm_outputs.jsonl row 91 (CoachForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 19.085696400376037,
+          "corrected": 16.9305766006466
+        },
+        {
+          "where": "arm_outputs.jsonl row 91 (CoachForce::a::0)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 10.136643799953163,
+          "corrected": 8.448
+        },
+        {
+          "where": "arm_outputs.jsonl row 91 (CoachForce::a::0)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 10.136643799953163,
+          "corrected": 8.448
+        },
+        {
+          "where": "arm_outputs.jsonl row 91 (CoachForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 16.9305766006466,
+          "corrected": 15.241932800693437
+        },
+        {
+          "where": "arm_outputs.jsonl row 92 (CollaborateForce::a::0)",
+          "field": "generator.request_s",
+          "recorded": 16.758824900258332,
+          "corrected": 14.617
+        },
+        {
+          "where": "arm_outputs.jsonl row 92 (CollaborateForce::a::0)",
+          "field": "generator.time_s",
+          "recorded": 16.759785399772227,
+          "corrected": 14.617
+        },
+        {
+          "where": "arm_outputs.jsonl row 92 (CollaborateForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 30.011043799924664,
+          "corrected": 27.86825840015244
+        },
+        {
+          "where": "arm_outputs.jsonl row 92 (CollaborateForce::a::0)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 11.257794399745762,
+          "corrected": 9.383
+        },
+        {
+          "where": "arm_outputs.jsonl row 92 (CollaborateForce::a::0)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 11.257794399745762,
+          "corrected": 9.383
+        },
+        {
+          "where": "arm_outputs.jsonl row 92 (CollaborateForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 27.86825840015244,
+          "corrected": 25.993464000406675
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "generator.request_s",
+          "recorded": 8.152399700134993,
+          "corrected": 5.972
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "generator.time_s",
+          "recorded": 8.15334969991818,
+          "corrected": 5.972
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 18.780099999625236,
+          "corrected": 16.598750299707056
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 8.697331599891186,
+          "corrected": 7.117
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 8.697331599891186,
+          "corrected": 7.117
+        },
+        {
+          "where": "arm_outputs.jsonl row 93 (CollaborationForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 16.598750299707056,
+          "corrected": 15.018418699815872
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "generator.request_s",
+          "recorded": 9.825310400221497,
+          "corrected": 6.133
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "generator.time_s",
+          "recorded": 9.826243599876761,
+          "corrected": 6.133
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 36.912873099558055,
+          "corrected": 33.2196294996813
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 10.317768100183457,
+          "corrected": 8.033
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 24.59212730033323,
+          "corrected": 22.307359200149776
+        },
+        {
+          "where": "arm_outputs.jsonl row 94 (ConnectForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 33.2196294996813,
+          "corrected": 30.93486139949784
+        },
+        {
+          "where": "arm_outputs.jsonl row 95 (ContentForce::a::0)",
+          "field": "generator.request_s",
+          "recorded": 7.447567400056869,
+          "corrected": 5.554
+        },
+        {
+          "where": "arm_outputs.jsonl row 95 (ContentForce::a::0)",
+          "field": "generator.time_s",
+          "recorded": 7.44831069977954,
+          "corrected": 5.554
+        },
+        {
+          "where": "arm_outputs.jsonl row 95 (ContentForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 19.450045700068586,
+          "corrected": 17.555735000289047
+        },
+        {
+          "where": "arm_outputs.jsonl row 95 (ContentForce::a::0)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 10.228065800387412,
+          "corrected": 8.601
+        },
+        {
+          "where": "arm_outputs.jsonl row 95 (ContentForce::a::0)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 10.228065800387412,
+          "corrected": 8.601
+        },
+        {
+          "where": "arm_outputs.jsonl row 95 (ContentForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 17.555735000289047,
+          "corrected": 15.928669199901636
+        },
+        {
+          "where": "arm_outputs.jsonl row 96 (ContextForce::a::0)",
+          "field": "generator.request_s",
+          "recorded": 4.908534900285304,
+          "corrected": 2.964
+        },
+        {
+          "where": "arm_outputs.jsonl row 96 (ContextForce::a::0)",
+          "field": "generator.time_s",
+          "recorded": 4.909452399704605,
+          "corrected": 2.964
+        },
+        {
+          "where": "arm_outputs.jsonl row 96 (ContextForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 19.83543369988911,
+          "corrected": 17.889981300184502
+        },
+        {
+          "where": "arm_outputs.jsonl row 96 (ContextForce::a::0)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 12.97948159975931,
+          "corrected": 11.027
+        },
+        {
+          "where": "arm_outputs.jsonl row 96 (ContextForce::a::0)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 12.97948159975931,
+          "corrected": 11.027
+        },
+        {
+          "where": "arm_outputs.jsonl row 96 (ContextForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 17.889981300184502,
+          "corrected": 15.93749970042519
+        },
+        {
+          "where": "arm_outputs.jsonl row 97 (EdgeForce::a::0)",
+          "field": "generator.request_s",
+          "recorded": 4.581719700247049,
+          "corrected": 3.006
+        },
+        {
+          "where": "arm_outputs.jsonl row 97 (EdgeForce::a::0)",
+          "field": "generator.time_s",
+          "recorded": 4.582348300144076,
+          "corrected": 3.006
+        },
+        {
+          "where": "arm_outputs.jsonl row 97 (EdgeForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 20.854358100914396,
+          "corrected": 19.27800980077032
+        },
+        {
+          "where": "arm_outputs.jsonl row 97 (EdgeForce::a::0)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 12.895053900312632,
+          "corrected": 11.293
+        },
+        {
+          "where": "arm_outputs.jsonl row 97 (EdgeForce::a::0)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 12.895053900312632,
+          "corrected": 11.293
+        },
+        {
+          "where": "arm_outputs.jsonl row 97 (EdgeForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 19.27800980077032,
+          "corrected": 17.675955900457687
+        },
+        {
+          "where": "arm_outputs.jsonl row 98 (ExplainabilityForce::a::0)",
+          "field": "generator.request_s",
+          "recorded": 7.823394000064582,
+          "corrected": 5.368
+        },
+        {
+          "where": "arm_outputs.jsonl row 98 (ExplainabilityForce::a::0)",
+          "field": "generator.time_s",
+          "recorded": 7.824468899983913,
+          "corrected": 5.368
+        },
+        {
+          "where": "arm_outputs.jsonl row 98 (ExplainabilityForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 22.80320330010727,
+          "corrected": 20.34673440012336
+        },
+        {
+          "where": "arm_outputs.jsonl row 98 (ExplainabilityForce::a::0)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 10.670957600232214,
+          "corrected": 9.156
+        },
+        {
+          "where": "arm_outputs.jsonl row 98 (ExplainabilityForce::a::0)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 10.670957600232214,
+          "corrected": 9.156
+        },
+        {
+          "where": "arm_outputs.jsonl row 98 (ExplainabilityForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 20.34673440012336,
+          "corrected": 18.831776799891145
+        },
+        {
+          "where": "arm_outputs.jsonl row 99 (FeedbackForce::a::0)",
+          "field": "generator.request_s",
+          "recorded": 9.144095600116998,
+          "corrected": 7.351
+        },
+        {
+          "where": "arm_outputs.jsonl row 99 (FeedbackForce::a::0)",
+          "field": "generator.time_s",
+          "recorded": 9.144890600349754,
+          "corrected": 7.351
+        },
+        {
+          "where": "arm_outputs.jsonl row 99 (FeedbackForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 19.23918389994651,
+          "corrected": 17.445293299596756
+        },
+        {
+          "where": "arm_outputs.jsonl row 99 (FeedbackForce::a::0)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 8.217519299592823,
+          "corrected": 6.635
+        },
+        {
+          "where": "arm_outputs.jsonl row 99 (FeedbackForce::a::0)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 8.217519299592823,
+          "corrected": 6.635
+        },
+        {
+          "where": "arm_outputs.jsonl row 99 (FeedbackForce::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 17.445293299596756,
+          "corrected": 15.862774000003933
+        }
+      ],
+      "checks": [
+        {
+          "what": "each changed entry held exactly one answering record, whose answering try's seconds were the entry's request_s and which has a server time",
+          "holds": true,
+          "looked_at": 200
+        }
+      ],
+      "evidence": {
+        "file": "model_call_times.json",
+        "sha256": "60bab3905f7289e128715ec4cdba76754174f3a10014800178c79396da8f8c78",
+        "what": "the backlog's rate and limit, the clean relations, the files they were read from with their sha256, and per corrected call its server time, backlog, relation time and time; the check of the relations on calls sent again"
+      },
+      "files": {
+        "arm_outputs.jsonl": {
+          "sha256_before": "9b541012a0270ca2e579b21651cca8b2dbb22113e779a27c74043b7b9428d001",
+          "sha256_corrected": "7132d3a92b07f6bb3ca75c3a98a0bf69cfdca658c3a389f4c0a562cb3933c111",
+          "as_recorded": "arm_outputs.as_recorded.jsonl"
+        }
+      },
+      "script": "correct_model_call_time.py, in this folder"
     }
   ]
 }

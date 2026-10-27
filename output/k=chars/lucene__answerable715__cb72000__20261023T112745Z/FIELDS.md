@@ -22,10 +22,15 @@ One run of one retrieval method, **lucene**, over 715 questions: for each questi
 | `eval_failures.jsonl` | One line per score cell that failed. Empty when none did. | question_id + metric |
 | `corrections.json` | Only in a folder whose stored numbers were corrected after the run: what was changed, by which rule, on whose word. |  |
 | `eval_results.as_recorded.jsonl` | eval_results.jsonl exactly as the scoring wrote it, kept by the first correction that changed it (corrections.json names it). |  |
-| `arm_outputs.as_recorded.jsonl`, `run_manifest.as_recorded.json` | A file exactly as the run wrote it, kept when a correction changed the file of the same name. |  |
+| `arm_outputs.as_recorded.jsonl`, `eval_calls.as_recorded.jsonl`, `run_manifest.as_recorded.json` | A file exactly as the run wrote it, kept when a correction changed the file of the same name. |  |
 | `correct_zero_usage.py` | The script that made the zero-usage correction (the tokens of the answer calls whose Claude program reply held 0 in its usage field); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
 | `cli_transcript_usage.json` | The evidence of the zero-usage correction: the Claude program's own transcript counts of each answer call it changed, by session id, read on the machine that made the calls. | session id = calls[].envelope.session_id of arm_outputs.jsonl |
 | `correct_nonllm_record_content.py` | The script that made the non-LLM record-content correction (context_recall_nonllm and context_precision_nonllm calculated again, record content against record content); run on the files from before it, with the code named in its entry, it gives the corrected files again. |  |
+| `correct_search_time.py` | The script that made the search-time correction (each question's search time the time of the same retrieval made again with one question at a time on the laptop, and a question's wait for the embedder's lock out); run on the files from before it, with the re-made run its entry names, it gives the corrected files again. |  |
+| `correct_judge_embed_gpu_time.py` | The script that made the judging's GPU-time correction (RAGAS's own embedding requests made on the CPU given the time the same requests take on the desktop's graphics card); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
+| `judge_embed_gpu_times.json` | The evidence of the judging's GPU-time correction: per RAGAS embedding request that the six final runs' judging made on the CPU, its seconds on the graphics card, its recorded seconds, texts and tokens. | run = the run folder; line = the record's line in eval_calls.jsonl, from 0; question_id, eval_leg, seq = the record's own |
+| `correct_model_call_time.py` | The script that made the model-call-time correction (each answer call and first call given its answering try's server time, and a call started past the login's limit its arm's clean relation at its own output tokens); run on the files from before it, over the same run folders, it gives the corrected files again. |  |
+| `model_call_times.json` | The evidence of the model-call-time correction: the login's backlog of claude-sonnet-5 input tokens (its rate, its limit, the files it was read from with their sha256), the clean relation of each arm and kind of call, and per corrected call its server time, backlog, relation time and time; with the check of the relations on calls sent again one at a time. | question_id = id of arm_outputs.jsonl; record = the call's place in calls; seq = calls[].seq |
 | `correct_code_version_from_reflog.py` | The script that made the code-version correction (the commit each start ran on, by its clone's own reflog, where git gave no answer when the start began); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
 | `code_reflog.txt` | The evidence of the code-version correction: the reflog of the clone the run ran in, written on that machine: each move of HEAD, its commit, time and why. |  |
 
@@ -1126,23 +1131,29 @@ The file holds no record.
 | `workers` | integer | 1 | 0 |
 
 ---
-Written from `prod/harness/fields.py`, sha256 `ef5841854ddd95ae01da262ccf6ad2581936e1712178ac04ef32733a2a37ac92`.
+Written from `prod/harness/fields.py`, sha256 `b31598ca597e06561a7975020a896d13469eff0733d92f0ad778f832b659ac80`.
 
 The files as they stood when this was written, their line ends as git holds them (LF):
 
 - `arm_outputs.as_recorded.jsonl` sha256 `b82f10e2ecc3fea11484f18b7a51e3fb8a7cd851067ad891fe58030823e0412c`
-- `arm_outputs.jsonl` sha256 `a0686a4e59de4249f45b72adb0f463d3ef1c6897644d244a259c08355868b977`
+- `arm_outputs.jsonl` sha256 `d0457b76b7a01184250a1075361fd36d2ac608688dd464cfaf82c0118ec4bcbc`
 - `cli_transcript_usage.json` sha256 `907bfe09f541f6ca0ddf3ee9785d7b375f8d3574ec8c9b098841da99ea6620c7`
 - `code_reflog.txt` sha256 `3afbde103bd3a20f21192f2128ed8a23ccd4dae9caa4683448649069ab195df5`
 - `correct_code_version_from_reflog.py` sha256 `fa6dbcf7a2a2d8eb84900653a531b52b04d441fd8cfa1ce4dd37f3547f2b15e3`
+- `correct_judge_embed_gpu_time.py` sha256 `22823e15cb005f752c66af694f22e085e3081ca13bb30553de0945c2975fc64d`
+- `correct_model_call_time.py` sha256 `f3e49a6b4fbfc779bba8d6793c98897415fbd7693202b2ff89f4e68771420a5c`
 - `correct_nonllm_record_content.py` sha256 `22f302c2e645d3aecbf87ab8735b64b356695a43362ab1cad39ce406d6d59f75`
+- `correct_search_time.py` sha256 `fedae7c39d863737ad1e3f472a5b17bf38fa838b114a2204ee582a89fcf9f0bb`
 - `correct_zero_usage.py` sha256 `8f1cb37eec34d6b58c927e2098d3ce47bc603c6594227751e2ac01211f8b3c97`
-- `corrections.json` sha256 `9384f4afde10ba4bde989042d4db35b79b0365e97b17cf51176840328ea741b1`
-- `eval_calls.jsonl` sha256 `084c5e785f05a72ec78ce829797c42f0012575e5b17d2f2d0d2048f1edaccd9b`
+- `corrections.json` sha256 `8d50c948158ba8c9e33382e76c376ae4b506e464e1ac292363c44beddde69f16`
+- `eval_calls.as_recorded.jsonl` sha256 `084c5e785f05a72ec78ce829797c42f0012575e5b17d2f2d0d2048f1edaccd9b`
+- `eval_calls.jsonl` sha256 `469275bfeb2eece15e4511cb54ec33ebb2e7ea9a63cc62b87cb93a59858153de`
 - `eval_failures.jsonl` sha256 `5fa4867aca245a2455b4c7ffa374b71f3c348688670f29cc6d0c76171af6cadb`
 - `eval_manifest.json` sha256 `2299dd59cadc695910a9445907bce4d9e93f6fa4de418ed7b87fa73bcc397716`
 - `eval_results.as_recorded.jsonl` sha256 `56026d8b37a3305a6e144b07ed1919aa70fddc679dd4ce59eb32ce85b7868c76`
 - `eval_results.jsonl` sha256 `f2bd581a54115f60cead0f4ac0fbaee7d4a38b1ad98b06ec20ddab4f1e9ce75f`
 - `failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- `judge_embed_gpu_times.json` sha256 `72aa41ffeb48a6228a901c06cbb90094fcdad07911147faef29efb1d1b1c9267`
+- `model_call_times.json` sha256 `bab9ca97ad6184b38a8881715855f6bd77bdd9a7d53e881cd0c64ef10d8065ca`
 - `run_manifest.as_recorded.json` sha256 `e7c9f47eb0e185d4df27c355310c73a5fba41795596c152496bb8efc0dd01664`
 - `run_manifest.json` sha256 `9714b05d4dad2b2dcb9abf8812cd24f37eaf45ce485e7739bdab5ca1f5778772`

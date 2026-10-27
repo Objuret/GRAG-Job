@@ -1,0 +1,8 @@
+answer calls read: 2887; all chat calls: 34935
+   login at under 2,000      input tokens/s:   140 answers | server seconds per 1,000 output tokens: median   15.1, p90   22.3
+   login at 2,000-5,000      input tokens/s:   263 answers | server seconds per 1,000 output tokens: median   15.3, p90   21.3
+   login at 5,000-10,000     input tokens/s:   256 answers | server seconds per 1,000 output tokens: median   14.8, p90   19.9
+   login at 10,000-15,000    input tokens/s:   497 answers | server seconds per 1,000 output tokens: median   16.2, p90   72.5
+   login at 15,000 and more  input tokens/s:  1731 answers | server seconds per 1,000 output tokens: median   46.6, p90  236.2
+
+[exited with code 0]

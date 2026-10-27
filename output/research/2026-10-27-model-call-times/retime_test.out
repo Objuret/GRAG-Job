@@ -1,0 +1,82 @@
+clean relation lucene: server s = 1.54 + 11.24 per 1000 output tokens
+clean relation vector: server s = 1.63 + 9.89 per 1000 output tokens
+clean relation artefact: server s = 1.79 + 9.95 per 1000 output tokens
+calls chosen: 70 {'control: lucene, hundred (clean)': 10, 'lucene, 715 (slowed)': 25, 'vector, 715 (slowed)': 25, 'artefact, hundred (slowed tail)': 10}
+  1/70 control: lucene, hundred (clean)   | recorded    2.5 s (97 tok) | now   4.4 s (322 tok) | relation for now's length   5.2 s | fix value   2.6 s
+  2/70 control: lucene, hundred (clean)   | recorded    2.8 s (136 tok) | now   3.7 s (174 tok) | relation for now's length   3.5 s | fix value   3.1 s
+  3/70 control: lucene, hundred (clean)   | recorded    3.5 s (181 tok) | now   6.3 s (415 tok) | relation for now's length   6.2 s | fix value   3.6 s
+  4/70 control: lucene, hundred (clean)   | recorded    4.8 s (210 tok) | now   3.1 s (129 tok) | relation for now's length   3.0 s | fix value   3.9 s
+  5/70 control: lucene, hundred (clean)   | recorded    4.2 s (245 tok) | now   4.0 s (209 tok) | relation for now's length   3.9 s | fix value   4.3 s
+  6/70 control: lucene, hundred (clean)   | recorded    4.6 s (282 tok) | now   4.9 s (271 tok) | relation for now's length   4.6 s | fix value   4.7 s
+  7/70 control: lucene, hundred (clean)   | recorded    5.0 s (361 tok) | now   4.4 s (290 tok) | relation for now's length   4.8 s | fix value   5.6 s
+  8/70 control: lucene, hundred (clean)   | recorded    6.9 s (435 tok) | now   9.5 s (750 tok) | relation for now's length  10.0 s | fix value   6.4 s
+  9/70 control: lucene, hundred (clean)   | recorded    7.3 s (537 tok) | now   6.4 s (503 tok) | relation for now's length   7.2 s | fix value   7.6 s
+ 10/70 control: lucene, hundred (clean)   | recorded   13.4 s (1023 tok) | now  11.8 s (927 tok) | relation for now's length  12.0 s | fix value  13.0 s
+ 11/70 lucene, 715 (slowed)               | recorded   20.8 s (56 tok) | now   3.8 s (179 tok) | relation for now's length   3.6 s | fix value   2.2 s
+ 12/70 lucene, 715 (slowed)               | recorded   12.6 s (105 tok) | now   2.9 s (108 tok) | relation for now's length   2.8 s | fix value   2.7 s
+ 13/70 lucene, 715 (slowed)               | recorded   13.4 s (117 tok) | now   2.8 s (113 tok) | relation for now's length   2.8 s | fix value   2.9 s
+ 14/70 lucene, 715 (slowed)               | recorded   23.6 s (139 tok) | now   2.9 s (231 tok) | relation for now's length   4.1 s | fix value   3.1 s
+ 15/70 lucene, 715 (slowed)               | recorded  148.6 s (155 tok) | now   4.5 s (265 tok) | relation for now's length   4.5 s | fix value   3.3 s
+ 16/70 lucene, 715 (slowed)               | recorded   22.3 s (166 tok) | now   3.2 s (142 tok) | relation for now's length   3.1 s | fix value   3.4 s
+ 17/70 lucene, 715 (slowed)               | recorded   21.6 s (178 tok) | now   2.9 s (168 tok) | relation for now's length   3.4 s | fix value   3.5 s
+ 18/70 lucene, 715 (slowed)               | recorded   13.7 s (187 tok) | now   3.2 s (171 tok) | relation for now's length   3.5 s | fix value   3.6 s
+ 19/70 lucene, 715 (slowed)               | recorded   23.2 s (197 tok) | now   4.0 s (199 tok) | relation for now's length   3.8 s | fix value   3.8 s
+ 20/70 lucene, 715 (slowed)               | recorded    9.0 s (206 tok) | now   5.2 s (236 tok) | relation for now's length   4.2 s | fix value   3.9 s
+ 21/70 lucene, 715 (slowed)               | recorded   23.7 s (216 tok) | now   3.8 s (214 tok) | relation for now's length   3.9 s | fix value   4.0 s
+ 22/70 lucene, 715 (slowed)               | recorded   14.5 s (228 tok) | now   6.4 s (221 tok) | relation for now's length   4.0 s | fix value   4.1 s
+ 23/70 lucene, 715 (slowed)               | recorded   44.2 s (242 tok) | now   4.5 s (253 tok) | relation for now's length   4.4 s | fix value   4.3 s
+ 24/70 lucene, 715 (slowed)               | recorded   43.0 s (257 tok) | now   4.1 s (284 tok) | relation for now's length   4.7 s | fix value   4.4 s
+ 25/70 lucene, 715 (slowed)               | recorded    9.7 s (275 tok) | now   4.0 s (259 tok) | relation for now's length   4.5 s | fix value   4.6 s
+ 26/70 lucene, 715 (slowed)               | recorded   24.2 s (289 tok) | now   4.0 s (235 tok) | relation for now's length   4.2 s | fix value   4.8 s
+ 27/70 lucene, 715 (slowed)               | recorded   25.0 s (302 tok) | now   4.1 s (309 tok) | relation for now's length   5.0 s | fix value   4.9 s
+ 28/70 lucene, 715 (slowed)               | recorded   23.5 s (322 tok) | now   4.5 s (310 tok) | relation for now's length   5.0 s | fix value   5.2 s
+ 29/70 lucene, 715 (slowed)               | recorded   23.4 s (342 tok) | now   4.9 s (270 tok) | relation for now's length   4.6 s | fix value   5.4 s
+ 30/70 lucene, 715 (slowed)               | recorded   11.5 s (376 tok) | now   7.4 s (469 tok) | relation for now's length   6.8 s | fix value   5.8 s
+ 31/70 lucene, 715 (slowed)               | recorded   26.8 s (404 tok) | now   4.8 s (248 tok) | relation for now's length   4.3 s | fix value   6.1 s
+ 32/70 lucene, 715 (slowed)               | recorded   82.1 s (442 tok) | now   4.4 s (290 tok) | relation for now's length   4.8 s | fix value   6.5 s
+ 33/70 lucene, 715 (slowed)               | recorded   16.6 s (506 tok) | now   5.4 s (406 tok) | relation for now's length   6.1 s | fix value   7.2 s
+ 34/70 lucene, 715 (slowed)               | recorded   42.7 s (597 tok) | now   7.1 s (656 tok) | relation for now's length   8.9 s | fix value   8.3 s
+ 35/70 lucene, 715 (slowed)               | recorded  156.0 s (941 tok) | now   8.6 s (742 tok) | relation for now's length   9.9 s | fix value  12.1 s
+ 36/70 vector, 715 (slowed)               | recorded  179.0 s (88 tok) | now   3.1 s (147 tok) | relation for now's length   3.1 s | fix value   2.5 s
+ 37/70 vector, 715 (slowed)               | recorded   23.2 s (124 tok) | now   3.1 s (118 tok) | relation for now's length   2.8 s | fix value   2.9 s
+ 38/70 vector, 715 (slowed)               | recorded   22.6 s (152 tok) | now   3.1 s (151 tok) | relation for now's length   3.1 s | fix value   3.1 s
+ 39/70 vector, 715 (slowed)               | recorded   22.7 s (168 tok) | now   4.4 s (244 tok) | relation for now's length   4.0 s | fix value   3.3 s
+ 40/70 vector, 715 (slowed)               | recorded   23.5 s (190 tok) | now   6.5 s (361 tok) | relation for now's length   5.2 s | fix value   3.5 s
+ 41/70 vector, 715 (slowed)               | recorded   38.8 s (207 tok) | now   3.4 s (168 tok) | relation for now's length   3.3 s | fix value   3.7 s
+ 42/70 vector, 715 (slowed)               | recorded  120.7 s (230 tok) | now   4.8 s (323 tok) | relation for now's length   4.8 s | fix value   3.9 s
+ 43/70 vector, 715 (slowed)               | recorded   41.0 s (249 tok) | now   5.3 s (323 tok) | relation for now's length   4.8 s | fix value   4.1 s
+ 44/70 vector, 715 (slowed)               | recorded  154.9 s (268 tok) | now   7.8 s (671 tok) | relation for now's length   8.3 s | fix value   4.3 s
+ 45/70 vector, 715 (slowed)               | recorded    9.0 s (287 tok) | now   4.7 s (282 tok) | relation for now's length   4.4 s | fix value   4.5 s
+ 46/70 vector, 715 (slowed)               | recorded   41.1 s (304 tok) | now   4.6 s (293 tok) | relation for now's length   4.5 s | fix value   4.6 s
+ 47/70 vector, 715 (slowed)               | recorded  116.9 s (326 tok) | now   4.1 s (252 tok) | relation for now's length   4.1 s | fix value   4.9 s
+ 48/70 vector, 715 (slowed)               | recorded   23.0 s (350 tok) | now   3.7 s (248 tok) | relation for now's length   4.1 s | fix value   5.1 s
+ 49/70 vector, 715 (slowed)               | recorded   24.5 s (366 tok) | now   4.3 s (387 tok) | relation for now's length   5.5 s | fix value   5.3 s
+ 50/70 vector, 715 (slowed)               | recorded  113.8 s (385 tok) | now   3.6 s (125 tok) | relation for now's length   2.9 s | fix value   5.4 s
+ 51/70 vector, 715 (slowed)               | recorded  149.8 s (404 tok) | now   5.3 s (345 tok) | relation for now's length   5.0 s | fix value   5.6 s
+ 52/70 vector, 715 (slowed)               | recorded   26.0 s (435 tok) | now   5.9 s (429 tok) | relation for now's length   5.9 s | fix value   5.9 s
+ 53/70 vector, 715 (slowed)               | recorded   25.5 s (462 tok) | now   8.2 s (563 tok) | relation for now's length   7.2 s | fix value   6.2 s
+ 54/70 vector, 715 (slowed)               | recorded   15.7 s (484 tok) | now   4.4 s (321 tok) | relation for now's length   4.8 s | fix value   6.4 s
+ 55/70 vector, 715 (slowed)               | recorded  150.7 s (511 tok) | now   3.3 s (171 tok) | relation for now's length   3.3 s | fix value   6.7 s
+ 56/70 vector, 715 (slowed)               | recorded   84.2 s (553 tok) | now   6.2 s (484 tok) | relation for now's length   6.4 s | fix value   7.1 s
+ 57/70 vector, 715 (slowed)               | recorded   45.4 s (611 tok) | now   8.5 s (707 tok) | relation for now's length   8.6 s | fix value   7.7 s
+ 58/70 vector, 715 (slowed)               | recorded  118.2 s (693 tok) | now   5.7 s (376 tok) | relation for now's length   5.3 s | fix value   8.5 s
+ 59/70 vector, 715 (slowed)               | recorded  158.0 s (855 tok) | now   6.4 s (427 tok) | relation for now's length   5.9 s | fix value  10.1 s
+ 60/70 vector, 715 (slowed)               | recorded  200.8 s (1671 tok) | now  11.9 s (1007 tok) | relation for now's length  11.6 s | fix value  18.2 s
+ 61/70 artefact, hundred (slowed tail)    | recorded   77.3 s (355 tok) | now   6.0 s (369 tok) | relation for now's length   5.5 s | fix value   5.3 s
+ 62/70 artefact, hundred (slowed tail)    | recorded   41.5 s (197 tok) | now   3.3 s (227 tok) | relation for now's length   4.1 s | fix value   3.8 s
+ 63/70 artefact, hundred (slowed tail)    | recorded   40.0 s (201 tok) | now  11.0 s (410 tok) | relation for now's length   5.9 s | fix value   3.8 s
+ 64/70 artefact, hundred (slowed tail)    | recorded   39.3 s (220 tok) | now   4.9 s (259 tok) | relation for now's length   4.4 s | fix value   4.0 s
+ 65/70 artefact, hundred (slowed tail)    | recorded   44.6 s (256 tok) | now   5.0 s (281 tok) | relation for now's length   4.6 s | fix value   4.3 s
+ 66/70 artefact, hundred (slowed tail)    | recorded   43.3 s (286 tok) | now   5.7 s (276 tok) | relation for now's length   4.5 s | fix value   4.6 s
+ 67/70 artefact, hundred (slowed tail)    | recorded   40.4 s (283 tok) | now   7.4 s (447 tok) | relation for now's length   6.2 s | fix value   4.6 s
+ 68/70 artefact, hundred (slowed tail)    | recorded   42.9 s (303 tok) | now   6.3 s (336 tok) | relation for now's length   5.1 s | fix value   4.8 s
+ 69/70 artefact, hundred (slowed tail)    | recorded   43.6 s (338 tok) | now   3.7 s (220 tok) | relation for now's length   4.0 s | fix value   5.2 s
+ 70/70 artefact, hundred (slowed tail)    | recorded   41.2 s (331 tok) | now   8.1 s (417 tok) | relation for now's length   5.9 s | fix value   5.1 s
+
+== by group (medians)
+control: lucene, hundred (clean)   n=10 | recorded    4.7 s | re-timed   4.6 s | re-timed minus relation (same length): median -0.05, |err| median 0.24, 90% 0.79 s | re-timed minus fix value: median -0.07 s | length now / recorded, median 0.95 | env differs: ['ENABLE_PROMPT_CACHING_1H']
+lucene, 715 (slowed)               n=25 | recorded   23.4 s | re-timed   4.1 s | re-timed minus relation (same length): median -0.16, |err| median 0.41, 90% 1.27 s | re-timed minus fix value: median -0.32 s | length now / recorded, median 0.97 | env differs: ['ENABLE_PROMPT_CACHING_1H']
+vector, 715 (slowed)               n=25 | recorded   41.1 s | re-timed   4.7 s | re-timed minus relation (same length): median +0.11, |err| median 0.29, 90% 0.89 s | re-timed minus fix value: median -0.02 s | length now / recorded, median 0.96 | env differs: ['ENABLE_PROMPT_CACHING_1H']
+artefact, hundred (slowed tail)    n=10 | recorded   42.2 s | re-timed   5.9 s | re-timed minus relation (same length): median +0.84, |err| median 0.92, 90% 2.46 s | re-timed minus fix value: median +0.98 s | length now / recorded, median 1.13 | env differs: ['ENABLE_PROMPT_CACHING_1H']
+
+[exited with code 0]

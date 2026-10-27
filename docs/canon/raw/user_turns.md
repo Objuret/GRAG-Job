@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2943 turns, chronological. Verbatim text; no edits.
+2958 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -21045,4 +21045,70 @@ i mean NOW, after you r last stuff
 *queued while an agent was working*
 
 resume
+
+## 2026-10-27 17:40 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+well, where are we with this then?
+
+## 2026-10-27 17:42 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+"" wtf is this then?
+
+## 2026-10-27 17:45 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+answer seconds looks really fucked up btw, there is litterally no chance those times are correct for real.. take a serious look at them
+
+## 2026-10-27 18:25 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+really? that is all you got?
+
+## 2026-10-27 18:50 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+how much would it take to re-time these?
+
+## 2026-10-27 18:54 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+72million tokens...
+
+## 2026-10-27 18:57 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+can we do something smart instead? like a 1,2,3 step diff comparison between the old and new of the old arms and use the difference between them and their previous times and extrapolate the expected diff, do you understand what i say when i say such a thing?
+
+## 2026-10-27 19:06 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+yes but i also meant that some questions will take longer time than others, and different types maybe are different between the arms etc
+
+## 2026-10-27 19:06 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+are you SURE that the reporting is not jsut a bit retarded? because escalating longer times is just.. what?
+
+## 2026-10-27 19:09 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+yeah, but dude, are you even understanding what i am talking about? why i want this fixed at all?
+
+## 2026-10-27 19:13 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+indeed
+
+## 2026-10-27 19:13 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+but, and this is the kicker, many of the 100 were also ran concurrently on both computers, so apparently something is really fucking off here
+
+## 2026-10-27 19:14 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+you keep saying api, is that headless sub, or are you actually believeing we are using the real api?
+
+## 2026-10-27 19:22 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+do a selected test/fix for a bunch and see if its the correct way
+
+## 2026-10-27 19:46 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+doit
 

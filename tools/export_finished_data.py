@@ -9,8 +9,11 @@ file they all read (data/questions.jsonl, checked against each run's hash of it)
 question sets (SETS, which together are HERB's answerable questions, each once) and the graph's
 build cost (test/graph/build_cost.json), and writes grag-data.xlsx. It prints which question sets
 each arm's runs cover and names a set an arm has no run on. A run split over the laptop and the
-desktop is read with its halves for its environment. Every run's time, and its judging's time, is
-its questions' times added; an arm's is its runs' added. A run that read its interpreter's answers
+desktop is read with its halves for its environment. Every run's time is its questions' times added,
+its judging's time its judge calls' and embedding requests' times added; an arm's is its runs' added.
+A model call counts by its answering try's server time; the run folders' corrections give the
+answer and first calls past the login's limit, and the search times, their values (model-call-time,
+search-time in each folder's corrections.json). A run that read its interpreter's answers
 and its query embeddings from an earlier run takes those values from that run (MADE_IN); the artefact's
 run on the 715 takes its query embeddings from a run of the same questions without answers that embedded
 every question's texts in one pass, on the graphics card (EMBEDDED_IN). Two scores
@@ -27,7 +30,6 @@ import hashlib
 import json
 import re
 import sys
-from datetime import datetime, timedelta
 from pathlib import Path
 
 from openpyxl import Workbook
@@ -111,8 +113,6 @@ QUESTIONS = [
     ("arm", "Retrieval method.", ""),
     ("question_id", "Question id: product, a (answerable), index of the question in the product's answerable "
                     "questions in HERB, from 0.", ""),
-    ("question_set", "Question set of the question: gold100, 100 of HERB's 815 answerable questions; "
-                     "answerable715, the other 715.", ""),
     ("question_type", "HERB question type.", ""),
     ("question", "Question, from HERB.", ""),
     ("reference_answer", "Reference answer: HERB's answer to the question, as RAGAS was given it (its parts "
@@ -120,15 +120,25 @@ QUESTIONS = [
     ("reference_context_ids", "Reference context ids: the ids of HERB's evidence records for the question.", ""),
     ("answer", "Answer of the answer model.", ""),
     *SCORES,
-    ("search_seconds", "Retrieval time, without the interpreter and the query embedding.", "seconds"),
+    ("search_seconds", "Retrieval time, without the interpreter and the query embedding, measured with one question "
+                       "at a time on one machine for every arm: for lucene and vector the ranking, for the artefact "
+                       "the ranking and its hand-over of the records up to character_limit.", "seconds"),
     ("interpreter_seconds", "Time of the interpreter call's answering try: the answer model, called before "
-                            "retrieval. Artefact only.", "seconds"),
-    ("query_embedding_seconds", "Time to embed the query. Vector and artefact only. The artefact embeds its "
+                            "retrieval, measured and limited as answer_seconds, with the relation fitted on the "
+                            "interpreter calls. Artefact only.", "seconds"),
+    ("query_embedding_seconds", "Time to embed the query on the graphics card, without waits for the embedder. "
+                                "Vector and artefact only. The artefact embeds its "
                                 "query texts and reads a text embedded before from its cache, counted as no "
                                 "call: its time is that of the texts embedded for the question, empty when all "
                                 "of them were embedded before.", "seconds"),
-    ("answer_seconds", "Time of the answer model call's answering try.", "seconds"),
-    ("total_seconds", "Time of all steps for the question, to the answer, without failed tries of model "
+    ("answer_seconds", "Time of the answer model call's answering try: the Claude CLI's duration_api_ms, its time in "
+                       "requests to the model. For a call started while the backlog of answer-model input tokens of the "
+                       "recorded calls (added at each call's start, lowered by 16,500 tokens per second) was 886,127 "
+                       "tokens or more, the fitted backlog at which the seconds per output token rise (5-95%: 838,629 "
+                       "to 941,433): a + b x output tokens, fitted on the same arm's calls started below it.",
+     "seconds"),
+    ("total_seconds", "Time of the question's steps added: search_seconds, interpreter_seconds, "
+                      "query_embedding_seconds and answer_seconds. Without failed tries of model "
                       "calls.", "seconds"),
     ("interpreter_tokens_in", "Input tokens of the interpreter call. Artefact only.", "tokens"),
     ("interpreter_tokens_out", "Output tokens of the interpreter call. Artefact only.", "tokens"),
@@ -152,12 +162,16 @@ SETUP = [
     ("embedding_model", "Embedding model of the query embeddings and of the RAGAS scores that use embeddings.", ""),
 ]
 RUN = [
-    ("run_seconds", f"Time of the arm's runs over its questions in {PER_QUESTION}, without failed tries of "
-                    "model calls.", "seconds"),
+    ("run_seconds", f"Time of the arm's runs over its questions in {PER_QUESTION}: their total_seconds added.",
+     "seconds"),
     ("judge_tokens_in", "Input tokens of all RAGAS judge calls.", "tokens"),
     ("judge_tokens_out", "Output tokens of all RAGAS judge calls.", "tokens"),
     ("judge_embedding_tokens", "Tokens embedded by RAGAS.", "tokens"),
-    ("judging_seconds", f"Time of the RAGAS evaluation over the arm's questions in {PER_QUESTION}.", "seconds"),
+    ("judging_seconds", f"Time of the RAGAS evaluation over the arm's questions in {PER_QUESTION}: the Claude CLI's "
+                        "duration_api_ms of every judge call that answered, as judge_tokens_in counts them (also in "
+                        "cells that failed or that a later start judged again), and the encoding times of RAGAS's "
+                        "embedding requests, added. Three judge calls of the artefact that no record holds are in the "
+                        "tokens and have no time.", "seconds"),
 ]
 INDEX_KIND = {"lucene": ("BM25 full-text index", "corpus record"),
               "vector": ("dense vector index", "corpus record"),
@@ -185,51 +199,37 @@ def one(values, what):
     return values[0]
 
 
-def covered(intervals):
-    """The seconds a set of (start, end) intervals covers, overlaps counted once."""
-    total, end = 0.0, None
-    for a, b in sorted(intervals):
-        if end is None or a > end:
-            total, end = total + (b - a).total_seconds(), b
-        elif b > end:
-            total, end = total + (b - end).total_seconds(), b
-    return total
-
-
 def judging_seconds(calls, ids, what):
-    """The judging's time as each question's judging added, one span per question and scoring start:
-    from the question's first call record in that start to its last. The time between two starts is
-    in no span (his 2026-10-22 "THE RUN TIME IS THE ADDED TIME FOR ALL THE THINGS IN THE FUCKING
-    RUN", 2026-10-23 "wall time? this is not a thing"). A judge call's time is its answering try: out
-    of each span goes the time in which only tries that did not answer, or the pauses after tries, of
-    the question's calls were under way, and no answering try or embedder request of the question
-    (his 2026-10-21 "a model call's time is its answering try; the seconds of failed tries are out of
-    the call, the question and the run"). Also the seconds so taken out."""
-    spans, failed, answering = {}, {}, {}
+    """The judging's time: the time of all the things in it added, never a clock over the judging or
+    over a question's judging (his 2026-10-22 "THE RUN TIME IS THE ADDED TIME FOR ALL THE THINGS IN THE
+    FUCKING RUN", 2026-10-23 "wall time? this is not a thing"). A judge call that answered counts by its
+    answering try's server time, the CLI's own duration_api_ms, without the program's start on our
+    machine; one of RAGAS's embedding requests by its encoding time, encode_s, without its wait for the
+    embedder's lock. How many calls ran at once changes neither. A try that did not answer counts with
+    nothing (his 2026-10-21 "a model call's time is its answering try; the seconds of failed tries are
+    out of the call, the question and the run"). Also the seconds of the tries so left out, by our clock."""
+    total, failed, seen = 0.0, 0.0, set()
     for c in calls:
-        if c.get("question_id") not in ids or not (c.get("started_at") and c.get("finished_at")):
-            continue
-        key = (c["question_id"], c["eval_leg"])
-        a, b = datetime.fromisoformat(c["started_at"]), datetime.fromisoformat(c["finished_at"])
-        s = spans.setdefault(key, [a, b])
-        s[0], s[1] = min(s[0], a), max(s[1], b)
         if c.get("kind") != "chat":
-            answering.setdefault(key, []).append((a, b))
+            # RAGAS's own embedding requests, made for the run's answers and references before the
+            # cells (phase prime): their record names no question
+            total += float(c["encode_s"])
             continue
+        if c.get("question_id") not in ids:
+            continue
+        seen.add(c["question_id"])
         tries = c.get("attempts") or []
         for n, t in enumerate(tries):
-            if not t.get("started_at") or t.get("seconds") is None:
-                sys.exit(f"{what}: a judge call's try has no start or no seconds; its time cannot be cut")
-            t0 = datetime.fromisoformat(t["started_at"])
-            t1 = t0 + timedelta(seconds=float(t["seconds"]))
             if c.get("ok") and n == len(tries) - 1:
-                answering.setdefault(key, []).append((t0, t1))
+                server = (c.get("envelope") or {}).get("duration_api_ms")
+                if not server:
+                    sys.exit(f"{what}: a judge call that answered has no server time")
+                total += server / 1000
             else:
-                failed.setdefault(key, []).append((t0, t1 + timedelta(seconds=float(t.get("backoff_s") or 0.0))))
-    if {q for q, _ in spans} != set(ids):
+                failed += float(t.get("seconds") or 0.0) + float(t.get("backoff_s") or 0.0)
+    if seen != set(ids):
         sys.exit(f"{what}: not every question has its judge calls")
-    out = {k: covered(failed[k] + answering.get(k, [])) - covered(answering.get(k, [])) for k in failed}
-    return sum((b - a).total_seconds() - out.get(k, 0.0) for k, (a, b) in spans.items()), sum(out.values())
+    return total, failed
 
 
 def judge_cost(folder, ev, calls, cells, d):
@@ -334,8 +334,8 @@ def rejudged(arm, d, cells, judge_model, set_name):
     """REJUDGED_SCORES from the folder beside the run, which judged the run's own answers and holds the
     run's other scores as the run has them. Their cost is that of every judge call of the folder that
     answered, as the run's own judging is counted (judge_usage; the key's "all RAGAS judge calls"); their
-    time each question's span of calls added, one span per start of the judging, as the run's. A run
-    with no such folder must have judged every score itself."""
+    time their judge calls' server times added, as the run's. A run with no such folder must have judged
+    every score itself."""
     j = d.parent / (d.name + REJUDGED + set_name)
     if not j.exists():
         return {}, 0.0, 0, 0, 0.0
@@ -433,7 +433,6 @@ def runs_tables(arm, folder, refs, sets, by_sha):
         arm_calls = [c for c in r["calls"] if c.get("role") != "answer"]
         records = [(r["generator"], [c for c in r["calls"] if c.get("role") == "answer"])] + [
             (e, [c for c in arm_calls if c.get("kind") == k]) for k, e in own.items()]
-        replaced = None
         if source:
             o = source[r["id"]]
             records += [(e, [c for c in o["calls"] if c.get("role") != "answer" and c.get("kind") == e["kind"]])
@@ -444,7 +443,6 @@ def runs_tables(arm, folder, refs, sets, by_sha):
             made = {e["kind"]: e for e in o["retrieval"]}
             # this run's own embedding calls, for texts its machine had not embedded before, give way to
             # the calls that embedded all of them
-            replaced = own.get("embed")
             own["chat"], own["embed"] = made["chat"], made["embed"]
         if embedding_source:
             o = embedding_source[r["id"]]
@@ -461,7 +459,6 @@ def runs_tables(arm, folder, refs, sets, by_sha):
             records += [(made["embed"], [c for c in o["calls"] if c.get("role") != "answer" and c.get("kind") == "embed"])]
             # the run's own embedding calls, for texts its machine had not embedded before, give way to the
             # calls that embedded all of them; the interpreter stays the run's own
-            replaced = own.get("embed")
             own["embed"] = made["embed"]
         mine = cells[r["id"]]
         if set(mine) != {s for s, _, _ in SCORES} or any(c["status"] != "ok" for c in mine.values()):
@@ -478,26 +475,15 @@ def runs_tables(arm, folder, refs, sets, by_sha):
                     or call["time_s"] - call["request_s"] - call["wait_s"] - call["retry_s"] < -1e-6):
                 sys.exit(f"{arm} {r['id']}: a call's retry_s is not its records' failed tries and pauses, or "
                          f"its time does not hold its tries and its wait")
-        # the question's time holds all its steps: an interpreter call and embedding calls made in
-        # MADE_IN's run count by their answering try, in place of this run's own embedding calls;
-        # an interpreter call that a start of this run made before the start that wrote the row
-        # (read from the run's store, its record given back by correction store-hit-calls/1) counts
-        # by its answering try, outside the row's own span
-        stored = (not source and interp is not None
-                  and all(s.get("cache_hit") for s in r["meta"]["interpreter"]["stages"]))
-        # the calls inside the row's own span, and those made elsewhere, which count by their answering
-        # try; a call of the run's own that gave way to one made elsewhere leaves the row's time
-        if source:
-            inside, elsewhere = (g, replaced), (interp, qe)
-        elif embedding_source:
-            inside, elsewhere = ((g, replaced), (interp, qe)) if stored else ((g, interp, replaced), (qe,))
-        elif stored:
-            inside, elsewhere = (g, qe), (interp,)
-        else:
-            inside, elsewhere = (g, interp, qe), ()
-        failed = sum(call["retry_s"] for call in inside if call)
-        made_elsewhere = (sum(c["time_s"] - c["retry_s"] for c in elsewhere if c)
-                          - (replaced["time_s"] - replaced["retry_s"] if replaced else 0.0))
+        # the question's time is its steps' times added (his 2026-10-22 "THE RUN TIME IS THE ADDED TIME FOR
+        # ALL THE THINGS IN THE FUCKING RUN"), each step as its column holds it: an interpreter call or
+        # embedding calls made in MADE_IN's or EMBEDDED_IN's run, or read from the run's store (its record
+        # given back by correction store-hit-calls/1), by their answering try, in place of the run's own;
+        # the harness's own time between the steps is in no step
+        parts = {"search_seconds": r["search_time_s"],
+                 "interpreter_seconds": interp and interp["time_s"] - interp["retry_s"],
+                 "query_embedding_seconds": qe and qe["time_s"] - qe["retry_s"] - qe["wait_s"],
+                 "answer_seconds": g["time_s"] - g["retry_s"]}
         # the characters the cut handed over, checked against the texts themselves
         chars = r["meta"]["char_budget"]["chars"]
         if chars != sum(len(t) for t in r["contexts"]) or chars > man["char_budget"]:
@@ -508,19 +494,14 @@ def runs_tables(arm, folder, refs, sets, by_sha):
         questions.append({
             "arm": arm,
             "question_id": r["id"],
-            # where the row comes from, like an id (the main session's decision of 2026-10-25)
-            "question_set": set_name,
             "question_type": one((c["type"] for c in mine.values()), f"{r['id']} type"),
             "question": r["question"],
             "reference_answer": " ".join(str(g) for g in ref["ground_truth"]),
             "reference_context_ids": ", ".join(str(c) for c in ref["citations"]),
             "answer": r["answer"],
             **{s: mine[s]["value"] for s, _, _ in SCORES},
-            "search_seconds": r["search_time_s"],
-            "interpreter_seconds": interp and interp["time_s"] - interp["retry_s"],
-            "query_embedding_seconds": qe and qe["time_s"] - qe["retry_s"],
-            "answer_seconds": g["time_s"] - g["retry_s"],
-            "total_seconds": r["timing"]["wall_s"] - failed + made_elsewhere,
+            **parts,
+            "total_seconds": sum(v for v in parts.values() if v),
             "interpreter_tokens_in": interp and interp["tokens_in"],
             "interpreter_tokens_out": interp and interp["tokens_out"],
             "query_embedding_tokens": qe and qe["tokens_in"],
@@ -549,7 +530,7 @@ def runs_tables(arm, folder, refs, sets, by_sha):
                         for t in c.get("attempts") or [] if t.get("outcome") != "ok")
     print(f"{folder}: {set_name}, {len(questions)} rows; answer calls' tries that did not answer {failed_answer}, "
           f"their seconds and pauses out: {sum(r['generator']['retry_s'] for r in outputs):.1f} s; seconds of judge "
-          f"calls' tries that did not answer, and their pauses, taken out of the judging's spans: "
+          f"calls' tries that did not answer, and their pauses, left out of the judging: "
           f"{failed_judging + added_failed:.1f} s")
     return questions, setup, run, set_name
 
@@ -615,12 +596,15 @@ def construction_table():
 
     tagging = steps["descriptions_and_tags"]
     graph_chunks = tagging["the_4869_chunks_of_this_graph"]["extract"]
-    recovery = left_out("descriptions_and_tags", "the recovery by pass")["extract"]   # calls, in, out, summed
-    # the pass wrote these chunks and the ones taken out later; its time is split by the calls' own time
-    pass_seconds = (left_out("descriptions_and_tags", "per-pass elapsed")["extract"]
-                    + left_out("descriptions_and_tags", "the recovery's elapsed and its passes")["extract"])
-    haiku_seconds = pass_seconds * graph_chunks["seconds_summed_per_call"] / (
-        tagging["whole_run"]["by_pass"]["extract"]["seconds_summed_per_call"] + recovery[3])
+    # a model's time is its calls' times added, as a run's (his 2026-10-22 "THE RUN TIME IS THE ADDED TIME
+    # FOR ALL THE THINGS IN THE FUCKING RUN"), never the clock of a pass that ran calls at once, each call by
+    # its answering try (his 2026-10-21 "correct this"), recounted from the tagging run's own records
+    haiku = read(ROOT / "test/graph/build_cost_haiku_answering_tries.json")
+    if (haiku["as_build_cost_json_had_it"] != graph_chunks["seconds_summed_per_call"]
+            or haiku["answered_on_the_first_try"]["calls"] + haiku["answered_on_a_later_try"]["calls"]
+            != graph_chunks["calls_with_usage"]):
+        sys.exit("build_cost_haiku_answering_tries.json is not the recount of build_cost.json's haiku calls")
+    haiku_seconds = haiku["seconds"]
     vectors = steps["embeddings"]["parts"]
     embedded = [vectors[k] for k in ("tags", "tags_with_underscores_in_readable_form", "descriptions")]
     runs = left_out("facet_layer", "the Opus judge runs one by one")
@@ -633,7 +617,7 @@ def construction_table():
                 + facet["write"]["seconds_elapsed"] + facet["write"]["backup_seconds"]
                 + sum(steps["later_edges_and_fields"]["seconds"].values()))
     embed_seconds = sum(p["seconds_elapsed"] for p in embedded)
-    opus_seconds = sum(r[4] for r in learned_from)
+    opus_seconds = sum(r[3] for r in learned_from)
     encoder_seconds = facet["encoder_cache"]["seconds_elapsed"]
     vector = mans["vector"]["build_stats"]["models"][0]
     embedder = model_name(vector["model"])
@@ -648,7 +632,9 @@ def construction_table():
         ("units in the index", "Units in the index.", "count",
          {"lucene": mans["lucene"]["index"]["units"], "vector": mans["vector"]["index"]["units"],
           a: mans[a]["index"]["counts"]["chunks"]}),
-        ("build time, seconds", "Time to build the index. Artefact: sum of the times of the build steps.", "seconds",
+        ("build time, seconds", "Time to build the index. Artefact: sum of the times of the build steps: the "
+                                "claude-haiku-4-5 and claude-opus-5 steps as the times of their calls added, the other "
+                                "steps as their elapsed times.", "seconds",
          {"lucene": mans["lucene"]["build_stats"]["build_time_s"], "vector": vector["seconds_elapsed"],
           a: haiku_seconds + embed_seconds + opus_seconds + encoder_seconds + no_model}),
         (f"{embedder}, texts embedded", "Texts embedded for the index.", "count",
@@ -661,13 +647,17 @@ def construction_table():
          {a: graph_chunks["calls_with_usage"]}),
         ("claude-haiku-4-5, tokens in", "Input tokens of those calls.", "tokens", {a: graph_chunks["tokens_in"]}),
         ("claude-haiku-4-5, tokens out", "Output tokens of those calls.", "tokens", {a: graph_chunks["tokens_out"]}),
-        ("claude-haiku-4-5, seconds", "Time of those calls: the time of the pass that made them, multiplied by "
-                                      "their share of the pass's call time.", "seconds", {a: haiku_seconds}),
+        ("claude-haiku-4-5, seconds", "Time of those calls added, each by its answering try as the tagging run "
+                                      "recorded it; a call answered on a later try, whose record also holds its failed "
+                                      "tries, by a + b x its output tokens fitted on the calls answered on the first "
+                                      "try.", "seconds", {a: haiku_seconds}),
         ("claude-opus-5, calls", "Calls to claude-opus-5 for the index.", "count",
          {a: sum(r[0] for r in learned_from)}),
         ("claude-opus-5, tokens in", "Input tokens of those calls.", "tokens", {a: sum(r[1] for r in learned_from)}),
         ("claude-opus-5, tokens out", "Output tokens of those calls.", "tokens", {a: sum(r[2] for r in learned_from)}),
-        ("claude-opus-5, seconds", "Time of those calls.", "seconds", {a: opus_seconds}),
+        ("claude-opus-5, seconds", "Time of those calls added, each by the clock around the call on the machine "
+                                   "that made it; the server's own time was not recorded for them.", "seconds",
+         {a: opus_seconds}),
         (f"{encoder}, seconds", f"Encoding time of {encoder} for the index.", "seconds", {a: encoder_seconds}),
     ]
     table = [{"property": t, **{k: values.get(k) for k in RUNS}} for t, _, _, values in things]

@@ -1,0 +1,65 @@
+== the six final runs: their sonnet calls by the sonnet load at the start (input tokens per second, 60 s before)
+   lucene100    answer          100 calls | 0k+:49 4k+:51 8k+:0 10k+:0 12k+:0 14k+:0 16k+:0 20k+:0
+   vector100    answer          100 calls | 0k+:76 4k+:24 8k+:0 10k+:0 12k+:0 14k+:0 16k+:0 20k+:0
+   artefact100  answer          100 calls | 0k+:7 4k+:8 8k+:4 10k+:4 12k+:4 14k+:3 16k+:8 20k+:62
+   lucene715    answer          715 calls | 0k+:9 4k+:9 8k+:5 10k+:6 12k+:28 14k+:133 16k+:427 20k+:98
+   vector715    answer          715 calls | 0k+:7 4k+:8 8k+:6 10k+:17 12k+:57 14k+:119 16k+:353 20k+:148
+   artefact715  None            720 calls | 0k+:120 4k+:80 8k+:43 10k+:54 12k+:79 14k+:92 16k+:138 20k+:114
+   artefact715  answer          715 calls | 0k+:82 4k+:85 8k+:74 10k+:85 12k+:94 14k+:72 16k+:105 20k+:118
+   artefact100_first_calls None            102 calls | 0k+:102 4k+:0 8k+:0 10k+:0 12k+:0 14k+:0 16k+:0 20k+:0
+   artefact100_first_calls answer          100 calls | 0k+:100 4k+:0 8k+:0 10k+:0 12k+:0 14k+:0 16k+:0 20k+:0
+
+per-call table: C:\Users\jocke\AppData\Local\Temp\claude\c--Coding-exjobbet-GRAG-Job\9c164e78-008e-41e9-85f3-58c55027a64c\scratchpad\load_per_call.json (4106 calls)
+sonnet calls: 4106; answer calls with a server time: 2890; first calls with one: 1205
+bucket grid, best five (rank corr on answers, R tokens/s, C tokens): [(0.68, 16000, '3.2e+07'), (0.68, 16000, '1.6e+07'), (0.68, 16000, '8.0e+06'), (0.68, 16000, '4.0e+06'), (0.68, 16000, '2.0e+06')]
+
+measure                          rank corr with s per 1,000 tokens: answer calls | first calls
+tokens/s over 0.5 min            +0.237 | -0.033
+tokens/s over 1 min              +0.401 | +0.023
+tokens/s over 2 min              +0.556 | +0.007
+tokens/s over 3 min              +0.603 | +0.013
+tokens/s over 5 min              +0.588 | +0.009
+tokens/s over 10 min             +0.567 | +0.005
+tokens/s over 15 min             +0.526 | +0.001
+tokens/s over 20 min             +0.499 | -0.001
+tokens/s over 30 min             +0.416 | -0.005
+calls in flight                  +0.621 | -0.094
+bucket R=16000 C=3.2e+07         +0.680 | +0.107
+
+== best on the answer calls: bucket R=16000 C=3.2e+07; band table (answer calls)
+    -31,989,577 to  -31,968,056:  241 | median   15.2 | p75   17.9 | p90   21.3
+    -31,968,056 to  -31,945,325:  241 | median   15.2 | p75   17.9 | p90   20.6
+    -31,945,325 to  -31,851,140:  241 | median   15.3 | p75   17.6 | p90   22.6
+    -31,851,140 to  -31,617,685:  241 | median   14.9 | p75   18.0 | p90   21.8
+    -31,617,685 to  -31,188,519:  241 | median   14.8 | p75   17.1 | p90   20.7
+    -31,188,519 to  -30,553,500:  241 | median   15.5 | p75   19.1 | p90   25.6
+    -30,553,500 to  -30,249,671:  241 | median   45.1 | p75  124.5 | p90  285.8
+    -30,249,671 to  -30,045,555:  241 | median   57.5 | p75  116.0 | p90  244.9
+    -30,045,555 to  -29,878,918:  241 | median   71.9 | p75  117.5 | p90  248.2
+    -29,878,918 to  -29,730,707:  241 | median   70.4 | p75  148.8 | p90  310.8
+    -29,730,707 to  -29,565,497:  241 | median   61.3 | p75  121.1 | p90  296.9
+    -29,565,497 to  -28,921,291:  241 | median   78.6 | p75  130.6 | p90  293.9
+
+hinge fit on log(s per 1,000 tokens) against bucket R=16000 C=3.2e+07: bends at -31,296,424 (bootstrap 5-95%: -31,403,535 to -31,247,262); flat level 15.7 s per 1,000 tokens
+   answer calls at or past the bend: 1734 of 2890 | s per 1,000 tokens median, past: 52.7, before: 15.1 | before the bend but over 30: 12 | past the bend and under 20: 412
+   first calls at or past the bend: 173 of 1205 | median past 13.4, before 11.5
+   lucene100                past the bend: answer calls 0 of 100, first calls 0 of 0
+   vector100                past the bend: answer calls 0 of 100, first calls 0 of 0
+   artefact100              past the bend: answer calls 68 of 100, first calls 0 of 0
+   artefact100_first_calls  past the bend: answer calls 0 of 100, first calls 0 of 102
+   lucene715                past the bend: answer calls 679 of 715, first calls 0 of 0
+   vector715                past the bend: answer calls 692 of 715, first calls 0 of 0
+   artefact715              past the bend: answer calls 193 of 715, first calls 176 of 720
+
+hinge fit on log(s per 1,000 tokens) against tokens/s over 1 min: bends at 1,754 (bootstrap 5-95%: 1,725 to 1,787); flat level 17.8 s per 1,000 tokens
+   answer calls at or past the bend: 2745 of 2890 | s per 1,000 tokens median, past: 22.1, before: 15.2 | before the bend but over 30: 1 | past the bend and under 20: 1290
+   first calls at or past the bend: 931 of 1205 | median past 11.6, before 11.4
+   lucene100                past the bend: answer calls 91 of 100, first calls 0 of 0
+   vector100                past the bend: answer calls 97 of 100, first calls 0 of 0
+   artefact100              past the bend: answer calls 97 of 100, first calls 0 of 0
+   artefact100_first_calls  past the bend: answer calls 39 of 100, first calls 50 of 102
+   lucene715                past the bend: answer calls 711 of 715, first calls 0 of 0
+   vector715                past the bend: answer calls 712 of 715, first calls 0 of 0
+   artefact715              past the bend: answer calls 684 of 715, first calls 653 of 720
+
+[exited with code 0]

@@ -22,10 +22,15 @@ One run of one retrieval method, **artefact_v4**, over 100 questions: for each q
 | `eval_failures.jsonl` | One line per score cell that failed. Empty when none did. | question_id + metric |
 | `corrections.json` | Only in a folder whose stored numbers were corrected after the run: what was changed, by which rule, on whose word. |  |
 | `eval_results.as_recorded.jsonl` | eval_results.jsonl exactly as the scoring wrote it, kept by the first correction that changed it (corrections.json names it). |  |
-| `arm_outputs.as_recorded.jsonl` | A file exactly as the run wrote it, kept when a correction changed the file of the same name. |  |
+| `arm_outputs.as_recorded.jsonl`, `eval_calls.as_recorded.jsonl` | A file exactly as the run wrote it, kept when a correction changed the file of the same name. |  |
 | `correct_zero_usage.py` | The script that made the zero-usage correction (the tokens of the answer calls whose Claude program reply held 0 in its usage field); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
 | `cli_transcript_usage.json` | The evidence of the zero-usage correction: the Claude program's own transcript counts of each answer call it changed, by session id, read on the machine that made the calls. | session id = calls[].envelope.session_id of arm_outputs.jsonl |
 | `correct_nonllm_record_content.py` | The script that made the non-LLM record-content correction (context_recall_nonllm and context_precision_nonllm calculated again, record content against record content); run on the files from before it, with the code named in its entry, it gives the corrected files again. |  |
+| `correct_search_time.py` | The script that made the search-time correction (each question's search time the time of the same retrieval made again with one question at a time on the laptop, and a question's wait for the embedder's lock out); run on the files from before it, with the re-made run its entry names, it gives the corrected files again. |  |
+| `correct_judge_embed_gpu_time.py` | The script that made the judging's GPU-time correction (RAGAS's own embedding requests made on the CPU given the time the same requests take on the desktop's graphics card); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
+| `judge_embed_gpu_times.json` | The evidence of the judging's GPU-time correction: per RAGAS embedding request that the six final runs' judging made on the CPU, its seconds on the graphics card, its recorded seconds, texts and tokens. | run = the run folder; line = the record's line in eval_calls.jsonl, from 0; question_id, eval_leg, seq = the record's own |
+| `correct_model_call_time.py` | The script that made the model-call-time correction (each answer call and first call given its answering try's server time, and a call started past the login's limit its arm's clean relation at its own output tokens); run on the files from before it, over the same run folders, it gives the corrected files again. |  |
+| `model_call_times.json` | The evidence of the model-call-time correction: the login's backlog of claude-sonnet-5 input tokens (its rate, its limit, the files it was read from with their sha256), the clean relation of each arm and kind of call, and per corrected call its server time, backlog, relation time and time; with the check of the relations on calls sent again one at a time. | question_id = id of arm_outputs.jsonl; record = the call's place in calls; seq = calls[].seq |
 
 Times are seconds (`_s`), milliseconds (`_ms`) or UTC stamps (`_at`; every other time text carries its own zone). Sizes are tokens, characters (`chars`) or bytes. A count (calls, attempts, requests, texts, records, edges, refits, and the like) is a plain number of the things it names. A price (`usd`, `USD`) is the Claude program's own, in US dollars; no number of this harness uses it. The evaluation's scores run from 0 to 1 and higher is more; a score an arm ranks by says its own scale.
 
@@ -138,7 +143,7 @@ One line per question: what was delivered, the answer, and everything the questi
 | `meta.interpreter.stages.stage` | Which call: querytag is the first call. |
 | `meta.interpreter.stages.cache_hit` | Whether its answer was read from the cache instead of asked. |
 | `meta.interpreter.stages.key` | The cache key: the sha256 of the call's instruction, message, schema and model. |
-| `meta.interpreter.stages.asks` | How many times the call was made for this question. |
+| `meta.interpreter.stages.asks` | How many times the start that wrote this row tried the call; a read from the cache counts as one. A try of an earlier start that failed or was cut off is kept in the store, in querytag/failed/ under the same key. |
 | `meta.interpreter.stages.offline` | Whether the run refused to ask the model. |
 | `meta.interpreter.stages.duplicate_tags_dropped` | How many tags of the answer were left out because the same phrase stood there twice. |
 | `meta.interpreter.description_side_tags` | How many query tags the first call wrote from the content it described. |
@@ -1395,20 +1400,26 @@ The file holds no record.
 | `workers` | integer | 1 | 0 |
 
 ---
-Written from `prod/harness/fields.py`, sha256 `bd121e0a2cb46d6c89216b24d24db0e97fe15fba3a887562d427a38bfaf3360d`.
+Written from `prod/harness/fields.py`, sha256 `b31598ca597e06561a7975020a896d13469eff0733d92f0ad778f832b659ac80`.
 
 The files as they stood when this was written, their line ends as git holds them (LF):
 
 - `arm_outputs.as_recorded.jsonl` sha256 `707c3cf90d3eb398ddad67a9c05a2ab3f408ce3e857573c5138fce58ec58e7ea`
-- `arm_outputs.jsonl` sha256 `fba8f4ccfb6df5a13d751693faf39880b170b56c39517eba1a814d363455be1f`
+- `arm_outputs.jsonl` sha256 `854c9908a5ab4342ec7f8c9ebe35a39d8bc7346ef8a2de5e7aa99cf3d70791d0`
 - `cli_transcript_usage.json` sha256 `ab47c312791e4b9453755162e3d40f62c667fab5f93d7da34cfa312a23d38389`
+- `correct_judge_embed_gpu_time.py` sha256 `22823e15cb005f752c66af694f22e085e3081ca13bb30553de0945c2975fc64d`
+- `correct_model_call_time.py` sha256 `f3e49a6b4fbfc779bba8d6793c98897415fbd7693202b2ff89f4e68771420a5c`
 - `correct_nonllm_record_content.py` sha256 `f915dd944ce45f6b5927efc63e4fa0edd73af4be036e20f304c0180aea64877a`
+- `correct_search_time.py` sha256 `fedae7c39d863737ad1e3f472a5b17bf38fa838b114a2204ee582a89fcf9f0bb`
 - `correct_zero_usage.py` sha256 `bebb0c7214ba2efbafb15b4b0272d8abef7d4600b04123df1f01b365b3ddfb89`
-- `corrections.json` sha256 `6b0398f9b6776711a3b3a6f7ca90f9d373058db4fd3d0704dd3f204e499bd735`
-- `eval_calls.jsonl` sha256 `3abb3c1dd09fca96fdbf7ded595783f46700d51d42b9da4960c337c8803317a6`
+- `corrections.json` sha256 `0754fa805892893f13f47fe6fd04961311fa2f183f0d9999dff35200b6d95dcf`
+- `eval_calls.as_recorded.jsonl` sha256 `3abb3c1dd09fca96fdbf7ded595783f46700d51d42b9da4960c337c8803317a6`
+- `eval_calls.jsonl` sha256 `2d2a40818b31f4ffa41bfe363a459117e0e98e716fd366fb7155e9fb989b3c71`
 - `eval_failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - `eval_manifest.json` sha256 `7f5059f10a288edf6f16555a5b35131ae514a638506410bce8adfb4b4aa005ef`
 - `eval_results.as_recorded.jsonl` sha256 `9604529333bdad767083d3a8b284ba99f8cb0b1d8ea7bf154b7723e07e24a24e`
 - `eval_results.jsonl` sha256 `8117611496019f40c8a73c3b304c8aa5b917f4c6816c529fee8cba06f3ccc98b`
 - `failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- `judge_embed_gpu_times.json` sha256 `72aa41ffeb48a6228a901c06cbb90094fcdad07911147faef29efb1d1b1c9267`
+- `model_call_times.json` sha256 `8e1240346f506af093d4d86433d3478c33ec7fa786484f03d4a807f9bb1a2419`
 - `run_manifest.json` sha256 `b537a117b7bc02b56cabd85bce3f5d351a4020a404cf2ece4c2c309cd9e063e2`

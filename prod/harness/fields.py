@@ -766,6 +766,38 @@ FILES = {
                              "question id = id of arm_outputs.jsonl; seq = calls[].seq", None),
     "measure_gpu_embed_times.py": ("The script that measured the GPU-time correction's evidence on the "
                                    "desktop's graphics card.", "", None),
+    "gpu_embed_times_all.json": ("The evidence of the GPU-time correction with --all: per question, each embed "
+                                 "call's seconds on the graphics card one call after the other, also of a call the "
+                                 "run made on the card while other questions were under way, and its recorded "
+                                 "seconds.", "question id = id of arm_outputs.jsonl; seq = calls[].seq", None),
+    "correct_search_time.py": ("The script that made the search-time correction (each question's search time "
+                               "the time of the same retrieval made again with one question at a time on the "
+                               "laptop, and a question's wait for the embedder's lock out); run on the files "
+                               "from before it, with the re-made run its entry names, it gives the corrected "
+                               "files again.", "", None),
+    "correct_judge_embed_gpu_time.py": ("The script that made the judging's GPU-time correction (RAGAS's own "
+                                        "embedding requests made on the CPU given the time the same requests "
+                                        "take on the desktop's graphics card); run on the files from before it, "
+                                        "with its evidence file, it gives the corrected files again.", "", None),
+    "judge_embed_gpu_times.json": ("The evidence of the judging's GPU-time correction: per RAGAS embedding "
+                                   "request that the six final runs' judging made on the CPU, its seconds on "
+                                   "the graphics card, its recorded seconds, texts and tokens.",
+                                   "run = the run folder; line = the record's line in eval_calls.jsonl, from 0; "
+                                   "question_id, eval_leg, seq = the record's own", None),
+    "measure_gpu_judge_embed_times.py": ("The script that measured the judging's GPU-time correction's evidence "
+                                         "on the desktop's graphics card.", "", None),
+    "correct_model_call_time.py": ("The script that made the model-call-time correction (each answer call "
+                                   "and first call given its answering try's server time, and a call "
+                                   "started past the login's limit its arm's clean relation at its own "
+                                   "output tokens); run on the files from before it, over the same run "
+                                   "folders, it gives the corrected files again.", "", None),
+    "model_call_times.json": ("The evidence of the model-call-time correction: the login's backlog of "
+                              "claude-sonnet-5 input tokens (its rate, its limit, the files it was read "
+                              "from with their sha256), the clean relation of each arm and kind of call, "
+                              "and per corrected call its server time, backlog, relation time and time; "
+                              "with the check of the relations on calls sent again one at a time.",
+                              "question_id = id of arm_outputs.jsonl; record = the call's place in calls; "
+                              "seq = calls[].seq", None),
     "correct_secret_env.py": ("The script that made the credential correction (a credential a "
                               "manifest had copied written as <set>); the value as recorded is "
                               "kept nowhere.", "", None),
