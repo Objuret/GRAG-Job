@@ -20,6 +20,10 @@ One run of one retrieval method, **artefact_v4**, over 715 questions: for each q
 | `eval_manifest.json` | What the scoring was: the judge, its settings, and what it cost. | judge_legs[].settings.started_at = the eval_leg of a score row |
 | `failures.jsonl` | One line per try at a question that failed. Empty when none did. A question that failed and was answered in a later start has a line here and a row. | id |
 | `eval_failures.jsonl` | One line per score cell that failed. Empty when none did. | question_id + metric |
+| `corrections.json` | Only in a folder whose stored numbers were corrected after the run: what was changed, by which rule, on whose word. |  |
+| `arm_outputs.as_recorded.jsonl` | A file exactly as the run wrote it, kept when a correction changed the file of the same name. |  |
+| `correct_embed_gpu_time.py` | The script that made the GPU-time correction (the query embeddings made on the CPU given the time the same embeddings take on the desktop's graphics card); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
+| `gpu_embed_times_all.json` | The evidence of the GPU-time correction with --all: per question, each embed call's seconds on the graphics card one call after the other, also of a call the run made on the card while other questions were under way, and its recorded seconds. | question id = id of arm_outputs.jsonl; seq = calls[].seq |
 | `query_vectors_against_the_run.json` | Only in a run made again to embed another run's query texts: each text's vector here against the vector of the same text that the other run made, by cosine; per question its texts, how many were compared and the lowest cosine. | per_question = id of arm_outputs.jsonl |
 | `query_vectors_desktop.json` | The part of that comparison made on the desktop, where most of the other run's vectors are: per text key, its questions, the cosine and the folder the other run's vector was found in. | key = sha256 of the prefix and the text |
 | `check_query_vectors.py` | The script that made query_vectors_against_the_run.json from the desktop's part and the laptop's own vectors; it makes no model call. |  |
@@ -493,6 +497,29 @@ One line per score cell that failed. Empty when none did.
 | `failed_at` | When (UTC). |
 | `usage` | What the failed cell had cost. Its fields: see "What a score cell cost" below. |
 
+## `corrections.json`
+
+Only in a folder whose stored numbers were corrected after the run: what was changed, by which rule, on whose word.
+
+| Field | What it holds |
+|---|---|
+| `corrections` | One entry per correction, in the order they were made; each rests on the files the one before it left. |
+| `corrections.made_at` | When the correction was made (UTC). |
+| `corrections.ordered_by` | The words that ordered it. |
+| `corrections.what_happened` | What was wrong in the stored numbers. |
+| `corrections.rule` | The rule that decided which numbers were corrected, and how. |
+| `corrections.not_changed_and_worth_knowing` | What the correction left as recorded and a reader should know. |
+| `corrections.slept_tries` | Only in the sleep correction: the tries the rule found, each with its question, its row (the line of arm_outputs.jsonl, counted from 0), its try (its number within the call, from 1), its start (UTC), its recorded seconds, its timeout in seconds, the seconds of low power the machine logged inside it, whether a whole reply had come back, and that reply's tokens. |
+| `corrections.changes` | Every changed value: where it is, the value before and the corrected value, and what was taken out (taken_out: seconds in the sleep correction; in the clean-up correction the embedder's seconds and the seconds of refused first calls). The value before is empty where the field was not there before the correction. A copied value keeps its empty parts; its own field's words say why they are empty. |
+| `corrections.checks` | What the correction checked before it changed anything (in the clean-up correction against the call records and the graph), whether it held, and how many places were looked at. |
+| `corrections.evidence` | Only in a correction that rests on a file it keeps in this folder: the file (or the files), its sha256 where given, and what it holds; in the sleep correction, the file that holds the machine's own record. |
+| `corrections.before` | Only in the non-LLM record-content correction: the method that made the stored scores (method, and what_it_did), found by running each method the evaluation has used on the folder's own inputs; how many stored scores each method gives again, per score; and how many stored scores there were, per score. |
+| `corrections.judge_calls_with_logged_low_power_time_inside_them` | Only in the sleep correction: judge calls the machine's own sleep record touches, not changed; each try as [its number from 1, its outcome, its seconds]. |
+| `corrections.low_power_intervals_the_machine_logged` | Only in the sleep correction: the machine's own record of when it slept: start and end (UTC), seconds, and what the machine said. |
+| `corrections.files` | The sha256 of each corrected file, before and after the correction, and where the file from before is kept. The sleep correction's are of the bytes on the disk that ran it; the clean-up correction's are of the files with the line ends git holds (LF), as line_ends says. |
+| `corrections.script` | The script that made the correction. |
+| `corrections.code` | The code the script ran on, which it imports its harness and arms from: the commit, whether anything differed from it, and what. |
+
 ## Groups of fields that stand in several places
 
 ### What a model's work cost
@@ -919,6 +946,21 @@ Counted from the files themselves when this was written. A record is a line of a
 | `timing.thread` | string | 715 | 0 |
 | `timing.wall_s` | number | 715 | 0 |
 
+### `corrections.json` (1 records)
+
+| Field | Types | Records that hold it | Of those, empty |
+|---|---|---|---|
+| `corrections` | array | 1 | 0 |
+| `corrections.changes` | array | 1 | 0 |
+| `corrections.evidence` | object | 1 | 0 |
+| `corrections.files` | object | 1 | 0 |
+| `corrections.made_at` | string | 1 | 0 |
+| `corrections.not_changed_and_worth_knowing` | array | 1 | 0 |
+| `corrections.ordered_by` | string | 1 | 0 |
+| `corrections.rule` | object | 1 | 0 |
+| `corrections.script` | string | 1 | 0 |
+| `corrections.what_happened` | string | 1 | 0 |
+
 ### `eval_calls.jsonl` (0 records)
 
 The file holds no record.
@@ -1226,17 +1268,21 @@ The file holds no record.
 | `workers` | integer | 1 | 0 |
 
 ---
-Written from `prod/harness/fields.py`, sha256 `80b41950b31eba4167ba52f1e5b896676d8354905d1766de3a804de000989e27`.
+Written from `prod/harness/fields.py`, sha256 `42e2015e16ce089be06ea5e6f37efb14794c820667498abc78edbb8e85d08581`.
 
 The files as they stood when this was written, their line ends as git holds them (LF):
 
-- `arm_outputs.jsonl` sha256 `15fd5f5efc88a275dce4bbe55965e4091bb4f61809e98a3640b921fc3496be62`
+- `arm_outputs.as_recorded.jsonl` sha256 `15fd5f5efc88a275dce4bbe55965e4091bb4f61809e98a3640b921fc3496be62`
+- `arm_outputs.jsonl` sha256 `872220f0a3e434978d9419dca208d0b35a48913d0d16a5b9b4d2adfd5b92c37d`
 - `check_query_vectors.py` sha256 `2f4bfe630bec7f7184d87e15231fad99581d346346ef64d74e6fc85a8801d7f6`
+- `correct_embed_gpu_time.py` sha256 `87b6b56b9f2194c78010b456ddc38135dbba349eff69e61c1a28e33500125123`
+- `corrections.json` sha256 `5e5699b4b6ca181a67c834a95024e3e544a7aa39d2f297d3808ba866fc4ff09f`
 - `eval_calls.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - `eval_failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - `eval_manifest.json` sha256 `d3126a6b1ba4fad7c9f7e00d3ef4a8b51319358411eb9465b90087615118fdd0`
 - `eval_results.jsonl` sha256 `823d3214bc7e90714e3231cf473d0cfdb69e3ecba6139a083eb44718d82b6260`
 - `failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- `gpu_embed_times_all.json` sha256 `c54c8a02f2f98e351a1845a902a2d0ed906c84dc78832153203bc8292e8cfd19`
 - `query_vectors_against_the_run.json` sha256 `548bbde1f217aa5b56281c7ddd1db3702adf054b88a95ff251e07806ea5d3a1e`
 - `query_vectors_desktop.json` sha256 `eb5648fbca1805d98104541fe5535844386354ca14d2e7b3e99770d4a4de7b98`
 - `run_manifest.json` sha256 `65d7b40a6bb8250f60244b71138ea47c3ace1adc14752080baebbe2ca7d0e1c0`

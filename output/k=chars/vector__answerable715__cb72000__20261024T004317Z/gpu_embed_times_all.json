@@ -1,0 +1,7167 @@
+{
+ "vector__answerable715__cb72000__20261024T004317Z": {
+  "ActionGenie::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.022790999995777383,
+    "recorded_encode_s": 0.05085889995098114,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ActionGenie::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.02240940000046976,
+    "recorded_encode_s": 0.08132909995038062,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ActionGenie::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.03158780001103878,
+    "recorded_encode_s": 0.07217940001282841,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ActionGenie::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.023202400014270097,
+    "recorded_encode_s": 0.06259939994197339,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "ActionGenie::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.022134600003482774,
+    "recorded_encode_s": 0.1308023000601679,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "ActionGenie::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.022700200002873316,
+    "recorded_encode_s": 0.12934019998647273,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "ActionGenie::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.023947899986524135,
+    "recorded_encode_s": 0.09440979990176857,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "ActionGenie::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.026409200014313683,
+    "recorded_encode_s": 0.0811145999468863,
+    "texts": 1,
+    "tokens_in": 40,
+    "recorded_tokens_in": 40
+   }
+  ],
+  "ActionGenie::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.02635170001303777,
+    "recorded_encode_s": 0.0952633999986574,
+    "texts": 1,
+    "tokens_in": 41,
+    "recorded_tokens_in": 41
+   }
+  ],
+  "ActionGenie::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.026249899994581938,
+    "recorded_encode_s": 0.0756726999534294,
+    "texts": 1,
+    "tokens_in": 33,
+    "recorded_tokens_in": 33
+   }
+  ],
+  "ActionGenie::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.02639459999045357,
+    "recorded_encode_s": 0.10355309990700334,
+    "texts": 1,
+    "tokens_in": 35,
+    "recorded_tokens_in": 35
+   }
+  ],
+  "ActionGenie::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022399699984816834,
+    "recorded_encode_s": 0.1340525000123307,
+    "texts": 1,
+    "tokens_in": 32,
+    "recorded_tokens_in": 32
+   }
+  ],
+  "ActionGenie::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.026536599994869903,
+    "recorded_encode_s": 0.07703509996645153,
+    "texts": 1,
+    "tokens_in": 34,
+    "recorded_tokens_in": 34
+   }
+  ],
+  "ActionGenie::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.026149200013605878,
+    "recorded_encode_s": 0.02960540005005896,
+    "texts": 1,
+    "tokens_in": 33,
+    "recorded_tokens_in": 33
+   }
+  ],
+  "ActionGenie::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.02627760000177659,
+    "recorded_encode_s": 0.08030589995905757,
+    "texts": 1,
+    "tokens_in": 37,
+    "recorded_tokens_in": 37
+   }
+  ],
+  "ActionGenie::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.026509299990721047,
+    "recorded_encode_s": 0.0578594000544399,
+    "texts": 1,
+    "tokens_in": 41,
+    "recorded_tokens_in": 41
+   }
+  ],
+  "ActionGenie::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.026688800018746406,
+    "recorded_encode_s": 0.23842619999777526,
+    "texts": 1,
+    "tokens_in": 42,
+    "recorded_tokens_in": 42
+   }
+  ],
+  "ActionGenie::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.02486850001150742,
+    "recorded_encode_s": 0.13980809994973242,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "ActionGenie::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.022798499994678423,
+    "recorded_encode_s": 0.097315099905245,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "ActionGenie::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.02292180000222288,
+    "recorded_encode_s": 0.19841099996119738,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "ActionGenie::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.02231000000028871,
+    "recorded_encode_s": 0.027210599975660443,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "ActionGenie::a::25": [
+   {
+    "seq": 0,
+    "encode_s": 0.022574500006157905,
+    "recorded_encode_s": 0.12954510003328323,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "AnomalyForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.022890499996719882,
+    "recorded_encode_s": 0.1442512999055907,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "AnomalyForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.022438399988459423,
+    "recorded_encode_s": 0.11296150006819516,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "AnomalyForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.02313390001654625,
+    "recorded_encode_s": 0.26022400008514524,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "AnomalyForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.023476600006688386,
+    "recorded_encode_s": 0.19555389997549355,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "AnomalyForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.06733690001419745,
+    "recorded_encode_s": 0.25953719997778535,
+    "texts": 1,
+    "tokens_in": 16,
+    "recorded_tokens_in": 16
+   }
+  ],
+  "AnomalyForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.022502200008602813,
+    "recorded_encode_s": 0.31048889993689954,
+    "texts": 1,
+    "tokens_in": 15,
+    "recorded_tokens_in": 15
+   }
+  ],
+  "AnomalyForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.023149500018917024,
+    "recorded_encode_s": 0.14209769992157817,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "AnomalyForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.023905300011392683,
+    "recorded_encode_s": 0.4577762000262737,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "AnomalyForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.02304770000046119,
+    "recorded_encode_s": 0.1997605999931693,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "AnomalyForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.022691400023177266,
+    "recorded_encode_s": 0.13951279991306365,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "AnomalyForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.02280919998884201,
+    "recorded_encode_s": 0.2547898000339046,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "AnomalyForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.022342999989632517,
+    "recorded_encode_s": 0.30855489999521524,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "AnomalyForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.022394800005713478,
+    "recorded_encode_s": 0.1666313000023365,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "AnomalyForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022529000008944422,
+    "recorded_encode_s": 0.030041799996979535,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "AnomalyForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.02270249999128282,
+    "recorded_encode_s": 0.0353525000391528,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "AnomalyForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.02215269999578595,
+    "recorded_encode_s": 0.13279449997935444,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "AnomalyForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.02217680000467226,
+    "recorded_encode_s": 0.0832432999741286,
+    "texts": 1,
+    "tokens_in": 16,
+    "recorded_tokens_in": 16
+   }
+  ],
+  "AnomalyForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.02265980001538992,
+    "recorded_encode_s": 0.027536100009456277,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "AnomalyForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.026239600003464147,
+    "recorded_encode_s": 0.03881530009675771,
+    "texts": 1,
+    "tokens_in": 35,
+    "recorded_tokens_in": 35
+   }
+  ],
+  "AnomalyForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.02625409999745898,
+    "recorded_encode_s": 0.03700329991988838,
+    "texts": 1,
+    "tokens_in": 37,
+    "recorded_tokens_in": 37
+   }
+  ],
+  "AnomalyForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.02650570002151653,
+    "recorded_encode_s": 0.07236269989516586,
+    "texts": 1,
+    "tokens_in": 35,
+    "recorded_tokens_in": 35
+   }
+  ],
+  "AnomalyForce::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.026233999989926815,
+    "recorded_encode_s": 0.06329890002962202,
+    "texts": 1,
+    "tokens_in": 37,
+    "recorded_tokens_in": 37
+   }
+  ],
+  "AnomalyForce::a::25": [
+   {
+    "seq": 0,
+    "encode_s": 0.02282710000872612,
+    "recorded_encode_s": 0.05883440002799034,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "AnomalyForce::a::26": [
+   {
+    "seq": 0,
+    "encode_s": 0.026358600007370114,
+    "recorded_encode_s": 0.04330130002927035,
+    "texts": 1,
+    "tokens_in": 35,
+    "recorded_tokens_in": 35
+   }
+  ],
+  "AnomalyForce::a::27": [
+   {
+    "seq": 0,
+    "encode_s": 0.022502200008602813,
+    "recorded_encode_s": 0.028849399997852743,
+    "texts": 1,
+    "tokens_in": 32,
+    "recorded_tokens_in": 32
+   }
+  ],
+  "AnomalyForce::a::28": [
+   {
+    "seq": 0,
+    "encode_s": 0.026508200011448935,
+    "recorded_encode_s": 0.03680849994998425,
+    "texts": 1,
+    "tokens_in": 37,
+    "recorded_tokens_in": 37
+   }
+  ],
+  "AnomalyForce::a::29": [
+   {
+    "seq": 0,
+    "encode_s": 0.026226200017845258,
+    "recorded_encode_s": 0.05135690001770854,
+    "texts": 1,
+    "tokens_in": 33,
+    "recorded_tokens_in": 33
+   }
+  ],
+  "AnomalyForce::a::30": [
+   {
+    "seq": 0,
+    "encode_s": 0.026487299997825176,
+    "recorded_encode_s": 0.03718680003657937,
+    "texts": 1,
+    "tokens_in": 33,
+    "recorded_tokens_in": 33
+   }
+  ],
+  "AnomalyForce::a::31": [
+   {
+    "seq": 0,
+    "encode_s": 0.02288020000560209,
+    "recorded_encode_s": 0.03186929994262755,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "AnomalyForce::a::32": [
+   {
+    "seq": 0,
+    "encode_s": 0.023150399996666238,
+    "recorded_encode_s": 0.06485950003843755,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "AnomalyForce::a::33": [
+   {
+    "seq": 0,
+    "encode_s": 0.021981400001095608,
+    "recorded_encode_s": 0.028434500098228455,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "AnomalyForce::a::34": [
+   {
+    "seq": 0,
+    "encode_s": 0.022091399994678795,
+    "recorded_encode_s": 0.036698500043712556,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "AutoTuneForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.022574300004635006,
+    "recorded_encode_s": 0.056276599992997944,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "AutoTuneForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.022398500004783273,
+    "recorded_encode_s": 0.03700430004391819,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "AutoTuneForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.022993799997493625,
+    "recorded_encode_s": 0.05745689989998937,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "AutoTuneForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.022676799999317154,
+    "recorded_encode_s": 0.06942179996985942,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "AutoTuneForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.028894599992781878,
+    "recorded_encode_s": 0.02657700004056096,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "AutoTuneForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.023211899999296293,
+    "recorded_encode_s": 0.02722419996280223,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "AutoTuneForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.022199300001375377,
+    "recorded_encode_s": 0.034345899941399693,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "AutoTuneForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.021979199984343722,
+    "recorded_encode_s": 0.0640329000307247,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "AutoTuneForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.023353399999905378,
+    "recorded_encode_s": 0.028957400005310774,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "AutoTuneForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.022365099983289838,
+    "recorded_encode_s": 0.03060980001464486,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "AutoTuneForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.022641399991698563,
+    "recorded_encode_s": 0.056291099986992776,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "AutoTuneForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.028336600022157654,
+    "recorded_encode_s": 0.32563990005292,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "AutoTuneForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.022152099991217256,
+    "recorded_encode_s": 0.24972219998016953,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "AutoTuneForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.02266550000058487,
+    "recorded_encode_s": 0.03513770003337413,
+    "texts": 1,
+    "tokens_in": 31,
+    "recorded_tokens_in": 31
+   }
+  ],
+  "AutoTuneForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.022491899988381192,
+    "recorded_encode_s": 0.03506779996678233,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "AutoTuneForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.022919799986993894,
+    "recorded_encode_s": 0.20632260001730174,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "AutoTuneForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.022527399996761233,
+    "recorded_encode_s": 0.2658955999650061,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "AutoTuneForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.023076799989212304,
+    "recorded_encode_s": 0.031929400051012635,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "CoachForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.022549600020283833,
+    "recorded_encode_s": 0.03390019992366433,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "CoachForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.02289819999714382,
+    "recorded_encode_s": 0.030015200027264655,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "CoachForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.022404499992262572,
+    "recorded_encode_s": 0.059261800022795796,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "CoachForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.023049999988870695,
+    "recorded_encode_s": 0.3701839999994263,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "CoachForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.022053100023185834,
+    "recorded_encode_s": 0.12328149995300919,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "CoachForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.022510999988298863,
+    "recorded_encode_s": 0.03359250002540648,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "CoachForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.02259760000742972,
+    "recorded_encode_s": 0.1409605999942869,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "CoachForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.022435399994719774,
+    "recorded_encode_s": 0.07052629999816418,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "CoachForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.022537799988640472,
+    "recorded_encode_s": 0.2608195999637246,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "CoachForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.02252910000970587,
+    "recorded_encode_s": 0.1365292000118643,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "CoachForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.023108199995476753,
+    "recorded_encode_s": 0.1638549999333918,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "CoachForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.022194699995452538,
+    "recorded_encode_s": 0.09514430002309382,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "CoachForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022562600002856925,
+    "recorded_encode_s": 0.16833770007360727,
+    "texts": 1,
+    "tokens_in": 15,
+    "recorded_tokens_in": 15
+   }
+  ],
+  "CoachForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.022574200003873557,
+    "recorded_encode_s": 0.10599990002810955,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "CoachForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.023521099996287376,
+    "recorded_encode_s": 0.1503120999550447,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "CoachForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.02272360000642948,
+    "recorded_encode_s": 0.06092370010446757,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "CoachForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.022877800016431138,
+    "recorded_encode_s": 0.15433529997244477,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "CoachForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.0227739000110887,
+    "recorded_encode_s": 0.0919044999172911,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "CoachForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.022532700008014217,
+    "recorded_encode_s": 0.029527599923312664,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "CollaborateForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.02261049998924136,
+    "recorded_encode_s": 0.034455499961040914,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "CollaborateForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.022688500001095235,
+    "recorded_encode_s": 0.030185599927790463,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "CollaborateForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.023501600022427738,
+    "recorded_encode_s": 0.1805676999501884,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "CollaborateForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.022525899985339493,
+    "recorded_encode_s": 0.04662340006325394,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "CollaborateForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.02286689999164082,
+    "recorded_encode_s": 0.16428440005984157,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "CollaborateForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.02267470001243055,
+    "recorded_encode_s": 0.07938080001622438,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "CollaborateForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.022763799992389977,
+    "recorded_encode_s": 0.07880770007614046,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "CollaborateForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.02277219999814406,
+    "recorded_encode_s": 0.029309500008821487,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "CollaborateForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.022664399992208928,
+    "recorded_encode_s": 0.04004029999487102,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "CollaborateForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.022423099988372996,
+    "recorded_encode_s": 0.027057700091972947,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "CollaborateForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.023795200017048046,
+    "recorded_encode_s": 0.03386239998508245,
+    "texts": 1,
+    "tokens_in": 16,
+    "recorded_tokens_in": 16
+   }
+  ],
+  "CollaborateForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.023013500001979992,
+    "recorded_encode_s": 0.02471320005133748,
+    "texts": 1,
+    "tokens_in": 15,
+    "recorded_tokens_in": 15
+   }
+  ],
+  "CollaborateForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.02269099999102764,
+    "recorded_encode_s": 0.04181710002012551,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "CollaborateForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.02267909998772666,
+    "recorded_encode_s": 0.03399659995920956,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "CollaborateForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.022460199979832396,
+    "recorded_encode_s": 0.025184699916280806,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "CollaborateForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.02228619999368675,
+    "recorded_encode_s": 0.02537420007865876,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "CollaborateForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.028466799994930625,
+    "recorded_encode_s": 0.02506730007007718,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "CollaborateForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.022589600004721433,
+    "recorded_encode_s": 0.025589399971067905,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "CollaborateForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.02208649998647161,
+    "recorded_encode_s": 0.0334529000101611,
+    "texts": 1,
+    "tokens_in": 27,
+    "recorded_tokens_in": 27
+   }
+  ],
+  "CollaborateForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.022336899972287938,
+    "recorded_encode_s": 0.028891499969176948,
+    "texts": 1,
+    "tokens_in": 30,
+    "recorded_tokens_in": 30
+   }
+  ],
+  "CollaborateForce::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.022528099972987548,
+    "recorded_encode_s": 0.02500769996549934,
+    "texts": 1,
+    "tokens_in": 30,
+    "recorded_tokens_in": 30
+   }
+  ],
+  "CollaborateForce::a::25": [
+   {
+    "seq": 0,
+    "encode_s": 0.022526999993715435,
+    "recorded_encode_s": 0.025318800006061792,
+    "texts": 1,
+    "tokens_in": 31,
+    "recorded_tokens_in": 31
+   }
+  ],
+  "CollaborateForce::a::26": [
+   {
+    "seq": 0,
+    "encode_s": 0.022841500001959503,
+    "recorded_encode_s": 0.1788054999196902,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "CollaborateForce::a::27": [
+   {
+    "seq": 0,
+    "encode_s": 0.022581900004297495,
+    "recorded_encode_s": 0.05176270008087158,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "CollaborateForce::a::28": [
+   {
+    "seq": 0,
+    "encode_s": 0.022646000026725233,
+    "recorded_encode_s": 0.02716509997844696,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "CollaborateForce::a::29": [
+   {
+    "seq": 0,
+    "encode_s": 0.02248349998262711,
+    "recorded_encode_s": 0.027172999922186136,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "CollaborateForce::a::30": [
+   {
+    "seq": 0,
+    "encode_s": 0.02234679998946376,
+    "recorded_encode_s": 0.026297500007785857,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "CollaborateForce::a::32": [
+   {
+    "seq": 0,
+    "encode_s": 0.022196500009158626,
+    "recorded_encode_s": 0.040571499965153635,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "CollaborateForce::a::33": [
+   {
+    "seq": 0,
+    "encode_s": 0.022192500007804483,
+    "recorded_encode_s": 0.056597899994812906,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "CollaborationForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.022329699975671247,
+    "recorded_encode_s": 0.03752010001335293,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "CollaborationForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.02213070000289008,
+    "recorded_encode_s": 0.02656679996289313,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "CollaborationForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.025655799981905147,
+    "recorded_encode_s": 0.02880700002424419,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "CollaborationForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.024596400005975738,
+    "recorded_encode_s": 0.04974070005118847,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "CollaborationForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.02291880000848323,
+    "recorded_encode_s": 0.03103650000412017,
+    "texts": 1,
+    "tokens_in": 27,
+    "recorded_tokens_in": 27
+   }
+  ],
+  "CollaborationForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.028274099982809275,
+    "recorded_encode_s": 0.026639900053851306,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "CollaborationForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.022283800004515797,
+    "recorded_encode_s": 0.027516799978911877,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "CollaborationForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.022807300003478304,
+    "recorded_encode_s": 0.028514700010418892,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "CollaborationForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.02299890000722371,
+    "recorded_encode_s": 0.033331999904476106,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "CollaborationForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.022987400006968528,
+    "recorded_encode_s": 0.030903700040653348,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "CollaborationForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.028469800017774105,
+    "recorded_encode_s": 0.03358169994316995,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "CollaborationForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.022161300003062934,
+    "recorded_encode_s": 0.04342290002387017,
+    "texts": 1,
+    "tokens_in": 31,
+    "recorded_tokens_in": 31
+   }
+  ],
+  "CollaborationForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.026170700002694502,
+    "recorded_encode_s": 0.0359680000692606,
+    "texts": 1,
+    "tokens_in": 37,
+    "recorded_tokens_in": 37
+   }
+  ],
+  "CollaborationForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.022448100004112348,
+    "recorded_encode_s": 0.026399699971079826,
+    "texts": 1,
+    "tokens_in": 31,
+    "recorded_tokens_in": 31
+   }
+  ],
+  "CollaborationForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.02294870000332594,
+    "recorded_encode_s": 0.02853719994891435,
+    "texts": 1,
+    "tokens_in": 31,
+    "recorded_tokens_in": 31
+   }
+  ],
+  "CollaborationForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.02267020000726916,
+    "recorded_encode_s": 0.03258220001589507,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "CollaborationForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.02259470001445152,
+    "recorded_encode_s": 0.030527499970048666,
+    "texts": 1,
+    "tokens_in": 30,
+    "recorded_tokens_in": 30
+   }
+  ],
+  "CollaborationForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.026414399995701388,
+    "recorded_encode_s": 0.036907400004565716,
+    "texts": 1,
+    "tokens_in": 33,
+    "recorded_tokens_in": 33
+   }
+  ],
+  "CollaborationForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.023270799982128665,
+    "recorded_encode_s": 0.031168000074103475,
+    "texts": 1,
+    "tokens_in": 32,
+    "recorded_tokens_in": 32
+   }
+  ],
+  "CollaborationForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.022328099992591888,
+    "recorded_encode_s": 0.026940800016745925,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "CollaborationForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.022674200008623302,
+    "recorded_encode_s": 0.05732320004608482,
+    "texts": 1,
+    "tokens_in": 32,
+    "recorded_tokens_in": 32
+   }
+  ],
+  "CollaborationForce::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.0227113000000827,
+    "recorded_encode_s": 0.0294365999288857,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "CollaborationForce::a::25": [
+   {
+    "seq": 0,
+    "encode_s": 0.023260199988726526,
+    "recorded_encode_s": 0.08071080001536757,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "CollaborationForce::a::26": [
+   {
+    "seq": 0,
+    "encode_s": 0.02260039999964647,
+    "recorded_encode_s": 0.02676700009033084,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "CollaborationForce::a::27": [
+   {
+    "seq": 0,
+    "encode_s": 0.02464180000242777,
+    "recorded_encode_s": 0.03397929994389415,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ConnectForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.023303299996769056,
+    "recorded_encode_s": 0.026664000004529953,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "ConnectForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.022479900013422593,
+    "recorded_encode_s": 0.026482299901545048,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "ConnectForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.02252620001672767,
+    "recorded_encode_s": 0.1459743999876082,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "ConnectForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.022362699994118884,
+    "recorded_encode_s": 0.0797524000518024,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "ConnectForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.02615009999135509,
+    "recorded_encode_s": 0.08593550010118634,
+    "texts": 1,
+    "tokens_in": 33,
+    "recorded_tokens_in": 33
+   }
+  ],
+  "ConnectForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.022626299993135035,
+    "recorded_encode_s": 0.025213200016878545,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "ConnectForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.028419400012353435,
+    "recorded_encode_s": 0.024607199942693114,
+    "texts": 1,
+    "tokens_in": 30,
+    "recorded_tokens_in": 30
+   }
+  ],
+  "ConnectForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.022851099987747148,
+    "recorded_encode_s": 0.02712809992954135,
+    "texts": 1,
+    "tokens_in": 30,
+    "recorded_tokens_in": 30
+   }
+  ],
+  "ConnectForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.022956800006795675,
+    "recorded_encode_s": 0.025857900036498904,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ConnectForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.022477799997432157,
+    "recorded_encode_s": 0.023484400007873774,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "ConnectForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.022824799991212785,
+    "recorded_encode_s": 0.02984420000575483,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "ConnectForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.023171399981947616,
+    "recorded_encode_s": 0.058161400025710464,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "ContentForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.022848499997053295,
+    "recorded_encode_s": 0.038620400009676814,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "ContentForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.022891200002050027,
+    "recorded_encode_s": 0.02524490002542734,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "ContentForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.023186299978988245,
+    "recorded_encode_s": 0.024950599996373057,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "ContentForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.022452999983215705,
+    "recorded_encode_s": 0.024700399953871965,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "ContentForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.02312350002466701,
+    "recorded_encode_s": 0.027937600039876997,
+    "texts": 1,
+    "tokens_in": 15,
+    "recorded_tokens_in": 15
+   }
+  ],
+  "ContentForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.02270390000194311,
+    "recorded_encode_s": 0.024525800021365285,
+    "texts": 1,
+    "tokens_in": 14,
+    "recorded_tokens_in": 14
+   }
+  ],
+  "ContentForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.022976400010520592,
+    "recorded_encode_s": 0.02297379996161908,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ContentForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.022512399998959154,
+    "recorded_encode_s": 0.0247413000324741,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "ContentForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.022883700003148988,
+    "recorded_encode_s": 0.02357690001372248,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "ContentForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.022583499987376854,
+    "recorded_encode_s": 0.02517979999538511,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "ContentForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.022645899996859953,
+    "recorded_encode_s": 0.02563739998731762,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "ContentForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.022698499989928678,
+    "recorded_encode_s": 0.07901750004384667,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ContentForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022644400014542043,
+    "recorded_encode_s": 0.029647700022906065,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "ContextForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.022381800023140386,
+    "recorded_encode_s": 0.026407500030472875,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "ContextForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.02238119998946786,
+    "recorded_encode_s": 0.023287400021217763,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "ContextForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.022711099998559803,
+    "recorded_encode_s": 0.025048199924640357,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "ContextForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.026159899978665635,
+    "recorded_encode_s": 0.03898349998053163,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "ContextForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.022725500020897016,
+    "recorded_encode_s": 0.024190800031647086,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "ContextForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.02212919999146834,
+    "recorded_encode_s": 0.02709740004502237,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "ContextForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.02260349999414757,
+    "recorded_encode_s": 0.02547160000540316,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "ContextForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.022682500013615936,
+    "recorded_encode_s": 0.06828989996574819,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "ContextForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.023069500020937994,
+    "recorded_encode_s": 0.02610269992146641,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "ContextForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.022671100014122203,
+    "recorded_encode_s": 0.025342099950648844,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "ContextForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.022538499993970618,
+    "recorded_encode_s": 0.20256350003182888,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "ContextForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.022648399986792356,
+    "recorded_encode_s": 0.05440629995428026,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "ContextForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.022378900001058355,
+    "recorded_encode_s": 0.02687149995472282,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "ContextForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.0220223999931477,
+    "recorded_encode_s": 0.026130399899557233,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "ContextForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.025619499996537343,
+    "recorded_encode_s": 0.04782019997946918,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "ContextForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.022868900006869808,
+    "recorded_encode_s": 0.05778539995662868,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "ContextForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.022353400010615587,
+    "recorded_encode_s": 0.026346899918280542,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "ContextForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.02218269999139011,
+    "recorded_encode_s": 0.03799720003735274,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ContextForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.06126899999799207,
+    "recorded_encode_s": 0.03835079993586987,
+    "texts": 1,
+    "tokens_in": 15,
+    "recorded_tokens_in": 15
+   }
+  ],
+  "ContextForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.02600089999032207,
+    "recorded_encode_s": 0.030741400085389614,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ContextForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.022495600016554818,
+    "recorded_encode_s": 0.10708750004414469,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "ContextForce::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.023254600004293025,
+    "recorded_encode_s": 0.026858099969103932,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "ContextForce::a::25": [
+   {
+    "seq": 0,
+    "encode_s": 0.022103700001025572,
+    "recorded_encode_s": 0.026753999991342425,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "ContextForce::a::26": [
+   {
+    "seq": 0,
+    "encode_s": 0.022414799983380362,
+    "recorded_encode_s": 0.026121900067664683,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "EdgeForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.022644299984676763,
+    "recorded_encode_s": 0.02626419998705387,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "EdgeForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.02319459998398088,
+    "recorded_encode_s": 0.028396100038662553,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "EdgeForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.022637899994151667,
+    "recorded_encode_s": 0.026893600006587803,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "EdgeForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.02340340000228025,
+    "recorded_encode_s": 0.03669930004980415,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "EdgeForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.023270299978321418,
+    "recorded_encode_s": 0.026577700045891106,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "EdgeForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.02294430002802983,
+    "recorded_encode_s": 0.02645690005738288,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "EdgeForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.022705199982738122,
+    "recorded_encode_s": 0.05306619999464601,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "EdgeForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.022767399990698323,
+    "recorded_encode_s": 0.029217900009825826,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "EdgeForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.022730099997716025,
+    "recorded_encode_s": 0.07958790007978678,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "EdgeForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.02319429998169653,
+    "recorded_encode_s": 0.11449569999240339,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "EdgeForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022470299998531118,
+    "recorded_encode_s": 0.07762600004207343,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "EdgeForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.022501799976453185,
+    "recorded_encode_s": 0.05733640003018081,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "EdgeForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.022966699994867668,
+    "recorded_encode_s": 0.02699019992724061,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "EdgeForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.02620950000709854,
+    "recorded_encode_s": 0.03132710000500083,
+    "texts": 1,
+    "tokens_in": 33,
+    "recorded_tokens_in": 33
+   }
+  ],
+  "EdgeForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.026604299986502156,
+    "recorded_encode_s": 0.031483300030231476,
+    "texts": 1,
+    "tokens_in": 35,
+    "recorded_tokens_in": 35
+   }
+  ],
+  "EdgeForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.026721200003521517,
+    "recorded_encode_s": 0.1566085999365896,
+    "texts": 1,
+    "tokens_in": 36,
+    "recorded_tokens_in": 36
+   }
+  ],
+  "EdgeForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.026293500006431714,
+    "recorded_encode_s": 0.08784519997425377,
+    "texts": 1,
+    "tokens_in": 36,
+    "recorded_tokens_in": 36
+   }
+  ],
+  "EdgeForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.026279799989424646,
+    "recorded_encode_s": 0.0893198000267148,
+    "texts": 1,
+    "tokens_in": 36,
+    "recorded_tokens_in": 36
+   }
+  ],
+  "EdgeForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.026676899986341596,
+    "recorded_encode_s": 0.03218530002050102,
+    "texts": 1,
+    "tokens_in": 41,
+    "recorded_tokens_in": 41
+   }
+  ],
+  "EdgeForce::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.026264699990861118,
+    "recorded_encode_s": 0.048939400003291667,
+    "texts": 1,
+    "tokens_in": 35,
+    "recorded_tokens_in": 35
+   }
+  ],
+  "EdgeForce::a::25": [
+   {
+    "seq": 0,
+    "encode_s": 0.02650430001085624,
+    "recorded_encode_s": 0.03384129994083196,
+    "texts": 1,
+    "tokens_in": 44,
+    "recorded_tokens_in": 44
+   }
+  ],
+  "EdgeForce::a::26": [
+   {
+    "seq": 0,
+    "encode_s": 0.026380299997981638,
+    "recorded_encode_s": 0.042571600060909986,
+    "texts": 1,
+    "tokens_in": 39,
+    "recorded_tokens_in": 39
+   }
+  ],
+  "EdgeForce::a::27": [
+   {
+    "seq": 0,
+    "encode_s": 0.03034180001122877,
+    "recorded_encode_s": 0.03637959994375706,
+    "texts": 1,
+    "tokens_in": 38,
+    "recorded_tokens_in": 38
+   }
+  ],
+  "EdgeForce::a::28": [
+   {
+    "seq": 0,
+    "encode_s": 0.022599699994316325,
+    "recorded_encode_s": 0.037386000039987266,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "EdgeForce::a::29": [
+   {
+    "seq": 0,
+    "encode_s": 0.02212320000398904,
+    "recorded_encode_s": 0.024762299959547818,
+    "texts": 1,
+    "tokens_in": 27,
+    "recorded_tokens_in": 27
+   }
+  ],
+  "EdgeForce::a::30": [
+   {
+    "seq": 0,
+    "encode_s": 0.02253210000344552,
+    "recorded_encode_s": 0.04972420004196465,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "EdgeForce::a::31": [
+   {
+    "seq": 0,
+    "encode_s": 0.022143699985463172,
+    "recorded_encode_s": 0.024909500032663345,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "EdgeForce::a::32": [
+   {
+    "seq": 0,
+    "encode_s": 0.022396399988792837,
+    "recorded_encode_s": 0.03322069998830557,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "EdgeForce::a::33": [
+   {
+    "seq": 0,
+    "encode_s": 0.023068000009516254,
+    "recorded_encode_s": 0.028942600009031594,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ExplainabilityForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.02231460000621155,
+    "recorded_encode_s": 0.03061740007251501,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ExplainabilityForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.02245240000775084,
+    "recorded_encode_s": 0.03425380005501211,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ExplainabilityForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.030495199986035004,
+    "recorded_encode_s": 0.023616299964487553,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ExplainabilityForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.024509100010618567,
+    "recorded_encode_s": 0.08194900001399219,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ExplainabilityForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.026141800015466288,
+    "recorded_encode_s": 0.08911099995020777,
+    "texts": 1,
+    "tokens_in": 33,
+    "recorded_tokens_in": 33
+   }
+  ],
+  "ExplainabilityForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.023554999992484227,
+    "recorded_encode_s": 0.07377880008425564,
+    "texts": 1,
+    "tokens_in": 30,
+    "recorded_tokens_in": 30
+   }
+  ],
+  "ExplainabilityForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.02614900001208298,
+    "recorded_encode_s": 0.031927699921652675,
+    "texts": 1,
+    "tokens_in": 37,
+    "recorded_tokens_in": 37
+   }
+  ],
+  "ExplainabilityForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.022637799993390217,
+    "recorded_encode_s": 0.026133199920877814,
+    "texts": 1,
+    "tokens_in": 32,
+    "recorded_tokens_in": 32
+   }
+  ],
+  "ExplainabilityForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.022310600004857406,
+    "recorded_encode_s": 0.029074300080537796,
+    "texts": 1,
+    "tokens_in": 30,
+    "recorded_tokens_in": 30
+   }
+  ],
+  "ExplainabilityForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.02281689998926595,
+    "recorded_encode_s": 0.03353609994519502,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ExplainabilityForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022720000008121133,
+    "recorded_encode_s": 0.026128600002266467,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "ExplainabilityForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.022299200005363673,
+    "recorded_encode_s": 0.061191000044345856,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "ExplainabilityForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.022568300017155707,
+    "recorded_encode_s": 0.025994000025093555,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "FeedbackForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.027930899988859892,
+    "recorded_encode_s": 0.025622499990276992,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "FeedbackForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.02817269999650307,
+    "recorded_encode_s": 0.032936399918980896,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "FeedbackForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.022271199995884672,
+    "recorded_encode_s": 0.039043899974785745,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "FeedbackForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.02344469999661669,
+    "recorded_encode_s": 0.025393699994310737,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "FeedbackForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.022550299996510148,
+    "recorded_encode_s": 0.043707899982109666,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "FeedbackForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.023278500011656433,
+    "recorded_encode_s": 0.02987919992301613,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "FeedbackForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.028472300007706508,
+    "recorded_encode_s": 0.07532489998266101,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "FeedbackForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.02240210000309162,
+    "recorded_encode_s": 0.03532749996520579,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "FeedbackForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.02313969997339882,
+    "recorded_encode_s": 0.02258700004313141,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "FeedbackForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.0232761999941431,
+    "recorded_encode_s": 0.023809900041669607,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "FeedbackForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.023182999982964247,
+    "recorded_encode_s": 0.02271269995253533,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "FeedbackForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.022143500013044104,
+    "recorded_encode_s": 0.022747799986973405,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "FlowForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.023207199992612004,
+    "recorded_encode_s": 0.024115200038067997,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "FlowForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.022412699996493757,
+    "recorded_encode_s": 0.024642399977892637,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "FlowForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.02236490001087077,
+    "recorded_encode_s": 0.023406699998304248,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "FlowForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.022775999997975305,
+    "recorded_encode_s": 0.024693300016224384,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "FlowForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.022697000007610768,
+    "recorded_encode_s": 0.08165320008993149,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "FlowForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.022968699980992824,
+    "recorded_encode_s": 0.0811891999328509,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "FlowForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.022064699995098636,
+    "recorded_encode_s": 0.08125729998573661,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "FlowForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.022709700017003343,
+    "recorded_encode_s": 0.08070179994683713,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "FlowForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.022408199991332367,
+    "recorded_encode_s": 0.08275269996374846,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "FlowForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.022198199992999434,
+    "recorded_encode_s": 0.09927540004719049,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "FlowForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.022237900004256517,
+    "recorded_encode_s": 0.02320340008009225,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "FlowForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.02420630000415258,
+    "recorded_encode_s": 0.025201700045727193,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "FlowForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022128699987661093,
+    "recorded_encode_s": 0.05361980001907796,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "FlowForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.026023600017651916,
+    "recorded_encode_s": 0.03578190004918724,
+    "texts": 1,
+    "tokens_in": 35,
+    "recorded_tokens_in": 35
+   }
+  ],
+  "FlowForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.026306199986720458,
+    "recorded_encode_s": 0.03130959998816252,
+    "texts": 1,
+    "tokens_in": 34,
+    "recorded_tokens_in": 34
+   }
+  ],
+  "FlowForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.026780899992445484,
+    "recorded_encode_s": 0.0312739999499172,
+    "texts": 1,
+    "tokens_in": 40,
+    "recorded_tokens_in": 40
+   }
+  ],
+  "FlowForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.026658099988708273,
+    "recorded_encode_s": 0.03107850009109825,
+    "texts": 1,
+    "tokens_in": 41,
+    "recorded_tokens_in": 41
+   }
+  ],
+  "FlowForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.026072300010127947,
+    "recorded_encode_s": 0.030594400013796985,
+    "texts": 1,
+    "tokens_in": 33,
+    "recorded_tokens_in": 33
+   }
+  ],
+  "FlowForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.026233899989165366,
+    "recorded_encode_s": 0.030514299985952675,
+    "texts": 1,
+    "tokens_in": 35,
+    "recorded_tokens_in": 35
+   }
+  ],
+  "FlowForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.022857500007376075,
+    "recorded_encode_s": 0.02347000001464039,
+    "texts": 1,
+    "tokens_in": 31,
+    "recorded_tokens_in": 31
+   }
+  ],
+  "FlowForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.026392300002044067,
+    "recorded_encode_s": 0.031028699944727123,
+    "texts": 1,
+    "tokens_in": 40,
+    "recorded_tokens_in": 40
+   }
+  ],
+  "FlowForce::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.02617990001454018,
+    "recorded_encode_s": 0.030928899999707937,
+    "texts": 1,
+    "tokens_in": 35,
+    "recorded_tokens_in": 35
+   }
+  ],
+  "FlowForce::a::25": [
+   {
+    "seq": 0,
+    "encode_s": 0.02876240000477992,
+    "recorded_encode_s": 0.032659499906003475,
+    "texts": 1,
+    "tokens_in": 44,
+    "recorded_tokens_in": 44
+   }
+  ],
+  "FlowForce::a::26": [
+   {
+    "seq": 0,
+    "encode_s": 0.023088699992513284,
+    "recorded_encode_s": 0.025138599914498627,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "FlowForce::a::27": [
+   {
+    "seq": 0,
+    "encode_s": 0.02265829997486435,
+    "recorded_encode_s": 0.024914400069974363,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "FlowForce::a::28": [
+   {
+    "seq": 0,
+    "encode_s": 0.02229230001103133,
+    "recorded_encode_s": 0.02483450004365295,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "FlowForce::a::29": [
+   {
+    "seq": 0,
+    "encode_s": 0.022291400004178286,
+    "recorded_encode_s": 0.02263610006775707,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "FlowForce::a::30": [
+   {
+    "seq": 0,
+    "encode_s": 0.022308999992674217,
+    "recorded_encode_s": 0.02647309994790703,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "FlowForce::a::31": [
+   {
+    "seq": 0,
+    "encode_s": 0.022895999980391935,
+    "recorded_encode_s": 0.026463599991984665,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ForecastForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.02235909999581054,
+    "recorded_encode_s": 0.03729190002195537,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "ForecastForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.02276950000668876,
+    "recorded_encode_s": 0.02563940000254661,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "ForecastForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.022638499998720363,
+    "recorded_encode_s": 0.031067400006577373,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "ForecastForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.028018300014082342,
+    "recorded_encode_s": 0.07879179995507002,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "ForecastForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.023368900001514703,
+    "recorded_encode_s": 0.07900109991896898,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "ForecastForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.02229690001695417,
+    "recorded_encode_s": 0.08436950005125254,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "ForecastForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.02293400000780821,
+    "recorded_encode_s": 0.029939900035969913,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "ForecastForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.02248949999921024,
+    "recorded_encode_s": 0.05112469999585301,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "ForecastForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.022713500016834587,
+    "recorded_encode_s": 0.024707900010980666,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "ForecastForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.022911100008059293,
+    "recorded_encode_s": 0.0311564999865368,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "ForecastForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.022734199999831617,
+    "recorded_encode_s": 0.023004600079730153,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "ForecastForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.022670600010314956,
+    "recorded_encode_s": 0.02305359998717904,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "ForecastForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.02255749999312684,
+    "recorded_encode_s": 0.03145940008107573,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "ForecastForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.02273090000380762,
+    "recorded_encode_s": 0.02561880007851869,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "ForecastForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022824700019555166,
+    "recorded_encode_s": 0.027059099986217916,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "ForecastForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.022581900004297495,
+    "recorded_encode_s": 0.02347020001616329,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "ForecastForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.022337700007483363,
+    "recorded_encode_s": 0.024150699959136546,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "ForecastForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.026437099993927404,
+    "recorded_encode_s": 0.024815000011585653,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "ForecastForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.024243899999419227,
+    "recorded_encode_s": 0.02272170002106577,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "ForecastForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.022489599999971688,
+    "recorded_encode_s": 0.03091650002170354,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "ForecastForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.02244639999116771,
+    "recorded_encode_s": 0.0560110000660643,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ForecastForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.02285820001270622,
+    "recorded_encode_s": 0.03279109997674823,
+    "texts": 1,
+    "tokens_in": 15,
+    "recorded_tokens_in": 15
+   }
+  ],
+  "ForecastForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.022786599991377443,
+    "recorded_encode_s": 0.024576500058174133,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ForecastForce::a::25": [
+   {
+    "seq": 0,
+    "encode_s": 0.0226183999911882,
+    "recorded_encode_s": 0.02473059995099902,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "ForecastForce::a::27": [
+   {
+    "seq": 0,
+    "encode_s": 0.022481199994217604,
+    "recorded_encode_s": 0.02391760004684329,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "ForecastForce::a::28": [
+   {
+    "seq": 0,
+    "encode_s": 0.023300000000745058,
+    "recorded_encode_s": 0.03404229995794594,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "InsightForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.02332179999211803,
+    "recorded_encode_s": 0.02494289993774146,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "InsightForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.02279579997411929,
+    "recorded_encode_s": 0.0358544000191614,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "InsightForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.022079499991377816,
+    "recorded_encode_s": 0.029967099893838167,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "InsightForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.022759800020139664,
+    "recorded_encode_s": 0.026080299983732402,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "InsightForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.022658999980194494,
+    "recorded_encode_s": 0.02502000005915761,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "InsightForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.022320999996736646,
+    "recorded_encode_s": 0.02548039995599538,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "InsightForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.022507400019094348,
+    "recorded_encode_s": 0.20550549996551126,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "InsightForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.022738800005754456,
+    "recorded_encode_s": 0.026837000041268766,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "InsightForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.022517100005643442,
+    "recorded_encode_s": 0.049960199976339936,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "InsightForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.02256489999126643,
+    "recorded_encode_s": 0.036197699955664575,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "InsightForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.02389389998279512,
+    "recorded_encode_s": 0.14069949998520315,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "InsightForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.02259910001885146,
+    "recorded_encode_s": 0.1202736000996083,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "InsightForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.02228470001136884,
+    "recorded_encode_s": 0.030339200049638748,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "KnowledgeForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.02238859998760745,
+    "recorded_encode_s": 0.07082700007595122,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "KnowledgeForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.027723300008801743,
+    "recorded_encode_s": 0.03677779994904995,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "KnowledgeForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.022634099994320422,
+    "recorded_encode_s": 0.025820399983786047,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "KnowledgeForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.022573399997781962,
+    "recorded_encode_s": 0.02612079994287342,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "KnowledgeForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.02315470000030473,
+    "recorded_encode_s": 0.026735100080259144,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "KnowledgeForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.022433900012401864,
+    "recorded_encode_s": 0.027519600000232458,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "KnowledgeForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.022595399990677834,
+    "recorded_encode_s": 0.026380500057712197,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "KnowledgeForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.022592399996938184,
+    "recorded_encode_s": 0.025988100096583366,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "KnowledgeForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.023099099984392524,
+    "recorded_encode_s": 0.028722899965941906,
+    "texts": 1,
+    "tokens_in": 15,
+    "recorded_tokens_in": 15
+   }
+  ],
+  "KnowledgeForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.022314000001642853,
+    "recorded_encode_s": 0.026314200018532574,
+    "texts": 1,
+    "tokens_in": 14,
+    "recorded_tokens_in": 14
+   }
+  ],
+  "KnowledgeForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.022375899978214875,
+    "recorded_encode_s": 0.028299300000071526,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "KnowledgeForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.026668200007406995,
+    "recorded_encode_s": 0.026899700053036213,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "KnowledgeForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.027836699999170378,
+    "recorded_encode_s": 0.034802100039087236,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "KnowledgeForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.02197820000583306,
+    "recorded_encode_s": 0.0659567000111565,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "KnowledgeForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.022701399982906878,
+    "recorded_encode_s": 0.02670279995072633,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "KnowledgeForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.022171699994942173,
+    "recorded_encode_s": 0.03394690004643053,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "KnowledgeForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.022976400010520592,
+    "recorded_encode_s": 0.02878599998075515,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "KnowledgeForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.023040100000798702,
+    "recorded_encode_s": 0.18506479996722192,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "KnowledgeForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.022839499986730516,
+    "recorded_encode_s": 0.05689210002310574,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "KnowledgeForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.02838159998646006,
+    "recorded_encode_s": 0.026106600067578256,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "KnowledgeForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.022229700000025332,
+    "recorded_encode_s": 0.03187850001268089,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "LeadForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.022306700004264712,
+    "recorded_encode_s": 0.05438210000284016,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "LeadForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.022535700001753867,
+    "recorded_encode_s": 0.026465400005690753,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "LeadForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.02251460001571104,
+    "recorded_encode_s": 0.030297899967990816,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "LeadForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.026371499989181757,
+    "recorded_encode_s": 0.03843630000483245,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "LeadForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.022715700004482642,
+    "recorded_encode_s": 0.029954700032249093,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "LeadForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.02239289999124594,
+    "recorded_encode_s": 0.04980959999375045,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "LeadForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.022309099993435666,
+    "recorded_encode_s": 0.04288400011137128,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "LeadForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.02240189997246489,
+    "recorded_encode_s": 0.04007270000874996,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "LeadForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.02293970002210699,
+    "recorded_encode_s": 0.047403199947439134,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "LeadForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.02230539999436587,
+    "recorded_encode_s": 0.05756789993029088,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "LeadForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.022527399996761233,
+    "recorded_encode_s": 0.02702589996624738,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "LeadForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.022683000017423183,
+    "recorded_encode_s": 0.02753419999498874,
+    "texts": 1,
+    "tokens_in": 31,
+    "recorded_tokens_in": 31
+   }
+  ],
+  "LeadForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.02267879998544231,
+    "recorded_encode_s": 0.06810519995633513,
+    "texts": 1,
+    "tokens_in": 32,
+    "recorded_tokens_in": 32
+   }
+  ],
+  "LeadForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.02294280001660809,
+    "recorded_encode_s": 0.026312300004065037,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "LeadForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.023249100020620972,
+    "recorded_encode_s": 0.026256300043314695,
+    "texts": 1,
+    "tokens_in": 27,
+    "recorded_tokens_in": 27
+   }
+  ],
+  "LeadForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.027940600004512817,
+    "recorded_encode_s": 0.028162700007669628,
+    "texts": 1,
+    "tokens_in": 32,
+    "recorded_tokens_in": 32
+   }
+  ],
+  "LeadForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.023091199982445687,
+    "recorded_encode_s": 0.02704830002039671,
+    "texts": 1,
+    "tokens_in": 32,
+    "recorded_tokens_in": 32
+   }
+  ],
+  "LeadForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.02276049999636598,
+    "recorded_encode_s": 0.045903900056146085,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "LeadForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.022714799997629598,
+    "recorded_encode_s": 0.029912900063209236,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "LeadForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.0245174000156112,
+    "recorded_encode_s": 0.02920710004400462,
+    "texts": 1,
+    "tokens_in": 30,
+    "recorded_tokens_in": 30
+   }
+  ],
+  "LeadForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.02259750000666827,
+    "recorded_encode_s": 0.027979200007393956,
+    "texts": 1,
+    "tokens_in": 27,
+    "recorded_tokens_in": 27
+   }
+  ],
+  "LeadForce::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.022923899989109486,
+    "recorded_encode_s": 0.08285469992551953,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "LeadForce::a::25": [
+   {
+    "seq": 0,
+    "encode_s": 0.022359899972798303,
+    "recorded_encode_s": 0.07804129994474351,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "LeadForce::a::26": [
+   {
+    "seq": 0,
+    "encode_s": 0.023350800009211525,
+    "recorded_encode_s": 0.026055900030769408,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "LeadForce::a::27": [
+   {
+    "seq": 0,
+    "encode_s": 0.02306839998345822,
+    "recorded_encode_s": 0.08239589992444962,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "MonitorForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.022139300010167062,
+    "recorded_encode_s": 0.08155699993949383,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "MonitorForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.02780809998512268,
+    "recorded_encode_s": 0.09266460000071675,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "MonitorForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.02210130001185462,
+    "recorded_encode_s": 0.07991390000097454,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "MonitorForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.02273100000456907,
+    "recorded_encode_s": 0.07875949994195253,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "MonitorForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.022707600001012906,
+    "recorded_encode_s": 0.027493900037370622,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "MonitorForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.02300059999106452,
+    "recorded_encode_s": 0.02470579999499023,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "MonitorForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.02250700001604855,
+    "recorded_encode_s": 0.02629119995981455,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "MonitorForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.022830599977169186,
+    "recorded_encode_s": 0.02964530000463128,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "MonitorForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.022810000024037436,
+    "recorded_encode_s": 0.03443269990384579,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "MonitorForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.02252329999464564,
+    "recorded_encode_s": 0.027090799994766712,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "MonitorForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.022288500011200085,
+    "recorded_encode_s": 0.047177899978123605,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "MonitorForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.02241810000850819,
+    "recorded_encode_s": 0.028010900015942752,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "MonitorForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.022496199992019683,
+    "recorded_encode_s": 0.036075200070627034,
+    "texts": 1,
+    "tokens_in": 15,
+    "recorded_tokens_in": 15
+   }
+  ],
+  "MonitorForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.023323000001255423,
+    "recorded_encode_s": 0.02688070002477616,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "MonitorForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022672499995678663,
+    "recorded_encode_s": 0.032339699915610254,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "MonitorForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.022479300008853897,
+    "recorded_encode_s": 0.06447480001952499,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "PersonalizeForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.022454199992353097,
+    "recorded_encode_s": 0.03643520001787692,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "PersonalizeForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.022925600002054125,
+    "recorded_encode_s": 0.08973859995603561,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "PersonalizeForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.022781500010751188,
+    "recorded_encode_s": 0.024738799897022545,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "PersonalizeForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.022764200024539605,
+    "recorded_encode_s": 0.08173269999679178,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "PersonalizeForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.023120900004869327,
+    "recorded_encode_s": 0.08147450000979006,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "PersonalizeForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.023404200008371845,
+    "recorded_encode_s": 0.08089400001335889,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "PersonalizeForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.022434000013163313,
+    "recorded_encode_s": 0.08124979992862791,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "PersonalizeForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.022709600016241893,
+    "recorded_encode_s": 0.07952590007334948,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "PersonalizeForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.02249390000361018,
+    "recorded_encode_s": 0.0774627000791952,
+    "texts": 1,
+    "tokens_in": 16,
+    "recorded_tokens_in": 16
+   }
+  ],
+  "PersonalizeForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.022122399997897446,
+    "recorded_encode_s": 0.024514799937605858,
+    "texts": 1,
+    "tokens_in": 15,
+    "recorded_tokens_in": 15
+   }
+  ],
+  "PersonalizeForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.022429700009524822,
+    "recorded_encode_s": 0.031577899935655296,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "PersonalizeForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.022179099993081763,
+    "recorded_encode_s": 0.06064810010138899,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "PersonalizeForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.02218830000492744,
+    "recorded_encode_s": 0.02580090006813407,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "PersonalizeForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.022392100014258176,
+    "recorded_encode_s": 0.02643780002836138,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "PersonalizeForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022820500016678125,
+    "recorded_encode_s": 0.028517500031739473,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "PersonalizeForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.022436599974753335,
+    "recorded_encode_s": 0.031961900065653026,
+    "texts": 1,
+    "tokens_in": 27,
+    "recorded_tokens_in": 27
+   }
+  ],
+  "PersonalizeForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.02279879999696277,
+    "recorded_encode_s": 0.025723899947479367,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "PersonalizeForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.02276170000550337,
+    "recorded_encode_s": 0.03683440003078431,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "PersonalizeForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.02249659999506548,
+    "recorded_encode_s": 0.029824000084772706,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "PersonalizeForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.022535500000230968,
+    "recorded_encode_s": 0.051498099928721786,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "PersonalizeForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.022395000007236376,
+    "recorded_encode_s": 0.02536369999870658,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "PersonalizeForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.022633400018094108,
+    "recorded_encode_s": 0.029925200040452182,
+    "texts": 1,
+    "tokens_in": 16,
+    "recorded_tokens_in": 16
+   }
+  ],
+  "PersonalizeForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.023707599990302697,
+    "recorded_encode_s": 0.036269100033678114,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "PersonalizeForce::a::25": [
+   {
+    "seq": 0,
+    "encode_s": 0.022486700006993487,
+    "recorded_encode_s": 0.025515499990433455,
+    "texts": 1,
+    "tokens_in": 32,
+    "recorded_tokens_in": 32
+   }
+  ],
+  "PersonalizeForce::a::26": [
+   {
+    "seq": 0,
+    "encode_s": 0.022503199987113476,
+    "recorded_encode_s": 0.02552789996843785,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "PersonalizeForce::a::27": [
+   {
+    "seq": 0,
+    "encode_s": 0.022808299981988966,
+    "recorded_encode_s": 0.03305330011062324,
+    "texts": 1,
+    "tokens_in": 30,
+    "recorded_tokens_in": 30
+   }
+  ],
+  "PersonalizeForce::a::28": [
+   {
+    "seq": 0,
+    "encode_s": 0.0225188999902457,
+    "recorded_encode_s": 0.05737430008593947,
+    "texts": 1,
+    "tokens_in": 32,
+    "recorded_tokens_in": 32
+   }
+  ],
+  "PersonalizeForce::a::29": [
+   {
+    "seq": 0,
+    "encode_s": 0.026320300006773323,
+    "recorded_encode_s": 0.04076040000654757,
+    "texts": 1,
+    "tokens_in": 39,
+    "recorded_tokens_in": 39
+   }
+  ],
+  "PersonalizeForce::a::30": [
+   {
+    "seq": 0,
+    "encode_s": 0.022156999999424443,
+    "recorded_encode_s": 0.0368595999898389,
+    "texts": 1,
+    "tokens_in": 32,
+    "recorded_tokens_in": 32
+   }
+  ],
+  "PersonalizeForce::a::31": [
+   {
+    "seq": 0,
+    "encode_s": 0.026301899983081967,
+    "recorded_encode_s": 0.04720579995773733,
+    "texts": 1,
+    "tokens_in": 35,
+    "recorded_tokens_in": 35
+   }
+  ],
+  "PersonalizeForce::a::32": [
+   {
+    "seq": 0,
+    "encode_s": 0.023209999984828755,
+    "recorded_encode_s": 0.05268829991109669,
+    "texts": 1,
+    "tokens_in": 32,
+    "recorded_tokens_in": 32
+   }
+  ],
+  "PersonalizeForce::a::33": [
+   {
+    "seq": 0,
+    "encode_s": 0.026671200001146644,
+    "recorded_encode_s": 0.045308099943213165,
+    "texts": 1,
+    "tokens_in": 40,
+    "recorded_tokens_in": 40
+   }
+  ],
+  "PersonalizeForce::a::35": [
+   {
+    "seq": 0,
+    "encode_s": 0.02360509999562055,
+    "recorded_encode_s": 0.03172090009320527,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "PersonalizeForce::a::36": [
+   {
+    "seq": 0,
+    "encode_s": 0.022762999986298382,
+    "recorded_encode_s": 0.025922000058926642,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "PersonalizeForce::a::37": [
+   {
+    "seq": 0,
+    "encode_s": 0.02295430001686327,
+    "recorded_encode_s": 0.05486919998656958,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "PersonalizeForce::a::38": [
+   {
+    "seq": 0,
+    "encode_s": 0.022820800018962473,
+    "recorded_encode_s": 0.06049559998791665,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "PitchForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.02254539998830296,
+    "recorded_encode_s": 0.04199430008884519,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "PitchForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.023136400006478652,
+    "recorded_encode_s": 0.15423099999316037,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "PitchForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.024018900003284216,
+    "recorded_encode_s": 0.07860690006054938,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "PitchForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.025107599998591468,
+    "recorded_encode_s": 0.08110389998182654,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "PitchForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.022796899982495233,
+    "recorded_encode_s": 0.034495199914090335,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "PitchForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.022384700016118586,
+    "recorded_encode_s": 0.05274469999130815,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "PitchForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.023310799995670095,
+    "recorded_encode_s": 0.028395699919201434,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "PitchForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.022723700007190928,
+    "recorded_encode_s": 0.026657899958081543,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "PitchForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.022193599987076595,
+    "recorded_encode_s": 0.027592999977059662,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "PitchForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.022515199991175905,
+    "recorded_encode_s": 0.02301059989258647,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "PitchForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.022714199993060902,
+    "recorded_encode_s": 0.024524400010704994,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "PitchForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.02262390000396408,
+    "recorded_encode_s": 0.02748649998102337,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "PitchForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.022700100002111867,
+    "recorded_encode_s": 0.036849800031632185,
+    "texts": 1,
+    "tokens_in": 30,
+    "recorded_tokens_in": 30
+   }
+  ],
+  "PitchForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.022164499998325482,
+    "recorded_encode_s": 0.02674170001409948,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "PitchForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022729999996954575,
+    "recorded_encode_s": 0.02698920003604144,
+    "texts": 1,
+    "tokens_in": 31,
+    "recorded_tokens_in": 31
+   }
+  ],
+  "PitchForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.0229010000184644,
+    "recorded_encode_s": 0.0387703999876976,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "PitchForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.02847069999552332,
+    "recorded_encode_s": 0.046830000006593764,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "PitchForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.022493399999802932,
+    "recorded_encode_s": 0.08193940005730838,
+    "texts": 1,
+    "tokens_in": 27,
+    "recorded_tokens_in": 27
+   }
+  ],
+  "PitchForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.022893099987413734,
+    "recorded_encode_s": 0.08245290000922978,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "PitchForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.02263599997968413,
+    "recorded_encode_s": 0.08311250002589077,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "PitchForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.023365900007775053,
+    "recorded_encode_s": 0.08670250000432134,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "PitchForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.02313979997416027,
+    "recorded_encode_s": 0.08299440005794168,
+    "texts": 1,
+    "tokens_in": 27,
+    "recorded_tokens_in": 27
+   }
+  ],
+  "PitchForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.022456400009104982,
+    "recorded_encode_s": 0.033457999932579696,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "PitchForce::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.02645839998149313,
+    "recorded_encode_s": 0.05950540001504123,
+    "texts": 1,
+    "tokens_in": 33,
+    "recorded_tokens_in": 33
+   }
+  ],
+  "PitchForce::a::26": [
+   {
+    "seq": 0,
+    "encode_s": 0.02273799999966286,
+    "recorded_encode_s": 0.02947339997626841,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "PitchForce::a::28": [
+   {
+    "seq": 0,
+    "encode_s": 0.02632509998511523,
+    "recorded_encode_s": 0.03466970007866621,
+    "texts": 1,
+    "tokens_in": 35,
+    "recorded_tokens_in": 35
+   }
+  ],
+  "PitchForce::a::29": [
+   {
+    "seq": 0,
+    "encode_s": 0.026462499983608723,
+    "recorded_encode_s": 0.05212570005096495,
+    "texts": 1,
+    "tokens_in": 36,
+    "recorded_tokens_in": 36
+   }
+  ],
+  "PitchForce::a::30": [
+   {
+    "seq": 0,
+    "encode_s": 0.026550800015684217,
+    "recorded_encode_s": 0.04078889999072999,
+    "texts": 1,
+    "tokens_in": 35,
+    "recorded_tokens_in": 35
+   }
+  ],
+  "PitchForce::a::31": [
+   {
+    "seq": 0,
+    "encode_s": 0.026522900006966665,
+    "recorded_encode_s": 0.03408859996125102,
+    "texts": 1,
+    "tokens_in": 39,
+    "recorded_tokens_in": 39
+   }
+  ],
+  "PitchForce::a::32": [
+   {
+    "seq": 0,
+    "encode_s": 0.028265800006920472,
+    "recorded_encode_s": 0.0335933999158442,
+    "texts": 1,
+    "tokens_in": 35,
+    "recorded_tokens_in": 35
+   }
+  ],
+  "PitchForce::a::33": [
+   {
+    "seq": 0,
+    "encode_s": 0.026977500005159527,
+    "recorded_encode_s": 0.03386770002543926,
+    "texts": 1,
+    "tokens_in": 37,
+    "recorded_tokens_in": 37
+   }
+  ],
+  "PitchForce::a::34": [
+   {
+    "seq": 0,
+    "encode_s": 0.022421800007577986,
+    "recorded_encode_s": 0.02588830003514886,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "PitchForce::a::35": [
+   {
+    "seq": 0,
+    "encode_s": 0.022497400001157075,
+    "recorded_encode_s": 0.02495569991879165,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "PitchForce::a::36": [
+   {
+    "seq": 0,
+    "encode_s": 0.02309529998456128,
+    "recorded_encode_s": 0.03959290008060634,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "PitchForce::a::37": [
+   {
+    "seq": 0,
+    "encode_s": 0.022578800009796396,
+    "recorded_encode_s": 0.06347239995375276,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "PitchForce::a::38": [
+   {
+    "seq": 0,
+    "encode_s": 0.0225784000067506,
+    "recorded_encode_s": 0.02644789998885244,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ProposalForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.022324300021864474,
+    "recorded_encode_s": 0.027154800016433,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "ProposalForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.023014900012640283,
+    "recorded_encode_s": 0.02523480006493628,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "ProposalForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.022603799996431917,
+    "recorded_encode_s": 0.03668599994853139,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "ProposalForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.0282213999889791,
+    "recorded_encode_s": 0.025568600045517087,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "ProposalForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.02274400001624599,
+    "recorded_encode_s": 0.041030699969269335,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "ProposalForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.0226120000006631,
+    "recorded_encode_s": 0.029217700008302927,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "ProposalForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.022343199991155416,
+    "recorded_encode_s": 0.025448700063861907,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "ProposalForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.022636500012595206,
+    "recorded_encode_s": 0.02503299992531538,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "ProposalForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.022682699986035004,
+    "recorded_encode_s": 0.024780899984762073,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "ProposalForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.022560700017493218,
+    "recorded_encode_s": 0.026692300103604794,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "ProposalForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.023305100010475144,
+    "recorded_encode_s": 0.20183449995238334,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "ProposalForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.022541799989994615,
+    "recorded_encode_s": 0.07847449998371303,
+    "texts": 1,
+    "tokens_in": 15,
+    "recorded_tokens_in": 15
+   }
+  ],
+  "ProposalForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.02227139999740757,
+    "recorded_encode_s": 0.08811440004501492,
+    "texts": 1,
+    "tokens_in": 14,
+    "recorded_tokens_in": 14
+   }
+  ],
+  "ProposalForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.022544799983734265,
+    "recorded_encode_s": 0.07915100001264364,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "ProposalForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022562199999811128,
+    "recorded_encode_s": 0.06421809992752969,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "ProposalForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.022356300003593788,
+    "recorded_encode_s": 0.0282720000250265,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "ProposalForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.022324499994283542,
+    "recorded_encode_s": 0.02576820005197078,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "ProposalForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.022639600007096305,
+    "recorded_encode_s": 0.028545000008307397,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "ProposalForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.022427299991250038,
+    "recorded_encode_s": 0.028858099947683513,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "ProposalForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.022746099974028766,
+    "recorded_encode_s": 0.0438738000812009,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "ProposalForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.02292940000188537,
+    "recorded_encode_s": 0.025913399993442,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "ProposalForce::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.022346500016283244,
+    "recorded_encode_s": 0.023722999962046742,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "ProposalForce::a::25": [
+   {
+    "seq": 0,
+    "encode_s": 0.022841400001198053,
+    "recorded_encode_s": 0.023014200036413968,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "SearchFlow::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.02267450001090765,
+    "recorded_encode_s": 0.025060900021344423,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "SearchFlow::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.022347999998601153,
+    "recorded_encode_s": 0.025931600015610456,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "SearchFlow::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.02188940002815798,
+    "recorded_encode_s": 0.032351700006984174,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "SearchFlow::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.022197999991476536,
+    "recorded_encode_s": 0.025554300053045154,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "SearchFlow::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.022313599998597056,
+    "recorded_encode_s": 0.037430299911648035,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "SearchFlow::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.022765600006096065,
+    "recorded_encode_s": 0.025162399979308248,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "SearchFlow::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.022533400013344362,
+    "recorded_encode_s": 0.028435699990950525,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "SearchFlow::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.022583499987376854,
+    "recorded_encode_s": 0.03421569999773055,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "SearchFlow::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.02231900001061149,
+    "recorded_encode_s": 0.025743599981069565,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "SearchFlow::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.02272939999238588,
+    "recorded_encode_s": 0.08538489998318255,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "SearchFlow::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.022383500006981194,
+    "recorded_encode_s": 0.02361370006110519,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "SearchFlow::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.022649599995929748,
+    "recorded_encode_s": 0.0813410000409931,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "SearchFlow::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.023038499988615513,
+    "recorded_encode_s": 0.052624600008130074,
+    "texts": 1,
+    "tokens_in": 14,
+    "recorded_tokens_in": 14
+   }
+  ],
+  "SearchFlow::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.026619599986588582,
+    "recorded_encode_s": 0.026319800061173737,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "SearchFlow::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.02321499999379739,
+    "recorded_encode_s": 0.024734499980695546,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "SearchFlow::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.02300500002456829,
+    "recorded_encode_s": 0.02278100000694394,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "SearchFlow::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.022897099988767877,
+    "recorded_encode_s": 0.02415299997664988,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "SearchFlow::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.022831200010841712,
+    "recorded_encode_s": 0.027472599991597235,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "SearchFlow::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.025937500002328306,
+    "recorded_encode_s": 0.029065200011245906,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "SearchFlow::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.02326260000700131,
+    "recorded_encode_s": 0.05518829997163266,
+    "texts": 1,
+    "tokens_in": 27,
+    "recorded_tokens_in": 27
+   }
+  ],
+  "SearchFlow::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.022623199998633936,
+    "recorded_encode_s": 0.029714299947954714,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "SearchFlow::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.022797999990871176,
+    "recorded_encode_s": 0.04991679999511689,
+    "texts": 1,
+    "tokens_in": 30,
+    "recorded_tokens_in": 30
+   }
+  ],
+  "SearchFlow::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.023349600000074133,
+    "recorded_encode_s": 0.0885372000047937,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "SearchFlow::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.023248299985425547,
+    "recorded_encode_s": 0.026056200033053756,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "SearchFlow::a::25": [
+   {
+    "seq": 0,
+    "encode_s": 0.022246000007726252,
+    "recorded_encode_s": 0.03209200000856072,
+    "texts": 1,
+    "tokens_in": 30,
+    "recorded_tokens_in": 30
+   }
+  ],
+  "SearchFlow::a::26": [
+   {
+    "seq": 0,
+    "encode_s": 0.022618699993472546,
+    "recorded_encode_s": 0.031114800018258393,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "SearchFlow::a::27": [
+   {
+    "seq": 0,
+    "encode_s": 0.02241969999158755,
+    "recorded_encode_s": 0.0406199999852106,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "SearchFlow::a::28": [
+   {
+    "seq": 0,
+    "encode_s": 0.022973099985392764,
+    "recorded_encode_s": 0.026558800018392503,
+    "texts": 1,
+    "tokens_in": 31,
+    "recorded_tokens_in": 31
+   }
+  ],
+  "SearchFlow::a::29": [
+   {
+    "seq": 0,
+    "encode_s": 0.02234389999648556,
+    "recorded_encode_s": 0.0245116000296548,
+    "texts": 1,
+    "tokens_in": 32,
+    "recorded_tokens_in": 32
+   }
+  ],
+  "SearchFlow::a::30": [
+   {
+    "seq": 0,
+    "encode_s": 0.026296500000171363,
+    "recorded_encode_s": 0.030823700013570487,
+    "texts": 1,
+    "tokens_in": 37,
+    "recorded_tokens_in": 37
+   }
+  ],
+  "SearchFlow::a::31": [
+   {
+    "seq": 0,
+    "encode_s": 0.02635339999687858,
+    "recorded_encode_s": 0.053522199974395335,
+    "texts": 1,
+    "tokens_in": 34,
+    "recorded_tokens_in": 34
+   }
+  ],
+  "SearchFlow::a::32": [
+   {
+    "seq": 0,
+    "encode_s": 0.026170099998125806,
+    "recorded_encode_s": 0.06520169996656477,
+    "texts": 1,
+    "tokens_in": 31,
+    "recorded_tokens_in": 31
+   }
+  ],
+  "SearchFlow::a::34": [
+   {
+    "seq": 0,
+    "encode_s": 0.023860499990405515,
+    "recorded_encode_s": 0.027835700078867376,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "SearchFlow::a::35": [
+   {
+    "seq": 0,
+    "encode_s": 0.026392700005089864,
+    "recorded_encode_s": 0.03400750004220754,
+    "texts": 1,
+    "tokens_in": 33,
+    "recorded_tokens_in": 33
+   }
+  ],
+  "SearchFlow::a::36": [
+   {
+    "seq": 0,
+    "encode_s": 0.022919300012290478,
+    "recorded_encode_s": 0.06814300001133233,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "SearchFlow::a::37": [
+   {
+    "seq": 0,
+    "encode_s": 0.022597000002861023,
+    "recorded_encode_s": 0.052064000046812,
+    "texts": 1,
+    "tokens_in": 30,
+    "recorded_tokens_in": 30
+   }
+  ],
+  "SearchFlow::a::38": [
+   {
+    "seq": 0,
+    "encode_s": 0.023180099989986047,
+    "recorded_encode_s": 0.09178669995162636,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "SearchFlow::a::39": [
+   {
+    "seq": 0,
+    "encode_s": 0.022945900011109188,
+    "recorded_encode_s": 0.03205280005931854,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "SearchFlow::a::40": [
+   {
+    "seq": 0,
+    "encode_s": 0.022568400017917156,
+    "recorded_encode_s": 0.026678399997763336,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "SearchFlow::a::41": [
+   {
+    "seq": 0,
+    "encode_s": 0.022440900007495657,
+    "recorded_encode_s": 0.030813800054602325,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "SearchFlow::a::42": [
+   {
+    "seq": 0,
+    "encode_s": 0.022666200005915016,
+    "recorded_encode_s": 0.031741400016471744,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "SearchForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.02222710000933148,
+    "recorded_encode_s": 0.14050189999397844,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "SearchForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.022896399983437732,
+    "recorded_encode_s": 0.07874599995557219,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "SearchForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.023173199995653704,
+    "recorded_encode_s": 0.07766189996618778,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "SearchForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.022861599980387837,
+    "recorded_encode_s": 0.08088309993036091,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "SearchForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.022459200001321733,
+    "recorded_encode_s": 0.07351969997398555,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "SearchForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.022298600000794977,
+    "recorded_encode_s": 0.02462999999988824,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "SearchForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.0225753000122495,
+    "recorded_encode_s": 0.045132100000046194,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "SearchForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.02311020001070574,
+    "recorded_encode_s": 0.02463630004785955,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "SearchForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.026865600026212633,
+    "recorded_encode_s": 0.022830399917438626,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "SearchForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.0229811999888625,
+    "recorded_encode_s": 0.025514199980534613,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "SearchForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.022583200014196336,
+    "recorded_encode_s": 0.030875900061801076,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "SearchForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.023189800005638972,
+    "recorded_encode_s": 0.048548099934123456,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "SearchForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.02290730000822805,
+    "recorded_encode_s": 0.02846770000178367,
+    "texts": 1,
+    "tokens_in": 27,
+    "recorded_tokens_in": 27
+   }
+  ],
+  "SearchForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.02265359999728389,
+    "recorded_encode_s": 0.02566559996921569,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "SearchForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022557000018423423,
+    "recorded_encode_s": 0.025166100007481873,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "SearchForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.023968499997863546,
+    "recorded_encode_s": 0.04042020009364933,
+    "texts": 1,
+    "tokens_in": 27,
+    "recorded_tokens_in": 27
+   }
+  ],
+  "SearchForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.022950499987928197,
+    "recorded_encode_s": 0.024586800020188093,
+    "texts": 1,
+    "tokens_in": 27,
+    "recorded_tokens_in": 27
+   }
+  ],
+  "SearchForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.022753500001272187,
+    "recorded_encode_s": 0.03236429998651147,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "SearchForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.02247719999286346,
+    "recorded_encode_s": 0.06734459998551756,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "SearchForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.022740699991118163,
+    "recorded_encode_s": 0.038029000046662986,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "SearchForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.022570200002519414,
+    "recorded_encode_s": 0.023180399904958904,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "SearchForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.02302399999462068,
+    "recorded_encode_s": 0.029905000003054738,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "SearchForce::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.022351799998432398,
+    "recorded_encode_s": 0.03279420000035316,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "SecurityForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.022764399996958673,
+    "recorded_encode_s": 0.0575642999028787,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "SecurityForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.023184499994385988,
+    "recorded_encode_s": 0.024525700020603836,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "SecurityForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.022339199989801273,
+    "recorded_encode_s": 0.08191539999097586,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "SecurityForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.02283450000686571,
+    "recorded_encode_s": 0.05659630009904504,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "SecurityForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.022232599993003532,
+    "recorded_encode_s": 0.03872820001561195,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "SecurityForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.02276480000000447,
+    "recorded_encode_s": 0.05940379993990064,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "SecurityForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.0224564999807626,
+    "recorded_encode_s": 0.025232499931007624,
+    "texts": 1,
+    "tokens_in": 15,
+    "recorded_tokens_in": 15
+   }
+  ],
+  "SecurityForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.022493299999041483,
+    "recorded_encode_s": 0.031641899957321584,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "SecurityForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.02233049998176284,
+    "recorded_encode_s": 0.08442900003865361,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "SecurityForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.022758400009479374,
+    "recorded_encode_s": 0.077214700053446,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "SecurityForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.02259770000819117,
+    "recorded_encode_s": 0.03143400000408292,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "SecurityForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.022662100003799424,
+    "recorded_encode_s": 0.02401829999871552,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "SecurityForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.023184699995908886,
+    "recorded_encode_s": 0.02813880005851388,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "SecurityForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.02310550000402145,
+    "recorded_encode_s": 0.050040400004945695,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "SecurityForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022569599997950718,
+    "recorded_encode_s": 0.03707439999561757,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "SecurityForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.02324619999853894,
+    "recorded_encode_s": 0.03573579993098974,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "SecurityForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.022642500000074506,
+    "recorded_encode_s": 0.052417300059460104,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "SecurityForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.022151000011945143,
+    "recorded_encode_s": 0.03438319999258965,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "SecurityForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.022434699989389628,
+    "recorded_encode_s": 0.030223499983549118,
+    "texts": 1,
+    "tokens_in": 15,
+    "recorded_tokens_in": 15
+   }
+  ],
+  "SecurityForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.02836970001226291,
+    "recorded_encode_s": 0.03958860004786402,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "SecurityForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.022775800025556237,
+    "recorded_encode_s": 0.031493699993006885,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "SecurityForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.023033800011035055,
+    "recorded_encode_s": 0.0580315999686718,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "SecurityForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.02246700000250712,
+    "recorded_encode_s": 0.03631429991219193,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "SecurityForce::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.02300929999910295,
+    "recorded_encode_s": 0.02846169995609671,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "SecurityForce::a::25": [
+   {
+    "seq": 0,
+    "encode_s": 0.02268359999288805,
+    "recorded_encode_s": 0.022731199976988137,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "SentimentForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.022842300008051097,
+    "recorded_encode_s": 0.025518500013276935,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "SentimentForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.022592399996938184,
+    "recorded_encode_s": 0.08698190003633499,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "SentimentForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.022401399997761473,
+    "recorded_encode_s": 0.0806198000209406,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "SentimentForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.02251740000792779,
+    "recorded_encode_s": 0.07019750005565584,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "SentimentForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.022101899987319484,
+    "recorded_encode_s": 0.03363419999368489,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "SentimentForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.022983500006375834,
+    "recorded_encode_s": 0.026981999981217086,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "SentimentForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.02262099998188205,
+    "recorded_encode_s": 0.0996000999584794,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "SentimentForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.022656399989500642,
+    "recorded_encode_s": 0.046840199967846274,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "SentimentForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.022762399981729686,
+    "recorded_encode_s": 0.024632300017401576,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "SentimentForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.022411200014175847,
+    "recorded_encode_s": 0.06966710009146482,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "SentimentForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.022749399999156594,
+    "recorded_encode_s": 0.024199999985285103,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "SentimentForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.024228199996287003,
+    "recorded_encode_s": 0.025131699978373945,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "SentimentForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.028382199991028756,
+    "recorded_encode_s": 0.03067060001194477,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "SentimentForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.022179299994604662,
+    "recorded_encode_s": 0.022989299963228405,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "SentimentForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022383700008504093,
+    "recorded_encode_s": 0.033735400065779686,
+    "texts": 1,
+    "tokens_in": 27,
+    "recorded_tokens_in": 27
+   }
+  ],
+  "SentimentForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.022684399998979643,
+    "recorded_encode_s": 0.023653500014916062,
+    "texts": 1,
+    "tokens_in": 30,
+    "recorded_tokens_in": 30
+   }
+  ],
+  "SentimentForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.022342700016452,
+    "recorded_encode_s": 0.027668000082485378,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "SentimentForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.02240609997534193,
+    "recorded_encode_s": 0.050750400056131184,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "SentimentForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.022313499997835606,
+    "recorded_encode_s": 0.02300459996331483,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "SentimentForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.023109599977033213,
+    "recorded_encode_s": 0.04244780004955828,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "SentimentForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.02266550000058487,
+    "recorded_encode_s": 0.02800079993903637,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "SentimentForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.02757979999296367,
+    "recorded_encode_s": 0.02731490007136017,
+    "texts": 1,
+    "tokens_in": 16,
+    "recorded_tokens_in": 16
+   }
+  ],
+  "SentimentForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.0223083000164479,
+    "recorded_encode_s": 0.04050249990541488,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "SentimentForce::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.023046699992846698,
+    "recorded_encode_s": 0.08085579995531589,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "SentimentForce::a::25": [
+   {
+    "seq": 0,
+    "encode_s": 0.02267450001090765,
+    "recorded_encode_s": 0.05031419999431819,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "SentimentForce::a::28": [
+   {
+    "seq": 0,
+    "encode_s": 0.02289250001194887,
+    "recorded_encode_s": 0.02835800009779632,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "SentimentForce::a::30": [
+   {
+    "seq": 0,
+    "encode_s": 0.022781800013035536,
+    "recorded_encode_s": 0.0297242000233382,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "SummarizeForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.02233079998404719,
+    "recorded_encode_s": 0.029207800049334764,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "SummarizeForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.02207889998680912,
+    "recorded_encode_s": 0.02349669998511672,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "SummarizeForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.02706000002217479,
+    "recorded_encode_s": 0.03706580004654825,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "SummarizeForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.023119899997254834,
+    "recorded_encode_s": 0.11390460003167391,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "SummarizeForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.022744799993233755,
+    "recorded_encode_s": 0.08841590001247823,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "SummarizeForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.022722900001099333,
+    "recorded_encode_s": 0.031184199964627624,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "SummarizeForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.022279900003923103,
+    "recorded_encode_s": 0.025258700014092028,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "SummarizeForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.022101500013377517,
+    "recorded_encode_s": 0.025063399923965335,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "SummarizeForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.022549199988134205,
+    "recorded_encode_s": 0.025619399966672063,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "SummarizeForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.022377699991920963,
+    "recorded_encode_s": 0.02490710001438856,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "SummarizeForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.02711779999663122,
+    "recorded_encode_s": 0.0263723999960348,
+    "texts": 1,
+    "tokens_in": 16,
+    "recorded_tokens_in": 16
+   }
+  ],
+  "SummarizeForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.023297200008528307,
+    "recorded_encode_s": 0.02565829991362989,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "SummarizeForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.022568900021724403,
+    "recorded_encode_s": 0.029650900047272444,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "SummarizeForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.026773000019602478,
+    "recorded_encode_s": 0.03463279991410673,
+    "texts": 1,
+    "tokens_in": 44,
+    "recorded_tokens_in": 44
+   }
+  ],
+  "SummarizeForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.02646160000585951,
+    "recorded_encode_s": 0.03434909996576607,
+    "texts": 1,
+    "tokens_in": 33,
+    "recorded_tokens_in": 33
+   }
+  ],
+  "SummarizeForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.022622199991019443,
+    "recorded_encode_s": 0.05897849996108562,
+    "texts": 1,
+    "tokens_in": 32,
+    "recorded_tokens_in": 32
+   }
+  ],
+  "SummarizeForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.022827499982668087,
+    "recorded_encode_s": 0.1261054000351578,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "SummarizeForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.022112400009064004,
+    "recorded_encode_s": 0.02505830000154674,
+    "texts": 1,
+    "tokens_in": 30,
+    "recorded_tokens_in": 30
+   }
+  ],
+  "SummarizeForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.022899000003235415,
+    "recorded_encode_s": 0.02645130001474172,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "SummarizeForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.023461900011170655,
+    "recorded_encode_s": 0.03891280002426356,
+    "texts": 1,
+    "tokens_in": 26,
+    "recorded_tokens_in": 26
+   }
+  ],
+  "SummarizeForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.02312609998625703,
+    "recorded_encode_s": 0.026201399974524975,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "SummarizeForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.02272210002411157,
+    "recorded_encode_s": 0.024488299968652427,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "SupportForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.022162899986142293,
+    "recorded_encode_s": 0.026530100032687187,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "SupportForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.0226803999976255,
+    "recorded_encode_s": 0.029741099919192493,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "SupportForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.022709300013957545,
+    "recorded_encode_s": 0.02689410001039505,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "SupportForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.022892700013471767,
+    "recorded_encode_s": 0.055542999994941056,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "SupportForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.022536000004038215,
+    "recorded_encode_s": 0.025004600058309734,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "SupportForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.025988200010033324,
+    "recorded_encode_s": 0.034736900008283556,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "SupportForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.02247450000140816,
+    "recorded_encode_s": 0.06195990007836372,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "SupportForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.02647329997853376,
+    "recorded_encode_s": 0.0403587999753654,
+    "texts": 1,
+    "tokens_in": 36,
+    "recorded_tokens_in": 36
+   }
+  ],
+  "SupportForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.022678000008454546,
+    "recorded_encode_s": 0.025835099979303777,
+    "texts": 1,
+    "tokens_in": 30,
+    "recorded_tokens_in": 30
+   }
+  ],
+  "SupportForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.02226850000442937,
+    "recorded_encode_s": 0.03653189993929118,
+    "texts": 1,
+    "tokens_in": 31,
+    "recorded_tokens_in": 31
+   }
+  ],
+  "SupportForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.02677130000665784,
+    "recorded_encode_s": 0.03739369998220354,
+    "texts": 1,
+    "tokens_in": 35,
+    "recorded_tokens_in": 35
+   }
+  ],
+  "SupportForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.02785869999206625,
+    "recorded_encode_s": 0.06858510000165552,
+    "texts": 1,
+    "tokens_in": 37,
+    "recorded_tokens_in": 37
+   }
+  ],
+  "SupportForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.0225380000192672,
+    "recorded_encode_s": 0.050630300072953105,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "SupportForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022513700008857995,
+    "recorded_encode_s": 0.02911759994458407,
+    "texts": 1,
+    "tokens_in": 30,
+    "recorded_tokens_in": 30
+   }
+  ],
+  "SupportForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.026196699996944517,
+    "recorded_encode_s": 0.19639810000080615,
+    "texts": 1,
+    "tokens_in": 34,
+    "recorded_tokens_in": 34
+   }
+  ],
+  "SupportForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.022592599998461083,
+    "recorded_encode_s": 0.07997800002340227,
+    "texts": 1,
+    "tokens_in": 31,
+    "recorded_tokens_in": 31
+   }
+  ],
+  "SupportForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.022506199980853125,
+    "recorded_encode_s": 0.02523660007864237,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "SupportForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.022431199991842732,
+    "recorded_encode_s": 0.027325999923050404,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "SupportForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.02843220002250746,
+    "recorded_encode_s": 0.02607779996469617,
+    "texts": 1,
+    "tokens_in": 27,
+    "recorded_tokens_in": 27
+   }
+  ],
+  "SupportForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.022160699998494238,
+    "recorded_encode_s": 0.0357924000127241,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "SupportForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.022135700011858717,
+    "recorded_encode_s": 0.02543299994431436,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "SupportForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.023285600007511675,
+    "recorded_encode_s": 0.029071100056171417,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "SupportForce::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.022414099978050217,
+    "recorded_encode_s": 0.02972969994880259,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "TrendForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.02340179999009706,
+    "recorded_encode_s": 0.027564499992877245,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "TrendForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.023373300005914643,
+    "recorded_encode_s": 0.043678199988789856,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "TrendForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.02256029998534359,
+    "recorded_encode_s": 0.024813500000163913,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "TrendForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.022337600006721914,
+    "recorded_encode_s": 0.026825800072401762,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "TrendForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.022338999988278374,
+    "recorded_encode_s": 0.0246908999979496,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "TrendForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.022593300003791228,
+    "recorded_encode_s": 0.02550600003451109,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "TrendForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.02216469999984838,
+    "recorded_encode_s": 0.02634580002631992,
+    "texts": 1,
+    "tokens_in": 17,
+    "recorded_tokens_in": 17
+   }
+  ],
+  "TrendForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.02217969999765046,
+    "recorded_encode_s": 0.029928699950687587,
+    "texts": 1,
+    "tokens_in": 18,
+    "recorded_tokens_in": 18
+   }
+  ],
+  "TrendForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.022064799995860085,
+    "recorded_encode_s": 0.03572879999410361,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "TrendForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.02248909999616444,
+    "recorded_encode_s": 0.05209750006906688,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "TrendForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.02303279997431673,
+    "recorded_encode_s": 0.03596979996655136,
+    "texts": 1,
+    "tokens_in": 19,
+    "recorded_tokens_in": 19
+   }
+  ],
+  "TrendForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.022281200013821945,
+    "recorded_encode_s": 0.03429910005070269,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "TrendForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.02282409998588264,
+    "recorded_encode_s": 0.02681130007840693,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "TrendForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.02276910000364296,
+    "recorded_encode_s": 0.03227570001035929,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "TrendForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022713400016073138,
+    "recorded_encode_s": 0.20172489993274212,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "TrendForce::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.02272049998282455,
+    "recorded_encode_s": 0.05114390002563596,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "TrendForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.023045999987516552,
+    "recorded_encode_s": 0.031596300075761974,
+    "texts": 1,
+    "tokens_in": 15,
+    "recorded_tokens_in": 15
+   }
+  ],
+  "TrendForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.022762800013879314,
+    "recorded_encode_s": 0.051246499991975725,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ],
+  "TrendForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.022986700001638383,
+    "recorded_encode_s": 0.026732999947853386,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "TrendForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.022577299998374656,
+    "recorded_encode_s": 0.029010500060394406,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "TrendForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.022164499998325482,
+    "recorded_encode_s": 0.028534600045531988,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "TrendForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.02245990000665188,
+    "recorded_encode_s": 0.02736960002221167,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "TrendForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.02786890001152642,
+    "recorded_encode_s": 0.027537500020116568,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "VizForce::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.022443599998950958,
+    "recorded_encode_s": 0.0656965000089258,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "VizForce::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.022710600023856387,
+    "recorded_encode_s": 0.06203489995095879,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "VizForce::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.024001300014788285,
+    "recorded_encode_s": 0.039244100102223456,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "VizForce::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.022324399993522093,
+    "recorded_encode_s": 0.02621700009331107,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "VizForce::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.02269220000016503,
+    "recorded_encode_s": 0.026459300075657666,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "VizForce::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.022611100022913888,
+    "recorded_encode_s": 0.026369999977760017,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "VizForce::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.02252060000319034,
+    "recorded_encode_s": 0.028475199942477047,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "VizForce::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.022837800002889708,
+    "recorded_encode_s": 0.02612829999998212,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "VizForce::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.02245509999920614,
+    "recorded_encode_s": 0.027949700015597045,
+    "texts": 1,
+    "tokens_in": 23,
+    "recorded_tokens_in": 23
+   }
+  ],
+  "VizForce::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.022125899995444342,
+    "recorded_encode_s": 0.03543439996428788,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "VizForce::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.023463399993488565,
+    "recorded_encode_s": 0.07360509992577136,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "VizForce::a::11": [
+   {
+    "seq": 0,
+    "encode_s": 0.022840099991299212,
+    "recorded_encode_s": 0.05857649992685765,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "VizForce::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.028105200006393716,
+    "recorded_encode_s": 0.07479689992032945,
+    "texts": 1,
+    "tokens_in": 16,
+    "recorded_tokens_in": 16
+   }
+  ],
+  "VizForce::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.02198090002639219,
+    "recorded_encode_s": 0.033478999976068735,
+    "texts": 1,
+    "tokens_in": 15,
+    "recorded_tokens_in": 15
+   }
+  ],
+  "VizForce::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.022472299984656274,
+    "recorded_encode_s": 0.05559529992751777,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "VizForce::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022131699981400743,
+    "recorded_encode_s": 0.036782899987883866,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "VizForce::a::17": [
+   {
+    "seq": 0,
+    "encode_s": 0.02270989998942241,
+    "recorded_encode_s": 0.036643800092861056,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "VizForce::a::18": [
+   {
+    "seq": 0,
+    "encode_s": 0.02977259998442605,
+    "recorded_encode_s": 0.026962000061757863,
+    "texts": 1,
+    "tokens_in": 31,
+    "recorded_tokens_in": 31
+   }
+  ],
+  "VizForce::a::19": [
+   {
+    "seq": 0,
+    "encode_s": 0.025980699982028455,
+    "recorded_encode_s": 0.20566800003871322,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "VizForce::a::20": [
+   {
+    "seq": 0,
+    "encode_s": 0.023232400009874254,
+    "recorded_encode_s": 0.028769000084139407,
+    "texts": 1,
+    "tokens_in": 27,
+    "recorded_tokens_in": 27
+   }
+  ],
+  "VizForce::a::21": [
+   {
+    "seq": 0,
+    "encode_s": 0.022955299995373935,
+    "recorded_encode_s": 0.02621989999897778,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "VizForce::a::22": [
+   {
+    "seq": 0,
+    "encode_s": 0.025109200010774657,
+    "recorded_encode_s": 0.031234199996106327,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "VizForce::a::23": [
+   {
+    "seq": 0,
+    "encode_s": 0.022836699994513765,
+    "recorded_encode_s": 0.055898600025102496,
+    "texts": 1,
+    "tokens_in": 27,
+    "recorded_tokens_in": 27
+   }
+  ],
+  "VizForce::a::24": [
+   {
+    "seq": 0,
+    "encode_s": 0.023263000010047108,
+    "recorded_encode_s": 0.027302499976940453,
+    "texts": 1,
+    "tokens_in": 31,
+    "recorded_tokens_in": 31
+   }
+  ],
+  "VizForce::a::25": [
+   {
+    "seq": 0,
+    "encode_s": 0.02286709999316372,
+    "recorded_encode_s": 0.04384309996385127,
+    "texts": 1,
+    "tokens_in": 31,
+    "recorded_tokens_in": 31
+   }
+  ],
+  "VizForce::a::26": [
+   {
+    "seq": 0,
+    "encode_s": 0.02293389997794293,
+    "recorded_encode_s": 0.05905860010534525,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "VizForce::a::27": [
+   {
+    "seq": 0,
+    "encode_s": 0.02280760000576265,
+    "recorded_encode_s": 0.04602460004389286,
+    "texts": 1,
+    "tokens_in": 29,
+    "recorded_tokens_in": 29
+   }
+  ],
+  "VizForce::a::28": [
+   {
+    "seq": 0,
+    "encode_s": 0.02668500001891516,
+    "recorded_encode_s": 0.03913210006430745,
+    "texts": 1,
+    "tokens_in": 28,
+    "recorded_tokens_in": 28
+   }
+  ],
+  "VizForce::a::29": [
+   {
+    "seq": 0,
+    "encode_s": 0.022452700010035187,
+    "recorded_encode_s": 0.07807219994720072,
+    "texts": 1,
+    "tokens_in": 27,
+    "recorded_tokens_in": 27
+   }
+  ],
+  "VizForce::a::30": [
+   {
+    "seq": 0,
+    "encode_s": 0.02634429998579435,
+    "recorded_encode_s": 0.04195900005288422,
+    "texts": 1,
+    "tokens_in": 39,
+    "recorded_tokens_in": 39
+   }
+  ],
+  "VizForce::a::31": [
+   {
+    "seq": 0,
+    "encode_s": 0.026591200003167614,
+    "recorded_encode_s": 0.05910079996101558,
+    "texts": 1,
+    "tokens_in": 41,
+    "recorded_tokens_in": 41
+   }
+  ],
+  "VizForce::a::32": [
+   {
+    "seq": 0,
+    "encode_s": 0.026472699973965064,
+    "recorded_encode_s": 0.08854920009616762,
+    "texts": 1,
+    "tokens_in": 41,
+    "recorded_tokens_in": 41
+   }
+  ],
+  "VizForce::a::33": [
+   {
+    "seq": 0,
+    "encode_s": 0.026441099995281547,
+    "recorded_encode_s": 0.06916920002549887,
+    "texts": 1,
+    "tokens_in": 38,
+    "recorded_tokens_in": 38
+   }
+  ],
+  "VizForce::a::34": [
+   {
+    "seq": 0,
+    "encode_s": 0.026597200019750744,
+    "recorded_encode_s": 0.03833080001641065,
+    "texts": 1,
+    "tokens_in": 35,
+    "recorded_tokens_in": 35
+   }
+  ],
+  "VizForce::a::35": [
+   {
+    "seq": 0,
+    "encode_s": 0.02641849999781698,
+    "recorded_encode_s": 0.0770085999974981,
+    "texts": 1,
+    "tokens_in": 37,
+    "recorded_tokens_in": 37
+   }
+  ],
+  "VizForce::a::36": [
+   {
+    "seq": 0,
+    "encode_s": 0.02639199999975972,
+    "recorded_encode_s": 0.04812209994997829,
+    "texts": 1,
+    "tokens_in": 33,
+    "recorded_tokens_in": 33
+   }
+  ],
+  "VizForce::a::37": [
+   {
+    "seq": 0,
+    "encode_s": 0.026469900010852143,
+    "recorded_encode_s": 0.03592729999218136,
+    "texts": 1,
+    "tokens_in": 36,
+    "recorded_tokens_in": 36
+   }
+  ],
+  "VizForce::a::38": [
+   {
+    "seq": 0,
+    "encode_s": 0.026404700009152293,
+    "recorded_encode_s": 0.03654909995384514,
+    "texts": 1,
+    "tokens_in": 34,
+    "recorded_tokens_in": 34
+   }
+  ],
+  "VizForce::a::39": [
+   {
+    "seq": 0,
+    "encode_s": 0.02648199998657219,
+    "recorded_encode_s": 0.03603939991444349,
+    "texts": 1,
+    "tokens_in": 42,
+    "recorded_tokens_in": 42
+   }
+  ],
+  "VizForce::a::40": [
+   {
+    "seq": 0,
+    "encode_s": 0.022541999991517514,
+    "recorded_encode_s": 0.035403499961830676,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "VizForce::a::41": [
+   {
+    "seq": 0,
+    "encode_s": 0.022428199998103082,
+    "recorded_encode_s": 0.02838610007893294,
+    "texts": 1,
+    "tokens_in": 20,
+    "recorded_tokens_in": 20
+   }
+  ],
+  "VizForce::a::42": [
+   {
+    "seq": 0,
+    "encode_s": 0.02215740000247024,
+    "recorded_encode_s": 0.028157399967312813,
+    "texts": 1,
+    "tokens_in": 21,
+    "recorded_tokens_in": 21
+   }
+  ],
+  "WorkFlowGenie::a::0": [
+   {
+    "seq": 0,
+    "encode_s": 0.023111000016797334,
+    "recorded_encode_s": 0.026895200018770993,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "WorkFlowGenie::a::1": [
+   {
+    "seq": 0,
+    "encode_s": 0.02490739998756908,
+    "recorded_encode_s": 0.033812700072303414,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "WorkFlowGenie::a::2": [
+   {
+    "seq": 0,
+    "encode_s": 0.02338140000938438,
+    "recorded_encode_s": 0.053550099954009056,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "WorkFlowGenie::a::3": [
+   {
+    "seq": 0,
+    "encode_s": 0.02290570002514869,
+    "recorded_encode_s": 0.06276190001517534,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "WorkFlowGenie::a::4": [
+   {
+    "seq": 0,
+    "encode_s": 0.022231800016015768,
+    "recorded_encode_s": 0.0542947999201715,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "WorkFlowGenie::a::5": [
+   {
+    "seq": 0,
+    "encode_s": 0.022497400001157075,
+    "recorded_encode_s": 0.06570249993819743,
+    "texts": 1,
+    "tokens_in": 30,
+    "recorded_tokens_in": 30
+   }
+  ],
+  "WorkFlowGenie::a::6": [
+   {
+    "seq": 0,
+    "encode_s": 0.02648499998031184,
+    "recorded_encode_s": 0.08625809999648482,
+    "texts": 1,
+    "tokens_in": 34,
+    "recorded_tokens_in": 34
+   }
+  ],
+  "WorkFlowGenie::a::7": [
+   {
+    "seq": 0,
+    "encode_s": 0.024351400003070012,
+    "recorded_encode_s": 0.11737729993183166,
+    "texts": 1,
+    "tokens_in": 31,
+    "recorded_tokens_in": 31
+   }
+  ],
+  "WorkFlowGenie::a::8": [
+   {
+    "seq": 0,
+    "encode_s": 0.02621229999931529,
+    "recorded_encode_s": 0.06720190006308258,
+    "texts": 1,
+    "tokens_in": 33,
+    "recorded_tokens_in": 33
+   }
+  ],
+  "WorkFlowGenie::a::9": [
+   {
+    "seq": 0,
+    "encode_s": 0.0231768999947235,
+    "recorded_encode_s": 0.04904389998409897,
+    "texts": 1,
+    "tokens_in": 31,
+    "recorded_tokens_in": 31
+   }
+  ],
+  "WorkFlowGenie::a::10": [
+   {
+    "seq": 0,
+    "encode_s": 0.026293599978089333,
+    "recorded_encode_s": 0.20021619996987283,
+    "texts": 1,
+    "tokens_in": 34,
+    "recorded_tokens_in": 34
+   }
+  ],
+  "WorkFlowGenie::a::12": [
+   {
+    "seq": 0,
+    "encode_s": 0.022649599995929748,
+    "recorded_encode_s": 0.03227650001645088,
+    "texts": 1,
+    "tokens_in": 31,
+    "recorded_tokens_in": 31
+   }
+  ],
+  "WorkFlowGenie::a::13": [
+   {
+    "seq": 0,
+    "encode_s": 0.02281240001320839,
+    "recorded_encode_s": 0.11185570002999157,
+    "texts": 1,
+    "tokens_in": 25,
+    "recorded_tokens_in": 25
+   }
+  ],
+  "WorkFlowGenie::a::14": [
+   {
+    "seq": 0,
+    "encode_s": 0.02280929998960346,
+    "recorded_encode_s": 0.13131369999609888,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "WorkFlowGenie::a::15": [
+   {
+    "seq": 0,
+    "encode_s": 0.022038600000087172,
+    "recorded_encode_s": 0.043502100044861436,
+    "texts": 1,
+    "tokens_in": 22,
+    "recorded_tokens_in": 22
+   }
+  ],
+  "WorkFlowGenie::a::16": [
+   {
+    "seq": 0,
+    "encode_s": 0.02286840000306256,
+    "recorded_encode_s": 0.035234599956311285,
+    "texts": 1,
+    "tokens_in": 24,
+    "recorded_tokens_in": 24
+   }
+  ]
+ },
+ "measured": {
+  "device": "cuda",
+  "model": "nvidia/llama-nemotron-embed-1b-v2",
+  "revision": "113abe4acafa848e77ead9c0623205e511932348",
+  "dtype": "float32",
+  "calls": 715,
+  "all_records": true,
+  "warm_up_calls": 20,
+  "texts_without_a_kept_cpu_vector": 715,
+  "min_cosine_to_stored_cpu": null,
+  "script": "tools/measure_gpu_embed_times.py",
+  "script_sha256": "9f551c8472d2a356ac579a61223a012bcf42a75b4833478c8de57f71203c0937"
+ }
+}
