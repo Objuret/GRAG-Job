@@ -11,7 +11,9 @@ build cost (test/graph/build_cost.json), and writes grag-data.xlsx. It prints wh
 each arm's runs cover and names a set an arm has no run on. A run split over the laptop and the
 desktop is read with its halves for its environment. Every run's time, and its judging's time, is
 its questions' times added; an arm's is its runs' added. A run that read its interpreter's answers
-and its query embeddings from an earlier run takes those values from that run (MADE_IN). Two scores
+and its query embeddings from an earlier run takes those values from that run (MADE_IN); the artefact's
+run on the 715 takes its query embeddings from a run of the same questions without answers that embedded
+every question's texts in one pass, on the graphics card (EMBEDDED_IN). Two scores
 judged after a run, on its answers with its judge, are read from the folder beside the run
 (REJUDGED), and their judging is added to the run's. A column of a run is a measure he named
 (times, tokens, characters, runtime, the RAGAS scores) or an id of the dataset, the evaluation or
@@ -48,6 +50,15 @@ SETS = {"gold100": "data/gold100.jsonl", "answerable715": "data/answerable715.js
 # the artefact's run on the hundred read its interpreter's answers and its query embeddings, the same
 # on every question, from this run (his 2026-10-22 "it's the same as the fucking "old run's interpreter"")
 MADE_IN = {"artefact_v4__gold100__cb72000__20261023T021439Z": "artefact_v4__gold100__cb72000__20261020T041923Z"}
+# the artefact's run on the 715 takes its query embeddings, and only those, from a run that embedded every
+# question's texts in one pass, as MADE_IN's run did for the hundred: the same questions run again without
+# answers, each first call read from the run's own store, the embedding cache empty, on the graphics card.
+# Starts of the run that the desktop's crashes ended had embedded some questions' texts, and their records
+# went with them
+EMBEDDED_IN = {"artefact_v4__answerable715__cb72000__20261025T211532Z":
+               "artefact_v4__answerable715__cb72000__20261027_query_embeddings"}
+# in EMBEDDED_IN's run: each text's vector against the run's own vector of the same text, by cosine
+VECTOR_CHECK = "query_vectors_against_the_run.json"
 # scores judged after a run, on its answers with its judge, by prod/run.py --rejudge into the folder
 # beside the run, named by the run, this and the set (his 2026-10-23 "just toggle them and run them
 # on all 100 for all 3 arms"); a run that judged every score itself has no such folder
@@ -293,12 +304,15 @@ def failed_tries_seconds(records):
                for c in records if c.get("kind") == "chat")
 
 
-def interpreter_and_embeddings(r):
+def interpreter_and_embeddings(r, vectors=True):
     """What the interpreter answered and what was embedded for the query, without how each was got
-    (asked anew, or read from a store or a cache)."""
+    (asked anew, or read from a store or a cache); without the vectors' sha256 when vectors is False
+    (vectors made again on another device or in other batches differ in their last bits)."""
     i = r["meta"]["interpreter"]
+    embedded = i["embeddings"] if vectors else {
+        k: {f: v for f, v in g.items() if f != "embedding"} for k, g in i["embeddings"].items()}
     return ([{k: v for k, v in s.items() if k not in ("cache_hit", "offline", "asks")} for s in i["stages"]],
-            i["embeddings"])
+            embedded)
 
 
 def halves(d, name):
@@ -405,6 +419,10 @@ def runs_tables(arm, folder, refs, sets, by_sha):
         cells[qid].update(scores)
     source = {o["id"]: o for o in rows(ROOT / "output/k=chars" / MADE_IN[folder] / "arm_outputs.jsonl")} \
         if folder in MADE_IN else {}
+    embedding_source = {o["id"]: o for o in rows(ROOT / "output/k=chars" / EMBEDDED_IN[folder] / "arm_outputs.jsonl")} \
+        if folder in EMBEDDED_IN else {}
+    # the source's vectors against the run's own, text by text: every text compared, none below the cosine
+    vectors = read(ROOT / "output/k=chars" / EMBEDDED_IN[folder] / VECTOR_CHECK) if folder in EMBEDDED_IN else {}
     questions = []
     for r in outputs:
         own = {}
@@ -428,6 +446,23 @@ def runs_tables(arm, folder, refs, sets, by_sha):
             # the calls that embedded all of them
             replaced = own.get("embed")
             own["chat"], own["embed"] = made["chat"], made["embed"]
+        if embedding_source:
+            o = embedding_source[r["id"]]
+            if interpreter_and_embeddings(r, vectors=False) != interpreter_and_embeddings(o, vectors=False):
+                sys.exit(f"{arm} {r['id']}: the interpreter's answers or the texts embedded are not those of "
+                         f"{EMBEDDED_IN[folder]}")
+            v = vectors["per_question"].get(r["id"])
+            if not v or v["compared"] != v["texts"] or v["min_cosine"] < vectors["min_cosine_required"]:
+                sys.exit(f"{arm} {r['id']}: not every vector of {EMBEDDED_IN[folder]} is the run's own by its "
+                         f"cosine ({VECTOR_CHECK})")
+            made = {e["kind"]: e for e in o["retrieval"]}
+            if "embed" not in made:
+                sys.exit(f"{arm} {r['id']}: {EMBEDDED_IN[folder]} embedded nothing for the question")
+            records += [(made["embed"], [c for c in o["calls"] if c.get("role") != "answer" and c.get("kind") == "embed"])]
+            # the run's own embedding calls, for texts its machine had not embedded before, give way to the
+            # calls that embedded all of them; the interpreter stays the run's own
+            replaced = own.get("embed")
+            own["embed"] = made["embed"]
         mine = cells[r["id"]]
         if set(mine) != {s for s, _, _ in SCORES} or any(c["status"] != "ok" for c in mine.values()):
             sys.exit(f"{arm} {r['id']}: not every score is there and ok")
@@ -450,11 +485,19 @@ def runs_tables(arm, folder, refs, sets, by_sha):
         # by its answering try, outside the row's own span
         stored = (not source and interp is not None
                   and all(s.get("cache_hit") for s in r["meta"]["interpreter"]["stages"]))
-        failed = sum(call["retry_s"] for call in
-                     ((g, replaced) if source else (g, qe) if stored else (g, interp, qe)) if call)
-        made_elsewhere = ((sum(c["time_s"] - c["retry_s"] for c in (interp, qe))
-                           - (replaced["time_s"] - replaced["retry_s"] if replaced else 0.0)) if source
-                          else interp["time_s"] - interp["retry_s"] if stored else 0.0)
+        # the calls inside the row's own span, and those made elsewhere, which count by their answering
+        # try; a call of the run's own that gave way to one made elsewhere leaves the row's time
+        if source:
+            inside, elsewhere = (g, replaced), (interp, qe)
+        elif embedding_source:
+            inside, elsewhere = ((g, replaced), (interp, qe)) if stored else ((g, interp, replaced), (qe,))
+        elif stored:
+            inside, elsewhere = (g, qe), (interp,)
+        else:
+            inside, elsewhere = (g, interp, qe), ()
+        failed = sum(call["retry_s"] for call in inside if call)
+        made_elsewhere = (sum(c["time_s"] - c["retry_s"] for c in elsewhere if c)
+                          - (replaced["time_s"] - replaced["retry_s"] if replaced else 0.0))
         # the characters the cut handed over, checked against the texts themselves
         chars = r["meta"]["char_budget"]["chars"]
         if chars != sum(len(t) for t in r["contexts"]) or chars > man["char_budget"]:

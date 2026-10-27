@@ -98,7 +98,13 @@ the palace and the session transcripts; the numbers are in the run folders and u
   laptop and the desktop and merged by `tools/merge_split_run.py`, both halves under its `halves/`),
   `lucene__answerable715__cb72000__20261023T112745Z` and
   `vector__answerable715__cb72000__20261024T004317Z`; each judged all sixteen scores itself. Their
-  files over 100 MB are listed in `.gitignore` and copied between the machines.
+  files over 100 MB are listed in `.gitignore` and copied between the machines. Starts of the
+  artefact's run that the desktop's crashes ended had embedded some questions' query texts, and
+  their records went with them, so the workbook takes that run's query embeddings from
+  `artefact_v4__answerable715__cb72000__20261027_query_embeddings`: the same questions without
+  answers, each first call read from the run's stores, the embedding cache empty, on the desktop's
+  graphics card (the same retrieval on all 715; each text's vector checked against the run's own,
+  `query_vectors_against_the_run.json` in it).
   `context_recall_id` and `context_precision_id` count record ids; the nonllm pair counts record
   content against record content, each delivered text cut into its records
   (`nonllm-record-content/1` in each run's `corrections.json`).

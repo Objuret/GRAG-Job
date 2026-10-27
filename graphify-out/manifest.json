@@ -75,9 +75,9 @@
     "semantic_hash": "7b65bf271aa2968d686e39c8798a87ff"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\prod\\harness\\fields.py": {
-    "mtime": 1793061398.851362,
-    "ast_hash": "74d2b46b4384c5a93eeae53daf81bcc3",
-    "semantic_hash": "74d2b46b4384c5a93eeae53daf81bcc3"
+    "mtime": 1793100574.849316,
+    "ast_hash": "ab4af29c3f0219ecf9496d2f8c54cdef",
+    "semantic_hash": "ab4af29c3f0219ecf9496d2f8c54cdef"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\prod\\harness\\jsonl.py": {
     "mtime": 1790072775.2471683,
@@ -285,9 +285,9 @@
     "semantic_hash": "7e9fa8262e25f683b27134b14f50f654"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\test\\arms\\artefact_v4.py": {
-    "mtime": 1793015981.9541986,
-    "ast_hash": "b82514b47c43b33187e6d4dbcb070062",
-    "semantic_hash": "b82514b47c43b33187e6d4dbcb070062"
+    "mtime": 1793063368.8231647,
+    "ast_hash": "3fbaa0badc426becd9de618c98cd821f",
+    "semantic_hash": "3fbaa0badc426becd9de618c98cd821f"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\test\\arms\\artefact_volmax.py": {
     "mtime": 1788931766.653245,

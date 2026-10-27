@@ -31,6 +31,7 @@ One run of one retrieval method, **vector**, over 715 questions: for each questi
 | `correct_nonllm_record_content.py` | The script that made the non-LLM record-content correction (context_recall_nonllm and context_precision_nonllm calculated again, record content against record content); run on the files from before it, with the code named in its entry, it gives the corrected files again. |  |
 | `correct_code_version_from_reflog.py` | The script that made the code-version correction (the commit each start ran on, by its clone's own reflog, where git gave no answer when the start began); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
 | `code_reflog.txt` | The evidence of the code-version correction: the reflog of the clone the run ran in, written on that machine: each move of HEAD, its commit, time and why. |  |
+| `desktop_start_20261026T001551Z_FIELDS.md`, `desktop_start_20261026T001551Z_eval_manifest.json`, `desktop_start_20261026T001551Z_run_manifest.json`, `desktop_start_20261026T001551Z_sha256.txt` | The records of a start that ran in this run's own folder on the desktop after the folder kept here was copied from it: its run_manifest.json, eval_manifest.json and FIELDS.md as that start wrote them, and the sha256 of the folder's files as they then stood. The start answered no question and judged no cell (its judging entry holds 0 calls), so no value of this folder changes by it; the name holds when it began. |  |
 
 Times are seconds (`_s`), milliseconds (`_ms`) or UTC stamps (`_at`; every other time text carries its own zone). Sizes are tokens, characters (`chars`) or bytes. A count (calls, attempts, requests, texts, records, edges, refits, and the like) is a plain number of the things it names. A price (`usd`, `USD`) is the Claude program's own, in US dollars; no number of this harness uses it. The evaluation's scores run from 0 to 1 and higher is more; a score an arm ranks by says its own scale.
 
@@ -1166,7 +1167,7 @@ The file holds no record.
 | `workers` | integer | 1 | 0 |
 
 ---
-Written from `prod/harness/fields.py`, sha256 `ef5841854ddd95ae01da262ccf6ad2581936e1712178ac04ef32733a2a37ac92`.
+Written from `prod/harness/fields.py`, sha256 `ad90f9c9b4700dcd463dab196bb728c34f154cdbdfe5d27017973ade0c148afb`.
 
 The files as they stood when this was written, their line ends as git holds them (LF):
 
@@ -1180,6 +1181,10 @@ The files as they stood when this was written, their line ends as git holds them
 - `correct_nonllm_record_content.py` sha256 `22f302c2e645d3aecbf87ab8735b64b356695a43362ab1cad39ce406d6d59f75`
 - `correct_zero_usage.py` sha256 `8f1cb37eec34d6b58c927e2098d3ce47bc603c6594227751e2ac01211f8b3c97`
 - `corrections.json` sha256 `5f17a72d43242f1946701e99dfd8b9cdf4b4193f67644fa4ac96c014a21df8dd`
+- `desktop_start_20261026T001551Z_eval_manifest.json` sha256 `6c75ecb95dd28dc01fe7e86c145df4263fe9892975f5788169722a9dae05e21c`
+- `desktop_start_20261026T001551Z_FIELDS.md` sha256 `2b4ddb21e0db6fdb38e0a2cd10c6f5c44f1da86d1741e8784a3354a2676312ed`
+- `desktop_start_20261026T001551Z_run_manifest.json` sha256 `5772125e2002848ff0870fafe89493592ce41a4d850040be2baa3cc9be477e23`
+- `desktop_start_20261026T001551Z_sha256.txt` sha256 `5f8ed702f2262b4faca522f5985ad77f45938b9fc591b51115839a555eda33f1`
 - `eval_calls.jsonl` sha256 `f2e5b9aae2aba418b5c7e04e09840323155afaee6ceecf58e8fcfa08c1530d18`
 - `eval_failures.jsonl` sha256 `695aa78b36c95732d50f62d3fc5579d69830d0c5542ee3a5200986865fa094ac`
 - `eval_manifest.as_recorded.json` sha256 `cd3ede15ba4052ab14d2fbf8444a535af002ee817f4001629d372a7e6cfd797b`

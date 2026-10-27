@@ -1,0 +1,3588 @@
+{
+ "made_at": "2026-10-27T11:35:17.617795+00:00",
+ "how": "each text the run embedded, by its key, against the vector of the same key that the run it stands for made (its cache on the desktop, cpu and cuda, the laptop's CPU vectors copied to the desktop, and the laptop's own cache), by cosine in float64; no model call",
+ "min_cosine_required": 0.9999,
+ "texts": 3377,
+ "compared": 3377,
+ "compared_on_the_laptop": 96,
+ "min_cosine": 0.9999999999943618,
+ "below": [],
+ "not_found": [],
+ "per_question": {
+  "ActionGenie::a::2": {
+   "texts": 11,
+   "compared": 11,
+   "min_cosine": 0.9999999999983789
+  },
+  "ActionGenie::a::3": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999989453
+  },
+  "ActionGenie::a::4": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999990223
+  },
+  "ActionGenie::a::6": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.999999999999093
+  },
+  "ActionGenie::a::8": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.9999999999989451
+  },
+  "ActionGenie::a::9": {
+   "texts": 12,
+   "compared": 12,
+   "min_cosine": 0.9999999999982925
+  },
+  "ActionGenie::a::10": {
+   "texts": 13,
+   "compared": 13,
+   "min_cosine": 0.9999999999983158
+  },
+  "ActionGenie::a::11": {
+   "texts": 13,
+   "compared": 13,
+   "min_cosine": 0.9999999999985405
+  },
+  "ActionGenie::a::12": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999990785
+  },
+  "ActionGenie::a::13": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.999999999999023
+  },
+  "ActionGenie::a::14": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999988962
+  },
+  "ActionGenie::a::15": {
+   "texts": 11,
+   "compared": 11,
+   "min_cosine": 0.9999999999989067
+  },
+  "ActionGenie::a::16": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999993319
+  },
+  "ActionGenie::a::17": {
+   "texts": 14,
+   "compared": 14,
+   "min_cosine": 0.9999999999990523
+  },
+  "ActionGenie::a::18": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.9999999999986511
+  },
+  "ActionGenie::a::19": {
+   "texts": 11,
+   "compared": 11,
+   "min_cosine": 0.9999999999991498
+  },
+  "ActionGenie::a::20": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999990228
+  },
+  "ActionGenie::a::21": {
+   "texts": 12,
+   "compared": 12,
+   "min_cosine": 0.9999999999989366
+  },
+  "ActionGenie::a::22": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999989684
+  },
+  "ActionGenie::a::23": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999991834
+  },
+  "ActionGenie::a::24": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999988681
+  },
+  "ActionGenie::a::25": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999990183
+  },
+  "AnomalyForce::a::2": {
+   "texts": 11,
+   "compared": 11,
+   "min_cosine": 0.9999999999987579
+  },
+  "AnomalyForce::a::3": {
+   "texts": 12,
+   "compared": 12,
+   "min_cosine": 0.9999999999987113
+  },
+  "AnomalyForce::a::4": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999986242
+  },
+  "AnomalyForce::a::5": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.999999999998775
+  },
+  "AnomalyForce::a::6": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.9999999999986708
+  },
+  "AnomalyForce::a::7": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999989997
+  },
+  "AnomalyForce::a::8": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999990199
+  },
+  "AnomalyForce::a::9": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999992
+  },
+  "AnomalyForce::a::10": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.999999999998481
+  },
+  "AnomalyForce::a::11": {
+   "texts": 14,
+   "compared": 14,
+   "min_cosine": 0.9999999999989139
+  },
+  "AnomalyForce::a::12": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999988365
+  },
+  "AnomalyForce::a::13": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999988283
+  },
+  "AnomalyForce::a::14": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999985418
+  },
+  "AnomalyForce::a::15": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999991551
+  },
+  "AnomalyForce::a::16": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999990039
+  },
+  "AnomalyForce::a::18": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999985967
+  },
+  "AnomalyForce::a::19": {
+   "texts": 14,
+   "compared": 14,
+   "min_cosine": 0.9999999999985258
+  },
+  "AnomalyForce::a::20": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.9999999999990401
+  },
+  "AnomalyForce::a::21": {
+   "texts": 11,
+   "compared": 11,
+   "min_cosine": 0.9999999999981597
+  },
+  "AnomalyForce::a::22": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999990565
+  },
+  "AnomalyForce::a::23": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.999999999999216
+  },
+  "AnomalyForce::a::24": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999990972
+  },
+  "AnomalyForce::a::25": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999990186
+  },
+  "AnomalyForce::a::26": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.999999999998856
+  },
+  "AnomalyForce::a::27": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999990843
+  },
+  "AnomalyForce::a::28": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999990584
+  },
+  "AnomalyForce::a::29": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.9999999999991711
+  },
+  "AnomalyForce::a::30": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.999999999998896
+  },
+  "AnomalyForce::a::31": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.999999999999118
+  },
+  "AnomalyForce::a::32": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999988975
+  },
+  "AnomalyForce::a::33": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999984832
+  },
+  "AnomalyForce::a::34": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.999999999999059
+  },
+  "AutoTuneForce::a::2": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999990188
+  },
+  "AutoTuneForce::a::3": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999988316
+  },
+  "AutoTuneForce::a::4": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.999999999998486
+  },
+  "AutoTuneForce::a::5": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.999999999998634
+  },
+  "AutoTuneForce::a::6": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999990474
+  },
+  "AutoTuneForce::a::7": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999990896
+  },
+  "AutoTuneForce::a::8": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999989748
+  },
+  "AutoTuneForce::a::9": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999989333
+  },
+  "AutoTuneForce::a::10": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.999999999999134
+  },
+  "AutoTuneForce::a::11": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999991331
+  },
+  "AutoTuneForce::a::14": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999991193
+  },
+  "AutoTuneForce::a::15": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999987581
+  },
+  "AutoTuneForce::a::16": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999988003
+  },
+  "AutoTuneForce::a::17": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999991278
+  },
+  "AutoTuneForce::a::18": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999984073
+  },
+  "AutoTuneForce::a::19": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999989935
+  },
+  "AutoTuneForce::a::20": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999990268
+  },
+  "AutoTuneForce::a::21": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999993869
+  },
+  "CoachForce::a::1": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999988557
+  },
+  "CoachForce::a::2": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999990581
+  },
+  "CoachForce::a::3": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999976463
+  },
+  "CoachForce::a::4": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999991593
+  },
+  "CoachForce::a::6": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999989688
+  },
+  "CoachForce::a::7": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999991052
+  },
+  "CoachForce::a::8": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990972
+  },
+  "CoachForce::a::9": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999985787
+  },
+  "CoachForce::a::10": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.999999999999168
+  },
+  "CoachForce::a::12": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999992211
+  },
+  "CoachForce::a::13": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999980005
+  },
+  "CoachForce::a::14": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999990714
+  },
+  "CoachForce::a::15": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999984852
+  },
+  "CoachForce::a::16": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999988145
+  },
+  "CoachForce::a::17": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990425
+  },
+  "CoachForce::a::18": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999993361
+  },
+  "CoachForce::a::19": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.999999999999118
+  },
+  "CoachForce::a::20": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999991749
+  },
+  "CoachForce::a::21": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999991376
+  },
+  "CollaborateForce::a::2": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999988449
+  },
+  "CollaborateForce::a::3": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999992848
+  },
+  "CollaborateForce::a::4": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.999999999998405
+  },
+  "CollaborateForce::a::5": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999993243
+  },
+  "CollaborateForce::a::6": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999988032
+  },
+  "CollaborateForce::a::7": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999988054
+  },
+  "CollaborateForce::a::8": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999990802
+  },
+  "CollaborateForce::a::9": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999988003
+  },
+  "CollaborateForce::a::10": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999992266
+  },
+  "CollaborateForce::a::11": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999987355
+  },
+  "CollaborateForce::a::12": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999990443
+  },
+  "CollaborateForce::a::13": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999991298
+  },
+  "CollaborateForce::a::14": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992539
+  },
+  "CollaborateForce::a::15": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999991229
+  },
+  "CollaborateForce::a::16": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.999999999999237
+  },
+  "CollaborateForce::a::17": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999989266
+  },
+  "CollaborateForce::a::18": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999991769
+  },
+  "CollaborateForce::a::20": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999990146
+  },
+  "CollaborateForce::a::22": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.999999999999267
+  },
+  "CollaborateForce::a::23": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999990963
+  },
+  "CollaborateForce::a::24": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999990314
+  },
+  "CollaborateForce::a::25": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.999999999998781
+  },
+  "CollaborateForce::a::26": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999990026
+  },
+  "CollaborateForce::a::27": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999990201
+  },
+  "CollaborateForce::a::28": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999984588
+  },
+  "CollaborateForce::a::29": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999992328
+  },
+  "CollaborateForce::a::30": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999991533
+  },
+  "CollaborateForce::a::32": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999984923
+  },
+  "CollaborateForce::a::33": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999990974
+  },
+  "CollaborationForce::a::1": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999987328
+  },
+  "CollaborationForce::a::2": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999993543
+  },
+  "CollaborationForce::a::3": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999990459
+  },
+  "CollaborationForce::a::4": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999993223
+  },
+  "CollaborationForce::a::5": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999993023
+  },
+  "CollaborationForce::a::7": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999992039
+  },
+  "CollaborationForce::a::8": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.999999999998938
+  },
+  "CollaborationForce::a::9": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999988185
+  },
+  "CollaborationForce::a::10": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999992111
+  },
+  "CollaborationForce::a::11": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999985845
+  },
+  "CollaborationForce::a::13": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999991689
+  },
+  "CollaborationForce::a::14": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999989787
+  },
+  "CollaborationForce::a::15": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999983387
+  },
+  "CollaborationForce::a::16": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.9999999999991838
+  },
+  "CollaborationForce::a::17": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999990175
+  },
+  "CollaborationForce::a::18": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999991027
+  },
+  "CollaborationForce::a::19": {
+   "texts": 11,
+   "compared": 11,
+   "min_cosine": 0.9999999999985214
+  },
+  "CollaborationForce::a::20": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999989759
+  },
+  "CollaborationForce::a::21": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.999999999998052
+  },
+  "CollaborationForce::a::22": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999991322
+  },
+  "CollaborationForce::a::23": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.999999999999301
+  },
+  "CollaborationForce::a::24": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.999999999999453
+  },
+  "CollaborationForce::a::25": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999989069
+  },
+  "CollaborationForce::a::26": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999987093
+  },
+  "CollaborationForce::a::27": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999984812
+  },
+  "ConnectForce::a::1": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999975429
+  },
+  "ConnectForce::a::2": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999990017
+  },
+  "ConnectForce::a::3": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999991553
+  },
+  "ConnectForce::a::4": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999987339
+  },
+  "ConnectForce::a::6": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.9999999999973523
+  },
+  "ConnectForce::a::8": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999993607
+  },
+  "ConnectForce::a::9": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999980103
+  },
+  "ConnectForce::a::10": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999991507
+  },
+  "ConnectForce::a::11": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999988138
+  },
+  "ConnectForce::a::12": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999990226
+  },
+  "ConnectForce::a::13": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999986096
+  },
+  "ConnectForce::a::16": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999988556
+  },
+  "ContentForce::a::1": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.9999999999986164
+  },
+  "ContentForce::a::3": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991864
+  },
+  "ContentForce::a::4": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999988565
+  },
+  "ContentForce::a::5": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999990137
+  },
+  "ContentForce::a::6": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992957
+  },
+  "ContentForce::a::7": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999992428
+  },
+  "ContentForce::a::8": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999992166
+  },
+  "ContentForce::a::9": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999990081
+  },
+  "ContentForce::a::10": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999990432
+  },
+  "ContentForce::a::12": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999988733
+  },
+  "ContentForce::a::13": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999988305
+  },
+  "ContentForce::a::14": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999977338
+  },
+  "ContentForce::a::15": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991238
+  },
+  "ContextForce::a::2": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999988194
+  },
+  "ContextForce::a::3": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999986726
+  },
+  "ContextForce::a::4": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999988465
+  },
+  "ContextForce::a::5": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999989939
+  },
+  "ContextForce::a::6": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999991209
+  },
+  "ContextForce::a::7": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999987916
+  },
+  "ContextForce::a::8": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999990195
+  },
+  "ContextForce::a::9": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999988742
+  },
+  "ContextForce::a::10": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992841
+  },
+  "ContextForce::a::11": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999990883
+  },
+  "ContextForce::a::12": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990117
+  },
+  "ContextForce::a::13": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999986853
+  },
+  "ContextForce::a::14": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999986537
+  },
+  "ContextForce::a::15": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999992009
+  },
+  "ContextForce::a::16": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999991849
+  },
+  "ContextForce::a::17": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999991251
+  },
+  "ContextForce::a::18": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999989968
+  },
+  "ContextForce::a::19": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999989264
+  },
+  "ContextForce::a::20": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999985125
+  },
+  "ContextForce::a::21": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999989526
+  },
+  "ContextForce::a::23": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999991485
+  },
+  "ContextForce::a::24": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.999999999999191
+  },
+  "ContextForce::a::25": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992846
+  },
+  "ContextForce::a::26": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999994598
+  },
+  "EdgeForce::a::1": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999985361
+  },
+  "EdgeForce::a::3": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999990261
+  },
+  "EdgeForce::a::4": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999986188
+  },
+  "EdgeForce::a::5": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999986975
+  },
+  "EdgeForce::a::6": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999989464
+  },
+  "EdgeForce::a::7": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999969482
+  },
+  "EdgeForce::a::8": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999985707
+  },
+  "EdgeForce::a::9": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999971889
+  },
+  "EdgeForce::a::10": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999988238
+  },
+  "EdgeForce::a::11": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999991656
+  },
+  "EdgeForce::a::15": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999985412
+  },
+  "EdgeForce::a::16": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999988707
+  },
+  "EdgeForce::a::17": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999984561
+  },
+  "EdgeForce::a::18": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999975613
+  },
+  "EdgeForce::a::19": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991194
+  },
+  "EdgeForce::a::20": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999989364
+  },
+  "EdgeForce::a::21": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999992031
+  },
+  "EdgeForce::a::22": {
+   "texts": 12,
+   "compared": 12,
+   "min_cosine": 0.9999999999985947
+  },
+  "EdgeForce::a::23": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999992346
+  },
+  "EdgeForce::a::24": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999990989
+  },
+  "EdgeForce::a::25": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.9999999999990783
+  },
+  "EdgeForce::a::26": {
+   "texts": 11,
+   "compared": 11,
+   "min_cosine": 0.9999999999990505
+  },
+  "EdgeForce::a::27": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999991792
+  },
+  "EdgeForce::a::28": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999990636
+  },
+  "EdgeForce::a::29": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999991722
+  },
+  "EdgeForce::a::30": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999993956
+  },
+  "EdgeForce::a::31": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999984044
+  },
+  "EdgeForce::a::32": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999991355
+  },
+  "EdgeForce::a::33": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992768
+  },
+  "ExplainabilityForce::a::1": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999994429
+  },
+  "ExplainabilityForce::a::2": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999991536
+  },
+  "ExplainabilityForce::a::3": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999986311
+  },
+  "ExplainabilityForce::a::4": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992802
+  },
+  "ExplainabilityForce::a::5": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999988336
+  },
+  "ExplainabilityForce::a::8": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999991365
+  },
+  "ExplainabilityForce::a::10": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999988489
+  },
+  "ExplainabilityForce::a::12": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999986577
+  },
+  "ExplainabilityForce::a::13": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999989277
+  },
+  "ExplainabilityForce::a::14": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999990523
+  },
+  "ExplainabilityForce::a::15": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999994784
+  },
+  "ExplainabilityForce::a::16": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999989522
+  },
+  "ExplainabilityForce::a::17": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992888
+  },
+  "FeedbackForce::a::1": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999989588
+  },
+  "FeedbackForce::a::2": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992428
+  },
+  "FeedbackForce::a::3": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999984643
+  },
+  "FeedbackForce::a::4": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.99999999999909
+  },
+  "FeedbackForce::a::8": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999989004
+  },
+  "FeedbackForce::a::9": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990414
+  },
+  "FeedbackForce::a::10": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.999999999998509
+  },
+  "FeedbackForce::a::11": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999993905
+  },
+  "FeedbackForce::a::13": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999987856
+  },
+  "FeedbackForce::a::14": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999991978
+  },
+  "FeedbackForce::a::15": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999993079
+  },
+  "FeedbackForce::a::17": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992337
+  },
+  "FlowForce::a::0": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999990417
+  },
+  "FlowForce::a::1": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999988081
+  },
+  "FlowForce::a::2": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.999999999999184
+  },
+  "FlowForce::a::4": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990021
+  },
+  "FlowForce::a::5": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999989648
+  },
+  "FlowForce::a::6": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999990834
+  },
+  "FlowForce::a::7": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990159
+  },
+  "FlowForce::a::8": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999990261
+  },
+  "FlowForce::a::9": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999985352
+  },
+  "FlowForce::a::10": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999988016
+  },
+  "FlowForce::a::11": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999991613
+  },
+  "FlowForce::a::14": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999988218
+  },
+  "FlowForce::a::15": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999990381
+  },
+  "FlowForce::a::16": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.9999999999990483
+  },
+  "FlowForce::a::17": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999990625
+  },
+  "FlowForce::a::18": {
+   "texts": 13,
+   "compared": 13,
+   "min_cosine": 0.9999999999988929
+  },
+  "FlowForce::a::19": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999991448
+  },
+  "FlowForce::a::20": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999990679
+  },
+  "FlowForce::a::21": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999987217
+  },
+  "FlowForce::a::22": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999990581
+  },
+  "FlowForce::a::23": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999991338
+  },
+  "FlowForce::a::24": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.9999999999991599
+  },
+  "FlowForce::a::25": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999993103
+  },
+  "FlowForce::a::26": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999990408
+  },
+  "FlowForce::a::27": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999989191
+  },
+  "FlowForce::a::28": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999990519
+  },
+  "FlowForce::a::29": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999989884
+  },
+  "FlowForce::a::30": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991098
+  },
+  "FlowForce::a::31": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999992248
+  },
+  "ForecastForce::a::0": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999988214
+  },
+  "ForecastForce::a::1": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999989759
+  },
+  "ForecastForce::a::2": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.999999999998608
+  },
+  "ForecastForce::a::3": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.999999999998979
+  },
+  "ForecastForce::a::5": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999989484
+  },
+  "ForecastForce::a::6": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999983957
+  },
+  "ForecastForce::a::7": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990397
+  },
+  "ForecastForce::a::8": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999990443
+  },
+  "ForecastForce::a::9": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999984566
+  },
+  "ForecastForce::a::10": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992477
+  },
+  "ForecastForce::a::11": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991853
+  },
+  "ForecastForce::a::12": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999990823
+  },
+  "ForecastForce::a::13": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999993561
+  },
+  "ForecastForce::a::14": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999992271
+  },
+  "ForecastForce::a::15": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990394
+  },
+  "ForecastForce::a::16": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990947
+  },
+  "ForecastForce::a::17": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.999999999999267
+  },
+  "ForecastForce::a::18": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999992639
+  },
+  "ForecastForce::a::19": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.999999999999325
+  },
+  "ForecastForce::a::20": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991545
+  },
+  "ForecastForce::a::21": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.999999999999349
+  },
+  "ForecastForce::a::22": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999987046
+  },
+  "ForecastForce::a::23": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999988012
+  },
+  "ForecastForce::a::25": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.99999999999922
+  },
+  "ForecastForce::a::27": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.99999999999885
+  },
+  "ForecastForce::a::28": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999987167
+  },
+  "InsightForce::a::0": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999988554
+  },
+  "InsightForce::a::1": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.999999999999349
+  },
+  "InsightForce::a::2": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992408
+  },
+  "InsightForce::a::3": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999989208
+  },
+  "InsightForce::a::4": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999987579
+  },
+  "InsightForce::a::9": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.999999999997256
+  },
+  "InsightForce::a::10": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999988867
+  },
+  "InsightForce::a::11": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999989794
+  },
+  "InsightForce::a::12": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999988574
+  },
+  "InsightForce::a::13": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.999999999999305
+  },
+  "InsightForce::a::14": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999988756
+  },
+  "InsightForce::a::15": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992473
+  },
+  "InsightForce::a::16": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999992344
+  },
+  "KnowledgeForce::a::0": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990374
+  },
+  "KnowledgeForce::a::1": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999992275
+  },
+  "KnowledgeForce::a::2": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.999999999999067
+  },
+  "KnowledgeForce::a::3": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999989175
+  },
+  "KnowledgeForce::a::5": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999993157
+  },
+  "KnowledgeForce::a::6": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999985985
+  },
+  "KnowledgeForce::a::7": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999988989
+  },
+  "KnowledgeForce::a::8": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.999999999998715
+  },
+  "KnowledgeForce::a::9": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999989886
+  },
+  "KnowledgeForce::a::10": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.999999999999218
+  },
+  "KnowledgeForce::a::11": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999988132
+  },
+  "KnowledgeForce::a::12": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992659
+  },
+  "KnowledgeForce::a::13": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990685
+  },
+  "KnowledgeForce::a::16": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999993545
+  },
+  "KnowledgeForce::a::17": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999993525
+  },
+  "KnowledgeForce::a::18": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999993112
+  },
+  "KnowledgeForce::a::19": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999990843
+  },
+  "KnowledgeForce::a::20": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992688
+  },
+  "KnowledgeForce::a::21": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991183
+  },
+  "KnowledgeForce::a::22": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999989446
+  },
+  "KnowledgeForce::a::23": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999986376
+  },
+  "LeadForce::a::0": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999989786
+  },
+  "LeadForce::a::1": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999968556
+  },
+  "LeadForce::a::2": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.999999999998884
+  },
+  "LeadForce::a::3": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999989677
+  },
+  "LeadForce::a::4": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999985074
+  },
+  "LeadForce::a::6": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.999999999996558
+  },
+  "LeadForce::a::7": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999987519
+  },
+  "LeadForce::a::8": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999988989
+  },
+  "LeadForce::a::9": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999978963
+  },
+  "LeadForce::a::10": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999988647
+  },
+  "LeadForce::a::11": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.999999999999013
+  },
+  "LeadForce::a::12": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999990081
+  },
+  "LeadForce::a::14": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999990536
+  },
+  "LeadForce::a::15": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999990812
+  },
+  "LeadForce::a::16": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999989914
+  },
+  "LeadForce::a::17": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999990561
+  },
+  "LeadForce::a::18": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999989688
+  },
+  "LeadForce::a::19": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999989013
+  },
+  "LeadForce::a::21": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999988622
+  },
+  "LeadForce::a::22": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999991871
+  },
+  "LeadForce::a::23": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999988161
+  },
+  "LeadForce::a::24": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990097
+  },
+  "LeadForce::a::25": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999991611
+  },
+  "LeadForce::a::26": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.999999999998191
+  },
+  "LeadForce::a::27": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.999999999998407
+  },
+  "MonitorForce::a::0": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999989482
+  },
+  "MonitorForce::a::1": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990947
+  },
+  "MonitorForce::a::2": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999992486
+  },
+  "MonitorForce::a::3": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999993563
+  },
+  "MonitorForce::a::4": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999992089
+  },
+  "MonitorForce::a::6": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999991438
+  },
+  "MonitorForce::a::7": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999989968
+  },
+  "MonitorForce::a::8": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.999999999999156
+  },
+  "MonitorForce::a::9": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.999999999999085
+  },
+  "MonitorForce::a::10": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999992883
+  },
+  "MonitorForce::a::11": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999992084
+  },
+  "MonitorForce::a::12": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999990155
+  },
+  "MonitorForce::a::13": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999991094
+  },
+  "MonitorForce::a::14": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999992368
+  },
+  "MonitorForce::a::15": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999989769
+  },
+  "MonitorForce::a::17": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991904
+  },
+  "PersonalizeForce::a::0": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999987497
+  },
+  "PersonalizeForce::a::1": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999988904
+  },
+  "PersonalizeForce::a::2": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999961937
+  },
+  "PersonalizeForce::a::3": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999982419
+  },
+  "PersonalizeForce::a::4": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999989009
+  },
+  "PersonalizeForce::a::5": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991436
+  },
+  "PersonalizeForce::a::6": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.999999999999275
+  },
+  "PersonalizeForce::a::8": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999991425
+  },
+  "PersonalizeForce::a::9": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992986
+  },
+  "PersonalizeForce::a::10": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999988858
+  },
+  "PersonalizeForce::a::11": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999992095
+  },
+  "PersonalizeForce::a::12": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999988629
+  },
+  "PersonalizeForce::a::13": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999993625
+  },
+  "PersonalizeForce::a::14": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999988163
+  },
+  "PersonalizeForce::a::15": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999989644
+  },
+  "PersonalizeForce::a::16": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999988776
+  },
+  "PersonalizeForce::a::17": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999992513
+  },
+  "PersonalizeForce::a::18": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.999999999999142
+  },
+  "PersonalizeForce::a::19": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999989253
+  },
+  "PersonalizeForce::a::20": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999991924
+  },
+  "PersonalizeForce::a::21": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999993299
+  },
+  "PersonalizeForce::a::22": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999993398
+  },
+  "PersonalizeForce::a::23": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990503
+  },
+  "PersonalizeForce::a::25": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999992086
+  },
+  "PersonalizeForce::a::26": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990989
+  },
+  "PersonalizeForce::a::27": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990741
+  },
+  "PersonalizeForce::a::28": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999992562
+  },
+  "PersonalizeForce::a::29": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999991782
+  },
+  "PersonalizeForce::a::30": {
+   "texts": 11,
+   "compared": 11,
+   "min_cosine": 0.9999999999987847
+  },
+  "PersonalizeForce::a::31": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999989257
+  },
+  "PersonalizeForce::a::32": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999989966
+  },
+  "PersonalizeForce::a::33": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999989624
+  },
+  "PersonalizeForce::a::35": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.999999999998461
+  },
+  "PersonalizeForce::a::36": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999989659
+  },
+  "PersonalizeForce::a::37": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999992576
+  },
+  "PersonalizeForce::a::38": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992868
+  },
+  "PitchForce::a::0": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999989821
+  },
+  "PitchForce::a::1": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991332
+  },
+  "PitchForce::a::2": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.999999999998938
+  },
+  "PitchForce::a::3": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.99999999999919
+  },
+  "PitchForce::a::4": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999989935
+  },
+  "PitchForce::a::5": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999991565
+  },
+  "PitchForce::a::7": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999988569
+  },
+  "PitchForce::a::8": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999943618
+  },
+  "PitchForce::a::9": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999987045
+  },
+  "PitchForce::a::10": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999993876
+  },
+  "PitchForce::a::11": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999993632
+  },
+  "PitchForce::a::12": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999987561
+  },
+  "PitchForce::a::13": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999991998
+  },
+  "PitchForce::a::14": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999992535
+  },
+  "PitchForce::a::15": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999992641
+  },
+  "PitchForce::a::16": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999991271
+  },
+  "PitchForce::a::17": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999992395
+  },
+  "PitchForce::a::18": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990787
+  },
+  "PitchForce::a::19": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991749
+  },
+  "PitchForce::a::20": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999991911
+  },
+  "PitchForce::a::21": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999992684
+  },
+  "PitchForce::a::22": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.999999999999118
+  },
+  "PitchForce::a::23": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999991391
+  },
+  "PitchForce::a::24": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999991
+  },
+  "PitchForce::a::26": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.9999999999990947
+  },
+  "PitchForce::a::28": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.9999999999987725
+  },
+  "PitchForce::a::29": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999993361
+  },
+  "PitchForce::a::30": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.99999999999923
+  },
+  "PitchForce::a::31": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999994418
+  },
+  "PitchForce::a::32": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.9999999999990807
+  },
+  "PitchForce::a::33": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.9999999999991842
+  },
+  "PitchForce::a::34": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.999999999999073
+  },
+  "PitchForce::a::35": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999988103
+  },
+  "PitchForce::a::36": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999992186
+  },
+  "PitchForce::a::37": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999985218
+  },
+  "PitchForce::a::38": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991684
+  },
+  "ProposalForce::a::0": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999993872
+  },
+  "ProposalForce::a::1": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992062
+  },
+  "ProposalForce::a::2": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999984002
+  },
+  "ProposalForce::a::3": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.999999999999416
+  },
+  "ProposalForce::a::4": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999986746
+  },
+  "ProposalForce::a::5": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999991898
+  },
+  "ProposalForce::a::6": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999989944
+  },
+  "ProposalForce::a::7": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.99999999999859
+  },
+  "ProposalForce::a::8": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999989608
+  },
+  "ProposalForce::a::9": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999986386
+  },
+  "ProposalForce::a::10": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991656
+  },
+  "ProposalForce::a::12": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999993925
+  },
+  "ProposalForce::a::13": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991407
+  },
+  "ProposalForce::a::14": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999991975
+  },
+  "ProposalForce::a::15": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999992908
+  },
+  "ProposalForce::a::16": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.999999999999283
+  },
+  "ProposalForce::a::18": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999992291
+  },
+  "ProposalForce::a::19": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999990494
+  },
+  "ProposalForce::a::21": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999990474
+  },
+  "ProposalForce::a::22": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990696
+  },
+  "ProposalForce::a::23": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.999999999999079
+  },
+  "ProposalForce::a::24": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999991003
+  },
+  "ProposalForce::a::25": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999993288
+  },
+  "SearchFlow::a::0": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999993043
+  },
+  "SearchFlow::a::1": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999980305
+  },
+  "SearchFlow::a::2": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999990159
+  },
+  "SearchFlow::a::3": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999991801
+  },
+  "SearchFlow::a::4": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999988489
+  },
+  "SearchFlow::a::5": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.999999999999307
+  },
+  "SearchFlow::a::6": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999978257
+  },
+  "SearchFlow::a::7": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999987024
+  },
+  "SearchFlow::a::8": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999991415
+  },
+  "SearchFlow::a::9": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991989
+  },
+  "SearchFlow::a::10": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999988936
+  },
+  "SearchFlow::a::11": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999989833
+  },
+  "SearchFlow::a::13": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992792
+  },
+  "SearchFlow::a::14": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999988314
+  },
+  "SearchFlow::a::15": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992542
+  },
+  "SearchFlow::a::16": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999991951
+  },
+  "SearchFlow::a::17": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999991565
+  },
+  "SearchFlow::a::18": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999993388
+  },
+  "SearchFlow::a::19": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999989981
+  },
+  "SearchFlow::a::20": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999992579
+  },
+  "SearchFlow::a::21": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999989289
+  },
+  "SearchFlow::a::22": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.999999999999108
+  },
+  "SearchFlow::a::23": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999991089
+  },
+  "SearchFlow::a::24": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999992528
+  },
+  "SearchFlow::a::25": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999991839
+  },
+  "SearchFlow::a::26": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999986418
+  },
+  "SearchFlow::a::27": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999992679
+  },
+  "SearchFlow::a::28": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999991638
+  },
+  "SearchFlow::a::29": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.9999999999990974
+  },
+  "SearchFlow::a::30": {
+   "texts": 11,
+   "compared": 11,
+   "min_cosine": 0.9999999999990898
+  },
+  "SearchFlow::a::31": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999991231
+  },
+  "SearchFlow::a::32": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999989626
+  },
+  "SearchFlow::a::34": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.999999999999305
+  },
+  "SearchFlow::a::35": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999987643
+  },
+  "SearchFlow::a::36": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999991525
+  },
+  "SearchFlow::a::37": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999989164
+  },
+  "SearchFlow::a::38": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991873
+  },
+  "SearchFlow::a::39": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999990092
+  },
+  "SearchFlow::a::40": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999994498
+  },
+  "SearchFlow::a::41": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999992872
+  },
+  "SearchFlow::a::42": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.999999999999349
+  },
+  "SearchForce::a::0": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999986422
+  },
+  "SearchForce::a::1": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999992568
+  },
+  "SearchForce::a::2": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999988753
+  },
+  "SearchForce::a::3": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999991696
+  },
+  "SearchForce::a::4": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999990337
+  },
+  "SearchForce::a::5": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999987019
+  },
+  "SearchForce::a::6": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999987489
+  },
+  "SearchForce::a::8": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999992324
+  },
+  "SearchForce::a::9": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999989198
+  },
+  "SearchForce::a::10": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991369
+  },
+  "SearchForce::a::11": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999987994
+  },
+  "SearchForce::a::12": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999991178
+  },
+  "SearchForce::a::13": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990261
+  },
+  "SearchForce::a::14": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999987932
+  },
+  "SearchForce::a::15": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999992721
+  },
+  "SearchForce::a::17": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999992688
+  },
+  "SearchForce::a::18": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990725
+  },
+  "SearchForce::a::19": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999990443
+  },
+  "SearchForce::a::20": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999989462
+  },
+  "SearchForce::a::21": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991288
+  },
+  "SearchForce::a::22": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999993101
+  },
+  "SearchForce::a::23": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991134
+  },
+  "SearchForce::a::24": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999980389
+  },
+  "SecurityForce::a::0": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999985889
+  },
+  "SecurityForce::a::1": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990041
+  },
+  "SecurityForce::a::2": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999989458
+  },
+  "SecurityForce::a::3": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990961
+  },
+  "SecurityForce::a::4": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999988038
+  },
+  "SecurityForce::a::5": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999990845
+  },
+  "SecurityForce::a::6": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999987783
+  },
+  "SecurityForce::a::8": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999987461
+  },
+  "SecurityForce::a::9": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999994871
+  },
+  "SecurityForce::a::10": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999998
+  },
+  "SecurityForce::a::11": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 1.0000000000000002
+  },
+  "SecurityForce::a::12": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999999998
+  },
+  "SecurityForce::a::13": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999999998
+  },
+  "SecurityForce::a::14": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999999999
+  },
+  "SecurityForce::a::15": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999996532
+  },
+  "SecurityForce::a::16": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999999999
+  },
+  "SecurityForce::a::17": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999999
+  },
+  "SecurityForce::a::18": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  },
+  "SecurityForce::a::19": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "SecurityForce::a::20": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999999998
+  },
+  "SecurityForce::a::21": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999999998
+  },
+  "SecurityForce::a::22": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999998
+  },
+  "SecurityForce::a::23": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999998
+  },
+  "SecurityForce::a::24": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "SecurityForce::a::25": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "SentimentForce::a::0": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  },
+  "SentimentForce::a::1": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999999998
+  },
+  "SentimentForce::a::2": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999998
+  },
+  "SentimentForce::a::3": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999991547
+  },
+  "SentimentForce::a::4": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.999999999998888
+  },
+  "SentimentForce::a::5": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  },
+  "SentimentForce::a::6": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "SentimentForce::a::7": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999998
+  },
+  "SentimentForce::a::9": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  },
+  "SentimentForce::a::10": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999998
+  },
+  "SentimentForce::a::11": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "SentimentForce::a::12": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999999998
+  },
+  "SentimentForce::a::13": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999999998
+  },
+  "SentimentForce::a::14": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999993303
+  },
+  "SentimentForce::a::15": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "SentimentForce::a::16": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999999998
+  },
+  "SentimentForce::a::17": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999999998
+  },
+  "SentimentForce::a::18": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999999998
+  },
+  "SentimentForce::a::19": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  },
+  "SentimentForce::a::20": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999987192
+  },
+  "SentimentForce::a::21": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999998
+  },
+  "SentimentForce::a::22": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999999998
+  },
+  "SentimentForce::a::23": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999999
+  },
+  "SentimentForce::a::24": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "SentimentForce::a::25": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999998
+  },
+  "SentimentForce::a::28": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999993432
+  },
+  "SentimentForce::a::30": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999992835
+  },
+  "SummarizeForce::a::0": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "SummarizeForce::a::1": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  },
+  "SummarizeForce::a::2": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999999998
+  },
+  "SummarizeForce::a::3": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999998
+  },
+  "SummarizeForce::a::4": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  },
+  "SummarizeForce::a::5": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  },
+  "SummarizeForce::a::6": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999999
+  },
+  "SummarizeForce::a::7": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999989377
+  },
+  "SummarizeForce::a::8": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "SummarizeForce::a::9": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "SummarizeForce::a::10": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999999998
+  },
+  "SummarizeForce::a::12": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "SummarizeForce::a::13": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "SummarizeForce::a::14": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999999998
+  },
+  "SummarizeForce::a::15": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999999
+  },
+  "SummarizeForce::a::16": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999999998
+  },
+  "SummarizeForce::a::17": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999999998
+  },
+  "SummarizeForce::a::18": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999999998
+  },
+  "SummarizeForce::a::19": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999999998
+  },
+  "SummarizeForce::a::20": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999999998
+  },
+  "SummarizeForce::a::21": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999999
+  },
+  "SummarizeForce::a::22": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999999998
+  },
+  "SupportForce::a::0": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "SupportForce::a::1": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "SupportForce::a::2": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999991684
+  },
+  "SupportForce::a::3": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  },
+  "SupportForce::a::4": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999998
+  },
+  "SupportForce::a::7": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999998
+  },
+  "SupportForce::a::8": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999999998
+  },
+  "SupportForce::a::9": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999999998
+  },
+  "SupportForce::a::10": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999999998
+  },
+  "SupportForce::a::11": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999999998
+  },
+  "SupportForce::a::12": {
+   "texts": 11,
+   "compared": 11,
+   "min_cosine": 0.9999999999999998
+  },
+  "SupportForce::a::13": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999999998
+  },
+  "SupportForce::a::14": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999999998
+  },
+  "SupportForce::a::15": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999999998
+  },
+  "SupportForce::a::16": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999999998
+  },
+  "SupportForce::a::17": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 1.0
+  },
+  "SupportForce::a::18": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "SupportForce::a::19": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999998
+  },
+  "SupportForce::a::20": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 1.0
+  },
+  "SupportForce::a::21": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "SupportForce::a::22": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "SupportForce::a::23": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999999
+  },
+  "SupportForce::a::24": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 1.0
+  },
+  "TrendForce::a::0": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "TrendForce::a::1": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "TrendForce::a::2": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999999998
+  },
+  "TrendForce::a::3": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "TrendForce::a::4": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  },
+  "TrendForce::a::5": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "TrendForce::a::6": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999998
+  },
+  "TrendForce::a::7": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  },
+  "TrendForce::a::8": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999999
+  },
+  "TrendForce::a::10": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999998
+  },
+  "TrendForce::a::11": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "TrendForce::a::12": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999999998
+  },
+  "TrendForce::a::13": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999999998
+  },
+  "TrendForce::a::14": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 1.0
+  },
+  "TrendForce::a::15": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999999998
+  },
+  "TrendForce::a::16": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999993383
+  },
+  "TrendForce::a::17": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999999998
+  },
+  "TrendForce::a::18": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999999999
+  },
+  "TrendForce::a::19": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "TrendForce::a::20": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "TrendForce::a::21": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "TrendForce::a::22": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "TrendForce::a::23": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "VizForce::a::0": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "VizForce::a::1": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::2": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "VizForce::a::3": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999999999
+  },
+  "VizForce::a::4": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::5": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::6": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::7": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "VizForce::a::8": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "VizForce::a::9": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 1.0
+  },
+  "VizForce::a::10": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0000000000000002
+  },
+  "VizForce::a::11": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::12": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "VizForce::a::13": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::14": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0000000000000002
+  },
+  "VizForce::a::15": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "VizForce::a::17": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::18": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::19": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::20": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 1.0
+  },
+  "VizForce::a::21": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 1.0
+  },
+  "VizForce::a::22": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::23": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 1.0
+  },
+  "VizForce::a::24": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::25": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999993656
+  },
+  "VizForce::a::26": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::27": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 1.0
+  },
+  "VizForce::a::28": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 1.0
+  },
+  "VizForce::a::29": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "VizForce::a::30": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::31": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::32": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 1.0
+  },
+  "VizForce::a::33": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::34": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::35": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::36": {
+   "texts": 9,
+   "compared": 9,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::37": {
+   "texts": 7,
+   "compared": 7,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::38": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::39": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999999999
+  },
+  "VizForce::a::40": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  },
+  "VizForce::a::41": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "VizForce::a::42": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999999998
+  },
+  "WorkFlowGenie::a::0": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0000000000000002
+  },
+  "WorkFlowGenie::a::1": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "WorkFlowGenie::a::2": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  },
+  "WorkFlowGenie::a::3": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "WorkFlowGenie::a::4": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  },
+  "WorkFlowGenie::a::5": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999999998
+  },
+  "WorkFlowGenie::a::6": {
+   "texts": 8,
+   "compared": 8,
+   "min_cosine": 0.9999999999999998
+  },
+  "WorkFlowGenie::a::7": {
+   "texts": 4,
+   "compared": 4,
+   "min_cosine": 0.9999999999999999
+  },
+  "WorkFlowGenie::a::8": {
+   "texts": 10,
+   "compared": 10,
+   "min_cosine": 0.9999999999999999
+  },
+  "WorkFlowGenie::a::9": {
+   "texts": 6,
+   "compared": 6,
+   "min_cosine": 0.9999999999999998
+  },
+  "WorkFlowGenie::a::10": {
+   "texts": 5,
+   "compared": 5,
+   "min_cosine": 0.9999999999990258
+  },
+  "WorkFlowGenie::a::12": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "WorkFlowGenie::a::13": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "WorkFlowGenie::a::14": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 1.0
+  },
+  "WorkFlowGenie::a::15": {
+   "texts": 2,
+   "compared": 2,
+   "min_cosine": 1.0
+  },
+  "WorkFlowGenie::a::16": {
+   "texts": 3,
+   "compared": 3,
+   "min_cosine": 0.9999999999999998
+  }
+ }
+}

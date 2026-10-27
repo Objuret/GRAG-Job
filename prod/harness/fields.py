@@ -800,6 +800,23 @@ FILES = {
     "judge_calls_without_record.py": ("The script that found judge_calls_without_record.json, run on the "
                                       "machine that made the calls; it reads no content and makes no "
                                       "model call.", "", None),
+    "query_vectors_against_the_run.json": ("Only in a run made again to embed another run's query texts: each "
+                                           "text's vector here against the vector of the same text that the "
+                                           "other run made, by cosine; per question its texts, how many were "
+                                           "compared and the lowest cosine.", "per_question = id of "
+                                           "arm_outputs.jsonl", None),
+    "query_vectors_desktop.json": ("The part of that comparison made on the desktop, where most of the other "
+                                   "run's vectors are: per text key, its questions, the cosine and the folder "
+                                   "the other run's vector was found in.", "key = sha256 of the prefix and "
+                                   "the text", None),
+    "check_query_vectors.py": ("The script that made query_vectors_against_the_run.json from the desktop's "
+                               "part and the laptop's own vectors; it makes no model call.", "", None),
+    "desktop_start_*": ("The records of a start that ran in this run's own folder on the desktop after the "
+                        "folder kept here was copied from it: its run_manifest.json, eval_manifest.json and "
+                        "FIELDS.md as that start wrote them, and the sha256 of the folder's files as they "
+                        "then stood. The start answered no question and judged no cell (its judging entry "
+                        "holds 0 calls), so no value of this folder changes by it; the name holds when it "
+                        "began.", "", None),
     "merge.json": ("Only in a folder merged from two runs over the two halves of one question set, "
                    "made at the same commit, on one machine or two (tools/merge_split_run.py): "
                    "what was merged, what was checked to be the same in both, and the sha256 of "
