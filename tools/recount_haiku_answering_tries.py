@@ -11,7 +11,10 @@ duration_ms is the client's clock from before its first try to its answer, so:
   1. a record answered on its first try counts by its duration_ms;
   2. a record that never answered (no usage) counts with nothing;
   3. a record answered on a later try holds its failed tries and the pauses after them as well: it
-     counts by a + b x its output tokens, fitted (least squares) on the records of rule 1.
+     counts by a + b x its output tokens, fitted (least squares) on the records of rule 1;
+  4. a main-run record whose answer failed the pipeline's validation (errors.jsonl) and whose chunk
+     the recovery made again counts with nothing, nor do its tokens: its answer is not in the graph
+     (his 2026-10-21 "The ONLY thing that matters, at all, is the iteration that ran the RAGAS").
 With --write it writes test/graph/build_cost_haiku_answering_tries.json, which the export reads.
 """
 import hashlib
@@ -43,8 +46,14 @@ def main():
             r = json.loads(line)
             if r.get("stage") == "extract" and r.get("target_id") in chunks:
                 u = r.get("usage") or {}
-                records.append({"file": name, "attempt": r.get("attempt"), "seconds": (r.get("duration_ms") or 0) / 1000,
-                                "answered": bool(u), "in": int(u.get("prompt_tokens") or 0), "out": int(u.get("completion_tokens") or 0)})
+                records.append({"file": name, "target": r["target_id"], "attempt": r.get("attempt"),
+                                "seconds": (r.get("duration_ms") or 0) / 1000, "answered": bool(u),
+                                "in": int(u.get("prompt_tokens") or 0), "out": int(u.get("completion_tokens") or 0)})
+    errors = [json.loads(x) for x in z.read(INSIDE + "errors.jsonl").decode("utf-8").splitlines() if x.strip()]
+    failed_validation = {e["target_id"] for e in errors if e.get("stage") == "extract" and str(e.get("error", "")).startswith("pydantic")}
+    remade = {r["target"] for r in records if r["file"] == "recovery_io.jsonl"}
+    for r in records:  # rule 4
+        r["replaced"] = r["file"] == "io.jsonl" and r["answered"] and r["target"] in failed_validation & remade
     first = [r for r in records if r["answered"] and r["attempt"] == 1]
     later = [r for r in records if r["answered"] and r["attempt"] != 1]
     never = [r for r in records if not r["answered"]]
@@ -60,14 +69,22 @@ def main():
     if len(chunks) != 4869 or counts != (subset["calls_with_usage"], subset["tokens_in"], subset["tokens_out"]):
         raise SystemExit(f"the records are not build_cost.json's: chunks {len(chunks)}, answered calls, tokens in, out {counts}, "
                          f"build_cost.json {(subset['calls_with_usage'], subset['tokens_in'], subset['tokens_out'])}")
-    value = sum(r["seconds"] for r in first) + estimated
+    # rule 4: the answers the graph does not hold count with nothing
+    kept_first = [r for r in first if not r["replaced"]]
+    kept_later = [r for r in later if not r["replaced"]]
+    replaced = [r for r in answered if r["replaced"]]
+    value = sum(r["seconds"] for r in kept_first) + sum(a + b * r["out"] for r in kept_later)
+    kept = kept_first + kept_later
     result = {
         "what": "seconds of the claude-haiku-4-5 calls that described and tagged the graph's 4,869 chunks, by their answering tries",
         "seconds": value,
+        "calls": len(kept), "tokens_in": sum(r["in"] for r in kept), "tokens_out": sum(r["out"] for r in kept),
         "rule": __doc__.split("so:\n", 1)[1].split("With --write", 1)[0].strip(),
-        "answered_on_the_first_try": {"calls": len(first), "seconds": float(s.sum())},
-        "answered_on_a_later_try": {"calls": len(later), "recorded_seconds_with_their_failed_tries": sum(r["seconds"] for r in later),
-                                    "seconds_by_the_relation": estimated},
+        "answered_on_the_first_try": {"calls": len(kept_first), "seconds": sum(r["seconds"] for r in kept_first)},
+        "answered_on_a_later_try": {"calls": len(kept_later), "recorded_seconds_with_their_failed_tries": sum(r["seconds"] for r in kept_later),
+                                    "seconds_by_the_relation": sum(a + b * r["out"] for r in kept_later)},
+        "answers_the_graph_does_not_hold": {"calls": len(replaced), "seconds_left_out": sum(r["seconds"] for r in replaced),
+                                            "tokens_in": sum(r["in"] for r in replaced), "tokens_out": sum(r["out"] for r in replaced)},
         "never_answered": {"records": len(never), "recorded_seconds_left_out": sum(r["seconds"] for r in never)},
         "relation": {"a_seconds": float(a), "b_seconds_per_output_token": float(b), "fitted_on": len(first),
                      "leave_one_out_abs_error_median_s_every_7th": float(np.median(loo))},

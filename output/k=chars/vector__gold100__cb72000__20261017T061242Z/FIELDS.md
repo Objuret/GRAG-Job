@@ -1141,19 +1141,19 @@ The file holds no record.
 | `workers` | integer | 1 | 0 |
 
 ---
-Written from `prod/harness/fields.py`, sha256 `b31598ca597e06561a7975020a896d13469eff0733d92f0ad778f832b659ac80`.
+Written from `prod/harness/fields.py`, sha256 `42e2015e16ce089be06ea5e6f37efb14794c820667498abc78edbb8e85d08581`.
 
 The files as they stood when this was written, their line ends as git holds them (LF):
 
 - `arm_outputs.as_recorded.jsonl` sha256 `6460b7dc48dc7ba35af7d9c1db7a3a0579b959d1bafbce3becfb2d6d423f4506`
-- `arm_outputs.jsonl` sha256 `65efa93bf31b6c60137b3961dd82c458122ba08e4ed389939d03c6410b2d06dc`
+- `arm_outputs.jsonl` sha256 `01ec360eaf418b81a926cb229761cb74c2249a25eb0a737647e5e9e340e95134`
 - `correct_embed_gpu_time.py` sha256 `84c6299aea0bbcf3589428bb2fe36ae8831ecd5a973ae14721cb956f5e1e24d7`
 - `correct_judge_embed_gpu_time.py` sha256 `22823e15cb005f752c66af694f22e085e3081ca13bb30553de0945c2975fc64d`
 - `correct_model_call_time.py` sha256 `f3e49a6b4fbfc779bba8d6793c98897415fbd7693202b2ff89f4e68771420a5c`
 - `correct_nonllm_record_content.py` sha256 `22f302c2e645d3aecbf87ab8735b64b356695a43362ab1cad39ce406d6d59f75`
-- `correct_search_time.py` sha256 `fedae7c39d863737ad1e3f472a5b17bf38fa838b114a2204ee582a89fcf9f0bb`
+- `correct_search_time.py` sha256 `4002eb8c2826c46a2b52f634a169f207a2cfa37322d6db64c9517f745bee351d`
 - `correct_usage_by_model.py` sha256 `28d2357c693e407a2d4739241d1fddca55751553f0c9d4f42eedcf5a79a0d299`
-- `corrections.json` sha256 `397940f2e09c964d4b0e4816b1dab003cc71749d26488546ab7f3c3f97462f3b`
+- `corrections.json` sha256 `45d75fa369751d698afd51d523b243965df6ada7e67be3ffb4e26706a03b77cd`
 - `eval_calls.as_recorded.jsonl` sha256 `4ec50f85bad7cde7b3c39c812ec031d4bf0ec8830428addffe9d6d31cd643370`
 - `eval_calls.jsonl` sha256 `e4b42ad09472b3435ade282bdcb506db475c7485a10f7d7074e1251989c40936`
 - `eval_failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`

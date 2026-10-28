@@ -83,22 +83,28 @@ SCORES = [
                             "answer. Claims and their presence: the judge's, atomicity and coverage low. Rounded to "
                             "two decimals.", "0-1"),
     ("context_recall_id", "RAGAS IDBasedContextRecall. Reference context ids found in the retrieved context ids / "
-                          "all reference context ids. Reference context ids: HERB's evidence record ids.", "0-1"),
+                          "all reference context ids. Reference context ids: HERB's evidence record ids. Retrieved context ids: "
+                          "the ids of the records whose whole text was given to the answer model.", "0-1"),
     ("context_precision_id", "RAGAS IDBasedContextPrecision. Retrieved context ids found in the reference context "
-                             "ids / all retrieved context ids.", "0-1"),
+                             "ids / all retrieved context ids. Retrieved context ids: the ids of the records whose whole text "
+                             "was given to the answer model.", "0-1"),
     ("context_recall_llm", "RAGAS LLMContextRecall. Claims in the reference answer supported by the retrieved "
                            "context / all claims in the reference answer.", "0-1"),
     ("context_entity_recall", "RAGAS ContextEntityRecall. Entities common to the reference answer and the retrieved "
                               "context / all entities in the reference answer. Entities: the judge's.", "0-1"),
     ("context_recall_nonllm", "RAGAS NonLLMContextRecall. Relevant contexts retrieved / all reference contexts. "
                               "Relevant: Levenshtein similarity to a reference context of more than 0.5. Reference context: the "
-                              "content of a HERB evidence record, without ids, labels, dates and names. Retrieved "
-                              "contexts: the content of each record passed to the answer model.", "0-1"),
+                              "content of a HERB evidence record: a message's text, a document's content and feedback, a "
+                              "transcript, a chat's text, a link's description, a pull request's summary and review "
+                              "comments. Retrieved contexts: the content of each record passed to the answer model.",
+     "0-1"),
     ("context_precision_nonllm", "RAGAS NonLLMContextPrecisionWithReference. Context precision@K: mean of "
                                  "precision@k over the ranks k of the relevant retrieved contexts. Relevant: "
                                  "Levenshtein similarity to a reference context of 0.5 or more. Reference context: the content "
-                                 "of a HERB evidence record, without ids, labels, dates and names. Retrieved contexts: "
-                                 "the content of each record passed to the answer model.", "0-1"),
+                                 "of a HERB evidence record: a message's text, a document's content and feedback, a transcript, "
+                                 "a chat's text, a link's description, a pull request's summary and review comments. "
+                                 "Retrieved contexts: the content of each record passed to the answer model, ranked in "
+                                 "the arm's order.", "0-1"),
     ("semantic_similarity", "RAGAS SemanticSimilarity. Cosine similarity of the embeddings of the answer and the "
                             "reference answer.", "0-1"),
     ("string_similarity", "RAGAS NonLLMStringSimilarity. Levenshtein similarity of the answer and the reference "
@@ -117,37 +123,41 @@ QUESTIONS = [
     ("question", "Question, from HERB.", ""),
     ("reference_answer", "Reference answer: HERB's answer to the question, as RAGAS was given it (its parts "
                          "joined by spaces).", ""),
-    ("reference_context_ids", "Reference context ids: the ids of HERB's evidence records for the question.", ""),
+    ("reference_context_ids", "Reference context ids: the ids of HERB's evidence records for the question, "
+                              "joined by ', '.", ""),
     ("answer", "Answer of the answer model.", ""),
     *SCORES,
     ("search_seconds", "Retrieval time, without the interpreter and the query embedding, measured with one question "
-                       "at a time on one machine for every arm: for lucene and vector the ranking, for the artefact "
-                       "the ranking and its hand-over of the records up to character_limit.", "seconds"),
+                       "at a time on one machine for every arm, never as the first question of a process: for lucene "
+                       "and vector the ranking, for the artefact the reading of its stored first-call answer and query "
+                       "vectors, the ranking and its hand-over of the records up to character_limit.", "seconds"),
     ("interpreter_seconds", "Time of the interpreter call's answering try: the answer model, called before "
                             "retrieval, measured and limited as answer_seconds, with the relation fitted on the "
                             "interpreter calls. Artefact only.", "seconds"),
-    ("query_embedding_seconds", "Time to embed the query on the graphics card, without waits for the embedder. "
-                                "Vector and artefact only. The artefact embeds its "
-                                "query texts and reads a text embedded before from its cache, counted as no "
-                                "call: its time is that of the texts embedded for the question, empty when all "
-                                "of them were embedded before.", "seconds"),
+    ("query_embedding_seconds", "Time to embed the query's texts on the graphics card, one request after the other "
+                                "in a warm process, without waits for the embedder. Vector and artefact only. The "
+                                "artefact keeps each text's vector: a text that an earlier question of the same run "
+                                "embedded is read with no request and counts with that question.", "seconds"),
     ("answer_seconds", "Time of the answer model call's answering try: the Claude CLI's duration_api_ms, its time in "
-                       "requests to the model. For a call started while the backlog of answer-model input tokens of the "
-                       "recorded calls (added at each call's start, lowered by 16,500 tokens per second) was 886,127 "
-                       "tokens or more, the fitted backlog at which the seconds per output token rise (5-95%: 838,629 "
-                       "to 941,433): a + b x output tokens, fitted on the same arm's calls started below it.",
+                       "requests to the model. For a call started while the backlog of answer-model input tokens of all "
+                       "answer-model calls in the run folders, test runs included (added at each call's start, lowered "
+                       "by 16,500 tokens per second), was 886,127 tokens or more, the fitted backlog at which the "
+                       "seconds per output token rise: a + b x output tokens, "
+                       "fitted on the same arm's calls in its final runs started below it.",
      "seconds"),
     ("total_seconds", "Time of the question's steps added: search_seconds, interpreter_seconds, "
                       "query_embedding_seconds and answer_seconds. Without failed tries of model "
                       "calls.", "seconds"),
-    ("interpreter_tokens_in", "Input tokens of the interpreter call. Artefact only.", "tokens"),
+    ("interpreter_tokens_in", "Input tokens of the interpreter call: new input, cache creation and cache read "
+                              "tokens added. Artefact only.", "tokens"),
     ("interpreter_tokens_out", "Output tokens of the interpreter call. Artefact only.", "tokens"),
-    ("query_embedding_tokens", "Tokens embedded for the query. Vector and artefact only; for the artefact, "
-                               "those of the texts embedded for the question, empty when all of them were "
-                               "embedded before.", "tokens"),
+    ("query_embedding_tokens", "Tokens embedded for the query's texts, counted on each text with the 'query: ' "
+                               "prefix and the tokenizer's special tokens. Vector and artefact only; for the "
+                               "artefact, as query_embedding_seconds says which texts count.", "tokens"),
     ("retrieved_context_characters", "Characters of the retrieved context given to the answer model. At most "
                                      "character_limit.", "characters"),
-    ("answer_tokens_in", "Input tokens of the answer model call.", "tokens"),
+    ("answer_tokens_in", "Input tokens of the answer model call: new input, cache creation and cache read tokens "
+                         "added.", "tokens"),
     ("answer_tokens_out", "Output tokens of the answer model call.", "tokens"),
 ]
 # the same for the three arms; the export stops if an arm differs. The dataset and its licence
@@ -164,18 +174,20 @@ SETUP = [
 RUN = [
     ("run_seconds", f"Time of the arm's runs over its questions in {PER_QUESTION}: their total_seconds added.",
      "seconds"),
-    ("judge_tokens_in", "Input tokens of all RAGAS judge calls.", "tokens"),
-    ("judge_tokens_out", "Output tokens of all RAGAS judge calls.", "tokens"),
-    ("judge_embedding_tokens", "Tokens embedded by RAGAS.", "tokens"),
+    ("judge_tokens_in", "Input tokens of all RAGAS judge calls that answered: new input, cache creation and cache "
+                        "read tokens added.", "tokens"),
+    ("judge_tokens_out", "Output tokens of all RAGAS judge calls that answered.", "tokens"),
+    ("judge_embedding_tokens", "Tokens embedded by RAGAS, counted on each text with its mode's prefix and the "
+                               "tokenizer's special tokens.", "tokens"),
     ("judging_seconds", f"Time of the RAGAS evaluation over the arm's questions in {PER_QUESTION}: the Claude CLI's "
                         "duration_api_ms of every judge call that answered, as judge_tokens_in counts them (also in "
                         "cells that failed or that a later start judged again), and the encoding times of RAGAS's "
-                        "embedding requests, added. Three judge calls of the artefact that no record holds are in the "
-                        "tokens and have no time.", "seconds"),
+                        "embedding requests on the graphics card, added. Judge calls that no record holds (three of "
+                        "the artefact, one of vector) are in the tokens and have no time.", "seconds"),
 ]
 INDEX_KIND = {"lucene": ("BM25 full-text index", "corpus record"),
               "vector": ("dense vector index", "corpus record"),
-              "artefact": ("graph database (Neo4j)", "chunk: one or more corpus records")}
+              "artefact": ("graph database (Neo4j)", "chunk: a part of one corpus record, one record, or several records")}
 
 
 def model_name(name):
@@ -575,14 +587,17 @@ def construction_table():
                     for k in held[0] if any(h[k] != held[0][k] for h in held)]
     if unequal:
         sys.exit("the runs of an arm read different indexes, by what the indexes hold:\n  " + "\n  ".join(unequal))
-    gold = next(hashlib.sha256((ROOT / f).read_bytes()).hexdigest() for s, f in SETS.items() if s == "gold100")
+    on_715 = next(hashlib.sha256((ROOT / f).read_bytes()).hexdigest() for s, f in SETS.items() if s == "answerable715")
     mans = {}
     for a, ms in of_runs.items():
-        on_gold = [m for m in ms if m["inputs"]["ids_sha256"] == gold]
-        if len(on_gold) != 1:
-            sys.exit(f"{a}: not one run on gold100, whose index build the construction holds")
-        mans[a] = on_gold[0]
-        # for the record: each run's own build, of which only the hundred's goes into the column
+        # the build of the index that the arm's run on the 715 read: one timer covered it (the vector index the
+        # run on the hundred read holds the same units, but the time of its first part was read off its parts'
+        # write times); the artefact's graph is the same for both runs
+        on = [m for m in ms if m["inputs"]["ids_sha256"] == on_715]
+        if len(on) != 1:
+            sys.exit(f"{a}: not one run on answerable715, whose index build the construction holds")
+        mans[a] = on[0]
+        # for the record: each run's own build, of which only the 715's goes into the column
         print(f"{a}: build seconds of each run's index: " + ", ".join(
             f"{f} {m['build_stats'].get('build_time_s')}" for f, m in zip(RUNS[a], ms)))
     cost = read(ROOT / "test/graph/build_cost.json")
@@ -600,24 +615,51 @@ def construction_table():
     # FOR ALL THE THINGS IN THE FUCKING RUN"), never the clock of a pass that ran calls at once, each call by
     # its answering try (his 2026-10-21 "correct this"), recounted from the tagging run's own records
     haiku = read(ROOT / "test/graph/build_cost_haiku_answering_tries.json")
+    left = haiku["answers_the_graph_does_not_hold"]
     if (haiku["as_build_cost_json_had_it"] != graph_chunks["seconds_summed_per_call"]
-            or haiku["answered_on_the_first_try"]["calls"] + haiku["answered_on_a_later_try"]["calls"]
-            != graph_chunks["calls_with_usage"]):
+            or (haiku["calls"] + left["calls"], haiku["tokens_in"] + left["tokens_in"], haiku["tokens_out"] + left["tokens_out"])
+            != (graph_chunks["calls_with_usage"], graph_chunks["tokens_in"], graph_chunks["tokens_out"])):
         sys.exit("build_cost_haiku_answering_tries.json is not the recount of build_cost.json's haiku calls")
     haiku_seconds = haiku["seconds"]
     vectors = steps["embeddings"]["parts"]
-    embedded = [vectors[k] for k in ("tags", "tags_with_underscores_in_readable_form", "descriptions")]
     runs = left_out("facet_layer", "the Opus judge runs one by one")
     learned_from = [runs["control"], runs["train"]]    # calls, in, out, summed, elapsed; the held-out only tested
     facet = steps["facet_layer"]["parts"]
     no_model = (sum(steps["graph_copies"]["seconds"].values())
                 + vectors["write_tag_vectors"]["seconds_elapsed"] + vectors["write_description_vectors"]["seconds_elapsed"]
-                + facet["head_selection_training_scoring"]["seconds_elapsed"]
+                # round 1 without its tests: the probe that chose and fitted the head, and the scoring; its held-out
+                # bootstrap and its diagnostics built nothing the final runs read
+                + left_out("facet_layer", "parts inside round 1")["probe_s"]
+                + left_out("facet_layer", "parts inside round 1")["scoring_s"]
                 + facet["bootstrap_refits"]["seconds_elapsed"]
-                + facet["write"]["seconds_elapsed"] + facet["write"]["backup_seconds"]
+                + facet["write"]["seconds_elapsed"]
                 + sum(steps["later_edges_and_fields"]["seconds"].values()))
-    embed_seconds = sum(p["seconds_elapsed"] for p in embedded)
-    opus_seconds = sum(r[3] for r in learned_from)
+    # the 63 readable tag names were embedded on the laptop's CPU; their time is that of the same requests
+    # on the desktop's graphics card, where the other two parts ran (his 2026-10-27 "embeddings via gpu")
+    readable = read(ROOT / "test/graph/build_cost_readable_names_gpu_times.json")
+    part = vectors["tags_with_underscores_in_readable_form"]
+    if (readable["measured"]["device"] != "cuda" or len(readable["requests"]) != part["texts"]
+            or sum(x["tokens_in"] for x in readable["requests"]) != part["tokens_in"]):
+        sys.exit("build_cost_readable_names_gpu_times.json is not the readable names' requests on the graphics card")
+    # the raw names' vectors were replaced in the graph by the readable names': their share of the tag pass, by the
+    # pass's own rate, is not part of what built the index (his 2026-10-21 "The ONLY thing that matters, at all, is
+    # the iteration that ran the RAGAS")
+    names = read(ROOT / "test/graph/build_cost_readable_names_tokens.json")
+    if ((names["tags"], names["tags_tokens"], names["raw_names"], names["readable_names_tokens"])
+            != (vectors["tags"]["texts"], vectors["tags"]["tokens_in"], part["texts"], part["tokens_in"])):
+        sys.exit("build_cost_readable_names_tokens.json is not the count of build_cost.json's tag pass")
+    kept_tags = vectors["tags"]["texts"] - names["raw_names"]
+    embed_texts = kept_tags + part["texts"] + vectors["descriptions"]["texts"]
+    embed_tokens = (vectors["tags"]["tokens_in"] - names["raw_names_tokens"] + part["tokens_in"]
+                    + vectors["descriptions"]["tokens_in"])
+    embed_seconds = (vectors["tags"]["seconds_elapsed"] * kept_tags / vectors["tags"]["texts"]
+                     + vectors["descriptions"]["seconds_elapsed"] + sum(x["encode_s"] for x in readable["requests"]))
+    # the Opus calls' records keep only the clock around each call; their CLI transcripts keep the prompt and the
+    # reply, which on the final runs' calls give the CLI's duration_api_ms within a median of 0.02 s
+    opus = read(ROOT / "test/graph/build_cost_opus_transcript_times.json")
+    if [opus["sets"][s]["calls"] for s in ("control", "train")] != [r[0] for r in learned_from]:
+        sys.exit("build_cost_opus_transcript_times.json is not the Opus calls of the control and train runs")
+    opus_seconds = opus["seconds"]
     encoder_seconds = facet["encoder_cache"]["seconds_elapsed"]
     vector = mans["vector"]["build_stats"]["models"][0]
     embedder = model_name(vector["model"])
@@ -629,24 +671,31 @@ def construction_table():
     things = [
         ("index", "Index type.", "", {k: INDEX_KIND[k][0] for k in RUNS}),
         ("unit", "Unit stored in the index.", "", {k: INDEX_KIND[k][1] for k in RUNS}),
-        ("units in the index", "Units in the index.", "count",
+        ("units in the index", "Units in the index. Artefact: the chunks in the graph; the arm retrieves from all of "
+                               "them but the chunks of three metadata files.", "count",
          {"lucene": mans["lucene"]["index"]["units"], "vector": mans["vector"]["index"]["units"],
-          a: mans[a]["index"]["counts"]["chunks"]}),
-        ("build time, seconds", "Time to build the index. Artefact: sum of the times of the build steps: the "
-                                "claude-haiku-4-5 and claude-opus-5 steps as the times of their calls added, the other "
-                                "steps as their elapsed times.", "seconds",
-         {"lucene": mans["lucene"]["build_stats"]["build_time_s"], "vector": vector["seconds_elapsed"],
+          a: mans[a]["graph"]["census"]["labels"]["Chunk"]}),
+        ("build time, seconds", "Time to build the index that the arm's run on the 715 read. Artefact: the times of "
+                                "the build steps added: the claude-haiku-4-5 and claude-opus-5 steps as the times of "
+                                "their calls added, the embedding as in its row, the other steps as their recorded "
+                                "times; the chunking and loading of the chunks has no recorded time and is not in "
+                                "it.", "seconds",
+         {"lucene": mans["lucene"]["build_stats"]["build_time_s"], "vector": mans["vector"]["build_stats"]["build_time_s"],
           a: haiku_seconds + embed_seconds + opus_seconds + encoder_seconds + no_model}),
-        (f"{embedder}, texts embedded", "Texts embedded for the index.", "count",
-         {"vector": vector["calls"], a: sum(p["texts"] for p in embedded)}),
-        (f"{embedder}, tokens", "Tokens embedded for the index.", "tokens",
-         {"vector": vector["tokens_in"], a: sum(p["tokens_in"] for p in embedded)}),
-        (f"{embedder}, seconds", "Embedding time for the index.", "seconds",
+        (f"{embedder}, texts embedded", "Texts embedded for the index, as the index holds them.", "count",
+         {"vector": vector["calls"], a: embed_texts}),
+        (f"{embedder}, tokens", "Tokens embedded for the index, counted on the text with its mode's prefix and the "
+                                "tokenizer's special tokens.", "tokens",
+         {"vector": vector["tokens_in"], a: embed_tokens}),
+        (f"{embedder}, seconds", "Embedding time for the index, on the graphics card. Vector: its requests' times "
+                                 "added. Artefact: the elapsed times of its two passes (model load and saving "
+                                 "included), less the share of the 63 tags whose vectors were made again from their "
+                                 "readable names, by the pass's rate, and those 63 requests' times.", "seconds",
          {"vector": vector["seconds_elapsed"], a: embed_seconds}),
-        ("claude-haiku-4-5, calls", "Calls to claude-haiku-4-5 for the index.", "count",
-         {a: graph_chunks["calls_with_usage"]}),
-        ("claude-haiku-4-5, tokens in", "Input tokens of those calls.", "tokens", {a: graph_chunks["tokens_in"]}),
-        ("claude-haiku-4-5, tokens out", "Output tokens of those calls.", "tokens", {a: graph_chunks["tokens_out"]}),
+        ("claude-haiku-4-5, calls", "Calls to claude-haiku-4-5 whose descriptions and tags the index holds.", "count",
+         {a: haiku["calls"]}),
+        ("claude-haiku-4-5, tokens in", "Input tokens of those calls.", "tokens", {a: haiku["tokens_in"]}),
+        ("claude-haiku-4-5, tokens out", "Output tokens of those calls.", "tokens", {a: haiku["tokens_out"]}),
         ("claude-haiku-4-5, seconds", "Time of those calls added, each by its answering try as the tagging run "
                                       "recorded it; a call answered on a later try, whose record also holds its failed "
                                       "tries, by a + b x its output tokens fitted on the calls answered on the first "
@@ -655,8 +704,8 @@ def construction_table():
          {a: sum(r[0] for r in learned_from)}),
         ("claude-opus-5, tokens in", "Input tokens of those calls.", "tokens", {a: sum(r[1] for r in learned_from)}),
         ("claude-opus-5, tokens out", "Output tokens of those calls.", "tokens", {a: sum(r[2] for r in learned_from)}),
-        ("claude-opus-5, seconds", "Time of those calls added, each by the clock around the call on the machine "
-                                   "that made it; the server's own time was not recorded for them.", "seconds",
+        ("claude-opus-5, seconds", "Time of those calls added, each from its prompt to its reply in the Claude CLI's "
+                                   "own transcript of the call.", "seconds",
          {a: opus_seconds}),
         (f"{encoder}, seconds", f"Encoding time of {encoder} for the index.", "seconds", {a: encoder_seconds}),
     ]
@@ -736,8 +785,9 @@ def main():
     key = ([{"sheet": PER_QUESTION, "field": c, "meaning": m, "unit": u} for c, m, u in QUESTIONS]
            + [{"sheet": PER_RUN, "field": c, "meaning": m, "unit": u} for c, m, u in SETUP + RUN if m]
            + [{"sheet": PER_RUN, "field": "mean of", "meaning": f"Mean over the arm's questions in {PER_QUESTION} "
-                                                               f"of the field of {PER_QUESTION} named in the row.",
-               "unit": ""}]
+                                                               f"of the field of {PER_QUESTION} named in the row; empty where "
+                                                               "the arm has no value of the field.",
+               "unit": "the unit of the field named in the row"}]
            + construction_key)
     sheets = [(PER_QUESTION, [([c for c, _, _ in QUESTIONS], questions)]),
               (PER_RUN, [(["property", "value"], same), (["property", *RUNS], run),

@@ -1,0 +1,9 @@
+{
+ "what": "tokens of the tags whose name holds an underscore, in the tag pass (raw name) and in the graph (readable name)",
+ "tags": 16714,
+ "tags_tokens": 103614,
+ "raw_names": 63,
+ "raw_names_tokens": 623,
+ "readable_names_tokens": 583,
+ "script": "tools/count_readable_tag_tokens.py"
+}

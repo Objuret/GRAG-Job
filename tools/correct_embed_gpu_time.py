@@ -102,7 +102,7 @@ def main():
                 changes.append({"where": where, "field": f"calls[{i}].device", "recorded": c.get("device"),
                                 "corrected": "cuda"})
                 c["encode_s"], c["device"] = by_seq[c["seq"]], "cuda"
-        lines[n] = json.dumps(row, ensure_ascii=False, default=repr).encode("utf-8")
+        lines[n] = json.dumps(row, ensure_ascii=False, default=repr).encode("utf-8") + (b"\r" if line.endswith(b"\r") else b"")
     print(f"{len(times)} questions: query embedding {before_s:.2f} s as recorded, {after_s:.2f} s on the GPU "
           f"one call after the other")
     if not args.write:

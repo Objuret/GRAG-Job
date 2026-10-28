@@ -61,7 +61,7 @@ def correct(d, times, evidence, write):
         before_s += c["encode_s"]
         after_s += t["encode_s"]
         c["encode_s"], c["device"] = t["encode_s"], "cuda"
-        lines[n] = json.dumps(c, ensure_ascii=False, default=repr).encode("utf-8")
+        lines[n] = json.dumps(c, ensure_ascii=False, default=repr).encode("utf-8") + (b"\r" if line.endswith(b"\r") else b"")
         done.add(n)
     if set(mine) != done:
         raise SystemExit(f"{d.name}: the GPU times name records that are not CPU embed records of eval_calls.jsonl")

@@ -1,0 +1,4 @@
+lucene100 answers                calls 100 (no transcript 0, several replies 24) | transcript span minus duration_api_ms: median +0.016 s, 5% -0.005, 95% +0.215
+vector100 answers                calls 100 (no transcript 0, several replies 30) | transcript span minus duration_api_ms: median +0.013 s, 5% -0.015, 95% +0.042
+artefact 20261020 first calls    calls 100 (no transcript 0, several replies 90) | transcript span minus duration_api_ms: median +0.144 s, 5% +0.101, 95% +0.263
+artefact 20261020 answers        calls 100 (no transcript 0, several replies 13) | transcript span minus duration_api_ms: median +0.014 s, 5% -0.000, 95% +0.039

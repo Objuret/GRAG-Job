@@ -8983,6 +8983,52 @@
         }
       },
       "script": "correct_judge_embed_gpu_time.py, in this folder"
+    },
+    {
+      "made_at": "2026-10-27T23:18:16.403636+00:00",
+      "ordered_by": "\"make sure it's all correctly calculated, no sloppy shit or lazy, i want the same methods for them\" (2026-10-27) · \"doit\" (2026-10-27)",
+      "what_happened": "The first question of the re-made run was the first in its process and also held the process's first loads and graph queries. Its search time is the time of the same retrieval made second in a fresh process, after the re-made run's second question.",
+      "rule": {
+        "id": "search-time/2",
+        "text": "1. The re-made run holds the run's questions, each once, and each question's retrieval in it hands\n     over the same records as in the run: the same contexts and record ids, as many of each. A\n     question whose records come in another order is named in the check, with the first rank at which\n     the order differs.\n  2. Each row gets search_time_s = the re-made row's search_time_s; its timing.wall_s changes by the\n     same amount.\n  3. Each row's embed entry in retrieval gets wait_s = 0: the time the question waited for the\n     embedder's lock while other questions of the run embedded; its time_s and the row's\n     timing.wall_s lose the same amount. No answer, context, score, token count or other time changes.\n  4. The question that was the first of the re-made run's process, which also made the process's\n     first loads and graph queries, gets its search_time_s from a warm run (--first-warm): the same\n     retrieval, made second in a fresh process after the re-made run's second question; that other\n     question's time is not used. Its timing.wall_s changes by the same amount. A run whose rules 1\n     to 3 are already written gets rule 4 alone."
+      },
+      "not_changed_and_worth_knowing": [
+        "The other question of the warm run, made first in its process, is not used."
+      ],
+      "changes": [
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "search_time_s",
+          "recorded": 0.05242110000108369,
+          "corrected": 0.03107389999786392
+        },
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 3.457769199819537,
+          "corrected": 3.436421999816317
+        }
+      ],
+      "checks": [
+        {
+          "what": "rule 4: the warm run made the re-made run's second question and then its first, one at a time, and hands over the same records for it",
+          "holds": true,
+          "looked_at": 1
+        }
+      ],
+      "evidence": {
+        "file": "../lucene__gold100__cb72000__20261028_first_question_warm/arm_outputs.jsonl",
+        "sha256": "8124cb4270f585cb79e2b0e14e196ffcd9227362a662a601236f4338bbc2fbb4",
+        "what": "the warm run's rows: the first question's search_time_s and contexts"
+      },
+      "files": {
+        "arm_outputs.jsonl": {
+          "sha256_before": "ca55772708446c625bbca97e08f9726eed55ad3dd615acbbfb698146cfcfb605",
+          "sha256_corrected": "11c17deff7ad5e6daf21ade578558bd591aaa44753dd4bd0ba9f03c0a8af5ea6",
+          "as_recorded": "arm_outputs.as_recorded.jsonl"
+        }
+      },
+      "script": "correct_search_time.py, in this folder"
     }
   ]
 }

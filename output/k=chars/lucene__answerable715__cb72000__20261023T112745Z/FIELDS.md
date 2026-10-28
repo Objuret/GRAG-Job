@@ -1131,21 +1131,21 @@ The file holds no record.
 | `workers` | integer | 1 | 0 |
 
 ---
-Written from `prod/harness/fields.py`, sha256 `b31598ca597e06561a7975020a896d13469eff0733d92f0ad778f832b659ac80`.
+Written from `prod/harness/fields.py`, sha256 `42e2015e16ce089be06ea5e6f37efb14794c820667498abc78edbb8e85d08581`.
 
 The files as they stood when this was written, their line ends as git holds them (LF):
 
 - `arm_outputs.as_recorded.jsonl` sha256 `b82f10e2ecc3fea11484f18b7a51e3fb8a7cd851067ad891fe58030823e0412c`
-- `arm_outputs.jsonl` sha256 `d0457b76b7a01184250a1075361fd36d2ac608688dd464cfaf82c0118ec4bcbc`
+- `arm_outputs.jsonl` sha256 `ea7e8d0a3e34758f6f8ed45a3992bcc9820913a1c276654b8b78c78a944d3c99`
 - `cli_transcript_usage.json` sha256 `907bfe09f541f6ca0ddf3ee9785d7b375f8d3574ec8c9b098841da99ea6620c7`
 - `code_reflog.txt` sha256 `3afbde103bd3a20f21192f2128ed8a23ccd4dae9caa4683448649069ab195df5`
 - `correct_code_version_from_reflog.py` sha256 `fa6dbcf7a2a2d8eb84900653a531b52b04d441fd8cfa1ce4dd37f3547f2b15e3`
 - `correct_judge_embed_gpu_time.py` sha256 `22823e15cb005f752c66af694f22e085e3081ca13bb30553de0945c2975fc64d`
 - `correct_model_call_time.py` sha256 `f3e49a6b4fbfc779bba8d6793c98897415fbd7693202b2ff89f4e68771420a5c`
 - `correct_nonllm_record_content.py` sha256 `22f302c2e645d3aecbf87ab8735b64b356695a43362ab1cad39ce406d6d59f75`
-- `correct_search_time.py` sha256 `fedae7c39d863737ad1e3f472a5b17bf38fa838b114a2204ee582a89fcf9f0bb`
+- `correct_search_time.py` sha256 `4002eb8c2826c46a2b52f634a169f207a2cfa37322d6db64c9517f745bee351d`
 - `correct_zero_usage.py` sha256 `8f1cb37eec34d6b58c927e2098d3ce47bc603c6594227751e2ac01211f8b3c97`
-- `corrections.json` sha256 `8d50c948158ba8c9e33382e76c376ae4b506e464e1ac292363c44beddde69f16`
+- `corrections.json` sha256 `dcdacf81a28ab7c35c76c2ccfee54ddf093c337c38af112965f685df445472ea`
 - `eval_calls.as_recorded.jsonl` sha256 `084c5e785f05a72ec78ce829797c42f0012575e5b17d2f2d0d2048f1edaccd9b`
 - `eval_calls.jsonl` sha256 `469275bfeb2eece15e4511cb54ec33ebb2e7ea9a63cc62b87cb93a59858153de`
 - `eval_failures.jsonl` sha256 `5fa4867aca245a2455b4c7ffa374b71f3c348688670f29cc6d0c76171af6cadb`

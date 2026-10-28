@@ -11,10 +11,12 @@ cache_read_input_tokens, output_tokens}}; the file is copied into the run folder
 the rows as they stand, and keeps the rows as recorded as arm_outputs.as_recorded.jsonl on the
 first write of any correction, never changed after.
 
-Rule "zero-usage/2".
+Rule "zero-usage/3".
   1. A model call that answered (a row's call record of kind chat: the answer call, marked role:
      answer, or a call the arm made itself, such as its first call) is corrected when its reply's
-     usage field holds 0 tokens in and 0 out and its list of iterations is empty.
+     usage field holds 0 tokens in and 0 out and its list of iterations is empty, or when the
+     tokens its record holds are fewer than its reply's own counts per model (rule 2): the usage
+     field then held only some of the requests the CLI made in the call.
   2. Its counts are the reply's own counts per model (modelUsage), for the one model the call
      names, counted as the harness counts the usage field (harness.chat): tokens in = inputTokens
      + cacheCreationInputTokens + cacheReadInputTokens, cached tokens in = cacheReadInputTokens,
@@ -34,7 +36,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-RULE = "zero-usage/2"
+RULE = "zero-usage/3"
 SCRIPT = "correct_zero_usage.py"
 EVIDENCE = "cli_transcript_usage.json"
 HIS_WORDS = "\"yeah, why 0?, do so\" (2026-10-23, on the answer calls whose rows held 0 tokens)"
@@ -79,6 +81,7 @@ def main():
     from harness import capture
     changes, checks, durations = [], [], {"corrected": [], "others": []}
     agree = looked = answers = arm_calls = 0
+    kinds = {"0 tokens": 0, "part of the call": 0}
     for n, line in enumerate(lines):
         if not line.strip():
             continue
@@ -95,12 +98,20 @@ def main():
             empty = (not usage.get("input_tokens") and not usage.get("output_tokens")
                      and not usage.get("cache_creation_input_tokens")
                      and not usage.get("cache_read_input_tokens") and not usage.get("iterations"))
+            per_model = env.get("modelUsage") or {}
+            whole = counted(per_model[call["model"]]) if call["model"] in per_model else None
+            if empty and whole is None:
+                raise SystemExit(f"row {n} ({row['id']}): a reply with 0 tokens and no counts for {call['model']}")
+            held = call.get("usage") or {}
+            # a record an earlier version of this rule corrected already holds the whole counts
+            short = whole is not None and (int(held.get("prompt_tokens") or 0) < whole["prompt_tokens"]
+                                           or int(held.get("completion_tokens") or 0) < whole["completion_tokens"])
             if call.get("role") == "answer":
-                durations["corrected" if empty else "others"].append(env.get("duration_ms", 0) / 1000)
-            if not empty:
+                durations["corrected" if short else "others"].append(env.get("duration_ms", 0) / 1000)
+            if not short:
                 continue
             looked += 1
-            per_model = env.get("modelUsage") or {}
+            kinds[("0 tokens" if empty else "part of the call")] += 1
             if list(per_model) != [call["model"]]:
                 raise SystemExit(f"row {n} ({row['id']}): the reply's counts name {list(per_model)}, "
                                  f"not only {call['model']}")
@@ -129,14 +140,14 @@ def main():
                 arm_calls += 1
                 arm_touched = True
         if arm_touched:
-            # rule 4: the arm's own calls counted again, as the harness counts them; only tokens change
+            # rule 4: the arm's own calls' tokens counted again, as the harness counts them; the entries'
+            # other fields stay as they stand (a later correction may have changed their times)
             before = row["retrieval"]
-            after = capture.usage_by_model([c for c in row["calls"] if c.get("role") != "answer"])
+            recount = {e["kind"]: e for e in capture.usage_by_model([c for c in row["calls"] if c.get("role") != "answer"])}
             token_keys = ("tokens_in", "cached_input_tokens", "tokens_out")
-            if ([{k: v for k, v in e.items() if k not in token_keys} for e in after]
-                    != [{k: v for k, v in e.items() if k not in token_keys} for e in before]):
-                raise SystemExit(f"row {n} ({row['id']}): its retrieval counted again differs in more than "
-                                 "its tokens; nothing written")
+            if sorted(recount) != sorted(e["kind"] for e in before):
+                raise SystemExit(f"row {n} ({row['id']}): its retrieval counted again has other kinds; nothing written")
+            after = [dict(e, **{k: recount[e["kind"]][k] for k in token_keys}) for e in before]
             changes.append({"where": where, "field": "retrieval", "recorded": before, "corrected": after})
             row["retrieval"] = after
         if row_changed:
@@ -148,7 +159,8 @@ def main():
          "holds": agree == looked, "looked_at": looked},
     ]
     med = lambda xs: sorted(xs)[len(xs) // 2] if xs else None  # noqa: E731
-    print(f"{looked} model calls with 0 tokens in their reply's usage field ({answers} answer calls, "
+    print(f"{looked} model calls to correct ({kinds['0 tokens']} with 0 tokens in their reply's usage field, "
+          f"{kinds['part of the call']} whose record held part of the call; {answers} answer calls, "
           f"{arm_calls} calls of the arm); {agree} of them match the CLI's transcript")
     print(f"answer call seconds, median: corrected {med(durations['corrected'])}, "
           f"others {med(durations['others'])}")
@@ -165,7 +177,8 @@ def main():
     tmp = rows_path.with_name(rows_path.name + ".tmp")
     tmp.write_bytes(b"\n".join(lines))
     tmp.replace(rows_path)
-    shutil.copy2(args.transcripts, d / EVIDENCE)
+    if Path(args.transcripts).resolve() != (d / EVIDENCE).resolve():
+        shutil.copy2(args.transcripts, d / EVIDENCE)
     if Path(__file__).resolve() != (d / SCRIPT).resolve():
         shutil.copy2(__file__, d / SCRIPT)
     earlier = (json.loads((d / "corrections.json").read_text(encoding="utf-8"))["corrections"]
@@ -174,16 +187,19 @@ def main():
         "made_at": datetime.now(timezone.utc).isoformat(),
         "ordered_by": args.ordered_by,
         "what_happened": (f"On {looked} model calls ({answers} answer calls, {arm_calls} calls of the arm) "
-                          "the CLI's reply held 0 in its usage field and an empty list of iterations, "
-                          "while the same reply's counts per model and the CLI's own transcript of the "
-                          "call held the tokens. The harness reads the usage field, so the rows held 0 "
-                          "tokens for those calls."),
+                          f"the row held fewer tokens than the call: on {kinds['0 tokens']} the CLI's reply held 0 "
+                          "in its usage field and an empty list of iterations, on "
+                          f"{kinds['part of the call']} its usage field held only some of the requests the CLI "
+                          "made in the call; the same reply's counts per model and the CLI's own transcript "
+                          "of the call held all of its tokens. The harness reads the usage field."),
         "rule": {"id": RULE, "text": __doc__.split(f'Rule "{RULE}".', 1)[1].strip()},
-        "not_changed_and_worth_knowing": [
+        "not_changed_and_worth_knowing": ([
             "Why the CLI wrote 0 in its usage field on these calls is not known. On them its list "
             "of iterations is empty, and they took longer: a median of "
             f"{med(durations['corrected']):.1f} s against {med(durations['others']):.1f} s for "
-            "the other answer calls.",
+            "the other answer calls."] if durations["corrected"] else []) + ([
+            "A call whose usage field held part of it made more than one request in the CLI (the reply's "
+            "num_turns); the usage field held the tokens of only some of them."] if kinds["part of the call"] else []) + [
             "No answer, context, score or time is changed: only the tokens of those calls.",
         ],
         "changes": changes,

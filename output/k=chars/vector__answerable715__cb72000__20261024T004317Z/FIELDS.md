@@ -31,6 +31,7 @@ One run of one retrieval method, **vector**, over 715 questions: for each questi
 | `correct_nonllm_record_content.py` | The script that made the non-LLM record-content correction (context_recall_nonllm and context_precision_nonllm calculated again, record content against record content); run on the files from before it, with the code named in its entry, it gives the corrected files again. |  |
 | `correct_embed_gpu_time.py` | The script that made the GPU-time correction (the query embeddings made on the CPU given the time the same embeddings take on the desktop's graphics card); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
 | `gpu_embed_times_all.json` | The evidence of the GPU-time correction with --all: per question, each embed call's seconds on the graphics card one call after the other, also of a call the run made on the card while other questions were under way, and its recorded seconds. | question id = id of arm_outputs.jsonl; seq = calls[].seq |
+| `correct_judge_usage.py` | The script that made the judge-usage correction (a judge call whose record held fewer tokens than its own reply given the whole call's counts, with its scoring start's entry, judge_usage and its score cell); run on the files from before it, it gives the corrected files again. |  |
 | `correct_search_time.py` | The script that made the search-time correction (each question's search time the time of the same retrieval made again with one question at a time on the laptop, and a question's wait for the embedder's lock out); run on the files from before it, with the re-made run its entry names, it gives the corrected files again. |  |
 | `correct_judge_embed_gpu_time.py` | The script that made the judging's GPU-time correction (RAGAS's own embedding requests made on the CPU given the time the same requests take on the desktop's graphics card); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
 | `judge_embed_gpu_times.json` | The evidence of the judging's GPU-time correction: per RAGAS embedding request that the six final runs' judging made on the CPU, its seconds on the graphics card, its recorded seconds, texts and tokens. | run = the run folder; line = the record's line in eval_calls.jsonl, from 0; question_id, eval_leg, seq = the record's own |
@@ -1174,35 +1175,36 @@ The file holds no record.
 | `workers` | integer | 1 | 0 |
 
 ---
-Written from `prod/harness/fields.py`, sha256 `42e2015e16ce089be06ea5e6f37efb14794c820667498abc78edbb8e85d08581`.
+Written from `prod/harness/fields.py`, sha256 `ab7ca3537924b5c2d49c3a94c78e577d396b1ccac8dec1ae8194215985af050e`.
 
 The files as they stood when this was written, their line ends as git holds them (LF):
 
 - `arm_outputs.as_recorded.jsonl` sha256 `51b297b0a4fff313388a1f67bfd83043da0d66b7fd62b96bde9ba167c5e5fea9`
-- `arm_outputs.jsonl` sha256 `3312c7b9ff18299aff925900b3fcbcb818165ff47a5c1c5dc6817bcece4a86e0`
+- `arm_outputs.jsonl` sha256 `4937afdf5b4d7e47803fc8f12451fdf40814c0c38364285c97aad97a8ad153be`
 - `cli_transcript_usage.json` sha256 `6bd0d1f65ff278b3215ac2da72d1e09cffd09b6cdfa6690095a80d4ed2edb803`
 - `code.acb4fb450f447926.diff` sha256 `acb4fb450f4479261d2bd5dd2c523c2ee90272df3795e2299c477c8b2c8a2ea9`
 - `code_reflog.txt` sha256 `3afbde103bd3a20f21192f2128ed8a23ccd4dae9caa4683448649069ab195df5`
 - `correct_code_version_from_reflog.py` sha256 `fa6dbcf7a2a2d8eb84900653a531b52b04d441fd8cfa1ce4dd37f3547f2b15e3`
 - `correct_embed_gpu_time.py` sha256 `87b6b56b9f2194c78010b456ddc38135dbba349eff69e61c1a28e33500125123`
 - `correct_judge_embed_gpu_time.py` sha256 `22823e15cb005f752c66af694f22e085e3081ca13bb30553de0945c2975fc64d`
+- `correct_judge_usage.py` sha256 `233cb588a35ae1f957449e31bc163f3bf5138217b58ba7e90390f8c0c446a517`
 - `correct_missing_judge_legs.py` sha256 `e8adbbbe26fed551172e08ae67d12df25490d0ef05585d445acabee4d6e8c71e`
 - `correct_model_call_time.py` sha256 `f3e49a6b4fbfc779bba8d6793c98897415fbd7693202b2ff89f4e68771420a5c`
 - `correct_nonllm_record_content.py` sha256 `22f302c2e645d3aecbf87ab8735b64b356695a43362ab1cad39ce406d6d59f75`
-- `correct_search_time.py` sha256 `fedae7c39d863737ad1e3f472a5b17bf38fa838b114a2204ee582a89fcf9f0bb`
+- `correct_search_time.py` sha256 `4002eb8c2826c46a2b52f634a169f207a2cfa37322d6db64c9517f745bee351d`
 - `correct_zero_usage.py` sha256 `8f1cb37eec34d6b58c927e2098d3ce47bc603c6594227751e2ac01211f8b3c97`
-- `corrections.json` sha256 `86908fe9dd7459160db412a9d66599289da79f06837c36f427c0008ea72cf2d2`
+- `corrections.json` sha256 `87fd04363a183a13a9d159f33de38d8aadc21071803a033791e0ba840671cfc5`
 - `desktop_start_20261026T001551Z_eval_manifest.json` sha256 `6c75ecb95dd28dc01fe7e86c145df4263fe9892975f5788169722a9dae05e21c`
 - `desktop_start_20261026T001551Z_FIELDS.md` sha256 `2b4ddb21e0db6fdb38e0a2cd10c6f5c44f1da86d1741e8784a3354a2676312ed`
 - `desktop_start_20261026T001551Z_run_manifest.json` sha256 `5772125e2002848ff0870fafe89493592ce41a4d850040be2baa3cc9be477e23`
 - `desktop_start_20261026T001551Z_sha256.txt` sha256 `5f8ed702f2262b4faca522f5985ad77f45938b9fc591b51115839a555eda33f1`
 - `eval_calls.as_recorded.jsonl` sha256 `f2e5b9aae2aba418b5c7e04e09840323155afaee6ceecf58e8fcfa08c1530d18`
-- `eval_calls.jsonl` sha256 `51ec54a78150a7254f26d60c18e450ac8011c49b8a0f13c5adc172bb373b9afe`
+- `eval_calls.jsonl` sha256 `975b10c4e9cf8bd627f5e8ed3abde6a66e7195e05ec0f04404a4f8ed3ed43458`
 - `eval_failures.jsonl` sha256 `695aa78b36c95732d50f62d3fc5579d69830d0c5542ee3a5200986865fa094ac`
 - `eval_manifest.as_recorded.json` sha256 `cd3ede15ba4052ab14d2fbf8444a535af002ee817f4001629d372a7e6cfd797b`
-- `eval_manifest.json` sha256 `79e0c49407a08269e751ae3cf1edf2b678a1fa63bf94d5a93c332f1333f1512c`
+- `eval_manifest.json` sha256 `55de5e521cbd1875460adf7f9bbcfe17b367013a45748733a013642610a9c938`
 - `eval_results.as_recorded.jsonl` sha256 `c9200739e3245fdd0cd14104035f96d3cc99235fb2213da0999541f3e89f21b2`
-- `eval_results.jsonl` sha256 `7244c058e48bd1cdab19801ee844153bddd65a0d8a060f3ab74f1223b4424f40`
+- `eval_results.jsonl` sha256 `fdf04ecfb6874d6707c3160d81585a54f57084835c15b3f5301dac54cefb7b5b`
 - `failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - `gpu_embed_times_all.json` sha256 `db24c3d8fa2102717683be8dede03a2b04e863cfb82705a35817336693c5bac2`
 - `judge_embed_gpu_times.json` sha256 `72aa41ffeb48a6228a901c06cbb90094fcdad07911147faef29efb1d1b1c9267`

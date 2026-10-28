@@ -11,7 +11,7 @@ time to test the relations; their result goes into the evidence as it is. Withou
 prints what it would change. It keeps the rows as recorded as arm_outputs.as_recorded.jsonl on the
 first write of any correction, never changed after.
 
-Rule "model-call-time/1".
+Rule "model-call-time/2".
   1. A call is an answer call (role answer) or a first call (the artefact's call without a role) on
      claude-sonnet-5 that answered. Its time is its answering try's server time: the CLI's own
      duration_api_ms, the time spent with the model, without the program's start on our machine.
@@ -34,6 +34,9 @@ Rule "model-call-time/1".
      inside the row's span; a first call read from the run's store, made by an earlier start before
      the row's span began, changes no wall_s. No call record, answer, context, score or token count
      changes.
+  6. A run whose earlier version of this rule is written gets rules 1 to 5 again from its records as
+     they stand, their tokens corrected since: each entry and wall_s change by the difference, and
+     the evidence goes into model_call_times_v2.json.
 """
 import argparse
 import hashlib
@@ -46,9 +49,10 @@ from pathlib import Path
 
 import numpy as np
 
-RULE = "model-call-time/1"
+RULE = "model-call-time/2"
 SCRIPT = "correct_model_call_time.py"
 EVIDENCE = "model_call_times.json"
+EVIDENCE_AGAIN = "model_call_times_v2.json"
 HIS_WORDS = ("\"answer seconds looks really fucked up btw, there is litterally no chance those times are correct for "
              "real.. take a serious look at them\" · \"do a selected test/fix for a bunch and see if its the correct "
              "way\" · \"doit\" (2026-10-27)")
@@ -206,6 +210,8 @@ def main():
 def correct(d, summary, where, args):
     earlier = (json.loads((d / "corrections.json").read_text(encoding="utf-8"))["corrections"]
                if (d / "corrections.json").exists() else [])
+    # rule 6: an earlier version written means the entries hold its values, not the answering try's clock
+    first_time = not any(e["rule"]["id"].startswith("model-call-time/") for e in earlier)
     arm = ARM_OF[d.name]
     rows_path = d / "arm_outputs.jsonl"
     lines = rows_path.read_bytes().split(b"\n")
@@ -228,7 +234,7 @@ def correct(d, summary, where, args):
             i, c = answered[0]
             server = ((c.get("envelope") or {}).get("duration_api_ms") or 0) / 1000
             ok_try = c["attempts"][-1]
-            if server <= 0 or ok_try.get("outcome") != "ok" or abs(float(ok_try["seconds"]) - entry["request_s"]) > 1e-6:
+            if server <= 0 or ok_try.get("outcome") != "ok" or (first_time and abs(float(ok_try["seconds"]) - entry["request_s"]) > 1e-6):
                 raise SystemExit(f"{where_}: the {kind} call has no server time, or its entry's request_s is not its answering try")
             login = where[(d.name, n, i)]
             rel = summary["relations"][f"{kind}|{arm}"]
@@ -248,12 +254,12 @@ def correct(d, summary, where, args):
             before_s += entry["request_s"]
             after_s += value
             per_call.append({"question_id": row["id"], "kind": kind, "record": f"calls[{i}]", "seq": c.get("seq"),
-                             "started_at": c["started_at"], "output_tokens": out_tokens, "our_clock_s": entry["request_s"],
+                             "started_at": c["started_at"], "output_tokens": out_tokens, "our_clock_s": float(ok_try["seconds"]), "before_s": entry["request_s"],
                              "server_s": server, "login_backlog_tokens": login["backlog"], "past_limit": past,
                              "relation_s": rel["a_seconds"] + rel["b_seconds_per_output_token"] * out_tokens,
                              "seconds": value, "inside_row_span": inside})
             entry["request_s"], entry["time_s"] = value, new_time
-        lines[n] = json.dumps(row, ensure_ascii=False, default=repr).encode("utf-8")
+        lines[n] = json.dumps(row, ensure_ascii=False, default=repr).encode("utf-8") + (b"\r" if line.endswith(b"\r") else b"")
     past_n = sum(c["past_limit"] for c in per_call)
     print(f"{d.name}: {len(per_call)} calls ({past_n} past the limit): {before_s:.1f} s by our clock, {after_s:.1f} s corrected; "
           f"rate {summary['rate_tokens_per_second']} tokens/s, limit {summary['limit_backlog_tokens']:,.0f} tokens")
@@ -277,17 +283,21 @@ def correct(d, summary, where, args):
     tmp = rows_path.with_name(rows_path.name + ".tmp")
     tmp.write_bytes(b"\n".join(lines))
     tmp.replace(rows_path)
-    (d / EVIDENCE).write_text(json.dumps(evidence, ensure_ascii=False, indent=1), encoding="utf-8")
+    evidence_file = EVIDENCE if first_time else EVIDENCE_AGAIN
+    (d / evidence_file).write_text(json.dumps(evidence, ensure_ascii=False, indent=1), encoding="utf-8")
     if Path(__file__).resolve() != (d / SCRIPT).resolve():
         shutil.copy2(__file__, d / SCRIPT)
     entry = {
         "made_at": datetime.now(timezone.utc).isoformat(),
         "ordered_by": HIS_WORDS,
-        "what_happened": ("A model call's time was our clock around the whole CLI program, which holds the program's start "
-                          "on our machine (longer with more calls at once), and the calls that started while the login's "
-                          "backlog of claude-sonnet-5 input tokens was past its limit were slowed by the server. Each answer "
-                          "call and first call now has the server's own time for its answering try, and a call past the "
-                          "limit the time its arm's calls take for an answer of that length below it."),
+        "what_happened": (("A model call's time was our clock around the whole CLI program, which holds the program's start "
+                           "on our machine (longer with more calls at once), and the calls that started while the login's "
+                           "backlog of claude-sonnet-5 input tokens was past its limit were slowed by the server. Each answer "
+                           "call and first call now has the server's own time for its answering try, and a call past the "
+                           "limit the time its arm's calls take for an answer of that length below it.") if first_time else
+                          ("After model-call-time/1, the tokens of calls were corrected (zero-usage/3). Rules 1 to 5 are "
+                           "worked out again from the records as they stand; the entries whose value differs change by "
+                           "the difference.")),
         "rule": {"id": RULE, "text": __doc__.split(f'Rule "{RULE}".', 1)[1].strip()},
         "not_changed_and_worth_knowing": [
             "Every call record keeps each try's seconds as our clock measured them; only the row's entries and wall_s change.",
@@ -299,7 +309,7 @@ def correct(d, summary, where, args):
         "changes": changes,
         "checks": [{"what": "each changed entry held exactly one answering record, whose answering try's seconds were the "
                             "entry's request_s and which has a server time", "holds": True, "looked_at": len(per_call)}],
-        "evidence": {"file": EVIDENCE, "sha256": sha(d / EVIDENCE),
+        "evidence": {"file": evidence_file, "sha256": sha(d / evidence_file),
                      "what": "the backlog's rate and limit, the clean relations, the files they were read from with their "
                              "sha256, and per corrected call its server time, backlog, relation time and time"
                              + ("; the check of the relations on calls sent again" if args.check else "")},
@@ -310,7 +320,7 @@ def correct(d, summary, where, args):
                                         encoding="utf-8")
     from harness import fields
     fields.write(d, stamp_files=True)
-    print(f"written: {len(changes)} changes; corrections.json, {EVIDENCE}, {SCRIPT}")
+    print(f"written: {len(changes)} changes; corrections.json, {evidence_file}, {SCRIPT}")
 
 
 if __name__ == "__main__":

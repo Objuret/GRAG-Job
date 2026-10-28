@@ -770,6 +770,14 @@ FILES = {
                                  "call's seconds on the graphics card one call after the other, also of a call the "
                                  "run made on the card while other questions were under way, and its recorded "
                                  "seconds.", "question id = id of arm_outputs.jsonl; seq = calls[].seq", None),
+    "correct_judge_usage.py": ("The script that made the judge-usage correction (a judge call whose record held "
+                               "fewer tokens than its own reply given the whole call's counts, with its scoring "
+                               "start's entry, judge_usage and its score cell); run on the files from before it, "
+                               "it gives the corrected files again.", "", None),
+    "model_call_times_v2.json": ("The evidence of model-call-time/2: as model_call_times.json, worked out again "
+                                 "from the call records after their tokens were corrected (zero-usage/3).",
+                                 "question_id = id of arm_outputs.jsonl; record = the call's place in calls; "
+                                 "seq = calls[].seq", None),
     "correct_search_time.py": ("The script that made the search-time correction (each question's search time "
                                "the time of the same retrieval made again with one question at a time on the "
                                "laptop, and a question's wait for the embedder's lock out); run on the files "

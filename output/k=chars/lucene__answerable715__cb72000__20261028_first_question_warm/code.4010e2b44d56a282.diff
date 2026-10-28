@@ -1,0 +1,168 @@
+diff --git a/tools/correct_search_time.py b/tools/correct_search_time.py
+index 85b85ce..4b2c90e 100644
+--- a/tools/correct_search_time.py
++++ b/tools/correct_search_time.py
+@@ -1,7 +1,7 @@
+ """Give each question's search time the time its retrieval takes with one question at a time on one
+ machine; say exactly what was changed.
+ 
+-    python tools/correct_search_time.py <run folder> <re-made run folder> [--write]
++    python tools/correct_search_time.py <run folder> <re-made run folder> [--first-warm <warm run folder>] [--write]
+ 
+ The re-made run is the run's retrieval made again with prod/run.py --workers 1 --retrieval-only, on the
+ laptop, with no model call (the baselines make none; the artefact reads each first call's answer from
+@@ -9,7 +9,7 @@ the run's own store, HERB_V4_OFFLINE=on). Without --write it only prints what it
+ the rows as recorded as arm_outputs.as_recorded.jsonl on the first write of any correction, never
+ changed after.
+ 
+-Rule "search-time/1".
++Rule "search-time/2".
+   1. The re-made run holds the run's questions, each once, and each question's retrieval in it hands
+      over the same records as in the run: the same contexts and record ids, as many of each. A
+      question whose records come in another order is named in the check, with the first rank at which
+@@ -19,6 +19,11 @@ Rule "search-time/1".
+   3. Each row's embed entry in retrieval gets wait_s = 0: the time the question waited for the
+      embedder's lock while other questions of the run embedded; its time_s and the row's
+      timing.wall_s lose the same amount. No answer, context, score, token count or other time changes.
++  4. The question that was the first of the re-made run's process, which also made the process's
++     first loads and graph queries, gets its search_time_s from a warm run (--first-warm): the same
++     retrieval, made second in a fresh process after the re-made run's second question; that other
++     question's time is not used. Its timing.wall_s changes by the same amount. A run whose rules 1
++     to 3 are already written gets rule 4 alone.
+ """
+ import argparse
+ import hashlib
+@@ -28,7 +33,7 @@ import sys
+ from datetime import datetime, timezone
+ from pathlib import Path
+ 
+-RULE = "search-time/1"
++RULE = "search-time/2"
+ SCRIPT = "correct_search_time.py"
+ HIS_WORDS = ("\"make sure it's all correctly calculated, no sloppy shit or lazy, i want the same methods for them\" "
+              "(2026-10-27) · \"doit\" (2026-10-27)")
+@@ -45,13 +50,103 @@ def rows(path):
+     return [json.loads(x) for x in Path(path).read_text(encoding="utf-8").splitlines() if x.strip()]
+ 
+ 
++def entry_for(d, rows_path, before, kept, what, changes, checks, evidence, worth_knowing):
++    earlier = (json.loads((d / "corrections.json").read_text(encoding="utf-8"))["corrections"]
++               if (d / "corrections.json").exists() else [])
++    entry = {
++        "made_at": datetime.now(timezone.utc).isoformat(),
++        "ordered_by": HIS_WORDS,
++        "what_happened": what,
++        "rule": {"id": RULE, "text": __doc__.split(f'Rule "{RULE}".', 1)[1].strip()},
++        "not_changed_and_worth_knowing": worth_knowing,
++        "changes": changes,
++        "checks": checks,
++        "evidence": evidence,
++        "files": {"arm_outputs.jsonl": {"sha256_before": before, "sha256_corrected": sha(rows_path), "as_recorded": kept.name}},
++        "script": f"{SCRIPT}, in this folder",
++    }
++    (d / "corrections.json").write_text(json.dumps({"corrections": earlier + [entry]}, ensure_ascii=False, indent=2),
++                                        encoding="utf-8")
++
++
++def write_rows(d, rows_path, lines):
++    before = sha(rows_path)
++    kept = d / "arm_outputs.as_recorded.jsonl"
++    if not kept.exists():
++        shutil.copy2(rows_path, kept)
++    tmp = rows_path.with_name(rows_path.name + ".tmp")
++    tmp.write_bytes(b"\n".join(lines))
++    tmp.replace(rows_path)
++    if Path(__file__).resolve() != (d / SCRIPT).resolve():
++        shutil.copy2(__file__, d / SCRIPT)
++    return before, kept
++
++
++def first_warm(d, r, w, write):
++    """Rule 4 alone, for a run whose rules 1 to 3 are written."""
++    earlier = json.loads((d / "corrections.json").read_text(encoding="utf-8"))["corrections"]
++    if not any(e["rule"]["id"].startswith("search-time/") for e in earlier):
++        raise SystemExit(f"{d.name}: rules 1 to 3 are not written yet")
++    made = sorted(rows(r / "arm_outputs.jsonl"), key=lambda x: x["timing"]["started_at"])
++    warm = sorted(rows(w / "arm_outputs.jsonl"), key=lambda x: x["timing"]["started_at"])
++    man = json.loads((w / "run_manifest.json").read_text(encoding="utf-8"))
++    if man.get("workers") != 1 or [x["id"] for x in warm] != [made[1]["id"], made[0]["id"]]:
++        raise SystemExit(f"{w.name}: not the re-made run's second question and then its first, one at a time")
++    x = warm[1]
++    rows_path = d / "arm_outputs.jsonl"
++    lines = rows_path.read_bytes().split(b"\n")
++    changes = []
++    for n, line in enumerate(lines):
++        if not line.strip() or f'"id": "{x["id"]}"'.encode() not in line:
++            continue
++        row = json.loads(line)
++        if row["id"] != x["id"]:
++            continue
++        if sorted(x["contexts"]) != sorted(row["contexts"]) or sorted(x["context_ids"]) != sorted(row["context_ids"]):
++            raise SystemExit(f"row {n} ({row['id']}): the warm run does not hand over the same records")
++        if row["search_time_s"] != made[0]["search_time_s"]:
++            raise SystemExit(f"row {n} ({row['id']}): the row's search time is not the re-made run's")
++        where = f"arm_outputs.jsonl row {n} ({row['id']})"
++        delta = x["search_time_s"] - row["search_time_s"]
++        changes += [{"where": where, "field": "search_time_s", "recorded": row["search_time_s"], "corrected": x["search_time_s"]},
++                    {"where": where, "field": "timing.wall_s", "recorded": row["timing"]["wall_s"],
++                     "corrected": row["timing"]["wall_s"] + delta}]
++        row["search_time_s"] = x["search_time_s"]
++        row["timing"]["wall_s"] += delta
++        lines[n] = json.dumps(row, ensure_ascii=False, default=repr).encode("utf-8")
++    if len(changes) != 2:
++        raise SystemExit(f"{d.name}: not one row for the re-made run's first question")
++    print(f"{d.name}: the re-made run's first question {made[0]['search_time_s']:.3f} s first in its process, "
++          f"{x['search_time_s']:.3f} s second")
++    if not write:
++        print("  (nothing written; --write does it)")
++        return
++    before, kept = write_rows(d, rows_path, lines)
++    entry_for(d, rows_path, before, kept,
++              "The first question of the re-made run was the first in its process and also held the process's first "
++              "loads and graph queries. Its search time is the time of the same retrieval made second in a fresh "
++              "process, after the re-made run's second question.",
++              changes,
++              [{"what": "rule 4: the warm run made the re-made run's second question and then its first, one at a time, "
++                        "and hands over the same records for it", "holds": True, "looked_at": 1}],
++              {"file": f"../{w.name}/arm_outputs.jsonl", "sha256": sha(w / "arm_outputs.jsonl"),
++               "what": "the warm run's rows: the first question's search_time_s and contexts"},
++              ["The other question of the warm run, made first in its process, is not used."])
++    from harness import fields
++    fields.write(d, stamp_files=True)
++    print(f"written: {len(changes)} changes; corrections.json, {SCRIPT}")
++
++
+ def main():
+     p = argparse.ArgumentParser()
+     p.add_argument("run")
+     p.add_argument("remade")
++    p.add_argument("--first-warm")
+     p.add_argument("--write", action="store_true")
+     args = p.parse_args()
+     d, r = Path(args.run).resolve(), Path(args.remade).resolve()
++    if args.first_warm:
++        return first_warm(d, r, Path(args.first_warm).resolve(), args.write)
+     remade = {x["id"]: x for x in rows(r / "arm_outputs.jsonl")}
+     man = json.loads((r / "run_manifest.json").read_text(encoding="utf-8"))
+     if man.get("workers") != 1 or man.get("generator") is not None and man.get("generator_model"):
+diff --git a/tools/export_finished_data.py b/tools/export_finished_data.py
+index 12bef33..291dcb1 100644
+--- a/tools/export_finished_data.py
++++ b/tools/export_finished_data.py
+@@ -616,7 +616,15 @@ def construction_table():
+                 + facet["bootstrap_refits"]["seconds_elapsed"]
+                 + facet["write"]["seconds_elapsed"] + facet["write"]["backup_seconds"]
+                 + sum(steps["later_edges_and_fields"]["seconds"].values()))
+-    embed_seconds = sum(p["seconds_elapsed"] for p in embedded)
++    # the 63 readable tag names were embedded on the laptop's CPU; their time is that of the same requests
++    # on the desktop's graphics card, where the other two parts ran (his 2026-10-27 "embeddings via gpu")
++    readable = read(ROOT / "test/graph/build_cost_readable_names_gpu_times.json")
++    part = vectors["tags_with_underscores_in_readable_form"]
++    if (readable["measured"]["device"] != "cuda" or len(readable["requests"]) != part["texts"]
++            or sum(x["tokens_in"] for x in readable["requests"]) != part["tokens_in"]):
++        sys.exit("build_cost_readable_names_gpu_times.json is not the readable names' requests on the graphics card")
++    embed_seconds = (vectors["tags"]["seconds_elapsed"] + vectors["descriptions"]["seconds_elapsed"]
++                     + sum(x["encode_s"] for x in readable["requests"]))
+     opus_seconds = sum(r[3] for r in learned_from)
+     encoder_seconds = facet["encoder_cache"]["seconds_elapsed"]
+     vector = mans["vector"]["build_stats"]["models"][0]
