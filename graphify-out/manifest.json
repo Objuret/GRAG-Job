@@ -75,9 +75,9 @@
     "semantic_hash": "7b65bf271aa2968d686e39c8798a87ff"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\prod\\harness\\fields.py": {
-    "mtime": 1793134287.1402533,
-    "ast_hash": "b74eb09ccc2c460d01931ef53535d0fb",
-    "semantic_hash": "b74eb09ccc2c460d01931ef53535d0fb"
+    "mtime": 1793145559.7316935,
+    "ast_hash": "af01b9504a6b3d13ef635049c8125715",
+    "semantic_hash": "af01b9504a6b3d13ef635049c8125715"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\prod\\harness\\jsonl.py": {
     "mtime": 1790072775.2471683,
@@ -1418,5 +1418,20 @@
     "mtime": 1789703030.8601515,
     "ast_hash": "d50eb42ebc0d6799f7d88cddb60e16f2",
     "semantic_hash": "d50eb42ebc0d6799f7d88cddb60e16f2"
+  },
+  "C:\\Coding\\exjobbet\\GRAG-Job\\test\\graph\\build_cost_haiku_answering_tries.json": {
+    "mtime": 1793146124.668432,
+    "ast_hash": "fec77659b501e0be473669d18ea81810",
+    "semantic_hash": "fec77659b501e0be473669d18ea81810"
+  },
+  "C:\\Coding\\exjobbet\\GRAG-Job\\test\\graph\\build_cost_opus_transcript_times.json": {
+    "mtime": 1793146086.7745526,
+    "ast_hash": "2d62a3ec66219148946460b57cb1ea2b",
+    "semantic_hash": "2d62a3ec66219148946460b57cb1ea2b"
+  },
+  "C:\\Coding\\exjobbet\\GRAG-Job\\test\\graph\\build_cost_readable_names_gpu_times.json": {
+    "mtime": 1793142985.034239,
+    "ast_hash": "02e3c55878cb66772c2dc502ee669b37",
+    "semantic_hash": "02e3c55878cb66772c2dc502ee669b37"
   }
 }
