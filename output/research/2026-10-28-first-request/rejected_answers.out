@@ -1,0 +1,10 @@
+first calls with more than one model request and a transcript here: 66
+  what the first answer held: {'placeholder name of the tool format ($...)': 52, 'other wrong or missing field': 14}
+  a whole answer readable inside the first answer: 47; identical to the accepted answer (description, tags, question tags, facets, true or false): 41; same description: 44
+interpreter seconds on the 229 calls with a transcript whose value is their own server time:
+  every request: mean 11.56, median 10.94
+  the first request only: mean 10.01, median 10.24
+  the last request only: mean 9.08, median 9.21
+interpreter tokens on the 265 calls with a transcript:
+  output, every request: mean 1030.22, median 975.00; the first request only: mean 866.95, median 894.00
+  input, every request: mean 3079.72, median 2069.00; the first request only: mean 2067.25, median 2066.00

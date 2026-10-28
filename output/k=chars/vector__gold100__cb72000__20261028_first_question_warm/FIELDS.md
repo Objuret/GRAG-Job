@@ -16,7 +16,6 @@ One run of one retrieval method, **vector**, over 2 questions: for each question
 | `arm_outputs.jsonl` | One line per question: what was delivered, the answer, and everything the question cost. | id |
 | `run_manifest.json` | What the run was: the arm, its index, the code, the machine, the inputs, and every start of this folder. | legs[].leg = the leg of a row |
 | `failures.jsonl` | One line per try at a question that failed. Empty when none did. A question that failed and was answered in a later start has a line here and a row. | id |
-| `.run.lock` | There only while a run is writing into the folder. |  |
 
 Times are seconds (`_s`), milliseconds (`_ms`) or UTC stamps (`_at`; every other time text carries its own zone). Sizes are tokens, characters (`chars`) or bytes. A count (calls, attempts, requests, texts, records, edges, refits, and the like) is a plain number of the things it names. A price (`usd`, `USD`) is the Claude program's own, in US dollars; no number of this harness uses it. The evaluation's scores run from 0 to 1 and higher is more; a score an arm ranks by says its own scale.
 
@@ -33,7 +32,7 @@ The scores are computed by RAGAS. The quoted sentence of each is RAGAS's own, fr
 | `context_recall_llm` | "Estimates context recall by estimating TP and FN using annotated answer and retrieved context." (RAGAS, class LLMContextRecall) Here: the gold answer, sentence by sentence, against contexts. | the judge | yes |
 | `faithfulness` | "The **Faithfulness** metric measures how factually consistent a `response` is with the `retrieved context`. [...] A response is considered **faithful** if all its claims can be supported by the retrieved context." (RAGAS, docs, faithfulness.md) Here: the answer's claims against contexts. | the judge | yes |
 | `answer_correctness` | "Measures answer correctness compared to ground truth as a combination of factuality and semantic similarity." (RAGAS, class AnswerCorrectness) Here: the answer against the gold answer: 0.75 times the F1 of the claims the judge finds in both, plus 0.25 times semantic_similarity (RAGAS's own weights). | the judge and the embedder | yes |
-| `factual_correctness` | "It uses claim decomposition and natural language inference (NLI) to verify the claims made in the responses against reference texts." (RAGAS, class FactualCorrectness) Here: the answer against the gold answer: the F1 of the answer's claims the judge finds in the gold answer and the gold answer's claims it finds in the answer (RAGAS's defaults: mode f1, beta 1, atomicity and coverage low), rounded to two decimals. | the judge | yes |
+| `factual_correctness` | "It uses claim decomposition and natural language inference (NLI) to verify the claims made in the responses against reference texts." (RAGAS, class FactualCorrectness) Here: the answer against the gold answer: the F1 of precision TP / (TP + FP) and recall TP / (TP + FN), where TP and FP are the answer's claims that the judge finds and does not find in the gold answer, and FN the gold answer's claims that it does not find in the answer (RAGAS's defaults: mode f1, beta 1, atomicity and coverage low), rounded to two decimals. | the judge | yes |
 | `context_entity_recall` | "Calculates recall based on entities present in ground truth and context." (RAGAS, class ContextEntityRecall) Here: the entities the judge finds in the gold answer, found among the entities it finds in contexts joined into one text. | the judge | yes |
 | `semantic_similarity` | "The **Semantic Similarity** metric evaluates the semantic resemblance between a generated response and a reference (ground truth) answer. [...] This metric uses embeddings and cosine similarity" (RAGAS, docs, semantic_similarity.md) Here: the answer against the gold answer, both embedded in passage mode. | the embedder | yes |
 | `string_similarity` | "`NonLLMStringSimilarity` metric measures the similarity between the reference and the response using traditional string distance measures such as Levenshtein, Hamming, and Jaro." (RAGAS, docs, traditional.md) Here: the answer against the gold answer, Levenshtein. | nothing | yes |
@@ -340,7 +339,7 @@ One line per try at a question that failed. Empty when none did. A question that
 | `usage.prompt_tokens` | Tokens sent: fresh input, plus what was written to the prompt cache, plus what was read from it. |
 | `usage.completion_tokens` | Tokens the model wrote. |
 | `usage.cached_input_tokens` | The part of prompt_tokens read from the prompt cache. |
-| `envelope` | The Claude program's whole reply as it printed it, each part as the program gives it: its own times in milliseconds (duration_ms for the whole program run, duration_api_ms for the time spent with the model, ttft_ms until the first token, ttft_stream_ms and time_to_request_ms), its own token counts, the models it used with their context window in tokens (contextWindow), its own price in US dollars (total_cost_usd, costUSD; no number of this harness uses it), its counts of web requests (0: the call has no tool), its session id, how many turns it took, and its error fields, which are empty when the call had no error (api_error_status, permission_denials). Empty for a call that gave up: no reply was read. |
+| `envelope` | The Claude program's whole reply as it printed it, each part as the program gives it: its own times in milliseconds (duration_ms from the start of the request turn, after the program has started, to its end; duration_api_ms for the time spent in requests to the model; ttft_ms until the first block of the first request's reply is complete; ttft_stream_ms until the first event of that reply's stream; time_to_request_ms until the first request was sent; the last three from the start of the request turn), its own token counts, the models it used with their context window in tokens (contextWindow), its own price in US dollars (total_cost_usd, costUSD; no number of this harness uses it), its counts of web requests (0: the call has no tool), its session id, how many turns it took, and its error fields, which are empty when the call had no error (api_error_status, permission_denials). Empty for a call that gave up: no reply was read. |
 | `stream` | The raw stream of a reply joined from parts; empty otherwise. |
 | `stderr` | What the program printed as errors in the try that answered; empty when it printed nothing, and for a call that gave up. |
 | `error` | The last error of a call that gave up; empty otherwise. |
@@ -691,4 +690,10 @@ The file holds no record.
 | `workers` | integer | 1 | 0 |
 
 ---
-Written from `prod/harness/fields.py`, sha256 `42e2015e16ce089be06ea5e6f37efb14794c820667498abc78edbb8e85d08581`.
+Written from `prod/harness/fields.py`, sha256 `1c4a0c739e74ffebf0a5a6c716aba0f32c6d222f566b01d1b471f2c222f6cfb6`.
+
+The files as they stood when this was written, their line ends as git holds them (LF):
+
+- `arm_outputs.jsonl` sha256 `d122ff865be70e2bf59c8586113359d7982d1a635fdc7f2917af859cb046f336`
+- `failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- `run_manifest.json` sha256 `79ba0c2d8dfc218db8aafcc80397d9ac538579e5654035d61c64840de2ca40e8`

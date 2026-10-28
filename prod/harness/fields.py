@@ -105,9 +105,12 @@ CALL = {
         "cached_input_tokens": "The part of prompt_tokens read from the prompt cache.",
     }),
     "envelope": whole("The Claude program's whole reply as it printed it, each part as the "
-                      "program gives it: its own times in milliseconds (duration_ms for the whole "
-                      "program run, duration_api_ms for the time spent with the model, ttft_ms "
-                      "until the first token, ttft_stream_ms and time_to_request_ms), its own "
+                      "program gives it: its own times in milliseconds (duration_ms from the start "
+                      "of the request turn, after the program has started, to its end; "
+                      "duration_api_ms for the time spent in requests to the model; ttft_ms until "
+                      "the first block of the first request's reply is complete; ttft_stream_ms "
+                      "until the first event of that reply's stream; time_to_request_ms until the "
+                      "first request was sent; the last three from the start of the request turn), its own "
                       "token counts, the models it used with their context window in tokens "
                       "(contextWindow), its own price in US dollars (total_cost_usd, costUSD; no "
                       "number of this harness uses it), its counts of web requests (0: the call "
@@ -778,6 +781,18 @@ FILES = {
                                  "from the call records after their tokens were corrected (zero-usage/3).",
                                  "question_id = id of arm_outputs.jsonl; record = the call's place in calls; "
                                  "seq = calls[].seq", None),
+    "model_call_times_v3.json": ("The evidence of model-call-time/3: as model_call_times.json, worked out again "
+                                 "with each call in which the CLI did not accept the answer's form counted by its first "
+                                 "request (first_request: its model requests, their times in the CLI's transcript, "
+                                 "the first request's share of the server time, its seconds and its tokens).",
+                                 "question_id = id of arm_outputs.jsonl; record = the call's place in calls; "
+                                 "seq = calls[].seq", None),
+    "cli_transcript_requests.json": ("The numbers of each model request of the run's calls that made more than one, "
+                                     "read from the Claude program's own transcript of each call on the machine "
+                                     "that made it, no text read out: the prompt record's time; per request the "
+                                     "times of its first and last records, its tokens and the kinds of its blocks; "
+                                     "per tool result its time and whether it was rejected (is_error).",
+                                     "session id = calls[].envelope.session_id of arm_outputs.jsonl", None),
     "correct_search_time.py": ("The script that made the search-time correction (each question's search time "
                                "the time of the same retrieval made again with one question at a time on the "
                                "laptop, and a question's wait for the embedder's lock out); run on the files "
@@ -914,9 +929,11 @@ SCORES = {
     "factual_correctness": (
         "It uses claim decomposition and natural language inference (NLI) to verify the claims "
         "made in the responses against reference texts.", "class FactualCorrectness",
-        "the answer against the gold answer: the F1 of the answer's claims the judge finds in the "
-        "gold answer and the gold answer's claims it finds in the answer (RAGAS's defaults: mode "
-        "f1, beta 1, atomicity and coverage low), rounded to two decimals.", "the judge", True),
+        "the answer against the gold answer: the F1 of precision TP / (TP + FP) and recall "
+        "TP / (TP + FN), where TP and FP are the answer's claims that the judge finds and does not "
+        "find in the gold answer, and FN the gold answer's claims that it does not find in the "
+        "answer (RAGAS's defaults: mode f1, beta 1, atomicity and coverage low), rounded to two "
+        "decimals.", "the judge", True),
     "context_entity_recall": (
         "Calculates recall based on entities present in ground truth and context.",
         "class ContextEntityRecall",

@@ -143,22 +143,27 @@ QUESTIONS = [
                        "answer-model calls in the run folders, test runs included (added at each call's start, lowered "
                        "by 16,500 tokens per second), was 886,127 tokens or more, the fitted backlog at which the "
                        "seconds per output token rise: a + b x output tokens, "
-                       "fitted on the same arm's calls in its final runs started below it.",
+                       "fitted on the same arm's calls in its final runs started below it. A call in which the CLI "
+                       "did not accept the answer's form and the model wrote the answer again counts by its first request: "
+                       "duration_api_ms times the first request's share of the requests' times in the CLI's transcript "
+                       "of the call, or the relation at the first request's output tokens.",
      "seconds"),
     ("total_seconds", "Time of the question's steps added: search_seconds, interpreter_seconds, "
                       "query_embedding_seconds and answer_seconds. Without failed tries of model "
                       "calls.", "seconds"),
     ("interpreter_tokens_in", "Input tokens of the interpreter call: new input, cache creation and cache read "
-                              "tokens added. Artefact only.", "tokens"),
-    ("interpreter_tokens_out", "Output tokens of the interpreter call. Artefact only.", "tokens"),
+                              "tokens added; of its first request, as answer_seconds says. Artefact only.", "tokens"),
+    ("interpreter_tokens_out", "Output tokens of the interpreter call; of its first request, as answer_seconds says. "
+                               "Artefact only.", "tokens"),
     ("query_embedding_tokens", "Tokens embedded for the query's texts, counted on each text with the 'query: ' "
                                "prefix and the tokenizer's special tokens. Vector and artefact only; for the "
                                "artefact, as query_embedding_seconds says which texts count.", "tokens"),
     ("retrieved_context_characters", "Characters of the retrieved context given to the answer model. At most "
                                      "character_limit.", "characters"),
     ("answer_tokens_in", "Input tokens of the answer model call: new input, cache creation and cache read tokens "
-                         "added.", "tokens"),
-    ("answer_tokens_out", "Output tokens of the answer model call.", "tokens"),
+                         "added; of its first request, as answer_seconds says.", "tokens"),
+    ("answer_tokens_out", "Output tokens of the answer model call; of its first request, as answer_seconds says.",
+     "tokens"),
 ]
 # the same for the three arms; the export stops if an arm differs. The dataset and its licence
 # are their own words and have no entry in the data dictionary.

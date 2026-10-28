@@ -1,0 +1,7347 @@
+{
+ "what": "the numbers of each model request of this run's calls that made more than one, read from the CLI's own transcript of each call on the machine that made it, no text read out",
+ "read_from": [
+  {
+   "file": "first_request_laptop.json",
+   "sha256": "ac18bd5a7eed76d665dc86a9479630add3503ac352a1f72997e31a4bcfdac566",
+   "machine": "Wiktop",
+   "script_sha256": "88800b943200c4fdcf0c55ab7d96c6c6f4c83d014ef171df982384f87906b89a",
+   "sessions": 66
+  },
+  {
+   "file": "first_request_desktop.json",
+   "sha256": "5467c9367e9af093c6cab66bcf831c1e9dc3f574cdd7e406c80546ca9741a9a8",
+   "machine": "Fräsh",
+   "script_sha256": "88800b943200c4fdcf0c55ab7d96c6c6f4c83d014ef171df982384f87906b89a",
+   "sessions": 125
+  }
+ ],
+ "sessions": {
+  "3af451eb-e264-4caf-8ba5-508ea15f3107": {
+   "prompt": "2026-10-25T21:19:51.113Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 217,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:20:00.967Z",
+     "id": "msg_011CgPetoBXgxqHY5H9mBW2p",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:20:04.977Z",
+     "output_tokens": 1127
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1203,
+     "cache_read_input_tokens": 2067,
+     "first_record": "2026-10-25T21:20:09.755Z",
+     "id": "msg_011CgPeuiFe3F7a1383TCmhL",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:20:09.755Z",
+     "output_tokens": 466
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:20:04.991Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:20:09.760Z"
+    }
+   ]
+  },
+  "a1510f88-8c3b-4fbc-a6fa-8d29a39912f4": {
+   "prompt": "2026-10-25T21:19:50.802Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 201,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:19:59.765Z",
+     "id": "msg_011CgPetmP9JVFa9VCk28Gxu",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:20:03.177Z",
+     "output_tokens": 946
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1022,
+     "cache_read_input_tokens": 2051,
+     "first_record": "2026-10-25T21:20:07.531Z",
+     "id": "msg_011CgPeuaquvCtdVYMY4Tc7A",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:20:07.531Z",
+     "output_tokens": 396
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:20:03.265Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:20:07.535Z"
+    }
+   ]
+  },
+  "7e894530-4230-47d8-96f9-dbd5bb9c2d85": {
+   "prompt": "2026-10-25T21:22:46.989Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 235,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:22:54.537Z",
+     "id": "msg_011CgPf7iBm9b2GQ5u9S11Bu",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:22:54.537Z",
+     "output_tokens": 675
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 694,
+     "cache_read_input_tokens": 2085,
+     "first_record": "2026-10-25T21:23:00.088Z",
+     "id": "msg_011CgPf8D5ahXry3BtwTbh3B",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:23:00.088Z",
+     "output_tokens": 663
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 694,
+     "cache_read_input_tokens": 2779,
+     "first_record": "2026-10-25T21:23:01.991Z",
+     "id": "msg_011CgPf8cr5NieB34micTS88",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:23:06.456Z",
+     "output_tokens": 732
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 763,
+     "cache_read_input_tokens": 3473,
+     "first_record": "2026-10-25T21:23:09.273Z",
+     "id": "msg_011CgPf95tFr81X8i4dGK9vJ",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:23:13.787Z",
+     "output_tokens": 774
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 805,
+     "cache_read_input_tokens": 4236,
+     "first_record": "2026-10-25T21:23:19.209Z",
+     "id": "msg_011CgPf9czmhyh5KMkfvueYS",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:23:20.361Z",
+     "output_tokens": 498
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:22:54.594Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:23:00.092Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:23:06.469Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:23:13.794Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:23:20.398Z"
+    }
+   ]
+  },
+  "6d56d62f-d764-4cef-bfa6-fecc9c5ef05f": {
+   "prompt": "2026-10-25T21:22:48.045Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 239,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:22:55.073Z",
+     "id": "msg_011CgPf7n2CWJVAMYAo4qJDf",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:22:59.115Z",
+     "output_tokens": 1039
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1103,
+     "cache_read_input_tokens": 2089,
+     "first_record": "2026-10-25T21:23:04.471Z",
+     "id": "msg_011CgPf8YhmvJhBMvLE7P3QP",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:23:04.471Z",
+     "output_tokens": 582
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:22:59.133Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:23:04.491Z"
+    }
+   ]
+  },
+  "23aa5cda-8e0e-4141-9dad-580ce484cd59": {
+   "prompt": "2026-10-25T21:25:09.981Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 216,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:25:18.875Z",
+     "id": "msg_011CgPfJEiqNfpxKtK7LyERC",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:25:22.291Z",
+     "output_tokens": 863
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 927,
+     "cache_read_input_tokens": 2066,
+     "first_record": "2026-10-25T21:25:26.555Z",
+     "id": "msg_011CgPfK6i9r3mRAATw8ndBo",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:25:26.555Z",
+     "output_tokens": 418
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:25:22.322Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:25:26.565Z"
+    }
+   ]
+  },
+  "1428e663-66e9-40b2-9130-a722093ff2a1": {
+   "prompt": "2026-10-25T21:27:12.256Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 220,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:27:18.200Z",
+     "id": "msg_011CgPfTE9rAURL89gk32XCz",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:27:18.200Z",
+     "output_tokens": 514
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 579,
+     "cache_read_input_tokens": 2070,
+     "first_record": "2026-10-25T21:27:23.250Z",
+     "id": "msg_011CgPfTegUqYS3wAto4g8pV",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:27:23.250Z",
+     "output_tokens": 538
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:27:18.273Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:27:23.270Z"
+    }
+   ]
+  },
+  "c4bd2122-3657-4d07-a45d-931245e4ab14": {
+   "prompt": "2026-10-25T21:29:41.465Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 209,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:29:47.167Z",
+     "id": "msg_011CgPfeG6ygoeo6PFNaibRv",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:29:47.167Z",
+     "output_tokens": 378
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 443,
+     "cache_read_input_tokens": 2059,
+     "first_record": "2026-10-25T21:29:51.861Z",
+     "id": "msg_011CgPfedqgt6PAQA5wjtNaA",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:29:51.861Z",
+     "output_tokens": 403
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:29:47.252Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:29:51.872Z"
+    }
+   ]
+  },
+  "05c503a4-facb-4c8d-88c7-fdac7cfc2190": {
+   "prompt": "2026-10-25T21:29:42.599Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 216,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:29:49.766Z",
+     "id": "msg_011CgPfeMtytCxnvdgnE38cw",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:29:53.580Z",
+     "output_tokens": 834
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 910,
+     "cache_read_input_tokens": 2066,
+     "first_record": "2026-10-25T21:29:58.190Z",
+     "id": "msg_011CgPff76HB1WQq441vnjhV",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:29:58.190Z",
+     "output_tokens": 451
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:29:53.641Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:29:58.220Z"
+    }
+   ]
+  },
+  "0b7f129f-3365-4b99-a1d9-58487f3461c2": {
+   "prompt": "2026-10-25T21:29:46.348Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 216,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:29:51.898Z",
+     "id": "msg_011CgPfeake5SNHrrjbc8FgF",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:29:55.834Z",
+     "output_tokens": 824
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 900,
+     "cache_read_input_tokens": 2066,
+     "first_record": "2026-10-25T21:30:01.005Z",
+     "id": "msg_011CgPffGkhGJrUibdT5YRSw",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:30:01.005Z",
+     "output_tokens": 529
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:29:55.900Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:30:01.030Z"
+    }
+   ]
+  },
+  "8a12197c-2860-4cd0-a5ec-b8d8768aadef": {
+   "prompt": "2026-10-25T21:32:25.718Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 234,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:32:31.969Z",
+     "id": "msg_011CgPfrLNnVVuzUYoznTxQJ",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:32:36.185Z",
+     "output_tokens": 943
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1019,
+     "cache_read_input_tokens": 2084,
+     "first_record": "2026-10-25T21:32:41.284Z",
+     "id": "msg_011CgPfs627oUNtjXaKkAWq5",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:32:41.284Z",
+     "output_tokens": 531
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:32:36.228Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:32:41.345Z"
+    }
+   ]
+  },
+  "ecd36c57-0d9c-4f69-a6ef-9497c514767d": {
+   "prompt": "2026-10-25T21:36:08.525Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 212,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:36:18.704Z",
+     "id": "msg_011CgPg8keErcbu2W2cu42Pd",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:19.203Z",
+     "output_tokens": 871
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 935,
+     "cache_read_input_tokens": 2062,
+     "first_record": "2026-10-25T21:36:23.733Z",
+     "id": "msg_011CgPg9XdwPnqfxkJw4JeJV",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:23.733Z",
+     "output_tokens": 402
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:36:19.239Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:36:23.741Z"
+    }
+   ]
+  },
+  "830f0498-0cb0-4824-b734-21550d41e885": {
+   "prompt": "2026-10-25T21:40:29.399Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 201,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:40:35.173Z",
+     "id": "msg_011CgPgU37UMeR2XWHf7KvtZ",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:40:38.047Z",
+     "output_tokens": 621
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 685,
+     "cache_read_input_tokens": 2051,
+     "first_record": "2026-10-25T21:40:40.975Z",
+     "id": "msg_011CgPgUdvUikSfcvkWqm5Jv",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:40:42.572Z",
+     "output_tokens": 355
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 419,
+     "cache_read_input_tokens": 2736,
+     "first_record": "2026-10-25T21:40:46.489Z",
+     "id": "msg_011CgPgUwNTu9j2CnQvb8nEi",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:40:48.645Z",
+     "output_tokens": 548
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:40:38.248Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:40:42.579Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:40:48.659Z"
+    }
+   ]
+  },
+  "1052fb16-4f91-4d0e-b3b5-70509c6b102c": {
+   "prompt": "2026-10-25T21:40:31.750Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 212,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:40:40.074Z",
+     "id": "msg_011CgPgUEoSePTcT2NinaJSg",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:40:40.728Z",
+     "output_tokens": 557
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 633,
+     "cache_read_input_tokens": 2062,
+     "first_record": "2026-10-25T21:40:45.806Z",
+     "id": "msg_011CgPgUqoMXpihaLzRW5vpb",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:40:45.806Z",
+     "output_tokens": 422
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:40:40.968Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:40:45.833Z"
+    }
+   ]
+  },
+  "12507787-5eb1-45f4-8e56-4eb6cff3a638": {
+   "prompt": "2026-10-25T21:40:46.970Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 216,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:40:54.526Z",
+     "id": "msg_011CgPgVH9bibD3QUGLsLTMv",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:40:57.501Z",
+     "output_tokens": 954
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1018,
+     "cache_read_input_tokens": 2066,
+     "first_record": "2026-10-25T21:41:01.537Z",
+     "id": "msg_011CgPgW3uf8YePyFs61uiZc",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:41:01.537Z",
+     "output_tokens": 375
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 440,
+     "cache_read_input_tokens": 3084,
+     "first_record": "2026-10-25T21:41:06.978Z",
+     "id": "msg_011CgPgWLbVXEQ4XRnHsZG9s",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:41:09.639Z",
+     "output_tokens": 719
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:40:57.571Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:41:01.610Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:41:09.657Z"
+    }
+   ]
+  },
+  "ac22f704-b489-4912-a9f2-9e48c5939e39": {
+   "prompt": "2026-10-25T21:43:23.754Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 210,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:43:33.300Z",
+     "id": "msg_011CgPggqvPJS11Frw6bkhMm",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:43:36.376Z",
+     "output_tokens": 973
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1037,
+     "cache_read_input_tokens": 2060,
+     "first_record": "2026-10-25T21:43:39.270Z",
+     "id": "msg_011CgPghkoaskUt8HkHMvuMp",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:43:41.827Z",
+     "output_tokens": 414
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 478,
+     "cache_read_input_tokens": 3097,
+     "first_record": "2026-10-25T21:43:45.361Z",
+     "id": "msg_011CgPgi9mxSFztnZdzJcu8c",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:43:47.251Z",
+     "output_tokens": 528
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:43:36.437Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:43:41.839Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:43:47.279Z"
+    }
+   ]
+  },
+  "f54c4229-f391-46be-b110-21eac0dcde98": {
+   "prompt": "2026-10-25T21:46:23.040Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 200,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:46:28.061Z",
+     "id": "msg_011CgPgv6oCczYTTKdef8gEK",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:46:31.563Z",
+     "output_tokens": 674
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 738,
+     "cache_read_input_tokens": 2050,
+     "first_record": "2026-10-25T21:46:36.083Z",
+     "id": "msg_011CgPgvfyVRgUoHnMBtFb14",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:46:36.083Z",
+     "output_tokens": 443
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 508,
+     "cache_read_input_tokens": 2788,
+     "first_record": "2026-10-25T21:46:41.103Z",
+     "id": "msg_011CgPgvzs3W4DMygRpgnXXd",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:46:44.228Z",
+     "output_tokens": 784
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:46:31.605Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:46:36.101Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:46:44.253Z"
+    }
+   ]
+  },
+  "fec99e9d-e943-4f51-80f9-344115051d1f": {
+   "prompt": "2026-10-25T21:46:24.858Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 214,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:46:29.090Z",
+     "id": "msg_011CgPgvFBUzJC5RyaZr7iUi",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:46:33.783Z",
+     "output_tokens": 771
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 835,
+     "cache_read_input_tokens": 2064,
+     "first_record": "2026-10-25T21:46:38.581Z",
+     "id": "msg_011CgPgvqAe1K1WvHYNJwa1p",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:46:38.581Z",
+     "output_tokens": 573
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:46:33.831Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:46:38.605Z"
+    }
+   ]
+  },
+  "b5b70889-32c8-4a86-980c-0bb5b26314fe": {
+   "prompt": "2026-10-25T21:53:03.386Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 218,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:53:10.776Z",
+     "id": "msg_011CgPhRZWMrnVvNsr7dko9s",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:53:13.814Z",
+     "output_tokens": 930
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 994,
+     "cache_read_input_tokens": 2068,
+     "first_record": "2026-10-25T21:53:20.439Z",
+     "id": "msg_011CgPhSKsLfcJbxppFjezmD",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:53:23.262Z",
+     "output_tokens": 875
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:53:13.892Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:53:23.296Z"
+    }
+   ]
+  },
+  "dfccb72c-8d89-4911-b522-e560561460be": {
+   "prompt": "2026-10-25T21:57:19.098Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 207,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:57:25.608Z",
+     "id": "msg_011CgPhkWM92c7i5tXo1hkpE",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:28.919Z",
+     "output_tokens": 673
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 737,
+     "cache_read_input_tokens": 2057,
+     "first_record": "2026-10-25T21:57:33.692Z",
+     "id": "msg_011CgPhmAPcq1A5rbfRwBnwm",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:33.692Z",
+     "output_tokens": 400
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:57:28.935Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:57:33.723Z"
+    }
+   ]
+  },
+  "131b0309-721a-4aaa-8087-b9ad98c71a16": {
+   "prompt": "2026-10-25T21:57:20.149Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 218,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:57:28.448Z",
+     "id": "msg_011CgPhkaVRgPfUhCahxAVFv",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:32.587Z",
+     "output_tokens": 1017
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1093,
+     "cache_read_input_tokens": 2068,
+     "first_record": "2026-10-25T21:57:34.923Z",
+     "id": "msg_011CgPhmRSEPYWwkJXxKXQkH",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:37.834Z",
+     "output_tokens": 510
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:57:32.600Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:57:37.858Z"
+    }
+   ]
+  },
+  "7a74968b-630d-4eef-9e9d-097dcf485807": {
+   "prompt": "2026-10-25T21:59:54.915Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 214,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:00:06.173Z",
+     "id": "msg_011CgPhx1RR5LwgyxG6FnAHW",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:09.373Z",
+     "output_tokens": 1086
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1150,
+     "cache_read_input_tokens": 2064,
+     "first_record": "2026-10-25T22:00:13.407Z",
+     "id": "msg_011CgPhxwq9cpQPse5kHNuFJ",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:13.407Z",
+     "output_tokens": 426
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:00:09.399Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:00:13.418Z"
+    }
+   ]
+  },
+  "3383a24a-dea4-4fae-8248-73f1698a7590": {
+   "prompt": "2026-10-25T22:00:05.402Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 208,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:00:14.831Z",
+     "id": "msg_011CgPhxiBNB4FdPwHXJdXQs",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:17.715Z",
+     "output_tokens": 995
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1059,
+     "cache_read_input_tokens": 2058,
+     "first_record": "2026-10-25T22:00:21.118Z",
+     "id": "msg_011CgPhyZffvtamhvATVy1cW",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:23.637Z",
+     "output_tokens": 557
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:00:17.741Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:00:23.643Z"
+    }
+   ]
+  },
+  "663c1d29-854c-4cf9-9e00-d46896f147e3": {
+   "prompt": "2026-10-25T22:02:00.345Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 215,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:02:09.280Z",
+     "id": "msg_011CgPi7C8M3roTX3mdrM3x3",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:02:11.327Z",
+     "output_tokens": 765
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 793,
+     "cache_read_input_tokens": 2065,
+     "first_record": "2026-10-25T22:02:12.908Z",
+     "id": "msg_011CgPi7wUKgaf9mSCM68ZUU",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:02:15.568Z",
+     "output_tokens": 451
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:02:11.371Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:02:15.580Z"
+    }
+   ]
+  },
+  "aedfd475-3c6f-41ed-b47c-fc96b5bc9088": {
+   "prompt": "2026-10-25T22:03:26.716Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 216,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:03:34.195Z",
+     "id": "msg_011CgPiDYdosY2NFkN48ULRo",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:37.988Z",
+     "output_tokens": 970
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1046,
+     "cache_read_input_tokens": 2066,
+     "first_record": "2026-10-25T22:03:42.908Z",
+     "id": "msg_011CgPiEKwMABy1Vrsr3nfZ2",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:42.908Z",
+     "output_tokens": 478
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:38.020Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:03:42.922Z"
+    }
+   ]
+  },
+  "20313025-c207-4435-a8f4-a1151ea871c2": {
+   "prompt": "2026-10-25T22:03:33.818Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 225,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:03:44.345Z",
+     "id": "msg_011CgPiE5KmUR2ntJG5Fe4ym",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:45.099Z",
+     "output_tokens": 793
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 869,
+     "cache_read_input_tokens": 2075,
+     "first_record": "2026-10-25T22:03:49.512Z",
+     "id": "msg_011CgPiErHDfLwUFYWuQYWiU",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:49.512Z",
+     "output_tokens": 416
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:45.130Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:03:49.521Z"
+    }
+   ]
+  },
+  "9a34ab3f-611b-4510-86c3-09a29f8d9697": {
+   "prompt": "2026-10-25T22:04:45.475Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 229,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:05:03.331Z",
+     "id": "msg_011CgPiKb2ar4Vj5tsKGfg86",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:05:03.331Z",
+     "output_tokens": 1170
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1209,
+     "cache_read_input_tokens": 2079,
+     "first_record": "2026-10-25T22:05:16.982Z",
+     "id": "msg_011CgPiMKkd9gLStWbynXHdx",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:05:16.982Z",
+     "output_tokens": 415
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:05:03.409Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:05:16.994Z"
+    }
+   ]
+  },
+  "11e356ab-fe3c-4e44-b6c0-5e365c9d4b1c": {
+   "prompt": "2026-10-25T22:04:53.415Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 235,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:05:21.758Z",
+     "id": "msg_011CgPiMQoEZE5etQ4LCezHU",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:05:21.758Z",
+     "output_tokens": 641
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 717,
+     "cache_read_input_tokens": 2085,
+     "first_record": "2026-10-25T22:05:35.991Z",
+     "id": "msg_011CgPiNfUK34aLCQcebRQnv",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:05:35.991Z",
+     "output_tokens": 477
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:05:21.838Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:05:36.008Z"
+    }
+   ]
+  },
+  "3fdf7fd9-3ce4-4a42-9608-13a4f82ab94b": {
+   "prompt": "2026-10-25T22:06:29.916Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 0,
+     "cache_read_input_tokens": 2066,
+     "first_record": "2026-10-25T22:06:32.893Z",
+     "id": "msg_011CgPiT4XFneZyjeeUcR1jQ",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:06:32.893Z",
+     "output_tokens": 52
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 117,
+     "cache_read_input_tokens": 2066,
+     "first_record": "2026-10-25T22:06:37.952Z",
+     "id": "msg_011CgPiTDieVavb7pP5p3wtn",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:06:37.952Z",
+     "output_tokens": 464
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:06:32.927Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:06:37.964Z"
+    }
+   ]
+  },
+  "fb726fd3-ed58-4837-8a58-65efc0545d3f": {
+   "prompt": "2026-10-25T22:07:06.215Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 214,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:07:30.484Z",
+     "id": "msg_011CgPiWUdgDzEeddnVbSMm5",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:30.484Z",
+     "output_tokens": 1101
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1140,
+     "cache_read_input_tokens": 2064,
+     "first_record": "2026-10-25T22:07:36.735Z",
+     "id": "msg_011CgPiXeaFN4mQBUgZ6TXU7",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:36.735Z",
+     "output_tokens": 385
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 450,
+     "cache_read_input_tokens": 3204,
+     "first_record": "2026-10-25T22:07:42.160Z",
+     "id": "msg_011CgPiXvJY8DT58Ftuc1ZzK",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:44.681Z",
+     "output_tokens": 683
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:07:30.530Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:07:36.742Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:07:44.688Z"
+    }
+   ]
+  },
+  "044091a7-da40-48a3-b735-e2846b6b7db2": {
+   "prompt": "2026-10-25T22:07:06.207Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 231,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:07:26.030Z",
+     "id": "msg_011CgPiWVhB32QD7ZNzp9hRH",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:26.030Z",
+     "output_tokens": 729
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 833,
+     "cache_read_input_tokens": 2081,
+     "first_record": "2026-10-25T22:07:40.985Z",
+     "id": "msg_011CgPiXsJhqk9Pu1Px4ypF4",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:40.985Z",
+     "output_tokens": 544
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:07:26.077Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:07:40.995Z"
+    }
+   ]
+  },
+  "d2d66096-d64c-4a83-bb21-72bba0bfda49": {
+   "prompt": "2026-10-25T22:07:49.460Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 224,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:07:54.235Z",
+     "id": "msg_011CgPiYu7dnUgY7MkRkLFF2",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:55.048Z",
+     "output_tokens": 337
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 413,
+     "cache_read_input_tokens": 2074,
+     "first_record": "2026-10-25T22:07:56.864Z",
+     "id": "msg_011CgPiZH6iSWASd6pxfwYav",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:59.711Z",
+     "output_tokens": 442
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:07:55.090Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:07:59.725Z"
+    }
+   ]
+  },
+  "bc0b358b-3b5f-4f2c-85aa-5698deabc61e": {
+   "prompt": "2026-10-25T22:07:57.421Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 214,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:08:05.517Z",
+     "id": "msg_011CgPiZWqxGAdqzL28kdsse",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:08:08.553Z",
+     "output_tokens": 828
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 858,
+     "cache_read_input_tokens": 2064,
+     "first_record": "2026-10-25T22:08:18.652Z",
+     "id": "msg_011CgPiafHV5NDweftB6GZeX",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:08:18.652Z",
+     "output_tokens": 436
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:08:08.577Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:08:18.666Z"
+    }
+   ]
+  },
+  "af0a8f29-f92b-4fa6-b49f-79e0d04f46b7": {
+   "prompt": "2026-10-25T22:08:04.119Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 209,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:08:26.192Z",
+     "id": "msg_011CgPiahbPUTjU2CXYYNU83",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:08:26.192Z",
+     "output_tokens": 1037
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1090,
+     "cache_read_input_tokens": 2059,
+     "first_record": "2026-10-25T22:08:30.299Z",
+     "id": "msg_011CgPibaJsL89LmoA7FcRgD",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:08:30.299Z",
+     "output_tokens": 376
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:08:26.286Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:08:30.307Z"
+    }
+   ]
+  },
+  "ae850063-a068-4e9e-a8d0-45ddfece488c": {
+   "prompt": "2026-10-25T22:08:35.726Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 214,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:08:47.124Z",
+     "id": "msg_011CgPicK2PKckKE9ZoYUPJh",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:08:50.458Z",
+     "output_tokens": 1310
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1374,
+     "cache_read_input_tokens": 2064,
+     "first_record": "2026-10-25T22:08:54.946Z",
+     "id": "msg_011CgPidMq6adLu6YdxatZe1",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:08:54.946Z",
+     "output_tokens": 438
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 503,
+     "cache_read_input_tokens": 3438,
+     "first_record": "2026-10-25T22:08:59.530Z",
+     "id": "msg_011CgPidgorVzZLJBviCPurw",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:09:02.641Z",
+     "output_tokens": 713
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:08:50.483Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:08:54.952Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:09:02.880Z"
+    }
+   ]
+  },
+  "2991f1cc-ab8f-4177-9bed-bdec4026910d": {
+   "prompt": "2026-10-25T22:08:37.156Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 215,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:08:42.895Z",
+     "id": "msg_011CgPicQiSi8ekzWKYGNdYh",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:08:42.895Z",
+     "output_tokens": 430
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 495,
+     "cache_read_input_tokens": 2065,
+     "first_record": "2026-10-25T22:08:44.770Z",
+     "id": "msg_011CgPicoTv8SzZDaHwziH3P",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:08:47.371Z",
+     "output_tokens": 456
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 522,
+     "cache_read_input_tokens": 2560,
+     "first_record": "2026-10-25T22:08:49.907Z",
+     "id": "msg_011CgPid8LyYC8oEwbkDTz8Z",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:08:53.340Z",
+     "output_tokens": 582
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 646,
+     "cache_read_input_tokens": 3082,
+     "first_record": "2026-10-25T22:08:59.595Z",
+     "id": "msg_011CgPidZtdKpyw3MBqvXu5C",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:09:02.862Z",
+     "output_tokens": 929
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:08:42.934Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:08:47.375Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:08:53.344Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:09:02.869Z"
+    }
+   ]
+  },
+  "eafec89e-d573-4d79-abc7-64fa415deea2": {
+   "prompt": "2026-10-25T22:08:40.432Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 213,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:08:45.229Z",
+     "id": "msg_011CgPicfLmbkZmD4dcmyAw9",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:08:45.946Z",
+     "output_tokens": 249
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 313,
+     "cache_read_input_tokens": 2063,
+     "first_record": "2026-10-25T22:08:51.191Z",
+     "id": "msg_011CgPid2aiCSvSELK9mnrEr",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:08:51.191Z",
+     "output_tokens": 508
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:08:45.965Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:08:51.198Z"
+    }
+   ]
+  },
+  "ac0d2f4b-fda5-4017-90b7-211ee6d0d3f4": {
+   "prompt": "2026-10-25T22:09:10.037Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 207,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:09:15.530Z",
+     "id": "msg_011CgPiesKtpwEjw5mmCmq1i",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:09:18.447Z",
+     "output_tokens": 644
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 708,
+     "cache_read_input_tokens": 2057,
+     "first_record": "2026-10-25T22:09:23.008Z",
+     "id": "msg_011CgPifRY931GDPqKics7bC",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:09:25.369Z",
+     "output_tokens": 607
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:09:18.496Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:09:25.379Z"
+    }
+   ]
+  },
+  "5b4b8ba3-0f36-42e0-92c8-3608547d1156": {
+   "prompt": "2026-10-25T21:17:12.733Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 205,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:17:18.470Z",
+     "id": "msg_011CgPehA4ovq5bUSLuj1pHj",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:21.614Z",
+     "output_tokens": 593
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 623,
+     "cache_read_input_tokens": 2055,
+     "first_record": "2026-10-25T21:17:25.645Z",
+     "id": "msg_011CgPehe8GkDLY8RuoQ1JZt",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:25.645Z",
+     "output_tokens": 407
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:21.625Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:17:25.647Z"
+    }
+   ]
+  },
+  "087cec0c-c4b8-4592-95bd-cac65bdc62d3": {
+   "prompt": "2026-10-25T21:17:12.280Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 2050,
+     "cache_read_input_tokens": 0,
+     "first_record": "2026-10-25T21:17:21.708Z",
+     "id": "msg_011CgPeh6GMH4R6zzSSUp1M3",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:24.519Z",
+     "output_tokens": 850
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 914,
+     "cache_read_input_tokens": 2050,
+     "first_record": "2026-10-25T21:17:28.493Z",
+     "id": "msg_011CgPehrRC2qetL5C9uumjp",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:28.493Z",
+     "output_tokens": 368
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 433,
+     "cache_read_input_tokens": 2964,
+     "first_record": "2026-10-25T21:17:31.790Z",
+     "id": "msg_011CgPei9S8fPFW2mvuf7XCA",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:34.394Z",
+     "output_tokens": 516
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 580,
+     "cache_read_input_tokens": 3397,
+     "first_record": "2026-10-25T21:17:38.904Z",
+     "id": "msg_011CgPeiaeCPX83KrxFq29pb",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:41.574Z",
+     "output_tokens": 639
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:24.526Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:28.495Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:34.399Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:17:41.577Z"
+    }
+   ]
+  },
+  "26e5756b-d4ca-4e75-93e3-304268555608": {
+   "prompt": "2026-10-25T21:17:11.918Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 2063,
+     "cache_read_input_tokens": 0,
+     "first_record": "2026-10-25T21:17:19.962Z",
+     "id": "msg_011CgPeh4yUVaiMbmPnYF8Ni",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:20.873Z",
+     "output_tokens": 498
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 574,
+     "cache_read_input_tokens": 2063,
+     "first_record": "2026-10-25T21:17:23.173Z",
+     "id": "msg_011CgPehaoqzZ3MBFQwZmfWW",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:26.011Z",
+     "output_tokens": 439
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:20.880Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:17:26.013Z"
+    }
+   ]
+  },
+  "8033f58d-6399-4115-803f-5d36639e14cc": {
+   "prompt": "2026-10-25T21:17:12.015Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 2058,
+     "cache_read_input_tokens": 0,
+     "first_record": "2026-10-25T21:17:24.099Z",
+     "id": "msg_011CgPeh4QzRquJu2Bfi6mq3",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:26.689Z",
+     "output_tokens": 1034
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1098,
+     "cache_read_input_tokens": 2058,
+     "first_record": "2026-10-25T21:17:29.540Z",
+     "id": "msg_011CgPei1c63vPyqwGVYtm5j",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:31.611Z",
+     "output_tokens": 451
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:26.696Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:17:31.618Z"
+    }
+   ]
+  },
+  "127c99a0-3620-4e9f-9743-7c74e6a972fd": {
+   "prompt": "2026-10-25T21:17:12.758Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 209,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:17:18.371Z",
+     "id": "msg_011CgPehALRYm6sgPVqzGffM",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:21.205Z",
+     "output_tokens": 554
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 632,
+     "cache_read_input_tokens": 2059,
+     "first_record": "2026-10-25T21:17:25.204Z",
+     "id": "msg_011CgPehcDv6wWLCqsULup95",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:25.204Z",
+     "output_tokens": 430
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:21.212Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:17:25.219Z"
+    }
+   ]
+  },
+  "8050117c-d5ef-47a4-a1cb-1cc44db87e92": {
+   "prompt": "2026-10-25T21:17:12.575Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 203,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:17:18.959Z",
+     "id": "msg_011CgPeh6qqkSLFgiaHEBhCH",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:18.959Z",
+     "output_tokens": 396
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 461,
+     "cache_read_input_tokens": 2053,
+     "first_record": "2026-10-25T21:17:21.069Z",
+     "id": "msg_011CgPehSggM5dGfoarimheM",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:23.548Z",
+     "output_tokens": 414
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 478,
+     "cache_read_input_tokens": 2514,
+     "first_record": "2026-10-25T21:17:26.722Z",
+     "id": "msg_011CgPehnGAAU4z7ZLj29Lxq",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:29.625Z",
+     "output_tokens": 551
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:18.968Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:23.550Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:17:29.628Z"
+    }
+   ]
+  },
+  "a813d5eb-1401-474f-b7bf-243b49115f70": {
+   "prompt": "2026-10-25T21:17:12.791Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 208,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:17:22.567Z",
+     "id": "msg_011CgPeh7bUyxPuEUpvF8JTk",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:25.217Z",
+     "output_tokens": 953
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1017,
+     "cache_read_input_tokens": 2058,
+     "first_record": "2026-10-25T21:17:29.021Z",
+     "id": "msg_011CgPehuPHhQbwZyeW2C3eS",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:29.021Z",
+     "output_tokens": 372
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:25.224Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:17:29.025Z"
+    }
+   ]
+  },
+  "7b0193d8-1b1c-4de0-ace7-63fcef3a34ed": {
+   "prompt": "2026-10-25T21:17:12.972Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 206,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:17:22.421Z",
+     "id": "msg_011CgPehB2bqgnM8UcS7NCRe",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:25.547Z",
+     "output_tokens": 849
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 913,
+     "cache_read_input_tokens": 2056,
+     "first_record": "2026-10-25T21:17:29.662Z",
+     "id": "msg_011CgPehvocmmzjuZydpzNDN",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:29.662Z",
+     "output_tokens": 372
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 437,
+     "cache_read_input_tokens": 2969,
+     "first_record": "2026-10-25T21:17:36.888Z",
+     "id": "msg_011CgPeiEHbJoG2KThQ28wPx",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:39.543Z",
+     "output_tokens": 856
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:25.553Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:29.663Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:17:39.549Z"
+    }
+   ]
+  },
+  "a158149f-9240-4cb8-aa99-ce39c642db4f": {
+   "prompt": "2026-10-25T21:17:12.715Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 205,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:17:21.340Z",
+     "id": "msg_011CgPeh6ns6XpyEHKapG5y1",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:22.083Z",
+     "output_tokens": 562
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 638,
+     "cache_read_input_tokens": 2055,
+     "first_record": "2026-10-25T21:17:26.053Z",
+     "id": "msg_011CgPehg5azmuz2knUTrX7h",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:26.053Z",
+     "output_tokens": 376
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:22.092Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:17:26.056Z"
+    }
+   ]
+  },
+  "0d8d4718-d78b-4902-b3c9-b53b01f11915": {
+   "prompt": "2026-10-25T21:17:12.797Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 212,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:17:19.800Z",
+     "id": "msg_011CgPehAJhdQuSVvUqVxSLT",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:19.800Z",
+     "output_tokens": 448
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 513,
+     "cache_read_input_tokens": 2062,
+     "first_record": "2026-10-25T21:17:24.032Z",
+     "id": "msg_011CgPehWCmFw1dqiCaqrzNF",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:24.032Z",
+     "output_tokens": 462
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:19.810Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:17:24.034Z"
+    }
+   ]
+  },
+  "1c526958-8e18-4795-a5d0-fc8879d41273": {
+   "prompt": "2026-10-25T21:17:12.504Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 214,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:17:26.187Z",
+     "id": "msg_011CgPeh7t69RjR6YE1Ao1D7",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:31.185Z",
+     "output_tokens": 1532
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1560,
+     "cache_read_input_tokens": 2064,
+     "first_record": "2026-10-25T21:17:33.288Z",
+     "id": "msg_011CgPeiMCJq3EHcBu6SPCRv",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:36.109Z",
+     "output_tokens": 496
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:31.192Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:17:36.114Z"
+    }
+   ]
+  },
+  "9dddf28c-637c-4438-ae58-ddefe28c149b": {
+   "prompt": "2026-10-25T21:17:12.259Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 200,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:17:20.700Z",
+     "id": "msg_011CgPehAY5ZPKuJqTGF2ZSP",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:24.288Z",
+     "output_tokens": 833
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 896,
+     "cache_read_input_tokens": 2050,
+     "first_record": "2026-10-25T21:17:27.149Z",
+     "id": "msg_011CgPehqVsveotCj5gpgtuu",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:29.658Z",
+     "output_tokens": 513
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:24.297Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:17:29.661Z"
+    }
+   ]
+  },
+  "9fb92868-3356-4e17-b3d7-c524876688b8": {
+   "prompt": "2026-10-25T21:17:12.822Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 207,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:17:22.854Z",
+     "id": "msg_011CgPeh86jmY3ZUjWDN5gXj",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:26.273Z",
+     "output_tokens": 1013
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1089,
+     "cache_read_input_tokens": 2057,
+     "first_record": "2026-10-25T21:17:28.014Z",
+     "id": "msg_011CgPehyuQA1472soa4gz1a",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:30.759Z",
+     "output_tokens": 437
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:26.280Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:17:30.762Z"
+    }
+   ]
+  },
+  "690ceca4-f7c1-4770-9b4b-b20f58d6ba0c": {
+   "prompt": "2026-10-25T21:17:25.579Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 205,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:17:31.246Z",
+     "id": "msg_011CgPehxnRcjiFgDTTvqtht",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:32.058Z",
+     "output_tokens": 478
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 554,
+     "cache_read_input_tokens": 2055,
+     "first_record": "2026-10-25T21:17:35.183Z",
+     "id": "msg_011CgPeiQdS5kocnSMB2gTnK",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:35.183Z",
+     "output_tokens": 334
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:32.066Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:17:35.187Z"
+    }
+   ]
+  },
+  "a0c9a09f-b688-4d99-8664-e977e14e081b": {
+   "prompt": "2026-10-25T21:17:25.679Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 204,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:17:33.359Z",
+     "id": "msg_011CgPehyXprsuToaVfoqnNC",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:36.643Z",
+     "output_tokens": 973
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1049,
+     "cache_read_input_tokens": 2054,
+     "first_record": "2026-10-25T21:17:40.919Z",
+     "id": "msg_011CgPeikGdoxncmLq4Zkw5p",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:40.919Z",
+     "output_tokens": 424
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:36.650Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:17:40.922Z"
+    }
+   ]
+  },
+  "aa65c941-7ed2-4baf-ac27-411ec157e370": {
+   "prompt": "2026-10-25T21:17:30.622Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 240,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:17:43.311Z",
+     "id": "msg_011CgPeiQqqf3GEoWr43dEom",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:47.751Z",
+     "output_tokens": 1485
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1549,
+     "cache_read_input_tokens": 2090,
+     "first_record": "2026-10-25T21:17:53.270Z",
+     "id": "msg_011CgPejZprz9G9foRPGt3Rj",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:53.270Z",
+     "output_tokens": 605
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:47.757Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:17:53.294Z"
+    }
+   ]
+  },
+  "231d67cc-05ff-4c1c-8808-b45797022907": {
+   "prompt": "2026-10-25T21:17:35.847Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 223,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:17:46.033Z",
+     "id": "msg_011CgPeijGbsCq11YZzdLikj",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:49.135Z",
+     "output_tokens": 1100
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1164,
+     "cache_read_input_tokens": 2073,
+     "first_record": "2026-10-25T21:17:53.067Z",
+     "id": "msg_011CgPejfccbzeMYo68SNfwU",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:53.067Z",
+     "output_tokens": 415
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:49.141Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:17:53.069Z"
+    }
+   ]
+  },
+  "21ee1f8f-09fe-4f09-9c00-b4ccc168efde": {
+   "prompt": "2026-10-25T21:17:42.601Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 238,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:17:52.283Z",
+     "id": "msg_011CgPejDAtrRJztfV75XThx",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:17:56.061Z",
+     "output_tokens": 1200
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1264,
+     "cache_read_input_tokens": 2088,
+     "first_record": "2026-10-25T21:17:58.171Z",
+     "id": "msg_011CgPekBM3JuSPT1zLoysMq",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:18:01.075Z",
+     "output_tokens": 507
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 571,
+     "cache_read_input_tokens": 3352,
+     "first_record": "2026-10-25T21:18:04.871Z",
+     "id": "msg_011CgPekYiA99KJQTS5HWJpD",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:18:07.894Z",
+     "output_tokens": 708
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:17:56.067Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:18:01.077Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:18:07.896Z"
+    }
+   ]
+  },
+  "ebcffe0e-53c4-42f4-a2b3-1f91e383e7b1": {
+   "prompt": "2026-10-25T21:30:10.264Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 217,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:30:15.562Z",
+     "id": "msg_011CgPfgKmZ5w31wjwu8Gxpy",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:30:19.412Z",
+     "output_tokens": 757
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 821,
+     "cache_read_input_tokens": 2067,
+     "first_record": "2026-10-25T21:30:23.754Z",
+     "id": "msg_011CgPfgyTx9zJyXCufkN877",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:30:23.754Z",
+     "output_tokens": 467
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:30:19.422Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:30:23.758Z"
+    }
+   ]
+  },
+  "748e0c22-59d1-4f21-85e2-b4f4d621d67f": {
+   "prompt": "2026-10-25T21:30:22.669Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 210,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:30:32.165Z",
+     "id": "msg_011CgPfhEkwr8vjhkAmLSy4V",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:30:35.744Z",
+     "output_tokens": 1106
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1170,
+     "cache_read_input_tokens": 2060,
+     "first_record": "2026-10-25T21:30:40.290Z",
+     "id": "msg_011CgPfiBJs9xocjYWLTT6Np",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:30:40.290Z",
+     "output_tokens": 442
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:30:35.754Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:30:40.297Z"
+    }
+   ]
+  },
+  "d2cf3a71-8c2f-4c62-a977-a687362da2de": {
+   "prompt": "2026-10-25T21:31:16.216Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 201,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:31:22.127Z",
+     "id": "msg_011CgPfmCtTLoFjZB1VCwkrK",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:31:22.127Z",
+     "output_tokens": 470
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 547,
+     "cache_read_input_tokens": 2051,
+     "first_record": "2026-10-25T21:31:26.425Z",
+     "id": "msg_011CgPfmbgQSSQ1AzQp5v55F",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:31:26.425Z",
+     "output_tokens": 453
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:31:22.138Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:31:26.430Z"
+    }
+   ]
+  },
+  "ea1ebf5f-3c07-4a94-91c8-41dd855be9e2": {
+   "prompt": "2026-10-25T21:32:17.717Z",
+   "requests": [
+    {
+     "blocks": [
+      "text"
+     ],
+     "cache_creation_input_tokens": 31884,
+     "cache_read_input_tokens": 0,
+     "first_record": "2026-10-25T21:32:24.171Z",
+     "id": "msg_011CgPfqhS34DbKPuraaetA3",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:32:24.171Z",
+     "output_tokens": 483
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 495,
+     "cache_read_input_tokens": 31884,
+     "first_record": "2026-10-25T21:32:29.778Z",
+     "id": "msg_011CgPfrAjcSgqcnuw3D24vt",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:32:29.778Z",
+     "output_tokens": 457
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:32:29.785Z"
+    }
+   ]
+  },
+  "a3259559-3e40-4c01-b809-61352960ac2d": {
+   "prompt": "2026-10-25T21:31:31.570Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 200,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:31:37.162Z",
+     "id": "msg_011CgPfnNuyb5E8mjXnVhNDZ",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:31:37.162Z",
+     "output_tokens": 389
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 454,
+     "cache_read_input_tokens": 2050,
+     "first_record": "2026-10-25T21:31:41.320Z",
+     "id": "msg_011CgPfnhnYVHxQWshSoYobx",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:31:41.320Z",
+     "output_tokens": 399
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:31:37.174Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:31:41.324Z"
+    }
+   ]
+  },
+  "4e346786-73a0-4b59-a69d-43274382bdeb": {
+   "prompt": "2026-10-25T21:31:34.914Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 231,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:31:42.608Z",
+     "id": "msg_011CgPfnbbyS8eWkrbAZxkxy",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:31:45.753Z",
+     "output_tokens": 846
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 910,
+     "cache_read_input_tokens": 2081,
+     "first_record": "2026-10-25T21:31:48.312Z",
+     "id": "msg_011CgPfoLaNA3vLDSvUg2zSb",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:31:50.836Z",
+     "output_tokens": 471
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 536,
+     "cache_read_input_tokens": 2991,
+     "first_record": "2026-10-25T21:31:54.740Z",
+     "id": "msg_011CgPfoiEcSMktd3ZJpDvX3",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:31:58.182Z",
+     "output_tokens": 674
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 739,
+     "cache_read_input_tokens": 3527,
+     "first_record": "2026-10-25T21:32:04.958Z",
+     "id": "msg_011CgPfpFhCUBp5Yt7mETopY",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:32:08.363Z",
+     "output_tokens": 925
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:31:45.763Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:31:50.838Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:31:58.186Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:32:08.373Z"
+    }
+   ]
+  },
+  "a307a662-79c2-440f-a91f-1d81497f1396": {
+   "prompt": "2026-10-25T21:31:39.029Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 256,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:31:49.659Z",
+     "id": "msg_011CgPfnt8PE3cG2m3TcZrvy",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:31:54.330Z",
+     "output_tokens": 1392
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1456,
+     "cache_read_input_tokens": 2106,
+     "first_record": "2026-10-25T21:31:59.990Z",
+     "id": "msg_011CgPfoyGyTyqpQErWfueR3",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:31:59.990Z",
+     "output_tokens": 639
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:31:54.343Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:31:59.996Z"
+    }
+   ]
+  },
+  "ce5b751f-5dec-445f-a76c-29008ec9e16e": {
+   "prompt": "2026-10-25T21:31:40.210Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 221,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:31:47.124Z",
+     "id": "msg_011CgPfnxPdHYub9A7dWY33J",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:31:49.661Z",
+     "output_tokens": 813
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 877,
+     "cache_read_input_tokens": 2071,
+     "first_record": "2026-10-25T21:31:51.786Z",
+     "id": "msg_011CgPfodMfdPfMRP938ysae",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:31:54.086Z",
+     "output_tokens": 398
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:31:49.672Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:31:54.094Z"
+    }
+   ]
+  },
+  "be48c2a2-6ce4-497e-9ff2-2b9d7da78ed2": {
+   "prompt": "2026-10-25T21:32:38.383Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 211,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:32:44.715Z",
+     "id": "msg_011CgPfsEyNpEdEbrKSZKqDd",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:32:44.715Z",
+     "output_tokens": 523
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 536,
+     "cache_read_input_tokens": 2061,
+     "first_record": "2026-10-25T21:32:49.241Z",
+     "id": "msg_011CgPfsggxKbdHbkDue7haM",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:32:49.241Z",
+     "output_tokens": 480
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:32:44.725Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:32:49.245Z"
+    }
+   ]
+  },
+  "626fba56-1839-44d3-b746-895e8a80bd21": {
+   "prompt": "2026-10-25T21:33:02.311Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 212,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:33:11.043Z",
+     "id": "msg_011CgPfu1R6wXACxG5k8PipL",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:33:14.132Z",
+     "output_tokens": 947
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1011,
+     "cache_read_input_tokens": 2062,
+     "first_record": "2026-10-25T21:33:18.316Z",
+     "id": "msg_011CgPfurTd4SJWJFHcMinkG",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:33:18.316Z",
+     "output_tokens": 420
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:33:14.145Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:33:18.321Z"
+    }
+   ]
+  },
+  "a90aa9c6-6b4c-48ba-a49a-0e35a5c7f84f": {
+   "prompt": "2026-10-25T21:33:06.360Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 213,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:33:14.604Z",
+     "id": "msg_011CgPfuJrMJ7EjT93EKCHvn",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:33:17.843Z",
+     "output_tokens": 1034
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1098,
+     "cache_read_input_tokens": 2063,
+     "first_record": "2026-10-25T21:33:22.342Z",
+     "id": "msg_011CgPfv8H8Zg8Y1Sp2aaCcn",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:33:22.342Z",
+     "output_tokens": 458
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:33:17.852Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:33:22.346Z"
+    }
+   ]
+  },
+  "63444bef-6914-46c8-ac19-54a85a33b4f0": {
+   "prompt": "2026-10-25T21:33:51.533Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 217,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:33:57.964Z",
+     "id": "msg_011CgPfxf2P2H9W58kt4ZbUY",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:33:58.638Z",
+     "output_tokens": 506
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 583,
+     "cache_read_input_tokens": 2067,
+     "first_record": "2026-10-25T21:34:03.649Z",
+     "id": "msg_011CgPfy8hGvK7eueteTPMGM",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:34:03.649Z",
+     "output_tokens": 466
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:33:58.648Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:34:03.654Z"
+    }
+   ]
+  },
+  "112d71f0-0130-4fea-b6a1-4d16ec947a4d": {
+   "prompt": "2026-10-25T21:33:53.302Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 198,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:33:58.177Z",
+     "id": "msg_011CgPfxmmBM81DqZQiy7mL4",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:33:58.177Z",
+     "output_tokens": 340
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 405,
+     "cache_read_input_tokens": 2048,
+     "first_record": "2026-10-25T21:34:01.993Z",
+     "id": "msg_011CgPfy6hiUUobTmbpZxYUd",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:34:01.993Z",
+     "output_tokens": 366
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:33:58.194Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:34:01.996Z"
+    }
+   ]
+  },
+  "0da651e1-c36b-45b7-80f7-4517aaceffb9": {
+   "prompt": "2026-10-25T21:33:54.645Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 200,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:33:59.673Z",
+     "id": "msg_011CgPfxrvjKoZhKtMJxdUCY",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:34:00.490Z",
+     "output_tokens": 386
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 462,
+     "cache_read_input_tokens": 2050,
+     "first_record": "2026-10-25T21:34:05.703Z",
+     "id": "msg_011CgPfyGc2X2JX7MYMR6Qaf",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:34:05.703Z",
+     "output_tokens": 491
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:34:00.498Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:34:05.707Z"
+    }
+   ]
+  },
+  "7340ef78-8880-4040-acb4-578a6d316114": {
+   "prompt": "2026-10-25T21:34:07.157Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 216,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:34:14.893Z",
+     "id": "msg_011CgPfynoyA1zCNZ4EUjjbE",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:34:17.671Z",
+     "output_tokens": 865
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 929,
+     "cache_read_input_tokens": 2066,
+     "first_record": "2026-10-25T21:34:19.777Z",
+     "id": "msg_011CgPfzY7DBDXXcBLKPdJkX",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:34:22.076Z",
+     "output_tokens": 417
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 481,
+     "cache_read_input_tokens": 2995,
+     "first_record": "2026-10-25T21:34:28.525Z",
+     "id": "msg_011CgPfzrs5c2L3ZYRQpSRrV",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:34:30.995Z",
+     "output_tokens": 814
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:34:17.685Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:34:22.086Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:34:30.998Z"
+    }
+   ]
+  },
+  "b326140c-b760-44ea-8a73-4bc0be8f2ce4": {
+   "prompt": "2026-10-25T21:34:09.248Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 216,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:34:17.488Z",
+     "id": "msg_011CgPfywHCf7MTy7vxhfpuB",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:34:20.406Z",
+     "output_tokens": 992
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1056,
+     "cache_read_input_tokens": 2066,
+     "first_record": "2026-10-25T21:34:23.807Z",
+     "id": "msg_011CgPfzjiTsqXzQuMYs7MJh",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:34:23.807Z",
+     "output_tokens": 366
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:34:20.413Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:34:23.811Z"
+    }
+   ]
+  },
+  "232fa26b-cf0c-4e3f-b975-1f6492b6af93": {
+   "prompt": "2026-10-25T21:34:11.639Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 215,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:34:20.397Z",
+     "id": "msg_011CgPfz7uRHh8KetwsCZzHa",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:34:23.736Z",
+     "output_tokens": 1005
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1069,
+     "cache_read_input_tokens": 2065,
+     "first_record": "2026-10-25T21:34:27.810Z",
+     "id": "msg_011CgPfzyyxB2mEJcLosJGcP",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:34:27.810Z",
+     "output_tokens": 396
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 461,
+     "cache_read_input_tokens": 3134,
+     "first_record": "2026-10-25T21:34:30.248Z",
+     "id": "msg_011CgPg1HSRx22qAAghxhF2v",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:34:32.966Z",
+     "output_tokens": 476
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 540,
+     "cache_read_input_tokens": 3595,
+     "first_record": "2026-10-25T21:34:36.631Z",
+     "id": "msg_011CgPg1fLJpo4KZjLZJ3ayb",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:34:39.321Z",
+     "output_tokens": 532
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 597,
+     "cache_read_input_tokens": 4135,
+     "first_record": "2026-10-25T21:34:44.929Z",
+     "id": "msg_011CgPg28pJYRBpUFF7LydTW",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:34:47.536Z",
+     "output_tokens": 752
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:34:23.746Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:34:27.814Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:34:32.967Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:34:39.370Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:34:47.542Z"
+    }
+   ]
+  },
+  "8f44f100-d3c6-4994-b338-ebee926133ee": {
+   "prompt": "2026-10-25T21:34:55.258Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 208,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:35:03.357Z",
+     "id": "msg_011CgPg3LZGWtPWmT6PrYoph",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:35:06.484Z",
+     "output_tokens": 939
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1003,
+     "cache_read_input_tokens": 2058,
+     "first_record": "2026-10-25T21:35:10.640Z",
+     "id": "msg_011CgPg48i9YFqvKhHgSM2wV",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:35:10.640Z",
+     "output_tokens": 400
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:35:06.491Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:35:10.642Z"
+    }
+   ]
+  },
+  "050cd2d2-95a7-481c-81d7-657909a1a5a1": {
+   "prompt": "2026-10-25T21:35:00.261Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 212,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:35:04.497Z",
+     "id": "msg_011CgPg3jC34avyR2hUGwUQp",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:35:07.494Z",
+     "output_tokens": 568
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 632,
+     "cache_read_input_tokens": 2062,
+     "first_record": "2026-10-25T21:35:12.052Z",
+     "id": "msg_011CgPg4D17dSv8VSJmecfNy",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:35:12.052Z",
+     "output_tokens": 443
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:35:07.503Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:35:12.055Z"
+    }
+   ]
+  },
+  "a60a4a25-8e8a-40e2-bdee-12ffcbaa3632": {
+   "prompt": "2026-10-25T21:35:01.641Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 216,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:35:09.415Z",
+     "id": "msg_011CgPg3oW1QTPhSzuZa6rhB",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:35:09.813Z",
+     "output_tokens": 591
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 655,
+     "cache_read_input_tokens": 2066,
+     "first_record": "2026-10-25T21:35:11.663Z",
+     "id": "msg_011CgPg4NtSem3EL3irLVysQ",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:35:15.236Z",
+     "output_tokens": 479
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:35:09.819Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:35:15.240Z"
+    }
+   ]
+  },
+  "2c7917ed-afac-410b-8c61-849226238f03": {
+   "prompt": "2026-10-25T21:35:12.763Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 208,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:35:18.361Z",
+     "id": "msg_011CgPg4dpNV3dY4tLBho1C3",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:35:19.075Z",
+     "output_tokens": 382
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 458,
+     "cache_read_input_tokens": 2058,
+     "first_record": "2026-10-25T21:35:20.861Z",
+     "id": "msg_011CgPg54fb957PDFZShCcoB",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:35:23.748Z",
+     "output_tokens": 411
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:35:19.081Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:35:23.752Z"
+    }
+   ]
+  },
+  "440120fc-8d7d-4671-a985-b4923e9fc93b": {
+   "prompt": "2026-10-25T21:35:50.312Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 225,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:35:56.519Z",
+     "id": "msg_011CgPg7PXxzep3fd5tPGhR9",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:35:59.790Z",
+     "output_tokens": 861
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 925,
+     "cache_read_input_tokens": 2075,
+     "first_record": "2026-10-25T21:36:04.211Z",
+     "id": "msg_011CgPg84gAksaoirCK5MoUA",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:04.211Z",
+     "output_tokens": 432
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 497,
+     "cache_read_input_tokens": 3000,
+     "first_record": "2026-10-25T21:36:08.262Z",
+     "id": "msg_011CgPg8PXzNCz9zTQGvQqgP",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:11.230Z",
+     "output_tokens": 646
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:35:59.798Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:36:04.214Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:36:11.266Z"
+    }
+   ]
+  },
+  "d54b27c7-d833-4c02-8f38-cee8cb5b79b0": {
+   "prompt": "2026-10-25T21:35:50.972Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 226,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:35:59.555Z",
+     "id": "msg_011CgPg7SJQArH98wKVXRjYW",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:03.371Z",
+     "output_tokens": 1140
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1204,
+     "cache_read_input_tokens": 2076,
+     "first_record": "2026-10-25T21:36:08.003Z",
+     "id": "msg_011CgPg8KzuyQZYdqxsqQsgi",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:08.003Z",
+     "output_tokens": 499
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 564,
+     "cache_read_input_tokens": 3280,
+     "first_record": "2026-10-25T21:36:11.860Z",
+     "id": "msg_011CgPg8feMc67a8EETTpgGL",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:15.466Z",
+     "output_tokens": 687
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:36:03.378Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:36:08.004Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:36:15.471Z"
+    }
+   ]
+  },
+  "2abd5f5a-7ee1-48c8-985f-d0ed41fd83df": {
+   "prompt": "2026-10-25T21:36:06.862Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 213,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:36:16.729Z",
+     "id": "msg_011CgPg8cdYA4XCZUv3tLg5c",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:19.612Z",
+     "output_tokens": 1060
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1360,
+     "cache_read_input_tokens": 2063,
+     "first_record": "2026-10-25T21:36:22.351Z",
+     "id": "msg_011CgPg9XK5bzCQ78jYinUsa",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:24.111Z",
+     "output_tokens": 407
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:36:19.615Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:36:24.116Z"
+    }
+   ]
+  },
+  "3bcc0248-1538-40b2-9f7a-b89d834a5ce4": {
+   "prompt": "2026-10-25T21:36:13.028Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 208,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:36:22.532Z",
+     "id": "msg_011CgPg96BEo5x9MN1mR9MVU",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:26.722Z",
+     "output_tokens": 1076
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1152,
+     "cache_read_input_tokens": 2058,
+     "first_record": "2026-10-25T21:36:31.600Z",
+     "id": "msg_011CgPgA3kfbCzY4QUoV9veL",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:31.600Z",
+     "output_tokens": 509
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:36:26.730Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:36:31.603Z"
+    }
+   ]
+  },
+  "0d082218-228d-45ec-81c1-6e8845c08007": {
+   "prompt": "2026-10-25T21:36:13.301Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 215,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:36:17.207Z",
+     "id": "msg_011CgPg974KZW3S14ZdvLPM8",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:17.914Z",
+     "output_tokens": 282
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 358,
+     "cache_read_input_tokens": 2065,
+     "first_record": "2026-10-25T21:36:22.530Z",
+     "id": "msg_011CgPg9Q4Gzf99EnDtbrxo4",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:22.530Z",
+     "output_tokens": 452
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:36:17.921Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:36:22.533Z"
+    }
+   ]
+  },
+  "27068255-be84-42d6-9e08-ad82271b0832": {
+   "prompt": "2026-10-25T21:36:16.482Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 218,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:36:22.467Z",
+     "id": "msg_011CgPg9L88NWtphmqkj6oAn",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:26.118Z",
+     "output_tokens": 841
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 917,
+     "cache_read_input_tokens": 2068,
+     "first_record": "2026-10-25T21:36:30.523Z",
+     "id": "msg_011CgPgA1NoFec8wte3LZvGu",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:30.523Z",
+     "output_tokens": 487
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:36:26.131Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:36:30.528Z"
+    }
+   ]
+  },
+  "080dd4d5-2a9a-42d1-a4b2-aef444d31b3f": {
+   "prompt": "2026-10-25T21:36:17.115Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 214,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:36:23.369Z",
+     "id": "msg_011CgPg9P6UouURU1ny4BA7E",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:26.303Z",
+     "output_tokens": 837
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 913,
+     "cache_read_input_tokens": 2064,
+     "first_record": "2026-10-25T21:36:30.271Z",
+     "id": "msg_011CgPgA1yFnuMNMpbgzWPRU",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:30.271Z",
+     "output_tokens": 410
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:36:26.312Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:36:30.282Z"
+    }
+   ]
+  },
+  "b92a642e-7827-40d2-8b40-a9148f83dcf8": {
+   "prompt": "2026-10-25T21:36:29.094Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 215,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:36:37.315Z",
+     "id": "msg_011CgPgAFGiDRrFfqAQeVCC7",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:40.954Z",
+     "output_tokens": 997
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1061,
+     "cache_read_input_tokens": 2065,
+     "first_record": "2026-10-25T21:36:47.633Z",
+     "id": "msg_011CgPgB6eLAzKouDdGuh1oe",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:50.881Z",
+     "output_tokens": 978
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:36:40.961Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:36:50.887Z"
+    }
+   ]
+  },
+  "74378eb4-d204-406f-ba99-e744d56931f4": {
+   "prompt": "2026-10-25T21:36:35.713Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 201,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:36:46.294Z",
+     "id": "msg_011CgPgAjg1j9u5DDSiESxE4",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:46.959Z",
+     "output_tokens": 820
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 896,
+     "cache_read_input_tokens": 2051,
+     "first_record": "2026-10-25T21:36:52.009Z",
+     "id": "msg_011CgPgBYPtDXJ6cUTu6pmUt",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:36:52.009Z",
+     "output_tokens": 481
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:36:46.968Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:36:52.014Z"
+    }
+   ]
+  },
+  "f51d05f2-776a-4468-9ab8-f87a1e306cd2": {
+   "prompt": "2026-10-26T10:52:05.762Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 2066,
+     "cache_read_input_tokens": 0,
+     "first_record": "2026-10-26T10:52:10.848Z",
+     "id": "msg_011CgQiqH3gnU18ZkdqvcqFY",
+     "input_tokens": 2,
+     "last_record": "2026-10-26T10:52:14.377Z",
+     "output_tokens": 737
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 801,
+     "cache_read_input_tokens": 2066,
+     "first_record": "2026-10-26T10:52:18.878Z",
+     "id": "msg_011CgQiqshGvky6akD7YvN5B",
+     "input_tokens": 2,
+     "last_record": "2026-10-26T10:52:18.878Z",
+     "output_tokens": 445
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 510,
+     "cache_read_input_tokens": 2867,
+     "first_record": "2026-10-26T10:52:22.425Z",
+     "id": "msg_011CgQirCqiD6QjvhmamuW7X",
+     "input_tokens": 2,
+     "last_record": "2026-10-26T10:52:25.274Z",
+     "output_tokens": 579
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 644,
+     "cache_read_input_tokens": 3377,
+     "first_record": "2026-10-26T10:52:29.828Z",
+     "id": "msg_011CgQirgHDdAfCnnmuXfA5C",
+     "input_tokens": 2,
+     "last_record": "2026-10-26T10:52:33.142Z",
+     "output_tokens": 806
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-26T10:52:14.386Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-26T10:52:18.879Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-26T10:52:25.276Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-26T10:52:33.144Z"
+    }
+   ]
+  },
+  "c17b3e32-f864-486f-879c-ea832ba0e864": {
+   "prompt": "2026-10-25T21:51:40.396Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 0,
+     "cache_read_input_tokens": 2071,
+     "first_record": "2026-10-25T21:51:43.909Z",
+     "id": "msg_011CgPhKj1CZb5f9M6jKnEh6",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:51:43.909Z",
+     "output_tokens": 52
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 117,
+     "cache_read_input_tokens": 2071,
+     "first_record": "2026-10-25T21:51:49.352Z",
+     "id": "msg_011CgPhKszBu8hYGxiNNWJb4",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:51:49.352Z",
+     "output_tokens": 508
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:51:43.946Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:51:49.358Z"
+    }
+   ]
+  },
+  "7a73eed6-9d96-48ae-a34c-827f2f66a8a7": {
+   "prompt": "2026-10-25T21:51:39.819Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 0,
+     "cache_read_input_tokens": 2058,
+     "first_record": "2026-10-25T21:51:50.044Z",
+     "id": "msg_011CgPhKdrdM4LjabW7E3svB",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:51:52.894Z",
+     "output_tokens": 1101
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1165,
+     "cache_read_input_tokens": 2058,
+     "first_record": "2026-10-25T21:51:56.765Z",
+     "id": "msg_011CgPhLYYfdDWWLb5ZepvUa",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:51:56.765Z",
+     "output_tokens": 361
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 426,
+     "cache_read_input_tokens": 3223,
+     "first_record": "2026-10-25T21:52:00.837Z",
+     "id": "msg_011CgPhLpufkiD4KuAGoW52M",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:52:03.215Z",
+     "output_tokens": 602
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:51:52.902Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:51:56.767Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:52:03.218Z"
+    }
+   ]
+  },
+  "52f87075-e419-4e61-98f1-5f20b8459156": {
+   "prompt": "2026-10-25T21:42:16.758Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 215,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:42:22.793Z",
+     "id": "msg_011CgPgc9Rx6nEgBL2yb8qef",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:42:25.714Z",
+     "output_tokens": 724
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 788,
+     "cache_read_input_tokens": 2065,
+     "first_record": "2026-10-25T21:42:27.293Z",
+     "id": "msg_011CgPgcjAiRz3FG8htv7h8h",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:42:29.551Z",
+     "output_tokens": 371
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 437,
+     "cache_read_input_tokens": 2853,
+     "first_record": "2026-10-25T21:42:34.995Z",
+     "id": "msg_011CgPgd1ZDN9gmwun1k9U6U",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:42:37.482Z",
+     "output_tokens": 726
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:42:25.723Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:42:29.565Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:42:37.485Z"
+    }
+   ]
+  },
+  "b40b8fa2-c049-40da-a605-a28b1f43567b": {
+   "prompt": "2026-10-25T21:42:16.270Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 217,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:42:32.020Z",
+     "id": "msg_011CgPgc7LwFE74SYxHMJjYS",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:42:32.726Z",
+     "output_tokens": 1197
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1273,
+     "cache_read_input_tokens": 2067,
+     "first_record": "2026-10-25T21:42:34.449Z",
+     "id": "msg_011CgPgdFFy3zvq8z71yg3X6",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:42:37.675Z",
+     "output_tokens": 474
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:42:32.739Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:42:37.678Z"
+    }
+   ]
+  },
+  "f39e6f63-5122-485f-9899-66e8b8971b00": {
+   "prompt": "2026-10-25T21:43:03.234Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 203,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:43:09.019Z",
+     "id": "msg_011CgPgfYfXtqwZGrxDG9y9V",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:43:09.019Z",
+     "output_tokens": 408
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 473,
+     "cache_read_input_tokens": 2053,
+     "first_record": "2026-10-25T21:43:12.214Z",
+     "id": "msg_011CgPgfvMm3TLdodV5zFpnx",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:43:14.656Z",
+     "output_tokens": 535
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:43:09.031Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:43:14.660Z"
+    }
+   ]
+  },
+  "4c9430cc-6211-45fa-892b-11305c2f2d52": {
+   "prompt": "2026-10-25T21:43:10.873Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 240,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:43:16.100Z",
+     "id": "msg_011CgPgg6XwBPN21bVWXTm8z",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:43:22.140Z",
+     "output_tokens": 1082
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1187,
+     "cache_read_input_tokens": 2090,
+     "first_record": "2026-10-25T21:43:28.314Z",
+     "id": "msg_011CgPggtTBS7miUJtCjaX9B",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:43:28.314Z",
+     "output_tokens": 701
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:43:18.369Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:43:22.142Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:43:28.317Z"
+    }
+   ]
+  },
+  "2cee82c7-2b9f-4712-9c94-0b2adcfe07a3": {
+   "prompt": "2026-10-25T21:43:12.008Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 229,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:43:17.479Z",
+     "id": "msg_011CgPggB3oQAjiBUFwneogc",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:43:17.479Z",
+     "output_tokens": 401
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 466,
+     "cache_read_input_tokens": 2079,
+     "first_record": "2026-10-25T21:43:22.035Z",
+     "id": "msg_011CgPggYYMpBgLbbpQd1MDR",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:43:22.035Z",
+     "output_tokens": 421
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:43:17.492Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:43:22.037Z"
+    }
+   ]
+  },
+  "d3a98941-ee50-4768-ab49-858461a28225": {
+   "prompt": "2026-10-25T21:43:14.055Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 215,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:43:20.656Z",
+     "id": "msg_011CgPggLGfxzV2o59KNYKeY",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:43:21.501Z",
+     "output_tokens": 593
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 669,
+     "cache_read_input_tokens": 2065,
+     "first_record": "2026-10-25T21:43:23.025Z",
+     "id": "msg_011CgPggqhFMSccEEPfVVK4a",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:43:25.689Z",
+     "output_tokens": 414
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:43:21.508Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:43:25.692Z"
+    }
+   ]
+  },
+  "a5a3971c-2e2c-4deb-ab26-9c510db7f166": {
+   "prompt": "2026-10-25T21:43:32.274Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 209,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:43:38.662Z",
+     "id": "msg_011CgPghfkjLr4sp4Y6aKj57",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:43:42.195Z",
+     "output_tokens": 832
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 896,
+     "cache_read_input_tokens": 2059,
+     "first_record": "2026-10-25T21:43:48.280Z",
+     "id": "msg_011CgPgiNFo3erqtcA2W33aN",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:43:48.280Z",
+     "output_tokens": 461
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:43:42.212Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:43:48.286Z"
+    }
+   ]
+  },
+  "e391007d-ad33-40a4-9a9b-290f211d3cf4": {
+   "prompt": "2026-10-25T21:52:06.638Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 203,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:52:12.602Z",
+     "id": "msg_011CgPhMdWM8NJeCqzmNm1XQ",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:52:15.278Z",
+     "output_tokens": 695
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 759,
+     "cache_read_input_tokens": 2053,
+     "first_record": "2026-10-25T21:52:17.222Z",
+     "id": "msg_011CgPhNBt1pMeyQZqQo6hgo",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:52:19.534Z",
+     "output_tokens": 407
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:52:15.292Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:52:19.563Z"
+    }
+   ]
+  },
+  "87678b7d-75c0-4164-8e87-570af0eb5bc0": {
+   "prompt": "2026-10-25T21:52:06.346Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 203,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:52:09.721Z",
+     "id": "msg_011CgPhMbQ76JRtPCDoegVkV",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:52:09.721Z",
+     "output_tokens": 54
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 119,
+     "cache_read_input_tokens": 2053,
+     "first_record": "2026-10-25T21:52:15.019Z",
+     "id": "msg_011CgPhMn2ooXnxcxDV3hwg2",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:52:15.019Z",
+     "output_tokens": 440
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:52:09.731Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:52:15.027Z"
+    }
+   ]
+  },
+  "d4153fbd-5f7e-4fb2-b217-8c312a7d5985": {
+   "prompt": "2026-10-25T21:52:07.710Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 207,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:52:12.675Z",
+     "id": "msg_011CgPhMhfdgTK3aADvnzQVi",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:52:15.791Z",
+     "output_tokens": 601
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 665,
+     "cache_read_input_tokens": 2057,
+     "first_record": "2026-10-25T21:52:20.750Z",
+     "id": "msg_011CgPhNEggjCJeFaskZQMYE",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:52:20.750Z",
+     "output_tokens": 453
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:52:15.801Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:52:20.753Z"
+    }
+   ]
+  },
+  "850c163d-e477-45fc-8bf9-d87f14174f49": {
+   "prompt": "2026-10-25T21:52:54.872Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 220,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:53:02.163Z",
+     "id": "msg_011CgPhRDmTfcJ4uHdC54B8b",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:53:02.778Z",
+     "output_tokens": 512
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 588,
+     "cache_read_input_tokens": 2070,
+     "first_record": "2026-10-25T21:53:07.794Z",
+     "id": "msg_011CgPhRh71FuxWVTnjxnJfm",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:53:07.794Z",
+     "output_tokens": 479
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:53:02.787Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:53:07.797Z"
+    }
+   ]
+  },
+  "a008ef04-e41a-4da8-bf55-aa0070bdae91": {
+   "prompt": "2026-10-25T21:52:59.017Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 223,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:53:05.177Z",
+     "id": "msg_011CgPhRX6zTvFqxiTiiRuUW",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:53:05.177Z",
+     "output_tokens": 411
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 476,
+     "cache_read_input_tokens": 2073,
+     "first_record": "2026-10-25T21:53:09.724Z",
+     "id": "msg_011CgPhRscnAG18PdYXRKz57",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:53:09.724Z",
+     "output_tokens": 436
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:53:05.198Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:53:09.727Z"
+    }
+   ]
+  },
+  "7239ed77-4116-4d62-ac4b-c6e47a6f91a6": {
+   "prompt": "2026-10-25T21:53:09.023Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 223,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:53:17.124Z",
+     "id": "msg_011CgPhSGaebFKV1GfRJ1sQB",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:53:17.825Z",
+     "output_tokens": 535
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 611,
+     "cache_read_input_tokens": 2073,
+     "first_record": "2026-10-25T21:53:22.493Z",
+     "id": "msg_011CgPhSpFeHBihV6rq7sc43",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:53:22.493Z",
+     "output_tokens": 419
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:53:17.851Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:53:22.495Z"
+    }
+   ]
+  },
+  "0200be6a-7e2e-4484-9fa7-adb73583bdcf": {
+   "prompt": "2026-10-25T21:53:13.890Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 244,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:53:24.873Z",
+     "id": "msg_011CgPhSYRPssyBnL2USrBW9",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:53:29.379Z",
+     "output_tokens": 1459
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1523,
+     "cache_read_input_tokens": 2094,
+     "first_record": "2026-10-25T21:53:33.230Z",
+     "id": "msg_011CgPhTefizAXmGzdxEkHt2",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:53:37.326Z",
+     "output_tokens": 839
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:53:29.387Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:53:37.332Z"
+    }
+   ]
+  },
+  "b12bef9f-ea7a-4b7a-8592-3eba85493b64": {
+   "prompt": "2026-10-25T21:53:13.973Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 219,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:53:22.313Z",
+     "id": "msg_011CgPhSYoxZ2Brb4f1n8dTX",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:53:25.211Z",
+     "output_tokens": 957
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1009,
+     "cache_read_input_tokens": 2069,
+     "first_record": "2026-10-25T21:53:29.352Z",
+     "id": "msg_011CgPhTLkxHhmyMGjJe6ScA",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:53:29.352Z",
+     "output_tokens": 407
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:53:25.218Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:53:29.358Z"
+    }
+   ]
+  },
+  "4e3d0b3a-b452-4304-89ac-043e9c29b710": {
+   "prompt": "2026-10-25T21:53:25.185Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 214,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:53:36.198Z",
+     "id": "msg_011CgPhTN2cAfqAmaH47ZTBe",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:53:39.086Z",
+     "output_tokens": 1120
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1184,
+     "cache_read_input_tokens": 2064,
+     "first_record": "2026-10-25T21:53:43.147Z",
+     "id": "msg_011CgPhUNFXBKx5zQ5vx3kz9",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:53:43.147Z",
+     "output_tokens": 383
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:53:39.095Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:53:43.154Z"
+    }
+   ]
+  },
+  "7ba46bac-8a91-4b1c-860b-be94accff98b": {
+   "prompt": "2026-10-25T21:54:36.219Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 201,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:54:42.813Z",
+     "id": "msg_011CgPhYc9oAhpwNVCsUdxRY",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:54:45.616Z",
+     "output_tokens": 758
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 822,
+     "cache_read_input_tokens": 2051,
+     "first_record": "2026-10-25T21:54:49.289Z",
+     "id": "msg_011CgPhZGm1UtwdkjwGqn81A",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:54:49.289Z",
+     "output_tokens": 343
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:54:45.624Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:54:49.292Z"
+    }
+   ]
+  },
+  "b6867b3d-f9fb-4453-b86d-d1bccf3839ef": {
+   "prompt": "2026-10-25T21:54:41.008Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 208,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:54:45.659Z",
+     "id": "msg_011CgPhYxVfqewmpe9mfeLxa",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:54:48.755Z",
+     "output_tokens": 648
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 712,
+     "cache_read_input_tokens": 2058,
+     "first_record": "2026-10-25T21:54:51.234Z",
+     "id": "msg_011CgPhZVwmNZLDLNCNfRMHg",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:54:53.582Z",
+     "output_tokens": 455
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 520,
+     "cache_read_input_tokens": 2770,
+     "first_record": "2026-10-25T21:54:59.564Z",
+     "id": "msg_011CgPhZrbUyCYtYoU3zfpip",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:55:02.486Z",
+     "output_tokens": 856
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:54:48.763Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:54:53.585Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:55:02.492Z"
+    }
+   ]
+  },
+  "a3904192-3f8e-4cab-894f-70a162fdd0fb": {
+   "prompt": "2026-10-25T21:54:52.567Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 226,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:55:02.582Z",
+     "id": "msg_011CgPhZpSW5L1SSUEydY3nu",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:55:07.078Z",
+     "output_tokens": 1249
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1279,
+     "cache_read_input_tokens": 2076,
+     "first_record": "2026-10-25T21:55:12.433Z",
+     "id": "msg_011CgPharHuaExDrLGspJw5n",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:55:12.433Z",
+     "output_tokens": 547
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:55:07.086Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:55:12.436Z"
+    }
+   ]
+  },
+  "cec6bda9-8185-4dfb-8d96-0549c59c3c69": {
+   "prompt": "2026-10-25T21:55:20.878Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 215,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:55:31.262Z",
+     "id": "msg_011CgPhbtzf5YAgJy9JXGRhd",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:55:35.390Z",
+     "output_tokens": 1202
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1232,
+     "cache_read_input_tokens": 2065,
+     "first_record": "2026-10-25T21:55:41.741Z",
+     "id": "msg_011CgPhcwP43Vw2vHQ4zTZti",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:55:45.212Z",
+     "output_tokens": 916
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:55:35.400Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:55:45.215Z"
+    }
+   ]
+  },
+  "ce8ee74a-d6d1-42f9-b329-d833bc5ca5a7": {
+   "prompt": "2026-10-25T21:56:55.431Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 217,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:57:03.845Z",
+     "id": "msg_011CgPhitkxz7d8BRSJ4UnVo",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:07.247Z",
+     "output_tokens": 1009
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1073,
+     "cache_read_input_tokens": 2067,
+     "first_record": "2026-10-25T21:57:09.536Z",
+     "id": "msg_011CgPhji3p9PmypwPYxHRuJ",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:12.214Z",
+     "output_tokens": 460
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 525,
+     "cache_read_input_tokens": 3140,
+     "first_record": "2026-10-25T21:57:15.685Z",
+     "id": "msg_011CgPhk5FGv38PdaU5VLWhk",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:18.568Z",
+     "output_tokens": 631
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:57:07.255Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:57:12.216Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:57:18.573Z"
+    }
+   ]
+  },
+  "cfdf9c64-6a2a-45e2-a66f-340f481f1e46": {
+   "prompt": "2026-10-25T21:56:57.837Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 215,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:57:02.632Z",
+     "id": "msg_011CgPhj4Us2egoH97VhP1QG",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:03.417Z",
+     "output_tokens": 364
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 440,
+     "cache_read_input_tokens": 2065,
+     "first_record": "2026-10-25T21:57:08.381Z",
+     "id": "msg_011CgPhjRgZjPVCssHd3j7LD",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:08.381Z",
+     "output_tokens": 515
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:57:03.424Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:57:08.386Z"
+    }
+   ]
+  },
+  "f16eee3f-3f43-4ca3-bc0a-3906e127a097": {
+   "prompt": "2026-10-25T21:56:57.774Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 201,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:57:03.011Z",
+     "id": "msg_011CgPhj3pBUhmFf41BPFS5R",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:05.301Z",
+     "output_tokens": 559
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 623,
+     "cache_read_input_tokens": 2051,
+     "first_record": "2026-10-25T21:57:08.479Z",
+     "id": "msg_011CgPhjZhGowy7ezQwguESr",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:08.479Z",
+     "output_tokens": 308
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:57:05.310Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:57:08.484Z"
+    }
+   ]
+  },
+  "259bd18c-ef32-4564-afb8-b7c149d8b6dd": {
+   "prompt": "2026-10-25T21:56:57.807Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 219,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:57:00.722Z",
+     "id": "msg_011CgPhj4qCSsbT7CoJiCKJc",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:00.722Z",
+     "output_tokens": 55
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 120,
+     "cache_read_input_tokens": 2069,
+     "first_record": "2026-10-25T21:57:05.954Z",
+     "id": "msg_011CgPhjE9Xx17S3mhqz3apy",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:05.954Z",
+     "output_tokens": 431
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:57:00.734Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:57:05.958Z"
+    }
+   ]
+  },
+  "d48a7d7b-965b-481a-abdb-6dc0761dec6c": {
+   "prompt": "2026-10-25T21:56:58.053Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 208,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:57:00.867Z",
+     "id": "msg_011CgPhj5XrgJEWhtEzhwY2j",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:00.867Z",
+     "output_tokens": 55
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 120,
+     "cache_read_input_tokens": 2058,
+     "first_record": "2026-10-25T21:57:05.831Z",
+     "id": "msg_011CgPhjEoU1CSgy17qv1212",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:05.831Z",
+     "output_tokens": 470
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:57:00.886Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:57:05.839Z"
+    }
+   ]
+  },
+  "58cd751a-15d4-4c7f-9dbf-af3d31541f6e": {
+   "prompt": "2026-10-25T21:57:03.326Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use",
+      "tool_use",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 217,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:57:10.787Z",
+     "id": "msg_011CgPhjSvEGdA7KTyjUE4PT",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:15.378Z",
+     "output_tokens": 1120
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1410,
+     "cache_read_input_tokens": 2067,
+     "first_record": "2026-10-25T21:57:19.804Z",
+     "id": "msg_011CgPhkJrLBnULE4p83KEDn",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:19.804Z",
+     "output_tokens": 443
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:57:12.260Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:57:14.073Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:57:15.379Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:57:19.810Z"
+    }
+   ]
+  },
+  "63068200-7af6-44b2-a7ad-8b1155ae5c45": {
+   "prompt": "2026-10-25T21:57:15.112Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 220,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:57:20.534Z",
+     "id": "msg_011CgPhkKBR51ND5BLhALzkQ",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:20.534Z",
+     "output_tokens": 425
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 490,
+     "cache_read_input_tokens": 2070,
+     "first_record": "2026-10-25T21:57:24.864Z",
+     "id": "msg_011CgPhkgsQT53C92x5zYtSL",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:57:24.864Z",
+     "output_tokens": 450
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:57:20.547Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:57:24.867Z"
+    }
+   ]
+  },
+  "3bfede5a-45ea-46b1-a711-6afa50390055": {
+   "prompt": "2026-10-25T21:58:49.915Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 222,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:59:00.175Z",
+     "id": "msg_011CgPhsKyVTiPLFKEd3LYi1",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:59:03.310Z",
+     "output_tokens": 1203
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1267,
+     "cache_read_input_tokens": 2072,
+     "first_record": "2026-10-25T21:59:11.062Z",
+     "id": "msg_011CgPhtGK1UaBbT1va5kjmA",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:59:13.963Z",
+     "output_tokens": 1081
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:59:03.317Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:59:13.968Z"
+    }
+   ]
+  },
+  "b74903e9-1c1f-48aa-a607-4b2b758b7eb4": {
+   "prompt": "2026-10-25T21:58:57.856Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 208,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:59:04.235Z",
+     "id": "msg_011CgPhstgk72uyNKmsP8cCx",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:59:04.843Z",
+     "output_tokens": 476
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 552,
+     "cache_read_input_tokens": 2058,
+     "first_record": "2026-10-25T21:59:09.596Z",
+     "id": "msg_011CgPhtNt8ysGmkHuNE2pfQ",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:59:09.596Z",
+     "output_tokens": 421
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:59:04.854Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:59:09.603Z"
+    }
+   ]
+  },
+  "d560cde7-368d-4217-97a6-a74e87703a70": {
+   "prompt": "2026-10-25T21:59:41.895Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 208,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T21:59:48.720Z",
+     "id": "msg_011CgPhw8xaSEocDxfycef9U",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:59:49.511Z",
+     "output_tokens": 525
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 601,
+     "cache_read_input_tokens": 2058,
+     "first_record": "2026-10-25T21:59:51.606Z",
+     "id": "msg_011CgPhwfiFLTsmWPjDpLKwY",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T21:59:54.615Z",
+     "output_tokens": 400
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T21:59:49.517Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T21:59:54.619Z"
+    }
+   ]
+  },
+  "af42ab57-92ed-4f6e-9ab7-25dc32dbd34b": {
+   "prompt": "2026-10-25T22:00:17.318Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 214,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:00:21.331Z",
+     "id": "msg_011CgPhykfxr4zWHuabs5Fwo",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:24.773Z",
+     "output_tokens": 592
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 656,
+     "cache_read_input_tokens": 2064,
+     "first_record": "2026-10-25T22:00:28.827Z",
+     "id": "msg_011CgPhzGYp9Tzaxrgyv1s11",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:28.827Z",
+     "output_tokens": 411
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 476,
+     "cache_read_input_tokens": 2720,
+     "first_record": "2026-10-25T22:00:32.411Z",
+     "id": "msg_011CgPhzZpcyJYvnTL2ser6d",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:35.152Z",
+     "output_tokens": 563
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 628,
+     "cache_read_input_tokens": 3196,
+     "first_record": "2026-10-25T22:00:40.227Z",
+     "id": "msg_011CgPi144zYV9A7QQP5Y1om",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:43.041Z",
+     "output_tokens": 733
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:00:24.781Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:00:28.828Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:00:35.188Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:00:43.047Z"
+    }
+   ]
+  },
+  "4889334f-8a94-4740-b283-f26d5a2442e0": {
+   "prompt": "2026-10-25T22:00:17.553Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 225,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:00:20.422Z",
+     "id": "msg_011CgPhyn6HqY8rU1aYxf7Vx",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:20.422Z",
+     "output_tokens": 64
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 129,
+     "cache_read_input_tokens": 2075,
+     "first_record": "2026-10-25T22:00:26.826Z",
+     "id": "msg_011CgPhywzr4fMnn2w3HPcvT",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:31.149Z",
+     "output_tokens": 990
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:00:20.437Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:00:31.156Z"
+    }
+   ]
+  },
+  "95ad9bb9-702e-4c4c-aaad-1349cf559bf1": {
+   "prompt": "2026-10-25T22:00:20.671Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 207,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:00:23.456Z",
+     "id": "msg_011CgPhyzuiXAu4DGCf3P6TN",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:26.052Z",
+     "output_tokens": 430
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 494,
+     "cache_read_input_tokens": 2057,
+     "first_record": "2026-10-25T22:00:28.128Z",
+     "id": "msg_011CgPhzN3hpSbnnb5DKh1s8",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:30.694Z",
+     "output_tokens": 393
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 457,
+     "cache_read_input_tokens": 2551,
+     "first_record": "2026-10-25T22:00:35.577Z",
+     "id": "msg_011CgPhzho76iV76mi43psSM",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:38.043Z",
+     "output_tokens": 640
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:00:26.061Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:00:30.696Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:00:38.047Z"
+    }
+   ]
+  },
+  "5d51ff43-c3f6-4c20-a555-b51ea4e6c5d2": {
+   "prompt": "2026-10-25T22:00:21.966Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 214,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:00:25.430Z",
+     "id": "msg_011CgPhz6rPyQS791rrftabr",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:25.430Z",
+     "output_tokens": 113
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 202,
+     "cache_read_input_tokens": 2064,
+     "first_record": "2026-10-25T22:00:29.916Z",
+     "id": "msg_011CgPhzKMEUWctc9To53QWH",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:29.916Z",
+     "output_tokens": 403
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:00:25.444Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:00:29.920Z"
+    }
+   ]
+  },
+  "d89089dd-887c-40ec-a980-293f819b5474": {
+   "prompt": "2026-10-25T22:00:33.642Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 216,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:00:38.920Z",
+     "id": "msg_011CgPhzwvfPhn5Qk9pd2Ny1",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:38.920Z",
+     "output_tokens": 453
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 518,
+     "cache_read_input_tokens": 2066,
+     "first_record": "2026-10-25T22:00:43.494Z",
+     "id": "msg_011CgPi1K2upuU5KZi7Uomvb",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:43.494Z",
+     "output_tokens": 474
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:00:38.932Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:00:43.498Z"
+    }
+   ]
+  },
+  "d364502e-eb4e-43fd-8e53-396e364843bd": {
+   "prompt": "2026-10-25T22:00:48.132Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 208,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:00:52.156Z",
+     "id": "msg_011CgPi22P5HRBVk9SV9jeS1",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:55.189Z",
+     "output_tokens": 554
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 612,
+     "cache_read_input_tokens": 2058,
+     "first_record": "2026-10-25T22:00:59.224Z",
+     "id": "msg_011CgPi2WbTUPPAAz2eyeT9L",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:00:59.224Z",
+     "output_tokens": 400
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:00:55.197Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:00:59.230Z"
+    }
+   ]
+  },
+  "2d42d494-46cd-4f15-9665-2ed407607c29": {
+   "prompt": "2026-10-25T22:02:07.273Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 0,
+     "cache_read_input_tokens": 2068,
+     "first_record": "2026-10-25T22:02:12.143Z",
+     "id": "msg_011CgPi7rPj8dUCuKoQbKCLc",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:02:15.421Z",
+     "output_tokens": 699
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 763,
+     "cache_read_input_tokens": 2068,
+     "first_record": "2026-10-25T22:02:19.869Z",
+     "id": "msg_011CgPi8RiwJq3uFxoPWUASb",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:02:19.869Z",
+     "output_tokens": 436
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:02:15.434Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:02:19.873Z"
+    }
+   ]
+  },
+  "7e2ec345-c978-43d6-8a0d-7ac5553b76e0": {
+   "prompt": "2026-10-25T22:02:07.308Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 0,
+     "cache_read_input_tokens": 2066,
+     "first_record": "2026-10-25T22:02:13.180Z",
+     "id": "msg_011CgPi7rWvE4KocMter1CSG",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:02:16.077Z",
+     "output_tokens": 814
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 878,
+     "cache_read_input_tokens": 2066,
+     "first_record": "2026-10-25T22:02:20.389Z",
+     "id": "msg_011CgPi8UTeXhAmv8qKTVkHT",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:02:20.389Z",
+     "output_tokens": 423
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:02:16.083Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:02:20.402Z"
+    }
+   ]
+  },
+  "db8f9e18-d8df-4617-b2e2-4c77d52ac157": {
+   "prompt": "2026-10-25T22:02:50.785Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 202,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:03:00.389Z",
+     "id": "msg_011CgPiB7rjpBXZ9ttkZuPU4",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:04.112Z",
+     "output_tokens": 1040
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1055,
+     "cache_read_input_tokens": 2052,
+     "first_record": "2026-10-25T22:03:06.635Z",
+     "id": "msg_011CgPiC1mtzKrtDEmifaXtS",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:09.702Z",
+     "output_tokens": 549
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:04.119Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:03:09.704Z"
+    }
+   ]
+  },
+  "7f8a9f58-8737-448b-8d5b-05ea7812fd58": {
+   "prompt": "2026-10-25T22:02:51.943Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 204,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:02:58.526Z",
+     "id": "msg_011CgPiBDbGrPYZzqKUPAS5J",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:02:58.526Z",
+     "output_tokens": 476
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 490,
+     "cache_read_input_tokens": 2054,
+     "first_record": "2026-10-25T22:03:02.911Z",
+     "id": "msg_011CgPiBbyB3RnZR3YGhLAyE",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:02.911Z",
+     "output_tokens": 449
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 490,
+     "cache_read_input_tokens": 2544,
+     "first_record": "2026-10-25T22:03:08.588Z",
+     "id": "msg_011CgPiBvZcYJq9A1wsPmTTo",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:11.787Z",
+     "output_tokens": 745
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:02:58.538Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:02.913Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:03:11.794Z"
+    }
+   ]
+  },
+  "a770fdc1-0ead-415c-8d80-2d4272351357": {
+   "prompt": "2026-10-25T22:02:53.086Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 208,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:02:59.703Z",
+     "id": "msg_011CgPiBGPCCRyRehni7cdSZ",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:03.484Z",
+     "output_tokens": 861
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 937,
+     "cache_read_input_tokens": 2058,
+     "first_record": "2026-10-25T22:03:08.291Z",
+     "id": "msg_011CgPiByHp3r42HmLfdAEN4",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:08.291Z",
+     "output_tokens": 482
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:03.493Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:03:08.295Z"
+    }
+   ]
+  },
+  "6b8d439f-3d27-40db-ab1b-5176045d39a6": {
+   "prompt": "2026-10-25T22:02:53.145Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 206,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:02:57.614Z",
+     "id": "msg_011CgPiBGAJXuGepVUakETDy",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:01.050Z",
+     "output_tokens": 615
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 648,
+     "cache_read_input_tokens": 2056,
+     "first_record": "2026-10-25T22:03:05.016Z",
+     "id": "msg_011CgPiBnnY6sXUgzVC7uAuP",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:05.016Z",
+     "output_tokens": 378
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 443,
+     "cache_read_input_tokens": 2704,
+     "first_record": "2026-10-25T22:03:10.158Z",
+     "id": "msg_011CgPiC5imYxZrV1doGrCNs",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:12.777Z",
+     "output_tokens": 751
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:01.074Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:05.018Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:03:12.781Z"
+    }
+   ]
+  },
+  "99d734e2-beab-496e-9ebf-17b972a0ff42": {
+   "prompt": "2026-10-25T22:02:53.741Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 209,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:02:58.958Z",
+     "id": "msg_011CgPiBJYfiWGNhy16Q2RmZ",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:02:58.958Z",
+     "output_tokens": 379
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 444,
+     "cache_read_input_tokens": 2059,
+     "first_record": "2026-10-25T22:03:03.102Z",
+     "id": "msg_011CgPiBdjaPFraCpUCox3MX",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:03.102Z",
+     "output_tokens": 379
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 444,
+     "cache_read_input_tokens": 2503,
+     "first_record": "2026-10-25T22:03:06.264Z",
+     "id": "msg_011CgPiBwRD5VeXiF4myPxkn",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:09.120Z",
+     "output_tokens": 510
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 574,
+     "cache_read_input_tokens": 2947,
+     "first_record": "2026-10-25T22:03:15.841Z",
+     "id": "msg_011CgPiCPap72KCsUdxcwbcc",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:18.441Z",
+     "output_tokens": 890
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:02:58.969Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:03.103Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:09.121Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:03:18.449Z"
+    }
+   ]
+  },
+  "7b66eb4d-55db-4cf8-a2bd-274b00c2e1d9": {
+   "prompt": "2026-10-25T22:02:55.046Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 220,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:03:02.251Z",
+     "id": "msg_011CgPiBP3nJnbqiogrWiG9R",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:06.157Z",
+     "output_tokens": 985
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1049,
+     "cache_read_input_tokens": 2070,
+     "first_record": "2026-10-25T22:03:10.889Z",
+     "id": "msg_011CgPiCAVkzFMGkDAqUVQKS",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:10.889Z",
+     "output_tokens": 498
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 563,
+     "cache_read_input_tokens": 3119,
+     "first_record": "2026-10-25T22:03:16.314Z",
+     "id": "msg_011CgPiCWivs3grgXxfmJM1K",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:19.363Z",
+     "output_tokens": 768
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 833,
+     "cache_read_input_tokens": 3682,
+     "first_record": "2026-10-25T22:03:23.506Z",
+     "id": "msg_011CgPiD9Ddx6KMvH2DePN9x",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:26.379Z",
+     "output_tokens": 726
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:06.164Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:10.890Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:19.367Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:03:26.382Z"
+    }
+   ]
+  },
+  "5034146f-d52f-4720-a409-6130cbceb435": {
+   "prompt": "2026-10-25T22:03:17.899Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 215,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:03:28.341Z",
+     "id": "msg_011CgPiDBgjNdtgw9Nk9sMZo",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:31.621Z",
+     "output_tokens": 1007
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1071,
+     "cache_read_input_tokens": 2065,
+     "first_record": "2026-10-25T22:03:35.760Z",
+     "id": "msg_011CgPiE3LhrS5KkFRJoeKS9",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:35.760Z",
+     "output_tokens": 411
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:31.628Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:03:35.763Z"
+    }
+   ]
+  },
+  "ad23d343-93bb-4cad-833a-cdf29c6df3ab": {
+   "prompt": "2026-10-25T22:03:26.841Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 215,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:03:37.276Z",
+     "id": "msg_011CgPiDmumY47tAFFRY2o95",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:40.082Z",
+     "output_tokens": 1037
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1077,
+     "cache_read_input_tokens": 2065,
+     "first_record": "2026-10-25T22:03:42.906Z",
+     "id": "msg_011CgPiEgEEboCLXQnb42eg5",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:45.314Z",
+     "output_tokens": 487
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:40.091Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:03:45.316Z"
+    }
+   ]
+  },
+  "1101f9a8-d915-4a75-9caf-fcb5411a39ba": {
+   "prompt": "2026-10-25T22:03:33.889Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 217,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:03:43.254Z",
+     "id": "msg_011CgPiEJZFSRsbmfdWqaF4Q",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:46.582Z",
+     "output_tokens": 1012
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1076,
+     "cache_read_input_tokens": 2067,
+     "first_record": "2026-10-25T22:03:50.844Z",
+     "id": "msg_011CgPiF9aHUQtgcV7GZo9RA",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:50.844Z",
+     "output_tokens": 419
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:46.598Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:03:50.846Z"
+    }
+   ]
+  },
+  "a048af1c-496d-42f1-8a1c-c8a159e285db": {
+   "prompt": "2026-10-25T22:03:39.328Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 207,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:03:44.314Z",
+     "id": "msg_011CgPiEhoyoEj8dQPhywmkf",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:47.727Z",
+     "output_tokens": 609
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 685,
+     "cache_read_input_tokens": 2057,
+     "first_record": "2026-10-25T22:03:51.765Z",
+     "id": "msg_011CgPiFEBbq2kTzAYZ9JvbP",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:51.765Z",
+     "output_tokens": 392
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:47.733Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:03:51.767Z"
+    }
+   ]
+  },
+  "63d0f242-30bb-42e4-9ccc-2d030501be8c": {
+   "prompt": "2026-10-25T22:03:40.642Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 244,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:03:47.879Z",
+     "id": "msg_011CgPiEoDg7bGciFZrWbUi2",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:51.407Z",
+     "output_tokens": 855
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 919,
+     "cache_read_input_tokens": 2094,
+     "first_record": "2026-10-25T22:03:55.517Z",
+     "id": "msg_011CgPiFVxd4KCiDYSH7PEiQ",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:55.517Z",
+     "output_tokens": 433
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:51.414Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:03:55.522Z"
+    }
+   ]
+  },
+  "7de3aac5-215e-4673-8c87-6078b3b24e86": {
+   "prompt": "2026-10-25T22:03:43.826Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 222,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:03:49.843Z",
+     "id": "msg_011CgPiF1dYdBNdqshJiH1Nb",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:53.370Z",
+     "output_tokens": 797
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 861,
+     "cache_read_input_tokens": 2072,
+     "first_record": "2026-10-25T22:03:55.635Z",
+     "id": "msg_011CgPiFf8myeUxHpGT6vZub",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:03:58.524Z",
+     "output_tokens": 483
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 548,
+     "cache_read_input_tokens": 2933,
+     "first_record": "2026-10-25T22:04:02.491Z",
+     "id": "msg_011CgPiG2SgcVbKR32h1Tb9k",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:04:05.700Z",
+     "output_tokens": 678
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:53.381Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:03:58.526Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:04:05.705Z"
+    }
+   ]
+  },
+  "6f3ac597-fc4a-498b-80ea-f11ba8857f18": {
+   "prompt": "2026-10-25T22:03:52.327Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 211,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:03:59.503Z",
+     "id": "msg_011CgPiFducMBkh2bdFyszPU",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:04:02.745Z",
+     "output_tokens": 779
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 843,
+     "cache_read_input_tokens": 2061,
+     "first_record": "2026-10-25T22:04:07.235Z",
+     "id": "msg_011CgPiGLXNVPJA4YY5WYKrv",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:04:07.235Z",
+     "output_tokens": 418
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:04:02.752Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:04:07.237Z"
+    }
+   ]
+  },
+  "e73adcbe-bba5-43ca-abf0-ea5512f82439": {
+   "prompt": "2026-10-25T22:04:16.899Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 228,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:04:25.688Z",
+     "id": "msg_011CgPiHU743H3Bm7CUWdFwm",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:04:29.865Z",
+     "output_tokens": 1019
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1083,
+     "cache_read_input_tokens": 2078,
+     "first_record": "2026-10-25T22:04:35.066Z",
+     "id": "msg_011CgPiJLTTsTyfdh4Tzdxoz",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:04:35.066Z",
+     "output_tokens": 539
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:04:29.873Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:04:35.068Z"
+    }
+   ]
+  },
+  "c03629c2-c69f-4f9f-8841-8af67b0fa4b8": {
+   "prompt": "2026-10-25T22:04:17.095Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 243,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:04:29.401Z",
+     "id": "msg_011CgPiHX3vGzC3ZdZ4nrXLh",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:04:34.298Z",
+     "output_tokens": 1432
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1508,
+     "cache_read_input_tokens": 2093,
+     "first_record": "2026-10-25T22:04:41.086Z",
+     "id": "msg_011CgPiJkUb1P9PRfq5Har2e",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:04:41.086Z",
+     "output_tokens": 629
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:04:34.306Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:04:41.093Z"
+    }
+   ]
+  },
+  "ce312218-cd44-4f4b-adfd-1932ab306c91": {
+   "prompt": "2026-10-25T22:04:17.437Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 219,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:04:26.297Z",
+     "id": "msg_011CgPiHXEptS9yHioCLN3i1",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:04:29.982Z",
+     "output_tokens": 981
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1057,
+     "cache_read_input_tokens": 2069,
+     "first_record": "2026-10-25T22:04:34.649Z",
+     "id": "msg_011CgPiJLsWWkk1NPYbzzgGr",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:04:34.649Z",
+     "output_tokens": 420
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:04:29.988Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:04:34.653Z"
+    }
+   ]
+  },
+  "145c82f6-6739-4ddf-a75c-df94a1622997": {
+   "prompt": "2026-10-25T22:04:17.027Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 227,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:04:24.200Z",
+     "id": "msg_011CgPiHVGW3dUNr8LUVGa1f",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:04:28.222Z",
+     "output_tokens": 970
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1046,
+     "cache_read_input_tokens": 2077,
+     "first_record": "2026-10-25T22:04:33.331Z",
+     "id": "msg_011CgPiJDQJtYoatj9Lbcetb",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:04:33.331Z",
+     "output_tokens": 539
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:04:28.229Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:04:33.334Z"
+    }
+   ]
+  },
+  "29698173-b609-4453-bf21-4375772c612f": {
+   "prompt": "2026-10-25T22:04:24.761Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 222,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:04:35.565Z",
+     "id": "msg_011CgPiJ3ZTQotxuXdBHDQ7A",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:04:38.347Z",
+     "output_tokens": 1132
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1196,
+     "cache_read_input_tokens": 2072,
+     "first_record": "2026-10-25T22:04:53.278Z",
+     "id": "msg_011CgPiKn1dhuE3R51e5YqTy",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:04:53.278Z",
+     "output_tokens": 382
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 479,
+     "cache_read_input_tokens": 3268,
+     "first_record": "2026-10-25T22:05:17.771Z",
+     "id": "msg_011CgPiMWGtozP1PT5hoXc7k",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:05:17.771Z",
+     "output_tokens": 484
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 581,
+     "cache_read_input_tokens": 3747,
+     "first_record": "2026-10-25T22:06:39.536Z",
+     "id": "msg_011CgPiTR7WHG7nePWx1acrf",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:06:39.536Z",
+     "output_tokens": 648
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:04:38.354Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:04:53.280Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:05:17.777Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:06:39.541Z"
+    }
+   ]
+  },
+  "277b785c-eb80-41c9-9c89-3caacdd5ddde": {
+   "prompt": "2026-10-25T22:04:29.968Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 206,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:04:34.228Z",
+     "id": "msg_011CgPiJNpbF1dTvmHtcg9o1",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:04:34.762Z",
+     "output_tokens": 277
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 328,
+     "cache_read_input_tokens": 2056,
+     "first_record": "2026-10-25T22:05:16.897Z",
+     "id": "msg_011CgPiMWEucYjbUHbxKb7GD",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:05:16.897Z",
+     "output_tokens": 397
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:04:34.769Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:05:16.905Z"
+    }
+   ]
+  },
+  "0056c85f-8c96-460b-bbb5-4ab87c6048fb": {
+   "prompt": "2026-10-25T22:04:37.272Z",
+   "requests": [
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 201,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:04:55.434Z",
+     "id": "msg_011CgPiKp2vPAB56ZKVynGmj",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:04:55.434Z",
+     "output_tokens": 505
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 555,
+     "cache_read_input_tokens": 2051,
+     "first_record": "2026-10-25T22:05:18.718Z",
+     "id": "msg_011CgPiMcXBX44Yz4hEwCxKm",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:05:18.718Z",
+     "output_tokens": 463
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:04:55.559Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:05:18.725Z"
+    }
+   ]
+  },
+  "071f881a-d21c-42ba-a49f-80924fba3c32": {
+   "prompt": "2026-10-25T22:05:05.945Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 219,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:05:18.700Z",
+     "id": "msg_011CgPiMPQe5J3jwA5MuvTup",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:05:18.700Z",
+     "output_tokens": 590
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 691,
+     "cache_read_input_tokens": 2069,
+     "first_record": "2026-10-25T22:05:33.845Z",
+     "id": "msg_011CgPiNhuATLFmZ1YxntUyB",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:05:33.845Z",
+     "output_tokens": 508
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:05:18.715Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:05:33.849Z"
+    }
+   ]
+  },
+  "d742479b-ffde-4eac-a033-7dd0f4485c5c": {
+   "prompt": "2026-10-25T22:05:17.570Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 207,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:06:40.018Z",
+     "id": "msg_011CgPiTGiEiNqeo9VQA3ZsW",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:06:40.018Z",
+     "output_tokens": 667
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 726,
+     "cache_read_input_tokens": 2057,
+     "first_record": "2026-10-25T22:07:59.264Z",
+     "id": "msg_011CgPiZS9vdoefDYXcPeApP",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:59.264Z",
+     "output_tokens": 398
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:06:40.031Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:07:59.268Z"
+    }
+   ]
+  },
+  "b5570328-7173-42fa-a13f-df0ffdadffab": {
+   "prompt": "2026-10-25T22:05:22.371Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 212,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:05:36.048Z",
+     "id": "msg_011CgPiNg8kL9nfPaTMNVWja",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:05:36.048Z",
+     "output_tokens": 635
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 699,
+     "cache_read_input_tokens": 2062,
+     "first_record": "2026-10-25T22:06:16.252Z",
+     "id": "msg_011CgPiRsHJDP367rx88DGHu",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:06:16.252Z",
+     "output_tokens": 414
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:05:36.060Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:06:16.259Z"
+    }
+   ]
+  },
+  "19c02f76-b9cf-4a11-8fc7-022b72ddcd8b": {
+   "prompt": "2026-10-25T22:05:36.153Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 214,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:06:40.163Z",
+     "id": "msg_011CgPiS9wAThxredWQdHeFx",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:06:40.163Z",
+     "output_tokens": 2185
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 2226,
+     "cache_read_input_tokens": 2064,
+     "first_record": "2026-10-25T22:08:39.092Z",
+     "id": "msg_011CgPicS92956PYijvZxL2T",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:08:39.092Z",
+     "output_tokens": 384
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:06:40.177Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:08:39.096Z"
+    }
+   ]
+  },
+  "25b5d14d-7535-42b7-85c1-6382854548cc": {
+   "prompt": "2026-10-25T22:05:39.168Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 213,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:06:01.642Z",
+     "id": "msg_011CgPiQBkWMcfN9oZh33t11",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:06:01.642Z",
+     "output_tokens": 1108
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1146,
+     "cache_read_input_tokens": 2063,
+     "first_record": "2026-10-25T22:06:06.422Z",
+     "id": "msg_011CgPiR6iuaRUAr5fw2SJxB",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:06:06.422Z",
+     "output_tokens": 437
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 502,
+     "cache_read_input_tokens": 3209,
+     "first_record": "2026-10-25T22:06:09.278Z",
+     "id": "msg_011CgPiRTFgoLLGzbax2aeo6",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:06:12.291Z",
+     "output_tokens": 589
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 654,
+     "cache_read_input_tokens": 3711,
+     "first_record": "2026-10-25T22:06:15.812Z",
+     "id": "msg_011CgPiRtFqenHMTb3A9b58H",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:06:18.959Z",
+     "output_tokens": 685
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:06:01.654Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:06:06.423Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:06:12.294Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:06:18.961Z"
+    }
+   ]
+  },
+  "f0563f2f-7058-4634-869d-7fbd71875124": {
+   "prompt": "2026-10-25T22:05:40.716Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 213,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:06:28.735Z",
+     "id": "msg_011CgPiSDm775yZCTao7EJgS",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:06:28.735Z",
+     "output_tokens": 643
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 719,
+     "cache_read_input_tokens": 2063,
+     "first_record": "2026-10-25T22:06:33.461Z",
+     "id": "msg_011CgPiT6fFFqhC1HpQzV52J",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:06:33.461Z",
+     "output_tokens": 490
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:06:28.749Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:06:33.465Z"
+    }
+   ]
+  },
+  "9707a0b7-456f-4a0f-bd17-68526ac4c7b6": {
+   "prompt": "2026-10-25T22:06:17.157Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 219,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:06:25.051Z",
+     "id": "msg_011CgPiSGiDEhikoAmvMYq7Y",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:06:28.935Z",
+     "output_tokens": 1045
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1059,
+     "cache_read_input_tokens": 2069,
+     "first_record": "2026-10-25T22:06:34.675Z",
+     "id": "msg_011CgPiT7S8tQMKd42J9nE6G",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:06:37.087Z",
+     "output_tokens": 748
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 780,
+     "cache_read_input_tokens": 3128,
+     "first_record": "2026-10-25T22:06:46.376Z",
+     "id": "msg_011CgPiTiF9B1jbErG3aVJGS",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:06:49.380Z",
+     "output_tokens": 1074
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1139,
+     "cache_read_input_tokens": 3908,
+     "first_record": "2026-10-25T22:07:04.956Z",
+     "id": "msg_011CgPiUzBctQXzuqieDL8dc",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:04.956Z",
+     "output_tokens": 977
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:06:28.942Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:06:37.089Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:06:49.382Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:07:04.966Z"
+    }
+   ]
+  },
+  "12e3dd5e-89d6-499a-9c13-f13f25619ee3": {
+   "prompt": "2026-10-25T22:06:26.344Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 217,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:06:38.451Z",
+     "id": "msg_011CgPiT3SXddPt5CDPerMha",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:06:42.073Z",
+     "output_tokens": 1217
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1281,
+     "cache_read_input_tokens": 2067,
+     "first_record": "2026-10-25T22:08:40.696Z",
+     "id": "msg_011CgPicUygBV388pzrycpQN",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:08:40.696Z",
+     "output_tokens": 493
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:06:42.080Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:08:40.702Z"
+    }
+   ]
+  },
+  "40b2c6aa-4785-4727-afb7-0004b4da75ea": {
+   "prompt": "2026-10-25T22:06:35.669Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 249,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:06:41.444Z",
+     "id": "msg_011CgPiTg5RWqpzjuiEBmfg8",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:06:46.454Z",
+     "output_tokens": 992
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1068,
+     "cache_read_input_tokens": 2099,
+     "first_record": "2026-10-25T22:07:02.252Z",
+     "id": "msg_011CgPiVAgtTynnhHFUHyXa5",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:02.252Z",
+     "output_tokens": 626
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:06:46.461Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:07:02.256Z"
+    }
+   ]
+  },
+  "e51eae90-db0e-4efd-9462-4a252f500ea6": {
+   "prompt": "2026-10-25T22:06:38.266Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 236,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:08:38.237Z",
+     "id": "msg_011CgPicGKB8rNHxaszS9wHP",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:08:38.237Z",
+     "output_tokens": 405
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 481,
+     "cache_read_input_tokens": 2086,
+     "first_record": "2026-10-25T22:08:44.381Z",
+     "id": "msg_011CgPiceEHcD8LmuvQpsror",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:08:44.381Z",
+     "output_tokens": 672
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:08:38.247Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:08:44.383Z"
+    }
+   ]
+  },
+  "3d47e6ff-5971-43aa-96b9-ac3c01f73722": {
+   "prompt": "2026-10-25T22:06:57.487Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 220,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:07:44.207Z",
+     "id": "msg_011CgPiXzN84AqkHHYXynLB5",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:44.207Z",
+     "output_tokens": 824
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 861,
+     "cache_read_input_tokens": 2070,
+     "first_record": "2026-10-25T22:07:48.915Z",
+     "id": "msg_011CgPiYfT6nukwwKJGif2Sr",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:48.915Z",
+     "output_tokens": 489
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:07:44.265Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:07:48.917Z"
+    }
+   ]
+  },
+  "ef57f9d6-8e4c-4ed0-9f12-570d3ca75d1e": {
+   "prompt": "2026-10-25T22:07:49.226Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 0,
+     "cache_read_input_tokens": 2067,
+     "first_record": "2026-10-25T22:07:53.174Z",
+     "id": "msg_011CgPiZ4aetZJq6J8g9db2E",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:56.925Z",
+     "output_tokens": 657
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 733,
+     "cache_read_input_tokens": 2067,
+     "first_record": "2026-10-25T22:08:20.073Z",
+     "id": "msg_011CgPiayiG8PyGQ5yXiYEym",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:08:20.073Z",
+     "output_tokens": 471
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:07:56.931Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:08:20.077Z"
+    }
+   ]
+  },
+  "2486a3ce-e9fd-4882-9ea8-3ff3afc17127": {
+   "prompt": "2026-10-25T22:07:01.564Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 233,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:07:22.140Z",
+     "id": "msg_011CgPiWJt32czNPtaGW9VdG",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:22.140Z",
+     "output_tokens": 895
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 994,
+     "cache_read_input_tokens": 2083,
+     "first_record": "2026-10-25T22:07:37.056Z",
+     "id": "msg_011CgPiXiSfGxMUjWPtkTAnx",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:37.056Z",
+     "output_tokens": 547
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 612,
+     "cache_read_input_tokens": 3077,
+     "first_record": "2026-10-25T22:07:41.944Z",
+     "id": "msg_011CgPiY8bDwwvGJVDe71F91",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:45.119Z",
+     "output_tokens": 804
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:07:22.153Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:07:37.058Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:07:45.147Z"
+    }
+   ]
+  },
+  "94e8f5e4-85f4-41c7-88a8-2f5e99e3ca4c": {
+   "prompt": "2026-10-25T22:07:16.330Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 221,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:07:47.420Z",
+     "id": "msg_011CgPiY568uokHnN6SALLFn",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:47.420Z",
+     "output_tokens": 1006
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1057,
+     "cache_read_input_tokens": 2071,
+     "first_record": "2026-10-25T22:07:49.355Z",
+     "id": "msg_011CgPiYu1vZvqfem6rLgtBq",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:51.812Z",
+     "output_tokens": 445
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:07:47.436Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:07:51.815Z"
+    }
+   ]
+  },
+  "fcf05502-bb89-4df7-a482-594ab04f1be2": {
+   "prompt": "2026-10-25T22:07:18.985Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 229,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:07:47.823Z",
+     "id": "msg_011CgPiXd4huBrCQ8uBbEpLT",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:47.823Z",
+     "output_tokens": 1617
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 1651,
+     "cache_read_input_tokens": 2079,
+     "first_record": "2026-10-25T22:07:50.531Z",
+     "id": "msg_011CgPiYviNwicp8HPQVaMBx",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:54.311Z",
+     "output_tokens": 684
+    },
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 748,
+     "cache_read_input_tokens": 3730,
+     "first_record": "2026-10-25T22:07:57.533Z",
+     "id": "msg_011CgPiZQTyPkJTTNMWBskCj",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:08:01.363Z",
+     "output_tokens": 762
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:07:47.838Z"
+    },
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:07:54.312Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:08:01.368Z"
+    }
+   ]
+  },
+  "1a464fde-e143-4d23-8308-8b6cb09c12e2": {
+   "prompt": "2026-10-25T22:07:19.290Z",
+   "requests": [
+    {
+     "blocks": [
+      "thinking",
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 211,
+     "cache_read_input_tokens": 1850,
+     "first_record": "2026-10-25T22:07:39.724Z",
+     "id": "msg_011CgPiXdyGr2KKfxFMt21ny",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:39.724Z",
+     "output_tokens": 783
+    },
+    {
+     "blocks": [
+      "tool_use"
+     ],
+     "cache_creation_input_tokens": 882,
+     "cache_read_input_tokens": 2061,
+     "first_record": "2026-10-25T22:07:43.373Z",
+     "id": "msg_011CgPiYL8Fia7pRWjw1asGo",
+     "input_tokens": 2,
+     "last_record": "2026-10-25T22:07:43.373Z",
+     "output_tokens": 362
+    }
+   ],
+   "tool_results": [
+    {
+     "is_error": true,
+     "time": "2026-10-25T22:07:39.736Z"
+    },
+    {
+     "is_error": false,
+     "time": "2026-10-25T22:07:43.376Z"
+    }
+   ]
+  }
+ }
+}

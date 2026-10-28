@@ -22598,6 +22598,1095 @@
         }
       },
       "script": "correct_model_call_time.py, in this folder"
+    },
+    {
+      "made_at": "2026-10-28T03:28:11.413802+00:00",
+      "ordered_by": "\"do we really want the rejected answers?\" · \"yeah, first request\" (2026-10-28, on the answers that the CLI rejected for their form and the model wrote again in the same call)",
+      "what_happened": "29 of this run's calls made more than one model request: the CLI did not accept the answer's form and the model wrote the answer again in the same call. Their time and tokens held every request; they now hold the first request's (rule 1). The clean relations are fitted again on the times of rule 1, so a call past the limit holds the new relation at its own output tokens. Every value that differs from the one before is listed.",
+      "rule": {
+        "id": "model-call-time/3",
+        "text": "1. A call is an answer call (role answer) or a first call (the artefact's call without a role) on\n     claude-sonnet-5 that answered. Its time is its answering try's server time: the CLI's own\n     duration_api_ms, the time spent with the model, without the program's start on our machine.\n     A call in which the CLI did not accept the answer's form and the model wrote the answer again\n     (more than one model request: num_turns above 2; the CLI rejected the answer given to its\n     StructuredOutput tool, or the model gave the answer without the tool and the CLI asked for it\n     again) counts by its first request: its time is the server time times the first request's\n     share of the requests' times in the CLI's transcript of the call (each request from the\n     prompt, or from the last tool result of the request before it, or from that request's last\n     record when it made no tool call, to its own last record), and its tokens are the first\n     request's (input, cache creation and cache read tokens in, output tokens out).\n  2. The login's backlog: every claude-sonnet-5 chat call that started from 1 to 26 October (UTC), in\n     any run folder under output/k=chars, adds its input tokens at its start (every request of the\n     call: the load as it was sent); between two starts the backlog drops by R tokens per second and\n     never below 0. R is the rate, from 10,000 to 22,000 by 500, whose backlog ranks the answer calls'\n     server seconds per 1,000 output tokens best (rank correlation); the limit is the backlog at\n     which log(seconds per 1,000 output tokens) against the backlog bends (two straight segments,\n     least squares, the bend at one of 181 quantiles from 5% to 95%).\n  3. A call that started at or past the limit gets the time of its arm's clean relation at its own\n     output tokens (rule 1's): seconds = a + b * output tokens, fitted on the times of rule 1 of the\n     arm's calls of the same kind (answer, first call) in the final runs that started below the limit\n     (for the first calls, with the run they were read from). Every call past the limit gets it,\n     whatever its own server time.\n  4. In the row, the call's entry (generator for the answer call, the retrieval entry of kind chat for\n     the first call) gets request_s = the time of rules 1 and 3, and time_s = request_s + wait_s +\n     retry_s; wait_s and retry_s stay as recorded, and the harness's own time in the call is out. A\n     call that counts by its first request gets that request's tokens in the entry (tokens_in,\n     cached_input_tokens, tokens_out).\n  5. The question's timing.wall_s changes by the same amount as the entry's time_s for a call made\n     inside the row's span; a first call read from the run's store, made by an earlier start before\n     the row's span began, changes no wall_s. No call record, answer, context or score changes: a\n     call record keeps the CLI's counts of the whole call.\n  6. A run whose earlier version of this rule is written gets rules 1 to 5 again from its records as\n     they stand: each entry and wall_s change by the difference, and the evidence goes into\n     model_call_times_v<n>.json for version n."
+      },
+      "not_changed_and_worth_knowing": [
+        "Every call record keeps each try's seconds as our clock measured them and the CLI's counts of the whole call; only the row's entries and wall_s change.",
+        "The backlog counts every request of a call, the load as it was sent; it holds the calls of the run folders on this laptop, and a call on the login that no folder here holds (another machine's own folders, an interactive session) is not in it.",
+        "A first request's share of a call's server time is its share of the requests' times between the records of the CLI's transcript, which also hold the program's own writing of each record.",
+        "The judge calls are not changed: their server time shows no slowing at any load, and they make no StructuredOutput call.",
+        "0 of the run's 200 calls are past the limit and hold the relation's time; 29 count by their first request."
+      ],
+      "changes": [
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 16.161,
+          "corrected": 12.600465652951423
+        },
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 16.161,
+          "corrected": 12.600465652951423
+        },
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 5272,
+          "corrected": 2067
+        },
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 2065,
+          "corrected": 0
+        },
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 1423,
+          "corrected": 1074
+        },
+        {
+          "where": "arm_outputs.jsonl row 0 (ActionGenie::a::0)",
+          "field": "timing.wall_s",
+          "recorded": 52.17617279965431,
+          "corrected": 48.61563845260573
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 15.123,
+          "corrected": 11.219778445012789
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 15.123,
+          "corrected": 11.219778445012789
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 5110,
+          "corrected": 2067
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3915,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 1285,
+          "corrected": 912
+        },
+        {
+          "where": "arm_outputs.jsonl row 4 (CollaborateForce::a::1)",
+          "field": "timing.wall_s",
+          "recorded": 24.552920698829922,
+          "corrected": 20.64969914384271
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 12.762,
+          "corrected": 9.154534488244053
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 12.762,
+          "corrected": 9.154534488244053
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 4968,
+          "corrected": 2062
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3910,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 1135,
+          "corrected": 780
+        },
+        {
+          "where": "arm_outputs.jsonl row 12 (FlowForce::a::3)",
+          "field": "timing.wall_s",
+          "recorded": 24.780199999934993,
+          "corrected": 21.172734488179046
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 24.533,
+          "corrected": 14.432982487519574
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 24.533,
+          "corrected": 14.432982487519574
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 9338,
+          "corrected": 2060
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 7294,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 2251,
+          "corrected": 1264
+        },
+        {
+          "where": "arm_outputs.jsonl row 14 (InsightForce::a::5)",
+          "field": "timing.wall_s",
+          "recorded": 32.999425700679424,
+          "corrected": 22.899408188198997
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 14.974,
+          "corrected": 10.832846014677964
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 14.974,
+          "corrected": 10.832846014677964
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 5089,
+          "corrected": 2069
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3917,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 1364,
+          "corrected": 935
+        },
+        {
+          "where": "arm_outputs.jsonl row 18 (PersonalizeForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 19.60112229981553,
+          "corrected": 15.459968314493493
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 8.157,
+          "corrected": 4.15870073933204
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 8.157,
+          "corrected": 4.15870073933204
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 4444,
+          "corrected": 2051
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3899,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 658,
+          "corrected": 267
+        },
+        {
+          "where": "arm_outputs.jsonl row 21 (SearchFlow::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 17.419128799897617,
+          "corrected": 13.420829539229658
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 16.133,
+          "corrected": 5.252258464853409
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 16.133,
+          "corrected": 5.252258464853409
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 7570,
+          "corrected": 2055
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 6406,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 1404,
+          "corrected": 435
+        },
+        {
+          "where": "arm_outputs.jsonl row 22 (SearchForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 21.386250299939885,
+          "corrected": 10.505508764793294
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 11.481,
+          "corrected": 7.139353836878382
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 11.481,
+          "corrected": 7.139353836878382
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 4659,
+          "corrected": 2061
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3909,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 827,
+          "corrected": 473
+        },
+        {
+          "where": "arm_outputs.jsonl row 24 (SentimentForce::a::8)",
+          "field": "timing.wall_s",
+          "recorded": 20.119002298782583,
+          "corrected": 15.777356135660966
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 13.652,
+          "corrected": 9.492831203735179
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 13.652,
+          "corrected": 9.492831203735179
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 5108,
+          "corrected": 2072
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3920,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 1387,
+          "corrected": 948
+        },
+        {
+          "where": "arm_outputs.jsonl row 25 (SummarizeForce::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 21.773184001141225,
+          "corrected": 17.614015204876402
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 13.763,
+          "corrected": 9.412959977973577
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 13.763,
+          "corrected": 9.412959977973577
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 4823,
+          "corrected": 2065
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3913,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 1033,
+          "corrected": 617
+        },
+        {
+          "where": "arm_outputs.jsonl row 33 (CoachForce::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 20.424558899880388,
+          "corrected": 16.074518877853965
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 23.771,
+          "corrected": 11.18180867062445
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 23.771,
+          "corrected": 11.18180867062445
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 8708,
+          "corrected": 2054
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 6946,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 2073,
+          "corrected": 928
+        },
+        {
+          "where": "arm_outputs.jsonl row 35 (CollaborationForce::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 34.65946359915659,
+          "corrected": 22.070272269781036
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 13.933,
+          "corrected": 9.578999227021688
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 13.933,
+          "corrected": 9.578999227021688
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 5076,
+          "corrected": 2074
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3922,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 1334,
+          "corrected": 864
+        },
+        {
+          "where": "arm_outputs.jsonl row 36 (ConnectForce::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 23.509003899795005,
+          "corrected": 19.155003126816695
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 28.546,
+          "corrected": 12.423985314672496
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 28.546,
+          "corrected": 12.423985314672496
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 12453,
+          "corrected": 2052
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 10377,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 2365,
+          "corrected": 919
+        },
+        {
+          "where": "arm_outputs.jsonl row 37 (ContentForce::a::11)",
+          "field": "timing.wall_s",
+          "recorded": 34.37381219921634,
+          "corrected": 18.251797513888835
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 17.579,
+          "corrected": 11.863025541701022
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 17.579,
+          "corrected": 11.863025541701022
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 5210,
+          "corrected": 2077
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3925,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 1539,
+          "corrected": 980
+        },
+        {
+          "where": "arm_outputs.jsonl row 38 (ContextForce::a::22)",
+          "field": "timing.wall_s",
+          "recorded": 25.447468898493796,
+          "corrected": 19.731494440194815
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 30.232,
+          "corrected": 7.618029520027875
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 30.232,
+          "corrected": 7.618029520027875
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 11967,
+          "corrected": 2066
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 9924,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 2442,
+          "corrected": 631
+        },
+        {
+          "where": "arm_outputs.jsonl row 43 (ForecastForce::a::24)",
+          "field": "timing.wall_s",
+          "recorded": 35.831578500040806,
+          "corrected": 13.217608020068681
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 12.531,
+          "corrected": 5.657927522095191
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 12.531,
+          "corrected": 5.657927522095191
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 4646,
+          "corrected": 2098
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3946,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 1020,
+          "corrected": 374
+        },
+        {
+          "where": "arm_outputs.jsonl row 49 (PitchForce::a::25)",
+          "field": "timing.wall_s",
+          "recorded": 19.23932729994133,
+          "corrected": 12.36625482203652
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 15.54,
+          "corrected": 9.582340092621518
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 15.54,
+          "corrected": 9.582340092621518
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 4937,
+          "corrected": 2090
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3938,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 1243,
+          "corrected": 681
+        },
+        {
+          "where": "arm_outputs.jsonl row 51 (SearchFlow::a::33)",
+          "field": "timing.wall_s",
+          "recorded": 21.89044820061419,
+          "corrected": 15.93278829323571
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 9.459,
+          "corrected": 5.837876337504957
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 9.459,
+          "corrected": 5.837876337504957
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 4680,
+          "corrected": 2056
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3904,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 823,
+          "corrected": 504
+        },
+        {
+          "where": "arm_outputs.jsonl row 57 (ActionGenie::a::7)",
+          "field": "timing.wall_s",
+          "recorded": 16.736689199864866,
+          "corrected": 13.115565537369823
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 14.185,
+          "corrected": 9.215283315481436
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 14.185,
+          "corrected": 9.215283315481436
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 5013,
+          "corrected": 2067
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3915,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 1215,
+          "corrected": 815
+        },
+        {
+          "where": "arm_outputs.jsonl row 59 (CollaborateForce::a::21)",
+          "field": "timing.wall_s",
+          "recorded": 30.336849700121213,
+          "corrected": 25.367133015602647
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 12.574,
+          "corrected": 6.629314782861186
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 12.574,
+          "corrected": 6.629314782861186
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 4658,
+          "corrected": 2061
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3909,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 980,
+          "corrected": 460
+        },
+        {
+          "where": "arm_outputs.jsonl row 66 (ForecastForce::a::26)",
+          "field": "timing.wall_s",
+          "recorded": 21.366676699741745,
+          "corrected": 15.42199148260293
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 32.8,
+          "corrected": 10.818947261081243
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 32.8,
+          "corrected": 10.818947261081243
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 17290,
+          "corrected": 2061
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 14534,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 2868,
+          "corrected": 943
+        },
+        {
+          "where": "arm_outputs.jsonl row 68 (KnowledgeForce::a::15)",
+          "field": "timing.wall_s",
+          "recorded": 41.27726299964915,
+          "corrected": 19.296210260730398
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 7.904,
+          "corrected": 2.936861187257852
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 7.904,
+          "corrected": 2.936861187257852
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 4368,
+          "corrected": 2070
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3918,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 667,
+          "corrected": 152
+        },
+        {
+          "where": "arm_outputs.jsonl row 69 (LeadForce::a::20)",
+          "field": "timing.wall_s",
+          "recorded": 16.10180079986993,
+          "corrected": 11.134661987127783
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 11.188,
+          "corrected": 7.363839127979889
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 11.188,
+          "corrected": 7.363839127979889
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 4685,
+          "corrected": 2058
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3906,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 841,
+          "corrected": 505
+        },
+        {
+          "where": "arm_outputs.jsonl row 78 (ContentForce::a::17)",
+          "field": "timing.wall_s",
+          "recorded": 15.993718699237332,
+          "corrected": 12.169557827217222
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 17.868,
+          "corrected": 13.115597223283379
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 17.868,
+          "corrected": 13.115597223283379
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 5264,
+          "corrected": 2062
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3910,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 1499,
+          "corrected": 1076
+        },
+        {
+          "where": "arm_outputs.jsonl row 81 (FeedbackForce::a::12)",
+          "field": "timing.wall_s",
+          "recorded": 22.361041300138456,
+          "corrected": 17.60863852342184
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 9.27,
+          "corrected": 5.271600264969053
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 9.27,
+          "corrected": 5.271600264969053
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 4592,
+          "corrected": 2051
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3899,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 800,
+          "corrected": 413
+        },
+        {
+          "where": "arm_outputs.jsonl row 82 (InsightForce::a::8)",
+          "field": "timing.wall_s",
+          "recorded": 17.458332800045607,
+          "corrected": 13.45993306501466
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 18.405,
+          "corrected": 14.384206310880844
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 18.405,
+          "corrected": 14.384206310880844
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 5391,
+          "corrected": 2059
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3907,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 1659,
+          "corrected": 1256
+        },
+        {
+          "where": "arm_outputs.jsonl row 83 (LeadForce::a::28)",
+          "field": "timing.wall_s",
+          "recorded": 23.227564999553376,
+          "corrected": 19.20677131043422
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 8.661,
+          "corrected": 4.44870695383472
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 8.661,
+          "corrected": 4.44870695383472
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 4588,
+          "corrected": 2060
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3908,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 831,
+          "corrected": 403
+        },
+        {
+          "where": "arm_outputs.jsonl row 84 (MonitorForce::a::19)",
+          "field": "timing.wall_s",
+          "recorded": 15.118900299333967,
+          "corrected": 10.906607253168687
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 7.887,
+          "corrected": 3.22561579450107
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 7.887,
+          "corrected": 3.22561579450107
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 4335,
+          "corrected": 2067
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3915,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 559,
+          "corrected": 146
+        },
+        {
+          "where": "arm_outputs.jsonl row 89 (AnomalyForce::a::1)",
+          "field": "timing.wall_s",
+          "recorded": 15.467633800421844,
+          "corrected": 10.806249594922914
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "retrieval.chat.request_s",
+          "recorded": 13.022,
+          "corrected": 9.232051450236261
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "retrieval.chat.time_s",
+          "recorded": 13.022,
+          "corrected": 9.232051450236261
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "retrieval.chat.tokens_in",
+          "recorded": 4986,
+          "corrected": 2063
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "retrieval.chat.cached_input_tokens",
+          "recorded": 3911,
+          "corrected": 1850
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "retrieval.chat.tokens_out",
+          "recorded": 1170,
+          "corrected": 784
+        },
+        {
+          "where": "arm_outputs.jsonl row 90 (AutoTuneForce::a::1)",
+          "field": "timing.wall_s",
+          "recorded": 18.22065050007496,
+          "corrected": 14.43070195031122
+        }
+      ],
+      "checks": [
+        {
+          "what": "each changed entry held exactly one answering record, whose answering try's seconds were the entry's request_s and which has a server time",
+          "holds": true,
+          "looked_at": 200
+        },
+        {
+          "what": "each call counted by its first request: in the CLI's transcript the last model request holds the accepted tool call and each earlier one tool calls the CLI rejected or none, each tool result and each request without a tool call is one of the call's num_turns - 1, and the requests' tokens add up to the call record's",
+          "holds": true,
+          "looked_at": 29
+        }
+      ],
+      "evidence": {
+        "file": "model_call_times_v3.json",
+        "sha256": "c5e4a4d265829d2b432406d714f0139ec60984bf4161ccbeb7e1964db8dd47e2",
+        "what": "the backlog's rate and limit, the clean relations, the files they were read from with their sha256, and per corrected call its server time, backlog, relation time, its first request where it made more than one, and time",
+        "requests_file": "cli_transcript_requests.json",
+        "requests_sha256": "b1b50afff0cc1cc0dd2f4294e7b8107160fd02881c3a68fe796487883bd42692"
+      },
+      "files": {
+        "arm_outputs.jsonl": {
+          "sha256_before": "7132d3a92b07f6bb3ca75c3a98a0bf69cfdca658c3a389f4c0a562cb3933c111",
+          "sha256_corrected": "d8dab2375ebb76dc398954eb1f626c8eb9dbfe012cbde1d23638efc4cb721aec",
+          "as_recorded": "arm_outputs.as_recorded.jsonl"
+        }
+      },
+      "script": "correct_model_call_time.py, in this folder"
     }
   ]
 }

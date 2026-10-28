@@ -27,6 +27,7 @@ One run of one retrieval method, **lucene**, over 100 questions: for each questi
 | `correct_slept_tries.py` | The script that made the sleep correction; run on the files as recorded it gives the files it corrected again. |  |
 | `correct_usage_by_model.py` | The script that made the clean-up correction (the cost per model, the search time without the model calls, the build cost per model, the graph as counted); run on the files from before it, it gives the corrected files again. |  |
 | `correct_nonllm_record_content.py` | The script that made the non-LLM record-content correction (context_recall_nonllm and context_precision_nonllm calculated again, record content against record content); run on the files from before it, with the code named in its entry, it gives the corrected files again. |  |
+| `model_call_times_v3.json` | The evidence of model-call-time/3: as model_call_times.json, worked out again with each call in which the CLI did not accept the answer's form counted by its first request (first_request: its model requests, their times in the CLI's transcript, the first request's share of the server time, its seconds and its tokens). | question_id = id of arm_outputs.jsonl; record = the call's place in calls; seq = calls[].seq |
 | `correct_search_time.py` | The script that made the search-time correction (each question's search time the time of the same retrieval made again with one question at a time on the laptop, and a question's wait for the embedder's lock out); run on the files from before it, with the re-made run its entry names, it gives the corrected files again. |  |
 | `correct_judge_embed_gpu_time.py` | The script that made the judging's GPU-time correction (RAGAS's own embedding requests made on the CPU given the time the same requests take on the desktop's graphics card); run on the files from before it, with its evidence file, it gives the corrected files again. |  |
 | `judge_embed_gpu_times.json` | The evidence of the judging's GPU-time correction: per RAGAS embedding request that the six final runs' judging made on the CPU, its seconds on the graphics card, its recorded seconds, texts and tokens. | run = the run folder; line = the record's line in eval_calls.jsonl, from 0; question_id, eval_leg, seq = the record's own |
@@ -48,7 +49,7 @@ The scores are computed by RAGAS. The quoted sentence of each is RAGAS's own, fr
 | `context_recall_llm` | "Estimates context recall by estimating TP and FN using annotated answer and retrieved context." (RAGAS, class LLMContextRecall) Here: the gold answer, sentence by sentence, against contexts. | the judge | yes |
 | `faithfulness` | "The **Faithfulness** metric measures how factually consistent a `response` is with the `retrieved context`. [...] A response is considered **faithful** if all its claims can be supported by the retrieved context." (RAGAS, docs, faithfulness.md) Here: the answer's claims against contexts. | the judge | yes |
 | `answer_correctness` | "Measures answer correctness compared to ground truth as a combination of factuality and semantic similarity." (RAGAS, class AnswerCorrectness) Here: the answer against the gold answer: 0.75 times the F1 of the claims the judge finds in both, plus 0.25 times semantic_similarity (RAGAS's own weights). | the judge and the embedder | yes |
-| `factual_correctness` | "It uses claim decomposition and natural language inference (NLI) to verify the claims made in the responses against reference texts." (RAGAS, class FactualCorrectness) Here: the answer against the gold answer: the F1 of the answer's claims the judge finds in the gold answer and the gold answer's claims it finds in the answer (RAGAS's defaults: mode f1, beta 1, atomicity and coverage low), rounded to two decimals. | the judge | yes |
+| `factual_correctness` | "It uses claim decomposition and natural language inference (NLI) to verify the claims made in the responses against reference texts." (RAGAS, class FactualCorrectness) Here: the answer against the gold answer: the F1 of precision TP / (TP + FP) and recall TP / (TP + FN), where TP and FP are the answer's claims that the judge finds and does not find in the gold answer, and FN the gold answer's claims that it does not find in the answer (RAGAS's defaults: mode f1, beta 1, atomicity and coverage low), rounded to two decimals. | the judge | yes |
 | `context_entity_recall` | "Calculates recall based on entities present in ground truth and context." (RAGAS, class ContextEntityRecall) Here: the entities the judge finds in the gold answer, found among the entities it finds in contexts joined into one text. | the judge | yes |
 | `semantic_similarity` | "The **Semantic Similarity** metric evaluates the semantic resemblance between a generated response and a reference (ground truth) answer. [...] This metric uses embeddings and cosine similarity" (RAGAS, docs, semantic_similarity.md) Here: the answer against the gold answer, both embedded in passage mode. | the embedder | yes |
 | `string_similarity` | "`NonLLMStringSimilarity` metric measures the similarity between the reference and the response using traditional string distance measures such as Levenshtein, Hamming, and Jaro." (RAGAS, docs, traditional.md) Here: the answer against the gold answer, Levenshtein. | nothing | yes |
@@ -448,7 +449,7 @@ Only in a folder whose stored numbers were corrected after the run: what was cha
 | `usage.prompt_tokens` | Tokens sent: fresh input, plus what was written to the prompt cache, plus what was read from it. |
 | `usage.completion_tokens` | Tokens the model wrote. |
 | `usage.cached_input_tokens` | The part of prompt_tokens read from the prompt cache. |
-| `envelope` | The Claude program's whole reply as it printed it, each part as the program gives it: its own times in milliseconds (duration_ms for the whole program run, duration_api_ms for the time spent with the model, ttft_ms until the first token, ttft_stream_ms and time_to_request_ms), its own token counts, the models it used with their context window in tokens (contextWindow), its own price in US dollars (total_cost_usd, costUSD; no number of this harness uses it), its counts of web requests (0: the call has no tool), its session id, how many turns it took, and its error fields, which are empty when the call had no error (api_error_status, permission_denials). Empty for a call that gave up: no reply was read. |
+| `envelope` | The Claude program's whole reply as it printed it, each part as the program gives it: its own times in milliseconds (duration_ms from the start of the request turn, after the program has started, to its end; duration_api_ms for the time spent in requests to the model; ttft_ms until the first block of the first request's reply is complete; ttft_stream_ms until the first event of that reply's stream; time_to_request_ms until the first request was sent; the last three from the start of the request turn), its own token counts, the models it used with their context window in tokens (contextWindow), its own price in US dollars (total_cost_usd, costUSD; no number of this harness uses it), its counts of web requests (0: the call has no tool), its session id, how many turns it took, and its error fields, which are empty when the call had no error (api_error_status, permission_denials). Empty for a call that gave up: no reply was read. |
 | `stream` | The raw stream of a reply joined from parts; empty otherwise. |
 | `stderr` | What the program printed as errors in the try that answered; empty when it printed nothing, and for a call that gave up. |
 | `error` | The last error of a call that gave up; empty otherwise. |
@@ -688,7 +689,7 @@ Counted from the files themselves when this was written. A record is a line of a
 |---|---|---|---|
 | `corrections` | array | 1 | 0 |
 | `corrections.before` | object | 1 | 0 |
-| `corrections.changes` | array | 1 | 0 |
+| `corrections.changes` | array | 1 | 1 |
 | `corrections.checks` | array | 1 | 0 |
 | `corrections.code` | object | 1 | 0 |
 | `corrections.evidence` | object, string | 1 | 0 |
@@ -1114,19 +1115,19 @@ The file holds no record.
 | `workers` | integer | 1 | 0 |
 
 ---
-Written from `prod/harness/fields.py`, sha256 `42e2015e16ce089be06ea5e6f37efb14794c820667498abc78edbb8e85d08581`.
+Written from `prod/harness/fields.py`, sha256 `1c4a0c739e74ffebf0a5a6c716aba0f32c6d222f566b01d1b471f2c222f6cfb6`.
 
 The files as they stood when this was written, their line ends as git holds them (LF):
 
 - `arm_outputs.as_recorded.jsonl` sha256 `8a4338f33912763e24165504fb88119fa7aba162e51a1d5901a37110ee0db69b`
 - `arm_outputs.jsonl` sha256 `11c17deff7ad5e6daf21ade578558bd591aaa44753dd4bd0ba9f03c0a8af5ea6`
 - `correct_judge_embed_gpu_time.py` sha256 `22823e15cb005f752c66af694f22e085e3081ca13bb30553de0945c2975fc64d`
-- `correct_model_call_time.py` sha256 `f3e49a6b4fbfc779bba8d6793c98897415fbd7693202b2ff89f4e68771420a5c`
+- `correct_model_call_time.py` sha256 `32185f94f2157e1441b75bc54af61e7f416905882652ca83aa542b3bd4787b01`
 - `correct_nonllm_record_content.py` sha256 `f915dd944ce45f6b5927efc63e4fa0edd73af4be036e20f304c0180aea64877a`
 - `correct_search_time.py` sha256 `4002eb8c2826c46a2b52f634a169f207a2cfa37322d6db64c9517f745bee351d`
 - `correct_slept_tries.py` sha256 `ce777075aef50ec5b4e9a4cb33bff71194ff002b212bec526a8bc7b6e8ffc249`
 - `correct_usage_by_model.py` sha256 `28d2357c693e407a2d4739241d1fddca55751553f0c9d4f42eedcf5a79a0d299`
-- `corrections.json` sha256 `5fd1006b3a9625fb16903ea06afca05753cbf1621b40979f8e759337c753ea30`
+- `corrections.json` sha256 `650de76edf5784634a972ef9d5235cd84b7689e678d745aeb9eecf9fe5d21f9d`
 - `eval_calls.as_recorded.jsonl` sha256 `a50318c9117ec70553fd416b35cfa1b82df625c970e8ee546a6706f30b8a6ef2`
 - `eval_calls.jsonl` sha256 `7421dd024cae188f8bd2a40a675487c76f3b1f9f2e872ed3b2685e1a3cc5d3b3`
 - `eval_failures.jsonl` sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
@@ -1137,5 +1138,6 @@ The files as they stood when this was written, their line ends as git holds them
 - `judge_embed_gpu_times.json` sha256 `72aa41ffeb48a6228a901c06cbb90094fcdad07911147faef29efb1d1b1c9267`
 - `machine_sleep_events.txt` sha256 `f6151dcfe0be5bcc2272c609a71f2d1b8caac65142580b934fd87dfa8de0f72d`
 - `model_call_times.json` sha256 `ac8f39a2d385e9c09a8e695d78b99530049e1d07398d4378ec9f83b4ed54029e`
+- `model_call_times_v3.json` sha256 `a3a51fcecc587f7c37ec75efdb00e0cf9858f734da3aa101c1c9b345d8ce4076`
 - `run_manifest.as_recorded.json` sha256 `9475f6a33f12778be1d08fa5c9f32e6e230fcdae54c1ecea412d8d096bc27058`
 - `run_manifest.json` sha256 `c0dc71ca352cc9ee016200413b5020884e92d415a5e2aeab83aed2d5901da8c5`
