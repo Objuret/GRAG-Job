@@ -129,9 +129,9 @@ QUESTIONS = [
     ("answer", "Answer of the answer model.", ""),
     *SCORES,
     ("string_presence_per_id", "RAGAS StringPresence run on each item of HERB's reference list (one employee ID, PR "
-                               "link, URL or company name per item) instead of on the whole reference answer: the share "
-                               "of the items the answer contains. Person, PR, URL and company questions; empty for "
-                               "content questions, whose reference items are text.", "0-1"),
+                               "link or URL per item) instead of on the whole reference answer: the share of the items "
+                               "the answer contains. Person, PR and URL questions; empty for content and company "
+                               "questions.", "0-1"),
     ("search_seconds", "Retrieval time, without the interpreter and the query embedding, measured with one question "
                        "at a time on one machine for every arm, never as the first question of a process: for lucene "
                        "and vector the ranking, for the artefact the reading of its stored first-call answer and query "
@@ -315,7 +315,7 @@ def judge_cost(folder, ev, calls, cells, d):
     return ev["judge_usage"], embedded
 
 
-ID_TYPES = ("person", "pr", "url", "company")  # HERB's question types whose reference list holds one ID per item
+ID_TYPES = ("person", "pr", "url")  # HERB's question types whose reference list holds one ID or link per item
 
 
 def string_presence_per_id(answer, items):
