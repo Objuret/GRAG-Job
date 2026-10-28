@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-2974 turns, chronological. Verbatim text; no edits.
+3047 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -21183,4 +21183,321 @@ also, you need to fucking stop separating the 715 and the 100 in all places, the
 *queued while an agent was working*
 
 also, give me an analysis of the two new ragas-metrics we added
+
+## 2026-10-28 04:10 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+tell it to me cleaner
+
+## 2026-10-28 04:11 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+only 190?
+
+## 2026-10-28 04:13 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+ok, about those 2 new metrics i asked about tho
+
+## 2026-10-28 04:17 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+ok, but do you remember the reason we inckuded those?
+
+## 2026-10-28 04:20 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+so not only was a fucking shit suggestion to use those.. it was shitty implemented also..
+
+## 2026-10-28 04:21 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+got only the second part of it? what the fucking what?
+
+## 2026-10-28 04:26 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+what the fuck are you even saying.. what bisarre construction is that, i dont get it at all
+
+## 2026-10-28 04:27 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+and yet again, you do realise we are not using the fucking cli, right?
+
+## 2026-10-28 04:28 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+what do you mean that there is more than 1 reply tho?
+
+## 2026-10-28 04:28 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+and what fucking output limit, we put it at "no limit" ?
+
+## 2026-10-28 04:29 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+ok, but its not really 64 tho, is it
+
+## 2026-10-28 04:30 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+how do we fix this shit then?
+
+## 2026-10-28 04:30 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+and if we DO fix this, oes it matter at all for these metrics?
+
+## 2026-10-28 04:32 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+cant you append the two rounds.. honestly, you are still fucking messy as to what you are even talking about with these fucking rounds
+
+## 2026-10-28 04:33 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+ok, so why are you fucking spazzing out about this, this was not what the fucking conversation was about
+
+## 2026-10-28 04:39 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+what is this even? what did you do?
+
+## 2026-10-28 04:40 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+ok.. but.. that is NOT a ragas thing? you just made some shit up?
+
+## 2026-10-28 04:41 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+then reason about the actual solution here then, dont toss your data, but the base here are ragas-stuff so we should figure out how to do THAT correctly instead
+
+## 2026-10-28 04:49 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+so, this was his actual questions "For questions involving employee IDs and PR links, exact entity-level accuracy might be more informative than text-similarity metrics.".. what is "exact entity-level accuracy" ?
+
+## 2026-10-28 04:50 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+but.. dont our ragasmetrics already cover this? i dont fucking get it
+
+## 2026-10-28 04:51 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+how do we fix this then?
+
+## 2026-10-28 04:51 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+those metrics you jsut used, are those even the correct ones to use tho?
+
+## 2026-10-28 04:53 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+wait.. we are using it incorrectly.. and NOT as ragas documents it!? are you motherfucking shitting me?
+
+## 2026-10-28 04:54 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+ok..
+
+## 2026-10-28 04:55 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+you are not beein gvery fucking helpful
+
+## 2026-10-28 04:55 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+so, for this "For questions involving employee IDs and PR links, exact entity-level accuracy might be more informative than text-similarity metrics.".. what is the actual fucking soution with out metrics?
+
+## 2026-10-28 04:56 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+that is NOT what i meant
+
+## 2026-10-28 04:56 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+i meant about your reasoning and trying to solve this issue
+
+## 2026-10-28 04:56 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+*queued while an agent was working*
+
+no, stop
+
+## 2026-10-28 04:57 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+that is done already, fucking hobo
+
+## 2026-10-28 04:58 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+just fucking look at his question, what IS it that he actually wants.. how much of that can we already solve? what exactly are we not solving?
+
+## 2026-10-28 04:59 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+resume
+
+## 2026-10-28 04:59 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+just fucking look at his question, what IS it that he actually wants.. how much of that can we already solve? what exactly are we not solving?
+
+## 2026-10-28 05:02 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+what áre those two pieces then?
+
+## 2026-10-28 05:05 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+i think you are beeing retarded, but honestly, its so messy i ant even deduct that..  your third point.. isnt the whole fucking point of the other points to NOT NEED THAT?
+
+## 2026-10-28 05:05 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+are you overdoing it based on his questions?
+
+## 2026-10-28 05:05 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+are you overdoing it based on his questions?
+
+## 2026-10-28 05:06 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+does he ask for that?
+
+## 2026-10-28 05:10 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+eh.. ok..
+
+## 2026-10-28 05:11 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+how the fuck was that a go for you..
+
+## 2026-10-28 05:12 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+what are you even doing? and where the fuck do you think you are going to put that information?
+
+## 2026-10-28 05:13 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+well, nope, find a fucking other solution dude
+
+## 2026-10-28 05:13 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+use what we already hae
+
+## 2026-10-28 05:13 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+soo..
+
+## 2026-10-28 05:13 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+NO
+
+## 2026-10-28 05:14 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+ffs dude
+
+## 2026-10-28 05:14 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+"Answer correctness: Despite relatively high faithfulness across all three methods, answer correctness remains low (0.175–0.273). Several answers also indicate that the requested information could not be found. Could we examine whether this is primarily a retrieval problem or an issue with extracting the correct answer from the retrieved evidence? For questions involving employee IDs and PR links, exact entity-level accuracy might be more informative than text-similarity metrics." this was his whole question
+
+## 2026-10-28 05:15 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+i dont get it.. isnt "context_recall_id " EXACTLY the thing to use here? explain why you think it isnt
+
+## 2026-10-28 05:16 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+so, this is his question "Answer correctness: Despite relatively high faithfulness across all three methods, answer correctness remains low (0.175–0.273). Several answers also indicate that the requested information could not be found. Could we examine whether this is primarily a retrieval problem or an issue with extracting the correct answer from the retrieved evidence? For questions involving employee IDs and PR links, exact entity-level accuracy might be more informative than text-similarity metrics."
+and the first part we already answered with already existing metrics, correct?
+
+## 2026-10-28 05:17 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+why would this not work for employee ids and pr links?
+
+## 2026-10-28 05:19 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+so, each reference should get a "text check" against the answer?
+
+## 2026-10-28 05:20 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+so, can we do that, mod the input or something, and still be able to call it ragas?
+
+## 2026-10-28 05:22 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+or just a for each regex or commaseparated in reference, check
+
+## 2026-10-28 05:22 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+you havent even checked..
+
+## 2026-10-28 05:28 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+but HERB states those fiiles are not to be used if i recall correctly
+
+## 2026-10-28 05:28 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+dude who gives a shit, it is what it is now, that is not the current issue
+
+## 2026-10-28 05:28 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+everything i say is not a fucking challenge or command
+
+## 2026-10-28 05:29 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+so what is the differene from before then?
+
+## 2026-10-28 05:29 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+yeah but when the fucking stringprecence code ran on this shit before, did it NOT do exactly this then?
+
+## 2026-10-28 05:31 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+ok, so we do that and just name it stringpresence per item, or a better word, what is a better word for this
+
+## 2026-10-28 05:31 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+per id or something
+
+## 2026-10-28 05:32 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+dont do somthin that sounds like we made up a new ragas of our own.. unless you can do that according to ragas
+
+## 2026-10-28 05:34 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+i dont like that name
+
+## 2026-10-28 05:35 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+StringPresence  needs to be in it because that is exactly what we do, meaning its a subcategory of StringPresence
+
+## 2026-10-28 05:36 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+yup, dont have to mention that it is not a ragas tho, it actully is, we just run it differently, anyway, lets do this
+
+## 2026-10-28 05:36 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+check if it works first..
+
+## 2026-10-28 05:37 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+stop stop stop
+
+## 2026-10-28 05:38 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+i sure as fuck do NOT want you to do something psychotic here, what is the literal thing you ACTUALLY need to do this?
+
+ok, that sounds correct tho, i am just worried you will take a fucking million years as usual and do a retarded implementation as slow as fucking possible
+
+## 2026-10-28 05:39 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+expected time? isnt py slow?
+
+## 2026-10-28 05:39 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+fucking GO then
+
+## 2026-10-28 05:40 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+did you TEST it?
+
+## 2026-10-28 05:40 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+*queued while an agent was working*
+
+well nvm, just go
+
+## 2026-10-28 05:45 · 9c164e78-008e-41e9-85f3-58c55027a64c.jsonl
+
+so you just fucking skipped checking if it even worked?
 

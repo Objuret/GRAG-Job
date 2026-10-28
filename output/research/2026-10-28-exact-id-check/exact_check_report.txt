@@ -1,0 +1,278 @@
+===== count a =====
+--- numbers ---
+The ci test gives the same counts as the exact test on every line below. The whole test changes only pr_link (shown at the end of each step).
+
+STEP 3: PER ARM, EXACT TEST
+Each line is in this order:
+in context / in answer / in both / in context not in answer / in answer not in context / in neither | questions: context all/some/none | answer all/some/none
+
+All kinds (466 questions, 1,543 identifiers in each arm):
+- artefact: 1342 / 877 / 875 / 467 / 2 / 199 | 342/69/55 | 162/183/121
+- lucene: 586 / 336 / 336 / 250 / 0 / 957 | 157/124/185 | 66/111/289
+- vector: 1221 / 669 / 669 / 552 / 0 / 322 | 286/115/65 | 142/149/175
+- Share of the 1,543 identifiers in the context: artefact 0.870, lucene 0.380, vector 0.791.
+- Share of the 1,543 identifiers in the answer: artefact 0.568, lucene 0.218, vector 0.434.
+
+employee_id (262 questions, 1,055 identifiers):
+- artefact: 966 / 580 / 580 / 386 / 0 / 89 | 214/19/29 | 81/112/69
+- lucene: 393 / 198 / 198 / 195 / 0 / 662 | 106/83/73 | 39/61/162
+- vector: 859 / 434 / 434 / 425 / 0 / 196 | 162/75/25 | 79/90/93
+
+pr_link (167 questions, 370 identifiers):
+- artefact: 285 / 231 / 229 / 56 / 2 / 83 | 103/42/22 | 66/58/43
+- lucene: 115 / 89 / 89 / 26 / 0 / 255 | 28/37/102 | 17/38/112
+- vector: 303 / 186 / 186 / 117 / 0 / 67 | 115/24/28 | 57/45/65
+
+customer_id (17 questions, 48 identifiers):
+- artefact: 47 / 38 / 38 / 9 / 0 / 1 | 16/1/0 | 12/1/4
+- lucene: 8 / 2 / 2 / 6 / 0 / 40 | 3/4/10 | 1/1/15
+- vector: 7 / 2 / 2 / 5 / 0 / 41 | 3/3/11 | 2/0/15
+
+other_url (20 questions, 70 identifiers):
+- artefact: 44 / 28 / 28 / 16 / 0 / 26 | 9/7/4 | 3/12/5
+- lucene: 70 / 47 / 47 / 23 / 0 / 0 | 20/0/0 | 9/11/0
+- vector: 52 / 47 / 47 / 5 / 0 / 18 | 6/13/1 | 4/14/2
+
+- None of the 1,543 identifiers is in the text of its question. This includes the 2 artefact pr_links that are in the answer but not in the context.
+
+Whole test (lines in the same order):
+pr_link:
+- artefact: 283 / 225 / 223 / 60 / 2 / 85 | 101/44/22 | 63/58/46
+- lucene: 106 / 82 / 82 / 24 / 0 / 264 | 27/32/108 | 17/33/117
+- vector: 301 / 185 / 185 / 116 / 0 / 69 | 113/25/29 | 57/44/66
+All kinds:
+- artefact: 1340 / 871 / 869 / 471 / 2 / 201 | 340/71/55 | 159/183/124
+- lucene: 577 / 329 / 329 / 248 / 0 / 966 | 156/119/191 | 66/106/294
+- vector: 1219 / 668 / 668 / 551 / 0 / 324 | 284/116/66 | 142/148/176
+Some exact-substring hits are only the start of a longer PR link:
+- In the context: artefact 2, lucene 9, vector 2.
+- In the answer: artefact 6, lucene 7, vector 1.
+
+STEP 4: ARM AGAINST ARM, QUESTION BY QUESTION, EXACT TEST
+- Share = the identifiers of the question that are present ÷ the identifiers of the question.
+- "higher" means the first arm's share is higher.
+- The number in brackets is the median size of the share difference among the questions in that direction.
+
+All kinds (466 questions):
+- artefact vs lucene:
+  - context: higher 249 (0.909), lower 34 (0.5), equal 183
+  - answer: higher 238 (0.697), lower 52 (0.45), equal 176
+- artefact vs vector:
+  - context: higher 111 (0.4), lower 68 (0.5), equal 287
+  - answer: higher 153 (0.5), lower 110 (0.5), equal 203
+- lucene vs vector:
+  - context: higher 33 (0.5), lower 239 (0.727), equal 194
+  - answer: higher 39 (0.333), lower 192 (0.6), equal 235
+
+employee_id (262 questions):
+- artefact vs lucene:
+  - context: higher 128 (0.809), lower 18 (0.5), equal 116
+  - answer: higher 131 (0.667), lower 31 (0.4), equal 100
+- artefact vs vector:
+  - context: higher 62 (0.317), lower 17 (0.5), equal 183
+  - answer: higher 82 (0.5), lower 65 (0.5), equal 115
+- lucene vs vector:
+  - context: higher 14 (0.5), lower 130 (0.667), equal 118
+  - answer: higher 17 (0.333), lower 113 (0.545), equal 132
+
+pr_link (167 questions):
+- artefact vs lucene:
+  - context: higher 107 (1.0), lower 5 (0.5), equal 55
+  - answer: higher 93 (1.0), lower 9 (0.5), equal 65
+- artefact vs vector:
+  - context: higher 31 (1.0), lower 43 (0.5), equal 93
+  - answer: higher 57 (0.667), lower 32 (0.5), equal 78
+- lucene vs vector:
+  - context: higher 1 (0.333), lower 106 (1.0), equal 60
+  - answer: higher 12 (0.333), lower 70 (1.0), equal 85
+
+customer_id (17 questions):
+- artefact vs lucene:
+  - context: higher 14 (1.0), lower 0, equal 3
+  - answer: higher 12 (1.0), lower 0, equal 5
+- artefact vs vector:
+  - context: higher 14 (1.0), lower 0, equal 3
+  - answer: higher 11 (1.0), lower 0, equal 6
+- lucene vs vector:
+  - context: higher 4 (0.667), lower 3 (1.0), equal 10
+  - answer: higher 1 (0.333), lower 1 (1.0), equal 15
+
+other_url (20 questions):
+- artefact vs lucene:
+  - context: higher 0, lower 11 (0.75), equal 9
+  - answer: higher 2 (0.25), lower 12 (0.667), equal 6
+- artefact vs vector:
+  - context: higher 4 (0.25), lower 8 (0.5), equal 8
+  - answer: higher 3 (0.667), lower 13 (0.5), equal 4
+- lucene vs vector:
+  - context: higher 14 (0.333), lower 0, equal 6
+  - answer: higher 9 (0.333), lower 8 (0.375), equal 3
+
+Whole test (only these lines change):
+All kinds:
+- artefact vs lucene:
+  - context: higher 252 (0.909), lower 34 (0.5), equal 180
+  - answer: higher 238 (0.667), lower 52 (0.5), equal 176
+- artefact vs vector:
+  - context: higher 111 (0.429), lower 68 (0.5), equal 287
+  - answer: higher 149 (0.6), lower 111 (0.5), equal 206
+- lucene vs vector:
+  - context: higher 33 (0.5), lower 241 (0.75), equal 192
+  - answer: higher 38 (0.333), lower 194 (0.6), equal 234
+pr_link:
+- artefact vs lucene:
+  - context: higher 110 (1.0), lower 5 (0.5), equal 52
+  - answer: higher 93 (1.0), lower 9 (0.5), equal 65
+- artefact vs vector:
+  - context: higher 31 (1.0), lower 43 (0.5), equal 93
+  - answer: higher 53 (0.667), lower 33 (0.5), equal 81
+- lucene vs vector:
+  - context: higher 1 (0.333), lower 108 (1.0), equal 58
+  - answer: higher 11 (0.333), lower 72 (1.0), equal 84
+
+ROW CHECKS (all six final runs)
+- Each arm has all 815 ids and no other id.
+- The row's question is the same as in questions.jsonl for all 815 rows.
+- In arm_outputs.jsonl, answer and contexts are the same as in arm_outputs.as_recorded.jsonl (a sha256 for each row, 0 differences).
+- 0 empty answers. 0 rows without contexts.
+- Each of the 466 rows has one answer call, and each context text is in that call's recorded prompt.
+- For each of the 1,543 identifiers in each arm, presence in contexts is the same as presence in the recorded prompt (0 differences).
+- No identifier is in the answer call's system prompt.
+--- limits ---
+- The test is letter for letter. An identifier in another form counts as absent: for example a PR link without "https://", a PR given only by repository and number, an
+employee given by name and not by eid_, or a link with "http".
+- The ci test gives the same counts as the exact test on every line.
+- A plain substring test can count a PR link as present when only a longer link contains it (pull/1 inside pull/12). The whole test removes this. The differences are
+given in the numbers.
+- The check counts presence only. It does not count identifiers in the answer that are not in the reference (extra or wrong ids). It does not check what the answer says
+about an identifier that it names.
+- 349 of the 815 questions have no identifier in the reference: content 219, company 130. They are not in these counts. The token of shape [A-Z]{3}-\d{3} is not taken
+(the reason is in patterns).
+- Each identifier counts one time per question.
+- "Context" is the row's contexts: the texts after the 72,000-character cut. These are the same texts that are in the recorded answer-call prompt (checked). The last text
+can be cut at the budget, so an identifier after the cut does not count.
+- The artefact's answer model read the texts in pointer order (reading_order). The order does not change a substring count.
+- The numbers do not tell why an identifier is absent from a context or an answer. This check does not show that.
+- customer_id has 17 questions and other_url has 20, so a median in those groups uses few values.
+- Scripts and one aggregate file (counts only, no ids) are in C:\Users\jocke\AppData\Local\Temp\claude\c--Coding-exjobbet-GRAG-
+Job\9c164e78-008e-41e9-85f3-58c55027a64c\scratchpad\exact_check\ :
+  - exact_check.py (the main count)
+  - exact_check_counts.json
+  - learn_corpus_formats.py
+  - scan_reference_shapes.py
+  - check_odd_token.py
+  - check_corpus_id_sets.py
+  - check_prompt_vs_contexts.py
+- The relayed request, "do you remember the reason we inckuded those?", is not answered here. This step is only the count.
+===== count b =====
+--- numbers ---
+THREE READINGS OF "PRESENT"
+- Exact substring: the identifier is in "\n\n".join(contexts), or in answer. This is the main reading.
+- Case-insensitive substring: this gives the same numbers as the exact reading in every table below. It changes 0 identifier checks.
+- Exact whole token: the identifier has no letter, digit or _ before it and none after it. For a URL, there is also no "-" after it, and no /?#.%=&~+:@ followed by a
+letter or digit.
+
+STEP 3, EXACT SUBSTRING
+Each arm has 466 questions with identifiers and 1,543 identifiers.
+                                  artefact   lucene   vector
+in context                            1342      586     1221
+in answer                              877      336      669
+in context, not in answer              467      250      552
+in answer, not in context                2        0        0
+in both                                875      336      669
+in neither                             199      957      322
+questions all/some/none in context  342/69/55 157/124/185 286/115/65
+questions all/some/none in answer   162/183/121 66/111/289 142/149/175
+
+STEP 3, EXACT WHOLE TOKEN (artefact / lucene / vector)
+- In context: 1340 / 577 / 1219.
+- In answer: 871 / 329 / 668.
+- In context, not in answer: 471 / 248 / 551.
+- In answer, not in context: 2 / 0 / 0.
+- In both: 869 / 329 / 668.
+- In neither: 201 / 966 / 324.
+- Questions all/some/none in context: 340/71/55, 156/119/191, 284/116/66.
+- Questions all/some/none in answer: 159/183/124, 66/106/294, 142/148/176.
+
+STEP 3 BY KIND, EXACT SUBSTRING
+Each line: in context | in answer | in context, not in answer | in answer, not in context; then questions all/some/none in context; then in answer.
+Employee ID (262 questions, 1055 identifiers):
+- artefact: 966 | 580 | 386 | 0; context 214/19/29; answer 81/112/69
+- lucene: 393 | 198 | 195 | 0; context 106/83/73; answer 39/61/162
+- vector: 859 | 434 | 425 | 0; context 162/75/25; answer 79/90/93
+PR link (167 questions, 370 identifiers):
+- artefact: 285 | 231 | 56 | 2; context 103/42/22; answer 66/58/43
+- lucene: 115 | 89 | 26 | 0; context 28/37/102; answer 17/38/112
+- vector: 303 | 186 | 117 | 0; context 115/24/28; answer 57/45/65
+Other URL (20 questions, 70 identifiers):
+- artefact: 44 | 28 | 16 | 0; context 9/7/4; answer 3/12/5
+- lucene: 70 | 47 | 23 | 0; context 20/0/0; answer 9/11/0
+- vector: 52 | 47 | 5 | 0; context 6/13/1; answer 4/14/2
+Customer ID (17 questions, 48 identifiers):
+- artefact: 47 | 38 | 9 | 0; context 16/1/0; answer 12/1/4
+- lucene: 8 | 2 | 6 | 0; context 3/4/10; answer 1/1/15
+- vector: 7 | 2 | 5 | 0; context 3/3/11; answer 2/0/15
+
+STEP 4, ARM AGAINST ARM, QUESTION BY QUESTION
+- This covers 466 questions.
+- A question's share is the identifiers present divided by the identifiers in its reference.
+- "Higher" means the first arm's share is higher.
+- The two medians are the median difference on the higher questions and the median difference on the lower questions, both as positive sizes.
+- "Equal" is split into: both 0 / both 1 / both between.
+- These numbers use the exact substring reading. The case-insensitive reading gives the same numbers.
+- artefact vs lucene, context: higher 249, lower 34, equal 183; medians 0.909 and 0.500; equal 37/134/12
+- artefact vs lucene, answer: higher 238, lower 52, equal 176; medians 0.697 and 0.450; equal 102/35/39
+- artefact vs vector, context: higher 111, lower 68, equal 287; medians 0.400 and 0.500; equal 31/236/20
+- artefact vs vector, answer: higher 153, lower 110, equal 203; medians 0.500 and 0.500; equal 85/74/44
+- lucene vs vector, context: higher 33, lower 239, equal 194; medians 0.500 and 0.727; equal 49/132/13
+- lucene vs vector, answer: higher 39, lower 192, equal 235; medians 0.333 and 0.600; equal 161/44/30
+- Median |difference| over the unequal questions, in the order above: 0.857, 0.667, 0.500, 0.500, 0.667, 0.500.
+- Median signed difference over all 466, in the same order: 0.333, 0.207, 0.000, 0.000, -0.200, 0.000.
+
+STEP 4, EXACT WHOLE TOKEN (higher/lower/equal; median where higher, median where lower)
+- artefact vs lucene: context 252/34/180 (0.909, 0.500); answer 238/52/176 (0.667, 0.500)
+- artefact vs vector: context 111/68/287 (0.429, 0.500); answer 149/111/206 (0.600, 0.500)
+- lucene vs vector: context 33/241/192 (0.500, 0.750); answer 38/194/234 (0.333, 0.600)
+--- limits ---
+- The check finds an identifier only when it is written letter for letter. A change of case changed nothing. A URL with no scheme was found 0 times. I did not test other
+forms, for example a PR given only by its number, or an employee given by name.
+- The exact substring reading also finds a PR link inside a longer PR link: the same start, with more digits after it. The whole-token reading removes these finds:
+  - 13 context checks: artefact 2, lucene 9, vector 2.
+  - 14 answer checks: artefact 6, lucene 7, vector 1.
+  - All of them are PR links. The counts for employee IDs, customer IDs and other URLs do not change.
+- The check counts only machine identifiers.
+  - 349 of 815 references hold no identifier: 219 content and 130 company.
+  - The 130 company references hold company names: 381 matches of 10 distinct names from customers_data.json. I did not count names.
+  - Employee names, customer names and channel names are in 0 references.
+  - I did not count 11 other tokens in the references that contain letters plus digits or _. None of them is a corpus identifier value, and 8 are parts of channel names.
+- All 1,543 identifiers are, as whole tokens, in one or more of the 38,540 record texts that prod/harness/record_text.py makes. The lucene and vector runs indexed these
+38,540 units, with HERB_BASELINE_METADATA set to false.
+- No reference identifier is in its own question text.
+- There are 2 identifiers in an answer but not in its context. Both are artefact PR links. For both, the context holds the repository path and the PR number as a whole
+token, but not the link.
+- "Context" here is the row's contexts in arm_outputs.jsonl. I checked this:
+  - On 815 of 815 rows of each arm, the recorded answer-call prompt is exactly "Documents:\n" + the contexts joined by a blank line + "\n\nQuestion: " + the question.
+  - For the artefact, the prompt uses the contexts in reading_order. On 815 of 815 rows, reading_order is a permutation of all the contexts, so the order does not change
+what is present.
+  - On all rows, contexts and answer are the same as in arm_outputs.as_recorded.jsonl.
+  - No answer is empty.
+  - Each arm has 100 + 715 rows, and the ids are the same as in the two set files.
+  - The joined contexts and the single contexts give the same result on every check.
+- The check counts presence only.
+  - It does not find whether the answer gives the identifier as the answer. For example, an identifier in a list that the answer rejects still counts.
+  - It does not count identifiers in the answer that are not in the reference.
+- An identifier counts once in each question. No identifier repeats inside one reference.
+- An identifier that is cut at the 72,000-character end of the last context counts as absent.
+- I made no model call and wrote nothing into the repo.
+- The scripts are in the scratch folder only: C:/Users/jocke/AppData/Local/Temp/claude/c--Coding-exjobbet-GRAG-
+Job/9c164e78-008e-41e9-85f3-58c55027a64c/scratchpad/exact_check/
+  - common.py
+  - s05_corpus_formats.py
+  - s07_extract_refs.py: it writes ref_identifiers.pkl. I deleted this file after the run because it holds reference identifiers. Run s07 again before s08.
+  - s08_scan_runs.py
+  - s09_counts.py
+  - s10_limits.py
+  - s11_leftovers.py
+  - s12_dictionary_check.py
+- The same folder also holds the other worker's files: exact_check.py, exact_check_counts.json, check_*.py, learn_corpus_formats.py and scan_reference_shapes.py. I did
+not read or change them.

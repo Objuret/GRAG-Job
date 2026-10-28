@@ -26,6 +26,7 @@ goes in: no path, host, user, session, repository file, commit, note or reason. 
 come first; the last sheet is the key.
 """
 import argparse
+import asyncio
 import hashlib
 import json
 import re
@@ -127,6 +128,10 @@ QUESTIONS = [
                               "joined by ', '.", ""),
     ("answer", "Answer of the answer model.", ""),
     *SCORES,
+    ("string_presence_per_id", "RAGAS StringPresence run on each item of HERB's reference list (one employee ID, PR "
+                               "link, URL or company name per item) instead of on the whole reference answer: the share "
+                               "of the items the answer contains. Person, PR, URL and company questions; empty for "
+                               "content questions, whose reference items are text.", "0-1"),
     ("search_seconds", "Retrieval time, without the interpreter and the query embedding, measured with one question "
                        "at a time on one machine for every arm, never as the first question of a process: for lucene "
                        "and vector the ranking, for the artefact the reading of its stored first-call answer and query "
@@ -308,6 +313,22 @@ def judge_cost(folder, ev, calls, cells, d):
     # the cost is every judge call that answered, the cells that failed or that a later start dropped
     # included: judge_usage (the main session's decision of 2026-10-25, by the key's "all RAGAS judge calls")
     return ev["judge_usage"], embedded
+
+
+ID_TYPES = ("person", "pr", "url", "company")  # HERB's question types whose reference list holds one ID per item
+
+
+def string_presence_per_id(answer, items):
+    """RAGAS StringPresence run on each item of HERB's reference list: the share of the items the answer holds."""
+    from ragas.dataset_schema import SingleTurnSample
+    from ragas.metrics import StringPresence
+    metric = StringPresence()
+
+    async def each():
+        return [await metric.single_turn_ascore(SingleTurnSample(response=answer, reference=str(item)))
+                for item in items]
+    hits = asyncio.run(each())
+    return sum(hits) / len(hits)
 
 
 def failed_tries_seconds(records):
@@ -508,15 +529,18 @@ def runs_tables(arm, folder, refs, sets, by_sha):
         ref = refs[r["id"]]
         if ref["question"] != r["question"]:
             sys.exit(f"{arm} {r['id']}: the question is not the questions file's")
+        qtype = one((c["type"] for c in mine.values()), f"{r['id']} type")
         questions.append({
             "arm": arm,
             "question_id": r["id"],
-            "question_type": one((c["type"] for c in mine.values()), f"{r['id']} type"),
+            "question_type": qtype,
             "question": r["question"],
             "reference_answer": " ".join(str(g) for g in ref["ground_truth"]),
             "reference_context_ids": ", ".join(str(c) for c in ref["citations"]),
             "answer": r["answer"],
             **{s: mine[s]["value"] for s, _, _ in SCORES},
+            "string_presence_per_id": (string_presence_per_id(r["answer"], ref["ground_truth"])
+                                       if qtype in ID_TYPES else None),
             **parts,
             "total_seconds": sum(v for v in parts.values() if v),
             "interpreter_tokens_in": interp and interp["tokens_in"],
