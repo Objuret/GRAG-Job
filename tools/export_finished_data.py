@@ -7,7 +7,7 @@ arm), arm construction (a column per arm), key.
 Needs openpyxl. Reads the final run folders, one per arm and question set (RUNS), the questions
 file they all read (data/questions.jsonl, checked against each run's hash of it), the files of the
 question sets (SETS, which together are HERB's answerable questions, each once) and the graph's
-build cost (test/graph/build_cost.json), and writes grag-data.xlsx. It prints which question sets
+build cost (test/graph/build_cost.json), and writes full-grag-data.xlsx. It prints which question sets
 each arm's runs cover and names a set an arm has no run on. A run split over the laptop and the
 desktop is read with its halves for its environment. Every run's time is its questions' times added,
 its judging's time its judge calls' and embedding requests' times added; an arm's is its runs' added.
@@ -132,6 +132,18 @@ QUESTIONS = [
                                "link or URL per item) instead of on the whole reference answer: the share of the items "
                                "the answer contains. Person, PR and URL questions; empty for content and company "
                                "questions.", "0-1"),
+    ("string_presence_per_id_precision", "RAGAS StringPresence run the other way round: each distinct ID or link in "
+                                         "the answer of the forms that the items of HERB's reference list have, looked "
+                                         "for in the reference list (its items joined by spaces): the share of them the "
+                                         "list contains. The forms are our own rule: an employee ID (eid_ and eight hex "
+                                         "digits), a customer ID (CUST- and four digits), a PR link (a github.com pull "
+                                         "link), a URL (any other link that starts with http:// or https://). Person, PR and "
+                                         "URL questions; empty for content and company questions, and empty when the "
+                                         "answer gives no ID or link of those forms.", "0-1"),
+    ("string_presence_per_id_f1", "F1 of string_presence_per_id_precision (P) and string_presence_per_id (R): "
+                                  "2PR / (P + R); 0 when the answer gives no ID or link of the forms of "
+                                  "string_presence_per_id_precision, or when P + R is 0. The forms are our own rule. "
+                                  "Person, PR and URL questions; empty for content and company questions.", "0-1"),
     ("search_seconds", "Retrieval time, without the interpreter and the query embedding, measured with one question "
                        "at a time on one machine for every arm, never as the first question of a process: for lucene "
                        "and vector the ranking, for the artefact the reading of its stored first-call answer and query "
@@ -316,18 +328,65 @@ def judge_cost(folder, ev, calls, cells, d):
 
 
 ID_TYPES = ("person", "pr", "url")  # HERB's question types whose reference list holds one ID or link per item
+# the forms of an ID or a link, our own rule read from the corpus (the check of 2026-10-28); HERB's own
+# evaluation has a model take the items out of the answer (code/evaluate.py)
+URL = re.compile(r"https?://[^\s<>\"'()\[\]{}]+")
+URL_TRAIL = ".,;:!?*`"  # with the bold and code marks the answers' markdown sets after a link
+PR_LINK = re.compile(r"https://github\.com/[^/\s]+/[^/\s]+/pull/\d+")
+EMPLOYEE_ID = re.compile(r"(?<![A-Za-z0-9_])eid_[0-9a-f]{8}(?![A-Za-z0-9])")
+CUSTOMER_ID = re.compile(r"(?<![A-Za-z0-9])CUST-\d{4}(?![0-9])")
 
 
-def string_presence_per_id(answer, items):
-    """RAGAS StringPresence run on each item of HERB's reference list: the share of the items the answer holds."""
+def ids_and_links(text):
+    """The distinct IDs and links of a text, as (form, ID or link), in first-seen order: the links, less their
+    trailing punctuation, a link that is a github.com pull link a PR link and any other a URL; then the employee
+    and customer IDs in the text with its links masked."""
+    found = []
+    masked = text
+    for m in URL.finditer(text):
+        u = m.group(0).rstrip(URL_TRAIL)
+        kind = "pr_link" if PR_LINK.fullmatch(u) else "other_url"
+        found.append((kind, u))
+        masked = masked[:m.start()] + " " * (m.end() - m.start()) + masked[m.end():]
+    for m in EMPLOYEE_ID.finditer(masked):
+        found.append(("employee_id", m.group(0)))
+    for m in CUSTOMER_ID.finditer(masked):
+        found.append(("customer_id", m.group(0)))
+    seen, out = set(), []
+    for k, i in found:
+        if i not in seen:
+            seen.add(i)
+            out.append((k, i))
+    return out
+
+
+def string_presence(response, references):
+    """RAGAS StringPresence of each reference in the response, 1 or 0."""
     from ragas.dataset_schema import SingleTurnSample
     from ragas.metrics import StringPresence
     metric = StringPresence()
 
     async def each():
-        return [await metric.single_turn_ascore(SingleTurnSample(response=answer, reference=str(item)))
-                for item in items]
-    hits = asyncio.run(each())
+        return [await metric.single_turn_ascore(SingleTurnSample(response=response, reference=str(r)))
+                for r in references]
+    return asyncio.run(each())
+
+
+def string_presence_per_id(answer, items):
+    """RAGAS StringPresence run on each item of HERB's reference list: the share of the items the answer holds."""
+    hits = string_presence(answer, items)
+    return sum(hits) / len(hits)
+
+
+def string_presence_per_id_precision(answer, items):
+    """RAGAS StringPresence run the other way round: each distinct ID or link of the answer, of the forms the
+    reference items have, looked for in the items joined by spaces; the share of them found. None when the
+    answer gives none of those forms."""
+    forms = {k for item in items for k, _ in ids_and_links(str(item))}
+    given = [i for k, i in ids_and_links(answer) if k in forms]
+    if not given:
+        return None
+    hits = string_presence(" ".join(str(item) for item in items), given)
     return sum(hits) / len(hits)
 
 
@@ -530,6 +589,18 @@ def runs_tables(arm, folder, refs, sets, by_sha):
         if ref["question"] != r["question"]:
             sys.exit(f"{arm} {r['id']}: the question is not the questions file's")
         qtype = one((c["type"] for c in mine.values()), f"{r['id']} type")
+        per_id = dict.fromkeys(("string_presence_per_id", "string_presence_per_id_precision",
+                                "string_presence_per_id_f1"))
+        if qtype in ID_TYPES:
+            items = ref["ground_truth"]
+            if not all(ids_and_links(str(item)) for item in items):
+                sys.exit(f"{arm} {r['id']}: an item of HERB's reference list holds no ID or link of the forms")
+            recall = string_presence_per_id(r["answer"], items)
+            precision = string_presence_per_id_precision(r["answer"], items)
+            # an answer that gives no ID or link scores 0, as in HERB's set F1
+            per_id = {"string_presence_per_id": recall, "string_presence_per_id_precision": precision,
+                      "string_presence_per_id_f1": (2 * precision * recall / (precision + recall)
+                                                    if precision is not None and precision + recall else 0.0)}
         questions.append({
             "arm": arm,
             "question_id": r["id"],
@@ -539,8 +610,7 @@ def runs_tables(arm, folder, refs, sets, by_sha):
             "reference_context_ids": ", ".join(str(c) for c in ref["citations"]),
             "answer": r["answer"],
             **{s: mine[s]["value"] for s, _, _ in SCORES},
-            "string_presence_per_id": (string_presence_per_id(r["answer"], ref["ground_truth"])
-                                       if qtype in ID_TYPES else None),
+            **per_id,
             **parts,
             "total_seconds": sum(v for v in parts.values() if v),
             "interpreter_tokens_in": interp and interp["tokens_in"],
@@ -583,7 +653,7 @@ def construction_table():
     of the chunks in the graph, the vectors, the Opus judgements the facet network learned from, the
     encoding of every edge, and the steps with no model; work replaced later, trials and tests stay
     out. Every run of an arm must have read the same index, by what the index holds; the column holds
-    the build of the index that the arm's run on the hundred read."""
+    the build as the arm's run on the 715 timed it."""
     of_runs = {a: [read(ROOT / "output/k=chars" / f / "run_manifest.json") for f in fs] for a, fs in RUNS.items()}
 
     # an index is the same when it holds the same: the same units, their text and its digest, from the
@@ -704,7 +774,7 @@ def construction_table():
                                "them but the chunks of three metadata files.", "count",
          {"lucene": mans["lucene"]["index"]["units"], "vector": mans["vector"]["index"]["units"],
           a: mans[a]["graph"]["census"]["labels"]["Chunk"]}),
-        ("build time, seconds", "Time to build the index that the arm's run on the 715 read. Artefact: the times of "
+        ("build time, seconds", "Time to build the index that the arm's runs read. Artefact: the times of "
                                 "the build steps added: the claude-haiku-4-5 and claude-opus-5 steps as the times of "
                                 "their calls added, the embedding as in its row, the other steps as their recorded "
                                 "times; the chunking and loading of the chunks has no recorded time and is not in "
@@ -823,7 +893,7 @@ def main():
                          (["mean of", *RUNS], means)]),
               (CONSTRUCTION, [(["property", *RUNS], construction)]),
               (KEY, [(["sheet", "field", "meaning", "unit"], key)])]
-    path = out / "grag-data.xlsx"
+    path = out / "full-grag-data.xlsx"
     workbook(path, "grag data", sheets)
     print(f"{path.name}: {path.stat().st_size:,} bytes, sheets {[n for n, _ in sheets]}, "
           f"rows {[[len(t) for _, t in blocks] for _, blocks in sheets]}")

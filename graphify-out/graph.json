@@ -530,7 +530,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "prod_compare_arms",
-      "community": 244,
+      "community": 245,
       "norm_label": "compare_arms.py"
     },
     {
@@ -540,7 +540,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "prod_compare_arms_scan",
-      "community": 244,
+      "community": 245,
       "norm_label": "_scan()"
     },
     {
@@ -550,7 +550,7 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "prod_compare_arms_print",
-      "community": 244,
+      "community": 245,
       "norm_label": "_print()"
     },
     {
@@ -560,7 +560,7 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "prod_compare_arms_main",
-      "community": 244,
+      "community": 245,
       "norm_label": "main()"
     },
     {
@@ -690,7 +690,7 @@
       "source_location": "L259",
       "_origin": "ast",
       "id": "completedprocess",
-      "community": 31,
+      "community": 30,
       "norm_label": "completedprocess"
     },
     {
@@ -710,7 +710,7 @@
       "source_location": "L289",
       "_origin": "ast",
       "id": "prod_eval_ragas_py_exception",
-      "community": 31,
+      "community": 30,
       "norm_label": "exception"
     },
     {
@@ -1230,7 +1230,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "prod_export_raw",
-      "community": 228,
+      "community": 229,
       "norm_label": "export_raw.py"
     },
     {
@@ -1240,7 +1240,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "prod_export_raw_manifest",
-      "community": 228,
+      "community": 229,
       "norm_label": "_manifest()"
     },
     {
@@ -1250,7 +1250,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "prod_export_raw_py_path",
-      "community": 228,
+      "community": 229,
       "norm_label": "path"
     },
     {
@@ -1260,7 +1260,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "prod_export_raw_collect_rows",
-      "community": 228,
+      "community": 229,
       "norm_label": "_collect_rows()"
     },
     {
@@ -1270,7 +1270,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "prod_export_raw_main",
-      "community": 228,
+      "community": 229,
       "norm_label": "main()"
     },
     {
@@ -1280,7 +1280,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "harness_init",
-      "community": 262,
+      "community": 263,
       "norm_label": "__init__.py"
     },
     {
@@ -1670,7 +1670,7 @@
       "source_location": "L265",
       "_origin": "ast",
       "id": "harness_chat_call_env",
-      "community": 243,
+      "community": 244,
       "norm_label": "_call_env()"
     },
     {
@@ -1680,7 +1680,7 @@
       "source_location": "L272",
       "_origin": "ast",
       "id": "harness_chat_try_env",
-      "community": 243,
+      "community": 244,
       "norm_label": "_try_env()"
     },
     {
@@ -1720,7 +1720,7 @@
       "source_location": "L312",
       "_origin": "ast",
       "id": "harness_chat_join_stream",
-      "community": 227,
+      "community": 228,
       "norm_label": "join_stream()"
     },
     {
@@ -1810,7 +1810,7 @@
       "source_location": "L266",
       "_origin": "ast",
       "id": "harness_chat_rationale_266",
-      "community": 243,
+      "community": 244,
       "norm_label": "the environment the cli is started in for one call."
     },
     {
@@ -1820,7 +1820,7 @@
       "source_location": "L273",
       "_origin": "ast",
       "id": "harness_chat_rationale_273",
-      "community": 243,
+      "community": 244,
       "norm_label": "the environment of one try: the subscription's token, or the claude_api key in i"
     },
     {
@@ -1860,7 +1860,7 @@
       "source_location": "L313",
       "_origin": "ast",
       "id": "harness_chat_rationale_313",
-      "community": 227,
+      "community": 228,
       "norm_label": "(joined assistant text, the result event) from `--output-format stream-json`."
     },
     {
@@ -2040,7 +2040,7 @@
       "source_location": "L207",
       "_origin": "ast",
       "id": "harness_contract_evalresult",
-      "community": 31,
+      "community": 30,
       "norm_label": "evalresult"
     },
     {
@@ -2050,7 +2050,7 @@
       "source_location": "L219",
       "_origin": "ast",
       "id": "harness_contract_runmanifest",
-      "community": 36,
+      "community": 35,
       "norm_label": "runmanifest"
     },
     {
@@ -2060,7 +2060,7 @@
       "source_location": "L248",
       "_origin": "ast",
       "id": "harness_contract_evalmanifest",
-      "community": 36,
+      "community": 35,
       "norm_label": "evalmanifest"
     },
     {
@@ -2160,7 +2160,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "harness_fields_whole",
-      "community": 257,
+      "community": 258,
       "norm_label": "whole()"
     },
     {
@@ -2390,7 +2390,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "harness_fields_rationale_27",
-      "community": 257,
+      "community": 258,
       "norm_label": "something kept whole from elsewhere: this one line stands for everything below i"
     },
     {
@@ -2570,7 +2570,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "harness_orchestrator",
-      "community": 36,
+      "community": 35,
       "norm_label": "orchestrator.py"
     },
     {
@@ -2580,7 +2580,7 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "harness_orchestrator_load_chosen_questions",
-      "community": 36,
+      "community": 35,
       "norm_label": "load_chosen_questions()"
     },
     {
@@ -2590,7 +2590,7 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "harness_orchestrator_read_ids",
-      "community": 36,
+      "community": 35,
       "norm_label": "_read_ids()"
     },
     {
@@ -2600,7 +2600,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "harness_orchestrator_open_corpus",
-      "community": 36,
+      "community": 35,
       "norm_label": "open_corpus()"
     },
     {
@@ -2610,7 +2610,7 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "harness_orchestrator_build_shared_generator",
-      "community": 36,
+      "community": 35,
       "norm_label": "build_shared_generator()"
     },
     {
@@ -2620,7 +2620,7 @@
       "source_location": "L147",
       "_origin": "ast",
       "id": "harness_orchestrator_generator_info",
-      "community": 36,
+      "community": 35,
       "norm_label": "generator_info()"
     },
     {
@@ -2630,7 +2630,7 @@
       "source_location": "L166",
       "_origin": "ast",
       "id": "harness_orchestrator_to_arm_question",
-      "community": 36,
+      "community": 35,
       "norm_label": "to_arm_question()"
     },
     {
@@ -2640,7 +2640,7 @@
       "source_location": "L170",
       "_origin": "ast",
       "id": "harness_orchestrator_done_ids",
-      "community": 36,
+      "community": 35,
       "norm_label": "_done_ids()"
     },
     {
@@ -2650,7 +2650,7 @@
       "source_location": "L174",
       "_origin": "ast",
       "id": "harness_orchestrator_n_exhausted",
-      "community": 36,
+      "community": 35,
       "norm_label": "_n_exhausted()"
     },
     {
@@ -2660,7 +2660,7 @@
       "source_location": "L179",
       "_origin": "ast",
       "id": "harness_orchestrator_rehydrate",
-      "community": 36,
+      "community": 35,
       "norm_label": "_rehydrate()"
     },
     {
@@ -2670,7 +2670,7 @@
       "source_location": "L188",
       "_origin": "ast",
       "id": "harness_orchestrator_retrieval_of",
-      "community": 36,
+      "community": 35,
       "norm_label": "retrieval_of()"
     },
     {
@@ -2680,7 +2680,7 @@
       "source_location": "L203",
       "_origin": "ast",
       "id": "harness_orchestrator_run_one_pipeline",
-      "community": 36,
+      "community": 35,
       "norm_label": "run_one_pipeline()"
     },
     {
@@ -2690,7 +2690,7 @@
       "source_location": "L292",
       "_origin": "ast",
       "id": "harness_orchestrator_run_one_evaluator",
-      "community": 36,
+      "community": 35,
       "norm_label": "run_one_evaluator()"
     },
     {
@@ -2700,7 +2700,7 @@
       "source_location": "L299",
       "_origin": "ast",
       "id": "harness_orchestrator_graph_identity",
-      "community": 36,
+      "community": 35,
       "norm_label": "graph_identity()"
     },
     {
@@ -2710,7 +2710,7 @@
       "source_location": "L336",
       "_origin": "ast",
       "id": "harness_orchestrator_census_key",
-      "community": 36,
+      "community": 35,
       "norm_label": "_census_key()"
     },
     {
@@ -2720,7 +2720,7 @@
       "source_location": "L341",
       "_origin": "ast",
       "id": "harness_orchestrator_census_of",
-      "community": 36,
+      "community": 35,
       "norm_label": "census_of()"
     },
     {
@@ -2730,7 +2730,7 @@
       "source_location": "L361",
       "_origin": "ast",
       "id": "harness_orchestrator_graph_census",
-      "community": 36,
+      "community": 35,
       "norm_label": "graph_census()"
     },
     {
@@ -2740,7 +2740,7 @@
       "source_location": "L388",
       "_origin": "ast",
       "id": "harness_orchestrator_merged_graph",
-      "community": 36,
+      "community": 35,
       "norm_label": "_merged_graph()"
     },
     {
@@ -2750,7 +2750,7 @@
       "source_location": "L402",
       "_origin": "ast",
       "id": "harness_orchestrator_build_run_manifest",
-      "community": 36,
+      "community": 35,
       "norm_label": "build_run_manifest()"
     },
     {
@@ -2760,7 +2760,7 @@
       "source_location": "L437",
       "_origin": "ast",
       "id": "harness_orchestrator_accumulated_judge",
-      "community": 36,
+      "community": 35,
       "norm_label": "_accumulated_judge()"
     },
     {
@@ -2770,7 +2770,7 @@
       "source_location": "L488",
       "_origin": "ast",
       "id": "harness_orchestrator_build_eval_manifest",
-      "community": 36,
+      "community": 35,
       "norm_label": "build_eval_manifest()"
     },
     {
@@ -2780,7 +2780,7 @@
       "source_location": "L504",
       "_origin": "ast",
       "id": "harness_orchestrator_arm_name",
-      "community": 36,
+      "community": 35,
       "norm_label": "_arm_name()"
     },
     {
@@ -2790,7 +2790,7 @@
       "source_location": "L508",
       "_origin": "ast",
       "id": "harness_orchestrator_rewrite_fields",
-      "community": 36,
+      "community": 35,
       "norm_label": "_rewrite_fields()"
     },
     {
@@ -2800,7 +2800,7 @@
       "source_location": "L518",
       "_origin": "ast",
       "id": "harness_orchestrator_run",
-      "community": 36,
+      "community": 35,
       "norm_label": "run()"
     },
     {
@@ -2810,7 +2810,7 @@
       "source_location": "L670",
       "_origin": "ast",
       "id": "harness_orchestrator_selfcheck",
-      "community": 36,
+      "community": 35,
       "norm_label": "_selfcheck()"
     },
     {
@@ -2820,7 +2820,7 @@
       "source_location": "L148",
       "_origin": "ast",
       "id": "harness_orchestrator_rationale_148",
-      "community": 36,
+      "community": 35,
       "norm_label": "what every answer call of a run is given, once, for its manifest."
     },
     {
@@ -2830,7 +2830,7 @@
       "source_location": "L189",
       "_origin": "ast",
       "id": "harness_orchestrator_rationale_189",
-      "community": 36,
+      "community": 35,
       "norm_label": "a row's retrieval: the question's own call records, the answer call left out, on"
     },
     {
@@ -2840,7 +2840,7 @@
       "source_location": "L300",
       "_origin": "ast",
       "id": "harness_orchestrator_rationale_300",
-      "community": 36,
+      "community": 35,
       "norm_label": "which graph a run read: its last build record, and the graph as counted in it"
     },
     {
@@ -2850,7 +2850,7 @@
       "source_location": "L342",
       "_origin": "ast",
       "id": "harness_orchestrator_rationale_342",
-      "community": 36,
+      "community": 35,
       "norm_label": "the census and its sha256 from the rows of `census_cypher`, each part's keys in"
     },
     {
@@ -2860,7 +2860,7 @@
       "source_location": "L362",
       "_origin": "ast",
       "id": "harness_orchestrator_rationale_362",
-      "community": 36,
+      "community": 35,
       "norm_label": "the graph as it stands, counted in it (`census_cypher`), read-only. when the dat"
     },
     {
@@ -2870,7 +2870,7 @@
       "source_location": "L509",
       "_origin": "ast",
       "id": "harness_orchestrator_rationale_509",
-      "community": 36,
+      "community": 35,
       "norm_label": "fields.md again, now that the folder holds its manifest. the one written at the"
     },
     {
@@ -4680,7 +4680,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_chat_exe",
-      "community": 221,
+      "community": 222,
       "norm_label": "test_chat_exe.py"
     },
     {
@@ -4690,7 +4690,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "tests_test_chat_exe_test_cmd_shim_resolves_to_native_binary",
-      "community": 221,
+      "community": 222,
       "norm_label": "test_cmd_shim_resolves_to_native_binary()"
     },
     {
@@ -4700,7 +4700,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "tests_test_chat_exe_test_cmd_shim_without_native_binary_is_kept",
-      "community": 221,
+      "community": 222,
       "norm_label": "test_cmd_shim_without_native_binary_is_kept()"
     },
     {
@@ -4710,7 +4710,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "tests_test_chat_exe_test_native_exe_on_path_is_kept",
-      "community": 221,
+      "community": 222,
       "norm_label": "test_native_exe_on_path_is_kept()"
     },
     {
@@ -4720,7 +4720,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "tests_test_chat_exe_test_nothing_on_path_falls_back_to_local_bin",
-      "community": 221,
+      "community": 222,
       "norm_label": "test_nothing_on_path_falls_back_to_local_bin()"
     },
     {
@@ -4730,7 +4730,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_chat_exe_rationale_1",
-      "community": 221,
+      "community": 222,
       "norm_label": "`chat._resolve_claude_exe`: an npm `.cmd` shim resolves to the native binary it"
     },
     {
@@ -5270,7 +5270,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_lane_settings",
-      "community": 31,
+      "community": 30,
       "norm_label": "test_lane_settings.py"
     },
     {
@@ -5280,7 +5280,7 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "tests_test_lane_settings_user",
-      "community": 31,
+      "community": 30,
       "norm_label": "_user()"
     },
     {
@@ -5290,7 +5290,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "tests_test_lane_settings_flag",
-      "community": 31,
+      "community": 30,
       "norm_label": "_flag()"
     },
     {
@@ -5300,7 +5300,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callsettingstests",
-      "community": 31,
+      "community": 30,
       "norm_label": "callsettingstests"
     },
     {
@@ -5310,7 +5310,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callsettingstests_test_no_effort_named_means_none_is_sent",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_no_effort_named_means_none_is_sent()"
     },
     {
@@ -5320,7 +5320,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callsettingstests_test_a_named_effort_goes_as_the_flag",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_a_named_effort_goes_as_the_flag()"
     },
     {
@@ -5330,7 +5330,7 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callsettingstests_test_the_system_prompt_is_always_passed_and_is_empty_when_the_call_has_none",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_the_system_prompt_is_always_passed_and_is_empty_when_the_call_has_none()"
     },
     {
@@ -5340,7 +5340,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callsettingstests_test_every_call_switches_the_title_request_and_the_billing_line_off",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_every_call_switches_the_title_request_and_the_billing_line_off()"
     },
     {
@@ -5350,7 +5350,7 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callsettingstests_test_the_answer_call_gets_thinking_off_and_its_cap_and_says_the_temperature_is_refused",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_the_answer_call_gets_thinking_off_and_its_cap_and_says_the_temperature_is_refused()"
     },
     {
@@ -5360,7 +5360,7 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callsettingstests_test_the_judge_call_gets_thinking_off_and_the_temperature_it_was_handed",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_the_judge_call_gets_thinking_off_and_the_temperature_it_was_handed()"
     },
     {
@@ -5370,7 +5370,7 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callsettingstests_test_a_cap_or_a_temperature_without_thinking_off_is_said_not_applied",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_a_cap_or_a_temperature_without_thinking_off_is_said_not_applied()"
     },
     {
@@ -5380,7 +5380,7 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callassenttests",
-      "community": 31,
+      "community": 30,
       "norm_label": "callassenttests"
     },
     {
@@ -5390,7 +5390,7 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callassenttests_setup",
-      "community": 31,
+      "community": 30,
       "norm_label": ".setup()"
     },
     {
@@ -5400,7 +5400,7 @@
       "source_location": "L127",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callassenttests_sent",
-      "community": 31,
+      "community": 30,
       "norm_label": "._sent()"
     },
     {
@@ -5410,7 +5410,7 @@
       "source_location": "L142",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callassenttests_test_the_cli_runs_under_its_own_config_folder_and_the_token_is_never_kept",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_the_cli_runs_under_its_own_config_folder_and_the_token_is_never_kept()"
     },
     {
@@ -5420,7 +5420,7 @@
       "source_location": "L158",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callassenttests_test_a_call_is_refused_when_no_login_token_is_there",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_a_call_is_refused_when_no_login_token_is_there()"
     },
     {
@@ -5430,7 +5430,7 @@
       "source_location": "L167",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callassenttests_test_the_prompt_reaches_the_cli_as_the_bytes_that_are_kept",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_the_prompt_reaches_the_cli_as_the_bytes_that_are_kept()"
     },
     {
@@ -5440,7 +5440,7 @@
       "source_location": "L175",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callassenttests_test_a_switch_left_in_the_shell_does_not_reach_a_call_that_did_not_ask_for_it",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_a_switch_left_in_the_shell_does_not_reach_a_call_that_did_not_ask_for_it()"
     },
     {
@@ -5450,7 +5450,7 @@
       "source_location": "L195",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callassenttests_test_the_kept_call_says_what_was_applied_and_what_was_not",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_the_kept_call_says_what_was_applied_and_what_was_not()"
     },
     {
@@ -5460,7 +5460,7 @@
       "source_location": "L208",
       "_origin": "ast",
       "id": "tests_test_lane_settings_judgecalltests",
-      "community": 31,
+      "community": 30,
       "norm_label": "judgecalltests"
     },
     {
@@ -5470,7 +5470,7 @@
       "source_location": "L209",
       "_origin": "ast",
       "id": "tests_test_lane_settings_judgecalltests_test_ragas_own_temperature_reaches_the_lane_with_no_system_text_and_thinking_off",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_ragas_own_temperature_reaches_the_lane_with_no_system_text_and_thinking_off()"
     },
     {
@@ -5480,7 +5480,7 @@
       "source_location": "L234",
       "_origin": "ast",
       "id": "tests_test_lane_settings_judgecalltests_test_the_evaluation_records_what_a_judge_call_is_given",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_the_evaluation_records_what_a_judge_call_is_given()"
     },
     {
@@ -5510,7 +5510,7 @@
       "source_location": "L276",
       "_origin": "ast",
       "id": "tests_test_lane_settings_runrecordtests",
-      "community": 31,
+      "community": 30,
       "norm_label": "runrecordtests"
     },
     {
@@ -5520,7 +5520,7 @@
       "source_location": "L279",
       "_origin": "ast",
       "id": "tests_test_lane_settings_runrecordtests_folder",
-      "community": 31,
+      "community": 30,
       "norm_label": "._folder()"
     },
     {
@@ -5530,7 +5530,7 @@
       "source_location": "L290",
       "_origin": "ast",
       "id": "tests_test_lane_settings_runrecordtests_arm",
-      "community": 31,
+      "community": 30,
       "norm_label": "._arm()"
     },
     {
@@ -5540,7 +5540,7 @@
       "source_location": "L300",
       "_origin": "ast",
       "id": "tests_test_lane_settings_runrecordtests_test_the_code_a_start_ran_on_is_read_once_before_it_answers",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_the_code_a_start_ran_on_is_read_once_before_it_answers()"
     },
     {
@@ -5550,7 +5550,7 @@
       "source_location": "L329",
       "_origin": "ast",
       "id": "tests_test_lane_settings_runrecordtests_test_a_start_that_makes_no_judge_call_leaves_the_judge_named",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_a_start_that_makes_no_judge_call_leaves_the_judge_named()"
     },
     {
@@ -5560,7 +5560,7 @@
       "source_location": "L352",
       "_origin": "ast",
       "id": "tests_test_lane_settings_environmentrecordtests",
-      "community": 31,
+      "community": 30,
       "norm_label": "environmentrecordtests"
     },
     {
@@ -5570,7 +5570,7 @@
       "source_location": "L353",
       "_origin": "ast",
       "id": "tests_test_lane_settings_environmentrecordtests_test_the_env_record_takes_what_the_cli_reads_and_never_a_secret",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_the_env_record_takes_what_the_cli_reads_and_never_a_secret()"
     },
     {
@@ -5580,7 +5580,7 @@
       "source_location": "L369",
       "_origin": "ast",
       "id": "tests_test_lane_settings_environmentrecordtests_test_the_environment_lists_every_installed_package",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_the_environment_lists_every_installed_package()"
     },
     {
@@ -5590,7 +5590,7 @@
       "source_location": "L376",
       "_origin": "ast",
       "id": "tests_test_lane_settings_environmentrecordtests_test_the_saved_diff_is_gits_own_bytes",
-      "community": 31,
+      "community": 30,
       "norm_label": ".test_the_saved_diff_is_gits_own_bytes()"
     },
     {
@@ -5600,7 +5600,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_lane_settings_rationale_1",
-      "community": 31,
+      "community": 30,
       "norm_label": "what a model call carries is what the caller asked for and nothing left over fro"
     },
     {
@@ -6160,7 +6160,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "prod_truncate_k",
-      "community": 253,
+      "community": 254,
       "norm_label": "truncate_k.py"
     },
     {
@@ -6170,7 +6170,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "prod_truncate_k_truncate_record",
-      "community": 253,
+      "community": 254,
       "norm_label": "truncate_record()"
     },
     {
@@ -6180,7 +6180,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "prod_truncate_k_main",
-      "community": 253,
+      "community": 254,
       "norm_label": "main()"
     },
     {
@@ -7600,7 +7600,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "arms_artefact_facet_program_v2",
-      "community": 248,
+      "community": 249,
       "norm_label": "artefact_facet_program_v2.py"
     },
     {
@@ -7610,7 +7610,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "arms_artefact_facet_program_v2_answer_one_question",
-      "community": 248,
+      "community": 249,
       "norm_label": "answer_one_question()"
     },
     {
@@ -7620,7 +7620,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "arms_artefact_facet_program_v2_rationale_1",
-      "community": 248,
+      "community": 249,
       "norm_label": "serialization adapter for the sealed fixed-program experimental arm.  the numeri"
     },
     {
@@ -12330,7 +12330,7 @@
       "source_location": "L911",
       "_origin": "ast",
       "id": "arms_artefact_v4_as_in_git",
-      "community": 238,
+      "community": 239,
       "norm_label": "_as_in_git()"
     },
     {
@@ -12340,7 +12340,7 @@
       "source_location": "L922",
       "_origin": "ast",
       "id": "arms_artefact_v4_elapsed_seconds",
-      "community": 239,
+      "community": 240,
       "norm_label": "_elapsed_seconds()"
     },
     {
@@ -12350,7 +12350,7 @@
       "source_location": "L940",
       "_origin": "ast",
       "id": "arms_artefact_v4_build_stats_from_cost",
-      "community": 239,
+      "community": 240,
       "norm_label": "build_stats_from_cost()"
     },
     {
@@ -12360,7 +12360,7 @@
       "source_location": "L1011",
       "_origin": "ast",
       "id": "arms_artefact_v4_index_info",
-      "community": 238,
+      "community": 239,
       "norm_label": "index_info()"
     },
     {
@@ -12710,7 +12710,7 @@
       "source_location": "L912",
       "_origin": "ast",
       "id": "arms_artefact_v4_rationale_912",
-      "community": 238,
+      "community": 239,
       "norm_label": "a text file's bytes with the line ends git holds (lf): a checkout on windows can"
     },
     {
@@ -12720,7 +12720,7 @@
       "source_location": "L923",
       "_origin": "ast",
       "id": "arms_artefact_v4_rationale_923",
-      "community": 239,
+      "community": 240,
       "norm_label": "every elapsed second and command span in a build step, in the order the file giv"
     },
     {
@@ -12730,7 +12730,7 @@
       "source_location": "L941",
       "_origin": "ast",
       "id": "arms_artefact_v4_rationale_941",
-      "community": 239,
+      "community": 240,
       "norm_label": "what building the graph cost, from `test/graph/build_cost.json`: one entry per m"
     },
     {
@@ -12740,7 +12740,7 @@
       "source_location": "L1012",
       "_origin": "ast",
       "id": "arms_artefact_v4_rationale_1012",
-      "community": 238,
+      "community": 239,
       "norm_label": "what the arm's index is, for the run manifest: the graph it reads and what build"
     },
     {
@@ -18340,7 +18340,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "artefact_v4_walk",
-      "community": 32,
+      "community": 31,
       "norm_label": "v4_walk.py"
     },
     {
@@ -18350,7 +18350,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "artefact_v4_walk_best_edges",
-      "community": 32,
+      "community": 31,
       "norm_label": "best_edges()"
     },
     {
@@ -18360,7 +18360,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "artefact_v4_walk_build_layer",
-      "community": 32,
+      "community": 31,
       "norm_label": "build_layer()"
     },
     {
@@ -18370,7 +18370,7 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "artefact_v4_walk_levels",
-      "community": 32,
+      "community": 31,
       "norm_label": "levels()"
     },
     {
@@ -18380,7 +18380,7 @@
       "source_location": "L134",
       "_origin": "ast",
       "id": "artefact_v4_walk_tags_nearness",
-      "community": 32,
+      "community": 31,
       "norm_label": "tags_nearness()"
     },
     {
@@ -18390,7 +18390,7 @@
       "source_location": "L149",
       "_origin": "ast",
       "id": "artefact_v4_walk_knee",
-      "community": 32,
+      "community": 31,
       "norm_label": "knee()"
     },
     {
@@ -18400,7 +18400,7 @@
       "source_location": "L161",
       "_origin": "ast",
       "id": "artefact_v4_walk_levels_of",
-      "community": 32,
+      "community": 31,
       "norm_label": "levels_of()"
     },
     {
@@ -18410,7 +18410,7 @@
       "source_location": "L193",
       "_origin": "ast",
       "id": "artefact_v4_walk_query_tag_profiles",
-      "community": 32,
+      "community": 31,
       "norm_label": "query_tag_profiles()"
     },
     {
@@ -18420,7 +18420,7 @@
       "source_location": "L205",
       "_origin": "ast",
       "id": "artefact_v4_walk_storyline",
-      "community": 32,
+      "community": 31,
       "norm_label": "storyline()"
     },
     {
@@ -18430,7 +18430,7 @@
       "source_location": "L282",
       "_origin": "ast",
       "id": "artefact_v4_walk_storyline_order",
-      "community": 32,
+      "community": 31,
       "norm_label": "storyline_order()"
     },
     {
@@ -18440,7 +18440,7 @@
       "source_location": "L297",
       "_origin": "ast",
       "id": "artefact_v4_walk_closeness_places",
-      "community": 32,
+      "community": 31,
       "norm_label": "closeness_places()"
     },
     {
@@ -18450,7 +18450,7 @@
       "source_location": "L334",
       "_origin": "ast",
       "id": "artefact_v4_walk_wins",
-      "community": 32,
+      "community": 31,
       "norm_label": "wins()"
     },
     {
@@ -18460,7 +18460,7 @@
       "source_location": "L344",
       "_origin": "ast",
       "id": "artefact_v4_walk_facet_standings",
-      "community": 32,
+      "community": 31,
       "norm_label": "facet_standings()"
     },
     {
@@ -18470,7 +18470,7 @@
       "source_location": "L366",
       "_origin": "ast",
       "id": "artefact_v4_walk_closest_edge_standing",
-      "community": 32,
+      "community": 31,
       "norm_label": "closest_edge_standing()"
     },
     {
@@ -18480,7 +18480,7 @@
       "source_location": "L389",
       "_origin": "ast",
       "id": "artefact_v4_walk_majority_scopes",
-      "community": 32,
+      "community": 31,
       "norm_label": "majority_scopes()"
     },
     {
@@ -18490,7 +18490,7 @@
       "source_location": "L413",
       "_origin": "ast",
       "id": "artefact_v4_walk_cloud_combo",
-      "community": 32,
+      "community": 31,
       "norm_label": "cloud_combo()"
     },
     {
@@ -18500,7 +18500,7 @@
       "source_location": "L513",
       "_origin": "ast",
       "id": "artefact_v4_walk_conversations",
-      "community": 32,
+      "community": 31,
       "norm_label": "conversations()"
     },
     {
@@ -18510,7 +18510,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "artefact_v4_walk_rationale_1",
-      "community": 32,
+      "community": 31,
       "norm_label": "artefact_v4's arithmetic: arrays in, arrays out.  `build_layer` holds what doe"
     },
     {
@@ -18520,7 +18520,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "artefact_v4_walk_rationale_29",
-      "community": 32,
+      "community": 31,
       "norm_label": "per chunk the largest value over its edges and the edge that carries it, the ear"
     },
     {
@@ -18530,7 +18530,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "artefact_v4_walk_rationale_50",
-      "community": 32,
+      "community": 31,
       "norm_label": "the edges of the eligible graph tags with their five values, each chunk's edge c"
     },
     {
@@ -18540,7 +18540,7 @@
       "source_location": "L86",
       "_origin": "ast",
       "id": "artefact_v4_walk_rationale_86",
-      "community": 32,
+      "community": 31,
       "norm_label": "the values cut into k clusters on the line, the number given and not found (his"
     },
     {
@@ -18550,7 +18550,7 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "artefact_v4_walk_rationale_135",
-      "community": 32,
+      "community": 31,
       "norm_label": "per chunk the closeness of its closest eligible tag to a query tag, the largest"
     },
     {
@@ -18560,7 +18560,7 @@
       "source_location": "L150",
       "_origin": "ast",
       "id": "artefact_v4_walk_rationale_150",
-      "community": 32,
+      "community": 31,
       "norm_label": "the knee of a falling run of values: with both axes run from 0 to 1, the index o"
     },
     {
@@ -18570,7 +18570,7 @@
       "source_location": "L162",
       "_origin": "ast",
       "id": "artefact_v4_walk_rationale_162",
-      "community": 32,
+      "community": 31,
       "norm_label": "the levels one list of nearness values falls into, read off the distances themse"
     },
     {
@@ -18580,7 +18580,7 @@
       "source_location": "L194",
       "_origin": "ast",
       "id": "artefact_v4_walk_rationale_194",
-      "community": 32,
+      "community": 31,
       "norm_label": "per chunk and query tag, the closeness of the chunk's strongest edge for that qu"
     },
     {
@@ -18590,7 +18590,7 @@
       "source_location": "L206",
       "_origin": "ast",
       "id": "artefact_v4_walk_rationale_206",
-      "community": 32,
+      "community": 31,
       "norm_label": "the 4-combo (his 2026-10-17 \"time, scope, entities, chunknearness?\", \"that is th"
     },
     {
@@ -18600,7 +18600,7 @@
       "source_location": "L283",
       "_origin": "ast",
       "id": "artefact_v4_walk_rationale_283",
-      "community": 32,
+      "community": 31,
       "norm_label": "the chosen chunks first, in the combo's order; then the other chunks of the regi"
     },
     {
@@ -18610,7 +18610,7 @@
       "source_location": "L298",
       "_origin": "ast",
       "id": "artefact_v4_walk_rationale_298",
-      "community": 32,
+      "community": 31,
       "norm_label": "per query tag the border's chunks ranked by their closeness to it, each through"
     },
     {
@@ -18620,7 +18620,7 @@
       "source_location": "L335",
       "_origin": "ast",
       "id": "artefact_v4_walk_rationale_335",
-      "community": 32,
+      "community": 31,
       "norm_label": "per item its wins over the others: the higher value wins when it is higher by mo"
     },
     {
@@ -18630,7 +18630,7 @@
       "source_location": "L345",
       "_origin": "ast",
       "id": "artefact_v4_walk_rationale_345",
-      "community": 32,
+      "community": 31,
       "norm_label": "per edge its standing in one facet, read only against the same graph tag's other"
     },
     {
@@ -18640,7 +18640,7 @@
       "source_location": "L367",
       "_origin": "ast",
       "id": "artefact_v4_walk_rationale_367",
-      "community": 32,
+      "community": 31,
       "norm_label": "per chunk the standing (`facet_standings`) of its edge to its closest tag, in th"
     },
     {
@@ -18650,7 +18650,7 @@
       "source_location": "L390",
       "_origin": "ast",
       "id": "artefact_v4_walk_rationale_390",
-      "community": 32,
+      "community": 31,
       "norm_label": "the scopes that hold the majority of the hit chunks (his 2026-10-09 \"what the ma"
     },
     {
@@ -18660,7 +18660,7 @@
       "source_location": "L414",
       "_origin": "ast",
       "id": "artefact_v4_walk_rationale_414",
-      "community": 32,
+      "community": 31,
       "norm_label": "the chunk cloud and the tags' cloud together, over the chunks of a border (his 2"
     },
     {
@@ -18670,7 +18670,7 @@
       "source_location": "L514",
       "_origin": "ast",
       "id": "artefact_v4_walk_rationale_514",
-      "community": 32,
+      "community": 31,
       "norm_label": "one channel's messages as conversations: a new one starts where the gap to the m"
     },
     {
@@ -18710,7 +18710,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "test_build_questions",
-      "community": 254,
+      "community": 255,
       "norm_label": "build_questions.py"
     },
     {
@@ -18720,7 +18720,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "test_build_questions_mint_id",
-      "community": 254,
+      "community": 255,
       "norm_label": "mint_id()"
     },
     {
@@ -18730,7 +18730,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "test_build_questions_build",
-      "community": 254,
+      "community": 255,
       "norm_label": "build()"
     },
     {
@@ -18930,7 +18930,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "graph_init",
-      "community": 261,
+      "community": 262,
       "norm_label": "__init__.py"
     },
     {
@@ -21220,7 +21220,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "graph_facet_answers",
-      "community": 29,
+      "community": 28,
       "norm_label": "facet_answers.py"
     },
     {
@@ -21260,7 +21260,7 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "graph_facet_answers_prompt_text",
-      "community": 29,
+      "community": 28,
       "norm_label": "prompt_text()"
     },
     {
@@ -21270,7 +21270,7 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "graph_facet_answers_prompt_sha",
-      "community": 29,
+      "community": 28,
       "norm_label": "prompt_sha()"
     },
     {
@@ -21290,7 +21290,7 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "graph_facet_answers_shard_of",
-      "community": 29,
+      "community": 28,
       "norm_label": "shard_of()"
     },
     {
@@ -21300,7 +21300,7 @@
       "source_location": "L134",
       "_origin": "ast",
       "id": "graph_facet_answers_in_shard",
-      "community": 29,
+      "community": 28,
       "norm_label": "in_shard()"
     },
     {
@@ -21310,7 +21310,7 @@
       "source_location": "L138",
       "_origin": "ast",
       "id": "graph_facet_answers_file_stem",
-      "community": 29,
+      "community": 28,
       "norm_label": "file_stem()"
     },
     {
@@ -21320,7 +21320,7 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "graph_facet_answers_out_dir",
-      "community": 29,
+      "community": 28,
       "norm_label": "out_dir()"
     },
     {
@@ -21330,7 +21330,7 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "test_graph_facet_answers_py_path",
-      "community": 29,
+      "community": 28,
       "norm_label": "path"
     },
     {
@@ -21340,7 +21340,7 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "graph_facet_answers_chunk_path",
-      "community": 29,
+      "community": 28,
       "norm_label": "chunk_path()"
     },
     {
@@ -21350,7 +21350,7 @@
       "source_location": "L156",
       "_origin": "ast",
       "id": "graph_facet_answers_failed_path",
-      "community": 29,
+      "community": 28,
       "norm_label": "failed_path()"
     },
     {
@@ -21360,7 +21360,7 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "graph_facet_answers_manifest_path",
-      "community": 29,
+      "community": 28,
       "norm_label": "manifest_path()"
     },
     {
@@ -21370,7 +21370,7 @@
       "source_location": "L164",
       "_origin": "ast",
       "id": "graph_facet_answers_lock_path",
-      "community": 29,
+      "community": 28,
       "norm_label": "lock_path()"
     },
     {
@@ -21380,7 +21380,7 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "graph_facet_answers_status_of",
-      "community": 29,
+      "community": 28,
       "norm_label": "status_of()"
     },
     {
@@ -21390,7 +21390,7 @@
       "source_location": "L188",
       "_origin": "ast",
       "id": "graph_facet_answers_is_done",
-      "community": 29,
+      "community": 28,
       "norm_label": "is_done()"
     },
     {
@@ -21400,7 +21400,7 @@
       "source_location": "L192",
       "_origin": "ast",
       "id": "graph_facet_answers_write_json",
-      "community": 29,
+      "community": 28,
       "norm_label": "write_json()"
     },
     {
@@ -21410,7 +21410,7 @@
       "source_location": "L208",
       "_origin": "ast",
       "id": "graph_facet_answers_sweep_tmp",
-      "community": 29,
+      "community": 28,
       "norm_label": "sweep_tmp()"
     },
     {
@@ -21420,7 +21420,7 @@
       "source_location": "L221",
       "_origin": "ast",
       "id": "graph_facet_answers_pid_alive",
-      "community": 29,
+      "community": 28,
       "norm_label": "_pid_alive()"
     },
     {
@@ -21430,7 +21430,7 @@
       "source_location": "L241",
       "_origin": "ast",
       "id": "graph_facet_answers_take_lock",
-      "community": 29,
+      "community": 28,
       "norm_label": "take_lock()"
     },
     {
@@ -21440,7 +21440,7 @@
       "source_location": "L260",
       "_origin": "ast",
       "id": "graph_facet_answers_release_lock",
-      "community": 29,
+      "community": 28,
       "norm_label": "release_lock()"
     },
     {
@@ -21450,7 +21450,7 @@
       "source_location": "L291",
       "_origin": "ast",
       "id": "graph_facet_answers_rows_from_graph",
-      "community": 29,
+      "community": 28,
       "norm_label": "rows_from_graph()"
     },
     {
@@ -21460,7 +21460,7 @@
       "source_location": "L320",
       "_origin": "ast",
       "id": "graph_facet_answers_write_export",
-      "community": 29,
+      "community": 28,
       "norm_label": "write_export()"
     },
     {
@@ -21470,7 +21470,7 @@
       "source_location": "L337",
       "_origin": "ast",
       "id": "graph_facet_answers_read_export",
-      "community": 29,
+      "community": 28,
       "norm_label": "read_export()"
     },
     {
@@ -21480,7 +21480,7 @@
       "source_location": "L349",
       "_origin": "ast",
       "id": "graph_facet_answers_read_ids",
-      "community": 29,
+      "community": 28,
       "norm_label": "read_ids()"
     },
     {
@@ -21570,7 +21570,7 @@
       "source_location": "L476",
       "_origin": "ast",
       "id": "graph_facet_answers_write_manifest",
-      "community": 29,
+      "community": 28,
       "norm_label": "write_manifest()"
     },
     {
@@ -21600,7 +21600,7 @@
       "source_location": "L654",
       "_origin": "ast",
       "id": "graph_facet_answers_merge",
-      "community": 29,
+      "community": 28,
       "norm_label": "merge()"
     },
     {
@@ -21610,7 +21610,7 @@
       "source_location": "L701",
       "_origin": "ast",
       "id": "graph_facet_answers_parse_shard",
-      "community": 29,
+      "community": 28,
       "norm_label": "parse_shard()"
     },
     {
@@ -21620,7 +21620,7 @@
       "source_location": "L712",
       "_origin": "ast",
       "id": "graph_facet_answers_corpus_sha",
-      "community": 29,
+      "community": 28,
       "norm_label": "corpus_sha()"
     },
     {
@@ -21630,7 +21630,7 @@
       "source_location": "L718",
       "_origin": "ast",
       "id": "graph_facet_answers_on_interrupt",
-      "community": 29,
+      "community": 28,
       "norm_label": "_on_interrupt()"
     },
     {
@@ -21640,7 +21640,7 @@
       "source_location": "L724",
       "_origin": "ast",
       "id": "graph_facet_answers_utf8_console",
-      "community": 29,
+      "community": 28,
       "norm_label": "_utf8_console()"
     },
     {
@@ -21650,7 +21650,7 @@
       "source_location": "L732",
       "_origin": "ast",
       "id": "graph_facet_answers_main",
-      "community": 29,
+      "community": 28,
       "norm_label": "main()"
     },
     {
@@ -21660,7 +21660,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "graph_facet_answers_rationale_1",
-      "community": 29,
+      "community": 28,
       "norm_label": "one model answer per chunk: for every phrase on the chunk, four plain-language a"
     },
     {
@@ -21690,7 +21690,7 @@
       "source_location": "L139",
       "_origin": "ast",
       "id": "graph_facet_answers_rationale_139",
-      "community": 29,
+      "community": 28,
       "norm_label": "a file name that survives every filesystem and still names one chunk: the id wit"
     },
     {
@@ -21700,7 +21700,7 @@
       "source_location": "L169",
       "_origin": "ast",
       "id": "graph_facet_answers_rationale_169",
-      "community": 29,
+      "community": 28,
       "norm_label": "missing | unreadable | prompt_mismatch | incomplete | done."
     },
     {
@@ -21710,7 +21710,7 @@
       "source_location": "L193",
       "_origin": "ast",
       "id": "graph_facet_answers_rationale_193",
-      "community": 29,
+      "community": 28,
       "norm_label": "temp file then rename, so an interrupt never leaves a half file behind."
     },
     {
@@ -21720,7 +21720,7 @@
       "source_location": "L292",
       "_origin": "ast",
       "id": "graph_facet_answers_rationale_292",
-      "community": 29,
+      "community": 28,
       "norm_label": "every product-linked chunk of `db` with its tags and its resolved text."
     },
     {
@@ -21760,7 +21760,7 @@
       "source_location": "L477",
       "_origin": "ast",
       "id": "graph_facet_answers_rationale_477",
-      "community": 29,
+      "community": 28,
       "norm_label": "written by the main thread only. a transient filesystem refusal is printed, not"
     },
     {
@@ -21770,7 +21770,7 @@
       "source_location": "L655",
       "_origin": "ast",
       "id": "graph_facet_answers_rationale_655",
-      "community": 29,
+      "community": 28,
       "norm_label": "fold another machine's directory into this one. a file written under a different"
     },
     {
@@ -21820,7 +21820,7 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "graph_facet_counterfactuals_tag_groups",
-      "community": 226,
+      "community": 227,
       "norm_label": "tag_groups()"
     },
     {
@@ -22020,7 +22020,7 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "graph_facet_counterfactuals_rationale_111",
-      "community": 226,
+      "community": 227,
       "norm_label": "the phrase list split into as few even groups as stay under the measured ceiling"
     },
     {
@@ -22100,7 +22100,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "graph_facet_embed_gpu",
-      "community": 250,
+      "community": 251,
       "norm_label": "facet_embed_gpu.py"
     },
     {
@@ -22110,7 +22110,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "graph_facet_embed_gpu_main",
-      "community": 250,
+      "community": 251,
       "norm_label": "main()"
     },
     {
@@ -22120,7 +22120,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "graph_facet_embed_gpu_rationale_1",
-      "community": 250,
+      "community": 251,
       "norm_label": "embed a string list on a machine with a gpu, with the harness embedder's exact s"
     },
     {
@@ -22340,7 +22340,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "facet_neural_layer_stats",
-      "community": 225,
+      "community": 226,
       "norm_label": "layer_stats.py"
     },
     {
@@ -22350,7 +22350,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "facet_neural_layer_stats_q",
-      "community": 225,
+      "community": 226,
       "norm_label": "q()"
     },
     {
@@ -22360,7 +22360,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "facet_neural_layer_stats_spearman",
-      "community": 225,
+      "community": 226,
       "norm_label": "spearman()"
     },
     {
@@ -22370,7 +22370,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "facet_neural_layer_stats_main",
-      "community": 225,
+      "community": 226,
       "norm_label": "main()"
     },
     {
@@ -22380,7 +22380,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "facet_neural_layer_stats_rationale_1",
-      "community": 225,
+      "community": 226,
       "norm_label": "the statistics of a written facet layer. counts only; nothing here reads them."
     },
     {
@@ -23500,7 +23500,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe",
-      "community": 28,
+      "community": 27,
       "norm_label": "cache_probe.py"
     },
     {
@@ -23510,7 +23510,7 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_cache",
-      "community": 28,
+      "community": 27,
       "norm_label": "cache"
     },
     {
@@ -23520,7 +23520,7 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_cache_init",
-      "community": 28,
+      "community": 27,
       "norm_label": ".__init__()"
     },
     {
@@ -23530,7 +23530,7 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_cache_features",
-      "community": 28,
+      "community": 27,
       "norm_label": ".features()"
     },
     {
@@ -23540,7 +23540,7 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "test_graph_facet_pairs_cache_probe_py_ndarray",
-      "community": 28,
+      "community": 27,
       "norm_label": "ndarray"
     },
     {
@@ -23550,7 +23550,7 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_cache_variants",
-      "community": 28,
+      "community": 27,
       "norm_label": ".variants()"
     },
     {
@@ -23560,7 +23560,7 @@
       "source_location": "L118",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_cache_cache_bytes",
-      "community": 28,
+      "community": 27,
       "norm_label": ".cache_bytes()"
     },
     {
@@ -23570,7 +23570,7 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_head",
-      "community": 28,
+      "community": 27,
       "norm_label": "head"
     },
     {
@@ -23580,7 +23580,7 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_head_init",
-      "community": 28,
+      "community": 27,
       "norm_label": ".__init__()"
     },
     {
@@ -23590,7 +23590,7 @@
       "source_location": "L142",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_head_forward",
-      "community": 28,
+      "community": 27,
       "norm_label": ".forward()"
     },
     {
@@ -23600,7 +23600,7 @@
       "source_location": "L147",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_head_nu",
-      "community": 28,
+      "community": 27,
       "norm_label": ".nu()"
     },
     {
@@ -23610,7 +23610,7 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_encode_obs",
-      "community": 28,
+      "community": 27,
       "norm_label": "encode_obs()"
     },
     {
@@ -23620,7 +23620,7 @@
       "source_location": "L171",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_subset",
-      "community": 28,
+      "community": 27,
       "norm_label": "subset()"
     },
     {
@@ -23630,7 +23630,7 @@
       "source_location": "L190",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_agreement_macro",
-      "community": 28,
+      "community": 27,
       "norm_label": "agreement_macro()"
     },
     {
@@ -23640,7 +23640,7 @@
       "source_location": "L207",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_fit_head",
-      "community": 28,
+      "community": 27,
       "norm_label": "fit_head()"
     },
     {
@@ -23650,7 +23650,7 @@
       "source_location": "L207",
       "_origin": "ast",
       "id": "test_graph_facet_pairs_cache_probe_py_tensor",
-      "community": 28,
+      "community": 27,
       "norm_label": "tensor"
     },
     {
@@ -23660,7 +23660,7 @@
       "source_location": "L244",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_standardise",
-      "community": 28,
+      "community": 27,
       "norm_label": "standardise()"
     },
     {
@@ -23670,7 +23670,7 @@
       "source_location": "L253",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_load_topic",
-      "community": 28,
+      "community": 27,
       "norm_label": "load_topic()"
     },
     {
@@ -23680,7 +23680,7 @@
       "source_location": "L270",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_topic_pairs",
-      "community": 28,
+      "community": 27,
       "norm_label": "topic_pairs()"
     },
     {
@@ -23690,7 +23690,7 @@
       "source_location": "L296",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_spearman",
-      "community": 28,
+      "community": 27,
       "norm_label": "spearman()"
     },
     {
@@ -23700,7 +23700,7 @@
       "source_location": "L302",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_ranks",
-      "community": 28,
+      "community": 27,
       "norm_label": "_ranks()"
     },
     {
@@ -23710,7 +23710,7 @@
       "source_location": "L317",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_pearson",
-      "community": 28,
+      "community": 27,
       "norm_label": "_pearson()"
     },
     {
@@ -23720,7 +23720,7 @@
       "source_location": "L329",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_teacher_same_side",
-      "community": 28,
+      "community": 27,
       "norm_label": "teacher_same_side()"
     },
     {
@@ -23730,7 +23730,7 @@
       "source_location": "L347",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_row_chunk",
-      "community": 28,
+      "community": 27,
       "norm_label": "_row_chunk()"
     },
     {
@@ -23740,7 +23740,7 @@
       "source_location": "L355",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_within_chunk_share",
-      "community": 28,
+      "community": 27,
       "norm_label": "within_chunk_share()"
     },
     {
@@ -23750,7 +23750,7 @@
       "source_location": "L378",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_run",
-      "community": 28,
+      "community": 27,
       "norm_label": "run()"
     },
     {
@@ -23760,7 +23760,7 @@
       "source_location": "L654",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_main",
-      "community": 28,
+      "community": 27,
       "norm_label": "main()"
     },
     {
@@ -23770,7 +23770,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_rationale_1",
-      "community": 28,
+      "community": 27,
       "norm_label": "train cheap heads on one frozen backbone cache and read the diagnostic table off"
     },
     {
@@ -23780,7 +23780,7 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_rationale_119",
-      "community": 28,
+      "community": 27,
       "norm_label": "f: what the full graph would cost in this backbone's cache \u2014 8 vectors, float16."
     },
     {
@@ -23790,7 +23790,7 @@
       "source_location": "L154",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_rationale_154",
-      "community": 28,
+      "community": 27,
       "norm_label": "observation lists to index tensors. observations whose edges are not cached are"
     },
     {
@@ -23800,7 +23800,7 @@
       "source_location": "L172",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_rationale_172",
-      "community": 28,
+      "community": 27,
       "norm_label": "remap a group of encodings onto only the cache rows they touch.      a training"
     },
     {
@@ -23810,7 +23810,7 @@
       "source_location": "L191",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_rationale_191",
-      "community": 28,
+      "community": 27,
       "norm_label": "macro over the five facets of the share of decided observations ordered as the j"
     },
     {
@@ -23820,7 +23820,7 @@
       "source_location": "L210",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_rationale_210",
-      "community": 28,
+      "community": 27,
       "norm_label": "fit one head on `fit`, select the epoch on `val`. returns (head, best val agreem"
     },
     {
@@ -23830,7 +23830,7 @@
       "source_location": "L254",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_rationale_254",
-      "community": 28,
+      "community": 27,
       "norm_label": "edge_id -> known topic. the only reader of the known values in this module."
     },
     {
@@ -23840,7 +23840,7 @@
       "source_location": "L271",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_rationale_271",
-      "community": 28,
+      "community": 27,
       "norm_label": "observations in the judged rows' shape, labelled by the known topic order."
     },
     {
@@ -23850,7 +23850,7 @@
       "source_location": "L330",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_rationale_330",
-      "community": 28,
+      "community": 27,
       "norm_label": "opus's own raw answers, facet against facet: among held-out rows where both face"
     },
     {
@@ -23860,7 +23860,7 @@
       "source_location": "L356",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_rationale_356",
-      "community": 28,
+      "community": 27,
       "norm_label": "per facet, the share of the output's variance that lies between tags inside one"
     },
     {
@@ -23870,7 +23870,7 @@
       "source_location": "L383",
       "_origin": "ast",
       "id": "facet_pairs_cache_probe_rationale_383",
-      "community": 28,
+      "community": 27,
       "norm_label": "`artifacts`, when a dict is passed, is filled with the fitted head, the scores m"
     },
     {
@@ -24160,7 +24160,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "facet_pairs_data",
-      "community": 33,
+      "community": 32,
       "norm_label": "data.py"
     },
     {
@@ -24170,7 +24170,7 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "facet_pairs_data_split_fraction",
-      "community": 33,
+      "community": 32,
       "norm_label": "split_fraction()"
     },
     {
@@ -24180,7 +24180,7 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "facet_pairs_data_is_heldout",
-      "community": 33,
+      "community": 32,
       "norm_label": "is_heldout()"
     },
     {
@@ -24190,7 +24190,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "facet_pairs_data_is_train_val",
-      "community": 33,
+      "community": 32,
       "norm_label": "is_train_val()"
     },
     {
@@ -24200,7 +24200,7 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "facet_pairs_data_shard_of",
-      "community": 33,
+      "community": 32,
       "norm_label": "shard_of()"
     },
     {
@@ -24210,7 +24210,7 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "facet_pairs_data_edge_id",
-      "community": 33,
+      "community": 32,
       "norm_label": "edge_id()"
     },
     {
@@ -24220,7 +24220,7 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "facet_pairs_data_split_edge_id",
-      "community": 33,
+      "community": 32,
       "norm_label": "split_edge_id()"
     },
     {
@@ -24230,7 +24230,7 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "facet_pairs_data_load_texts",
-      "community": 33,
+      "community": 32,
       "norm_label": "load_texts()"
     },
     {
@@ -24240,7 +24240,7 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "facet_pairs_data_load_chunks",
-      "community": 33,
+      "community": 32,
       "norm_label": "load_chunks()"
     },
     {
@@ -24250,7 +24250,7 @@
       "source_location": "L123",
       "_origin": "ast",
       "id": "facet_pairs_data_load_answer_rows",
-      "community": 33,
+      "community": 32,
       "norm_label": "load_answer_rows()"
     },
     {
@@ -24260,7 +24260,7 @@
       "source_location": "L140",
       "_origin": "ast",
       "id": "facet_pairs_data_edge_of",
-      "community": 33,
+      "community": 32,
       "norm_label": "_edge_of()"
     },
     {
@@ -24270,7 +24270,7 @@
       "source_location": "L154",
       "_origin": "ast",
       "id": "facet_pairs_data_observations",
-      "community": 33,
+      "community": 32,
       "norm_label": "observations()"
     },
     {
@@ -24280,7 +24280,7 @@
       "source_location": "L191",
       "_origin": "ast",
       "id": "facet_pairs_data_assert_no_heldout",
-      "community": 33,
+      "community": 32,
       "norm_label": "assert_no_heldout()"
     },
     {
@@ -24290,7 +24290,7 @@
       "source_location": "L204",
       "_origin": "ast",
       "id": "facet_pairs_data_assert_no_heldout_set",
-      "community": 33,
+      "community": 32,
       "norm_label": "assert_no_heldout_set()"
     },
     {
@@ -24300,7 +24300,7 @@
       "source_location": "L218",
       "_origin": "ast",
       "id": "facet_pairs_data_partition_observations",
-      "community": 33,
+      "community": 32,
       "norm_label": "partition_observations()"
     },
     {
@@ -24310,7 +24310,7 @@
       "source_location": "L229",
       "_origin": "ast",
       "id": "facet_pairs_data_training_val_split",
-      "community": 33,
+      "community": 32,
       "norm_label": "training_val_split()"
     },
     {
@@ -24320,7 +24320,7 @@
       "source_location": "L242",
       "_origin": "ast",
       "id": "facet_pairs_data_edges_of",
-      "community": 33,
+      "community": 32,
       "norm_label": "edges_of()"
     },
     {
@@ -24330,7 +24330,7 @@
       "source_location": "L251",
       "_origin": "ast",
       "id": "facet_pairs_data_attach_texts",
-      "community": 33,
+      "community": 32,
       "norm_label": "attach_texts()"
     },
     {
@@ -24340,7 +24340,7 @@
       "source_location": "L257",
       "_origin": "ast",
       "id": "facet_pairs_data_main",
-      "community": 33,
+      "community": 32,
       "norm_label": "main()"
     },
     {
@@ -24350,7 +24350,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "facet_pairs_data_rationale_1",
-      "community": 33,
+      "community": 32,
       "norm_label": "what the ranker is fitted to: the judge's comparisons, and nothing else.  one"
     },
     {
@@ -24360,7 +24360,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "facet_pairs_data_rationale_69",
-      "community": 33,
+      "community": 32,
       "norm_label": "a training chunk reserved for checkpoint selection. held-out chunks are not trai"
     },
     {
@@ -24370,7 +24370,7 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "facet_pairs_data_rationale_75",
-      "community": 33,
+      "community": 32,
       "norm_label": "which of `n_shards` scoring shards a chunk belongs to, 0-based."
     },
     {
@@ -24380,7 +24380,7 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "facet_pairs_data_rationale_92",
-      "community": 33,
+      "community": 32,
       "norm_label": "chunk_id -> the chunk text. the export's first line is a header and carries no t"
     },
     {
@@ -24390,7 +24390,7 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "facet_pairs_data_rationale_106",
-      "community": 33,
+      "community": 32,
       "norm_label": "the export's chunk records (chunk_id, kind, product, tags, text), header dropped"
     },
     {
@@ -24400,7 +24400,7 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "facet_pairs_data_rationale_124",
-      "community": 33,
+      "community": 32,
       "norm_label": "every answer file under `answers_dir`, one dict per row, extra keys kept."
     },
     {
@@ -24410,7 +24410,7 @@
       "source_location": "L141",
       "_origin": "ast",
       "id": "facet_pairs_data_rationale_141",
-      "community": 33,
+      "community": 32,
       "norm_label": "(edge_id, chunk_id, tag) from a pair side, whichever of the two shapes it carrie"
     },
     {
@@ -24420,7 +24420,7 @@
       "source_location": "L155",
       "_origin": "ast",
       "id": "facet_pairs_data_rationale_155",
-      "community": 33,
+      "community": 32,
       "norm_label": "one observation per (answer row, facet) with a stated outcome.      each obser"
     },
     {
@@ -24430,7 +24430,7 @@
       "source_location": "L192",
       "_origin": "ast",
       "id": "facet_pairs_data_rationale_192",
-      "community": 33,
+      "community": 32,
       "norm_label": "raise if any training observation touches a held-out chunk. returns the count ch"
     },
     {
@@ -24440,7 +24440,7 @@
       "source_location": "L205",
       "_origin": "ast",
       "id": "facet_pairs_data_rationale_205",
-      "community": 33,
+      "community": 32,
       "norm_label": "raise if any answer row is labelled with the held-out set name.      the chunk"
     },
     {
@@ -24450,7 +24450,7 @@
       "source_location": "L219",
       "_origin": "ast",
       "id": "facet_pairs_data_rationale_219",
-      "community": 33,
+      "community": 32,
       "norm_label": "split observations into the ones that may be trained on and the ones that may no"
     },
     {
@@ -24460,7 +24460,7 @@
       "source_location": "L230",
       "_origin": "ast",
       "id": "facet_pairs_data_rationale_230",
-      "community": 33,
+      "community": 32,
       "norm_label": "checkpoint-selection split inside the training observations: an observation goes"
     },
     {
@@ -24470,7 +24470,7 @@
       "source_location": "L243",
       "_origin": "ast",
       "id": "facet_pairs_data_rationale_243",
-      "community": 33,
+      "community": 32,
       "norm_label": "the distinct (edge_id, chunk_id, tag) an observation list touches."
     },
     {
@@ -24480,7 +24480,7 @@
       "source_location": "L252",
       "_origin": "ast",
       "id": "facet_pairs_data_rationale_252",
-      "community": 33,
+      "community": 32,
       "norm_label": "drop observations whose chunk text is not in the export, and count them."
     },
     {
@@ -24490,7 +24490,7 @@
       "source_location": "L258",
       "_origin": "ast",
       "id": "facet_pairs_data_rationale_258",
-      "community": 33,
+      "community": 32,
       "norm_label": "print what the judge's answers hold right now. no training, no model."
     },
     {
@@ -24850,7 +24850,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "facet_pairs_fullcache_bundle",
-      "community": 240,
+      "community": 241,
       "norm_label": "fullcache_bundle.py"
     },
     {
@@ -24860,7 +24860,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "facet_pairs_fullcache_bundle_shard_of",
-      "community": 240,
+      "community": 241,
       "norm_label": "shard_of()"
     },
     {
@@ -24870,7 +24870,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "facet_pairs_fullcache_bundle_main",
-      "community": 240,
+      "community": 241,
       "norm_label": "main()"
     },
     {
@@ -24880,7 +24880,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "facet_pairs_fullcache_bundle_rationale_1",
-      "community": 240,
+      "community": 241,
       "norm_label": "build the colab bundle for the one full pass: the bake-off's winning backbone ov"
     },
     {
@@ -24890,7 +24890,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "facet_pairs_fullcache_merge",
-      "community": 241,
+      "community": 242,
       "norm_label": "fullcache_merge.py"
     },
     {
@@ -24900,7 +24900,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "facet_pairs_fullcache_merge_graph_edges",
-      "community": 241,
+      "community": 242,
       "norm_label": "graph_edges()"
     },
     {
@@ -24910,7 +24910,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "facet_pairs_fullcache_merge_main",
-      "community": 241,
+      "community": 242,
       "norm_label": "main()"
     },
     {
@@ -24920,7 +24920,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "facet_pairs_fullcache_merge_rationale_1",
-      "community": 241,
+      "community": 242,
       "norm_label": "check and concatenate the full-pass shards into one cache the laptop harness rea"
     },
     {
@@ -24930,7 +24930,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "facet_pairs_fullcache_run",
-      "community": 249,
+      "community": 250,
       "norm_label": "fullcache_run.py"
     },
     {
@@ -24940,7 +24940,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "facet_pairs_fullcache_run_main",
-      "community": 249,
+      "community": 250,
       "norm_label": "main()"
     },
     {
@@ -24950,7 +24950,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "facet_pairs_fullcache_run_rationale_1",
-      "community": 249,
+      "community": 250,
       "norm_label": "run the full pass shard by shard on one machine (the desktop), resumable.  stand"
     },
     {
@@ -29090,7 +29090,7 @@
       "source_location": "L751",
       "_origin": "ast",
       "id": "graph_facet_views_check_position",
-      "community": 242,
+      "community": 243,
       "norm_label": "position()"
     },
     {
@@ -29360,7 +29360,7 @@
       "source_location": "L1628",
       "_origin": "ast",
       "id": "graph_facet_views_check_position_table",
-      "community": 242,
+      "community": 243,
       "norm_label": "position_table()"
     },
     {
@@ -29740,7 +29740,7 @@
       "source_location": "L752",
       "_origin": "ast",
       "id": "graph_facet_views_check_rationale_752",
-      "community": 242,
+      "community": 243,
       "norm_label": "\u00a77: (share of the reference column below) + 1\u20442 (share equal), in [0, 1]."
     },
     {
@@ -29920,7 +29920,7 @@
       "source_location": "L1629",
       "_origin": "ast",
       "id": "graph_facet_views_check_rationale_1629",
-      "community": 242,
+      "community": 243,
       "norm_label": "\u00a77: `\u03b4_rank` and its own band `p95(|pos_w1 \u2212 pos_w2|)` \u2014 the only reading on whi"
     },
     {
@@ -30400,7 +30400,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "graph_facet_views_topic_graph",
-      "community": 251,
+      "community": 252,
       "norm_label": "facet_views_topic_graph.py"
     },
     {
@@ -30410,7 +30410,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "graph_facet_views_topic_graph_main",
-      "community": 251,
+      "community": 252,
       "norm_label": "main()"
     },
     {
@@ -30420,7 +30420,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "graph_facet_views_topic_graph_rationale_1",
-      "community": 251,
+      "community": 252,
       "norm_label": "the graph's own topic for a set of chunks: cos(tag.emb, chunk.desc_emb) per has_"
     },
     {
@@ -30430,7 +30430,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "graph_facet_views_xenc_gpu",
-      "community": 252,
+      "community": 253,
       "norm_label": "facet_views_xenc_gpu.py"
     },
     {
@@ -30440,7 +30440,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "graph_facet_views_xenc_gpu_main",
-      "community": 252,
+      "community": 253,
       "norm_label": "main()"
     },
     {
@@ -30450,7 +30450,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "graph_facet_views_xenc_gpu_rationale_1",
-      "community": 252,
+      "community": 253,
       "norm_label": "score (phrase, view) pairs with a fixed cross-encoder on a machine with a gpu."
     },
     {
@@ -31810,7 +31810,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_artefact_facet_area",
-      "community": 229,
+      "community": 230,
       "norm_label": "test_artefact_facet_area.py"
     },
     {
@@ -31820,7 +31820,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "tests_test_artefact_facet_area_test_variant_preparation_selects_and_records_its_source",
-      "community": 229,
+      "community": 230,
       "norm_label": "test_variant_preparation_selects_and_records_its_source()"
     },
     {
@@ -31830,7 +31830,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "tests_test_artefact_facet_area_test_actual_rank_dispatches_scope_policy_without_changing_scores",
-      "community": 229,
+      "community": 230,
       "norm_label": "test_actual_rank_dispatches_scope_policy_without_changing_scores()"
     },
     {
@@ -31840,7 +31840,7 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "tests_test_artefact_facet_area_test_invalid_schedule_fails_before_snapshot_read",
-      "community": 229,
+      "community": 230,
       "norm_label": "test_invalid_schedule_fails_before_snapshot_read()"
     },
     {
@@ -31850,7 +31850,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_artefact_facet_area_rationale_1",
-      "community": 229,
+      "community": 230,
       "norm_label": "serving wiring for the explicit area-first candidate, no model calls."
     },
     {
@@ -31970,7 +31970,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_artefact_v1",
-      "community": 27,
+      "community": 36,
       "norm_label": "test_artefact_v1.py"
     },
     {
@@ -31980,7 +31980,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_setupmodule",
-      "community": 27,
+      "community": 36,
       "norm_label": "setupmodule()"
     },
     {
@@ -31990,7 +31990,7 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_teardownmodule",
-      "community": 27,
+      "community": 36,
       "norm_label": "teardownmodule()"
     },
     {
@@ -32010,7 +32010,7 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_interpreterbackendtests",
-      "community": 27,
+      "community": 36,
       "norm_label": "interpreterbackendtests"
     },
     {
@@ -32020,7 +32020,7 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_interpreterbackendtests_test_default_interpreter_uses_claude_haiku",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_default_interpreter_uses_claude_haiku()"
     },
     {
@@ -32030,7 +32030,7 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_interpreterbackendtests_test_interpreter_dispatches_through_claude_cli_lane",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_interpreter_dispatches_through_claude_cli_lane()"
     },
     {
@@ -32040,7 +32040,7 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_interpreterbackendtests_test_partless_interpretation_falls_back_to_the_description",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_partless_interpretation_falls_back_to_the_description()"
     },
     {
@@ -32110,7 +32110,7 @@
       "source_location": "L159",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_multiksupporttests",
-      "community": 27,
+      "community": 36,
       "norm_label": "multiksupporttests"
     },
     {
@@ -32120,7 +32120,7 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_multiksupporttests_test_nearer_tags_carry_more_support",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_nearer_tags_carry_more_support()"
     },
     {
@@ -32130,7 +32130,7 @@
       "source_location": "L165",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_multiksupporttests_test_tags_inside_more_levels_accumulate_support",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_tags_inside_more_levels_accumulate_support()"
     },
     {
@@ -32140,7 +32140,7 @@
       "source_location": "L170",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_multiksupporttests_test_extended_levels_cover_the_whole_ranked_set",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_extended_levels_cover_the_whole_ranked_set()"
     },
     {
@@ -32150,7 +32150,7 @@
       "source_location": "L176",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_multiksupporttests_test_raw_support_is_a_pure_function_of_distance",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_raw_support_is_a_pure_function_of_distance()"
     },
     {
@@ -32250,7 +32250,7 @@
       "source_location": "L212",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_sufficiencytests",
-      "community": 27,
+      "community": 36,
       "norm_label": "sufficiencytests"
     },
     {
@@ -32260,7 +32260,7 @@
       "source_location": "L213",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_sufficiencytests_test_sufficient_at_a_level_keeps_exactly_what_was_seen",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_sufficient_at_a_level_keeps_exactly_what_was_seen()"
     },
     {
@@ -32270,7 +32270,7 @@
       "source_location": "L221",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_sufficiencytests_test_never_sufficient_keeps_the_full_retrieval",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_never_sufficient_keeps_the_full_retrieval()"
     },
     {
@@ -32280,7 +32280,7 @@
       "source_location": "L228",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_sufficiencytests_test_review_failure_keeps_the_full_retrieval_and_is_logged",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_review_failure_keeps_the_full_retrieval_and_is_logged()"
     },
     {
@@ -32290,7 +32290,7 @@
       "source_location": "L234",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_sufficiencytests_test_a_failed_review_call_still_accounts_its_spent_usage",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_a_failed_review_call_still_accounts_its_spent_usage()"
     },
     {
@@ -32300,7 +32300,7 @@
       "source_location": "L244",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_truncaterebuildtests",
-      "community": 218,
+      "community": 219,
       "norm_label": "truncaterebuildtests"
     },
     {
@@ -32310,7 +32310,7 @@
       "source_location": "L245",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_truncaterebuildtests_test_ids_rebuilt_from_kept_chunks_not_sliced_flat",
-      "community": 218,
+      "community": 219,
       "norm_label": ".test_ids_rebuilt_from_kept_chunks_not_sliced_flat()"
     },
     {
@@ -32320,7 +32320,7 @@
       "source_location": "L254",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_truncaterebuildtests_test_one_to_one_runs_without_per_chunk_ids_slice_the_flat_list",
-      "community": 218,
+      "community": 219,
       "norm_label": ".test_one_to_one_runs_without_per_chunk_ids_slice_the_flat_list()"
     },
     {
@@ -32330,7 +32330,7 @@
       "source_location": "L260",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_truncaterebuildtests_test_records_not_one_to_one_without_per_chunk_ids_fail_loud",
-      "community": 218,
+      "community": 219,
       "norm_label": ".test_records_not_one_to_one_without_per_chunk_ids_fail_loud()"
     },
     {
@@ -32340,7 +32340,7 @@
       "source_location": "L267",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_truncaterebuildtests_test_a_fill_to_budget_record_is_refused",
-      "community": 218,
+      "community": 219,
       "norm_label": ".test_a_fill_to_budget_record_is_refused()"
     },
     {
@@ -32350,7 +32350,7 @@
       "source_location": "L276",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_truncaterebuildtests_test_a_fill_to_budget_run_folder_is_refused",
-      "community": 218,
+      "community": 219,
       "norm_label": ".test_a_fill_to_budget_run_folder_is_refused()"
     },
     {
@@ -32460,7 +32460,7 @@
       "source_location": "L371",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_fake_embed",
-      "community": 27,
+      "community": 36,
       "norm_label": "_fake_embed()"
     },
     {
@@ -32710,7 +32710,7 @@
       "source_location": "L685",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_doortracetests",
-      "community": 27,
+      "community": 36,
       "norm_label": "doortracetests"
     },
     {
@@ -32810,7 +32810,7 @@
       "source_location": "L780",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_runflagtests",
-      "community": 27,
+      "community": 218,
       "norm_label": "runflagtests"
     },
     {
@@ -32820,7 +32820,7 @@
       "source_location": "L781",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_runflagtests_test_a_flag_spec_parses_to_its_name_value_pair",
-      "community": 27,
+      "community": 218,
       "norm_label": ".test_a_flag_spec_parses_to_its_name_value_pair()"
     },
     {
@@ -32830,7 +32830,7 @@
       "source_location": "L787",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_runflagtests_test_a_malformed_flag_spec_fails_at_parse",
-      "community": 27,
+      "community": 218,
       "norm_label": ".test_a_malformed_flag_spec_fails_at_parse()"
     },
     {
@@ -32840,7 +32840,7 @@
       "source_location": "L792",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_runflagtests_test_flags_land_in_this_process_environment_only",
-      "community": 27,
+      "community": 218,
       "norm_label": ".test_flags_land_in_this_process_environment_only()"
     },
     {
@@ -32850,7 +32850,7 @@
       "source_location": "L798",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_runflagtests_test_a_blank_value_unsets_a_session_env_var",
-      "community": 27,
+      "community": 218,
       "norm_label": ".test_a_blank_value_unsets_a_session_env_var()"
     },
     {
@@ -32860,7 +32860,7 @@
       "source_location": "L803",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_runflagtests_test_flags_apply_before_any_pipeline_or_eval_import",
-      "community": 27,
+      "community": 218,
       "norm_label": ".test_flags_apply_before_any_pipeline_or_eval_import()"
     },
     {
@@ -32870,7 +32870,7 @@
       "source_location": "L820",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_normalizetests",
-      "community": 27,
+      "community": 36,
       "norm_label": "normalizetests"
     },
     {
@@ -32880,7 +32880,7 @@
       "source_location": "L821",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_normalizetests_test_min_max_spans_zero_to_one",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_min_max_spans_zero_to_one()"
     },
     {
@@ -32890,7 +32890,7 @@
       "source_location": "L826",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_normalizetests_test_a_single_scale_point_maps_every_member_to_one",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_a_single_scale_point_maps_every_member_to_one()"
     },
     {
@@ -32900,7 +32900,7 @@
       "source_location": "L829",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_normalizetests_test_an_empty_pool_normalizes_to_nothing",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_an_empty_pool_normalizes_to_nothing()"
     },
     {
@@ -32910,7 +32910,7 @@
       "source_location": "L833",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_modifierlerptests",
-      "community": 27,
+      "community": 36,
       "norm_label": "modifierlerptests"
     },
     {
@@ -32920,7 +32920,7 @@
       "source_location": "L834",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_modifierlerptests_test_strength_zero_is_inert",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_strength_zero_is_inert()"
     },
     {
@@ -32930,7 +32930,7 @@
       "source_location": "L838",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_modifierlerptests_test_strength_one_is_the_raw_factor",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_strength_one_is_the_raw_factor()"
     },
     {
@@ -32940,7 +32940,7 @@
       "source_location": "L842",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_modifierlerptests_test_strength_interpolates_between_inert_and_full",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_strength_interpolates_between_inert_and_full()"
     },
     {
@@ -32950,7 +32950,7 @@
       "source_location": "L846",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_modifierlerptests_test_a_strength_past_one_clamps_at_zero_without_flipping_sign",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_a_strength_past_one_clamps_at_zero_without_flipping_sign()"
     },
     {
@@ -33190,7 +33190,7 @@
       "source_location": "L1028",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_embedcachetests",
-      "community": 27,
+      "community": 36,
       "norm_label": "embedcachetests"
     },
     {
@@ -33200,7 +33200,7 @@
       "source_location": "L1029",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_embedcachetests_test_a_miss_embeds_and_a_hit_serves_without_a_call",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_a_miss_embeds_and_a_hit_serves_without_a_call()"
     },
     {
@@ -33210,7 +33210,7 @@
       "source_location": "L1038",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_embedcachetests_test_a_new_model_id_misses",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_a_new_model_id_misses()"
     },
     {
@@ -33520,7 +33520,7 @@
       "source_location": "L1305",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_guidebuildtests",
-      "community": 233,
+      "community": 234,
       "norm_label": "guidebuildtests"
     },
     {
@@ -33530,7 +33530,7 @@
       "source_location": "L1308",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_guidebuildtests_pool",
-      "community": 233,
+      "community": 234,
       "norm_label": "._pool()"
     },
     {
@@ -33540,7 +33540,7 @@
       "source_location": "L1313",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_guidebuildtests_test_membership_rows_sum_to_one",
-      "community": 233,
+      "community": 234,
       "norm_label": ".test_membership_rows_sum_to_one()"
     },
     {
@@ -33550,7 +33550,7 @@
       "source_location": "L1321",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_guidebuildtests_test_facet_participation_counts_edge_fractions",
-      "community": 233,
+      "community": 234,
       "norm_label": ".test_facet_participation_counts_edge_fractions()"
     },
     {
@@ -33560,7 +33560,7 @@
       "source_location": "L1332",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_guidebuildtests_test_the_build_is_deterministic_for_a_fixed_seed",
-      "community": 233,
+      "community": 234,
       "norm_label": ".test_the_build_is_deterministic_for_a_fixed_seed()"
     },
     {
@@ -34050,7 +34050,7 @@
       "source_location": "L1687",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_resolveguardtests",
-      "community": 27,
+      "community": 36,
       "norm_label": "resolveguardtests"
     },
     {
@@ -34060,7 +34060,7 @@
       "source_location": "L1688",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_resolveguardtests_test_a_relpath_escaping_the_raw_root_is_refused",
-      "community": 27,
+      "community": 36,
       "norm_label": ".test_a_relpath_escaping_the_raw_root_is_refused()"
     },
     {
@@ -34650,7 +34650,7 @@
       "source_location": "L180",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_actionphrasetests",
-      "community": 230,
+      "community": 231,
       "norm_label": "actionphrasetests"
     },
     {
@@ -34660,7 +34660,7 @@
       "source_location": "L181",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_actionphrasetests_test_a_verb_hit_carries_its_clause_window",
-      "community": 230,
+      "community": 231,
       "norm_label": ".test_a_verb_hit_carries_its_clause_window()"
     },
     {
@@ -34670,7 +34670,7 @@
       "source_location": "L187",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_actionphrasetests_test_the_window_stops_at_the_clause_boundary",
-      "community": 230,
+      "community": 231,
       "norm_label": ".test_the_window_stops_at_the_clause_boundary()"
     },
     {
@@ -34680,7 +34680,7 @@
       "source_location": "L191",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_actionphrasetests_test_a_capitalized_hit_names_something_rather_than_doing_it",
-      "community": 230,
+      "community": 231,
       "norm_label": ".test_a_capitalized_hit_names_something_rather_than_doing_it()"
     },
     {
@@ -34690,7 +34690,7 @@
       "source_location": "L194",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_actionphrasetests_test_a_query_with_no_verb_asks_no_activity",
-      "community": 230,
+      "community": 231,
       "norm_label": ".test_a_query_with_no_verb_asks_no_activity()"
     },
     {
@@ -34810,7 +34810,7 @@
       "source_location": "L251",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_evidencekindtests",
-      "community": 231,
+      "community": 232,
       "norm_label": "evidencekindtests"
     },
     {
@@ -34820,7 +34820,7 @@
       "source_location": "L252",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_evidencekindtests_test_the_question_forms_map_to_the_kinds",
-      "community": 231,
+      "community": 232,
       "norm_label": ".test_the_question_forms_map_to_the_kinds()"
     },
     {
@@ -34830,7 +34830,7 @@
       "source_location": "L261",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_evidencekindtests_test_a_form_free_question_asks_no_kind",
-      "community": 231,
+      "community": 232,
       "norm_label": ".test_a_form_free_question_asks_no_kind()"
     },
     {
@@ -34840,7 +34840,7 @@
       "source_location": "L264",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_evidencekindtests_test_the_first_form_wins",
-      "community": 231,
+      "community": 232,
       "norm_label": ".test_the_first_form_wins()"
     },
     {
@@ -34850,7 +34850,7 @@
       "source_location": "L267",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_evidencekindtests_test_every_signature_feature_is_a_register_feature",
-      "community": 231,
+      "community": 232,
       "norm_label": ".test_every_signature_feature_is_a_register_feature()"
     },
     {
@@ -34990,7 +34990,7 @@
       "source_location": "L368",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_silenceruletests",
-      "community": 232,
+      "community": 233,
       "norm_label": "silenceruletests"
     },
     {
@@ -35000,7 +35000,7 @@
       "source_location": "L370",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_silenceruletests_ids",
-      "community": 232,
+      "community": 233,
       "norm_label": "._ids()"
     },
     {
@@ -35010,7 +35010,7 @@
       "source_location": "L374",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_silenceruletests_test_an_unasked_question_reorders_nothing",
-      "community": 232,
+      "community": 233,
       "norm_label": ".test_an_unasked_question_reorders_nothing()"
     },
     {
@@ -35020,7 +35020,7 @@
       "source_location": "L381",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_silenceruletests_test_an_asked_question_does_reorder",
-      "community": 232,
+      "community": 233,
       "norm_label": ".test_an_asked_question_does_reorder()"
     },
     {
@@ -35030,7 +35030,7 @@
       "source_location": "L389",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_silenceruletests_test_every_combine_treats_a_constant_question_as_silent",
-      "community": 232,
+      "community": 233,
       "norm_label": ".test_every_combine_treats_a_constant_question_as_silent()"
     },
     {
@@ -35490,7 +35490,7 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_persons_session_run",
-      "community": 234,
+      "community": 235,
       "norm_label": ".run()"
     },
     {
@@ -36170,7 +36170,7 @@
       "source_location": "L519",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_persons_result",
-      "community": 234,
+      "community": 235,
       "norm_label": "_result"
     },
     {
@@ -36180,7 +36180,7 @@
       "source_location": "L520",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_persons_result_init",
-      "community": 234,
+      "community": 235,
       "norm_label": ".__init__()"
     },
     {
@@ -36190,7 +36190,7 @@
       "source_location": "L523",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_persons_result_consume",
-      "community": 234,
+      "community": 235,
       "norm_label": ".consume()"
     },
     {
@@ -36200,7 +36200,7 @@
       "source_location": "L526",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_persons_result_single",
-      "community": 234,
+      "community": 235,
       "norm_label": ".single()"
     },
     {
@@ -37390,7 +37390,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file",
-      "community": 34,
+      "community": 33,
       "norm_label": "test_artefact_v3_facet_file.py"
     },
     {
@@ -37400,7 +37400,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_reload_arm",
-      "community": 34,
+      "community": 33,
       "norm_label": "reload_arm()"
     },
     {
@@ -37410,7 +37410,7 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_write_overlay",
-      "community": 34,
+      "community": 33,
       "norm_label": "write_overlay()"
     },
     {
@@ -37420,7 +37420,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_prepared_of",
-      "community": 34,
+      "community": 33,
       "norm_label": "prepared_of()"
     },
     {
@@ -37430,7 +37430,7 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_thesourceitself",
-      "community": 34,
+      "community": 33,
       "norm_label": "thesourceitself"
     },
     {
@@ -37440,7 +37440,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_thesourceitself_test_file_without_a_path_raises",
-      "community": 34,
+      "community": 33,
       "norm_label": ".test_file_without_a_path_raises()"
     },
     {
@@ -37450,7 +37450,7 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_thesourceitself_test_file_uses_the_five_ruled_facets",
-      "community": 34,
+      "community": 33,
       "norm_label": ".test_file_uses_the_five_ruled_facets()"
     },
     {
@@ -37460,7 +37460,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_thesourceitself_test_the_flags_record_the_file_and_its_sha",
-      "community": 34,
+      "community": 33,
       "norm_label": ".test_the_flags_record_the_file_and_its_sha()"
     },
     {
@@ -37470,7 +37470,7 @@
       "source_location": "L86",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_thereader",
-      "community": 34,
+      "community": 33,
       "norm_label": "thereader"
     },
     {
@@ -37480,7 +37480,7 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_thereader_read",
-      "community": 34,
+      "community": 33,
       "norm_label": "._read()"
     },
     {
@@ -37490,7 +37490,7 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_thereader_test_null_topic_becomes_the_graph_cosine",
-      "community": 34,
+      "community": 33,
       "norm_label": ".test_null_topic_becomes_the_graph_cosine()"
     },
     {
@@ -37500,7 +37500,7 @@
       "source_location": "L108",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_thereader_test_an_edge_the_file_misses_keeps_topic_and_loses_the_four",
-      "community": 34,
+      "community": 33,
       "norm_label": ".test_an_edge_the_file_misses_keeps_topic_and_loses_the_four()"
     },
     {
@@ -37510,7 +37510,7 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_thereader_test_another_facet_list_raises",
-      "community": 34,
+      "community": 33,
       "norm_label": ".test_another_facet_list_raises()"
     },
     {
@@ -37520,7 +37520,7 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_thereader_test_another_database_raises",
-      "community": 34,
+      "community": 33,
       "norm_label": ".test_another_database_raises()"
     },
     {
@@ -37530,7 +37530,7 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_thereader_test_a_missing_file_raises",
-      "community": 34,
+      "community": 33,
       "norm_label": ".test_a_missing_file_raises()"
     },
     {
@@ -37540,7 +37540,7 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_two_tags_per_chunk",
-      "community": 34,
+      "community": 33,
       "norm_label": "two_tags_per_chunk()"
     },
     {
@@ -37550,7 +37550,7 @@
       "source_location": "L144",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_thelevelling",
-      "community": 34,
+      "community": 33,
       "norm_label": "thelevelling"
     },
     {
@@ -37560,7 +37560,7 @@
       "source_location": "L148",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_thelevelling_positions",
-      "community": 34,
+      "community": 33,
       "norm_label": "._positions()"
     },
     {
@@ -37570,7 +37570,7 @@
       "source_location": "L157",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_thelevelling_test_file_keeps_the_two_tags_of_one_chunk_apart",
-      "community": 34,
+      "community": 33,
       "norm_label": ".test_file_keeps_the_two_tags_of_one_chunk_apart()"
     },
     {
@@ -37580,7 +37580,7 @@
       "source_location": "L164",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_thelevelling_test_stats_reads_one_value_per_chunk",
-      "community": 34,
+      "community": 33,
       "norm_label": ".test_stats_reads_one_value_per_chunk()"
     },
     {
@@ -37590,7 +37590,7 @@
       "source_location": "L170",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_thelevelling_test_nan_sorts_last",
-      "community": 34,
+      "community": 33,
       "norm_label": ".test_nan_sorts_last()"
     },
     {
@@ -37600,7 +37600,7 @@
       "source_location": "L181",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_thelevelling_test_negative_and_zero_are_ordinary_values",
-      "community": 34,
+      "community": 33,
       "norm_label": ".test_negative_and_zero_are_ordinary_values()"
     },
     {
@@ -37610,7 +37610,7 @@
       "source_location": "L195",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_theothersourcesareunchanged",
-      "community": 34,
+      "community": 33,
       "norm_label": "theothersourcesareunchanged"
     },
     {
@@ -37620,7 +37620,7 @@
       "source_location": "L197",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_theothersourcesareunchanged_test_stats_still_reads_herb_facet_stats",
-      "community": 34,
+      "community": 33,
       "norm_label": ".test_stats_still_reads_herb_facet_stats()"
     },
     {
@@ -37630,7 +37630,7 @@
       "source_location": "L206",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_theothersourcesareunchanged_test_weight_keeps_the_graph_layout",
-      "community": 34,
+      "community": 33,
       "norm_label": ".test_weight_keeps_the_graph_layout()"
     },
     {
@@ -37640,7 +37640,7 @@
       "source_location": "L212",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_theothersourcesareunchanged_test_an_unknown_source_still_raises",
-      "community": 34,
+      "community": 33,
       "norm_label": ".test_an_unknown_source_still_raises()"
     },
     {
@@ -37650,7 +37650,7 @@
       "source_location": "L217",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_therealoverlay",
-      "community": 34,
+      "community": 33,
       "norm_label": "therealoverlay"
     },
     {
@@ -37660,7 +37660,7 @@
       "source_location": "L222",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_therealoverlay_test_shape_and_count",
-      "community": 34,
+      "community": 33,
       "norm_label": ".test_shape_and_count()"
     },
     {
@@ -37670,7 +37670,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_rationale_1",
-      "community": 34,
+      "community": 33,
       "norm_label": "herb_facet_source=file: the five facet values read per edge off an overlay.  eve"
     },
     {
@@ -37680,7 +37680,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_rationale_22",
-      "community": 34,
+      "community": 33,
       "norm_label": "import artefact_v3 under this environment, restoring the environment afterwards"
     },
     {
@@ -37690,7 +37690,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_rationale_49",
-      "community": 34,
+      "community": 33,
       "norm_label": "a prepared with the fields the levelling reads and nothing else"
     },
     {
@@ -37700,7 +37700,7 @@
       "source_location": "L131",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_rationale_131",
-      "community": 34,
+      "community": 33,
       "norm_label": "n_chunks chunks, tag a and tag b on each; tag a takes values[0], tag b values[1]"
     },
     {
@@ -37710,7 +37710,7 @@
       "source_location": "L145",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_rationale_145",
-      "community": 34,
+      "community": 33,
       "norm_label": "two tags on one chunk with different values: per edge under file, one per chunk"
     },
     {
@@ -37720,7 +37720,7 @@
       "source_location": "L218",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_facet_file_rationale_218",
-      "community": 34,
+      "community": 33,
       "norm_label": "the round-1 overlay on disk, if it has been written"
     },
     {
@@ -38430,7 +38430,7 @@
       "source_location": "L464",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_multirank_weighted_static_test_g14_no_question_or_gold_symbol_in_the_modes",
-      "community": 219,
+      "community": 220,
       "norm_label": ".test_g14_no_question_or_gold_symbol_in_the_modes()"
     },
     {
@@ -38710,7 +38710,7 @@
       "source_location": "L819",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_multirank_weighted_linktwoband",
-      "community": 219,
+      "community": 220,
       "norm_label": "linktwoband"
     },
     {
@@ -38730,7 +38730,7 @@
       "source_location": "L868",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_multirank_weighted_linktwoband_walk",
-      "community": 219,
+      "community": 220,
       "norm_label": ".walk()"
     },
     {
@@ -38740,7 +38740,7 @@
       "source_location": "L883",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_multirank_weighted_linktwoband_test_link_two_uses_the_description_band",
-      "community": 219,
+      "community": 220,
       "norm_label": ".test_link_two_uses_the_description_band()"
     },
     {
@@ -38860,7 +38860,7 @@
       "source_location": "L465",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_multirank_weighted_rationale_465",
-      "community": 219,
+      "community": 220,
       "norm_label": "every name the modes' code objects read or bind. prose that names gold100 in an"
     },
     {
@@ -38930,7 +38930,7 @@
       "source_location": "L820",
       "_origin": "ast",
       "id": "tests_test_artefact_v3_multirank_weighted_rationale_820",
-      "community": 219,
+      "community": 220,
       "norm_label": "which band levels link 2 (part -> chunk description)?      the fixture is built"
     },
     {
@@ -39220,7 +39220,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_build_chunk_times",
-      "community": 255,
+      "community": 256,
       "norm_label": "test_build_chunk_times.py"
     },
     {
@@ -39230,7 +39230,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "tests_test_build_chunk_times_test_a_records_time_is_read_from_the_field_its_kind_keeps_it_in",
-      "community": 255,
+      "community": 256,
       "norm_label": "test_a_records_time_is_read_from_the_field_its_kind_keeps_it_in()"
     },
     {
@@ -39240,7 +39240,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "tests_test_build_chunk_times_test_a_chunks_times_are_its_records_own_times_sorted",
-      "community": 255,
+      "community": 256,
       "norm_label": "test_a_chunks_times_are_its_records_own_times_sorted()"
     },
     {
@@ -39330,7 +39330,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "tests_test_build_entity_graph_removalpredicatetests",
-      "community": 220,
+      "community": 221,
       "norm_label": "removalpredicatetests"
     },
     {
@@ -39340,7 +39340,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "tests_test_build_entity_graph_removalpredicatetests_test_the_union_is_exactly_the_dying_tags",
-      "community": 220,
+      "community": 221,
       "norm_label": ".test_the_union_is_exactly_the_dying_tags()"
     },
     {
@@ -39350,7 +39350,7 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "tests_test_build_entity_graph_removalpredicatetests_test_bare_http_protocol_tags_are_not_removed",
-      "community": 220,
+      "community": 221,
       "norm_label": ".test_bare_http_protocol_tags_are_not_removed()"
     },
     {
@@ -39360,7 +39360,7 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "tests_test_build_entity_graph_removalpredicatetests_test_decision_and_date_tags_are_not_removed",
-      "community": 220,
+      "community": 221,
       "norm_label": ".test_decision_and_date_tags_are_not_removed()"
     },
     {
@@ -39370,7 +39370,7 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "tests_test_build_entity_graph_removalpredicatetests_test_pr_pointer_forms_match_only_with_digits",
-      "community": 220,
+      "community": 221,
       "norm_label": ".test_pr_pointer_forms_match_only_with_digits()"
     },
     {
@@ -39380,7 +39380,7 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "tests_test_build_entity_graph_removalpredicatetests_test_removal_impact_counts_tags_edges_and_chunks",
-      "community": 220,
+      "community": 221,
       "norm_label": ".test_removal_impact_counts_tags_edges_and_chunks()"
     },
     {
@@ -39390,7 +39390,7 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "tests_test_build_entity_graph_gatetests",
-      "community": 235,
+      "community": 236,
       "norm_label": "gatetests"
     },
     {
@@ -39400,7 +39400,7 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "tests_test_build_entity_graph_gatetests_test_matching_census_passes",
-      "community": 235,
+      "community": 236,
       "norm_label": ".test_matching_census_passes()"
     },
     {
@@ -39410,7 +39410,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "tests_test_build_entity_graph_gatetests_test_value_mismatch_stops",
-      "community": 235,
+      "community": 236,
       "norm_label": ".test_value_mismatch_stops()"
     },
     {
@@ -39420,7 +39420,7 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "tests_test_build_entity_graph_gatetests_test_missing_key_stops",
-      "community": 235,
+      "community": 236,
       "norm_label": ".test_missing_key_stops()"
     },
     {
@@ -39430,7 +39430,7 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "tests_test_build_entity_graph_gatetests_test_unexpected_key_stops",
-      "community": 235,
+      "community": 236,
       "norm_label": ".test_unexpected_key_stops()"
     },
     {
@@ -39530,7 +39530,7 @@
       "source_location": "L140",
       "_origin": "ast",
       "id": "tests_test_build_entity_graph_backtickquotingtests",
-      "community": 256,
+      "community": 257,
       "norm_label": "backtickquotingtests"
     },
     {
@@ -39540,7 +39540,7 @@
       "source_location": "L141",
       "_origin": "ast",
       "id": "tests_test_build_entity_graph_backtickquotingtests_test_plain_names_quote",
-      "community": 256,
+      "community": 257,
       "norm_label": ".test_plain_names_quote()"
     },
     {
@@ -39550,7 +39550,7 @@
       "source_location": "L144",
       "_origin": "ast",
       "id": "tests_test_build_entity_graph_backtickquotingtests_test_inner_backticks_are_doubled",
-      "community": 256,
+      "community": 257,
       "norm_label": ".test_inner_backticks_are_doubled()"
     },
     {
@@ -40670,7 +40670,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_combined_leaderboard",
-      "community": 236,
+      "community": 237,
       "norm_label": "test_facet_combined_leaderboard.py"
     },
     {
@@ -40680,7 +40680,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "tests_test_facet_combined_leaderboard_test_ranking_keeps_primary_metric_and_undefined_precision_last",
-      "community": 236,
+      "community": 237,
       "norm_label": "test_ranking_keeps_primary_metric_and_undefined_precision_last()"
     },
     {
@@ -40690,7 +40690,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "tests_test_facet_combined_leaderboard_test_live_replays_match_reference_selected_numeric_cells",
-      "community": 236,
+      "community": 237,
       "norm_label": "test_live_replays_match_reference_selected_numeric_cells()"
     },
     {
@@ -40700,7 +40700,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "tests_test_facet_combined_leaderboard_test_coefficient_constraints_filter_candidates_and_choices",
-      "community": 236,
+      "community": 237,
       "norm_label": "test_coefficient_constraints_filter_candidates_and_choices()"
     },
     {
@@ -40710,7 +40710,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_combined_leaderboard_rationale_1",
-      "community": 236,
+      "community": 237,
       "norm_label": "selected settings must reproduce the numeric cells advertised in the lab."
     },
     {
@@ -40970,7 +40970,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_facet_counterfactuals.py"
     },
     {
@@ -40980,7 +40980,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_edit",
-      "community": 35,
+      "community": 34,
       "norm_label": "edit()"
     },
     {
@@ -40990,7 +40990,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_apply_edits_replaces_a_unique_span",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_apply_edits_replaces_a_unique_span()"
     },
     {
@@ -41000,7 +41000,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_apply_edits_deletes_with_empty_replacement",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_apply_edits_deletes_with_empty_replacement()"
     },
     {
@@ -41010,7 +41010,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_apply_edits_keeps_every_untouched_character",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_apply_edits_keeps_every_untouched_character()"
     },
     {
@@ -41020,7 +41020,7 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_apply_edits_applies_several_spans_in_text_order_whatever_the_list_order",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_apply_edits_applies_several_spans_in_text_order_whatever_the_list_order()"
     },
     {
@@ -41030,7 +41030,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_apply_edits_refuses_an_anchor_that_is_not_in_the_text",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_apply_edits_refuses_an_anchor_that_is_not_in_the_text()"
     },
     {
@@ -41040,7 +41040,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_apply_edits_refuses_an_anchor_that_occurs_twice",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_apply_edits_refuses_an_anchor_that_occurs_twice()"
     },
     {
@@ -41050,7 +41050,7 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_apply_edits_refuses_overlapping_spans",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_apply_edits_refuses_overlapping_spans()"
     },
     {
@@ -41060,7 +41060,7 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_apply_edits_names_a_malformed_edit_and_applies_the_rest",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_apply_edits_names_a_malformed_edit_and_applies_the_rest()"
     },
     {
@@ -41070,7 +41070,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_apply_edits_empty_list_returns_the_original",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_apply_edits_empty_list_returns_the_original()"
     },
     {
@@ -41080,7 +41080,7 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_apply_edits_rejects_a_non_string_replacement",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_apply_edits_rejects_a_non_string_replacement()"
     },
     {
@@ -41090,7 +41090,7 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_payload_edits",
-      "community": 35,
+      "community": 34,
       "norm_label": "payload_edits()"
     },
     {
@@ -41100,7 +41100,7 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_parse_edits_reconstructs_every_facet",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_parse_edits_reconstructs_every_facet()"
     },
     {
@@ -41110,7 +41110,7 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_parse_edits_empty_edit_list_is_an_unchanged_counterfactual",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_parse_edits_empty_edit_list_is_an_unchanged_counterfactual()"
     },
     {
@@ -41120,7 +41120,7 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_parse_edits_marks_a_failed_anchor_on_that_facet_only",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_parse_edits_marks_a_failed_anchor_on_that_facet_only()"
     },
     {
@@ -41130,7 +41130,7 @@
       "source_location": "L118",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_parse_drops_a_row_missing_a_facet",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_parse_drops_a_row_missing_a_facet()"
     },
     {
@@ -41140,7 +41140,7 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_parse_keeps_an_unasked_phrase_and_marks_it",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_parse_keeps_an_unasked_phrase_and_marks_it()"
     },
     {
@@ -41150,7 +41150,7 @@
       "source_location": "L131",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_parse_refuses_a_payload_with_no_edges",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_parse_refuses_a_payload_with_no_edges()"
     },
     {
@@ -41160,7 +41160,7 @@
       "source_location": "L140",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_parse_full_takes_the_returned_text",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_parse_full_takes_the_returned_text()"
     },
     {
@@ -41170,7 +41170,7 @@
       "source_location": "L151",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_parse_full_unchanged_text_is_recorded_as_unchanged",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_parse_full_unchanged_text_is_recorded_as_unchanged()"
     },
     {
@@ -41180,7 +41180,7 @@
       "source_location": "L157",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_parse_full_refuses_an_empty_chunk",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_parse_full_refuses_an_empty_chunk()"
     },
     {
@@ -41190,7 +41190,7 @@
       "source_location": "L165",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_the_two_prompts_share_the_body_and_differ_in_the_tail",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_the_two_prompts_share_the_body_and_differ_in_the_tail()"
     },
     {
@@ -41200,7 +41200,7 @@
       "source_location": "L172",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_prompt_text_refuses_an_unknown_format",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_prompt_text_refuses_an_unknown_format()"
     },
     {
@@ -41210,7 +41210,7 @@
       "source_location": "L177",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_status_of_a_complete_file_is_done",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_status_of_a_complete_file_is_done()"
     },
     {
@@ -41220,7 +41220,7 @@
       "source_location": "L186",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_status_of_a_partial_payload_is_not_done",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_status_of_a_partial_payload_is_not_done()"
     },
     {
@@ -41230,7 +41230,7 @@
       "source_location": "L195",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_status_of_a_half_answered_file_is_not_done",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_status_of_a_half_answered_file_is_not_done()"
     },
     {
@@ -41240,7 +41240,7 @@
       "source_location": "L202",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_status_of_a_missing_or_broken_file",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_status_of_a_missing_or_broken_file()"
     },
     {
@@ -41250,7 +41250,7 @@
       "source_location": "L211",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_workers_above_eight_is_refused",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_workers_above_eight_is_refused()"
     },
     {
@@ -41260,7 +41260,7 @@
       "source_location": "L216",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_a_lane_error_with_no_backend_is_not_retried",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_a_lane_error_with_no_backend_is_not_retried()"
     },
     {
@@ -41270,7 +41270,7 @@
       "source_location": "L221",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_user_message_carries_the_text_and_every_phrase",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_user_message_carries_the_text_and_every_phrase()"
     },
     {
@@ -41280,7 +41280,7 @@
       "source_location": "L228",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_join_stream_joins_every_assistant_text_block",
-      "community": 227,
+      "community": 228,
       "norm_label": "test_join_stream_joins_every_assistant_text_block()"
     },
     {
@@ -41290,7 +41290,7 @@
       "source_location": "L246",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_join_stream_ignores_non_json_and_missing_result",
-      "community": 227,
+      "community": 228,
       "norm_label": "test_join_stream_ignores_non_json_and_missing_result()"
     },
     {
@@ -41300,7 +41300,7 @@
       "source_location": "L254",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_group_size_comes_from_the_measured_ceiling_and_rate",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_group_size_comes_from_the_measured_ceiling_and_rate()"
     },
     {
@@ -41310,7 +41310,7 @@
       "source_location": "L261",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_a_chunk_under_the_ceiling_is_one_call",
-      "community": 226,
+      "community": 227,
       "norm_label": "test_a_chunk_under_the_ceiling_is_one_call()"
     },
     {
@@ -41320,7 +41320,7 @@
       "source_location": "L267",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_a_chunk_over_the_ceiling_is_split_and_loses_no_phrase",
-      "community": 226,
+      "community": 227,
       "norm_label": "test_a_chunk_over_the_ceiling_is_split_and_loses_no_phrase()"
     },
     {
@@ -41330,7 +41330,7 @@
       "source_location": "L277",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_groups_are_evened_out_not_a_full_group_and_a_remainder_of_one",
-      "community": 226,
+      "community": 227,
       "norm_label": "test_groups_are_evened_out_not_a_full_group_and_a_remainder_of_one()"
     },
     {
@@ -41340,7 +41340,7 @@
       "source_location": "L284",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_grouped_ask_shows_the_other_phrases_as_context_only",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_grouped_ask_shows_the_other_phrases_as_context_only()"
     },
     {
@@ -41350,7 +41350,7 @@
       "source_location": "L291",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_test_ungrouped_ask_carries_no_context_section",
-      "community": 35,
+      "community": 34,
       "norm_label": "test_ungrouped_ask_carries_no_context_section()"
     },
     {
@@ -41360,7 +41360,7 @@
       "source_location": "L229",
       "_origin": "ast",
       "id": "tests_test_facet_counterfactuals_rationale_229",
-      "community": 227,
+      "community": 228,
       "norm_label": "a long answer arrives as several assistant messages; the `json` envelope keeps o"
     },
     {
@@ -41370,7 +41370,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_coverage_transfer",
-      "community": 245,
+      "community": 246,
       "norm_label": "test_facet_coverage_transfer.py"
     },
     {
@@ -41380,7 +41380,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "tests_test_facet_coverage_transfer_test_intervention_is_closest_feasible_and_preserves_observed_direction",
-      "community": 245,
+      "community": 246,
       "norm_label": "test_intervention_is_closest_feasible_and_preserves_observed_direction()"
     },
     {
@@ -41390,7 +41390,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "tests_test_facet_coverage_transfer_test_no_intervention_when_original_already_satisfies_constraints",
-      "community": 245,
+      "community": 246,
       "norm_label": "test_no_intervention_when_original_already_satisfies_constraints()"
     },
     {
@@ -41400,7 +41400,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_coverage_transfer_rationale_1",
-      "community": 245,
+      "community": 246,
       "norm_label": "check the geometric claim behind the diagnostic intervention."
     },
     {
@@ -41470,7 +41470,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_directed_values",
-      "community": 246,
+      "community": 247,
       "norm_label": "test_facet_directed_values.py"
     },
     {
@@ -41480,7 +41480,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "tests_test_facet_directed_values_test_direction_cycles_duplicates_isolation_and_sponsors",
-      "community": 246,
+      "community": 247,
       "norm_label": "test_direction_cycles_duplicates_isolation_and_sponsors()"
     },
     {
@@ -41490,7 +41490,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "tests_test_facet_directed_values_test_destination_gate_preserves_facet_and_query_streams",
-      "community": 246,
+      "community": 247,
       "norm_label": "test_destination_gate_preserves_facet_and_query_streams()"
     },
     {
@@ -41500,7 +41500,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "tests_test_facet_directed_values_test_placement_is_in_graph_flow_not_final_sort",
-      "community": 246,
+      "community": 247,
       "norm_label": "test_placement_is_in_graph_flow_not_final_sort()"
     },
     {
@@ -41510,7 +41510,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_edge_controls",
-      "community": 222,
+      "community": 223,
       "norm_label": "test_facet_edge_controls.py"
     },
     {
@@ -41520,7 +41520,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "tests_test_facet_edge_controls_fixture",
-      "community": 222,
+      "community": 223,
       "norm_label": "fixture()"
     },
     {
@@ -41530,7 +41530,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "tests_test_facet_edge_controls_sorted_rows",
-      "community": 222,
+      "community": 223,
       "norm_label": "sorted_rows()"
     },
     {
@@ -41540,7 +41540,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "tests_test_facet_edge_controls_test_edge_shuffle_preserves_conditional_vectors_topic_and_input",
-      "community": 222,
+      "community": 223,
       "norm_label": "test_edge_shuffle_preserves_conditional_vectors_topic_and_input()"
     },
     {
@@ -41550,7 +41550,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "tests_test_facet_edge_controls_test_query_shuffle_moves_whole_vectors_and_preserves_topic",
-      "community": 222,
+      "community": 223,
       "norm_label": "test_query_shuffle_moves_whole_vectors_and_preserves_topic()"
     },
     {
@@ -41560,7 +41560,7 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "tests_test_facet_edge_controls_test_query_singleton_and_invalid_source_kind",
-      "community": 222,
+      "community": 223,
       "norm_label": "test_query_singleton_and_invalid_source_kind()"
     },
     {
@@ -41570,7 +41570,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_final_selection",
-      "community": 258,
+      "community": 259,
       "norm_label": "test_facet_final_selection.py"
     },
     {
@@ -41580,7 +41580,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "tests_test_facet_final_selection_test_fixed_objectives_remain_distinct_and_partial_parent_is_rejected",
-      "community": 258,
+      "community": 259,
       "norm_label": "test_fixed_objectives_remain_distinct_and_partial_parent_is_rejected()"
     },
     {
@@ -41890,7 +41890,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_lex_direction",
-      "community": 223,
+      "community": 224,
       "norm_label": "test_facet_lex_direction.py"
     },
     {
@@ -41900,7 +41900,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "tests_test_facet_lex_direction_test_unrelated_facet_cannot_break_an_otherwise_unresolved_comparison",
-      "community": 223,
+      "community": 224,
       "norm_label": "test_unrelated_facet_cannot_break_an_otherwise_unresolved_comparison()"
     },
     {
@@ -41910,7 +41910,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "tests_test_facet_lex_direction_test_equal_priority_disagreement_does_not_create_an_arbitrary_winner",
-      "community": 223,
+      "community": 224,
       "norm_label": "test_equal_priority_disagreement_does_not_create_an_arbitrary_winner()"
     },
     {
@@ -41920,7 +41920,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "tests_test_facet_lex_direction_test_orders_survive_scale_and_coordinate_permutation",
-      "community": 223,
+      "community": 224,
       "norm_label": "test_orders_survive_scale_and_coordinate_permutation()"
     },
     {
@@ -41930,7 +41930,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "tests_test_facet_lex_direction_test_invalid_relevance_is_not_a_sorting_key",
-      "community": 223,
+      "community": 224,
       "norm_label": "test_invalid_relevance_is_not_a_sorting_key()"
     },
     {
@@ -41940,7 +41940,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_lex_direction_rationale_1",
-      "community": 223,
+      "community": 224,
       "norm_label": "behavioral invariants for the experimental ordinal comparator."
     },
     {
@@ -44510,7 +44510,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_program_findings",
-      "community": 247,
+      "community": 248,
       "norm_label": "test_facet_program_findings.py"
     },
     {
@@ -44520,7 +44520,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "tests_test_facet_program_findings_test_effective_orders_and_oracle_are_distinct_from_fixed_rule_results",
-      "community": 247,
+      "community": 248,
       "norm_label": "test_effective_orders_and_oracle_are_distinct_from_fixed_rule_results()"
     },
     {
@@ -44530,7 +44530,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "tests_test_facet_program_findings_seed",
-      "community": 247,
+      "community": 248,
       "norm_label": "seed()"
     },
     {
@@ -44540,7 +44540,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "tests_test_facet_program_findings_test_pareto_seeds_preserve_mechanism_families_and_two_objectives",
-      "community": 247,
+      "community": 248,
       "norm_label": "test_pareto_seeds_preserve_mechanism_families_and_two_objectives()"
     },
     {
@@ -44680,7 +44680,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_reader",
-      "community": 30,
+      "community": 29,
       "norm_label": "test_facet_reader.py"
     },
     {
@@ -44690,7 +44690,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "tests_test_facet_reader_chunk",
-      "community": 30,
+      "community": 29,
       "norm_label": "_chunk()"
     },
     {
@@ -44700,7 +44700,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "tests_test_facet_reader_write",
-      "community": 30,
+      "community": 29,
       "norm_label": "_write()"
     },
     {
@@ -44710,7 +44710,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "test_tests_test_facet_reader_py_path",
-      "community": 30,
+      "community": 29,
       "norm_label": "path"
     },
     {
@@ -44720,7 +44720,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "tests_test_facet_reader_hypotheses",
-      "community": 30,
+      "community": 29,
       "norm_label": "hypotheses"
     },
     {
@@ -44730,7 +44730,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "tests_test_facet_reader_hypotheses_test_exact_strings",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_exact_strings()"
     },
     {
@@ -44740,7 +44740,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "tests_test_facet_reader_hypotheses_test_tag_inserted_verbatim",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_tag_inserted_verbatim()"
     },
     {
@@ -44750,7 +44750,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "tests_test_facet_reader_hypotheses_test_braces_in_a_tag_are_not_a_format_field",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_braces_in_a_tag_are_not_a_format_field()"
     },
     {
@@ -44760,7 +44760,7 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "tests_test_facet_reader_hypotheses_test_facets_are_the_four",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_facets_are_the_four()"
     },
     {
@@ -44770,7 +44770,7 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "tests_test_facet_reader_readandpairs",
-      "community": 30,
+      "community": 29,
       "norm_label": "readandpairs"
     },
     {
@@ -44780,7 +44780,7 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "tests_test_facet_reader_readandpairs_setup",
-      "community": 30,
+      "community": 29,
       "norm_label": ".setup()"
     },
     {
@@ -44790,7 +44790,7 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "tests_test_facet_reader_readandpairs_test_pairs_from_a_sample_chunk_file",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_pairs_from_a_sample_chunk_file()"
     },
     {
@@ -44800,7 +44800,7 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "tests_test_facet_reader_readandpairs_test_pairs_sorted_by_length",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_pairs_sorted_by_length()"
     },
     {
@@ -44810,7 +44810,7 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "tests_test_facet_reader_readandpairs_test_failed_manifest_and_incomplete_are_skipped_and_counted",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_failed_manifest_and_incomplete_are_skipped_and_counted()"
     },
     {
@@ -44820,7 +44820,7 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "tests_test_facet_reader_readandpairs_test_an_edge_missing_an_answer_is_skipped",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_an_edge_missing_an_answer_is_skipped()"
     },
     {
@@ -44830,7 +44830,7 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "tests_test_facet_reader_resume",
-      "community": 30,
+      "community": 29,
       "norm_label": "resume"
     },
     {
@@ -44840,7 +44840,7 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "tests_test_facet_reader_resume_setup",
-      "community": 30,
+      "community": 29,
       "norm_label": ".setup()"
     },
     {
@@ -44850,7 +44850,7 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "tests_test_facet_reader_resume_test_scores_present_for_an_answer_sha_are_not_recomputed",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_scores_present_for_an_answer_sha_are_not_recomputed()"
     },
     {
@@ -44860,7 +44860,7 @@
       "source_location": "L131",
       "_origin": "ast",
       "id": "tests_test_facet_reader_resume_test_a_changed_answer_is_read_again",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_a_changed_answer_is_read_again()"
     },
     {
@@ -44870,7 +44870,7 @@
       "source_location": "L143",
       "_origin": "ast",
       "id": "tests_test_facet_reader_merge",
-      "community": 30,
+      "community": 29,
       "norm_label": "merge"
     },
     {
@@ -44880,7 +44880,7 @@
       "source_location": "L144",
       "_origin": "ast",
       "id": "tests_test_facet_reader_merge_setup",
-      "community": 30,
+      "community": 29,
       "norm_label": ".setup()"
     },
     {
@@ -44890,7 +44890,7 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "tests_test_facet_reader_merge_scores",
-      "community": 30,
+      "community": 29,
       "norm_label": "._scores()"
     },
     {
@@ -44900,7 +44900,7 @@
       "source_location": "L157",
       "_origin": "ast",
       "id": "tests_test_facet_reader_merge_test_merge_with_identity_fields",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_merge_with_identity_fields()"
     },
     {
@@ -44910,7 +44910,7 @@
       "source_location": "L167",
       "_origin": "ast",
       "id": "tests_test_facet_reader_merge_test_merge_by_pair_id_when_identity_is_gone",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_merge_by_pair_id_when_identity_is_gone()"
     },
     {
@@ -44920,7 +44920,7 @@
       "source_location": "L175",
       "_origin": "ast",
       "id": "tests_test_facet_reader_merge_test_an_unmatchable_score_line_raises",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_an_unmatchable_score_line_raises()"
     },
     {
@@ -44930,7 +44930,7 @@
       "source_location": "L181",
       "_origin": "ast",
       "id": "tests_test_facet_reader_overlay",
-      "community": 30,
+      "community": 29,
       "norm_label": "overlay"
     },
     {
@@ -44940,7 +44940,7 @@
       "source_location": "L182",
       "_origin": "ast",
       "id": "tests_test_facet_reader_overlay_setup",
-      "community": 30,
+      "community": 29,
       "norm_label": ".setup()"
     },
     {
@@ -44950,7 +44950,7 @@
       "source_location": "L187",
       "_origin": "ast",
       "id": "tests_test_facet_reader_overlay_test_overlay_shape_matches_facet_stats",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_overlay_shape_matches_facet_stats()"
     },
     {
@@ -44960,7 +44960,7 @@
       "source_location": "L207",
       "_origin": "ast",
       "id": "tests_test_facet_reader_overlay_test_overlay_keys_are_the_facet_stats_keys",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_overlay_keys_are_the_facet_stats_keys()"
     },
     {
@@ -44970,7 +44970,7 @@
       "source_location": "L212",
       "_origin": "ast",
       "id": "tests_test_facet_reader_labels",
-      "community": 30,
+      "community": 29,
       "norm_label": "labels"
     },
     {
@@ -44980,7 +44980,7 @@
       "source_location": "L213",
       "_origin": "ast",
       "id": "tests_test_facet_reader_labels_test_label_order_read_off_the_config",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_label_order_read_off_the_config()"
     },
     {
@@ -44990,7 +44990,7 @@
       "source_location": "L219",
       "_origin": "ast",
       "id": "tests_test_facet_reader_labels_test_a_reordered_config_is_followed",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_a_reordered_config_is_followed()"
     },
     {
@@ -45000,7 +45000,7 @@
       "source_location": "L225",
       "_origin": "ast",
       "id": "tests_test_facet_reader_labels_test_a_config_without_the_labels_raises",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_a_config_without_the_labels_raises()"
     },
     {
@@ -45010,7 +45010,7 @@
       "source_location": "L232",
       "_origin": "ast",
       "id": "tests_test_facet_reader_pairsout",
-      "community": 30,
+      "community": 29,
       "norm_label": "pairsout"
     },
     {
@@ -45020,7 +45020,7 @@
       "source_location": "L233",
       "_origin": "ast",
       "id": "tests_test_facet_reader_pairsout_setup",
-      "community": 30,
+      "community": 29,
       "norm_label": ".setup()"
     },
     {
@@ -45030,7 +45030,7 @@
       "source_location": "L238",
       "_origin": "ast",
       "id": "tests_test_facet_reader_pairsout_test_pairs_out_loads_no_model",
-      "community": 30,
+      "community": 29,
       "norm_label": ".test_pairs_out_loads_no_model()"
     },
     {
@@ -45670,7 +45670,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_scope_program_lab",
-      "community": 259,
+      "community": 260,
       "norm_label": "test_facet_scope_program_lab.py"
     },
     {
@@ -45680,7 +45680,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "tests_test_facet_scope_program_lab_test_scope_override_is_query_grounded_and_does_not_mutate_saved_case",
-      "community": 259,
+      "community": 260,
       "norm_label": "test_scope_override_is_query_grounded_and_does_not_mutate_saved_case()"
     },
     {
@@ -45970,7 +45970,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_structural_findings",
-      "community": 260,
+      "community": 261,
       "norm_label": "test_facet_structural_findings.py"
     },
     {
@@ -45980,7 +45980,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "tests_test_facet_structural_findings_test_only_one_structural_change_is_matched_and_context_reversal_is_visible",
-      "community": 260,
+      "community": 261,
       "norm_label": "test_only_one_structural_change_is_matched_and_context_reversal_is_visible()"
     },
     {
@@ -47740,7 +47740,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_weighted_fast",
-      "community": 224,
+      "community": 225,
       "norm_label": "test_facet_weighted_fast.py"
     },
     {
@@ -47750,7 +47750,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "tests_test_facet_weighted_fast_test_competition_many_matches_row_wise_competition",
-      "community": 224,
+      "community": 225,
       "norm_label": "test_competition_many_matches_row_wise_competition()"
     },
     {
@@ -47760,7 +47760,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "tests_test_facet_weighted_fast_test_competition_many_unsupported_get_n_plus_one",
-      "community": 224,
+      "community": 225,
       "norm_label": "test_competition_many_unsupported_get_n_plus_one()"
     },
     {
@@ -47770,7 +47770,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "tests_test_facet_weighted_fast_test_families_groups_by_match_topology_join_and_rejects_other_facets",
-      "community": 224,
+      "community": 225,
       "norm_label": "test_families_groups_by_match_topology_join_and_rejects_other_facets()"
     },
     {
@@ -47780,7 +47780,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "tests_test_facet_weighted_fast_test_max_cut_chunks_counts_smallest_units_to_the_budget",
-      "community": 224,
+      "community": 225,
       "norm_label": "test_max_cut_chunks_counts_smallest_units_to_the_budget()"
     },
     {
@@ -47790,7 +47790,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_weighted_fast_rationale_1",
-      "community": 224,
+      "community": 225,
       "norm_label": "the grouped replay must reproduce the per-policy ranking primitives exactly."
     },
     {
@@ -47800,7 +47800,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_weighted_lab",
-      "community": 237,
+      "community": 238,
       "norm_label": "test_facet_weighted_lab.py"
     },
     {
@@ -47810,7 +47810,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "tests_test_facet_weighted_lab_test_invalid_coefficients",
-      "community": 237,
+      "community": 238,
       "norm_label": "test_invalid_coefficients()"
     },
     {
@@ -47820,7 +47820,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tests_test_facet_weighted_lab_test_other_combinations_reject_custom_coefficients",
-      "community": 237,
+      "community": 238,
       "norm_label": "test_other_combinations_reject_custom_coefficients()"
     },
     {
@@ -47830,7 +47830,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "tests_test_facet_weighted_lab_test_real_case_cache_isolation_pinned_coefficients_and_original_response",
-      "community": 237,
+      "community": 238,
       "norm_label": "test_real_case_cache_isolation_pinned_coefficients_and_original_response()"
     },
     {
@@ -47840,7 +47840,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_weighted_lab_rationale_1",
-      "community": 237,
+      "community": 238,
       "norm_label": "live weighting must preserve cached ranking and independent pinned weights."
     },
     {
@@ -158090,5 +158090,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "746b230b4ca89397f15fe59303b0203bf63bfd47"
+  "built_at_commit": "0f46700805a718b9689dec3b0350f46a58d1e515"
 }
