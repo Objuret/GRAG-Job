@@ -25,9 +25,9 @@
     "semantic_hash": "a3bd5742e6925cd41c57a91019c5c235"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\prod\\eval\\ragas.py": {
-    "mtime": 1792967012.0161278,
-    "ast_hash": "b39ffabe111a7b4d784f6bb9706adc57",
-    "semantic_hash": "b39ffabe111a7b4d784f6bb9706adc57"
+    "mtime": 1793337520.3084252,
+    "ast_hash": "caa17848ada2d9d1df948d9b227b1af6",
+    "semantic_hash": "caa17848ada2d9d1df948d9b227b1af6"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\prod\\eval\\ragas_catalog.py": {
     "mtime": 1792961877.0681746,
@@ -115,9 +115,9 @@
     "semantic_hash": "0f77c7493ec5d58ae75b6bac8d9bbe1b"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\prod\\run.py": {
-    "mtime": 1792491536.2403526,
-    "ast_hash": "703162d2f1baa0fca7186ae4287b89ec",
-    "semantic_hash": "703162d2f1baa0fca7186ae4287b89ec"
+    "mtime": 1793332471.0386264,
+    "ast_hash": "6d02e91bd4c8a4998c704490710a4832",
+    "semantic_hash": "6d02e91bd4c8a4998c704490710a4832"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\prod\\tests\\test_baseline_corpus.py": {
     "mtime": 1791501654.9361582,
@@ -1433,5 +1433,10 @@
     "mtime": 1793142985.034239,
     "ast_hash": "02e3c55878cb66772c2dc502ee669b37",
     "semantic_hash": "02e3c55878cb66772c2dc502ee669b37"
+  },
+  "C:\\Coding\\exjobbet\\GRAG-Job\\prod\\arms\\gold_evidence.py": {
+    "mtime": 1793337521.932048,
+    "ast_hash": "6836752698b811c209c083ffc8f10f16",
+    "semantic_hash": "6836752698b811c209c083ffc8f10f16"
   }
 }

@@ -550,7 +550,9 @@ def contents_handed_over(contexts, context_ids, meta, records) -> list:
     several records is their record_text forms joined by a blank line, or the start of that join
     where the character budget cut it. Each record's header is taken off; a record cut before its
     content gives nothing. The records behind each text come from meta's chunk_ids, or else from
-    context_ids with the record cut at the budget last."""
+    context_ids with the record cut at the budget last. A text with no record behind it (a
+    directory entry, a block of the gold arm's oracle context) holds no corpus record and gives
+    nothing."""
     meta = meta or {}
     if "chunk_ids" in meta:
         id_lists = meta["chunk_ids"]
@@ -562,6 +564,8 @@ def contents_handed_over(contexts, context_ids, meta, records) -> list:
     out = []
     for text, ids in zip(contexts, id_lists):
         ids = [str(i) for i in ids]
+        if not ids:
+            continue
         if len(ids) == 1:
             # of an id with several versions, the one whose header the text starts with
             versions = _versions(records, ids[0])

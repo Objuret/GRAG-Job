@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-3100 turns, chronological. Verbatim text; no edits.
+3131 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -21939,4 +21939,285 @@ status
 ## 2026-10-29 23:32 · fb7cf733-3ae3-4b5b-9845-79e178c10f54.jsonl
 
 ffs.. yes, do this correctly instead then please.. mcp is the correct choice right?
+
+## 2026-10-29 23:40 · fb7cf733-3ae3-4b5b-9845-79e178c10f54.jsonl
+
+wtf are you even talking about, what are these shitty solutions.. dude, what are you doing?
+
+## 2026-10-29 23:47 · fb7cf733-3ae3-4b5b-9845-79e178c10f54.jsonl
+
+start it with cursor then, or pc start, or let me do it or what the fuck ever dude, just do a hook or check, "is it on, yeah, ok, no - start" how hard can this be?
+
+## 2026-10-30 00:08 · fb7cf733-3ae3-4b5b-9845-79e178c10f54.jsonl
+
+ok, can you make sure this works when i start claude or gpt app also?
+
+## 2026-10-30 00:50 · fb7cf733-3ae3-4b5b-9845-79e178c10f54.jsonl
+
+check, working?
+
+## 2026-10-30 00:51 · fb7cf733-3ae3-4b5b-9845-79e178c10f54.jsonl
+
+ok.. you said the cost would be 22mb.. is its held in memory like this, should it be fucking FAST to use then? IS it actually used?
+
+## 2026-10-30 00:52 · c67fa419-3f87-46e5-854c-c408e996c9ed.jsonl
+
+oi the git plugin etc said this about the repo: "The git repository at "c:\Coding\exjobbet\GRAG-Job" has too many active changes, only a subset of Git features will be enabled."
+
+## 2026-10-30 00:55 · fb7cf733-3ae3-4b5b-9845-79e178c10f54.jsonl
+
+ok, so, just keep working like usual now?
+
+## 2026-10-30 00:55 · 8c4c47a7-a875-4382-937a-f10ed94927a2.jsonl
+
+resume
+
+## 2026-10-30 01:23 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+*paste / file drop · 15297 chars*
+
+well, this was the actual correspondense about this part of the project:"
+
+<pasted_content id="ed2a">
+Hi,
+
+Before finalizing the evaluation, I would like to clarify a few remaining points:
+Corpus size and metadata: The workbook reports 38,540 indexed records, whereas HERB describes 39,190 artifacts. Could you clarify this difference? Also, are HERB's employee and company metadata files available to all three retrieval methods? This may be important for questions concerning employee roles and company identification.
+Factual correctness: I understand that the newly added RAGAS metrics do not perform exact identifier matching. However, I noticed some potentially misleading scores. For example, Lucene receives a factual-correctness score of 1.0 for AutoTuneForce::a::0, despite not identifying either expected employee ID. Should we reconsider using this metric in the main evaluation? The new string_presence_per_id metric is useful for measuring identifier recall, but could we also calculate precision and F1 to account for additional incorrect IDs or links?
+Retrieval versus answer generation: Artefact achieves considerably higher evidence recall, but the improvement in answer correctness is relatively modest. Could this be due to additional irrelevant information in the retrieved chunks? A small experiment using only HERB's gold evidence with the same answer model might help determine whether answer generation or context construction is limiting performance.
+Statistical analysis: Since the evaluation includes the same 815 questions across all methods, we should include paired statistical comparisons and confidence intervals. I also suggest reporting performance by question type, as the improvements differ between content, person, PR, company, and URL questions.
+Documentation: There is a minor inconsistency in the workbook's key sheet, which mentions 715 questions under index construction instead of 815. This can be corrected along with documenting the corpus filtering and evaluation settings.
+
+Best regards,
+
+Vijay
+
+ 
+
+From: Joakim Wikman (Student) <h23joawi@du.se>
+Sent: Wednesday, October 28, 2026 07:30
+To: Vijay Pratap Paidi (HDa) <vpp@du.se>; Nausheen Saeed (HDa) <nse@du.se>; Joakim Sandström (Student) <h19josan@du.se>
+Cc: Johan Håkansson Storbjörk (HDa) <jhk@du.se>
+Subject: Re: Meeting to discuss how to make thesis to article.
+ 
+Morsning!
+
+Here's the updated workbook. The changes since the last version:
+
+All 815 questions. It now covers all 815 answerable HERB questions, not just the 100, for all three arms. The averages in "run data" are over all 815.
+
+Reference answers and answers added. Each row in "results" now also has HERB's reference answer and the ids of its evidence records (reference_answer, reference_context_ids), which is what RAGAS scored against. So you can read each arm's answer side by side with the reference.
+
+Two more RAGAS scores. factual_correctness checks the answer claim by claim against the reference answer. context_entity_recall looks at how many of the reference answer's entities show up in the retrieved context. Both are explained in the key. I expected these two to answer your question on employee IDs and PR links, but they didn't, since neither is an exact check of the IDs and links in the answer. Since they were ran i kep them here anyway. 
+
+Your question on employee IDs and PR links. As an solution to this, since the metrics we  use already have the components needed, we made a granulated or sub-category of StringPresence in string_presence_per_id, which is RAGAS's StringPresence, but run on each ID or link in the reference separately instead of on the whole reference. So it shows what share of the expected IDs and links the answer actually contains, on the person, PR and URL questions. Read it next to context_recall_id (how many of the evidence records reached the answer model), and it should help tell whether a miss happened in retrieval or in the answer.
+
+Everything else is as before, and the key describes every column.
+
+Regards,
+Wikman
+
+From: Vijay Pratap Paidi (HDa) <vpp@du.se>
+Sent: Tuesday, October 27, 2026 10:32 AM
+To: Joakim Wikman (Student) <h23joawi@du.se>; Nausheen Saeed (HDa) <nse@du.se>; Joakim Sandström (Student) <h19josan@du.se>
+Cc: Johan Håkansson Storbjörk (HDa) <jhk@du.se>
+Subject: Re: Meeting to discuss how to make thesis to article.
+ 
+Hi,
+
+Thanks for the detailed response. 
+
+I am happy with the explanation and measures taken. Looking forward to seeing the updated workbook.
+
+Best regards,
+
+Vijay
+
+
+
+From: Joakim Wikman (Student) <h23joawi@du.se>
+Sent: Monday, October 26, 2026 13:08
+To: Vijay Pratap Paidi (HDa) <vpp@du.se>; Nausheen Saeed (HDa) <nse@du.se>; Joakim Sandström (Student) <h19josan@du.se>
+Cc: Johan Håkansson Storbjörk (HDa) <jhk@du.se>
+Subject: Re: Meeting to discuss how to make thesis to article.
+ 
+Hi, 
+
+So, one at a time:
+Evidence budget: 72,000 characters is a hard cap, applied the same way to all three methods: each method’s results are taken in its own rank order and cut at the 72,000th character.
+In characters, Lucene and vector fill the cap on every question. The artefact fills it on 90 of 100 questions. This comes from how the artefact works: it first limits the search to the part of the data that the question points at (scope) and if that part holds only a few records, the artefact takes those, and then there is nothing more there to take. 
+
+In tokens they differ because the same number of characters gives more tokens for some kinds of text than for others. Some messages, which carry IDs and timestamps, give more tokens per character than document text. Vector and the artefact pass a larger share of those messages than lucene does.
+
+Yes, both are recorded for every question, and both are in the workbook: the characters of evidence passed (retrieved_context_characters) and the input tokens of the answer call (answer_tokens_in).
+
+Context recall and precision: All three methods are scored on the dataset’s original source-record IDs, never on artefact chunk IDs. The artefact’s chunks are counted as the records inside them, never as chunks. Only what was actually passed to the answer model counts, after the 72,000-character cut has been made, and a record counts only if the model got all of it.
+Differences between recall metrics: Well, looking into this made us find 2 bugs, there were a format-diff between the retrieved and compared records. The artefact also had it's entire chunks read as 1 record. Fixed and re-ran after that and got much more reasonable results. It affects the non-LLM recall, not the ID-based one. 
+ID-based recall checks whether the right records were passed, by their IDs. Every record in our data has an ID, so this count is exact.
+
+Non-LLM recall tries to answer the same question by comparing text: a cited record counts as found if a passed text looks more than half like it.
+
+Once we fixed both bugs, non-LLM recall found exactly the records ID recall finds, plus wrong matches: different messages that look alike because HERB writes many of them from the same templates. So fixed, it becomes the same as ID recall, but worse. Every record in our data has an ID, so we suggest dropping non-LLM recall and precision and using the ID-based ones. The recalculated numbers are in the workbook now anyway .
+
+We also checked the other scores that don’t use a judge because of this.
+We suggest dropping bleu as well. RAGAS’s version only scores the first sentence of each answer: an answer whose first sentence is wrong scores 0 even if the rest is exactly HERB’s answer. On our runs it ranks the methods Lucene > artefact > vector, while BLEU on the whole answer ranks them artefact > vector > Lucene.
+We also suggest dropping string_similarity. It compares the whole answer with HERB’s much shorter answer, so its score mostly follows how close the two lengths are (correlation 0.95), not what the answer says.
+exact_match and string_presence are correct but tell little here.
+Answer correctness: We checked this by comparing answer_correctness with context_recall_id (how much of HERB’s evidence was retrieved) for each question. Both are in the results sheet.
+Lucene and vector rarely retrieve more than half of the evidence. Lucene got none of it for 26 of the 100 questions, and that is where its correctness is lowest. For those two methods, retrieval is the main problem.
+Artefact is different. It gets at least half of the evidence for 82 questions, but its correctness stays around 0.27 no matter how much it retrieved, and it only reaches 0.40 when it got all of it. For artefact, the loss happens after retrieval, when the answer is pulled out of the evidence. (Presumably because of it fetching "some extra" in it's chunk)
+High faithfulness and low correctness don’t contradict each other. Faithfulness only says the answer sticks to what was retrieved, not that it is complete. Most of the “could not be found” answers still had some of the relevant evidence retrieved.
+So, regarding your thoughts about questions involving employee IDs and PR links. I had another look through the ragas_catalog we made and found a couple of unused metrics that actually fits this, factual_correctness and context_entity_recall.
+factual_correctness (RAGAS FactualCorrectness) splits the answer and the reference into claims and scores precision/recall/F1 over them. Each ID or link becomes a claim, so it comes close to entity-level accuracy, judged by the model.
+context_entity_recall (RAGAS ContextEntityRecall) checks whether the gold entities appear in the retrieved text. It is the retrieval side of the same question.
+     I added these to the runs (the others are still kept, but the recommendation stands) and shove it all into the workbook.
+Comparison and statistical analysis: Yes. All three methods were evaluated under identical conditions. Each arm answered the same 100 questions (the question_id column on the results sheet). Every answer was scored against the same reference, HERB’s own answer and evidence record ids for each question. Both are now in the results sheet as reference_answer and reference_context_ids. The judging setup was also the same for all three arms: one judge model, one answer model, one embedding model and the same character limit, all listed on the run data sheet. The results sheet has one row per method and question, so the scores pair up directly on question_id.
+For your final query about the retrieval results: Yes, we kept all of them. For every question and every method we have the source IDs of the retrieved records, the retrieved texts exactly as they were passed to the answer model, and the length of that context. The context length is already in the workbook (retrieved_context_characters on the results sheet), next to HERB’s reference evidence ids for each question (reference_context_ids). The retrieved source IDs and texts are a bit large so i kept them out of the workbook, but, yeah, still available. Pretty much everything is kept and is able to be recalculated or reused somehow.
+A side note on the timings: as you know, they’re a weak data point. They depend on hardware, network latency and the model provider etc. Mostly there to give at least a rough sense of how the methods compare on speed. Still, the retrieval time (search_seconds) depends only on the hardware, and the token counts (interpreter_tokens_, query_embedding_tokens, answer_tokens_) give a fair indication of the time spent in the models, so together they say at least something about speed, if that is interesting at all.
+
+The updated workbook is not included here yet, i had hardware issues and had to spend my time solving that instead. I have to work this afternoon but i'll try to ship it tonight or tomorrow. Just wanted to make sure this was sent atleast..
+
+I have been writing this piecemeal so i apologize if it's disjointed, please do tell if anything is unclear.
+
+Cheers,
+Wikman
+
+
+From: Vijay Pratap Paidi (HDa) <vpp@du.se>
+Sent: Wednesday, October 21, 2026 10:00 AM
+To: Joakim Wikman (Student) <h23joawi@du.se>; Nausheen Saeed (HDa) <nse@du.se>; Joakim Sandström (Student) <h19josan@du.se>
+Cc: Johan Håkansson Storbjörk (HDa) <jhk@du.se>
+Subject: Re: Meeting to discuss how to make thesis to article.
+ 
+Hi,
+
+Good morning!
+
+Thanks for sharing the results. Data format is fine, and the proposed 72k-character cap seems reasonable, particularly since the retrieval units differ across the three methods.
+Before we proceed further, I would like to clarify a few methodological points to ensure the comparisons are fair.
+Evidence budget: Although all three methods have a 72k-character limit, their average answer input tokens differ (26k for Lucene, 30k for vector and 32k for Artefact). Is 72k simply the maximum allowed, or are the methods actually receiving comparable amounts of evidence? Can we record the actual characters and tokens supplied for each question?
+Context recall and precision: Artefact retrieves larger chunks containing multiple source records. Are the ID-based metrics calculated using the original source-record IDs or the Artefact chunk IDs? Ideally, we should evaluate all three methods against the same original source records, considering only evidence actually passed to the answer model.
+Differences between recall metrics: Artefact achieves considerably higher ID-based context recall (0.647), but its non-LLM recall is much lower (0.053). Could we check how these metrics are calculated and whether the difference in retrieval granularity affects them?
+Answer correctness: Despite relatively high faithfulness across all three methods, answer correctness remains low (0.175–0.273). Several answers also indicate that the requested information could not be found. Could we examine whether this is primarily a retrieval problem or an issue with extracting the correct answer from the retrieved evidence? For questions involving employee IDs and PR links, exact entity-level accuracy might be more informative than text-similarity metrics.
+Comparison and statistical analysis: Can we confirm that all three methods were evaluated on exactly the same questions, reference answers and judging setup? If so, we could perform paired statistical comparisons and calculate confidence intervals to establish whether Artefact's improvements are significant.
+Do we have the original retrieval results, including source IDs, retrieved contexts and actual context lengths? If these are available, we may be able to verify or recalculate several metrics without rerunning the experiments.
+Best regards, 
+Vijay
+
+
+
+ 
+
+From: Joakim Wikman (Student) <h23joawi@du.se>
+Sent: Wednesday, October 21, 2026 07:18
+To: Vijay Pratap Paidi (HDa) <vpp@du.se>; Nausheen Saeed (HDa) <nse@du.se>; Joakim Sandström (Student) <h19josan@du.se>
+Cc: Johan Håkansson Storbjörk (HDa) <jhk@du.se>
+Subject: Re: Meeting to discuss how to make thesis to article.
+ 
+Hi and good morning,
+
+The data is attatched here, i structured it as an excel workbook with tabs for results, rundata, construction and a key.
+Do tell if i missed something or if the format is bad. 
+
+Cheers, 
+Wikman
+</pasted_content id="ed2a">
+
+"
+so you get the actual conversation.. it's like hes not reading, understanding or using ai to analyse and answer because.. yeah.. reflect and reason
+
+## 2026-10-30 01:36 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+*queued while an agent was working*
+
+this broke again?
+
+## 2026-10-30 01:36 · fb7cf733-3ae3-4b5b-9845-79e178c10f54.jsonl
+
+dude, shit froze again?
+
+## 2026-10-30 01:45 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+well, this enforces my opinion and interpretation about the situation.. not only are you aggressively defeinding him, you are also "fully understanding the arguments and questions he has" which means a fucking ai wrote it because noone else would interpret this like that
+
+## 2026-10-30 01:47 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+i litterally said "this is bad, i thought it was good, but now i see its bad, this is why its bad" and he answered "hm, this doesnt look like it does the thing, maybe we shouldent use this metric? what do you think?".. dude? what the fuck?
+
+## 2026-10-30 01:48 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+no, no fucking human would say that, the last thing i wrote was a recommendation to drop it and just included it for him to see what it was, see, you STILL fucking defend this
+
+## 2026-10-30 01:49 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+"It fits your reading: the reply reacts to the column in the workbook, not to what you wrote."
+how the fuck is this MY reading?
+
+## 2026-10-30 01:54 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+so, can you respond to each point a little more reasonable and brief with this in mind?
+
+## 2026-10-30 01:58 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+ok, point 1 then, the corpus and metadata, explore wtf happened here, why  its not in and what it means, the decisions and thought that led there etc, i was under the impression that those were not used in herb
+
+## 2026-10-30 02:38 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+soo.. status?
+
+## 2026-10-30 03:02 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+but fucking WHY were they excluded!?
+
+## 2026-10-30 03:04 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+this fucking cant be it dude.. really? no actual reason? no actual fucking reason we just DID NOT USE A PART OF THE DATASET!?
+
+## 2026-10-30 03:12 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+go further back you cunt
+
+## 2026-10-30 03:15 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+that is NOT the first repo commit..
+
+## 2026-10-30 03:21 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+so, what is the reasonable thing to do here? and what is the analyst actually asking for?
+
+## 2026-10-30 03:42 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+ok, so, we add them back in then, before doing all of that shit again, what more do we need to do according to his questions?
+
+## 2026-10-30 03:46 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+ok, so, first 2, then 1, and since you hopefully have learned by the last weeks corrections and issues how to actually do everything correct from the start now and gather all relevant metadatametrics etc from the runs, we go.. also, run it on the desktop pc using the graphics card when possible etc..
+
+## 2026-10-30 03:47 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+*queued while an agent was working*
+
+do a gold test and analyse it briefly of the new goldarm before committing fully to the build, also, use agents for orchestration and all stuff from the laptop, but do the actual runs on the desktop
+
+## 2026-10-30 03:48 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+*queued while an agent was working*
+
+and dont hold back for no useful reason here, i want this actually done correctly and as well and fest as i can without breaking shit
+
+## 2026-10-30 04:28 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+status
+
+## 2026-10-30 04:34 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+you know what, i am thinking about having a bit of a sneaky manouvering here, how about we do a few tests before we do the megaruns again.. perhaps we dont have to run all the 815 questions, perhaps it's enough to run questions that could trigger them so to speak.. you know what i mean, right?
+
+## 2026-10-30 04:35 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+a bit shifty.. buy also.. fucking 4x815 again.. dude.. that is a fucking insane amount
+
+## 2026-10-30 04:40 · 393f7a90-bdd2-4756-bf14-05ef5209f07a.jsonl
+
+ah, yes, the evidence path is smart
 

@@ -21,8 +21,9 @@ the palace and the session transcripts; the numbers are in the run folders and u
 
 ## Where
 
-- `prod/` — the finished system: `harness/`, `eval/`, `arms/` (lucene, vector, hybrid), `run.py`,
-  `tests/`. `test/` — the artefact: `arms/`, `artefact/`, `graph/` (db, builders, facet tools),
+- `prod/` — the finished system: `harness/`, `eval/`, `arms/` (lucene, vector, hybrid, and
+  gold_evidence: HERB's own oracle context for the question, its product's team and customers and
+  the cited records, with no retrieval), `run.py`, `tests/`. `test/` — the artefact: `arms/`, `artefact/`, `graph/` (db, builders, facet tools),
   `tests/`. `python prod/run.py --arm <arm> --set <set>` from the repo root loads arms from both.
   Runs and their manifests in `output/`; data in `data/`.
 - The artefact: `test/arms/artefact_v4.py`. What it does, step by step with each step's function,
@@ -175,7 +176,8 @@ The harness and the data:
   output cap of its own gets the model's own maximum (`CLAUDE_CODE_MAX_OUTPUT_TOKENS` 128000, which
   Claude Code lowers to each model's cap).
 - *"72 is the cut for what gets fed to the agent to generate the output, the allowed context-size from the query"* (2026-09-13) · *"apparently we got it right with lucene and vector for tgose 72k caps, make sure the artefact also follows that rule"* (2026-09-13) — the arm ranks everything; the 72,000-character cut is the harness's, applied after.
-- *"the db only exists for the artefact and is created with it"* (2026-08-27) · *"vector and lucene sure as fuck shoulw never use the artefact or the graph DB, and there is a fucking reason thoes 3 files or off for the artefact"* · *"just dont use those chunks"* (2026-09-13) — the three metadata files' 61 chunks are out of the artefact's pool.
+- *"the db only exists for the artefact and is created with it"* (2026-08-27) · *"vector and lucene sure as fuck shoulw never use the artefact or the graph DB"* (2026-09-13)
+- *"ok, so, we add them back in then"* · *"first 2, then 1"* (2026-10-30, on HERB's three metadata files `employee.json`, `customers_data.json` and `salesforce_team.json`, which HERB's dataset card names a source for RAG and which no arm's answer model had read since the v3 baselines of 2026-06-21 left them out) — the metadata files are in every arm's corpus: lucene and vector index them, and the artefact's pool holds their chunks.
 - *"so, perhaps update the DB with the actual new information so the db is the only thing beeing used?"* · *"yeah make the db current before anything else"* (2026-10-06) — the facet layer is read from the graph.
 - *"dude, it MUST be asked of the DB, what the fuck is the point of this is its not actually using the db.."* (2026-10-07) — the retrieval is asked of the database per question, not worked out on arrays read out of it at start.
 - *"tracability is the pointers to the actual data etc"* (2026-10-05) · *"thats the fucking pointers to the real data..."* · *"and you know... SAVING THAT"* (2026-10-08, on the abstract's "traceability indicators")

@@ -25,8 +25,9 @@ ARMS = ("lucene", "vector", "hybrid", "artefact", "artefact_v1", "artefact_v1_de
         "artefact_v1_relevance_weight", "artefact_v1_five_questions", "artefact_v2",
         "artefact_v3", "artefact_v3GRAG",
         "artefact_volmax", "artefact_graph", "artefact_composed", "artefact_chain",
-        "artefact_scope", "artefact_cluster", "artefact_facet_joint", "artefact_facet_area", "artefact_v4")
-CHAR_BUDGET_ARMS = ("lucene", "vector", "artefact_v1", "artefact_v1_det", "artefact_v2",
+        "artefact_scope", "artefact_cluster", "artefact_facet_joint", "artefact_facet_area", "artefact_v4",
+        "gold_evidence")
+CHAR_BUDGET_ARMS = ("lucene", "vector", "gold_evidence", "artefact_v1", "artefact_v1_det", "artefact_v2",
                     "artefact_v3", "artefact_v3GRAG",
                     "artefact_graph", "artefact_composed", "artefact_chain",
                     "artefact_scope", "artefact_cluster", "artefact_facet_joint", "artefact_facet_area",
