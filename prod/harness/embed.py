@@ -14,7 +14,8 @@ EMBED_MODEL = "nvidia/llama-nemotron-embed-1b-v2"
 
 EMBED_REVISION = "113abe4acafa848e77ead9c0623205e511932348"
 
-# HERB_EMBED_DEVICE=cuda puts the embedder on the graphics card (the desktop's GTX 1080 Ti)
+# HERB_EMBED_DEVICE=cuda puts the embedder on the graphics card (the desktop's GTX 1080 Ti); a
+# run whose arm or scoring asks the embedder refuses to start without it (`require_cuda`)
 EMBED_DEVICE = os.environ.get("HERB_EMBED_DEVICE", "cpu")
 
 EMBED_DTYPE = "float32"
@@ -24,6 +25,10 @@ EMBED_PREFIX = {"query": "query: ", "passage": "passage: "}
 EMBED_BATCH = 1
 
 QUERY_VECS_PATH = Path(__file__).resolve().parent.parent.parent / "data" / "question_query_vecs.npz"
+
+# requests made once, not timed, before requests are timed alone: the number the measurements of
+# corrections embed-gpu-time and judge-embed-gpu-time warmed up with (tools/measure_gpu_*.py)
+WARM_REQUESTS = 20
 
 _model = None
 
@@ -117,3 +122,54 @@ def _embed(texts: list, input_type: str, batch: int = EMBED_BATCH,
     norms[norms == 0] = 1.0
     mat /= norms
     return mat, calls, tokens_in, tokens_out, secs
+
+
+def require_cuda(what: str) -> None:
+    """Stops a start in which `what` asks the embedder unless the embedder is on a graphics card:
+    every embedding time of a run is the card's (corrections embed-gpu-time and
+    judge-embed-gpu-time put them there after the run)."""
+    if not EMBED_DEVICE.startswith("cuda"):
+        raise RuntimeError(f"{what} asks the embedder and HERB_EMBED_DEVICE is {EMBED_DEVICE!r}: "
+                           "a run embeds on a graphics card only (HERB_EMBED_DEVICE=cuda)")
+    import torch
+    if not torch.cuda.is_available():
+        raise RuntimeError(f"{what} asks the embedder and HERB_EMBED_DEVICE is {EMBED_DEVICE!r}, "
+                           "but torch sees no graphics card")
+
+
+def time_alone(records: list) -> list:
+    """Each embed record's request made again with the same texts in the same input type, one
+    after the other in this process with nothing else under way, after the first WARM_REQUESTS of
+    them made once and not timed, as the measurements of corrections embed-gpu-time and
+    judge-embed-gpu-time made them. Returns, per record, the record of the request made again;
+    a request whose texts now give other tokens stops it. The requests are not added to what
+    `take_totals` reads."""
+    with _totals_lock:
+        before = dict(_totals)
+    try:
+        for r in records[:WARM_REQUESTS]:
+            _embed_request(r["texts"], r["input_type"])
+        out = []
+        for r in records:
+            cap, token = capture.start()
+            try:
+                _embed_request(r["texts"], r["input_type"])
+            finally:
+                capture.stop(token)
+            again = cap.close()["calls"][-1]
+            if again["tokens_in"] != r.get("tokens_in"):
+                raise RuntimeError(f"an embed request made again gives {again['tokens_in']} tokens, "
+                                   f"its record {r.get('tokens_in')}")
+            out.append(again)
+    finally:
+        with _totals_lock:
+            _totals.update(before)
+    return out
+
+
+def retimed(record: dict, again: dict) -> dict:
+    """The record with the device, encode_s and lock_wait_s of its request made alone
+    (`time_alone`); those it was made with while the start ran are kept under in_run."""
+    return {**record, "device": again["device"], "encode_s": again["encode_s"],
+            "lock_wait_s": again["lock_wait_s"],
+            "in_run": {k: record.get(k) for k in ("device", "encode_s", "lock_wait_s")}}

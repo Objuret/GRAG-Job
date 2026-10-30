@@ -31,26 +31,40 @@ def whole(text: str) -> tuple:
 USAGE = {
     "calls": "How many model calls this counts. An answer is one call, however many tries it took.",
     "attempts": "How many times the model was asked in all, the tries that did not answer included.",
-    "tokens_in": "Tokens the model was sent in the try that answered: the provider's count of the "
-                 "whole input, the part it read from its prompt cache included.",
+    "tokens_in": "Tokens the model was sent in the try that answered: the Claude program's own "
+                 "count for the model (modelUsage) of the whole input, the part read from the "
+                 "prompt cache included; of the first request alone where the program rejected the "
+                 "answer's form and the model wrote it again (the call record's counted).",
     "cached_input_tokens": "The part of tokens_in the provider read from its prompt cache instead "
                            "of reading it fresh. It depends on what was sent shortly before, not "
                            "on the arm.",
-    "tokens_out": "Tokens the model wrote in the try that answered.",
+    "tokens_out": "Tokens the model wrote in the try that answered, counted as tokens_in is.",
     "reasoning_tokens": "Always 0: thinking is off, and this way of calling the model reports none.",
-    "time_s": "Seconds from asking until the answer was in hand: request_s + wait_s + retry_s.",
-    "request_s": "Seconds of the try that answered, from starting the Claude program to its "
-                 "reply. The program's own start and end are inside it.",
-    "wait_s": "Always 0. Kept from an earlier way of calling models that queued.",
-    "retry_s": "Seconds spent on tries that did not answer, and on the pauses before trying again.",
+    "time_s": "The call's own time: request_s. wait_s and retry_s are beside it, not in it.",
+    "request_s": "Seconds of the try that answered with the model, as the Claude program counted "
+                 "them (duration_api_ms), without the program's start on this machine; the first "
+                 "request's share of them where the program rejected the answer's form and the "
+                 "model wrote it again (the call record's counted).",
+    "wait_s": "Seconds the call was held before its tries, so that the login's load of "
+              "claude-sonnet-5 input tokens stayed under its limit (lane.login_gate); 0 for other "
+              "models.",
+    "retry_s": "Seconds spent on tries that did not answer, by this machine's clock, and on the "
+               "pauses before trying again.",
 }
 
 ATTEMPT = {
     "n": "The try's number within the call, from 1.",
     "credential": "What the try logged in with: subscription (the lane's token) or api_key (the "
                   "CLAUDE_API key, sent as ANTHROPIC_API_KEY).",
-    "started_at": "When the try started (UTC).",
-    "seconds": "How long the try took.",
+    "gate_wait_s": "Seconds the try was held before it started, so that the login's load of "
+                   "claude-sonnet-5 input tokens stayed under its limit (lane.login_gate); 0 for "
+                   "other models.",
+    "gate_backlog_tokens": "The login's load the try started at, its own input tokens as the gate "
+                           "held them included; empty for other models.",
+    "started_at": "When the try started (UTC), by the wall clock.",
+    "finished_at": "When the try ended (UTC), by the wall clock.",
+    "seconds": "How long the try took, by this process's performance counter (time.perf_counter); "
+               "the program's own start and end are inside it.",
     "outcome": "ok (it answered), exit (the program ended with an error), usage_limit (the "
                "subscription refused it at its usage limit, HTTP 429, and the same try went again "
                "with the CLAUDE_API key), bad_envelope (its reply could not be read), or timeout "
@@ -98,12 +112,44 @@ CALL = {
                   "no try answered.",
     "text": "The reply's text. For an answer call it is the JSON that holds the answer. Empty for "
             "a call that gave up: no try answered.",
-    "usage": sub("The tokens of the try that answered; empty for a call that gave up.", {
+    "usage": sub("The tokens of the try that answered, every request of it: the program's own count "
+                 "for the model the call names (modelUsage); empty for a call that gave up, and "
+                 "for a reply that holds no count for the model (usage_missing).", {
         "prompt_tokens": "Tokens sent: fresh input, plus what was written to the prompt cache, "
                          "plus what was read from it.",
         "completion_tokens": "Tokens the model wrote.",
         "cached_input_tokens": "The part of prompt_tokens read from the prompt cache.",
     }),
+    "usage_missing": "Why usage is empty on a call that answered; empty otherwise.",
+    "server_s": "Seconds of the try that answered with the model, as the program counted them "
+                "(duration_api_ms), without its start on this machine; empty for a call that "
+                "gave up.",
+    "first_request": sub("Only on a call of more than one model request (num_turns above 2: the "
+                         "program rejected the answer's form and the model wrote it again): its "
+                         "first request, from the program's own transcript of the call; empty "
+                         "otherwise, and when the transcript could not be read (counted.missing).", {
+        "model_requests": "How many model requests the call made.",
+        "tool_calls": "How many answers the model gave to the program's answer tool.",
+        "spans_s": "Each request's seconds in the transcript: from the prompt, or from the last "
+                   "tool result of the request before it, or from that request's last record when "
+                   "it made no tool call, to its own last record.",
+        "first_request_share": "The first request's part of those seconds.",
+        "seconds": "server_s times that part.",
+        "tokens_in": "The first request's tokens sent, cache included.",
+        "cached_input_tokens": "The part of those read from the prompt cache.",
+        "tokens_out": "The first request's tokens written.",
+    }),
+    "counted": sub("What the call counts for in a row's generator or retrieval and in a score "
+                   "cell; empty for a call that gave up.", {
+        "by": "the whole call, or the first request (first_request).",
+        "seconds": "server_s, or the first request's seconds.",
+        "prompt_tokens": "usage's, or the first request's tokens sent.",
+        "completion_tokens": "usage's, or the first request's tokens written.",
+        "cached_input_tokens": "usage's, or the first request's tokens read from the cache.",
+        "missing": "Why a value is empty: it is never estimated. Empty when none is.",
+    }),
+    "gate_wait_s": "Seconds the call's tries were held before they started (attempts.gate_wait_s "
+                   "added).",
     "envelope": whole("The Claude program's whole reply as it printed it, each part as the "
                       "program gives it: its own times in milliseconds (duration_ms from the start "
                       "of the request turn, after the program has started, to its end; "
@@ -142,6 +188,15 @@ EMBED = {
     "finished_at": "When the request ended (UTC).",
     "lock_wait_s": "Seconds the request waited for the embedder to be free.",
     "encode_s": "Seconds the embedder worked on the request.",
+    "in_run": sub("Only where the request was made again alone after the answers, or after the "
+                  "scoring, one request after the other with nothing else under way: device, "
+                  "encode_s and lock_wait_s above are then those of the request made alone, and "
+                  "these are as measured while the start ran.", {
+                      "device": "Where the embedder ran in the start.",
+                      "encode_s": "Seconds the embedder worked on the request in the start, while "
+                                  "other work of the start was under way.",
+                      "lock_wait_s": "Seconds the request waited for the embedder in the start.",
+                  }),
 }
 
 RECORD = {**EMBED, **CALL}
@@ -155,10 +210,12 @@ TIMING = {
 }
 
 CODE_VERSION = {
-    "commit": "The git commit the code was at.",
+    "commit": "The git commit the code was at. When git gave no answer it is read from the git "
+              "folder's own files: HEAD and the branch it names.",
     "branch": "The git branch; HEAD when the code ran from a checkout of one commit.",
     "dirty": "Whether git saw anything changed or new anywhere in the checkout, files that are "
-             "not code included. What differed in the code is in code_state.",
+             "not code included; empty when git gave no answer. What differed in the code is in "
+             "code_state.",
 }
 
 CODE_STATE = {
@@ -184,6 +241,19 @@ LANE = {
     "config_settings": whole("The settings file the harness puts in the program's own config "
                              "folder; cleanupPeriodDays is how many days the program keeps its "
                              "own transcripts of the calls."),
+    "login_gate": sub("The gate that holds a call's tries until the login's load is under its limit, "
+                      "as correction model-call-time/1 measured them: the load adds each try's "
+                      "input tokens at its start and drains at its rate, never below 0. The load "
+                      "is one file that the gate of every process on the machine reads and writes "
+                      "under an OS lock; another machine on the login is not in it.", {
+        "model": "The model whose calls it holds.",
+        "state_file": "The file that holds the load and the time it was taken at.",
+        "rate_tokens_per_second": "How fast the load drains.",
+        "limit_backlog_tokens": "The load a try must stay under, its own tokens included.",
+        "tokens_held_per_character": "The tokens it holds for a try per character sent until "
+                                     "the reply's own count takes their place: the most of the "
+                                     "final runs' calls of one request.",
+    }),
     "env_per_call": "The switches a call sets only when it asks for them, and that are taken away "
                     "when it does not.",
     "per_call": "Where to find what each single call carried.",
@@ -211,17 +281,22 @@ RETRIEVAL_ENTRY = {
     "attempts": "chat: how many times the model was asked in all, the tries that did not answer "
                 "included. embed: the same as calls; the embedder is asked once a batch.",
     "tokens_in": "chat: tokens sent in the tries that answered, the part read from the prompt "
-                 "cache included. embed: the tokens of the texts, prefix included.",
+                 "cache included, as each call counts them (its record's counted). embed: the "
+                 "tokens of the texts, prefix included.",
     "cached_input_tokens": "chat: the part of tokens_in read from the prompt cache. embed: 0.",
-    "tokens_out": "chat: tokens the model wrote in the tries that answered. embed: 0.",
+    "tokens_out": "chat: tokens the model wrote in the tries that answered, as each call counts "
+                  "them. embed: 0.",
     "reasoning_tokens": "Always 0.",
-    "time_s": "request_s + wait_s + retry_s.",
-    "request_s": "chat: seconds of the tries that answered. embed: seconds the embedder worked "
-                 "(encode_s).",
-    "wait_s": "chat: 0. embed: seconds the requests waited for the embedder to be free "
+    "time_s": "request_s. wait_s and retry_s are beside it, not in it.",
+    "request_s": "chat: seconds of the tries that answered with the model, as each call counts "
+                 "them (its record's counted: the program's duration_api_ms, or its first "
+                 "request's share). embed: seconds the embedder worked (encode_s).",
+    "wait_s": "chat: seconds the calls were held so that the login's load stayed under its limit "
+              "(gate_wait_s). embed: seconds the requests waited for the embedder to be free "
               "(lock_wait_s).",
-    "retry_s": "chat: seconds of the tries that did not answer and of the pauses before trying "
-               "again; a try a correction marked as slept under is left out. embed: 0.",
+    "retry_s": "chat: seconds of the tries that did not answer, by this machine's clock, and of the "
+               "pauses before trying again; a try a correction marked as slept under is left out. "
+               "embed: 0.",
 }
 
 BUILD_MODEL = {
@@ -288,7 +363,14 @@ ROW = {
     "context_ids": "The ids of the corpus records that were handed over whole, in the same order. "
                    "A text cut at the budget is in contexts but its record is not counted here.",
     "search_time_s": "Seconds the arm took to rank the corpus for this question, without any "
-                     "model call or embedder request it made on the way.",
+                     "model call or embedder request it made on the way. Measured after the "
+                     "answers: the question's retrieval made again with one question at a time, "
+                     "nothing else under way, after one question made first and not counted, and "
+                     "no model call. A row without search_time_in_run_s holds the time measured "
+                     "while answering.",
+    "search_time_in_run_s": "The search time as measured while the start answered, other "
+                            "questions under way at the same time when it had more than one "
+                            "worker; there only where search_time_s was measured again.",
     "generator": sub("What the answer call cost.", USAGE),
     "retrieval": sub("What the arm's own model calls and embedder requests for this question "
                      "cost, one entry per model, in the order the models were first asked; two "
@@ -298,7 +380,9 @@ ROW = {
     "leg": "Which start of this folder made the row: 1 for the first start, one more for each "
            "time the run was taken up again. The start is in run_manifest.json under legs.",
     "timing": sub("The clock of the whole question: ranking and answering.", TIMING),
-    "calls": sub("Every model call and every embedder request the question made, whole.", RECORD),
+    "calls": sub("Every model call and every embedder request the question made, whole. A first "
+                 "call whose answer an arm read from its store is there as the store kept the "
+                 "record of the call that gave it.", RECORD),
     "correction": CORRECTION,
 }
 
@@ -318,11 +402,22 @@ ENVIRONMENT = {
     }),
 }
 
+EMBED_PASS = sub("The embedder requests made again alone after the work, one after the other "
+                 "with nothing else under way, each record's own time then kept under in_run; "
+                 "empty when there was none or the start did not get to it.", {
+                     "requests": "How many requests were made again.",
+                     "warm_up_requests": "How many of them were made once first and not timed.",
+                     "started_at": "When it began (UTC).",
+                     "finished_at": "When it ended (UTC).",
+                 })
+
 LEG = {
     "leg": "The start's number, from 1.",
-    "started_at": "When the start began (UTC).",
-    "finished_at": "When its answering ended (UTC). The judging comes after and is in "
-                   "eval_manifest.json.",
+    "started_at": "When the start began (UTC). The entry is written then and filled when the "
+                  "start ends; an entry whose finished_at is empty is of a start whose process "
+                  "stopped before it ended.",
+    "finished_at": "When its answering ended (UTC); empty when the start never ended. The "
+                   "judging comes after and is in eval_manifest.json.",
     "wall_s": "Seconds of the start up to the end of its answering.",
     "process_cpu_s": "Processor seconds the run's own process used in that time. Model calls run "
                      "in other processes and are not in it.",
@@ -351,6 +446,26 @@ LEG = {
                    "the value it was given; empty when none. What a switch does is the arm's to "
                    "say (retrieval_flags)."),
     "lane": sub("How every model call of the start was made.", LANE),
+    "search_pass": sub("The search times measured again after the answering (the rows' "
+                       "search_time_s); empty when no row was left to measure or the start did "
+                       "not get to it.", {
+                           "started_at": "When it began (UTC).",
+                           "finished_at": "When it ended (UTC).",
+                           "warm_up_question": "The question whose retrieval was made once first "
+                                               "and not counted; empty when that failed.",
+                           "questions": "How many rows got their search time measured again.",
+                           "same_records_in_another_order": "The questions whose retrieval made "
+                                                            "again handed over the same records "
+                                                            "in another order; their time is "
+                                                            "used.",
+                           "other_records": "The questions whose retrieval made again handed over "
+                                            "other records; they keep the time measured while "
+                                            "answering.",
+                           "failed": whole("The questions whose retrieval could not be made "
+                                           "again, each with its error; they keep the time "
+                                           "measured while answering."),
+                       }),
+    "embed_pass": EMBED_PASS,
     "correction": CORRECTION,
     "source_run": "Only in a folder merged from two runs (merge.json): the run this start belongs "
                   "to, by its folder's name; that folder is kept whole under halves/.",
@@ -447,10 +562,13 @@ USAGE_CELL = {
     "thread": "The worker thread that did it.",
     "chat_calls": "How many judge calls the cell made.",
     "chat_attempts": "How many tries those took in all.",
-    "tokens_in": "Tokens sent to the judge, summed over the cell's calls.",
+    "tokens_in": "Tokens sent to the judge, summed over the cell's calls as each counts them (its "
+                 "record's counted).",
     "cached_input_tokens": "The part of those the provider read from its prompt cache.",
     "tokens_out": "Tokens the judge wrote, summed.",
-    "chat_s": "Seconds of all tries of the cell's judge calls, summed.",
+    "chat_s": "Seconds of the cell's judge calls, each its answering try's time with the model as "
+              "it counts it (its record's counted), summed. The tries that did not answer are in "
+              "the call records only.",
     "embed_calls": "How many embedder requests the cell made.",
     "embed_texts": "How many texts those held.",
     "embed_tokens": "Their tokens.",
@@ -530,12 +648,16 @@ EVAL_MANIFEST = {
     "judge_usage": sub("What all judge calls cost, summed over every scoring start.", USAGE),
     "judge_elapsed_s": "Seconds of all scoring starts, summed.",
     "judge_legs": sub("One entry per scoring start, in order.", {
-        "timestamp": "When the start's entry was written (UTC).",
+        "begun_at": "When the scoring start began, by the harness's clock (UTC). The entry is "
+                    "written then and filled when the start ends; an entry whose timestamp is "
+                    "empty is of a start whose process stopped before it ended.",
+        "timestamp": "When the start's entry was filled (UTC).",
         "judge_model": "The model that judged in this start; empty when it made no judge call.",
         "judge_backend": "The way the judge was called.",
         "usage": sub("What the start's judge calls cost.", USAGE),
         "elapsed_s": "Seconds the start took.",
         "settings": sub("What the start ran under.", SETTINGS),
+        "embed_pass": EMBED_PASS,
         "source_run": "Only in a folder merged from two runs (merge.json): the run this scoring "
                       "start belongs to, by its folder's name.",
     }),
@@ -1152,48 +1274,46 @@ def relations(folder) -> list:
     def add(text, bad, n):
         out.append((text, bad == 0, f"{n} looked at, {bad} differ"))
 
+    from harness.capture import counted, usage_by_model
     chats = [(r, c) for r in rows for c in r.get("calls") or []
              if c.get("kind") == "chat" and c.get("ok") and c.get("model") is not None]
     answer = [(r, c) for r, c in chats
-              if c["usage"]["prompt_tokens"] == r["generator"]["tokens_in"]]
+              if counted(c).get("prompt_tokens") == r["generator"]["tokens_in"]]
 
     def envelope_in(c):
-        # a reply whose usage field held no tokens and no iterations is counted from its own
-        # counts per model (correction zero-usage/1, corrections.json), as the correction counts it
-        use = c["envelope"].get("usage") or {}
-        keys = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")
-        if any(use.get(k) for k in keys + ("output_tokens",)) or use.get("iterations"):
-            return sum(int(use.get(k) or 0) for k in keys)
+        # the envelope's own count for the call's model (modelUsage), or its first request's
+        if (c.get("counted") or {}).get("by") == "the first request":
+            return (c.get("first_request") or {}).get("tokens_in")
         per = (c["envelope"].get("modelUsage") or {}).get(c["model"]) or {}
         return sum(int(per.get(k) or 0) for k in
                    ("inputTokens", "cacheCreationInputTokens", "cacheReadInputTokens"))
 
-    add("generator.tokens_in is the envelope's input + cache creation + cache read tokens (its "
-        "counts per model where its usage field held none, as correction zero-usage/1 counts them)",
+    add("generator.tokens_in is the envelope's input + cache creation + cache read tokens for the "
+        "call's model (modelUsage), or its first request's where the call counts by it",
         sum(1 for r, c in answer if r["generator"]["tokens_in"] != envelope_in(c)), len(answer))
-    add("generator.time_s is request_s + wait_s + retry_s, to within half a second",
-        sum(1 for r in rows if abs(r["generator"]["time_s"] - sum(
-            r["generator"][k] for k in ("request_s", "wait_s", "retry_s"))) > 0.5), len(rows))
-    from harness.capture import usage_by_model
+    add("generator.time_s is request_s, the call's own time; wait_s and retry_s are beside it",
+        sum(1 for r in rows if abs(r["generator"]["time_s"] - r["generator"]["request_s"]) > 1e-6),
+        len(rows))
     own = [r for r in rows if isinstance(r.get("retrieval"), list)]
     add("retrieval is the question's own call records summed per model, the answer call left out",
         sum(1 for r in own if not _same_entries(r["retrieval"], usage_by_model(
             [c for c in r.get("calls") or [] if c.get("role") != "answer"]))), len(own))
     answered = [r for r in rows if (r.get("generator") or {}).get("calls")]
     add("every answered row has one call marked answer, and it is the one generator counts",
-        sum(1 for r in answered if [(c.get("usage") or {}).get("prompt_tokens")
+        sum(1 for r in answered if [counted(c).get("prompt_tokens")
                                     for c in r.get("calls") or []
                                     if c.get("role") == "answer" and c.get("ok")]
             != [r["generator"]["tokens_in"]]), len(answered))
     def made_before(r, e):
-        # a first call read from the run's own store, its record given back by correction
-        # store-hit-calls/1, was made by an earlier start, outside the row's span
+        # a first call read from the store, its record kept with the row by the arm or given back
+        # by correction store-hit-calls/1, was made before the row's span
         stages = ((r.get("meta") or {}).get("interpreter") or {}).get("stages") or []
         return e["kind"] == "chat" and bool(stages) and all(s.get("cache_hit") for s in stages)
 
     add("no second is counted twice: search_time_s, the retrieval's time_s and generator.time_s "
-        "add up to no more than timing.wall_s, half a second allowed (a first call an earlier start "
-        "made, given back by correction store-hit-calls/1, is outside the row's span)",
+        "add up to no more than timing.wall_s, half a second allowed (a first call read from the "
+        "store, its record kept with the row or given back by correction store-hit-calls/1, was "
+        "made before the row's span)",
         sum(1 for r in own if r["search_time_s"]
             + sum(e["time_s"] for e in r["retrieval"] if not made_before(r, e))
             + r["generator"]["time_s"] > r["timing"]["wall_s"] + 0.5), len(own))
@@ -1223,8 +1343,8 @@ def relations(folder) -> list:
             ok = [c for c in calls if c.get("kind") == "chat" and c.get("ok")]
 
             def tokens(cs):
-                return (len(cs), sum(int((c.get("usage") or {}).get("prompt_tokens") or 0) for c in cs),
-                        sum(int((c.get("usage") or {}).get("completion_tokens") or 0) for c in cs))
+                return (len(cs), sum(int(counted(c).get("prompt_tokens") or 0) for c in cs),
+                        sum(int(counted(c).get("completion_tokens") or 0) for c in cs))
             if calls:
                 # judge_usage is all judge calls, a cell a start dropped or that failed included; a
                 # start cut short can have counted calls whose cell wrote no record before it stopped,
@@ -1463,9 +1583,9 @@ def render(folder=None, arm: str | None = None, stamp_files: bool = False) -> st
             "- `top_k` in the manifest is not used by a run with a character budget.",
             "- `generator.payload` is what the harness asked for. `applied` and `not_applied` are "
             "what a call carried.",
-            "- `calls` counts answers, `attempts` counts tries. `tokens_in` and `tokens_out` are "
-            "those of the try that answered; a try that did not answer is in the call's own "
-            "record under `attempts`.",
+            "- `calls` counts answers, `attempts` counts tries. `tokens_in`, `tokens_out` and "
+            "`request_s` are what the try that answered counts for (the call record's `counted`); "
+            "a try that did not answer is in the call's own record under `attempts`.",
             "- `retrieval` is a list with one entry per model. A language model's tokens and the "
             "embedder's tokens are different things and are never added together; the same holds "
             "for the entries of `build_stats.models`.",
@@ -1478,8 +1598,9 @@ def render(folder=None, arm: str | None = None, stamp_files: bool = False) -> st
             "that part alone.",
             "- A text cut at the budget is in `contexts` and its record is not in `context_ids`, "
             "so the id scores do not count it.",
-            "- `request_s` includes the Claude program's own start and end. The time with the "
-            "model alone is in the call's `envelope`.",
+            "- `request_s` is the time with the model as the Claude program counted it, without "
+            "its own start and end; the try's whole time on this machine is the call record's "
+            "`attempts.seconds`.",
             "- `wall_s` of a start ends when its answering ends. The judging's time is in "
             "`eval_manifest.json`.",
             "- Paths (`questions_file`, `ids_file`, `source_run`) are from the machine that ran "

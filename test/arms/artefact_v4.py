@@ -370,7 +370,9 @@ FIELDS = {
             'model': 'The model of the first call.',
             'stages': sub('One entry a model call of the query side.', {
                 'stage': 'Which call: querytag is the first call.',
-                'cache_hit': 'Whether its answer was read from the cache instead of asked.',
+                'cache_hit': 'Whether its answer was read from the cache instead of asked; then '
+                             "the row's calls hold the record of the call that gave it, as the "
+                             'cache kept it.',
                 'key': "The cache key: the sha256 of the call's instruction, message, schema "
                        'and model.',
                 'asks': 'How many times the start that wrote this row tried the call; a read '
@@ -1017,9 +1019,10 @@ def index_info(prepared):
             'build_cost': json.loads(raw.decode('utf-8')) if raw else None,
             'build_cost_file_sha256': _sha(_as_in_git(raw)) if raw else None,
             'first_call': f'at query time, {INTERPRET_MODEL} through the lane; an answer already '
-                          'in the store (HERB_V4_CACHE) is read from it and counted as no call; '
-                          'with HERB_V4_OFFLINE off, a failed or cut-off one is moved to failed/ '
-                          'at the start and asked again',
+                          'in the store (HERB_V4_CACHE) is read from it and counted as no call by '
+                          'the arm, and the row keeps the record of the call that gave it as the '
+                          'store kept it; with HERB_V4_OFFLINE off, a failed or cut-off one is '
+                          'moved to failed/ at the start and asked again',
             'question_embedding': 'at query time, local embedder, query mode; a text embedded '
                                   'before is read from output/query_embed_cache and counted as '
                                   'no call',

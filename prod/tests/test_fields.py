@@ -36,11 +36,12 @@ QUESTIONS = [{"id": "launch::a::0", "question": "why did the rocket launch slip?
 
 def _envelope(answer):
     return {"type": "result", "subtype": "success", "is_error": False, "num_turns": 2,
-            "duration_ms": 900, "duration_api_ms": 700, "ttft_ms": 600, "stop_reason": "tool_use",
+            "duration_ms": 90, "duration_api_ms": 70, "ttft_ms": 60, "stop_reason": "tool_use",
             "session_id": "s", "result": json.dumps({"answer": answer}),
             "usage": {"input_tokens": 2, "cache_creation_input_tokens": 40,
                       "cache_read_input_tokens": 0, "output_tokens": 5},
-            "modelUsage": {"claude-sonnet-5": {"inputTokens": 2}}}
+            "modelUsage": {"claude-sonnet-5": {"inputTokens": 2, "cacheCreationInputTokens": 40,
+                                               "cacheReadInputTokens": 0, "outputTokens": 5}}}
 
 
 class _Folder(unittest.TestCase):

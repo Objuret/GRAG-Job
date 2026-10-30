@@ -153,7 +153,7 @@ What may be done:
 - A comment says what the code does; his sentence goes in only where it is the reason, as one line (his "yes", 2026-10-07).
 - *"the fucking dokumentation needs to reflect reality, at all times.."* (2026-10-17, after the 4-combo was written into this file as if built) — a sentence about what is built, what the arm does or where a thing is, is changed in the same turn as the change it describes.
 - *".. do the fucking 100th also.. stop beeing satisfied with an incomplete run"* (2026-10-06)
-- *"make sure you can run the new 100gold later cocurrently also, i want to do this on both the laptop and desktop every fucking time you do anything tbh, max speed if possible"* (2026-10-22) — a run on the hundred is split across the laptop and the desktop and run in parallel.
+- *"use agents for orchestration and all stuff from the laptop, but do the actual runs on the desktop"* · *"run it on the desktop pc using the graphics card when possible"* (2026-10-30) — every run is made on the desktop, its embedder on the graphics card (a run refuses to start without CUDA); the laptop orchestrates.
 - *"no skips allowed"* (2026-10-08, on a test run that reported 1 skipped and five test files that did not load)
 - *"if our history had a great solution for this, we would not still be working on it"* (2026-09-08) — restoring deleted code is not work.
 - *"i am certain now that you have in fact NOT retrieved the facet concepts, you have found the v3 retrieval interpreter concepts"* · *"you have to look in the fucking git"* (2026-09-08) — the concept is in the initial commit and the thesis, not in later design docs.

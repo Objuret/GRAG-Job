@@ -5,7 +5,6 @@ import os
 import re
 import sys
 from collections import defaultdict
-from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from statistics import mean
@@ -188,6 +187,9 @@ def _rejudge(args):
     if args.workers is None:
         args.workers = (max(1, len(ids) * len(metrics_to_run()))
                         if _wide_parallel_judge(args.judge) else 1)
+    if orchestrator.evaluator_embeds(scorer):
+        from harness import embed
+        embed.require_cuda(f"the scoring with {args.judge}")
 
     corpus = orchestrator.open_corpus(orchestrator.DEFAULT_CORPUS)
     abort.watch()
@@ -208,27 +210,9 @@ def _rejudge(args):
                     for r in rows:
                         fh.write(json.dumps(r, ensure_ascii=False) + "\n")
             chosen = [by_id[r["id"]] for r in rows]
-            orchestrator.run_one_evaluator(
-                scorer, [orchestrator._rehydrate(r) for r in rows], chosen, arm, corpus,
-                out_dir / "eval_results.jsonl", args.workers)
-            judge_config = {
-                "judge_model": args.judge,
-                "judge_backend": getattr(scorer, "LAST_JUDGE_BACKEND", None),
-                "judge_effort": getattr(scorer, "LAST_JUDGE_REASONING_EFFORT", None),
-                "judge_usage": getattr(scorer, "LAST_JUDGE_USAGE", None),
-                "judge_elapsed_s": getattr(scorer, "LAST_JUDGE_WALL_TIME_S", None),
-            }
-            manifest_path = out_dir / "eval_manifest.json"
-            manifest = orchestrator.build_eval_manifest(judge_config, "ragas", arm, f)
-            if manifest_path.is_file():
-                try:
-                    prior = json.loads(manifest_path.read_text(encoding="utf-8"))
-                except (OSError, ValueError):
-                    prior = None
-                manifest = orchestrator._accumulated_judge(prior, manifest)
-            manifest_path.write_text(
-                json.dumps(asdict(manifest), ensure_ascii=False, indent=2),
-                encoding="utf-8")
+            # the start's entry in judge_legs is written as it begins and filled as it ends
+            orchestrator.score_leg(scorer, rows, chosen, arm, corpus, out_dir, args.workers,
+                                   False, {}, "ragas", f, judge_model=args.judge)
         cells = [json.loads(x) for x in (out_dir / "eval_results.jsonl")
                  .read_text(encoding="utf-8").splitlines() if x.strip()]
         _print_table(cells, f"{arm} | {args.judge}", len(chosen))
@@ -410,6 +394,9 @@ def main():
         scorer = None
     else:
         import eval.ragas as scorer
+    # before the run's folder is made: an arm or a scoring that asks the embedder off a graphics
+    # card stops here
+    orchestrator.check_embedder_device(pipeline, scorer, args.retrieval_only)
     with RunLock(out_dir):
         summary = orchestrator.run(pipeline, scorer, ids_file, config)
 

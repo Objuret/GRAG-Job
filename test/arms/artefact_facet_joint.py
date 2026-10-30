@@ -21,6 +21,7 @@ import time
 import numpy as np
 from threadpoolctl import threadpool_limits
 
+from harness import capture
 from harness import chat
 from harness.contract import ArmOutput, BuildStats, ModelUsage, unpack_generation
 from artefact import querytagger as Q
@@ -246,6 +247,11 @@ def _cached_stage(stage, system, user, validate, cache_dir, model=None, schema=N
                 parsed = validate(saved['raw'])
             except Exception:
                 raise RuntimeError(f'Facet interpreter invalid cached {stage}; key={key}') from None
+            # the arm counts no call; the question keeps the record of the call that gave the
+            # answer as the store kept it, its tokens and time (correction store-hit-calls/1)
+            call = (saved.get('response') or {}).get('call')
+            if call:
+                capture.record({k: v for k, v in call.items() if k != 'seq'})
             return parsed, ModelUsage(), {'stage': stage, 'key': key, 'cache_hit': True,
                                           'saved_usage': saved['usage'], 'path': str(path),
                                           'raw': saved['raw'],

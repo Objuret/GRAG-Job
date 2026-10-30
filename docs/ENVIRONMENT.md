@@ -305,7 +305,8 @@ ACL set with the SIDs `*S-1-5-32-544` / `*S-1-5-18` — the Swedish Windows has 
 **GPU:** GTX 1080 Ti, 11 GB, driver 581.57. GRAG-Job's `.venv` here carries `torch` 2.14.1+cu126
 (PyTorch's cu126 index, `--no-deps`) and the old `A:\exjobbet\repo\.venv` 2.6.0+cu124, both with
 `sm_61` in their arch lists, so Pascal runs; `HERB_EMBED_DEVICE=cuda` puts the harness's embedder on
-the card (it is `cpu` otherwise). Load fp16 checkpoints as `dtype=torch.float32`
+the card (it is `cpu` otherwise). A run whose arm or scoring asks the embedder refuses to start
+without it, so such a run starts on this machine. Load fp16 checkpoints as `dtype=torch.float32`
 (Pascal has no fast fp16; `MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli` measured 501 pairs/s
 at batch 128 in fp32 vs 17 on the laptop CPU). **Claude CLI over SSH does not work:** the
 CLI (2.1.201) is installed and `~/.claude.json` carries the account, but the OAuth credential

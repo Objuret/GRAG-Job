@@ -31,7 +31,9 @@ ENVELOPE = {"type": "result", "subtype": "success", "is_error": False, "duration
             "stop_reason": "end_turn", "session_id": "s", "total_cost_usd": 0.0125,
             "usage": {"input_tokens": 100, "cache_creation_input_tokens": 20,
                       "cache_read_input_tokens": 30, "output_tokens": 7},
-            "modelUsage": {"claude-haiku-4-5": {"inputTokens": 100, "costUSD": 0.0125}}}
+            "modelUsage": {"claude-haiku-4-5": {"inputTokens": 100, "cacheCreationInputTokens": 20,
+                                                "cacheReadInputTokens": 30, "outputTokens": 7,
+                                                "costUSD": 0.0125}}}
 
 
 def _proc(returncode=0, stdout="", stderr=""):
@@ -142,9 +144,13 @@ class CaptureTests(unittest.TestCase):
         from eval import ragas as scorer
 
         def fake_post(path, payload, **kw):
-            capture.record({"kind": "chat", "usage": {"prompt_tokens": 9, "completion_tokens": 1,
-                                                      "cached_input_tokens": 0},
-                            "attempts": [{"seconds": 2.0}]})
+            capture.record({"kind": "chat", "ok": True,
+                            "usage": {"prompt_tokens": 9, "completion_tokens": 1,
+                                      "cached_input_tokens": 0},
+                            "counted": {"by": "the whole call", "seconds": 2.0, "prompt_tokens": 9,
+                                        "completion_tokens": 1, "cached_input_tokens": 0,
+                                        "missing": None},
+                            "attempts": [{"outcome": "ok", "seconds": 5.0}]})
             return {"choices": [{"message": {"content": "verdict"}}],
                     "usage": {"prompt_tokens": 9, "completion_tokens": 1}}
 
@@ -195,8 +201,10 @@ class UsageByModelTests(unittest.TestCase):
                           {"outcome": "timeout", "seconds": 500.0, "machine_asleep": True}]},
             {"kind": "embed", "model": "embedder", "n_texts": 5, "batch": 2, "tokens_in": 50,
              "encode_s": 0.4, "lock_wait_s": 0.1},
-            {"kind": "chat", "model": "sonnet", "ok": True,
-             "usage": {"prompt_tokens": 20, "completion_tokens": 7, "cached_input_tokens": 12},
+            {"kind": "chat", "model": "sonnet", "ok": True, "gate_wait_s": 0.75,
+             "usage": {"prompt_tokens": 30, "completion_tokens": 9, "cached_input_tokens": 12},
+             "counted": {"by": "the first request", "seconds": 2.0, "prompt_tokens": 20,
+                         "completion_tokens": 7, "cached_input_tokens": 12, "missing": None},
              "attempts": [{"outcome": "ok", "seconds": 2.5}]},
             {"kind": "chat", "model": "haiku", "ok": True,
              "usage": {"prompt_tokens": 9, "completion_tokens": 1, "cached_input_tokens": 0},
@@ -206,14 +214,17 @@ class UsageByModelTests(unittest.TestCase):
         # an answer is one call, however many tries; a call that gave up adds tries, no call
         self.assertEqual((sonnet["calls"], sonnet["attempts"], sonnet["tokens_in"],
                           sonnet["cached_input_tokens"], sonnet["tokens_out"]), (1, 3, 20, 12, 7))
-        # a try a correction marked as slept under is left out of the seconds
-        self.assertEqual((sonnet["request_s"], sonnet["retry_s"], sonnet["time_s"]), (2.5, 4.0, 6.5))
+        # the call's time is what it counts for; the gate's hold and the tries that did not
+        # answer are beside it, a try a correction marked as slept under left out
+        self.assertEqual((sonnet["request_s"], sonnet["wait_s"], sonnet["retry_s"],
+                          sonnet["time_s"]), (2.0, 0.75, 4.0, 2.0))
         self.assertEqual((embedder["kind"], embedder["calls"], embedder["attempts"],
                           embedder["tokens_in"], embedder["tokens_out"]), ("embed", 3, 3, 50, 0))
         self.assertEqual((embedder["request_s"], embedder["wait_s"], embedder["time_s"]),
-                         (0.4, 0.1, 0.5))
-        self.assertEqual((haiku["calls"], haiku["attempts"], haiku["retry_s"], haiku["time_s"]),
-                         (1, 2, 8.0, 9.0))
+                         (0.4, 0.1, 0.4))
+        # a record written before calls kept what they count for: its answering try's seconds
+        self.assertEqual((haiku["calls"], haiku["attempts"], haiku["request_s"], haiku["retry_s"],
+                          haiku["time_s"]), (1, 2, 1.0, 8.0, 1.0))
 
     def test_the_answer_call_is_marked_and_left_out_of_the_retrieval(self):
         cap, token = capture.start()

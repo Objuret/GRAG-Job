@@ -24,12 +24,70 @@ def code_version() -> dict:
         return out.stdout.strip() if out.returncode == 0 else None
 
     commit = git("rev-parse", "HEAD")
+    branch = git("rev-parse", "--abbrev-ref", "HEAD")
+    if commit is None:
+        # git is not on the PATH or gives no answer: HEAD and its ref read from the git folder
+        commit, named = head_from_files()
+        branch = branch or named
     status = git("status", "--porcelain")
     return {
         "commit": commit,
-        "branch": git("rev-parse", "--abbrev-ref", "HEAD"),
+        "branch": branch,
         "dirty": None if status is None else bool(status.strip()),
     }
+
+
+def _git_dir(repo=_REPO) -> Path | None:
+    """The checkout's git folder: .git, or the folder a .git file names (a worktree)."""
+    dot = Path(repo) / ".git"
+    if dot.is_dir():
+        return dot
+    try:
+        text = dot.read_text(encoding="utf-8").strip()
+    except OSError:
+        return None
+    if not text.startswith("gitdir:"):
+        return None
+    named = Path(text[len("gitdir:"):].strip())
+    return named if named.is_absolute() else (Path(repo) / named).resolve()
+
+
+def head_from_files(repo=_REPO) -> tuple:
+    """The commit and the branch HEAD names, read from the git folder's own files (HEAD, the ref
+    it points to, else packed-refs); the branch is HEAD when HEAD names a commit, as git gives it.
+    (None, None) when the folder or HEAD cannot be read."""
+    gd = _git_dir(repo)
+    if gd is None:
+        return None, None
+    try:
+        head = (gd / "HEAD").read_text(encoding="utf-8").strip()
+    except OSError:
+        return None, None
+    if not head.startswith("ref:"):
+        return head or None, "HEAD"
+    ref = head[len("ref:"):].strip()
+    branch = ref[len("refs/heads/"):] if ref.startswith("refs/heads/") else ref
+    roots = [gd]
+    try:
+        # a worktree keeps its branches in the folder its commondir names
+        roots.append((gd / (gd / "commondir").read_text(encoding="utf-8").strip()).resolve())
+    except OSError:
+        pass
+    for root in roots:
+        try:
+            return (root / ref).read_text(encoding="utf-8").strip() or None, branch
+        except OSError:
+            pass
+    for root in roots:
+        try:
+            lines = (root / "packed-refs").read_text(encoding="utf-8").splitlines()
+        except OSError:
+            continue
+        for line in lines:
+            sha, _, name = line.partition(" ")
+            if line[:1] not in ("#", "^") and name.strip() == ref:
+                return sha, branch
+    return None, branch
 
 
 _CODE_PATHS = ("prod", "test", "tools", "data", "pytest.ini", "refresh_graph.py")

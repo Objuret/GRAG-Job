@@ -166,7 +166,6 @@ def _record_judge_usage(tokens_in: int, tokens_out: int, reasoning_tokens: int,
 
 
 def _claude_verdict(text: str, model: str, timeout_s: float, temperature: float) -> str:
-    started = time.perf_counter()
     chat.reset_timing()
     # RAGAS's prompt and nothing of ours: no system text, no thinking, and the temperature RAGAS
     # hands its judge for this call. What the lane could apply is in the kept call.
@@ -176,11 +175,12 @@ def _claude_verdict(text: str, model: str, timeout_s: float, temperature: float)
                     timeout=timeout_s, max_tries=JUDGE_MAX_TRIES)
     transport = chat.take_timing()
     clean = ((resp.get("choices") or [{}])[0].get("message") or {}).get("content") or ""
+    # the call's own count and time (harness.chat.call_counts), never an estimate: a reply that
+    # holds no count adds none, and its record in eval_calls.jsonl says why
     usage = resp.get("usage") or {}
     _record_judge_usage(
-        int(usage.get("prompt_tokens") or 0) or _estimate_tokens(model, text),
-        int(usage.get("completion_tokens") or 0) or _estimate_tokens(model, clean),
-        0, time.perf_counter() - started,
+        int(usage.get("prompt_tokens") or 0), int(usage.get("completion_tokens") or 0),
+        0, transport["request_s"],
         int(usage.get("cached_input_tokens") or 0),
         transport)
     return clean

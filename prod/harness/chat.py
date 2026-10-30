@@ -3,8 +3,9 @@ the headless Claude CLI, subscription-billed. The hosted NIM lane was purged on 
 his word ("NIM is dead, you can purge nim"); a model string that is not a claude-* slug is an
 error here, never a silent fallthrough.
 
-Also home to the per-thread transport timing every arm folds into its ModelUsage, and the
-`.env` loader the graph driver and the arms use for NEO4J_PASSWORD.
+Also home to the per-thread transport timing every arm folds into its ModelUsage, the gate that
+holds a claude-sonnet-5 call until the login's load is under its limit, and the `.env` loader the
+graph driver and the arms use for NEO4J_PASSWORD.
 """
 from __future__ import annotations
 
@@ -16,7 +17,13 @@ import subprocess
 import tempfile
 import threading
 import time
+from datetime import datetime
 from pathlib import Path
+
+if os.name == "nt":
+    import msvcrt
+else:
+    import fcntl
 
 from harness import abort
 from harness import capture
@@ -53,6 +60,8 @@ def take_timing() -> dict:
 
 
 def _record_timing(attempts: int, request_s: float, wait_s: float, retry_s: float) -> None:
+    """request_s: the call's own time (`counted`); wait_s: the gate's hold before its tries;
+    retry_s: the tries that did not answer and the pauses after them, by our clock."""
     _call_timing.attempts = getattr(_call_timing, "attempts", 0) + attempts
     _call_timing.request_s = getattr(_call_timing, "request_s", 0.0) + request_s
     _call_timing.wait_s = getattr(_call_timing, "wait_s", 0.0) + wait_s
@@ -186,6 +195,11 @@ def lane_info() -> dict:
                       f"{_API_KEY} as ANTHROPIC_API_KEY, only on a run with {_API_FALLBACK}=on; "
                       f"for this run it is " + ("on" if _api_fallback_on() else "off")),
             "config_settings": dict(_CONFIG_SETTINGS),
+            "login_gate": {"model": _GATED_MODEL,
+                           "state_file": str(_CONFIG_DIR / "login_gate.json"),
+                           "rate_tokens_per_second": _LOGIN_RATE,
+                           "limit_backlog_tokens": _LOGIN_LIMIT,
+                           "tokens_held_per_character": _TOKENS_PER_CHAR},
             "env_per_call": list(_ENV_PER_CALL),
             "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
             "cli_adds": dict(_CLI_ADDS),
@@ -335,6 +349,258 @@ def join_stream(stdout: str) -> tuple:
     return "".join(parts), result
 
 
+# ------------------------------------------------------------------ what a call counts for
+
+def _counts(model_usage: dict) -> dict:
+    """The three numbers of one model's counts in a reply (modelUsage), the CLI's own count of the
+    whole call: tokens in = input + cache creation + cache read, cached = cache read."""
+    cached = int(model_usage.get("cacheReadInputTokens") or 0)
+    return {"prompt_tokens": int(model_usage.get("inputTokens") or 0)
+            + int(model_usage.get("cacheCreationInputTokens") or 0) + cached,
+            "completion_tokens": int(model_usage.get("outputTokens") or 0),
+            "cached_input_tokens": cached}
+
+
+def _stamp(s: str) -> float:
+    return datetime.fromisoformat(s.replace("Z", "+00:00")).timestamp()
+
+
+_REQUEST_USAGE = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens",
+                  "output_tokens")
+
+
+def transcript_requests(session_id: str | None) -> dict | None:
+    """The numbers of each model request in the CLI's own transcript of a call, read as
+    output/research/2026-10-28-first-request/extract.py reads them: the prompt record's time; per
+    model request (one assistant message id) the times of its first and last record, its usage and
+    the kinds of its blocks; per tool result its time and whether it is an error. No text is read:
+    the transcripts hold the prompts. None when this machine holds no transcript of the session."""
+    hits = sorted((_CONFIG_DIR / "projects").glob(f"*/{session_id}.jsonl")) if session_id else []
+    if not hits:
+        return None
+    prompt, order, requests, results = None, [], {}, []
+    with hits[0].open(encoding="utf-8") as fh:
+        for line in fh:
+            if not line.strip():
+                continue
+            rec = json.loads(line)
+            msg = rec.get("message") or {}
+            if rec.get("type") == "assistant" and msg.get("id"):
+                mid = msg["id"]
+                if mid not in requests:
+                    order.append(mid)
+                    requests[mid] = {"first_record": rec["timestamp"], "last_record": rec["timestamp"],
+                                     "blocks": [], **{k: 0 for k in _REQUEST_USAGE}}
+                r = requests[mid]
+                if _stamp(rec["timestamp"]) > _stamp(r["last_record"]):
+                    r["last_record"] = rec["timestamp"]
+                usage = msg.get("usage") or {}
+                for k in _REQUEST_USAGE:
+                    r[k] = max(r[k], int(usage.get(k) or 0))
+                r["blocks"] += [b["type"] for b in msg.get("content") or []
+                                if isinstance(b, dict) and b.get("type")]
+            elif rec.get("type") == "user":
+                content = msg.get("content")
+                tool = ([b for b in content if isinstance(b, dict) and b.get("type") == "tool_result"]
+                        if isinstance(content, list) else [])
+                if tool:
+                    results.append({"time": rec["timestamp"],
+                                    "is_error": any(bool(b.get("is_error")) for b in tool)})
+                elif prompt is None:
+                    prompt = rec["timestamp"]
+    return {"prompt": prompt, "requests": [{"id": m, **requests[m]} for m in order],
+            "tool_results": results}
+
+
+def first_request(numbers: dict, turns: int, usage: dict, server_s: float) -> dict:
+    """A call whose answer the CLI rejected for its form and the model wrote again in the same call
+    counts by its first request (rule model-call-time/3, 1): its time is the server time times the
+    first request's share of the requests' times in the transcript (each request from the prompt,
+    or from the last tool result of the request before it, or from that request's last record when
+    it made no tool call, to its own last record); its tokens are the first request's. ValueError,
+    with the reason, when the transcript is not such a call or its tokens are not the call's."""
+    reqs, results = numbers["requests"], numbers["tool_results"]
+    made = [r["blocks"].count("tool_use") for r in reqs]
+    # the last request holds the accepted tool call; an earlier one made tool calls the CLI rejected,
+    # or none, after which the CLI asked for one; each tool result and each such request is one turn
+    if (len(reqs) < 2 or not made[-1] or len(results) != sum(made)
+            or [r["is_error"] for r in results] != [True] * (len(results) - 1) + [False]
+            or len(results) + made[:-1].count(0) != turns - 1):
+        raise ValueError(f"the transcript is not requests of which the last holds the accepted tool "
+                         f"call and each earlier one rejected tool calls or none, in {turns} turns")
+    tin = [r["input_tokens"] + r["cache_creation_input_tokens"] + r["cache_read_input_tokens"]
+           for r in reqs]
+    if (sum(tin), sum(r["output_tokens"] for r in reqs)) != (usage["prompt_tokens"],
+                                                             usage["completion_tokens"]):
+        raise ValueError("the transcript's requests' tokens do not add up to the reply's count")
+    starts, k = [numbers["prompt"]], 0
+    for before, calls in zip(reqs[:-1], made[:-1]):
+        k += calls
+        starts.append(results[k - 1]["time"] if calls else before["last_record"])
+    spans = [_stamp(r["last_record"]) - _stamp(t) for r, t in zip(reqs, starts)]
+    if min(spans) <= 0:
+        raise ValueError("a request of the transcript has no time")
+    share = spans[0] / sum(spans)
+    return {"model_requests": len(reqs), "tool_calls": sum(made), "spans_s": spans,
+            "first_request_share": share, "seconds": server_s * share, "tokens_in": tin[0],
+            "cached_input_tokens": reqs[0]["cache_read_input_tokens"],
+            "tokens_out": reqs[0]["output_tokens"]}
+
+
+def call_counts(model: str, reply: dict, read=transcript_requests) -> dict:
+    """What an answered call counts for, from the CLI's reply and, for a call of more than one
+    model request, the numbers of the CLI's transcript of it, by its session id (`read`).
+
+    usage: the reply's own count for the model the call names (modelUsage), the whole call; none
+    when the reply holds none, and usage_missing says why. server_s: the answering try's time with
+    the model, the CLI's duration_api_ms, without the program's start on this machine.
+    first_request: for a call of more than one model request (num_turns above 2: the CLI rejected
+    the answer's form and the model wrote it again), the first request's time and tokens. counted:
+    what the call counts for, its first request where it has one, the whole call otherwise; a value
+    that cannot be known is none, and missing says why. Nothing is estimated."""
+    per_model = reply.get("modelUsage") or {}
+    usage = _counts(per_model[model]) if model in per_model else None
+    usage_missing = None if usage else (f"the reply holds no count for {model} (modelUsage names "
+                                        f"{sorted(per_model) or 'no model'})")
+    server_ms = reply.get("duration_api_ms")
+    server_s = server_ms / 1000 if server_ms else None
+    missing = [m for m in (usage_missing,
+                           None if server_s else "the reply holds no duration_api_ms") if m]
+    turns = int(reply.get("num_turns") or 0)
+    first = None
+    if turns > 2 and not missing:
+        sid = reply.get("session_id")
+        try:
+            numbers = read(sid)
+            if numbers is None:
+                missing.append(f"this machine holds no transcript of session {sid} under "
+                               f"{_CONFIG_DIR / 'projects'}")
+            else:
+                first = first_request(numbers, turns, usage, server_s)
+        except (OSError, ValueError, KeyError, TypeError) as err:
+            missing.append(f"session {sid}: {err!r}")
+    if turns > 2:
+        counted = {"by": "the first request", "seconds": first and first["seconds"],
+                   "prompt_tokens": first and first["tokens_in"],
+                   "completion_tokens": first and first["tokens_out"],
+                   "cached_input_tokens": first and first["cached_input_tokens"]}
+    else:
+        counted = {"by": "the whole call", "seconds": server_s,
+                   **(usage or dict.fromkeys(("prompt_tokens", "completion_tokens",
+                                              "cached_input_tokens")))}
+    counted["missing"] = "; ".join(missing) or None
+    return {"usage": usage, "usage_missing": usage_missing, "server_s": server_s,
+            "first_request": first, "counted": counted}
+
+
+# ------------------------------------------------------------------ the login's load
+
+# The login's load on claude-sonnet-5 (correction model-call-time/1: rate_tokens_per_second and
+# limit_backlog_tokens of model_call_times.json in each final run folder). The login's backlog adds
+# each call's input tokens at its start and drains this many tokens a second, never below 0; the
+# server slowed every call that started with the backlog at or past the limit.
+_GATED_MODEL = "claude-sonnet-5"
+_LOGIN_RATE = 16500.0
+_LOGIN_LIMIT = 886126.5972843313
+# A call's input tokens are known only when it answers: until then the gate holds this many tokens
+# per character sent, the most of the 3,169 claude-sonnet-5 calls of one request in the final runs,
+# and puts the reply's own count in their place when the call answers.
+_TOKENS_PER_CHAR = 0.496
+
+
+class _FileLock:
+    """An OS lock on one file, held by one process at a time; the OS lets it go when the process
+    that holds it ends, a crash included."""
+
+    def __init__(self, path: Path):
+        self.path = path
+
+    def __enter__(self):
+        self.fh = open(self.path, "a+b")
+        if os.name == "nt":
+            self.fh.seek(0)
+            while True:
+                try:
+                    msvcrt.locking(self.fh.fileno(), msvcrt.LK_NBLCK, 1)
+                    break
+                except OSError:
+                    time.sleep(0.005)
+        else:
+            fcntl.flock(self.fh.fileno(), fcntl.LOCK_EX)
+        return self
+
+    def __exit__(self, *exc):
+        if os.name == "nt":
+            self.fh.seek(0)
+            msvcrt.locking(self.fh.fileno(), msvcrt.LK_UNLCK, 1)
+        else:
+            fcntl.flock(self.fh.fileno(), fcntl.LOCK_UN)
+        self.fh.close()
+        return False
+
+
+class _LoginGate:
+    """Holds a try's start until the backlog, as model-call-time/1 counts it, plus the try's own
+    input tokens is under the limit; a try larger than the limit by itself starts on an empty
+    backlog. The backlog is one state file in the lane's config folder (`folder`, the lane's own
+    when none is given), read and written under an OS lock by the gate of every process on this
+    machine, and drained by the wall clock, so the tokens a crashed process held drain like the
+    rest. Another machine on the login is not in it."""
+
+    def __init__(self, rate: float, limit: float, folder: Path | None = None):
+        self.rate, self.limit, self.folder = rate, limit, folder
+        self.entered_at = None
+
+    def _files(self) -> tuple:
+        folder = self.folder or _CONFIG_DIR
+        folder.mkdir(parents=True, exist_ok=True)
+        return folder / "login_gate.json", folder / "login_gate.lock"
+
+    def _drained(self, state: Path) -> tuple:
+        """(the backlog now, now): a missing file is an empty backlog, an unreadable one (a write
+        cut by a crash) a full one."""
+        now = time.time()
+        try:
+            held = json.loads(state.read_text(encoding="utf-8"))
+            backlog, at = float(held["backlog"]), float(held["at"])
+        except FileNotFoundError:
+            return 0.0, now
+        except (OSError, ValueError, KeyError, TypeError):
+            return self.limit, now
+        return max(0.0, backlog - self.rate * max(0.0, now - at)), now
+
+    @staticmethod
+    def _write(state: Path, backlog: float, at: float) -> None:
+        state.write_text(json.dumps({"backlog": backlog, "at": at}), encoding="utf-8")
+
+    def enter(self, tokens: float) -> tuple:
+        """(seconds held, the backlog the try starts at with its own tokens, or None when an abort
+        came first and nothing was put on the backlog). entered_at: the wall-clock time the
+        backlog was taken at."""
+        t0 = time.perf_counter()
+        state, lock = self._files()
+        while not abort.aborted():
+            with _FileLock(lock):
+                backlog, now = self._drained(state)
+                over = backlog + tokens - self.limit if tokens < self.limit else backlog
+                if over < 0 or backlog == 0.0:
+                    self._write(state, backlog + tokens, now)
+                    self.entered_at = now
+                    return time.perf_counter() - t0, backlog + tokens
+            time.sleep(min(1.0, over / self.rate + 1e-3))
+        return time.perf_counter() - t0, None
+
+    def settle(self, held: float, tokens: float) -> None:
+        """The reply's own count of a call's input tokens in place of what the gate held for it."""
+        state, lock = self._files()
+        with _FileLock(lock):
+            backlog, now = self._drained(state)
+            self._write(state, max(0.0, backlog + tokens - held), now)
+
+
+_GATE = _LoginGate(_LOGIN_RATE, _LOGIN_LIMIT)
+
+
 def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
     model = payload["model"]
     _login()
@@ -353,20 +619,30 @@ def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
            "applied": call["applied"], "not_applied": call["not_applied"],
            "payload_dropped": sorted(call["not_applied"]),
            "started_at": capture.now(), "finished_at": None, "attempts": [], "ok": False,
-           "credential": None, "text": None, "usage": None, "envelope": None, "stream": None,
-           "stderr": None, "error": None}
+           "credential": None, "text": None, "usage": None, "usage_missing": None,
+           "server_s": None, "first_request": None, "counted": None, "gate_wait_s": 0.0,
+           "envelope": None, "stream": None, "stderr": None, "error": None}
 
+    gated = model == _GATED_MODEL
+    held = _TOKENS_PER_CHAR * (len(system) + len(prompt)
+                               + (len(json.dumps(schema)) if schema else 0))
     last = None
-    request_s = retry_s = 0.0
+    retry_s = gate_s = 0.0
     attempts = counted = 0
     credential = "subscription"
     while counted < max_tries:
+        waited, backlog = _GATE.enter(held) if gated else (0.0, None)
+        gate_s += waited
+        rec["gate_wait_s"] = gate_s
         if abort.aborted():
+            if backlog is not None:
+                _GATE.settle(held, 0.0)
             rec.update(finished_at=capture.now(), error="aborted before the try")
             capture.record(rec)
             raise abort.Aborted("claude call skipped — abort requested (pressed q)")
         attempts += 1
-        tried = {"n": attempts, "credential": credential, "started_at": capture.now(),
+        tried = {"n": attempts, "credential": credential, "gate_wait_s": waited,
+                 "gate_backlog_tokens": backlog, "started_at": capture.now(), "finished_at": None,
                  "seconds": None, "outcome": None,
                  "returncode": None, "error": None, "stdout": None, "stderr": None}
         rec["attempts"].append(tried)
@@ -377,14 +653,15 @@ def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
             r = subprocess.run(cmd, input=prompt.encode("utf-8"), capture_output=True,
                                timeout=timeout, cwd=_claude_cwd(), env=_try_env(call, credential))
         except subprocess.TimeoutExpired as err:
-            retry_s += time.perf_counter() - r0
+            spent = time.perf_counter() - r0
+            retry_s += spent
             last = err
-            tried.update(seconds=time.perf_counter() - r0, outcome="timeout", error=repr(err),
-                         stdout=_text(err.stdout), stderr=_text(err.stderr))
+            tried.update(finished_at=capture.now(), seconds=spent, outcome="timeout",
+                         error=repr(err), stdout=_text(err.stdout), stderr=_text(err.stderr))
         else:
             spent = time.perf_counter() - r0
             out, errtext = _text(r.stdout) or "", _text(r.stderr) or ""
-            tried.update(seconds=spent, returncode=r.returncode)
+            tried.update(finished_at=capture.now(), seconds=spent, returncode=r.returncode)
             if r.returncode != 0:
                 retry_s += spent
                 last = RuntimeError(
@@ -412,27 +689,32 @@ def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
                                  stderr=errtext)
                 else:
                     result = _FENCE.sub("", (data.get("result") or "").strip())
-                    usage = data.get("usage") or {}
-                    _record_timing(attempts, request_s + spent, 0.0, retry_s)
+                    found = call_counts(model, data)
+                    count = found["counted"]
+                    if gated:
+                        # the backlog counts every request of the call, the load as it was sent
+                        _GATE.settle(held, (found["usage"] or {}).get("prompt_tokens") or held)
+                    # the call's time is its own (counted): the gate's hold and the tries that did
+                    # not answer are beside it
+                    _record_timing(attempts, count["seconds"] or 0.0, gate_s, retry_s)
                     with _completed_lock:
                         _completed[0] += 1
-                    cached = int(usage.get("cache_read_input_tokens") or 0)
-                    prompt_tokens = (int(usage.get("input_tokens") or 0)
-                                     + int(usage.get("cache_creation_input_tokens") or 0)
-                                     + cached)
-                    kept = {"prompt_tokens": prompt_tokens,
-                            "completion_tokens": int(usage.get("output_tokens") or 0),
-                            "cached_input_tokens": cached}
+                    kept = None if count["prompt_tokens"] is None else {
+                        k: count[k] for k in ("prompt_tokens", "completion_tokens",
+                                              "cached_input_tokens")}
                     tried.update(outcome="ok")
                     rec.update(finished_at=capture.now(), ok=True, credential=credential,
-                               text=result, usage=kept,
+                               text=result, **found,
                                envelope=data,
                                stream=out if join_parts else None, stderr=errtext)
                     capture.record(rec)
                     return {
                         "choices": [{"message": {"content": result},
                                      "finish_reason": "stop"}],
+                        # the tokens the call counts for (counted); the record keeps the whole
+                        # call's under usage
                         "usage": kept,
+                        "usage_missing": count["missing"],
                         "num_turns": data.get("num_turns"),
                         "stop_reason": data.get("stop_reason"),
                         "call": rec,
@@ -443,7 +725,7 @@ def _claude_chat(payload: dict, timeout: float, max_tries: int) -> dict:
             time.sleep(2 ** (counted - 1))
             retry_s += time.perf_counter() - s0
             tried["backoff_s"] = time.perf_counter() - s0
-    _record_timing(attempts, request_s, 0.0, retry_s)
+    _record_timing(attempts, 0.0, gate_s, retry_s)
     rec.update(finished_at=capture.now(), error=repr(last))
     capture.record(rec)
     raise RuntimeError(f"claude {model} gave up after {max_tries} tries: {last!r}")

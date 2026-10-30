@@ -321,7 +321,9 @@ class RunRecordTests(unittest.TestCase):
             manifest = json.loads((root / "run" / "run_manifest.json").read_text(encoding="utf-8"))
             leg = manifest["legs"][0]
             saved = (root / "run" / leg["code_state"]["diff_file"]).read_bytes()
-        self.assertEqual(order, ["version", "state", "answer"])
+        # the retrieval is made again after the answers to measure its search time alone
+        self.assertEqual(order[:3], ["version", "state", "answer"])
+        self.assertEqual((order.count("version"), order.count("state")), (1, 1))
         self.assertEqual(saved, diff)
         self.assertEqual(hashlib.sha256(saved).hexdigest(), leg["code_state"]["diff_sha256"])
         self.assertEqual((leg["code_version"], manifest["code_version"]), (version, version))

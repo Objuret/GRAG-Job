@@ -72,20 +72,32 @@ def carry(fn, *args, **kwargs):
     return lambda: ctx.run(fn, *args, **kwargs)
 
 
+def counted(call: dict) -> dict:
+    """What a chat call counts for (`harness.chat.call_counts`): its time and tokens, none for a
+    call that gave up. A record written before calls kept `counted` gives its usage and its
+    answering try's seconds."""
+    if call.get("counted") is not None:
+        return call["counted"]
+    ok = [t for t in call.get("attempts") or [] if t.get("outcome") == "ok"]
+    return {"seconds": float(ok[-1].get("seconds") or 0.0) if ok and call.get("ok") else 0.0,
+            **(call.get("usage") or {})}
+
+
 def totals(calls: list) -> dict:
-    """The sums over a list of call records: what a cell or a question spent."""
+    """The sums over a list of call records: what a cell or a question spent. A chat call adds
+    what it counts for (`counted`); one whose count is missing adds none, its record says why."""
     out = {"chat_calls": 0, "chat_attempts": 0, "tokens_in": 0, "cached_input_tokens": 0,
            "tokens_out": 0, "chat_s": 0.0,
            "embed_calls": 0, "embed_texts": 0, "embed_tokens": 0, "embed_s": 0.0}
     for c in calls:
         if c.get("kind") == "chat":
-            usage = c.get("usage") or {}
+            n = counted(c)
             out["chat_calls"] += 1
             out["chat_attempts"] += len(c.get("attempts") or [])
-            out["tokens_in"] += int(usage.get("prompt_tokens") or 0)
-            out["cached_input_tokens"] += int(usage.get("cached_input_tokens") or 0)
-            out["tokens_out"] += int(usage.get("completion_tokens") or 0)
-            out["chat_s"] += sum(float(a.get("seconds") or 0.0) for a in c.get("attempts") or [])
+            out["tokens_in"] += int(n.get("prompt_tokens") or 0)
+            out["cached_input_tokens"] += int(n.get("cached_input_tokens") or 0)
+            out["tokens_out"] += int(n.get("completion_tokens") or 0)
+            out["chat_s"] += float(n.get("seconds") or 0.0)
         elif c.get("kind") == "embed":
             out["embed_calls"] += 1
             out["embed_texts"] += int(c.get("n_texts") or 0)
@@ -101,12 +113,14 @@ USAGE_KEYS = ("calls", "attempts", "tokens_in", "cached_input_tokens", "tokens_o
 def usage_by_model(calls: list) -> list:
     """What the call records cost, one entry per model in the order the models were first asked,
     so that no two models are added together. A language model (chat): an answer is one call,
-    however many tries it took, and a call that gave up adds its tries but no call; the tokens
-    are those of the tries that answered; request_s the seconds of those tries, retry_s the
-    seconds of the other tries and of the pauses before trying again, a try a correction marked
-    as slept under left out. The embedder (embed): one call and one attempt per batch, its
-    tokens, encode_s as request_s and lock_wait_s as wait_s. time_s = request_s + wait_s +
-    retry_s."""
+    however many tries it took, and a call that gave up adds its tries but no call; tokens and
+    request_s are what each call counts for (`counted`: its answering try's server time and the
+    CLI's own count, or its first request's), a call whose count is missing adding none; wait_s
+    the gate's hold before the tries; retry_s the seconds of the tries that did not answer, by our
+    clock, and of the pauses before trying again, a try a correction marked as slept under left
+    out. The embedder (embed): one call and one attempt per batch, its tokens, encode_s as
+    request_s and lock_wait_s as wait_s. time_s = request_s: the waits and the tries that did not
+    answer are beside it, not in it."""
     blocks = {}
     for c in calls:
         kind, model = c.get("kind"), c.get("model")
@@ -119,17 +133,17 @@ def usage_by_model(calls: list) -> list:
             tries = c.get("attempts") or []
             b["attempts"] += len(tries)
             for t in tries:
-                if t.get("outcome") == "ok" and c.get("ok"):
-                    b["request_s"] += float(t.get("seconds") or 0.0)
-                elif not t.get("machine_asleep"):
+                if not (t.get("outcome") == "ok" and c.get("ok")) and not t.get("machine_asleep"):
                     b["retry_s"] += float(t.get("seconds") or 0.0)
                 b["retry_s"] += float(t.get("backoff_s") or 0.0)
+            b["wait_s"] += float(c.get("gate_wait_s") or 0.0)
             if c.get("ok"):
-                usage = c.get("usage") or {}
+                n = counted(c)
                 b["calls"] += 1
-                b["tokens_in"] += int(usage.get("prompt_tokens") or 0)
-                b["cached_input_tokens"] += int(usage.get("cached_input_tokens") or 0)
-                b["tokens_out"] += int(usage.get("completion_tokens") or 0)
+                b["request_s"] += float(n.get("seconds") or 0.0)
+                b["tokens_in"] += int(n.get("prompt_tokens") or 0)
+                b["cached_input_tokens"] += int(n.get("cached_input_tokens") or 0)
+                b["tokens_out"] += int(n.get("completion_tokens") or 0)
         else:
             batches = -(-int(c.get("n_texts") or 0) // max(1, int(c.get("batch") or 1)))
             b["calls"] += batches
@@ -138,5 +152,5 @@ def usage_by_model(calls: list) -> list:
             b["request_s"] += float(c.get("encode_s") or 0.0)
             b["wait_s"] += float(c.get("lock_wait_s") or 0.0)
     for b in blocks.values():
-        b["time_s"] = b["request_s"] + b["wait_s"] + b["retry_s"]
+        b["time_s"] = b["request_s"]
     return list(blocks.values())

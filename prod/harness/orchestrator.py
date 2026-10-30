@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import hashlib
 import json
 import os
@@ -101,7 +102,6 @@ def build_shared_generator(config):
 
     def generate(question, contexts):
         chat.reset_timing()
-        t0 = time.perf_counter()
         # the answer call's record is marked, so the retrieval's own calls can be told from it
         role = capture.set_role("answer")
         try:
@@ -116,7 +116,6 @@ def build_shared_generator(config):
             }, timeout=480.0)
         finally:
             capture.reset_role(role)
-        elapsed = time.perf_counter() - t0
         transport = chat.take_timing()
         choices = resp.get("choices") or []
         if not choices:
@@ -136,10 +135,12 @@ def build_shared_generator(config):
                 f"generator did not honour the answer schema "
                 f"(finish_reason={choices[0].get('finish_reason')}): {content!r}") from e
         tokens_in, tokens_out = generator_usage_from_chat(resp.get("usage"))
+        # the call's time is its answering try's server time (request_s); our own clock of the
+        # call stays in its record (attempts, started_at, finished_at)
         return answer, {"calls": 1, "tokens_in": tokens_in, "tokens_out": tokens_out,
                         "cached_input_tokens": int(
                             (resp.get("usage") or {}).get("cached_input_tokens") or 0),
-                        "time": elapsed, **transport}
+                        "time": transport["request_s"], **transport}
 
     return generate
 
@@ -296,6 +297,219 @@ def run_one_evaluator(evaluator, outputs, chosen, arm="", corpus=None, results_p
                                    retrieval_only=retrieval_only)
 
 
+_CODE_ROOTS = (_HERE / "prod", _HERE / "test")
+# the packages an arm is made of; the harness's own modules are not followed
+_ARM_PACKAGES = ("arms", "artefact", "graph")
+
+
+def _module_file(name, base=None):
+    """The file of a module by its dotted name, under prod/ or test/, or under `base` for a
+    relative import; None when there is none."""
+    rel = Path(*name.split(".")) if name else Path()
+    for root in ([base] if base is not None else _CODE_ROOTS):
+        for p in ((root / rel).with_suffix(".py") if name else None, root / rel / "__init__.py"):
+            if p is not None and p.is_file():
+                return p
+    return None
+
+
+def embeds(module) -> bool:
+    """Whether a module asks the embedder: its source, or the source of a module of arms/,
+    artefact/ or graph/ that it imports, imports harness.embed. Read from the files; nothing is
+    run. A module without a file asks none."""
+    first = getattr(module, "__file__", None)
+    todo, seen = ([Path(first)] if first else []), set()
+    while todo:
+        path = todo.pop()
+        if path in seen:
+            continue
+        seen.add(path)
+        try:
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+        except (OSError, SyntaxError, ValueError):
+            continue
+        for node in ast.walk(tree):
+            base = None
+            if isinstance(node, ast.Import):
+                names = [a.name for a in node.names]
+            elif isinstance(node, ast.ImportFrom):
+                mod = node.module or ""
+                names = [mod] + [f"{mod}.{a.name}" if mod else a.name for a in node.names]
+                if node.level:
+                    base = path.parent
+                    for _ in range(node.level - 1):
+                        base = base.parent
+            else:
+                continue
+            for name in names:
+                if base is None and name == "harness.embed":
+                    return True
+                if base is None and name.split(".")[0] not in _ARM_PACKAGES:
+                    continue
+                found = _module_file(name, base)
+                if found is not None:
+                    todo.append(found)
+    return False
+
+
+def evaluator_embeds(evaluator, retrieval_only=False) -> bool:
+    """Whether a scoring start asks the embedder: a score it is set to make needs it (its
+    catalog's embed), or, for an evaluator without a catalog, its source imports harness.embed.
+    A retrieval-only scoring makes no such score."""
+    if evaluator is None or retrieval_only:
+        return False
+    catalog, chosen = getattr(evaluator, "CATALOG", None), getattr(evaluator, "metrics_to_run", None)
+    if catalog is not None and callable(chosen):
+        return any(catalog[n].embed for n in chosen())
+    return embeds(evaluator)
+
+
+def check_embedder_device(pipeline, evaluator, retrieval_only=False) -> bool:
+    """Stops a start whose arm or scoring asks the embedder unless the embedder is on a graphics
+    card (`embed.require_cuda`), before anything is written or asked. Returns whether the arm
+    asks it."""
+    arm_embeds = embeds(pipeline)
+    asking = [what for what, yes in (
+        (f"arm {_arm_name(pipeline)}", arm_embeds),
+        (f"the scoring ({_arm_name(evaluator) if evaluator is not None else 'gen'})",
+         evaluator_embeds(evaluator, retrieval_only))) if yes]
+    if asking:
+        from harness import embed
+        embed.require_cuda(" and ".join(asking))
+    return arm_embeds
+
+
+def _rewrite_rows(path, rows):
+    """A .jsonl file written again whole, each record as the harness writes a row, through a file
+    beside it that then takes its place."""
+    path = Path(path)
+    tmp = path.with_name(path.name + ".tmp")
+    with tmp.open("w", encoding="utf-8") as fh:
+        for r in rows:
+            fh.write(json.dumps(r, ensure_ascii=False, default=repr) + "\n")
+        fh.flush()
+        os.fsync(fh.fileno())
+    tmp.replace(path)
+
+
+def _no_model_call(*args, **kwargs):
+    raise RuntimeError("no model call is made while the search times are measured again")
+
+
+def search_time_pass(pipeline, prepared, out, k=DEFAULT_TOP_K, char_budget=None):
+    """Each row's search time measured again after the answers, as corrections search-time/1 and
+    /2 measured it: the row's retrieval made again one question at a time with nothing else under
+    way, after one question made once and not counted, so that no question is the first of its
+    process; no answer call, and every model call refused (an artefact reads its first call from
+    the run's own store). Where the retrieval hands over the same records as the row, the row's
+    search_time_s is the time measured now and the one measured while answering is kept as
+    search_time_in_run_s; a row that holds search_time_in_run_s is not measured again. Returns
+    what the pass did, for the start's entry in legs; None when no row was left to measure."""
+    path = Path(out) / "arm_outputs.jsonl"
+    rows = jsonl.load(path)
+    todo = [r for r in rows if "search_time_in_run_s" not in r]
+    if not todo:
+        return None
+    from harness import chat
+    extra = {} if char_budget is None else {"char_budget": char_budget}
+
+    def again(r):
+        return pipeline.answer_one_question((r["id"], r["question"]), prepared, None, k, **extra)
+
+    done = {"started_at": capture.now(), "finished_at": None, "warm_up_question": todo[0]["id"],
+            "questions": 0, "same_records_in_another_order": [], "other_records": [],
+            "failed": []}
+    kept_post, chat.post = chat.post, _no_model_call
+    try:
+        try:
+            again(todo[0])
+        except Exception as e:
+            done["warm_up_question"] = None
+            done["failed"].append({"id": todo[0]["id"], "error": repr(e)})
+            todo = todo[1:]
+        for r in progress(todo, desc="search time alone", unit="q"):
+            if abort.aborted():
+                break
+            try:
+                o = again(r)
+            except Exception as e:
+                done["failed"].append({"id": r["id"], "error": repr(e)})
+                continue
+            if (sorted(o.contexts) != sorted(r["contexts"])
+                    or sorted(o.context_ids) != sorted(r["context_ids"])):
+                done["other_records"].append(r["id"])
+                continue
+            if o.contexts != r["contexts"] or o.context_ids != r["context_ids"]:
+                done["same_records_in_another_order"].append(r["id"])
+            r["search_time_in_run_s"], r["search_time_s"] = r["search_time_s"], o.search_time_s
+            done["questions"] += 1
+    finally:
+        chat.post = kept_post
+        _rewrite_rows(path, rows)
+    done["finished_at"] = capture.now()
+    return done
+
+
+def row_embed_pass(out):
+    """The rows' embedder requests that were not made again alone yet, made again alone
+    (`embed.time_alone`), as corrections embed-gpu-time/1 to /3 measured them: each record gets
+    the device, encode_s and lock_wait_s of its request made alone, those of the run under in_run,
+    and its row's retrieval is counted again from its records. Returns what the pass did, for the
+    start's entry in legs; None when no request was left."""
+    path = Path(out) / "arm_outputs.jsonl"
+    rows = jsonl.load(path)
+    todo = [(r, i) for r in rows for i, c in enumerate(r.get("calls") or [])
+            if c.get("kind") == "embed" and "in_run" not in c]
+    if not todo:
+        return None
+    from harness import embed
+    started = capture.now()
+    again = embed.time_alone([r["calls"][i] for r, i in todo])
+    for (r, i), a in zip(todo, again):
+        r["calls"][i] = embed.retimed(r["calls"][i], a)
+    for r in {id(r): r for r, _ in todo}.values():
+        if isinstance(r.get("retrieval"), list):
+            r["retrieval"] = retrieval_of(r["calls"])
+    _rewrite_rows(path, rows)
+    return {"requests": len(todo), "warm_up_requests": min(embed.WARM_REQUESTS, len(todo)),
+            "started_at": started, "finished_at": capture.now()}
+
+
+def judge_embed_pass(out):
+    """The scoring's embedder requests in eval_calls.jsonl that were not made again alone yet,
+    made again alone (`embed.time_alone`), as correction judge-embed-gpu-time/1 measured them:
+    each record gets the device, encode_s and lock_wait_s of its request made alone, those of
+    the run under in_run; every other line stays as it is. Returns what the pass did, for the
+    start's entry in judge_legs; None when no request was left."""
+    path = Path(out) / "eval_calls.jsonl"
+    if not path.is_file():
+        return None
+    lines = path.read_bytes().split(b"\n")
+    todo = []
+    for n, line in enumerate(lines):
+        if b'"kind": "embed"' not in line:
+            continue
+        try:
+            c = json.loads(line)
+        except ValueError:
+            continue
+        if c.get("kind") == "embed" and "in_run" not in c:
+            todo.append((n, c))
+    if not todo:
+        return None
+    from harness import embed
+    started = capture.now()
+    again = embed.time_alone([c for _, c in todo])
+    for (n, c), a in zip(todo, again):
+        lines[n] = (json.dumps(embed.retimed(c, a), ensure_ascii=False, default=repr)
+                    .encode("utf-8") + (b"\r" if lines[n].endswith(b"\r") else b""))
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_bytes(b"\n".join(lines))
+    tmp.replace(path)
+    return {"requests": len(todo), "warm_up_requests": min(embed.WARM_REQUESTS, len(todo)),
+            "started_at": started, "finished_at": capture.now()}
+
+
 def graph_identity(database, counted=None):
     """Which graph a run read: its last build record, and the graph as counted in it
     (`graph_census`) when that was done."""
@@ -434,7 +648,7 @@ def build_run_manifest(config, arm, build_stats, n_questions, n_ran, n_failed,
     )
 
 
-def _accumulated_judge(prior, manifest):
+def _prior_judge_legs(prior):
     legs = list((prior or {}).get("judge_legs") or [])
     if not legs and prior and (prior.get("judge_usage") or prior.get("judge_elapsed_s")):
         legs.append({"timestamp": prior.get("timestamp"),
@@ -443,17 +657,24 @@ def _accumulated_judge(prior, manifest):
                      "usage": prior.get("judge_usage"),
                      "elapsed_s": prior.get("judge_elapsed_s"),
                      "settings": prior.get("judge_settings")})
+    return legs
+
+
+def _accumulated_judge(prior, manifest, begun_at=None, embed_pass=None):
+    legs = _prior_judge_legs(prior)
 
     usage = manifest.judge_usage
     # every scoring leg is kept, a leg without a judge call too: its stamps, settings and
     # embedding work are part of what the evaluation cost
     if usage is not None and (usage.calls or manifest.judge_settings):
-        legs.append({"timestamp": manifest.timestamp,
+        legs.append({"begun_at": begun_at,
+                     "timestamp": manifest.timestamp,
                      "judge_model": manifest.judge_model,
                      "judge_backend": manifest.judge_backend,
                      "usage": asdict(usage),
                      "elapsed_s": manifest.judge_elapsed_s,
-                     "settings": manifest.judge_settings})
+                     "settings": manifest.judge_settings,
+                     "embed_pass": embed_pass})
 
     if manifest.judge_model is None:
         # a start that made no judge call names no model: the one the kept scores were judged
@@ -501,6 +722,69 @@ def build_eval_manifest(config, scorer, arm, source_run):
     )
 
 
+def _write_json(path, doc):
+    Path(path).write_text(json.dumps(doc, ensure_ascii=False, indent=2, default=repr),
+                          encoding="utf-8")
+
+
+def _read_json(path):
+    try:
+        return json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+
+
+def score_leg(evaluator, rows, chosen, arm, corpus, out, workers, retrieval_only, config, scorer,
+              source_run, judge_model=None):
+    """One scoring start of a folder. Its entry in judge_legs is written when it begins, with
+    only when it began, and filled when it ends, also when it is cut short; a start whose process
+    is killed keeps the entry as it began. When the scoring asks the embedder, its requests are
+    made again alone after it (`judge_embed_pass`). `judge_model` names the judge where the
+    caller knows it better than the evaluator. Raises what cut the start short, after its entry
+    is filled; returns the results."""
+    out = Path(out)
+    eval_manifest_path = out / "eval_manifest.json"
+    prior = _read_json(eval_manifest_path)
+    prior = prior if isinstance(prior, dict) else None
+    begun_at = capture.now()
+    entry = {"begun_at": begun_at, "timestamp": None, "judge_model": None, "judge_backend": None,
+             "usage": None, "elapsed_s": None, "settings": None, "embed_pass": None}
+    if prior is not None:
+        begun = dict(prior, timestamp=begun_at, judge_legs=_prior_judge_legs(prior) + [entry])
+    else:
+        begun = asdict(build_eval_manifest({}, scorer, arm, source_run))
+        begun["judge_legs"] = [entry]
+    _write_json(eval_manifest_path, begun)
+
+    results, cut_short = None, None
+    try:
+        results = run_one_evaluator(evaluator, [_rehydrate(r) for r in rows], chosen, arm,
+                                    corpus, out / "eval_results.jsonl", workers, retrieval_only)
+    except BaseException as e:
+        cut_short = e
+    judge = {"judge_model": judge_model or getattr(evaluator, "LAST_JUDGE_MODEL", None),
+             "judge_backend": getattr(evaluator, "LAST_JUDGE_BACKEND", None),
+             "judge_effort": getattr(evaluator, "LAST_JUDGE_REASONING_EFFORT", None),
+             "judge_usage": getattr(evaluator, "LAST_JUDGE_USAGE", None),
+             "judge_elapsed_s": getattr(evaluator, "LAST_JUDGE_WALL_TIME_S", None),
+             "judge_settings": getattr(evaluator, "LAST_JUDGE_SETTINGS", None)}
+    config.update(judge)
+    embed_pass = None
+    if cut_short is None and evaluator_embeds(evaluator, retrieval_only):
+        try:
+            embed_pass = judge_embed_pass(out)
+        except Exception as e:
+            cut_short = e
+    # from the first scoring leg on: each leg is written with its own settings, so a later leg
+    # never replaces what an earlier one ran under
+    manifest = _accumulated_judge(prior, build_eval_manifest(config, scorer, arm, source_run),
+                                  begun_at, embed_pass)
+    _write_json(eval_manifest_path, asdict(manifest))
+    if cut_short is not None:
+        raise cut_short
+    return results
+
+
 def _arm_name(module):
     return module.__name__.rsplit(".", 1)[-1]
 
@@ -530,6 +814,10 @@ def run(pipeline, evaluator, ids_file, config=None):
     root = CHUNKS_ROOT if config.get("char_budget") is None else CHARS_ROOT
     out = Path(config.get("out_dir") or root / f"{arm}__{evname}")
 
+    # a start whose arm or scoring asks the embedder has it on a graphics card, checked before
+    # anything is written or asked
+    arm_embeds = check_embedder_device(pipeline, evaluator, config.get("retrieval_only"))
+
     # what the folder's files and fields mean, in the folder itself; written first, so a
     # start that cannot write it stops before it asks a model anything
     out.mkdir(parents=True, exist_ok=True)
@@ -537,12 +825,11 @@ def run(pipeline, evaluator, ids_file, config=None):
 
     # one leg per start or resume of this folder, so its time can be joined or discounted
     manifest_path = out / "run_manifest.json"
-    try:
-        prior_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
+    manifest_existed = manifest_path.is_file()
+    prior_manifest = _read_json(manifest_path)
+    if not isinstance(prior_manifest, dict):
         prior_manifest = None
-    prior_legs = list((prior_manifest or {}).get("legs") or []) \
-        if isinstance(prior_manifest, dict) else []
+    prior_legs = list((prior_manifest or {}).get("legs") or [])
     leg_no = len(prior_legs) + 1
     leg_started, leg_t0, leg_cpu0 = capture.now(), time.perf_counter(), time.process_time()
     workers = config.get("workers", DEFAULT_WORKERS)
@@ -560,12 +847,59 @@ def run(pipeline, evaluator, ids_file, config=None):
         out.mkdir(parents=True, exist_ok=True)
         if not (out / state["diff_file"]).is_file():
             (out / state["diff_file"]).write_bytes(diff)
+    if generate is not None or evaluator is not None:
+        from harness import chat
+        lane = chat.lane_info()
+    else:
+        lane = None
+
+    # the start's entry is written now and filled when it ends: a start whose process is killed
+    # keeps it as it began, and the rows it wrote carry its number
+    done_before = _done_ids(out / "arm_outputs.jsonl")
+    leg = {"leg": leg_no, "started_at": leg_started, "finished_at": None, "wall_s": None,
+           "process_cpu_s": None, "workers": workers,
+           "argv": list(sys.argv), "pid": os.getpid(), "python_executable": sys.executable,
+           "ids_file": None if ids_file is None else str(ids_file),
+           "n_chosen": len(chosen), "n_todo": sum(1 for q in chosen if q.id not in done_before),
+           "n_answered": None, "n_unanswered_after": None,
+           "aborted": "not ended: the start's process stopped before it filled this entry",
+           "prepare_s": None, "embedder_load_s": None,
+           "retrieval_only": bool(config.get("retrieval_only")), "evaluator": evname,
+           "peak_memory_bytes": None,
+           "code_version": code_version, "code_state": state,
+           "flags": config.get("flags"), "lane": lane, "index": None,
+           "search_pass": None, "embed_pass": None}
+    config.update(legs=prior_legs + [leg], lane=lane, code_state=state,
+                  code_version=code_version, generator_info=generator_info(config))
+    if prior_manifest is not None:
+        _write_json(manifest_path, dict(prior_manifest, legs=config["legs"]))
+    else:
+        n_before = sum(1 for q in chosen if q.id in done_before)
+        _write_json(manifest_path, asdict(build_run_manifest(
+            config, arm, None, len(chosen), n_before, len(chosen) - n_before)))
 
     telemetry = {}
     ran, _, aborted, build_stats = run_one_pipeline(
         pipeline, chosen, corpus, generate, out,
         config.get("top_k", DEFAULT_TOP_K), workers,
         char_budget=config.get("char_budget"), leg=leg_no, telemetry=telemetry)
+    leg.update(finished_at=capture.now(), wall_s=time.perf_counter() - leg_t0,
+               process_cpu_s=time.process_time() - leg_cpu0,
+               peak_memory_bytes=provenance.peak_memory_bytes())
+
+    # after the answers, with nothing else under way: each search time and each embedder
+    # request measured again alone
+    if not aborted:
+        try:
+            leg["search_pass"] = search_time_pass(
+                pipeline, telemetry.get("prepared"), out, config.get("top_k", DEFAULT_TOP_K),
+                config.get("char_budget"))
+            if arm_embeds:
+                leg["embed_pass"] = row_embed_pass(out)
+        except Exception as e:
+            aborted = f"stopped in the measuring after the answers: {e!r}"
+        if not aborted and abort.aborted():
+            aborted = "user aborted (pressed q)"
 
     done = _done_ids(out / "arm_outputs.jsonl")
     n_failed = len(chosen) - len(done)
@@ -576,46 +910,26 @@ def run(pipeline, evaluator, ids_file, config=None):
         index = info(telemetry.get("prepared")) if callable(info) else None
     except Exception as e:
         index = {"error": repr(e)}
-    if generate is not None or evaluator is not None:
-        from harness import chat
-        lane = chat.lane_info()
-    else:
-        lane = None
     from harness import embed
-    leg = {"leg": leg_no, "started_at": leg_started, "finished_at": capture.now(),
-           "wall_s": time.perf_counter() - leg_t0,
-           "process_cpu_s": time.process_time() - leg_cpu0, "workers": workers,
-           "argv": list(sys.argv), "pid": os.getpid(), "python_executable": sys.executable,
-           "ids_file": None if ids_file is None else str(ids_file),
-           "n_chosen": len(chosen), "n_todo": telemetry.get("n_todo"),
-           "n_answered": len(ran), "n_unanswered_after": n_failed, "aborted": aborted,
-           "prepare_s": telemetry.get("prepare_s"), "embedder_load_s": embed.LOAD_S,
-           "retrieval_only": bool(config.get("retrieval_only")), "evaluator": evname,
-           "peak_memory_bytes": provenance.peak_memory_bytes(),
-           "code_version": code_version, "code_state": state,
-           "flags": config.get("flags"), "lane": lane, "index": index}
-    config.update(legs=prior_legs + [leg], lane=lane, index=index, code_state=state,
-                  code_version=code_version, generator_info=generator_info(config))
+    leg.update(n_todo=telemetry.get("n_todo"), n_answered=len(ran), n_unanswered_after=n_failed,
+               aborted=aborted, prepare_s=telemetry.get("prepare_s"),
+               embedder_load_s=embed.LOAD_S, index=index)
+    config.update(legs=prior_legs + [leg], index=index)
     if config.get("graph_database") and "graph_census" not in config:
         # the graph the arm read, counted in it now: a build record can be missing or older
         config["graph_census"] = graph_census(config["graph_database"])
 
-    if ran or not manifest_path.is_file():
+    if ran or prior_manifest is None:
         manifest = build_run_manifest(
             config, arm, build_stats, len(chosen), len(done), n_failed, n_exhausted)
-        if isinstance(prior_manifest, dict):
+        if prior_manifest is not None:
             manifest.graph = _merged_graph(prior_manifest.get("graph"), manifest.graph)
-        elif manifest_path.is_file():
+        elif manifest_existed:
             manifest.graph = _merged_graph(None, manifest.graph)
-        manifest_path.write_text(
-            json.dumps(asdict(manifest), ensure_ascii=False, indent=2, default=repr),
-            encoding="utf-8")
-    elif isinstance(prior_manifest, dict):
+        _write_json(manifest_path, asdict(manifest))
+    else:
         # nothing was answered in this leg: the manifest of the answers stands, the leg is added
-        prior_manifest["legs"] = config["legs"]
-        manifest_path.write_text(
-            json.dumps(prior_manifest, ensure_ascii=False, indent=2, default=repr),
-            encoding="utf-8")
+        _write_json(manifest_path, dict(prior_manifest, legs=config["legs"]))
 
     _rewrite_fields(out)
     if aborted:
@@ -629,38 +943,12 @@ def run(pipeline, evaluator, ids_file, config=None):
     by_id = {q.id: q for q in chosen}
     recs = jsonl.load(out / "arm_outputs.jsonl")
     eval_path = out / "eval_results.jsonl"
-    # a scoring leg that is cut short still writes its manifest: what it spent is not dropped
-    results, cut_short = None, None
     try:
-        results = run_one_evaluator(
-            evaluator, [_rehydrate(r) for r in recs], [by_id[r["id"]] for r in recs],
-            arm, corpus, eval_path, config.get("workers", DEFAULT_WORKERS),
-            config.get("retrieval_only", False))
-    except BaseException as e:
-        cut_short = e
-    config["judge_model"] = getattr(evaluator, "LAST_JUDGE_MODEL", None)
-    config["judge_backend"] = getattr(evaluator, "LAST_JUDGE_BACKEND", None)
-    config["judge_effort"] = getattr(evaluator, "LAST_JUDGE_REASONING_EFFORT", None)
-    config["judge_usage"] = getattr(evaluator, "LAST_JUDGE_USAGE", None)
-    config["judge_elapsed_s"] = getattr(evaluator, "LAST_JUDGE_WALL_TIME_S", None)
-    config["judge_settings"] = getattr(evaluator, "LAST_JUDGE_SETTINGS", None)
-    eval_manifest_path = out / "eval_manifest.json"
-    eval_manifest = build_eval_manifest(config, evname, arm, out)
-    prior = None
-    if eval_manifest_path.is_file():
-        try:
-            prior = json.loads(eval_manifest_path.read_text(encoding="utf-8"))
-        except (OSError, ValueError):
-            prior = None
-    # from the first scoring leg on: each leg is written with its own settings, so a later leg
-    # never replaces what an earlier one ran under
-    eval_manifest = _accumulated_judge(prior, eval_manifest)
-    eval_manifest_path.write_text(
-        json.dumps(asdict(eval_manifest), ensure_ascii=False, indent=2, default=repr),
-        encoding="utf-8")
-    _rewrite_fields(out)
-    if cut_short is not None:
-        raise cut_short
+        results = score_leg(evaluator, recs, [by_id[r["id"]] for r in recs], arm, corpus, out,
+                            config.get("workers", DEFAULT_WORKERS),
+                            config.get("retrieval_only", False), config, evname, out)
+    finally:
+        _rewrite_fields(out)
     n_results = (sum(1 for x in eval_path.read_text(encoding="utf-8").splitlines() if x.strip())
                  if eval_path.is_file() else len(results or []))
     return {"out_dir": str(out), "n_questions": len(chosen), "n_ran": len(done),
