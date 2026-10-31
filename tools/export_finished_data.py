@@ -156,12 +156,15 @@ QUESTIONS = [
     *SCORES,
     ("string_presence_per_id", "RAGAS StringPresence run on each item of HERB's reference list (one employee ID, PR "
                                "link or URL per item) instead of on the whole reference answer: the share of the items "
-                               "the answer contains. Person, PR and URL questions; empty for content and company "
-                               "questions.", "0-1"),
+                               "the answer contains, an item counted only where it is not followed by a letter or a "
+                               "digit, so that a link is not found inside a longer one (pull/12 inside pull/123; our "
+                               "own rule). Person, PR and URL questions; empty for content and company questions.",
+     "0-1"),
     ("string_presence_per_id_precision", "RAGAS StringPresence run the other way round: each distinct ID or link in "
                                          "the answer of the forms that the items of HERB's reference list have, looked "
                                          "for in the reference list (its items joined by spaces): the share of them the "
-                                         "list contains. The forms are our own rule: an employee ID (eid_ and eight hex "
+                                         "list contains, each counted as in string_presence_per_id only where it is not "
+                                         "followed by a letter or a digit. The forms are our own rule: an employee ID (eid_ and eight hex "
                                          "digits), a customer ID (CUST- and four digits), a PR link (a github.com pull "
                                          "link), a URL (any other link that starts with http:// or https://). Person, PR and "
                                          "URL questions; empty for content and company questions, and empty when the "
@@ -213,10 +216,17 @@ QUESTIONS = [
 SETUP = [
     ("dataset", None, ""),
     ("dataset_licence", None, ""),
+    ("questions", "Questions each arm answered: every question of HERB's question set that cites evidence records.",
+     "questions"),
+    ("corpus_units", "Units of HERB's corpus that every arm reads: every record of HERB's products and every employee "
+                     "and customer record (employee.json, customers_data.json), one unit per record.", "units"),
     ("character_limit", "Maximum characters of retrieved text given to the answer model per question.",
      "characters"),
     ("answer_model", "Language model of the answers and of the artefact's interpreter.", ""),
     ("judge_model", "Language model that RAGAS uses as judge.", ""),
+    ("judge_temperature", "Sampling temperature of every judge call.", ""),
+    ("ragas_version", "Version of RAGAS that judged the scores, as every judge start that records its settings "
+                      "names it.", ""),
     ("embedding_model", "Embedding model of the query embeddings and of the RAGAS scores that use embeddings.", ""),
 ]
 RUN = [
@@ -358,6 +368,13 @@ def judge_cost(folder, ev, calls, cells, d):
 
 
 _REDONE = {}
+# the RAGAS versions and judge temperatures of every judging the workbook reads; run data names each once
+JUDGING = {"ragas": set(), "temperature": set()}
+
+
+def note_judging(ev, calls):
+    JUDGING["ragas"] |= {(leg.get("settings") or {}).get("ragas") for leg in ev.get("judge_legs") or []} - {None}
+    JUDGING["temperature"] |= {(c.get("applied") or {}).get("temperature") for c in calls if c.get("kind") == "chat"}
 
 
 def redone(arm):
@@ -378,6 +395,7 @@ def redone(arm):
         if set(cells) != set(outputs):
             sys.exit(f"{folder}: not every question it answered was judged")
         calls = rows(d / "eval_calls.jsonl")
+        note_judging(ev, calls)
         judge, _ = judge_cost(folder, ev, calls, cells, d)
         judging_seconds(calls, set(cells), folder)
         recorded = judge_records.usage_of(calls)
@@ -456,9 +474,17 @@ def string_presence(response, references):
     return asyncio.run(each())
 
 
+def whole(text, s):
+    """s stands in text not followed by a letter or a digit: an ID or a link found whole, not inside a longer one
+    (pull/12 in pull/123). Our own rule, the plan of 2026-10-30 ("a PR link must not count as found inside a longer
+    link") that he started with "first 2, then 1 ... we go"."""
+    return re.search(re.escape(s) + r"(?![A-Za-z0-9])", text) is not None
+
+
 def string_presence_per_id(answer, items):
-    """RAGAS StringPresence run on each item of HERB's reference list: the share of the items the answer holds."""
-    hits = string_presence(answer, items)
+    """RAGAS StringPresence run on each item of HERB's reference list, a hit counted where the item stands whole
+    (whole): the share of the items the answer holds."""
+    hits = [bool(h) and whole(answer, str(i)) for h, i in zip(string_presence(answer, items), items)]
     return sum(hits) / len(hits)
 
 
@@ -470,7 +496,8 @@ def string_presence_per_id_precision(answer, items):
     given = [i for k, i in ids_and_links(answer) if k in forms]
     if not given:
         return None
-    hits = string_presence(" ".join(str(item) for item in items), given)
+    joined = " ".join(str(item) for item in items)
+    hits = [bool(h) and whole(joined, g) for h, g in zip(string_presence(joined, given), given)]
     return sum(hits) / len(hits)
 
 
@@ -535,6 +562,7 @@ def rejudged(arm, d, cells, judge_model, set_name, keep):
         elif r != cells[r["question_id"]][r["metric"]]:
             sys.exit(f"{arm} {r['question_id']}: {r['metric']} in {j.name} is not the run's")
     every = rows(j / "eval_calls.jsonl")
+    note_judging(read(j / "eval_manifest.json"), every)
     if any(c.get("score") not in REJUDGED_SCORES or c.get("question_id") not in cells for c in every):
         sys.exit(f"{arm}: {j.name} holds a call for another score or question than the re-judged ones")
     calls = [c for c in every if (c.get("question_id"), c.get("score"), c.get("eval_leg")) in kept]
@@ -597,6 +625,7 @@ def runs_tables(arm, folder, refs, sets, by_sha):
     for r in rows(d / "eval_results.jsonl"):
         cells.setdefault(r["question_id"], {})[r["metric"]] = r
     calls = rows(d / "eval_calls.jsonl")
+    note_judging(ev, calls)
     judge, _ = judge_cost(folder, ev, calls, cells, d)
     judging_seconds(calls, set(cells), folder)
     # the run without answers over the index with the employee and customer records: which questions are now
@@ -951,10 +980,9 @@ def construction_table():
     things = [
         ("index", "Index type.", "", {k: INDEX_KIND[k][0] for k in RUNS}),
         ("unit", "Unit stored in the index.", "", {k: INDEX_KIND[k][1] for k in RUNS}),
-        ("units in the index", "Units in the index. Artefact: the chunks in the graph; the arm retrieves from all of "
-                               "them but the chunks of one of HERB's metadata files, salesforce_team.json.", "count",
+        ("units in the index", "Units in the index. Artefact: the chunks the arm retrieves from.", "count",
          {"lucene": mans["lucene"]["index"]["units"], "vector": mans["vector"]["index"]["units"],
-          a: mans[a]["graph"]["census"]["labels"]["Chunk"]}),
+          a: mans[a]["index"]["counts"]["chunks"]}),
         ("build time, seconds", "Time to build the index that the arm's runs read. Artefact: the times of "
                                 "the build steps added: the claude-haiku-4-5 and claude-opus-5 steps as the times of "
                                 "their calls added, the embedding as in its row, the other steps as their recorded "
@@ -1060,6 +1088,17 @@ def main():
     setup = next(iter(setups.values()))
     if any(s != setup for s in setups.values()):
         sys.exit("the runs differ in the setup; this export writes it once")
+    # the questions and the corpus every arm reads, and the judging's RAGAS version and temperature, once
+    construction, construction_key = construction_table()
+    units = next(r for r in construction if r["property"] == "units in the index")
+    asked = {a: {q["question_id"] for q in questions if q["arm"] == a} for a in RUNS}
+    cited = {i for i, q in refs.items() if q["citations"]}
+    if (any(s != cited for s in asked.values()) or units["lucene"] != units["vector"]
+            or len(JUDGING["ragas"]) != 1 or len(JUDGING["temperature"]) != 1):
+        sys.exit("an arm did not answer exactly the questions that cite evidence, lucene and vector index other "
+                 "corpora, or the judging names more than one RAGAS version or judge temperature")
+    setup = dict(setup, questions=len(cited), corpus_units=units["lucene"],
+                 ragas_version=next(iter(JUDGING["ragas"])), judge_temperature=next(iter(JUDGING["temperature"])))
     # run data: what is the same for the three arms once, then a table with a column per arm, each
     # value the arm's runs' added
     same = [{"property": c, "value": setup[c]} for c, _, _ in SETUP]
@@ -1068,7 +1107,6 @@ def main():
     measures = [c for c, _, u in QUESTIONS if u]
     means = [{"mean of": c, **{arm: (lambda v: sum(v) / len(v) if v else None)(
         [q[c] for q in questions if q["arm"] == arm and q[c] is not None]) for arm in RUNS}} for c in measures]
-    construction, construction_key = construction_table()
     key = ([{"sheet": PER_QUESTION, "field": c, "meaning": m, "unit": u} for c, m, u in QUESTIONS]
            + [{"sheet": PER_RUN, "field": c, "meaning": m, "unit": u} for c, m, u in SETUP + RUN if m]
            + [{"sheet": PER_RUN, "field": "mean of", "meaning": f"Mean over the arm's questions in {PER_QUESTION} "
