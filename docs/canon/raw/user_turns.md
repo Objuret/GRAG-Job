@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-3183 turns, chronological. Verbatim text; no edits.
+3193 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -22440,4 +22440,47 @@ Ah, yes, that took no model calls, cool.
 But.. Is this really it? It feels like we missed something.. Was it really this painfree?
 
 Did we answer all his points in his email?
+
+## 2026-10-31 20:29 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+Run
+
+## 2026-10-31 20:30 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+*queued while an agent was working*
+
+Run gold
+
+## 2026-10-31 20:56 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+Dude, you are doing that retarded shit again why the fuck have you split the data into 100 and 715!?
+
+## 2026-10-31 20:57 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+I mean, yes, but why the fuck are you separating them AFTER the run!?
+
+## 2026-10-31 20:58 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+Ok
+You wrote way too much btw in your previous answer
+
+## 2026-10-31 20:59 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+And by previous answer.. Perhaps I fucking didn't mean the 5 row anser.. Perhaps i meant the 50 row anser just before it.. Wtf dude
+
+## 2026-10-31 21:07 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+You do NOT have to do his statistical analysis, that's his fucking job we are answering his questions not doing the fucking job for him
+
+## 2026-10-31 21:08 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+Why would you add that as a fucking rule in the.md..?
+
+## 2026-10-31 21:34 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+Status
+
+## 2026-10-31 22:09 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+And let's walk through each question or point he brought up then
 

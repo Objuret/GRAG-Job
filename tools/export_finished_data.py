@@ -51,7 +51,11 @@ RUNS = {"lucene": ["lucene__gold100__cb72000__20261008T234209Z",
         "vector": ["vector__gold100__cb72000__20261017T061242Z",
                    "vector__answerable715__cb72000__20261024T004317Z"],
         "artefact": ["artefact_v4__gold100__cb72000__20261023T021439Z",
-                     "artefact_v4__answerable715__cb72000__20261025T211532Z"]}
+                     "artefact_v4__answerable715__cb72000__20261025T211532Z"],
+        # HERB's own evidence for each question, under the same cut and answer prompt (the analyst's experiment;
+        # his "Run gold", 2026-10-31): no index, no search over one and no redo, so no RETRIEVED and no REDONE run
+        "gold_evidence": ["gold_evidence__gold100__cb72000__20261031",
+                          "gold_evidence__answerable715__cb72000__20261031"]}
 # HERB's answerable questions, each in one of these files of ids; a run's set is the file whose
 # sha256 its manifest names as its ids file
 SETS = {"gold100": "data/gold100.jsonl", "answerable715": "data/answerable715.jsonl"}
@@ -176,7 +180,8 @@ QUESTIONS = [
     ("search_seconds", "Retrieval time, without the interpreter and the query embedding, measured with one question "
                        "at a time on one machine for every arm, never as the first question of a process: for lucene "
                        "and vector the ranking, for the artefact the reading of its stored first-call answer and query "
-                       "vectors, the ranking and its hand-over of the records up to character_limit.", "seconds"),
+                       "vectors, the ranking and its hand-over of the records up to character_limit, for "
+                       "gold_evidence the reading of HERB's evidence for the question.", "seconds"),
     ("interpreter_seconds", "Time of the interpreter call's answering try: the answer model, called before "
                             "retrieval, measured and limited as answer_seconds, with the relation fitted on the "
                             "interpreter calls. Artefact only.", "seconds"),
@@ -245,7 +250,9 @@ RUN = [
 ]
 INDEX_KIND = {"lucene": ("BM25 full-text index", "corpus record"),
               "vector": ("dense vector index", "corpus record"),
-              "artefact": ("graph database (Neo4j)", "chunk: a part of one corpus record, one record, or several records")}
+              "artefact": ("graph database (Neo4j)", "chunk: a part of one corpus record, one record, or several records"),
+              "gold_evidence": ("none: the arm hands over HERB's own evidence for each question",
+                                "HERB's evidence record")}
 
 
 def model_name(name):
@@ -629,23 +636,31 @@ def runs_tables(arm, folder, refs, sets, by_sha):
     judge, _ = judge_cost(folder, ev, calls, cells, d)
     judging_seconds(calls, set(cells), folder)
     # the run without answers over the index with the employee and customer records: which questions are now
-    # handed other texts, and every question's search
-    p = ROOT / "output/k=chars" / RETRIEVED[folder]
-    pman = read(p / "run_manifest.json")
-    if (pman["inputs"]["ids_sha256"] != man["inputs"]["ids_sha256"]
-            or (pman["n_questions"], pman["n_ran"], pman["n_failed"]) != (len(ids), len(ids), 0)):
-        sys.exit(f"{RETRIEVED[folder]}: not a run of every question of {set_name}")
-    passed = {o["id"]: o for o in rows(p / "arm_outputs.jsonl")}
-    if sorted(passed) != sorted(ids) or any(o.get("search_time_s") is None for o in passed.values()):
-        sys.exit(f"{RETRIEVED[folder]}: not every question of {set_name} once, each with its search time")
-    changed = {o["id"] for o in outputs if delivered(o) != delivered(passed[o["id"]])}
+    # handed other texts, and every question's search. An arm with no index (gold_evidence) has none: its texts
+    # are HERB's evidence, its search the reading of that evidence measured alone in its own run, and no question
+    # of it was answered again
+    if folder in RETRIEVED:
+        p = ROOT / "output/k=chars" / RETRIEVED[folder]
+        pman = read(p / "run_manifest.json")
+        if (pman["inputs"]["ids_sha256"] != man["inputs"]["ids_sha256"]
+                or (pman["n_questions"], pman["n_ran"], pman["n_failed"]) != (len(ids), len(ids), 0)):
+            sys.exit(f"{RETRIEVED[folder]}: not a run of every question of {set_name}")
+        passed = {o["id"]: o for o in rows(p / "arm_outputs.jsonl")}
+        if sorted(passed) != sorted(ids) or any(o.get("search_time_s") is None for o in passed.values()):
+            sys.exit(f"{RETRIEVED[folder]}: not every question of {set_name} once, each with its search time")
+        changed = {o["id"] for o in outputs if delivered(o) != delivered(passed[o["id"]])}
+        red = redone(arm)
+        if {i for i in red["rows"] if i in set(ids)} != changed:
+            sys.exit(f"{REDONE[arm]}: the questions of {set_name} it answered are not those now handed other texts")
+        if any(delivered(red["rows"][i]) != delivered(passed[i]) for i in changed):
+            sys.exit(f"{REDONE[arm]}: a question was handed other texts than in {RETRIEVED[folder]}")
+        red["used"] |= changed
+    else:
+        pman, red, changed = None, None, set()
+        passed = {o["id"]: o for o in outputs}
+        if any(o.get("search_time_s") is None for o in outputs):
+            sys.exit(f"{folder}: not every question has its search time")
     keep = set(ids) - changed
-    red = redone(arm)
-    if {i for i in red["rows"] if i in set(ids)} != changed:
-        sys.exit(f"{REDONE[arm]}: the questions of {set_name} it answered are not those now handed other texts")
-    if any(delivered(red["rows"][i]) != delivered(passed[i]) for i in changed):
-        sys.exit(f"{REDONE[arm]}: a question was handed other texts than in {RETRIEVED[folder]}")
-    red["used"] |= changed
 
     def texts(os):
         """The texts RAGAS embeds for these questions' scores: each answer and each reference, as its samples
@@ -664,9 +679,11 @@ def runs_tables(arm, folder, refs, sets, by_sha):
         sys.exit(f"{folder}: judge_usage holds fewer tokens than the call records")
     judge_in += judge["tokens_in"] - recorded["tokens_in"]
     judge_out += judge["tokens_out"] - recorded["tokens_out"]
-    r_seconds, r_failed, r_in, r_out, r_embedded, r_counted = judging_of(
-        red["calls"], changed, texts(red["rows"][i] for i in changed), REDONE[arm], red["claimed"])
-    red["claimed"] |= r_counted
+    r_seconds = r_failed = r_in = r_out = r_embedded = 0
+    if red:
+        r_seconds, r_failed, r_in, r_out, r_embedded, r_counted = judging_of(
+            red["calls"], changed, texts(red["rows"][i] for i in changed), REDONE[arm], red["claimed"])
+        red["claimed"] |= r_counted
     added, added_seconds, added_in, added_out, added_failed = rejudged(arm, d, cells, ev["judge_model"], set_name,
                                                                        keep)
     for qid, scores in added.items():
@@ -696,8 +713,9 @@ def runs_tables(arm, folder, refs, sets, by_sha):
             own[e["kind"]] = e
         arm_calls = [c for c in r["calls"] if c.get("role") != "answer"]
         # entries a REDONE row recorded itself: the harness of that run writes a call's time as its answering
-        # try's time alone (time_s = request_s), the gate's wait and the failed tries beside it, not in it
-        fresh = {id(r["generator"])} | {id(e) for e in own.values()} if again else set()
+        # try's time alone (time_s = request_s), the gate's wait and the failed tries beside it, not in it; the
+        # gold-evidence runs were made with that harness too
+        fresh = {id(r["generator"])} | {id(e) for e in own.values()} if again or red is None else set()
         if again and (r.get("meta") or {}).get("interpreter") is not None:
             # REDONE read the interpreter's answer from the store of the final runs' first calls and asked no
             # model: the first call counts as it counts for the final run's row
@@ -825,12 +843,12 @@ def runs_tables(arm, folder, refs, sets, by_sha):
     # never the clock of the run as a whole (his 2026-10-22 "THE RUN TIME IS THE ADDED TIME FOR ALL THE
     # THINGS IN THE FUCKING RUN", 2026-10-23 "wall time? this is not a thing")
     # one setup for every row: the redone and the retrieved run's as the final run's
-    rman = red["man"]
-    if ((rman["char_budget"], model_name(rman["generator_model"]), model_name(red["ev"]["judge_model"]),
-         model_name(rman["environment"]["embedder"]["model"]))
-            != (setup["character_limit"], setup["answer_model"], setup["judge_model"], setup["embedding_model"])
-            or (pman["char_budget"], model_name(pman["environment"]["embedder"]["model"]))
-            != (setup["character_limit"], setup["embedding_model"])):
+    rman = red and red["man"]
+    if red and ((rman["char_budget"], model_name(rman["generator_model"]), model_name(red["ev"]["judge_model"]),
+                 model_name(rman["environment"]["embedder"]["model"]))
+                != (setup["character_limit"], setup["answer_model"], setup["judge_model"], setup["embedding_model"])
+                or (pman["char_budget"], model_name(pman["environment"]["embedder"]["model"]))
+                != (setup["character_limit"], setup["embedding_model"])):
         sys.exit(f"{arm}: {REDONE[arm]} or {RETRIEVED[folder]} ran with another setup than {folder}")
     run = {
         "run_seconds": sum(q["total_seconds"] for q in questions),
@@ -841,7 +859,7 @@ def runs_tables(arm, folder, refs, sets, by_sha):
     failed_answer = sum(1 for r in outputs for c in r["calls"] if c.get("role") == "answer"
                         for t in c.get("attempts") or [] if t.get("outcome") != "ok")
     print(f"{folder}: {set_name}, {len(questions)} rows, {len(changed)} of them answered and judged again in "
-          f"{REDONE[arm]}; answer calls' tries that did not answer {failed_answer}, "
+          f"{REDONE.get(arm, 'no redo run')}; answer calls' tries that did not answer {failed_answer}, "
           f"their seconds and pauses out: {sum(r['generator']['retry_s'] for r in outputs):.1f} s; seconds of judge "
           f"calls' tries that did not answer, and their pauses, left out of the judging: "
           f"{failed_judging + r_failed + added_failed:.1f} s")
@@ -858,7 +876,7 @@ def construction_table():
     the build as the arm's run on the 715 timed it."""
     # the index each arm reads now: that of its runs without answers over the corpus with the employee and
     # customer records (RETRIEVED), which its redone run (REDONE) must hold too
-    now = {a: [RETRIEVED[f] for f in fs] for a, fs in RUNS.items()}
+    now = {a: [RETRIEVED[f] for f in fs] for a, fs in RUNS.items() if all(f in RETRIEVED for f in fs)}
     of_runs = {a: [read(ROOT / "output/k=chars" / f / "run_manifest.json") for f in fs] for a, fs in now.items()}
 
     # an index is the same when it holds the same: the same units, their text and its digest, from the
@@ -1072,7 +1090,7 @@ def main():
             runs[arm].append(run_of)
     # every question an arm's REDONE run answered is one of its sets' questions now handed other texts, and
     # each of that run's embedding requests is counted once
-    for arm in RUNS:
+    for arm in REDONE:
         red = redone(arm)
         if (red["used"] != set(red["rows"])
                 or red["claimed"] != {n for n, c in enumerate(red["calls"]) if c.get("kind") == "embed"}):
