@@ -1,0 +1,98 @@
+{
+ "stored": "A:\\exjobbet\\facet_pairs\\fullcache\\shard5\\Alibaba-NLP__gte-reranker-modernbert-base.npz",
+ "again": "shard5_again\\Alibaba-NLP__gte-reranker-modernbert-base.npz",
+ "edges": 7214,
+ "same_edges_in_the_same_order": true,
+ "n_tokens_equal": true,
+ "truncated_equal": true,
+ "arrays": {
+  "cls_L-1": {
+   "values": 5540352,
+   "bit_equal": 5540352,
+   "max_abs_difference": 0.0,
+   "mean_abs_difference": 0.0,
+   "stored_abs_mean": 1.1284162998199463
+  },
+  "cls_L-2": {
+   "values": 5540352,
+   "bit_equal": 5540352,
+   "max_abs_difference": 0.0,
+   "mean_abs_difference": 0.0,
+   "stored_abs_mean": 67.49861145019531
+  },
+  "cls_L-3": {
+   "values": 5540352,
+   "bit_equal": 5540352,
+   "max_abs_difference": 0.0,
+   "mean_abs_difference": 0.0,
+   "stored_abs_mean": 36.45195007324219
+  },
+  "cls_L-4": {
+   "values": 5540352,
+   "bit_equal": 5540352,
+   "max_abs_difference": 0.0,
+   "mean_abs_difference": 0.0,
+   "stored_abs_mean": 23.10190773010254
+  },
+  "mean_L-1": {
+   "values": 5540352,
+   "bit_equal": 5540352,
+   "max_abs_difference": 0.0,
+   "mean_abs_difference": 0.0,
+   "stored_abs_mean": 1.1254544258117676
+  },
+  "mean_L-2": {
+   "values": 5540352,
+   "bit_equal": 5540352,
+   "max_abs_difference": 0.0,
+   "mean_abs_difference": 0.0,
+   "stored_abs_mean": 68.14823150634766
+  },
+  "mean_L-3": {
+   "values": 5540352,
+   "bit_equal": 5540352,
+   "max_abs_difference": 0.0,
+   "mean_abs_difference": 0.0,
+   "stored_abs_mean": 36.95028305053711
+  },
+  "mean_L-4": {
+   "values": 5540352,
+   "bit_equal": 5540352,
+   "max_abs_difference": 0.0,
+   "mean_abs_difference": 0.0,
+   "stored_abs_mean": 23.959970474243164
+  },
+  "native_logit": {
+   "values": 7214,
+   "bit_equal": 7214,
+   "max_abs_difference": 0.0,
+   "mean_abs_difference": 0.0,
+   "stored_abs_mean": 2.0236968994140625
+  }
+ },
+ "facet_means_over_the_kept_refits": {
+  "variant": "mean_L-3",
+  "per_facet": {
+   "temporal": {
+    "max_abs_difference": 0.0,
+    "mean_abs_difference": 0.0,
+    "stored_sd": 1.8385496483653163
+   },
+   "why": {
+    "max_abs_difference": 0.0,
+    "mean_abs_difference": 0.0,
+    "stored_sd": 1.3708939860653053
+   },
+   "activity": {
+    "max_abs_difference": 0.0,
+    "mean_abs_difference": 0.0,
+    "stored_sd": 1.3871541098781628
+   },
+   "concreteness": {
+    "max_abs_difference": 0.0,
+    "mean_abs_difference": 0.0,
+    "stored_sd": 1.29206562732687
+   }
+  }
+ }
+}

@@ -1,0 +1,4 @@
+pairs touching a new edge: any 3627 same_chunk 1256
+(a) pairs drawn over the 61,018 stored indices: {'temporal': 1.01, 'why': 1.38, 'activity': 1.06, 'concreteness': 1.3, 'pooled_same_chunk': 1.0}
+(b) pairs drawn over 61,592, only pairs of two stored edges: {'temporal': 1.03, 'why': 1.39, 'activity': 1.06, 'concreteness': 1.3, 'pooled_same_chunk': 0.98}
+(c) pairs drawn over 61,592, all (the new BANDS.md): {'temporal': 1.03, 'why': 1.39, 'activity': 1.06, 'concreteness': 1.31, 'pooled_same_chunk': 0.98}

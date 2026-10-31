@@ -1,0 +1,91 @@
+{
+ "uri": "neo4j://localhost:7687",
+ "database": "herb-eval-volmax",
+ "arm_file": "C:\\Coding\\exjobbet\\GRAG-Job\\test\\arms\\artefact_v4.py",
+ "pool": "c.desc_emb IS NOT NULL AND ((c)-[:product]->() OR c.metadata_section IN [\"customers_data\", \"employee\"]) AND EXISTS { MATCH (c)-[run_edge:HAS_TAG]->() WHERE run_edge.run_id = $run }",
+ "counts": {
+  "chunks": 4839,
+  "edges": 61592,
+  "graph_tags": 16702,
+  "eligible_edges": 57778,
+  "eligible_graph_tags": 16657,
+  "product_named_tags": 45,
+  "chunks_with_an_eligible_edge": 4839,
+  "topic_apart": 0.9795221086869735
+ },
+ "topic_check_passes": false,
+ "graph_layer_read": {
+  "passes": false,
+  "error": "574 of 61592 pool edges do not carry the facet layer",
+  "pool_edges": 61592
+ },
+ "all_edges": {
+  "edges": 62028,
+  "sha256": "d3797ce1e59be2d4a81d060e74355cf743e7d98460752e369322fc75a3b1053a"
+ },
+ "node": {
+  "written": "2026-10-08T20:52:59+00:00",
+  "sha256": "8c5fed5e426c6458bbaa5ae00e49ece70b0de619a73a18d8f0e1c21e8b0bd1c3",
+  "properties": {
+   "value_others": "the edge's mean over the bootstrap refits of the round-1 head score",
+   "run_id": "pilot_full_herb",
+   "source_bands_sha256": "353464d168bf146163cc76502f9acc783f733c0628506b96b75a5d2d030dcf58",
+   "pooled_flip_gap_column": "gap (same chunk)",
+   "edges": 61018,
+   "equal_gap": [
+    1.01,
+    1.38,
+    1.06,
+    1.3
+   ],
+   "equal_gap_facets": [
+    "temporal",
+    "why",
+    "activity",
+    "concreteness"
+   ],
+   "equal_gap_column": "gap (any)",
+   "source_dir": "output/facet_pairs/rounds/round1",
+   "value_topic": "cos(tag vector, chunk description vector), the graph's stored vectors",
+   "facets": [
+    "topic",
+    "temporal",
+    "why",
+    "activity",
+    "concreteness"
+   ],
+   "refits": 24,
+   "source_scores_sha256": "465624f788a5e373526c9604829db4ce22dd874b87da5f91960340126f10fe1a",
+   "rows_sha256": "7691718044935dd08a729c7a11b00fcdc03de76c7350c10e39aa1b8b798976d6",
+   "name": "pairwise-round1-refit-mean",
+   "source_refits_sha256": "619f2687f7f7562ca681bd6f2db0f353ec8393bc80039dcb63fcf5207404709a",
+   "pooled_flip_gap": 1.0
+  }
+ },
+ "against_backup": {
+  "backup": "output/facet_weight_backup/herb-eval-volmax__pilot_full_herb/weights.jsonl",
+  "backup_edges": 62028,
+  "groups": {
+   "product": {
+    "edges": 61018,
+    "equal_to_backup": 61018,
+    "not_in_backup": 0
+   },
+   "employee": {
+    "edges": 492,
+    "equal_to_backup": 492,
+    "not_in_backup": 0
+   },
+   "salesforce_team": {
+    "edges": 436,
+    "equal_to_backup": 436,
+    "not_in_backup": 0
+   },
+   "customers_data": {
+    "edges": 82,
+    "equal_to_backup": 82,
+    "not_in_backup": 0
+   }
+  }
+ }
+}

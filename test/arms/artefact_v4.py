@@ -1,5 +1,6 @@
 """artefact_v4: the artefact. Inside the border the question's name sets, the chunk cloud and the
-tags' cloud together order the chunks, and the product's own work is handed over.
+tags' cloud together order the chunks of the pool, those of the products' files and of the metadata
+files employee.json and customers_data.json (`POOL`), and their records are handed over.
 
 Per question:
   1. One model call writes a description of the content the question is looking for and two
@@ -57,9 +58,10 @@ Per question:
      is the ways it is tied, added over
      the chosen chunks. The order: the chosen chunks, then the rest of the clouds by strength,
      equals in the clouds' order, then everything outside the clouds as the clouds order it.
-  8. What is handed over (`_hand_over`): in that order, every record of each chunk, and a Slack
-     conversation whole where it first shows (a channel's messages between its long gaps, each
-     message at its own time, read through the chunk's pointer). Nothing is left out (his
+  8. What is handed over (`_hand_over`): in that order, every record of each chunk (of a chunk of a
+     metadata file, the employees or customers at its pointer's places in the file, `_metadata`),
+     and a Slack conversation whole where it first shows (a channel's messages between its long
+     gaps, each message at its own time, read through the chunk's pointer). Nothing is left out (his
      2026-10-23 "yes, remove them", on leaving out a channel apart, other projects' pull requests
      and talk about another project's pull request).
      A chosen chunk that is a part of a split document or transcript goes in as its whole record,
@@ -105,8 +107,8 @@ from artefact import query_content as Q
 from artefact import graph_layer as GL
 from artefact import v4_walk as WK
 from arms.artefact_facet_joint import _cached_stage, _query_cosines, _sha
-from harness.record_text import FORM as RECORD_FORM, record_text
-from arms.artefact_v2 import _load_verified_doc
+from harness.record_text import FORM as RECORD_FORM, METADATA_TYPES, metadata_records, record_text
+from arms.artefact_v2 import RAW_ROOT, _load_verified_doc
 
 ROOT = Path(__file__).resolve().parents[2]
 DATABASE = 'herb-eval-volmax'
@@ -121,18 +123,22 @@ STAGE_NAMES = {'querytag': 'querytagger'}
 if GL.FACETS != WK.FACETS:
     raise RuntimeError('The graph layer and the arithmetic name different facets')
 
-# The pool: a chunk with a description vector, a tag edge of the run and a product edge (the three
-# metadata files' chunks carry no product edge and stay out).
-POOL = ('c.desc_emb IS NOT NULL AND (c)-[:product]->() '
-        'AND EXISTS { MATCH (c)-[r:HAS_TAG]->() WHERE r.run_id = $run }')
+# The pool: one condition on a chunk `c`, which every query of the pool reads ($run, the tag run): a
+# description vector, a tag edge of the run, and a product edge or a place in one of the metadata
+# files every arm's corpus holds, employee.json and customers_data.json (`METADATA_TYPES`; his
+# 2026-10-30 "ok, so, we add them back in then"). The chunks of salesforce_team.json stay out (his
+# 2026-10-31 "yeah, so, dont fucking talk about or use it then").
+POOL = ('c.desc_emb IS NOT NULL '
+        f'AND ((c)-[:product]->() OR c.metadata_section IN {json.dumps(sorted(METADATA_TYPES))}) '
+        'AND EXISTS { MATCH (c)-[run_edge:HAS_TAG]->() WHERE run_edge.run_id = $run }')
 
 PRODUCT_CYPHER = 'MATCH (p:Product) RETURN p.name AS name ORDER BY name'
 
 # Every pool edge with its five facet values: read once at start to check the facet layer whole
 # (`graph_layer.read`); the retrieval does not use it.
-EDGE_CYPHER = '''
+EDGE_CYPHER = f'''
 MATCH (c:Chunk)-[r:HAS_TAG]->(t:Tag)
-WHERE r.run_id = $run AND c.desc_emb IS NOT NULL AND t.emb IS NOT NULL AND (c)-[:product]->()
+WHERE r.run_id = $run AND t.emb IS NOT NULL AND {POOL}
 RETURN t.name AS tag, c.chunk_id AS chunkId, r.facets AS facets, r.w_facets AS values
 '''
 
@@ -143,7 +149,7 @@ COUNTS_CYPHER = f'''
 MATCH (c:Chunk) WHERE {POOL}
 WITH count(c) AS chunks
 MATCH (c:Chunk)-[r:HAS_TAG]->(t:Tag)
-WHERE r.run_id = $run AND c.desc_emb IS NOT NULL AND t.emb IS NOT NULL AND (c)-[:product]->()
+WHERE r.run_id = $run AND t.emb IS NOT NULL AND {POOL}
 WITH chunks, count(r) AS edges, count(DISTINCT t) AS graph_tags,
      sum(CASE WHEN NOT toLower(t.name) IN $products THEN 1 ELSE 0 END) AS eligible_edges,
      count(DISTINCT CASE WHEN NOT toLower(t.name) IN $products THEN t END) AS eligible_graph_tags,
@@ -156,13 +162,16 @@ RETURN chunks, edges, graph_tags, eligible_edges, eligible_graph_tags, product_n
 DIM_CYPHER = 'MATCH (t:Tag) WHERE t.emb IS NOT NULL RETURN size(t.emb) AS dim LIMIT 1'
 POOL_IDS_CYPHER = f'MATCH (c:Chunk) WHERE {POOL} RETURN c.chunk_id AS chunk ORDER BY chunk'
 
-# Per question, for the chunks of the border: each chunk's record pointer, product, channels and
-# parent, and its description's closeness to each of the query side's texts; each eligible graph
+# Per question, for the chunks of the border, each one of the pool: each chunk's record pointer,
+# product (none for a chunk of a metadata file), channels and parent, and its description's
+# closeness to each of the query side's texts; each eligible graph
 # tag on those chunks with its closeness to each query tag and its edges' five values. The
 # closeness is the graph's own cosine (vector.similarity.cosine gives (1 + cosine) / 2).
-QUESTION_CHUNKS_CYPHER = '''
+QUESTION_CHUNKS_CYPHER = f'''
 UNWIND $chunks AS cid
-MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk {chunk_id: cid})-[:product]->(p:Product)
+MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk {{chunk_id: cid}})
+WHERE {POOL}
+OPTIONAL MATCH (c)-[:product]->(p:Product)
 OPTIONAL MATCH (c)-[:channel]->(ch:Channel)
 WITH f, c, p, collect(ch.id) AS channels
 RETURN c.chunk_id AS chunkId, c.kind AS kind, c.parent_ref AS parent, c.ordinal AS ordinal,
@@ -198,8 +207,8 @@ RETURN sid AS start, cid AS chunk,
        EXISTS { MATCH (s)<-[:chunk]-(:Employee)-[:chunk]->(c) } AS shares_person,
        gap
 '''
-TIME_CYPHER = '''
-MATCH (c:Chunk) WHERE (c)-[:product]->()
+TIME_CYPHER = f'''
+MATCH (c:Chunk) WHERE {POOL}
 RETURN count(c) AS chunks, count(c.times) AS with_a_time,
        count(c.time_first) + count(c.time_last) AS old_spans
 '''
@@ -229,8 +238,7 @@ CALL (n) {
     MATCH (n)<-[:company]-(:Customer)-[:chunk]->(t:Chunk) WITH DISTINCT t.parent_ref AS parent
     MATCH (c:Chunk {parent_ref: parent}) RETURN c
 }
-WITH id, c WHERE c.desc_emb IS NOT NULL AND (c)-[:product]->()
-  AND EXISTS { MATCH (c)-[r:HAS_TAG]->() WHERE r.run_id = $run }
+WITH id, c WHERE ''' + POOL + '''
 RETURN id AS node, collect(DISTINCT c.chunk_id) AS chunks
 '''
 NAMES_CYPHER = '''
@@ -299,12 +307,10 @@ LEFT_OUT = [
     "The graph: the 974 chunks of the benchmark's question, unanswerable-question and "
     "product-profile sections were dropped from the graph on 2026-05-19 (5,843 chunks made, 4,869 "
     "kept). No rule in his words is recorded; his messages of those days are not in the canon.",
-    "The pool: the 61 chunks of the three metadata files (employee.json, salesforce_team.json, "
-    "customers_data.json) are out of the pool (4,869 chunks in the graph, 4,808 in the pool). His "
-    "words: \"eh.. vector and lucene sure as fuck shoulw never use the artefact or the graph DB, "
-    "and there is a fucking reason thoes 3 files or off for the artefact\" (2026-09-13T01:00:57Z) "
-    "· \"just dont use those chunks, ffs, and yeah, i did ask for their fucking removal a million "
-    "times but whatever\" (2026-09-13T01:10:35Z).",
+    "The pool: the 30 chunks of the metadata file salesforce_team.json are out of the pool (4,869 "
+    "chunks in the graph, 4,839 in the pool). His words, on that file: \"yeah, so, dont fucking "
+    "talk about or use it then, if its not a current file, why are you talking about it?\" "
+    "(2026-10-30T23:52:24Z).",
     "The tags: 4,111 tags and their 5,470 edges were removed from the graph copy herb-eval-v2 on "
     "2026-08-12 (output/graph_build/herb-eval-v2/step_cleanup.json, with its predicate). His "
     "words: \"ok, so, lets do this then, draft a new design based on these thoughts and "
@@ -336,7 +342,9 @@ FIELDS = {
                 "The largest difference, over the edges, between the topic value on the edge "
                 "and the cosine of the tag's vector and the chunk description's vector.",
             'counts': sub('What the graph held, counted in it.', {
-                'chunks': 'Chunks in the pool.',
+                'chunks': "Chunks in the pool: those of the products' files and of the metadata "
+                          'files employee.json and customers_data.json, each with a description '
+                          'vector and a tag edge of the run.',
                 'graph_tags': 'Tags that sit on a chunk of the pool.',
                 'edges': 'Tag-to-chunk edges into the pool.',
                 'products': 'Products.',
@@ -447,8 +455,9 @@ FIELDS = {
                                             'in a cloud.',
                 'scopes_taken': 'The parents that hold the majority of those chunks. A parent '
                                 "is a channel, a product's whole documents, transcripts, pull "
-                                'requests, links or chats, or the parts of one document or one '
-                                'transcript.',
+                                'requests, links or chats, the parts of one document or one '
+                                'transcript, or the employees or the customers of a metadata '
+                                'file.',
                 'chunks_in_scope': 'Chunks of the border under those parents.',
                 'tags_cloud_by_the_facets': sub("What the facets' standing did to the tags' cloud.", {
                     'nearer': 'Chunks moved one level of closeness nearer.',
@@ -623,8 +632,8 @@ FIELDS = {
                                             'step.'),
             'delivered_in_scope': 'How many of the delivered chunks are in scope.',
         }),
-        'chunk_ids': 'The record ids behind each text handed over, one list a text, in the order '
-                     "of contexts: the arm's order.",
+        'chunk_ids': "The record ids behind each text handed over (an employee's is its "
+                     "employee_id), one list a text, in the order of contexts: the arm's order.",
         'reading_order': 'The order the answer model read the texts in, pointer order, as '
                          'positions in contexts (0 the first).',
         'returned': 'How many texts were handed over, the one cut at the budget counted.',
@@ -862,9 +871,42 @@ def _without_names(question, swaps):
     return ' '.join(out.split())
 
 
+def _metadata(row, cache):
+    """The records of the metadata file a chunk's pointer names (its `metadata`: employee or
+    customers_data), each as (its own id, the record), in the order `record_text.metadata_records`
+    gives them: an employee's place among employee.json's entries, a customer's in
+    customers_data.json's list, the places the May chunker counted a pointer's `indices` in
+    (`_herb_json_specs`, backend/indexing/chunker.py at 399ee32). The file is the one the graph
+    was built from: its sha256 is checked (`_load_verified_doc`)."""
+    kind = json.loads(row['locator'])['metadata']
+    key = ('metadata', row['relpath'], row['sha256'])
+    if key not in cache:
+        if kind not in METADATA_TYPES:
+            raise ValueError(f'The chunk {row["chunkId"]} points into the metadata file {kind}, '
+                             'which the arm does not use')
+        _load_verified_doc(row['relpath'], row['sha256'], cache)
+        path = (RAW_ROOT / row['relpath']).resolve()
+        root = path.parent.parent
+        if (root / METADATA_TYPES[kind]).resolve() != path:
+            raise ValueError(f'The chunk {row["chunkId"]} points at {row["relpath"]}, not at '
+                             f'{METADATA_TYPES[kind]}')
+        cache[key] = [(str(rid), rec) for held, rid, rec in metadata_records(root) if held == kind]
+    return cache[key]
+
+
+def _metadata_ids(row, cache):
+    """The own ids of the employees or customers a chunk of a metadata file points at (an
+    employee's employee_id, a customer's id), in the order of its pointer's `indices`."""
+    held = _metadata(row, cache)
+    return [held[i][0] for i in json.loads(row['locator'])['indices']]
+
+
 def _pointed_records(row, cache):
-    """The records a chunk's pointer leads to, as they stand in the product's file."""
+    """The records a chunk's pointer leads to, as they stand in their file."""
     loc = json.loads(row['locator'])
+    if 'metadata' in loc:
+        held = _metadata(row, cache)
+        return [held[i][1] for i in loc['indices']]
     held = _load_verified_doc(row['relpath'], row['sha256'], cache)[loc['section']]
     return [held[i] for i in (loc['indices'] if 'indices' in loc else [loc['index']])]
 
@@ -1032,8 +1074,8 @@ def index_info(prepared):
                          'whole record, once, at its place, any other part as its record with only '
                          "that part of its long field (a document's feedback with its last part); "
                          "after the cut the texts reach the answer model in pointer order: file, "
-                         "section in the file's own order, place of the text's first record in its "
-                         "section, part; contexts keeps "
+                         "section in the file's own order (a metadata file one section), place of "
+                         "the text's first record in its section, part; contexts keeps "
                          "the arm's order, "
                          "which RAGAS reads as their rank, and reading_order gives the model's"}
 
@@ -1045,8 +1087,12 @@ def _same_words(a, b):
 
 def _pointed(row, cache):
     """A chunk's records through its pointer and their section; for a part of a split record,
-    also the pointer, which names the part (`char_range`, `field`, `part`)."""
+    also the pointer, which names the part (`char_range`, `field`, `part`). A pointer into a
+    metadata file names the file's kind (`metadata`), which is the section `record_text` writes
+    its records as."""
     loc = json.loads(row['locator'])
+    if 'metadata' in loc:
+        return loc['metadata'], _pointed_records(row, cache), None
     held = _load_verified_doc(row['relpath'], row['sha256'], cache)[loc['section']]
     if 'char_range' in loc:
         return loc['section'], [held[loc['index']]], loc
@@ -1079,10 +1125,15 @@ def _part_text(section, record, loc):
 
 def _pointer(rows, unit, doc_cache):
     """Where a text stands in HERB's files: its file, its section in the file's own order, the
-    place of its first record in that section, and its part (0 for a whole record)."""
+    place of its first record in that section, and its part (0 for a whole record). A metadata
+    file is one section; a record's place in it is its place in the file (`_metadata`)."""
     row = rows[unit['chunk']]
-    doc = _load_verified_doc(row['relpath'], row['sha256'], doc_cache)
     key = ('places', row['relpath'], unit['section'])
+    if unit['section'] in METADATA_TYPES:
+        if key not in doc_cache:
+            doc_cache[key] = {rid: n for n, (rid, _) in enumerate(_metadata(row, doc_cache))}
+        return row['relpath'], 0, min(doc_cache[key][record] for record in unit['ids']), 0
+    doc = _load_verified_doc(row['relpath'], row['sha256'], doc_cache)
     if key not in doc_cache:
         doc_cache[key] = {str(record['id']): n for n, record in enumerate(doc[unit['section']])}
     return (row['relpath'], list(doc).index(unit['section']),
@@ -1140,9 +1191,12 @@ def _hand_over(order, asked, char_budget, k, doc_cache, chosen=frozenset()):
                         'reaching': sum(1 for t in new if any(
                             str(record['id']) not in held for record in book['messages'][t]))}
             else:
-                # a part of a split record points at the whole record (`_pointed`)
+                # a part of a split record points at the whole record (`_pointed`); an employee's
+                # or a customer's id is its own (`_metadata_ids`)
                 section, records, part = _pointed(row, doc_cache)
-                unit = {'chunk': i, 'ids': list(dict.fromkeys(str(r['id']) for r in records)),
+                ids = (_metadata_ids(row, doc_cache) if section in METADATA_TYPES
+                       else [str(r['id']) for r in records])
+                unit = {'chunk': i, 'ids': list(dict.fromkeys(ids)),
                         'of_other_chunks': 0, 'not_handed_over': 0}
                 if part is not None:
                     if unit['ids'][0] in given:
@@ -1157,8 +1211,7 @@ def _hand_over(order, asked, char_budget, k, doc_cache, chosen=frozenset()):
                         continue
                     given.add(unit['ids'][0])
             text, ends = _record_texts(section, records)
-            unit.update(section=section,
-                        ends=list(zip((str(record['id']) for record in records), ends)))
+            unit.update(section=section, ends=list(zip(ids, ends)))
             units.append(unit)
             yield row['chunkId'], text
 
@@ -1227,7 +1280,7 @@ def prepare_over_corpus(corpus) -> Prepared:
             counts = session.execute_read(lambda tx: tx.run(
                 COUNTS_CYPHER, run=RUN_ID, products=folded).single().data())
             dim = session.execute_read(lambda tx: tx.run(DIM_CYPHER).single()['dim'])
-            timed = session.execute_read(lambda tx: tx.run(TIME_CYPHER).single().data())
+            timed = session.execute_read(lambda tx: tx.run(TIME_CYPHER, run=RUN_ID).single().data())
             named = session.execute_read(lambda tx: {r['label']: r['nodes']
                                                      for r in tx.run(NAMES_CYPHER)})
             customer_edges = session.execute_read(
@@ -1417,7 +1470,7 @@ def _ask_graph(chunk_ids, tag_vectors, text_vectors, prepared):
     chunk_ids = list(chunk_ids)
     with _graph().session(database=DATABASE, default_access_mode='READ') as session:
         chunk_rows = session.execute_read(lambda tx: [dict(r) for r in tx.run(
-            QUESTION_CHUNKS_CYPHER, chunks=chunk_ids, vectors=_floats(text_vectors))])
+            QUESTION_CHUNKS_CYPHER, chunks=chunk_ids, run=RUN_ID, vectors=_floats(text_vectors))])
         tag_rows = session.execute_read(lambda tx: [dict(r) for r in tx.run(
             QUESTION_TAGS_CYPHER, chunks=chunk_ids, run=RUN_ID, products=list(prepared.products),
             vectors=_floats(tag_vectors))])
@@ -1439,7 +1492,8 @@ def _ask_graph(chunk_ids, tag_vectors, text_vectors, prepared):
     rows = tuple({'chunkId': str(r['chunkId']), 'kind': r['kind'], 'parent': r['parent'],
                   'ordinal': r['ordinal'], 'locator': r['locator'],
                   'relpath': r['relpath'],
-                  'sha256': r['sha256'], 'product': str(r['product']),
+                  'sha256': r['sha256'],
+                  'product': None if r['product'] is None else str(r['product']),
                   'channels': [str(ch) for ch in r['channels']]} for r in chunk_rows)
     return Asked(chunk_rows=rows, chunk_ids=ids, graph_tags=graph_tags, layer=layer,
                  tag_cosines=np.asarray([r['closeness'] for r in tag_rows], dtype=np.float64).T,

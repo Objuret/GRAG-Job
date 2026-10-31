@@ -1,17 +1,21 @@
 """Write the facet layer the artefact reads onto the graph's HAS_TAG edges (his 2026-10-06
 "yeah make the db current before anything else").
 
-Per edge of the product-linked pool (the edges of rounds/round1/scores.jsonl) five values in
-the order topic, temporal, why, activity, concreteness:
+Per edge of the artefact's pool, the chunks with a product and the chunks of employee.json and
+customers_data.json (the edges of rounds/round1/metadata_pool/bootstrap/scores_b24.npz: the
+61,018 product edges' stored refit scores and the 574 metadata edges', made by
+`facet_pairs/metadata_edges.py`), five values in the order topic, temporal, why, activity,
+concreteness:
   topic        cos(tag vector, chunk description vector), the graph's own stored vectors,
                normalised and multiplied as the arm does it (`artefact_facet_joint._unit`,
                float64), so the stored number is the arm's own;
   the four     the edge's mean over the bootstrap refits of the round-1 head
-               (rounds/round1/bootstrap/scores_b24.npz), the numbers the arm ranks with.
+               (metadata_pool/bootstrap/scores_b24.npz), the numbers the arm ranks with.
 They replace `facets` / `w_facets` on those edges. Once, on a `FacetLayer` node: the layer's
-name, the four per-facet retrain gaps (`bootstrap/BANDS.md`, the column the arm reads), the
-pooled flip gap, the number of refits and the sha256 of every source file. Edges outside the
-pool (the chunks with no product) are not touched.
+name, the four per-facet retrain gaps (`metadata_pool/bootstrap/BANDS.md`, read over the
+pool's edges; the column the arm reads), the pooled flip gap, the number of refits and the
+sha256 of every source file. Edges outside the pool (the chunks of salesforce_team.json) are
+not touched.
 
     python write_facet_layer.py plan     # read everything, print what would be written
     python write_facet_layer.py write    # needs a backup entry that equals the live graph
@@ -38,14 +42,14 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path[:0] = [str(ROOT / "prod"), str(ROOT / "test")]
 
 from artefact import graph_layer as GL
-from artefact import learned_relations as L
 from arms.artefact_facet_joint import _unit
+from arms.artefact_v4 import POOL
 from graph import backup_facet_weights as BK
 from graph.db import DATABASE, RUN_ID, _driver
 
 LAYER_NAME = "pairwise-round1-refit-mean"
 FACETS = GL.FACETS
-LEARNED_DIR = ROOT / "output/facet_pairs/rounds/round1"
+LEARNED_DIR = ROOT / "output/facet_pairs/rounds/round1/metadata_pool"
 BANDS_FILE = LEARNED_DIR / "bootstrap/BANDS.md"
 REFITS_FILE = LEARNED_DIR / "bootstrap/scores_b24.npz"
 WRITE_BATCH = 1000
@@ -53,6 +57,20 @@ ADJUST_FACETS = GL.ADJUST
 GAP_TABLE = '## per column'
 GAP_COLUMN = 'gap (any)'
 _POOLED_ROW = re.compile(r'^\|\s*\*\*pooled[^|]*\|\s*([0-9.]+)\s*\|\s*([0-9.]+)\s*\|\s*([0-9.]+)\s*\|')
+
+
+def read_refit_endpoints(path) -> tuple:
+    """The (tag, chunk id) of every edge the refit archive scores, in the archive's order; its
+    edge id is "chunk id::tag"."""
+    with np.load(Path(path), allow_pickle=False) as archive:
+        edge_ids = archive['edge_ids'].tolist()
+    endpoints = []
+    for edge in edge_ids:
+        chunk, _, tag = edge.partition('::')
+        endpoints.append((tag, chunk))
+    if len(set(endpoints)) != len(endpoints):
+        raise ValueError(f'Duplicate edge id in {path}')
+    return tuple(endpoints)
 
 
 def read_refit_means(path, endpoints):
@@ -127,25 +145,24 @@ def read_flip_gap(path):
                                            'column': 'gap (same chunk)', 'row': 'pooled'}
     raise ValueError(f'No pooled flip-gap row in {path}')
 
-_TAG_CYPHER = """
-MATCH (t:Tag) WHERE t.emb IS NOT NULL AND EXISTS {
+# The pool is the arm's own (`artefact_v4.POOL`, one condition on a chunk `c`)
+_TAG_CYPHER = f"""
+MATCH (t:Tag) WHERE t.emb IS NOT NULL AND EXISTS {{
     MATCH (t)<-[r:HAS_TAG]-(c:Chunk)
-    WHERE r.run_id = $run AND (c)-[:product]->() }
+    WHERE r.run_id = $run AND {POOL} }}
 RETURN t.name AS id, t.emb AS vector ORDER BY id
 """
 
-_CHUNK_CYPHER = """
-MATCH (c:Chunk) WHERE c.desc_emb IS NOT NULL AND EXISTS {
-    MATCH (c)-[r:HAS_TAG]->() WHERE r.run_id = $run }
-    AND (c)-[:product]->()
+_CHUNK_CYPHER = f"""
+MATCH (c:Chunk) WHERE {POOL}
 RETURN c.chunk_id AS chunkId, c.desc_emb AS vector ORDER BY chunkId
 """
 
-_EDGE_CYPHER = """
+_EDGE_CYPHER = f"""
 MATCH (c:Chunk)-[r:HAS_TAG]->(t:Tag)
 WHERE r.run_id = $run
 RETURN c.chunk_id AS chunk_id, t.name AS tag, r.facets AS facets, r.w_facets AS w_facets,
-       EXISTS { (c)-[:product]->() } AS pooled
+       EXISTS {{ MATCH (c) WHERE {POOL} }} AS pooled
 """
 
 _WRITE_CYPHER = """
@@ -171,8 +188,7 @@ def _sha(path: Path) -> str:
 
 def layer_rows(session) -> tuple:
     """The rows to write, in the order of the layer's own file, and the layer node's values."""
-    learned = L.load(LEARNED_DIR)
-    endpoints = learned.endpoints
+    endpoints = read_refit_endpoints(REFITS_FILE)
     means, refit_source = read_refit_means(REFITS_FILE, endpoints)
     gaps, gap_source = read_facet_gaps(BANDS_FILE)
     pooled, pooled_source = read_flip_gap(BANDS_FILE)
@@ -208,7 +224,6 @@ def layer_rows(session) -> tuple:
         "pooled_flip_gap": float(pooled),
         "pooled_flip_gap_column": pooled_source["column"],
         "edges": len(rows), "rows_sha256": rows_sha256,
-        "source_scores_sha256": learned.source_sha256,
         "source_refits_sha256": refit_source["sha256"],
         "source_bands_sha256": _sha(BANDS_FILE),
         "source_dir": str(LEARNED_DIR.relative_to(ROOT)).replace("\\", "/"),
@@ -284,6 +299,9 @@ def main() -> None:
             if state["rows_with_no_edge"] or state["distinct_rows"] != state["layer_rows"]:
                 raise SystemExit("a layer row has no edge in the graph, or two rows name one "
                                  "edge — nothing written")
+            if state["of_them_in_the_pool"]:
+                raise SystemExit(f"{state['of_them_in_the_pool']} edges of the pool have no "
+                                 "row in the layer — nothing written")
             if args.mode == "write":
                 manifest = BK.require_backup()
                 stored = BK.load_backup(BK.entry_dir(), manifest)

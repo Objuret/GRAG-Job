@@ -350,6 +350,10 @@ def main():
     pipeline = importlib.import_module(f"arms.{args.arm}")
 
     if args.build:
+        # a build that embeds refuses to start without the graphics card, as a run does
+        if orchestrator.embeds(pipeline):
+            from harness import embed
+            embed.require_cuda(f"the build of arm {args.arm}")
         corpus = orchestrator.open_corpus(orchestrator.DEFAULT_CORPUS)
         bs = build_stats_record(pipeline.prepare_over_corpus(corpus).build_stats)
         took = "not recorded" if bs["build_time_s"] is None else f"{bs['build_time_s']:.1f}s"
