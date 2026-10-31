@@ -4,7 +4,7 @@ One run of one retrieval method, **lucene**, over 785 questions: for each questi
 
 - Answers by `claude-sonnet-5`, judged by `claude-haiku-4-5-20251001`.
 - Code: commit `354276cc0e4f3f7a6b40e5278097559ec2d181eb`; code paths that differed from it: 0.
-- Starts of this folder: 17, the first at 2026-10-31T12:44:58.549997+00:00.
+- Starts of this folder: 19, the first at 2026-10-31T12:44:58.549997+00:00.
 
 **This folder holds the questions and, inside the judge's prompts, the gold answers.** It must not be given to a model or an agent that works on the retrieval method, and it is not for a public repository.
 
@@ -21,6 +21,8 @@ One run of one retrieval method, **lucene**, over 785 questions: for each questi
 | `failures.jsonl` | One line per try at a question that failed. Empty when none did. A question that failed and was answered in a later start has a line here and a row. | id |
 | `eval_failures.jsonl` | One line per score cell that failed. Empty when none did. | question_id + metric |
 | `.run.lock` | There only while a run is writing into the folder. |  |
+| `corrections.json` | Only in a folder whose stored numbers were corrected after the run: what was changed, by which rule, on whose word. |  |
+| `eval_results.as_recorded.jsonl` | eval_results.jsonl exactly as the scoring wrote it, kept by the first correction that changed it (corrections.json names it). |  |
 
 Times are seconds (`_s`), milliseconds (`_ms`) or UTC stamps (`_at`; every other time text carries its own zone). Sizes are tokens, characters (`chars`) or bytes. A count (calls, attempts, requests, texts, records, edges, refits, and the like) is a plain number of the things it names. A price (`usd`, `USD`) is the Claude program's own, in US dollars; no number of this harness uses it. The evaluation's scores run from 0 to 1 and higher is more; a score an arm ranks by says its own scale.
 
@@ -360,6 +362,29 @@ One line per score cell that failed. Empty when none did.
 | `failed_at` | When (UTC). |
 | `usage` | What the failed cell had cost. Its fields: see "What a score cell cost" below. |
 
+## `corrections.json`
+
+Only in a folder whose stored numbers were corrected after the run: what was changed, by which rule, on whose word.
+
+| Field | What it holds |
+|---|---|
+| `corrections` | One entry per correction, in the order they were made; each rests on the files the one before it left. |
+| `corrections.made_at` | When the correction was made (UTC). |
+| `corrections.ordered_by` | The words that ordered it. |
+| `corrections.what_happened` | What was wrong in the stored numbers. |
+| `corrections.rule` | The rule that decided which numbers were corrected, and how. |
+| `corrections.not_changed_and_worth_knowing` | What the correction left as recorded and a reader should know. |
+| `corrections.slept_tries` | Only in the sleep correction: the tries the rule found, each with its question, its row (the line of arm_outputs.jsonl, counted from 0), its try (its number within the call, from 1), its start (UTC), its recorded seconds, its timeout in seconds, the seconds of low power the machine logged inside it, whether a whole reply had come back, and that reply's tokens. |
+| `corrections.changes` | Every changed value: where it is, the value before and the corrected value, and what was taken out (taken_out: seconds in the sleep correction; in the clean-up correction the embedder's seconds and the seconds of refused first calls). The value before is empty where the field was not there before the correction. A copied value keeps its empty parts; its own field's words say why they are empty. |
+| `corrections.checks` | What the correction checked before it changed anything (in the clean-up correction against the call records and the graph), whether it held, and how many places were looked at. |
+| `corrections.evidence` | Only in a correction that rests on a file it keeps in this folder: the file (or the files), its sha256 where given, and what it holds; in the sleep correction, the file that holds the machine's own record. |
+| `corrections.before` | Only in the non-LLM record-content correction: the method that made the stored scores (method, and what_it_did), found by running each method the evaluation has used on the folder's own inputs; how many stored scores each method gives again, per score; and how many stored scores there were, per score. |
+| `corrections.judge_calls_with_logged_low_power_time_inside_them` | Only in the sleep correction: judge calls the machine's own sleep record touches, not changed; each try as [its number from 1, its outcome, its seconds]. |
+| `corrections.low_power_intervals_the_machine_logged` | Only in the sleep correction: the machine's own record of when it slept: start and end (UTC), seconds, and what the machine said. |
+| `corrections.files` | The sha256 of each corrected file, before and after the correction, and where the file from before is kept. The sleep correction's are of the bytes on the disk that ran it; the clean-up correction's are of the files with the line ends git holds (LF), as line_ends says. |
+| `corrections.script` | The script that made the correction. |
+| `corrections.code` | The code the script ran on, which it imports its harness and arms from: the commit, whether anything differed from it, and what. |
+
 ## Groups of fields that stand in several places
 
 ### What a model's work cost
@@ -603,7 +628,9 @@ A record with `kind` chat is a call to a language model; one with `kind` embed i
 
 ## Fields without a word
 
-None: every file and every field of this folder is described above.
+1 have none:
+
+- `correct_judge_time_limit.py (the file)`
 
 ## The fields as they stand in this folder
 
@@ -712,113 +739,128 @@ Counted from the files themselves when this was written. A record is a line of a
 | `timing.thread` | string | 785 | 0 |
 | `timing.wall_s` | number | 785 | 0 |
 
-### `eval_calls.jsonl` (11383 records)
+### `corrections.json` (1 records)
 
 | Field | Types | Records that hold it | Of those, empty |
 |---|---|---|---|
-| `applied` | object | 9854 | 0 |
-| `arm` | string | 11383 | 0 |
-| `attempts` | array | 9854 | 0 |
-| `attempts.credential` | string | 9854 | 0 |
-| `attempts.error` | null, string | 9854 | 9637 |
-| `attempts.finished_at` | string | 9854 | 0 |
-| `attempts.gate_backlog_tokens` | null | 9854 | 9854 |
-| `attempts.gate_wait_s` | number | 9854 | 0 |
-| `attempts.n` | integer | 9854 | 0 |
-| `attempts.outcome` | string | 9854 | 0 |
-| `attempts.returncode` | integer, null | 9854 | 217 |
-| `attempts.seconds` | number | 9854 | 0 |
-| `attempts.started_at` | string | 9854 | 0 |
-| `attempts.stderr` | null, string | 9854 | 9854 |
-| `attempts.stdout` | null, string | 9854 | 9852 |
+| `corrections` | array | 1 | 0 |
+| `corrections.changes` | array | 1 | 0 |
+| `corrections.checks` | array | 1 | 0 |
+| `corrections.files` | object | 1 | 0 |
+| `corrections.made_at` | string | 1 | 0 |
+| `corrections.not_changed_and_worth_knowing` | array | 1 | 0 |
+| `corrections.ordered_by` | string | 1 | 0 |
+| `corrections.rule` | object | 1 | 0 |
+| `corrections.script` | string | 1 | 0 |
+| `corrections.what_happened` | string | 1 | 0 |
+
+### `eval_calls.jsonl` (11546 records)
+
+| Field | Types | Records that hold it | Of those, empty |
+|---|---|---|---|
+| `applied` | object | 10017 | 0 |
+| `arm` | string | 11546 | 0 |
+| `attempts` | array | 10017 | 0 |
+| `attempts.credential` | string | 10017 | 0 |
+| `attempts.error` | null, string | 10017 | 9800 |
+| `attempts.finished_at` | string | 10017 | 0 |
+| `attempts.gate_backlog_tokens` | null | 10017 | 10017 |
+| `attempts.gate_wait_s` | number | 10017 | 0 |
+| `attempts.n` | integer | 10017 | 0 |
+| `attempts.outcome` | string | 10017 | 0 |
+| `attempts.returncode` | integer, null | 10017 | 217 |
+| `attempts.seconds` | number | 10017 | 0 |
+| `attempts.started_at` | string | 10017 | 0 |
+| `attempts.stderr` | null, string | 10017 | 10017 |
+| `attempts.stdout` | null, string | 10017 | 10015 |
 | `batch` | integer | 1529 | 0 |
-| `counted` | null, object | 9854 | 217 |
-| `counted.by` | string | 9637 | 0 |
-| `counted.cached_input_tokens` | integer | 9637 | 0 |
-| `counted.completion_tokens` | integer | 9637 | 0 |
-| `counted.missing` | null | 9637 | 9637 |
-| `counted.prompt_tokens` | integer | 9637 | 0 |
-| `counted.seconds` | number | 9637 | 0 |
-| `credential` | null, string | 9854 | 217 |
-| `cwd` | string | 9854 | 0 |
+| `counted` | null, object | 10017 | 217 |
+| `counted.by` | string | 9800 | 0 |
+| `counted.cached_input_tokens` | integer | 9800 | 0 |
+| `counted.completion_tokens` | integer | 9800 | 0 |
+| `counted.missing` | null | 9800 | 9800 |
+| `counted.prompt_tokens` | integer | 9800 | 0 |
+| `counted.seconds` | number | 9800 | 0 |
+| `credential` | null, string | 10017 | 217 |
+| `cwd` | string | 10017 | 0 |
 | `device` | string | 1529 | 0 |
 | `dtype` | string | 1529 | 0 |
-| `effort` | null | 9854 | 9854 |
+| `effort` | null | 10017 | 10017 |
 | `encode_s` | number | 1529 | 0 |
-| `env_set` | object | 9854 | 0 |
-| `env_unset` | array | 9854 | 9854 |
-| `envelope` | null, object | 9854 | 217 |
-| `error` | null, string | 9854 | 9637 |
-| `eval_leg` | string | 11383 | 0 |
-| `exe` | string | 9854 | 0 |
-| `finished_at` | string | 11383 | 0 |
-| `first_request` | null | 9854 | 9854 |
-| `flags` | array | 9854 | 0 |
-| `gate_wait_s` | number | 9854 | 0 |
+| `env_set` | object | 10017 | 0 |
+| `env_unset` | array | 10017 | 10017 |
+| `envelope` | null, object | 10017 | 217 |
+| `error` | null, string | 10017 | 9800 |
+| `eval_leg` | string | 11546 | 0 |
+| `exe` | string | 10017 | 0 |
+| `finished_at` | string | 11546 | 0 |
+| `first_request` | null | 10017 | 10017 |
+| `flags` | array | 10017 | 0 |
+| `gate_wait_s` | number | 10017 | 0 |
 | `in_run` | object | 1529 | 0 |
 | `in_run.device` | string | 1529 | 0 |
 | `in_run.encode_s` | number | 1529 | 0 |
 | `in_run.lock_wait_s` | number | 1529 | 0 |
 | `input_type` | string | 1529 | 0 |
-| `join_parts` | boolean | 9854 | 0 |
-| `kind` | string | 11383 | 0 |
+| `join_parts` | boolean | 10017 | 0 |
+| `kind` | string | 11546 | 0 |
 | `lock_wait_s` | number | 1529 | 0 |
-| `max_tries` | integer | 9854 | 0 |
-| `model` | string | 11383 | 0 |
+| `max_tries` | integer | 10017 | 0 |
+| `model` | string | 11546 | 0 |
 | `n_texts` | integer | 1529 | 0 |
-| `not_applied` | object | 9854 | 9854 |
-| `ok` | boolean | 9854 | 0 |
-| `payload_dropped` | array | 9854 | 9854 |
-| `phase` | string | 11383 | 0 |
+| `not_applied` | object | 10017 | 10017 |
+| `ok` | boolean | 10017 | 0 |
+| `payload_dropped` | array | 10017 | 10017 |
+| `phase` | string | 11546 | 0 |
 | `prefix` | string | 1529 | 0 |
-| `prompt` | string | 9854 | 0 |
-| `question_id` | null, string | 11383 | 1529 |
+| `prompt` | string | 10017 | 0 |
+| `question_id` | null, string | 11546 | 1529 |
 | `revision` | string | 1529 | 0 |
-| `schema` | null | 9854 | 9854 |
-| `score` | null, string | 11383 | 1529 |
-| `seq` | integer | 11383 | 0 |
-| `server_s` | null, number | 9854 | 217 |
-| `started_at` | string | 11383 | 0 |
-| `stderr` | null, string | 9854 | 9854 |
-| `stream` | null | 9854 | 9854 |
-| `system` | string | 9854 | 9854 |
-| `text` | null, string | 9854 | 217 |
+| `schema` | null | 10017 | 10017 |
+| `score` | null, string | 11546 | 1529 |
+| `seq` | integer | 11546 | 0 |
+| `server_s` | null, number | 10017 | 217 |
+| `started_at` | string | 11546 | 0 |
+| `stderr` | null, string | 10017 | 10017 |
+| `stream` | null | 10017 | 10017 |
+| `system` | string | 10017 | 10017 |
+| `text` | null, string | 10017 | 217 |
 | `texts` | array | 1529 | 0 |
-| `timeout_s` | number | 9854 | 0 |
+| `timeout_s` | number | 10017 | 0 |
 | `tokens` | array | 1529 | 0 |
 | `tokens_in` | integer | 1529 | 0 |
-| `type` | string | 9854 | 0 |
-| `usage` | null, object | 9854 | 217 |
-| `usage.cached_input_tokens` | integer | 9637 | 0 |
-| `usage.completion_tokens` | integer | 9637 | 0 |
-| `usage.prompt_tokens` | integer | 9637 | 0 |
-| `usage_missing` | null | 9854 | 9854 |
+| `type` | string | 10017 | 0 |
+| `usage` | null, object | 10017 | 217 |
+| `usage.cached_input_tokens` | integer | 9800 | 0 |
+| `usage.completion_tokens` | integer | 9800 | 0 |
+| `usage.prompt_tokens` | integer | 9800 | 0 |
+| `usage_missing` | null | 10017 | 10017 |
 
-### `eval_failures.jsonl` (215 records)
+### `eval_failures.jsonl` (216 records)
 
 | Field | Types | Records that hold it | Of those, empty |
 |---|---|---|---|
-| `error` | string | 215 | 0 |
-| `eval_leg` | string | 215 | 0 |
-| `failed_at` | string | 215 | 0 |
-| `metric` | string | 215 | 0 |
-| `question_id` | string | 215 | 0 |
-| `usage` | object | 215 | 0 |
-| `usage.cached_input_tokens` | integer | 215 | 0 |
-| `usage.chat_attempts` | integer | 215 | 0 |
-| `usage.chat_calls` | integer | 215 | 0 |
-| `usage.chat_s` | number | 215 | 0 |
-| `usage.embed_calls` | integer | 215 | 0 |
-| `usage.embed_s` | number | 215 | 0 |
-| `usage.embed_texts` | integer | 215 | 0 |
-| `usage.embed_tokens` | integer | 215 | 0 |
-| `usage.eval_leg` | string | 215 | 0 |
-| `usage.finished_at` | string | 215 | 0 |
-| `usage.started_at` | string | 215 | 0 |
-| `usage.thread` | string | 215 | 0 |
-| `usage.tokens_in` | integer | 215 | 0 |
-| `usage.tokens_out` | integer | 215 | 0 |
-| `usage.wall_s` | number | 215 | 0 |
+| `error` | string | 216 | 0 |
+| `eval_leg` | string | 216 | 0 |
+| `failed_at` | string | 216 | 0 |
+| `metric` | string | 216 | 0 |
+| `question_id` | string | 216 | 0 |
+| `usage` | object | 216 | 0 |
+| `usage.cached_input_tokens` | integer | 216 | 0 |
+| `usage.chat_attempts` | integer | 216 | 0 |
+| `usage.chat_calls` | integer | 216 | 0 |
+| `usage.chat_s` | number | 216 | 0 |
+| `usage.embed_calls` | integer | 216 | 0 |
+| `usage.embed_s` | number | 216 | 0 |
+| `usage.embed_texts` | integer | 216 | 0 |
+| `usage.embed_tokens` | integer | 216 | 0 |
+| `usage.eval_leg` | string | 216 | 0 |
+| `usage.finished_at` | string | 216 | 0 |
+| `usage.started_at` | string | 216 | 0 |
+| `usage.thread` | string | 216 | 0 |
+| `usage.tokens_in` | integer | 216 | 0 |
+| `usage.tokens_out` | integer | 216 | 0 |
+| `usage.wall_s` | number | 216 | 0 |
 
 ### `eval_manifest.json` (1 records)
 

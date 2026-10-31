@@ -127,8 +127,10 @@ the palace and the session transcripts; the numbers are in the run folders and u
   `<arm>__metadata_redo__cb72000__20261031` (lucene 785, vector 147, artefact 5 of the 815; the ids
   in `output/research/2026-10-31-metadata-redo/`), at commit `354276c` on the desktop. Its judging
   ran with the code's judge limit of 120 s, where the final runs on the 715 ran with 1,280 s
-  (`RAGAS_JUDGE_TIMEOUT_S=1280`, in their judge starts): the entity-recall cells that 120 s cut were
-  judged again in later starts, the last ones with 1,280 s. The six runs without
+  (`RAGAS_JUDGE_TIMEOUT_S=1280`, in their judge starts): the entity-recall cells that 120 s cut and a
+  later start answered under 120 s (lucene 80, vector 12) are marked by
+  `tools/correct_judge_time_limit.py` (`judge-time-limit/1` in the run's `corrections.json`) and
+  judged again with 1,280 s; the cells a start with 1,280 s answered stand. The six runs without
   answers were made again one after the other on a quiet desktop,
   `<arm>__<set>__cb72000__20261031_metadata_search_alone`, so that every search is timed alone
   under one condition. The workbook takes the redone questions' rows, scores and judging from the

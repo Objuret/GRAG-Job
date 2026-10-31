@@ -1,0 +1,2137 @@
+{
+  "corrections": [
+    {
+      "made_at": "2026-10-31T19:12:52.863466+00:00",
+      "ordered_by": "\"go ahead and do this \"for real\"\" (2026-10-31, on the redo) · \"So, what did you not do now then. It's obvious some thing we're not done correctly here.\" (2026-10-31)",
+      "what_happened": "The run's judge starts ran with the code's judge time limit of 120 s, where the final runs ran with 1,280 s. 80 cells were cut at 120 s and answered by a later start under 120 s, which keeps only an answer that fits in 120 s; their rows are marked so that a start with 1,280 s judges them again.",
+      "rule": {
+        "id": "judge-time-limit/1",
+        "text": "1. A cell is a row of eval_results.jsonl with status ok. Its answer is the start that gave its value\n     (components.usage.eval_leg) and the cell's judge call records of that start in eval_calls.jsonl (the chat\n     records with its question_id, its metric as their score and that eval_leg); each call record holds its own\n     time limit (timeout_s). Its cuts are the records of eval_failures.jsonl with its question_id and its metric\n     whose error is a call cut at its time limit (TimeoutExpired); a cut's limit is the time limit of the cell's\n     call records of the cut's start that did not answer, else the time limit of that start's settings in\n     eval_manifest.json (judge_timeout_s).\n  2. The cell is judged again when a cut of it had a limit below 1,280 s and the call records of its answer ran\n     with a limit below 1,280 s. A cell whose answer ran with 1,280 s, or that was never cut, stands.\n  3. Its row in eval_results.jsonl gets status \"judge-time-limit/1\" and keeps its value and components. A start\n     of the run drops each row whose status is not ok and judges the cell again (eval.ragas); the start that\n     judges these runs with RAGAS_JUDGE_TIMEOUT_S=1280 and one try, the final runs' setting. This correction does\n     not start it.\n  4. The call records of the answer the cell had stay in eval_calls.jsonl as recorded, and count in the run's\n     judging as every judge call that answered counts, the cells that a later start dropped included.\n  5. No call record, failure record, judge leg, answer or other cell changes."
+      },
+      "not_changed_and_worth_knowing": [
+        "The values the cells had are in eval_results.as_recorded.jsonl and in each change.",
+        "The call records of the answers the cells had stay in eval_calls.jsonl and count in the judging.",
+        "No call record, failure record, judge leg, answer or other cell is changed."
+      ],
+      "changes": [
+        {
+          "question_id": "SummarizeForce::a::11",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.1999999996,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:33:39.302877+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ConnectForce::a::15",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:38:47.966070+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "TrendForce::a::9",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:33:54.043877+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "FeedbackForce::a::7",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:43:08.695474+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "AnomalyForce::a::3",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.571428570612245,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:46:03.457816+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "LeadForce::a::13",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:42:41.857974+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "PersonalizeForce::a::34",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:38:10.901612+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ContentForce::a::11",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:42:12.880473+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "SentimentForce::a::27",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:38:21.789111+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ContextForce::a::0",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:40:42.837449+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "SearchForce::a::7",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:33:14.035377+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "CoachForce::a::1",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.45454545413223135,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:50:12.453608+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "AnomalyForce::a::34",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:48:22.572366+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ForecastForce::a::24",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:35:13.129877+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ContentForce::a::8",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:58:08.665152+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "CollaborateForce::a::26",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.1999999996,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:53:43.401997+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "CollaborateForce::a::8",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.33333333277777777,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:52:23.786013+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ExplainabilityForce::a::14",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.9999999985714286,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:05:31.534341+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ContextForce::a::19",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:00:36.712685+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ExplainabilityForce::a::17",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:05:47.546341+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "EdgeForce::a::16",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:02:56.321234+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ForecastForce::a::9",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:11:01.155603+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ContextForce::a::10",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.7499999981250001,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:59:46.357322+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ForecastForce::a::20",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:11:47.965407+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ForecastForce::a::3",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.4999999975,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:10:25.395755+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "FlowForce::a::2",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:07:28.298549+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ExplainabilityForce::a::15",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:05:36.355841+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "FeedbackForce::a::13",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:06:37.152050+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "PersonalizeForce::a::11",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:20:13.357842+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ProposalForce::a::12",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.11764705875432525,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:26:56.650883+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "KnowledgeForce::a::9",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.4583333331423611,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:14:38.826375+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "MonitorForce::a::13",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.1999999996,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:18:51.109222+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "PitchForce::a::36",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:25:37.595959+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "SecurityForce::a::8",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:34:23.563829+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "PersonalizeForce::a::23",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:21:03.129566+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ProposalForce::a::5",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.16666666638888888,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:26:17.172039+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "SecurityForce::a::9",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:34:31.777829+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ProposalForce::a::23",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:27:37.647990+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "SearchForce::a::10",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:32:39.320787+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "SearchForce::a::23",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:33:41.021685+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "VizForce::a::14",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:45:49.801195+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "TrendForce::a::16",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:44:06.990195+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "SummarizeForce::a::13",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:40:03.139468+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "SecurityForce::a::21",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:35:20.012995+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "VizForce::a::41",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:48:01.358329+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "VizForce::a::26",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:46:42.329933+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "LeadForce::a::15",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.1999999996,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:56:32.200168+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "SearchFlow::a::11",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:59:28.926981+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "VizForce::a::39",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.9999999966666667,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:47:45.817830+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "WorkFlowGenie::a::12",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.9999999900000002,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:49:19.322169+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "CollaborateForce::a::27",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.1999999996,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:52:15.521512+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ContentForce::a::6",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.39999999973333333,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:52:56.117511+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "VizForce::a::8",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.7999999984,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T15:04:00.904668+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ProposalForce::a::2",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.4999999975,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:58:33.900715+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "SummarizeForce::a::2",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.1999999996,
+          "answer": {
+            "start": "2026-10-31T15:09:50.266923+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T15:02:05.739342+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "LeadForce::a::10",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:23:50.333423+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:16:59.791979+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:16:19.296924+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ForecastForce::a::11",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:23:50.333423+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:11:14.733517+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:15:32.191924+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "SecurityForce::a::7",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.2727272724793388,
+          "answer": {
+            "start": "2026-10-31T15:23:50.333423+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:33:21.279876+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:12:46.533424+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ForecastForce::a::27",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:23:50.333423+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:12:23.170907+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:15:52.327924+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ProposalForce::a::16",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:23:50.333423+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:27:17.465884+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:17:02.902423+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "FlowForce::a::3",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:23:50.333423+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:32:20.006377+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:12:00.906924+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "SentimentForce::a::9",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:23:50.333423+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:36:51.875850+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:18:21.734923+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "TrendForce::a::22",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:23:50.333423+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:44:44.861698+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:19:03.467425+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "SentimentForce::a::22",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.4444444439506172,
+          "answer": {
+            "start": "2026-10-31T15:23:50.333423+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:38:08.695028+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:18:22.401923+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ContentForce::a::9",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:30:27.362330+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:58:15.453652+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:14:19.204424+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:23:50.333423+00:00",
+              "failed_at": "2026-10-31T15:26:03.157424+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ConnectForce::a::14",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:30:27.362330+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:37:11.029542+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:12:02.145423+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:23:50.333423+00:00",
+              "failed_at": "2026-10-31T15:26:02.091423+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "LeadForce::a::9",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:30:27.362330+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:16:53.215978+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:15:59.714923+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:23:50.333423+00:00",
+              "failed_at": "2026-10-31T15:26:02.696925+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "SecurityForce::a::22",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.9999999900000002,
+          "answer": {
+            "start": "2026-10-31T15:30:27.362330+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:35:29.774993+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:18:07.031924+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:23:50.333423+00:00",
+              "failed_at": "2026-10-31T15:27:51.635033+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "AutoTuneForce::a::12",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.3333333322222222,
+          "answer": {
+            "start": "2026-10-31T15:30:27.362330+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:34:20.957877+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:12:40.104924+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:23:50.333423+00:00",
+              "failed_at": "2026-10-31T15:27:01.431842+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "LeadForce::a::24",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:30:27.362330+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:17:14.257853+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:16:27.398424+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:23:50.333423+00:00",
+              "failed_at": "2026-10-31T15:26:03.746425+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "KnowledgeForce::a::2",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.6666666644444444,
+          "answer": {
+            "start": "2026-10-31T15:30:27.362330+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:55:38.528168+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:20:23.506424+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:23:50.333423+00:00",
+              "failed_at": "2026-10-31T15:28:24.043533+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "CoachForce::a::19",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:36:13.294175+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:51:23.207105+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:13:04.957424+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:23:50.333423+00:00",
+              "failed_at": "2026-10-31T15:26:33.595775+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:30:27.362330+00:00",
+              "failed_at": "2026-10-31T15:32:40.173675+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "CollaborateForce::a::15",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:42:59.900326+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:52:47.242497+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:13:20.307424+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:23:50.333423+00:00",
+              "failed_at": "2026-10-31T15:26:29.588275+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:30:27.362330+00:00",
+              "failed_at": "2026-10-31T15:32:40.657674+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:36:13.294175+00:00",
+              "failed_at": "2026-10-31T15:38:25.549901+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "SummarizeForce::a::20",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:42:59.900326+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:40:25.295990+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:18:52.017924+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:23:50.333423+00:00",
+              "failed_at": "2026-10-31T15:28:02.785034+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:30:27.362330+00:00",
+              "failed_at": "2026-10-31T15:33:49.914673+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:36:13.294175+00:00",
+              "failed_at": "2026-10-31T15:38:25.461902+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "CollaborateForce::a::28",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:46:08.988910+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:53:51.645498+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:13:16.031923+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:23:50.333423+00:00",
+              "failed_at": "2026-10-31T15:26:03.233925+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:30:27.362330+00:00",
+              "failed_at": "2026-10-31T15:32:48.874175+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:36:13.294175+00:00",
+              "failed_at": "2026-10-31T15:38:25.443401+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:42:59.900326+00:00",
+              "failed_at": "2026-10-31T15:45:08.195509+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "PersonalizeForce::a::2",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.3999999992,
+          "answer": {
+            "start": "2026-10-31T15:49:18.029100+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:56:57.334167+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:20:44.268424+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:23:50.333423+00:00",
+              "failed_at": "2026-10-31T15:28:29.648034+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:30:27.362330+00:00",
+              "failed_at": "2026-10-31T15:34:42.964674+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:36:13.294175+00:00",
+              "failed_at": "2026-10-31T15:38:25.948902+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:42:59.900326+00:00",
+              "failed_at": "2026-10-31T15:45:07.855557+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:46:08.988910+00:00",
+              "failed_at": "2026-10-31T15:48:16.168447+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ContextForce::a::20",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.12499999984374999,
+          "answer": {
+            "start": "2026-10-31T15:55:38.862701+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:00:43.634463+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:14:40.197922+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:23:50.333423+00:00",
+              "failed_at": "2026-10-31T15:26:02.302924+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:30:27.362330+00:00",
+              "failed_at": "2026-10-31T15:32:41.142174+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:36:13.294175+00:00",
+              "failed_at": "2026-10-31T15:38:25.834400+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:42:59.900326+00:00",
+              "failed_at": "2026-10-31T15:45:07.902171+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:46:08.988910+00:00",
+              "failed_at": "2026-10-31T15:48:16.641475+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:49:18.029100+00:00",
+              "failed_at": "2026-10-31T15:51:25.142215+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:52:29.813918+00:00",
+              "failed_at": "2026-10-31T15:54:36.861202+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "CollaborateForce::a::2",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.9999999975,
+          "answer": {
+            "start": "2026-10-31T15:55:38.862701+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T14:51:43.817012+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:20:09.334924+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:23:50.333423+00:00",
+              "failed_at": "2026-10-31T15:28:17.332533+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:30:27.362330+00:00",
+              "failed_at": "2026-10-31T15:33:09.053176+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:36:13.294175+00:00",
+              "failed_at": "2026-10-31T15:38:26.098900+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:42:59.900326+00:00",
+              "failed_at": "2026-10-31T15:45:08.273827+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:46:08.988910+00:00",
+              "failed_at": "2026-10-31T15:48:15.895929+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:49:18.029100+00:00",
+              "failed_at": "2026-10-31T15:51:25.545183+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:52:29.813918+00:00",
+              "failed_at": "2026-10-31T15:54:36.595702+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ConnectForce::a::11",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:55:38.862701+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T13:57:20.151256+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:13:27.701923+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:23:50.333423+00:00",
+              "failed_at": "2026-10-31T15:26:11.719925+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:30:27.362330+00:00",
+              "failed_at": "2026-10-31T15:32:40.760175+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:36:13.294175+00:00",
+              "failed_at": "2026-10-31T15:38:25.546902+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:42:59.900326+00:00",
+              "failed_at": "2026-10-31T15:45:07.530826+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:46:08.988910+00:00",
+              "failed_at": "2026-10-31T15:48:16.044660+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:49:18.029100+00:00",
+              "failed_at": "2026-10-31T15:51:24.847583+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:52:29.813918+00:00",
+              "failed_at": "2026-10-31T15:54:36.501202+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "VizForce::a::2",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.49999999916666665,
+          "answer": {
+            "start": "2026-10-31T16:09:05.472190+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T13:06:11.431377+00:00",
+              "failed_at": "2026-10-31T15:03:55.081160+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:09:50.266923+00:00",
+              "failed_at": "2026-10-31T15:21:15.795924+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:23:50.333423+00:00",
+              "failed_at": "2026-10-31T15:29:01.509831+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:30:27.362330+00:00",
+              "failed_at": "2026-10-31T15:34:45.105675+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:42:59.900326+00:00",
+              "failed_at": "2026-10-31T15:45:07.793111+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:46:08.988910+00:00",
+              "failed_at": "2026-10-31T15:48:16.184016+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:49:18.029100+00:00",
+              "failed_at": "2026-10-31T15:51:25.204891+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:52:29.813918+00:00",
+              "failed_at": "2026-10-31T15:54:36.438202+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:55:38.862701+00:00",
+              "failed_at": "2026-10-31T15:57:45.263899+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:58:47.576398+00:00",
+              "failed_at": "2026-10-31T16:00:53.301692+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T16:02:47.537129+00:00",
+              "failed_at": "2026-10-31T16:04:53.885715+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T16:05:56.389035+00:00",
+              "failed_at": "2026-10-31T16:08:02.181507+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        }
+      ],
+      "checks": [
+        {
+          "what": "cells cut at least once (TimeoutExpired)",
+          "looked_at": "eval_results.jsonl, eval_failures.jsonl",
+          "count": 84,
+          "holds": true
+        },
+        {
+          "what": "cells that stand although cut, by why",
+          "looked_at": "eval_calls.jsonl",
+          "count": {
+            "answered with 1,280 s": 4,
+            "cut only at 1,280 s": 0
+          },
+          "holds": true
+        },
+        {
+          "what": "cuts whose time limit no record names",
+          "looked_at": "eval_calls.jsonl, eval_manifest.json",
+          "count": 0,
+          "holds": true
+        },
+        {
+          "what": "rows other than the changed ones kept byte for byte",
+          "looked_at": "eval_results.jsonl",
+          "count": 12480,
+          "holds": true
+        }
+      ],
+      "files": {
+        "eval_results.jsonl": {
+          "sha256_before": "f53d9b59332d3764169b94a16d387d3aa1df15b5fda67e3011cde1e78126c4a8",
+          "sha256_corrected": "1a060933512653ee3a5bc602d0fe7750c9098fa32f41a3bffc06038639cc56b1",
+          "as_recorded": "eval_results.as_recorded.jsonl"
+        }
+      },
+      "script": "correct_judge_time_limit.py, in this folder"
+    }
+  ]
+}

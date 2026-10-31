@@ -1,0 +1,299 @@
+{
+  "corrections": [
+    {
+      "made_at": "2026-10-31T19:13:04.064125+00:00",
+      "ordered_by": "\"go ahead and do this \"for real\"\" (2026-10-31, on the redo) · \"So, what did you not do now then. It's obvious some thing we're not done correctly here.\" (2026-10-31)",
+      "what_happened": "The run's judge starts ran with the code's judge time limit of 120 s, where the final runs ran with 1,280 s. 12 cells were cut at 120 s and answered by a later start under 120 s, which keeps only an answer that fits in 120 s; their rows are marked so that a start with 1,280 s judges them again.",
+      "rule": {
+        "id": "judge-time-limit/1",
+        "text": "1. A cell is a row of eval_results.jsonl with status ok. Its answer is the start that gave its value\n     (components.usage.eval_leg) and the cell's judge call records of that start in eval_calls.jsonl (the chat\n     records with its question_id, its metric as their score and that eval_leg); each call record holds its own\n     time limit (timeout_s). Its cuts are the records of eval_failures.jsonl with its question_id and its metric\n     whose error is a call cut at its time limit (TimeoutExpired); a cut's limit is the time limit of the cell's\n     call records of the cut's start that did not answer, else the time limit of that start's settings in\n     eval_manifest.json (judge_timeout_s).\n  2. The cell is judged again when a cut of it had a limit below 1,280 s and the call records of its answer ran\n     with a limit below 1,280 s. A cell whose answer ran with 1,280 s, or that was never cut, stands.\n  3. Its row in eval_results.jsonl gets status \"judge-time-limit/1\" and keeps its value and components. A start\n     of the run drops each row whose status is not ok and judges the cell again (eval.ragas); the start that\n     judges these runs with RAGAS_JUDGE_TIMEOUT_S=1280 and one try, the final runs' setting. This correction does\n     not start it.\n  4. The call records of the answer the cell had stay in eval_calls.jsonl as recorded, and count in the run's\n     judging as every judge call that answered counts, the cells that a later start dropped included.\n  5. No call record, failure record, judge leg, answer or other cell changes."
+      },
+      "not_changed_and_worth_knowing": [
+        "The values the cells had are in eval_results.as_recorded.jsonl and in each change.",
+        "The call records of the answers the cells had stay in eval_calls.jsonl and count in the judging.",
+        "No call record, failure record, judge leg, answer or other cell is changed."
+      ],
+      "changes": [
+        {
+          "question_id": "FlowForce::a::17",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:43:57.132130+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T15:11:07.507426+00:00",
+              "failed_at": "2026-10-31T15:32:51.016174+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "MonitorForce::a::11",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:43:57.132130+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T15:11:07.507426+00:00",
+              "failed_at": "2026-10-31T15:35:44.551676+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ProposalForce::a::21",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:43:57.132130+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T15:11:07.507426+00:00",
+              "failed_at": "2026-10-31T15:37:28.860383+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "AutoTuneForce::a::2",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:43:57.132130+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T15:11:07.507426+00:00",
+              "failed_at": "2026-10-31T15:28:54.197831+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "TrendForce::a::20",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.999999995,
+          "answer": {
+            "start": "2026-10-31T15:43:57.132130+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T15:11:07.507426+00:00",
+              "failed_at": "2026-10-31T15:41:46.881149+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "InsightForce::a::12",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.7499999981250001,
+          "answer": {
+            "start": "2026-10-31T15:43:57.132130+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T15:11:07.507426+00:00",
+              "failed_at": "2026-10-31T15:34:21.003674+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "TrendForce::a::3",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:43:57.132130+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T15:11:07.507426+00:00",
+              "failed_at": "2026-10-31T15:41:30.444135+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "CollaborationForce::a::10",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:43:57.132130+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T15:11:07.507426+00:00",
+              "failed_at": "2026-10-31T15:29:49.416831+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "SearchFlow::a::14",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:43:57.132130+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T15:11:07.507426+00:00",
+              "failed_at": "2026-10-31T15:37:52.111401+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "SearchFlow::a::42",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.9999999966666667,
+          "answer": {
+            "start": "2026-10-31T15:43:57.132130+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T15:11:07.507426+00:00",
+              "failed_at": "2026-10-31T15:38:11.986901+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "PitchForce::a::35",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:47:05.075251+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T15:11:07.507426+00:00",
+              "failed_at": "2026-10-31T15:37:14.816882+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:43:57.132130+00:00",
+              "failed_at": "2026-10-31T15:46:04.382910+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "ForecastForce::a::24",
+          "metric": "context_entity_recall",
+          "value_recorded": 0.0,
+          "answer": {
+            "start": "2026-10-31T15:47:05.075251+00:00",
+            "time_limit_s": 120.0,
+            "judge_calls": 2
+          },
+          "cuts": [
+            {
+              "start": "2026-10-31T15:11:07.507426+00:00",
+              "failed_at": "2026-10-31T15:28:07.719033+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            },
+            {
+              "start": "2026-10-31T15:43:57.132130+00:00",
+              "failed_at": "2026-10-31T15:46:03.516911+00:00",
+              "time_limits_s": [
+                120.0
+              ]
+            }
+          ]
+        }
+      ],
+      "checks": [
+        {
+          "what": "cells cut at least once (TimeoutExpired)",
+          "looked_at": "eval_results.jsonl, eval_failures.jsonl",
+          "count": 13,
+          "holds": true
+        },
+        {
+          "what": "cells that stand although cut, by why",
+          "looked_at": "eval_calls.jsonl",
+          "count": {
+            "answered with 1,280 s": 1,
+            "cut only at 1,280 s": 0
+          },
+          "holds": true
+        },
+        {
+          "what": "cuts whose time limit no record names",
+          "looked_at": "eval_calls.jsonl, eval_manifest.json",
+          "count": 0,
+          "holds": true
+        },
+        {
+          "what": "rows other than the changed ones kept byte for byte",
+          "looked_at": "eval_results.jsonl",
+          "count": 2340,
+          "holds": true
+        }
+      ],
+      "files": {
+        "eval_results.jsonl": {
+          "sha256_before": "8a6da3c063157d92468c676bbd16689ae79605e409c23bb32ad60eacc8a58efb",
+          "sha256_corrected": "de532bf9a46c58abbc1ca8c1eee3377e3a24e16228e282f8cba3dc33f9a045e2",
+          "as_recorded": "eval_results.as_recorded.jsonl"
+        }
+      },
+      "script": "correct_judge_time_limit.py, in this folder"
+    }
+  ]
+}

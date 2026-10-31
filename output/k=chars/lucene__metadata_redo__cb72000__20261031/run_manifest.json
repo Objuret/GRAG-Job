@@ -2040,6 +2040,218 @@
       },
       "search_pass": null,
       "embed_pass": null
+    },
+    {
+      "leg": 18,
+      "started_at": "2026-10-31T19:14:13.165439+00:00",
+      "finished_at": "2026-10-31T19:14:18.634938+00:00",
+      "wall_s": 5.4697916000004625,
+      "process_cpu_s": 5.078125,
+      "workers": 16,
+      "argv": [
+        "prod/run.py",
+        "--arm",
+        "lucene",
+        "--set",
+        "output/research/2026-10-31-metadata-redo/lucene__redo_ids.jsonl",
+        "--char-budget",
+        "72000",
+        "--workers",
+        "16",
+        "--out",
+        "output/k=chars/lucene__metadata_redo__cb72000__20261031"
+      ],
+      "pid": 6844,
+      "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "output\\research\\2026-10-31-metadata-redo\\lucene__redo_ids.jsonl",
+      "n_chosen": 785,
+      "n_todo": 0,
+      "n_answered": 0,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 2.9976944000081858,
+      "embedder_load_s": null,
+      "retrieval_only": false,
+      "evaluator": "ragas",
+      "peak_memory_bytes": 3540213760,
+      "code_version": {
+        "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+        "branch": "artefact-v4-iteration",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [],
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_sha256": {}
+      },
+      "flags": null,
+      "lane": {
+        "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "system_prompt": "always passed, empty when the call has no system text",
+        "stdin": "the prompt as UTF-8 bytes",
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+          "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+          "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+          "ENABLE_PROMPT_CACHING_1H": "1"
+        },
+        "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+        "config_settings": {
+          "cleanupPeriodDays": 36500
+        },
+        "login_gate": {
+          "model": "claude-sonnet-5",
+          "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+          "rate_tokens_per_second": 16500.0,
+          "limit_backlog_tokens": 886126.5972843313,
+          "tokens_held_per_character": 0.496
+        },
+        "env_per_call": [
+          "CLAUDE_CODE_EFFORT_LEVEL",
+          "MAX_THINKING_TOKENS",
+          "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+          "CLAUDE_CODE_EXTRA_BODY"
+        ],
+        "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+        "cli_adds": {
+          "seen_with": "2.1.212 (Claude Code)",
+          "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+          "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "units": 39190,
+        "text_chars": 14721423,
+        "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+        "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+        "method": "lucene",
+        "k1": 0.9,
+        "b": 0.4,
+        "bm25_parameters": "Anserini's defaults",
+        "stopwords": "en",
+        "stemmer": "english",
+        "bm25s": "0.2.14",
+        "PyStemmer": "3.1.0",
+        "kept": "in memory, built at the start of every leg"
+      },
+      "search_pass": null,
+      "embed_pass": null
+    },
+    {
+      "leg": 19,
+      "started_at": "2026-10-31T19:40:50.806913+00:00",
+      "finished_at": "2026-10-31T19:40:56.302683+00:00",
+      "wall_s": 5.4958175999927334,
+      "process_cpu_s": 5.140625,
+      "workers": 16,
+      "argv": [
+        "prod/run.py",
+        "--arm",
+        "lucene",
+        "--set",
+        "output/research/2026-10-31-metadata-redo/lucene__redo_ids.jsonl",
+        "--char-budget",
+        "72000",
+        "--workers",
+        "16",
+        "--out",
+        "output/k=chars/lucene__metadata_redo__cb72000__20261031"
+      ],
+      "pid": 16180,
+      "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "output\\research\\2026-10-31-metadata-redo\\lucene__redo_ids.jsonl",
+      "n_chosen": 785,
+      "n_todo": 0,
+      "n_answered": 0,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 2.9788484999880893,
+      "embedder_load_s": null,
+      "retrieval_only": false,
+      "evaluator": "ragas",
+      "peak_memory_bytes": 3659198464,
+      "code_version": {
+        "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+        "branch": "artefact-v4-iteration",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [],
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_sha256": {}
+      },
+      "flags": null,
+      "lane": {
+        "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "system_prompt": "always passed, empty when the call has no system text",
+        "stdin": "the prompt as UTF-8 bytes",
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+          "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+          "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+          "ENABLE_PROMPT_CACHING_1H": "1"
+        },
+        "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+        "config_settings": {
+          "cleanupPeriodDays": 36500
+        },
+        "login_gate": {
+          "model": "claude-sonnet-5",
+          "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+          "rate_tokens_per_second": 16500.0,
+          "limit_backlog_tokens": 886126.5972843313,
+          "tokens_held_per_character": 0.496
+        },
+        "env_per_call": [
+          "CLAUDE_CODE_EFFORT_LEVEL",
+          "MAX_THINKING_TOKENS",
+          "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+          "CLAUDE_CODE_EXTRA_BODY"
+        ],
+        "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+        "cli_adds": {
+          "seen_with": "2.1.212 (Claude Code)",
+          "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+          "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "units": 39190,
+        "text_chars": 14721423,
+        "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+        "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+        "method": "lucene",
+        "k1": 0.9,
+        "b": 0.4,
+        "bm25_parameters": "Anserini's defaults",
+        "stopwords": "en",
+        "stemmer": "english",
+        "bm25s": "0.2.14",
+        "PyStemmer": "3.1.0",
+        "kept": "in memory, built at the start of every leg"
+      },
+      "search_pass": null,
+      "embed_pass": null
     }
   ],
   "workers": 16,
