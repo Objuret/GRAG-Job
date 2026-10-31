@@ -25,7 +25,8 @@ from harness.progress import progress
 from harness.contract import EvalResult, ModelUsage
 from eval.ragas_catalog import CATALOG, metrics_to_run
 from harness.embed import EMBED_BATCH, _embed_request
-from harness.record_text import ARTIFACT_TYPES, record_content, record_header, record_text
+from harness.record_text import (ARTIFACT_TYPES, metadata_records, record_content, record_header,
+                                 record_text)
 
 # RAGAS posts a usage event to its makers for every score it computes unless this is set; the
 # evaluation sends nothing anywhere but to the judge
@@ -524,7 +525,9 @@ class CorpusRecords(dict):
 
 
 def corpus_records(corpus_root) -> dict:
-    """Every corpus record by its id, with its kind: {id: (kind, record)}."""
+    """Every corpus record by its id, with its kind: {id: (kind, record)}: the records of the
+    product files, then the employees and customers of the metadata files (`metadata_records`),
+    each by its own id. An employee's or a customer's id that is already a record's id stops it."""
     out = CorpusRecords()
     out.versions = {}
     for pf in sorted((Path(corpus_root) / "products").glob("*.json")):
@@ -538,6 +541,12 @@ def corpus_records(corpus_root) -> dict:
                 held = out.versions.setdefault(str(aid), [])
                 if (kind, rec) not in held:
                     held.append((kind, rec))
+    for kind, rid, rec in metadata_records(corpus_root):
+        if str(rid) in out:
+            raise ValueError(f"the {kind} record {rid!r} has the id of another record of the "
+                             "corpus")
+        out[str(rid)] = (kind, rec)
+        out.versions[str(rid)] = [(kind, rec)]
     return out
 
 
@@ -550,9 +559,9 @@ def contents_handed_over(contexts, context_ids, meta, records) -> list:
     several records is their record_text forms joined by a blank line, or the start of that join
     where the character budget cut it. Each record's header is taken off; a record cut before its
     content gives nothing. The records behind each text come from meta's chunk_ids, or else from
-    context_ids with the record cut at the budget last. A text with no record behind it (a
-    directory entry, a block of the gold arm's oracle context) holds no corpus record and gives
-    nothing."""
+    context_ids with the record cut at the budget last. An employee or a customer of the metadata
+    files is a record like the others (`corpus_records`). A text with no record behind it (a block
+    of the gold arm's oracle context) holds no corpus record and gives nothing."""
     meta = meta or {}
     if "chunk_ids" in meta:
         id_lists = meta["chunk_ids"]

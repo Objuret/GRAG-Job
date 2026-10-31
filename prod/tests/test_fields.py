@@ -54,6 +54,14 @@ class _Folder(unittest.TestCase):
         (root / "corpus" / "products").mkdir(parents=True)
         (root / "corpus" / "products" / "Rocket.json").write_text(
             json.dumps({"slack": SLACK, "documents": [DOCUMENT]}), encoding="utf-8")
+        (root / "corpus" / "metadata").mkdir()
+        (root / "corpus" / "metadata" / "employee.json").write_text(json.dumps(
+            {eid: {"employee_id": eid, "name": name, "role": "Engineer", "location": "Remote",
+                   "org": "slack"} for eid, name in (("eid_1", "Ada Vega"), ("eid_2", "Bo Ling"))}),
+            encoding="utf-8")
+        (root / "corpus" / "metadata" / "customers_data.json").write_text(json.dumps(
+            [{"name": "Cyd Marsh", "role": "CTO", "company": "BlueWave", "id": "CUST-1"}]),
+            encoding="utf-8")
         (root / "q.jsonl").write_text("".join(json.dumps(q) + "\n" for q in QUESTIONS),
                                       encoding="utf-8")
         (root / "ids.jsonl").write_text("".join(json.dumps({"id": q["id"]}) + "\n"

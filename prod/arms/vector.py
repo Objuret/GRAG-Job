@@ -3,10 +3,13 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import socket
+import sys
 import tempfile
 import threading
 import time
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable, Optional
 
@@ -20,32 +23,15 @@ from harness.progress import progress, say
 from harness.embed import (EMBED_MODEL, EMBED_REVISION, EMBED_DEVICE, EMBED_DTYPE,
                            EMBED_PREFIX, EMBED_BATCH, QUERY_VECS_PATH, _embedder,
                            _embed_request, _embed)
-from harness.record_text import ARTIFACT_TYPES, FORM, record_text, units_digest
+from harness.provenance import file_digest
+from harness.record_text import ARTIFACT_TYPES, FORM, metadata_records, record_text, units_digest
 
 DEFAULT_TOP_K = 10
 
 CACHE_DIR = Path(__file__).resolve().parent.parent.parent / "output" / "embed_cache"
 
-
-def _env_bool(name: str, default: bool) -> bool:
-    raw = os.environ.get(name)
-    if raw is None or not raw.strip():
-        return default
-    value = raw.strip()
-    if value not in ("0", "1"):
-        raise ValueError(f"{name} must be '0' or '1', got {raw!r}")
-    return value == "1"
-
-
-METADATA_ON = _env_bool("HERB_BASELINE_METADATA", False)
-
-EMPLOYEE_JSON = "metadata/employee.json"
-CUSTOMERS_JSON = "metadata/customers_data.json"
-TEAM_JSON = "metadata/salesforce_team.json"
-
-DIRECTORY_ID_PREFIX = "metadata::"
-
-RETRIEVAL_FLAGS = {"HERB_BASELINE_METADATA": METADATA_ON}
+# the arm has no switches of its own
+RETRIEVAL_FLAGS: dict = {}
 
 Generator = Callable[[str, list], object]
 
@@ -55,9 +41,10 @@ UNIT_IS_ONE_RECORD = True
 
 # what was left out of the data this arm rests on, and on whose word (harness.fields, FIELDS.md)
 LEFT_OUT = [
-    "The directory files: the corpus's three directory files (people, teams, customers) are not "
-    "embedded beside the product records (retrieval_flags.HERB_BASELINE_METADATA off). No rule in "
-    "his words is recorded.",
+    "The metadata file salesforce_team.json: it is not embedded; the index holds the records of "
+    "the product files and the employees and customers of employee.json and customers_data.json. "
+    "His words: \"yeah, so, dont fucking talk about or use it then, if its not a current file, why "
+    "are you talking about it?\" (2026-10-31).",
 ]
 
 # the words for what only this arm writes into a run folder (harness.fields, FIELDS.md)
@@ -72,11 +59,10 @@ FIELDS = {
             "next_score": "The cosine of the first unit that was not delivered; empty when none "
                           "was left.",
         }),
-        "chunk_ids": "Only in a run cut at a depth with the directory files indexed: the record "
-                     "ids behind each delivered text.",
     }),
     "index": sub("What the arm's index is.", {
-        "units": "How many units the index holds. A unit is one record of the corpus.",
+        "units": "How many units the index holds. A unit is one record of the corpus: a record "
+                 "of a product file, or an employee or a customer of the metadata files.",
         "text_chars": "The characters of all unit texts together.",
         "unit_text": "The form a record is written in to make its unit's text, and where that "
                      "form is from.",
@@ -95,16 +81,18 @@ FIELDS = {
                                  "embedder), batch (texts in a request), tokens, build_time_s and "
                                  "how it was read (build_time_note), max_seq_length (the most "
                                  "tokens a text may have) and how many units were longer, the "
-                                 "device, the machine and the software."),
+                                 "device, the machine and the software. When the vectors are a "
+                                 "stored file's vectors, kept as they are, with the vectors of "
+                                 "the units after them appended, the calls, tokens and "
+                                 "build_time_s are those of the two together; extends names the "
+                                 "stored file (its sha256, how many units it holds and its own "
+                                 "note) and appended gives the appended units' own count, calls, "
+                                 "tokens, seconds, device, machine and software."),
         "embedder_warm_s": "Seconds the embedder took for one empty request before the first "
                            "question, so that no question pays for its loading.",
         "question_embedding": "When and how a question is embedded.",
     }),
-    "retrieval_flags": sub("The arm's own switches.", {
-        "HERB_BASELINE_METADATA": "Whether the corpus's three directory files (people, teams, "
-                                  "customers) are taken in beside the records. Off: the records "
-                                  "only.",
-    }),
+    "retrieval_flags": sub("The arm's own switches. The arm has none, so this is empty.", {}),
 }
 
 
@@ -119,38 +107,10 @@ class Prepared:
     warm_s: Optional[float] = None
 
 
-def _team_leaders(nodes: list) -> list:
-    out: list = []
-    for node in nodes:
-        rosters = [v for v in node.values() if isinstance(v, list)]
-        if rosters:
-            out.append(node)
-        for roster in rosters:
-            out.extend(_team_leaders(roster))
-    return out
-
-
-def _directory_records(root: Path) -> list:
-    employees = json.loads((root / EMPLOYEE_JSON).read_text(encoding="utf-8"))
-    customers = json.loads((root / CUSTOMERS_JSON).read_text(encoding="utf-8"))
-    team = json.loads((root / TEAM_JSON).read_text(encoding="utf-8"))
-    return (
-        [("employee", rec["employee_id"], rec) for rec in employees.values()]
-        + [("customers_data", rec["id"], rec) for rec in customers]
-        + [("salesforce_team", rec["employee_id"], rec) for rec in _team_leaders(team)]
-    )
-
-
-def _directory_text(section: str, rec: dict) -> str:
-    lines = [f"{section} directory"]
-    for key, value in rec.items():
-        if isinstance(value, list):
-            value = ", ".join(f'{m["name"]} ({m["employee_id"]})' for m in value)
-        lines.append(f"{key}: {value}")
-    return "\n".join(lines)
-
-
 def _read_corpus(corpus_root) -> list:
+    """One unit per record, as lucene's: the records of the product files, then the employees and
+    customers of the metadata files (`metadata_records`), each with its own id and its
+    record_text."""
     root = Path(corpus_root)
     docs, seen = [], set()
     for pf in sorted((root / "products").glob("*.json")):
@@ -163,21 +123,14 @@ def _read_corpus(corpus_root) -> list:
                 seen.add(aid)
                 docs.append({"id": aid, "text": record_text(kind, rec)})
 
-    artifacts = len(docs)
-    if METADATA_ON:
-        clash = sorted(i for i in seen if str(i).startswith(DIRECTORY_ID_PREFIX))
-        if clash:
-            raise RuntimeError(
-                f"{len(clash)} artifact ids sit in the directory namespace "
-                f"{DIRECTORY_ID_PREFIX!r} (e.g. {clash[:3]}) — a directory record "
-                f"would be indistinguishable from an artifact")
-        for section, native, rec in _directory_records(root):
-            uid = f"{DIRECTORY_ID_PREFIX}{section}::{native}"
-            if uid in seen:
-                raise RuntimeError(f"duplicate directory unit id {uid!r}")
-            seen.add(uid)
-            docs.append({"id": uid, "text": _directory_text(section, rec)})
-    print(f"vector: {artifacts} artifacts + {len(docs) - artifacts} directory records",
+    products = len(docs)
+    for kind, rid, rec in metadata_records(root):
+        if rid in seen:
+            raise RuntimeError(f"the {kind} record {rid!r} has the id of another unit: two units "
+                               "would share one id")
+        seen.add(rid)
+        docs.append({"id": rid, "text": record_text(kind, rec)})
+    print(f"vector: {products} product records + {len(docs) - products} employees and customers",
           flush=True)
     return docs
 
@@ -210,7 +163,155 @@ def _seconds_note(note: dict) -> str | None:
     return None if not said else f"no one timer covered all of it; the cost note says: {said}"
 
 
+def _stats(z) -> tuple:
+    """A stored file's build_stats: build time, calls, tokens in, tokens out and the embedder's
+    seconds. An older file holds no tokens out."""
+    stats = z["build_stats"]
+    if len(stats) == 4:
+        return float(stats[0]), int(stats[1]), int(stats[2]), 0, float(stats[3])
+    return float(stats[0]), int(stats[1]), int(stats[2]), int(stats[3]), float(stats[4])
+
+
+def _device_name() -> str:
+    """The device the embedder runs on: a graphics card by its own name, else EMBED_DEVICE."""
+    if EMBED_DEVICE.startswith("cuda"):
+        import torch
+        return torch.cuda.get_device_name(torch.device(EMBED_DEVICE))
+    return EMBED_DEVICE
+
+
+def _made_with(batch: int) -> dict:
+    """The settings vectors are made with in passage mode: what a stored file's cost note must
+    record the same for its vectors to be extended."""
+    return {"model": EMBED_MODEL, "revision": EMBED_REVISION, "mode": "passage",
+            "prefix": EMBED_PREFIX["passage"], "dtype": EMBED_DTYPE, "batch": batch}
+
+
+def _machine() -> dict:
+    """When, on which machine and with which software vectors were made, for a cost note."""
+    from importlib.metadata import PackageNotFoundError, version
+    out = {"made_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+           "host": socket.gethostname(), "python": sys.version.split()[0]}
+    for name in ("torch", "sentence_transformers", "transformers"):
+        try:
+            out[name] = version(name)
+        except PackageNotFoundError:
+            out[name] = None
+    return out
+
+
+def _save(cache: Path, matrix, ids: list, texts: list, stats: list, note: dict) -> None:
+    """The vectors with their units and build_stats written to `cache` through a file beside it,
+    and the cost note beside them."""
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=cache.parent, suffix=".tmp")
+    try:
+        with os.fdopen(fd, "wb") as f:
+            np.savez(
+                f, matrix=matrix,
+                ids=np.array(ids, dtype=object), texts=np.array(texts, dtype=object),
+                build_stats=np.array(stats, dtype=object),
+            )
+        os.replace(tmp, cache)
+    except BaseException:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+    (cache.parent / f"{cache.stem}.cost.json").write_text(json.dumps(note, indent=2),
+                                                          encoding="utf-8")
+
+
+def _stored_start(ids: list, texts: list):
+    """The stored file to extend: of the files in CACHE_DIR, the one whose units, ids and texts in
+    order, are exactly the first n units of `ids` and `texts`, the most of them, n below all.
+    (path, n), or None when no file holds such a start."""
+    best = None
+    for path in sorted(CACHE_DIR.glob("*.npz")):
+        with np.load(path, allow_pickle=True) as z:
+            if not {"matrix", "ids", "texts", "build_stats"} <= set(z.files):
+                continue
+            held = z["ids"]
+            n = len(held)
+            if n <= (best[1] if best else 0) or n >= len(ids) or list(held) != ids[:n]:
+                continue
+            if list(z["texts"]) != texts[:n]:
+                continue
+        best = (path, n)
+    return best
+
+
+def _extend(stored: Path, n: int, ids: list, texts: list, batch: int, cache: Path,
+            t0: float) -> Prepared:
+    """The vectors of all units: the stored file's rows for the first n units, kept bit for bit,
+    and the rest embedded in passage mode with the settings the stored file's cost note records,
+    appended after them. Refuses when the note is missing or records any other model, revision,
+    mode, prefix, dtype or batch than the rest would be made with. The new file's build_stats and
+    cost note hold the two parts together, and the note gives the appended part's own."""
+    note_path = stored.parent / f"{stored.stem}.cost.json"
+    if not note_path.is_file():
+        raise RuntimeError(f"{stored.name} holds the first {n} of the {len(ids)} units but has no "
+                           "cost note beside it, so the settings of its vectors are not known: "
+                           "nothing is appended")
+    note = json.loads(note_path.read_text(encoding="utf-8"))
+    differ = {k: {"stored": note.get(k), "now": v} for k, v in _made_with(batch).items()
+              if note.get(k) != v}
+    if differ:
+        raise RuntimeError(f"{stored.name} holds the first {n} of the {len(ids)} units, but the "
+                           f"rest would be embedded with other settings than its vectors were: "
+                           f"{differ}; nothing is appended")
+    with np.load(stored, allow_pickle=True) as z:
+        held = z["matrix"]
+        bt0, calls0, tokens_in0, tokens_out0, model_s0 = _stats(z)
+    if held.shape[0] != n:
+        raise RuntimeError(f"{stored.name} holds {n} units but {held.shape[0]} vectors")
+    say(f"vector: {stored.name} holds the vectors of the first {n} of the {len(ids)} units; "
+        f"embedding the other {len(ids) - n}")
+
+    rest, calls, tokens_in, tokens_out, model_s = _embed(texts[n:], "passage", batch)
+    if rest.dtype != held.dtype or rest.shape[1:] != held.shape[1:]:
+        raise RuntimeError(f"the appended vectors are {rest.dtype} {rest.shape[1:]}, the stored "
+                           f"ones {held.dtype} {held.shape[1:]}: nothing is appended")
+    matrix = np.concatenate([held, rest])
+    part_s = time.perf_counter() - t0
+
+    device = _device_name()
+    both = (device if note.get("device") == device
+            else f"{note.get('device')} (units 1-{n}), {device} (units {n + 1}-{len(ids)})")
+    said = note.get("build_time_note")
+    total = [bt0 + part_s, calls0 + calls, tokens_in0 + tokens_in, tokens_out0 + tokens_out,
+             model_s0 + model_s]
+    new_note = {
+        **_made_with(batch), "calls": total[1], "tokens_in": total[2], "tokens_out": total[3],
+        "build_time_s": total[0],
+        "build_time_note": (f"two builds: units 1-{n} are the vectors of {stored.name}, made in "
+                            f"{bt0:.1f} s" + (f" (its note: {said})" if said else "")
+                            + f"; units {n + 1}-{len(ids)} were embedded and appended to them in "
+                            f"{part_s:.1f} s, one timer from the start of that build to its "
+                            "vectors"),
+        "device": both, "unit_text": FORM, "units": len(ids),
+        "units_sha256": units_digest(ids, texts),
+        "extends": {"cache_file": stored.name, "cache_file_sha256": file_digest(stored),
+                    "units": n, "cost_note": note},
+        "appended": {"units": len(ids) - n, "first_unit": n + 1, "calls": calls,
+                     "tokens_in": tokens_in, "tokens_out": tokens_out, "seconds_elapsed": model_s,
+                     "build_time_s": part_s, "device": device, **_machine()},
+    }
+    _save(cache, matrix, ids, texts, total, new_note)
+    return Prepared(
+        matrix=matrix, ids=ids, texts=texts,
+        build_stats=BuildStats(
+            build_time_s=total[0],
+            models=[_build_entry(total[1], total[2], total[3], total[4], both,
+                                 _seconds_note(new_note))]),
+        cache_file=str(cache))
+
+
 def build_dense_index(corpus, batch: int = EMBED_BATCH) -> Prepared:
+    """The vectors of every unit: read from the stored file of exactly these units when there is
+    one; else a stored file's vectors of the first units, with the rest embedded and appended
+    (`_extend`); else every unit embedded. A file made here is stored with its cost note."""
     t0 = time.perf_counter()
     docs = corpus if isinstance(corpus, list) else _read_corpus(corpus)
     ids = [d["id"] for d in docs]
@@ -221,13 +322,7 @@ def build_dense_index(corpus, batch: int = EMBED_BATCH) -> Prepared:
     cache = _cache_path(ids, texts)
     if cache.is_file():
         z = np.load(cache, allow_pickle=True)
-        stats = z["build_stats"]
-        bt = float(stats[0])
-        calls = int(stats[1])
-        if len(stats) == 4:
-            tokens_in, tokens_out, model_s = int(stats[2]), 0, float(stats[3])
-        else:
-            tokens_in, tokens_out, model_s = int(stats[2]), int(stats[3]), float(stats[4])
+        bt, calls, tokens_in, tokens_out, model_s = _stats(z)
         try:
             note = json.loads((CACHE_DIR / f"{cache.stem}.cost.json").read_text(encoding="utf-8"))
         except (OSError, ValueError):
@@ -241,34 +336,23 @@ def build_dense_index(corpus, batch: int = EMBED_BATCH) -> Prepared:
             cache_file=str(cache),
         )
 
-    matrix, calls, tokens_in, tokens_out, model_s = _embed(texts, "passage", batch)
+    stored = _stored_start(ids, texts)
+    if stored is not None:
+        return _extend(*stored, ids, texts, batch, cache, t0)
 
+    matrix, calls, tokens_in, tokens_out, model_s = _embed(texts, "passage", batch)
+    build_time_s = time.perf_counter() - t0
+
+    device = _device_name()
     build_stats = BuildStats(
-        build_time_s=time.perf_counter() - t0,
-        models=[_build_entry(calls, tokens_in, tokens_out, model_s, EMBED_DEVICE)],
+        build_time_s=build_time_s,
+        models=[_build_entry(calls, tokens_in, tokens_out, model_s, device)],
     )
-    CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    fd, tmp = tempfile.mkstemp(dir=CACHE_DIR, suffix=".tmp")
-    try:
-        with os.fdopen(fd, "wb") as f:
-            np.savez(
-                f, matrix=matrix,
-                ids=np.array(ids, dtype=object), texts=np.array(texts, dtype=object),
-                build_stats=np.array([build_stats.build_time_s, calls, tokens_in, tokens_out,
-                                      model_s], dtype=object),
-            )
-        os.replace(tmp, cache)
-    except BaseException:
-        try:
-            os.unlink(tmp)
-        except OSError:
-            pass
-        raise
-    (CACHE_DIR / f"{cache.stem}.cost.json").write_text(
-        json.dumps({"model": EMBED_MODEL, "calls": calls,
-                    "tokens_in": tokens_in, "tokens_out": tokens_out,
-                    "build_time_s": build_stats.build_time_s, "device": EMBED_DEVICE}, indent=2),
-        encoding="utf-8")
+    _save(cache, matrix, ids, texts,
+          [build_stats.build_time_s, calls, tokens_in, tokens_out, model_s],
+          {**_made_with(batch), "calls": calls, "tokens_in": tokens_in, "tokens_out": tokens_out,
+           "build_time_s": build_stats.build_time_s, "device": device, "unit_text": FORM,
+           "units": len(ids), "units_sha256": units_digest(ids, texts), **_machine()})
     return Prepared(matrix=matrix, ids=ids, texts=texts, build_stats=build_stats,
                     cache_file=str(cache))
 
@@ -344,11 +428,6 @@ def retrieve_top_k_units(question, prepared: Prepared, k: int = DEFAULT_TOP_K) -
     return units, usage
 
 
-def unit_to_artifact_id(unit: dict) -> Optional[str]:
-    uid = unit["id"]
-    return None if str(uid).startswith(DIRECTORY_ID_PREFIX) else uid
-
-
 def gather_unit_text(units: list) -> list:
     return [u["text"] for u in units]
 
@@ -370,16 +449,12 @@ def answer_one_question(
 
     meta = None
     if char_budget is None:
-        per_unit = [unit_to_artifact_id(u) for u in units]
-        context_ids = [aid for aid in per_unit if aid is not None]
+        context_ids = [u["id"] for u in units]
         contexts = gather_unit_text(units)
-        if METADATA_ON:
-            meta = {"chunk_ids": [[aid] if aid is not None else [] for aid in per_unit]}
     else:
         cut = cut_at_budget(((u["id"], u["text"]) for u in units), char_budget)
         contexts = cut.contexts
-        context_ids = [aid for aid in (unit_to_artifact_id(u) for u in units[:cut.kept])
-                       if aid is not None]
+        context_ids = [u["id"] for u in units[:cut.kept]]
         meta = {"char_budget": {"budget": char_budget, "chars": cut.chars,
                                 "kept": cut.kept, "boundary": cut.boundary,
                                 "exhausted": cut.exhausted},

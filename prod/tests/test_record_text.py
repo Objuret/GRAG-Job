@@ -6,7 +6,7 @@ import unittest
 
 from arms import lucene, vector
 from harness import orchestrator
-from harness.record_text import ARTIFACT_TYPES, FORM, record_text, units_digest
+from harness.record_text import ARTIFACT_TYPES, FORM, METADATA_TYPES, record_text, units_digest
 
 SLACK = {"id": "20260101-0-aaaaa", "Channel": {"name": "planning-x", "channelID": "ch-x"},
          "Message": {"User": {"userId": "eid_1", "timestamp": "2026-01-01T09:00:00",
@@ -89,14 +89,17 @@ class CorpusTests(unittest.TestCase):
         self.assertEqual([d["id"] for d in self.lucene_docs], [d["id"] for d in self.vector_docs])
         self.assertEqual([d["text"] for d in self.lucene_docs],
                          [d["text"] for d in self.vector_docs])
-        self.assertEqual(len(self.lucene_docs), 38540)
-        self.assertEqual({d["kind"] for d in self.lucene_docs}, set(ARTIFACT_TYPES))
+        self.assertEqual(len(self.lucene_docs), 39190)
+        self.assertEqual({d["kind"] for d in self.lucene_docs},
+                         set(ARTIFACT_TYPES) | set(METADATA_TYPES))
 
     def test_every_unit_has_text_and_names_its_record(self):
         for d in self.lucene_docs:
             self.assertTrue(d["text"].strip(), d["id"])
         heads = {"slack": "Message ID: ", "documents": "Doc ID: ", "meeting_transcripts":
-                 "Meeting ID: ", "meeting_chats": "Meeting ID: ", "urls": "URL: ", "prs": "Title: "}
+                 "Meeting ID: ", "meeting_chats": "Meeting ID: ", "urls": "URL: ", "prs": "Title: ",
+                 "employee": "employee directory\n",
+                 "customers_data": "customers_data directory\n"}
         for d in self.lucene_docs:
             self.assertTrue(d["text"].startswith(heads[d["kind"]]), d["id"])
 

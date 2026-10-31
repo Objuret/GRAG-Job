@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import os
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -14,33 +13,15 @@ from harness import char_budget
 from harness.char_budget import cut_at_budget
 from harness.contract import ArmOutput, BuildStats, ModelUsage, unpack_generation
 from harness.fields import sub
-from harness.record_text import ARTIFACT_TYPES, FORM, record_text, units_digest
+from harness.record_text import ARTIFACT_TYPES, FORM, metadata_records, record_text, units_digest
 
 # Anserini's defaults (Lucene's own are 1.2 / 0.75, bm25s's 1.5 / 0.75)
 K1 = 0.9
 B = 0.4
 DEFAULT_TOP_K = 10
 
-
-def _env_bool(name: str, default: bool) -> bool:
-    raw = os.environ.get(name)
-    if raw is None or not raw.strip():
-        return default
-    value = raw.strip()
-    if value not in ("0", "1"):
-        raise ValueError(f"{name} must be '0' or '1', got {raw!r}")
-    return value == "1"
-
-
-METADATA_ON = _env_bool("HERB_BASELINE_METADATA", False)
-
-EMPLOYEE_JSON = "metadata/employee.json"
-CUSTOMERS_JSON = "metadata/customers_data.json"
-TEAM_JSON = "metadata/salesforce_team.json"
-
-DIRECTORY_ID_PREFIX = "metadata::"
-
-RETRIEVAL_FLAGS = {"HERB_BASELINE_METADATA": METADATA_ON}
+# the arm has no switches of its own
+RETRIEVAL_FLAGS: dict = {}
 
 Generator = Callable[[str, list], object]
 
@@ -50,9 +31,10 @@ UNIT_IS_ONE_RECORD = True
 
 # what was left out of the data this arm rests on, and on whose word (harness.fields, FIELDS.md)
 LEFT_OUT = [
-    "The directory files: the corpus's three directory files (people, teams, customers) are not "
-    "indexed beside the product records (retrieval_flags.HERB_BASELINE_METADATA off). No rule in "
-    "his words is recorded.",
+    "The metadata file salesforce_team.json: it is not indexed; the index holds the records of the "
+    "product files and the employees and customers of employee.json and customers_data.json. His "
+    "words: \"yeah, so, dont fucking talk about or use it then, if its not a current file, why are "
+    "you talking about it?\" (2026-10-31).",
 ]
 
 # the words for what only this arm writes into a run folder (harness.fields, FIELDS.md)
@@ -68,11 +50,10 @@ FIELDS = {
             "next_score": "The BM25 score of the first unit that was not delivered, on the same "
                           "scale; empty when none was left.",
         }),
-        "chunk_ids": "Only in a run cut at a depth with the directory files indexed: the record "
-                     "ids behind each delivered text.",
     }),
     "index": sub("What the arm's index is.", {
-        "units": "How many units the index holds. A unit is one record of the corpus.",
+        "units": "How many units the index holds. A unit is one record of the corpus: a record "
+                 "of a product file, or an employee or a customer of the metadata files.",
         "text_chars": "The characters of all unit texts together.",
         "unit_text": "The form a record is written in to make its unit's text, and where that "
                      "form is from.",
@@ -89,11 +70,7 @@ FIELDS = {
         "PyStemmer": "The version of the stemmer.",
         "kept": "Where the index lives.",
     }),
-    "retrieval_flags": sub("The arm's own switches.", {
-        "HERB_BASELINE_METADATA": "Whether the corpus's three directory files (people, teams, "
-                                  "customers) are taken in beside the records. Off: the records "
-                                  "only.",
-    }),
+    "retrieval_flags": sub("The arm's own switches. The arm has none, so this is empty.", {}),
 }
 
 
@@ -107,38 +84,9 @@ class Prepared:
     build_stats: Optional[BuildStats] = None
 
 
-def _team_leaders(nodes: list) -> list:
-    out: list = []
-    for node in nodes:
-        rosters = [v for v in node.values() if isinstance(v, list)]
-        if rosters:
-            out.append(node)
-        for roster in rosters:
-            out.extend(_team_leaders(roster))
-    return out
-
-
-def _directory_records(root: Path) -> list:
-    employees = json.loads((root / EMPLOYEE_JSON).read_text(encoding="utf-8"))
-    customers = json.loads((root / CUSTOMERS_JSON).read_text(encoding="utf-8"))
-    team = json.loads((root / TEAM_JSON).read_text(encoding="utf-8"))
-    return (
-        [("employee", rec["employee_id"], rec) for rec in employees.values()]
-        + [("customers_data", rec["id"], rec) for rec in customers]
-        + [("salesforce_team", rec["employee_id"], rec) for rec in _team_leaders(team)]
-    )
-
-
-def _flatten_directory(section: str, rec: dict) -> tuple:
-    lines = []
-    for key, value in rec.items():
-        if isinstance(value, list):
-            value = ", ".join(f'{m["name"]} ({m["employee_id"]})' for m in value)
-        lines.append(f"{key}: {value}")
-    return f"{section} directory", "\n".join(lines)
-
-
 def ingest_corpus(corpus_root: Union[str, Path]) -> list:
+    """One unit per record: the records of the product files, then the employees and customers of
+    the metadata files (`metadata_records`), each with its own id and its record_text."""
     root = Path(corpus_root)
     product_files = sorted((root / "products").glob("*.json"))
     docs: list = []
@@ -153,22 +101,14 @@ def ingest_corpus(corpus_root: Union[str, Path]) -> list:
                 seen.add(aid)
                 docs.append({"id": aid, "text": record_text(kind, rec), "kind": kind})
 
-    artifacts = len(docs)
-    if METADATA_ON:
-        clash = sorted(i for i in seen if str(i).startswith(DIRECTORY_ID_PREFIX))
-        if clash:
-            raise RuntimeError(
-                f"{len(clash)} artifact ids sit in the directory namespace "
-                f"{DIRECTORY_ID_PREFIX!r} (e.g. {clash[:3]}) — a directory record "
-                f"would be indistinguishable from an artifact")
-        for section, native, rec in _directory_records(root):
-            uid = f"{DIRECTORY_ID_PREFIX}{section}::{native}"
-            if uid in seen:
-                raise RuntimeError(f"duplicate directory unit id {uid!r}")
-            seen.add(uid)
-            title, contents = _flatten_directory(section, rec)
-            docs.append({"id": uid, "text": title + "\n" + contents, "kind": section})
-    print(f"lucene: {artifacts} artifacts + {len(docs) - artifacts} directory records",
+    products = len(docs)
+    for kind, rid, rec in metadata_records(root):
+        if rid in seen:
+            raise RuntimeError(f"the {kind} record {rid!r} has the id of another unit: two units "
+                               "would share one id")
+        seen.add(rid)
+        docs.append({"id": rid, "text": record_text(kind, rec), "kind": kind})
+    print(f"lucene: {products} product records + {len(docs) - products} employees and customers",
           flush=True)
     return docs
 
@@ -254,11 +194,6 @@ def retrieve_top_k_units(question, prepared: Prepared, k: int = DEFAULT_TOP_K) -
     return units
 
 
-def unit_to_artifact_id(unit: dict) -> Optional[str]:
-    uid = unit["id"]
-    return None if str(uid).startswith(DIRECTORY_ID_PREFIX) else uid
-
-
 def gather_unit_text(units: list) -> list:
     return [u["text"] for u in units]
 
@@ -280,17 +215,13 @@ def answer_one_question(
 
     meta = None
     if char_budget is None:
-        per_unit = [unit_to_artifact_id(u) for u in units]
-        context_ids = [aid for aid in per_unit if aid is not None]
+        context_ids = [u["id"] for u in units]
         contexts = gather_unit_text(units)
-        if METADATA_ON:
-            meta = {"chunk_ids": [[aid] if aid is not None else [] for aid in per_unit]}
     else:
         ranked = [u for u in units if u["score"] > 0.0]
         cut = cut_at_budget(((u["id"], u["text"]) for u in ranked), char_budget)
         contexts = cut.contexts
-        context_ids = [aid for aid in (unit_to_artifact_id(u) for u in ranked[:cut.kept])
-                       if aid is not None]
+        context_ids = [u["id"] for u in ranked[:cut.kept]]
         meta = {"char_budget": {"budget": char_budget, "chars": cut.chars,
                                 "kept": cut.kept, "boundary": cut.boundary,
                                 "exhausted": cut.exhausted},
