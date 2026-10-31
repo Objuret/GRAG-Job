@@ -3,10 +3,13 @@ shouldnt go to scope directly, but to chunks instead?" and "my point just is, st
 beside node -> chunk").
 
 One edge `(:Employee)-[:chunk]->(:Chunk)` for every pool chunk whose records name the employee in
-the fields the graph's own build spec reads people from (`build_corpus_graph.ARCHITECTURE`): a
-Slack message's `userId`, a pull request's `user.login` and its reviews' `user.login`, a
-document's `author`, a meeting transcript's `participants`. The records are read from the dataset
-through each chunk's pointer. The edge carries nothing. No model call.
+the fields the graph's own build spec reads people from (`build_corpus_graph.ARCHITECTURE` and
+`REGISTRIES`): a Slack message's `userId`, a pull request's `user.login` and its reviews'
+`user.login`, a document's `author`, a meeting transcript's `participants`, an employee record's
+`employee_id`. The pool is the chunks with a product edge and the chunks of employee.json and
+customers_data.json (`record_text.METADATA_TYPES`), as the arm's. The records are read from the
+dataset through each chunk's pointer, by the arm's own reader (`artefact_v4._pointed_records`).
+The edge carries nothing. No model call.
 
     backup   writes the person edges to a channel or product (`slack`, `meeting_transcripts`,
              `documents`) to a file, so they can be put back (`restore`)
@@ -34,16 +37,18 @@ for p in (ROOT / 'prod', ROOT / 'test'):
     if str(p) not in sys.path:
         sys.path.insert(0, str(p))
 
-from arms.artefact_v2 import _load_verified_doc  # noqa: E402
+from arms.artefact_v4 import _pointed_records  # noqa: E402
 from graph.db import _driver  # noqa: E402
+from harness.record_text import METADATA_TYPES  # noqa: E402
 
 DATABASE = os.environ.get('NEO4J_DATABASE', 'herb-eval-volmax')
 OUT = ROOT / 'output' / 'graph_build' / DATABASE
 OLD_TYPES = ('slack', 'meeting_transcripts', 'documents')
 BATCH = 2000
 
-POOL_CYPHER = '''
-MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk) WHERE (c)-[:product]->()
+POOL_CYPHER = f'''
+MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk)
+WHERE (c)-[:product]->() OR c.metadata_section IN {json.dumps(sorted(METADATA_TYPES))}
 RETURN c.chunk_id AS chunk, c.kind AS kind, c.locator_json AS locator,
        f.rel_path AS relpath, f.sha256 AS sha256
 '''
@@ -81,25 +86,27 @@ def people_of(kind, record):
         return [('author', record['author'])]
     if kind in ('meeting_transcript', 'meeting_transcript_part'):
         return [('participants', p) for p in record.get('participants') or []]
+    if kind == 'employee':
+        return [('employee_id', record['employee_id'])]
     return []
 
 
 def pairs(session):
     """(eid, chunk id) pairs over the pool, the counts of what was found, and the ids that match
-    no employee."""
+    no employee. A chunk of a metadata file is read as that file's kind (employee,
+    customers_data)."""
     eids = {r['eid'] for r in session.run('MATCH (e:Employee) RETURN e.eid AS eid')}
     docs, out = {}, set()
     found, unmatched = Counter(), Counter()
     for row in session.run(POOL_CYPHER).data():
-        loc = json.loads(row['locator'])
-        arr = _load_verified_doc(row['relpath'], row['sha256'], docs)[loc['section']]
-        for i in (loc['indices'] if 'indices' in loc else [loc['index']]):
-            for field, pid in people_of(row['kind'], arr[i]):
-                found[(row['kind'], field)] += 1
+        kind = json.loads(row['locator']).get('metadata') or row['kind']
+        for record in _pointed_records(dict(row, chunkId=row['chunk']), docs):
+            for field, pid in people_of(kind, record):
+                found[(kind, field)] += 1
                 if pid in eids:
                     out.add((pid, row['chunk']))
                 else:
-                    unmatched[(row['kind'], field)] += 1
+                    unmatched[(kind, field)] += 1
     return sorted(out), found, unmatched
 
 

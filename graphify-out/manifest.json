@@ -620,9 +620,9 @@
     "semantic_hash": "eae3d095266f1f93c99f0683deda3b53"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\test\\graph\\build_customer_edges.py": {
-    "mtime": 1792373328.3242285,
-    "ast_hash": "6eac39f9eec0fe1cc5e897f08abb9563",
-    "semantic_hash": "6eac39f9eec0fe1cc5e897f08abb9563"
+    "mtime": 1793451025.4103382,
+    "ast_hash": "76742b2f535b72c16ca7ddd108fd3967",
+    "semantic_hash": "76742b2f535b72c16ca7ddd108fd3967"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\test\\graph\\build_entity_graph.py": {
     "mtime": 1788569461.136766,
@@ -635,9 +635,9 @@
     "semantic_hash": "bf36eaea007b0ee6ff84dc2fdd958d2b"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\test\\graph\\build_person_edges.py": {
-    "mtime": 1792204129.343779,
-    "ast_hash": "c0be3b2dc0de0ef9f1e9da67fd3493af",
-    "semantic_hash": "c0be3b2dc0de0ef9f1e9da67fd3493af"
+    "mtime": 1793451007.1276028,
+    "ast_hash": "865d1eeef6f62b54120454b2197c66aa",
+    "semantic_hash": "865d1eeef6f62b54120454b2197c66aa"
   },
   "C:\\Coding\\exjobbet\\GRAG-Job\\test\\graph\\build_records.json": {
     "mtime": 1792505246.6056278,

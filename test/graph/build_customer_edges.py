@@ -2,9 +2,12 @@
 the same shape as the person edges, a node to a chunk with nothing on the edge).
 
 One edge `(:Customer)-[:chunk]->(:Chunk)` for every pool chunk whose records carry the customer's
-id (`CUST-0019`) as a whole word anywhere in their fields. The records are read from the dataset
-through each chunk's pointer. Ids only: in this dataset a customer's name never stands in a record
-except where an employee carries the same name, so a name would tie the wrong node. No model call.
+id (`CUST-0019`) as a whole word anywhere in their fields. The pool is the chunks with a product
+edge and the chunks of employee.json and customers_data.json (`record_text.METADATA_TYPES`), as
+the arm's. The records are read from the dataset through each chunk's pointer, by the arm's own
+reader (`artefact_v4._pointed_records`). Ids only: in this dataset a customer's name never stands
+in a record except where an employee carries the same name, so a name would tie the wrong node.
+No model call.
 
     write    computes the pairs, prints them per record kind, and writes the edges (MERGE)
     verify   counts of the edges
@@ -27,14 +30,16 @@ for p in (ROOT / 'prod', ROOT / 'test'):
     if str(p) not in sys.path:
         sys.path.insert(0, str(p))
 
-from arms.artefact_v2 import _load_verified_doc  # noqa: E402
+from arms.artefact_v4 import _pointed_records  # noqa: E402
 from graph.db import _driver  # noqa: E402
+from harness.record_text import METADATA_TYPES  # noqa: E402
 
 DATABASE = os.environ.get('NEO4J_DATABASE', 'herb-eval-volmax')
 BATCH = 2000
 
-POOL_CYPHER = '''
-MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk) WHERE (c)-[:product]->()
+POOL_CYPHER = f'''
+MATCH (f:File)-[:HAS_CHUNK]->(c:Chunk)
+WHERE (c)-[:product]->() OR c.metadata_section IN {json.dumps(sorted(METADATA_TYPES))}
 RETURN c.chunk_id AS chunk, c.kind AS kind, c.locator_json AS locator,
        f.rel_path AS relpath, f.sha256 AS sha256
 '''
@@ -55,11 +60,10 @@ def pairs(session):
     pattern = id_pattern(r['id'] for r in session.run('MATCH (c:Customer) RETURN c.id AS id'))
     docs, out, found = {}, set(), Counter()
     for row in session.run(POOL_CYPHER).data():
-        loc = json.loads(row['locator'])
-        held = _load_verified_doc(row['relpath'], row['sha256'], docs)[loc['section']]
-        for i in (loc['indices'] if 'indices' in loc else [loc['index']]):
-            for cid in customers_in(held[i], pattern):
-                found[row['kind']] += 1
+        kind = json.loads(row['locator']).get('metadata') or row['kind']
+        for record in _pointed_records(dict(row, chunkId=row['chunk']), docs):
+            for cid in customers_in(record, pattern):
+                found[kind] += 1
                 out.add((cid, row['chunk']))
     return sorted(out), found
 
