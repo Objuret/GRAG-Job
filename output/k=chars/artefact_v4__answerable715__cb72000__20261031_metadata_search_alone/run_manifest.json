@@ -1,0 +1,2092 @@
+{
+  "arm": "artefact_v4",
+  "generator_model": null,
+  "interpreter_model": "claude-sonnet-5",
+  "top_k": 50,
+  "questions_file": "A:\\exjobbet\\GRAG-Job\\data\\questions.jsonl",
+  "n_questions": 715,
+  "n_ran": 715,
+  "n_failed": 0,
+  "timestamp": "2026-10-31T17:38:08.213839+00:00",
+  "build_stats": {
+    "build_time_s": 28682.1,
+    "models": [
+      {
+        "kind": "chat",
+        "model": "claude-haiku-4-5-20251001",
+        "what": "the tagging run pilot_full_herb: per chunk a description and its tags, five facet scores per tag (later replaced by the facet layer), per file a description and a score per chunk; the main run and its recovery",
+        "calls": 11802,
+        "tokens_in": 22982655,
+        "tokens_out": 10075140,
+        "seconds_summed_per_call": 54557.5,
+        "seconds_elapsed": 13644.6,
+        "device": "anthropic, forced tool use, temperature 0.3, 4 at a time",
+        "not_recorded": "cached input tokens; the 48 first attempts that failed before a retry; request start times; the recovery's elapsed time; token counts for 17 records of the main run"
+      },
+      {
+        "kind": "embed",
+        "model": "nvidia/llama-nemotron-embed-1b-v2",
+        "what": "every tag and every chunk description embedded in the query role and written to the graph (Tag.emb, Chunk.desc_emb), one text a request",
+        "calls": 21646,
+        "tokens_in": 456052,
+        "tokens_out": 0,
+        "seconds_summed_per_call": null,
+        "seconds_elapsed": 818.2,
+        "device": "desktop, cuda, GeForce GTX 1080 Ti; laptop CPU",
+        "not_recorded": "the laptop's CPU model; file transfer time; the cost of the arm's pool alone (16,654 tags, 4,808 chunks)"
+      },
+      {
+        "kind": "chat",
+        "model": "claude-opus-5",
+        "what": "pairs of tag-to-chunk edges judged for the facet layer (control and train, 920 calls; the 800 held-out calls only evaluated)",
+        "calls": 1720,
+        "tokens_in": 58405680,
+        "tokens_out": 65596,
+        "seconds_summed_per_call": 21552.5,
+        "seconds_elapsed": 2564.4,
+        "device": "effort high, headless lane, 8 at a time",
+        "not_recorded": "cached input tokens of the judge calls; the elapsed time of the paused held-out run"
+      },
+      {
+        "kind": "encoder",
+        "model": "4 candidate encoders",
+        "what": "the encoder bake-off on 5469 edges, which chose the encoder; not in the values",
+        "calls": null,
+        "tokens_in": null,
+        "tokens_out": 0,
+        "seconds_summed_per_call": null,
+        "seconds_elapsed": 3227.0,
+        "device": "Colab, cuda",
+        "not_recorded": "the tokens; the candidates are named in the bake-off's own results"
+      },
+      {
+        "kind": "encoder",
+        "model": "Alibaba-NLP/gte-reranker-modernbert-base",
+        "what": "the encoder cache: every one of the 61018 tag-to-chunk edges encoded for the facet head (fp32, fp16 stored)",
+        "calls": null,
+        "tokens_in": null,
+        "tokens_out": 0,
+        "seconds_summed_per_call": null,
+        "seconds_elapsed": 3549.5,
+        "device": "desktop, cuda, GeForce GTX 1080 Ti",
+        "not_recorded": "the encoder cache's total tokens"
+      }
+    ],
+    "not_recorded": [
+      "chunks: the elapsed time of the chunking and the load, and the machine",
+      "descriptions_and_tags: cached input tokens; the 48 first attempts that failed before a retry; request start times",
+      "graph_copies: how herb-eval went from 229,249 to 67,913 tag edges; the elapsed time of the crashed first volmax attempt; how the graph went from 15,605 tags and 62,443 tag edges after the volmax copy to 16,714 tags and 62,028 tag edges on 2026-10-08: no step's record covers that change",
+      "embeddings: the laptop's CPU model; file transfer time; the cost of the arm's pool alone (16,654 tags, 4,808 chunks)",
+      "facet_layer: cached input tokens of the judge calls; the elapsed time of the paused held-out run; the encoder cache's total tokens",
+      "later_edges_and_fields: the scripts print no elapsed time; the spans include backup and check",
+      "the superseded work (index.build_cost.superseded) is recorded there and not counted here"
+    ]
+  },
+  "retrieval_flags": {
+    "interpreter_model": "claude-sonnet-5",
+    "offline": "HERB_V4_OFFLINE=on reads the first call's answer from the cache and raises where it is missing; off asks the model on a miss, and again where an earlier start's first call failed or was cut off.",
+    "retrieval": "Everything the order is made of is asked of the graph for each question (`_ask_graph`): the border's chunks with their pointers, the eligible tags on them with their edges' facet values, every closeness as the graph's cosine of its stored vectors and the query side's, the people of the border's products and the 4-combo's ties; the start of a run only checks and counts the graph. The border (`name_border`, asked of the graph per question): the products, channels, people, customers and companies whose name, or a person's or customer's id, stands in the question word for word (the name_keys `test/graph/build_structure_names.py` wrote); a name picks a scope, never a chunk: a product's and a channel's chunks; for a person, a customer or a company, every chunk under the parents of the chunks it is tied to (a company through its customers); names of one kind add up, kinds narrow each other from the widest area down, and a kind that would leave nothing is set aside (`border_of`); no name, nothing cut; the chunks outside the border are out of the pool. Inside it (`v4_walk.cloud_combo`): each chunk's closest eligible tag to a query tag and the chunk descriptions' closeness to the question with the border's names taken out, closeness alone; each side's cloud is the chunks before the knee of its closeness sorted from the nearest (`v4_walk.levels_of`), the knee looked for among the values above the median, so a cloud holds at most half the border; a chunk's step is 2 in both clouds, 3 in one, 4 in neither; the parents holding the majority of the chunks in a cloud are the scope, whose chunks come first inside a step of the clouds' order, then the two sides' ranks counted equally: the description side's by closeness, the tags side's place by closeness (`v4_walk.closeness_places`: per query tag the border's chunks by closeness, each chunk at the best place any query tag gives it). The facets (`v4_walk.closest_edge_standing`): a chunk's edge to its closest tag stands above, the same or below the same graph tag's other edges on chunks of the same kind, in the facet the first call named for the query tag, beyond the facet's range on the FacetLayer node; the query tag's own phrase never stands below; the tags' cloud keeps the size of its knee and takes the chunks by their level of closeness moved one by the standing, then by closeness. The chunks in both clouds (with none, those of the lowest step) are the chosen chunks. The 4-combo (`v4_walk.storyline`, the graph asked per question in `STORYLINE_CYPHER`): every other chunk of the clouds is tied to each chosen chunk by scope (the same parent), entities (a person tied to both, through the person-to-chunk edges), time (the smallest gap between a record of the one and a record of the other, from the chunks' times, each record's own, near when before the knee of the upper half of the pairs' gaps on the logarithm) and nearness (near each other in what the query asks about: the correlation of their closeness to each query tag, near when before the knee of the upper half of the pairs' correlations); a chunk's strength is the ways it is tied, added over the chosen chunks; the order is the chosen chunks, then the rest of the clouds by strength, equals in the clouds' order, then everything outside the clouds as the clouds order it. What is handed over, in that order (`_hand_over`): every record of each chunk; of a batch of Slack messages its conversations, each whole where it first shows (a conversation is a channel's messages between its long gaps, `v4_walk.conversations`, no length given, read through the chunk's pointer); of a part of a split document or transcript that is a chosen chunk its whole record, once, at its place, of any other part only that part; nothing is left out.",
+    "offline_at_prepare": true
+  },
+  "char_budget": 72000,
+  "code_version": {
+    "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+    "branch": "artefact-v4-iteration",
+    "dirty": true
+  },
+  "environment": {
+    "host": "Fräsh",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "python": "3.12.6",
+    "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+    "cpu": "Intel64 Family 6 Model 158 Stepping 10, GenuineIntel",
+    "cpu_count": 6,
+    "ram_bytes": 34280620032,
+    "packages": {
+      "bm25s": "0.2.14",
+      "PyStemmer": "3.1.0",
+      "numpy": "2.4.6",
+      "sentence-transformers": "6.0.1",
+      "torch": "2.14.1+cu126",
+      "transformers": "5.12.1",
+      "httpx": "0.28.1",
+      "ragas": "0.4.3",
+      "neo4j": "6.2.0"
+    },
+    "packages_all": [
+      "absl-py==2.5.0",
+      "aiohappyeyeballs==2.7.1",
+      "aiohttp==3.14.1",
+      "aiosignal==1.4.0",
+      "annotated-doc==0.0.4",
+      "annotated-types==0.7.0",
+      "anyio==4.14.2",
+      "appdirs==1.4.4",
+      "attrs==26.1.0",
+      "blis==1.3.3",
+      "bm25s==0.2.14",
+      "catalogue==2.0.10",
+      "certifi==2026.6.17",
+      "charset-normalizer==3.4.9",
+      "click==8.4.2",
+      "cloudpathlib==0.25.0",
+      "colorama==0.4.6",
+      "confection==1.3.3",
+      "cymem==2.0.13",
+      "dataclasses-json==0.6.7",
+      "datasets==5.0.0",
+      "defusedxml==0.7.1",
+      "dill==0.4.1",
+      "diskcache==5.6.3",
+      "distro==1.9.0",
+      "docstring_parser==0.18.0",
+      "en_core_web_sm==3.8.0",
+      "et_xmlfile==2.0.0",
+      "filelock==3.30.0",
+      "frozenlist==1.8.0",
+      "fsspec==2026.4.0",
+      "graphifyy==0.8.39",
+      "greenlet==3.5.3",
+      "h11==0.16.0",
+      "hf-xet==1.5.1",
+      "httpcore==1.0.9",
+      "httpx-sse==0.4.3",
+      "httpx==0.28.1",
+      "huggingface_hub==1.23.0",
+      "idna==3.18",
+      "iniconfig==2.3.0",
+      "instructor==1.15.4",
+      "Jinja2==3.1.6",
+      "jiter==0.14.0",
+      "joblib==1.5.3",
+      "jsonpatch==1.33",
+      "jsonpointer==3.1.1",
+      "langchain-community==0.3.31",
+      "langchain-core==1.4.9",
+      "langchain-openai==1.3.5",
+      "langchain-protocol==0.0.18",
+      "langchain==1.3.13",
+      "langgraph-checkpoint==4.1.1",
+      "langgraph-prebuilt==1.1.0",
+      "langgraph-sdk==0.4.2",
+      "langgraph==1.2.9",
+      "langsmith==0.10.5",
+      "lxml==6.1.1",
+      "markdown-it-py==4.2.0",
+      "MarkupSafe==3.0.3",
+      "marshmallow==3.26.2",
+      "mdurl==0.1.2",
+      "mpmath==1.3.0",
+      "multidict==6.7.1",
+      "multiprocess==0.70.19",
+      "murmurhash==1.0.15",
+      "mypy_extensions==1.1.0",
+      "narwhals==2.25.0",
+      "neo4j==6.2.0",
+      "nest-asyncio==1.6.0",
+      "networkx==3.6.1",
+      "nltk==3.10.0",
+      "numpy==2.4.6",
+      "openai==2.45.0",
+      "openpyxl==3.1.5",
+      "orjson==3.11.9",
+      "ormsgpack==1.12.2",
+      "packaging==26.2",
+      "pandas==3.0.3",
+      "pillow==12.3.0",
+      "pip==24.2",
+      "pluggy==1.6.0",
+      "portalocker==3.2.0",
+      "preshed==3.0.13",
+      "propcache==0.5.2",
+      "pyarrow==25.0.0",
+      "pydantic-settings==2.14.2",
+      "pydantic==2.13.4",
+      "pydantic_core==2.46.4",
+      "Pygments==2.20.0",
+      "pypdf==6.18.0",
+      "PyStemmer==3.1.0",
+      "pytest==9.1.1",
+      "python-dateutil==2.9.0.post0",
+      "python-dotenv==1.2.2",
+      "pytz==2026.2",
+      "pywin32==312",
+      "PyYAML==6.0.3",
+      "ragas==0.4.3",
+      "RapidFuzz==3.14.5",
+      "regex==2026.7.10",
+      "requests-toolbelt==1.0.0",
+      "requests==2.34.2",
+      "rich==14.3.4",
+      "rouge_score==0.1.2",
+      "sacrebleu==2.6.0",
+      "safetensors==0.8.0",
+      "scikit-learn==1.9.0",
+      "scikit-network==0.33.5",
+      "scipy==1.18.0",
+      "sentence-transformers==6.0.1",
+      "setuptools==78.1.0",
+      "shellingham==1.5.4",
+      "six==1.17.0",
+      "smart_open==8.0.1",
+      "sniffio==1.3.1",
+      "spacy-legacy==3.0.12",
+      "spacy-loggers==1.0.5",
+      "spacy==3.8.16",
+      "SQLAlchemy==2.0.51",
+      "srsly==2.5.3",
+      "sympy==1.14.0",
+      "tabulate==0.10.0",
+      "tenacity==9.1.4",
+      "thinc==8.3.13",
+      "threadpoolctl==3.6.0",
+      "tiktoken==0.13.0",
+      "tokenizers==0.22.2",
+      "torch==2.14.1+cu126",
+      "tqdm==4.67.1",
+      "transformers==5.12.1",
+      "tree-sitter-bash==0.25.1",
+      "tree-sitter-c-sharp==0.23.5",
+      "tree-sitter-c==0.24.2",
+      "tree-sitter-cpp==0.23.4",
+      "tree-sitter-elixir==0.3.5",
+      "tree-sitter-fortran==0.6.0",
+      "tree-sitter-go==0.25.0",
+      "tree-sitter-groovy==0.1.2",
+      "tree-sitter-java==0.23.5",
+      "tree-sitter-javascript==0.25.0",
+      "tree-sitter-json==0.24.8",
+      "tree-sitter-julia==0.23.1",
+      "tree-sitter-kotlin==1.1.0",
+      "tree-sitter-lua==0.5.0",
+      "tree-sitter-objc==3.0.2",
+      "tree-sitter-php==0.24.1",
+      "tree-sitter-powershell==0.26.4",
+      "tree-sitter-python==0.25.0",
+      "tree-sitter-ruby==0.23.1",
+      "tree-sitter-rust==0.24.2",
+      "tree-sitter-scala==0.26.2",
+      "tree-sitter-swift==0.7.3",
+      "tree-sitter-typescript==0.23.2",
+      "tree-sitter-verilog==1.0.3",
+      "tree-sitter-zig==1.1.2",
+      "tree-sitter==0.25.2",
+      "typer==0.27.0",
+      "typing-inspect==0.9.0",
+      "typing-inspection==0.4.2",
+      "typing_extensions==4.16.0",
+      "tzdata==2026.3",
+      "urllib3==2.7.0",
+      "uuid_utils==0.17.0",
+      "wasabi==1.1.3",
+      "weasel==1.0.0",
+      "websockets==15.0.1",
+      "wrapt==2.4.0",
+      "xxhash==3.8.1",
+      "yarl==1.24.2",
+      "zstandard==0.25.0"
+    ],
+    "embedder": {
+      "model": "nvidia/llama-nemotron-embed-1b-v2",
+      "revision": "113abe4acafa848e77ead9c0623205e511932348",
+      "device": "cuda",
+      "dtype": "float32"
+    }
+  },
+  "inputs": {
+    "questions_sha256": "1dfb00e8773123eb66d2d5ae2828bdce976a5e7eb0637f7b3e6c0ca6f52f47ea",
+    "ids_sha256": "2179037350ac45d8e14abebd5cfbf6fe1f9280432c30ece3ca5220b808a1134c",
+    "corpus": {
+      "sha256": "4eeb46d025c6187319e462e1a78de67631e1b1dbf7b6a18f966cd14ce1ac5a82",
+      "n_files": 33
+    }
+  },
+  "graph": {
+    "database": "herb-eval-volmax",
+    "graph_version": "semantic-copy+registry-entities",
+    "graph_census_sha256": "e09bb272d8a7bbef1d8e268abcae9378c865115e6020bfee7661cf6555eb8f28",
+    "removed_tags_sha256": null,
+    "build_timestamp": "2026-08-16T21:46:16Z",
+    "source_database": "herb-eval-v2",
+    "census": {
+      "labels": {
+        "Channel": 302,
+        "Chunk": 4869,
+        "Company": 10,
+        "Customer": 120,
+        "Employee": 530,
+        "FacetLayer": 1,
+        "File": 33,
+        "Kind": 6,
+        "Org": 6,
+        "Product": 30,
+        "Role": 17,
+        "Tag": 16714
+      },
+      "relationships": {
+        "HAS_CHUNK File Chunk": 4869,
+        "HAS_TAG Chunk Tag": 62028,
+        "channel Chunk Channel": 2677,
+        "channel File Channel": 302,
+        "chunk Customer Chunk": 1163,
+        "chunk Employee Chunk": 27480,
+        "company Customer Company": 120,
+        "company File Company": 10,
+        "customer File Customer": 120,
+        "documents Employee Product": 234,
+        "employee File Employee": 1060,
+        "has Product Kind": 180,
+        "kind Chunk Kind": 4808,
+        "manages Employee Employee": 512,
+        "meeting_transcripts Employee Product": 1013,
+        "org Employee Org": 530,
+        "org File Org": 6,
+        "product Chunk Product": 4808,
+        "product File Product": 30,
+        "role Customer Role": 120,
+        "role Employee Role": 530,
+        "role File Role": 20,
+        "slack Employee Channel": 2647,
+        "slack Product Channel": 302
+      },
+      "node_properties": {
+        "Channel": {
+          "file_id": 302,
+          "id": 302,
+          "name": 302,
+          "name_keys": 302,
+          "pointer": 302
+        },
+        "Chunk": {
+          "chunk_id": 4869,
+          "chunk_ref": 4869,
+          "created_at": 4869,
+          "desc_emb": 4869,
+          "doc_field": 569,
+          "employee_id": 30,
+          "end_offset": 4869,
+          "file_id": 4869,
+          "item_index": 1163,
+          "kind": 4869,
+          "locator_json": 4869,
+          "metadata_section": 61,
+          "msg_index_end": 3706,
+          "msg_index_start": 3706,
+          "ordinal": 4869,
+          "parent_ref": 4869,
+          "part_index": 569,
+          "relevance_to_file": 4869,
+          "section": 4808,
+          "start_offset": 4869,
+          "subsection": 14,
+          "times": 4747,
+          "token_estimate": 4869,
+          "years": 3476
+        },
+        "Company": {
+          "name": 10,
+          "name_keys": 10,
+          "value": 10
+        },
+        "Customer": {
+          "file_id": 120,
+          "id": 120,
+          "name": 120,
+          "name_keys": 120,
+          "pointer": 120
+        },
+        "Employee": {
+          "eid": 530,
+          "file_id": 530,
+          "name": 530,
+          "name_keys": 530,
+          "pointer": 530
+        },
+        "FacetLayer": {
+          "edges": 1,
+          "equal_gap": 1,
+          "equal_gap_column": 1,
+          "equal_gap_facets": 1,
+          "facets": 1,
+          "name": 1,
+          "pooled_flip_gap": 1,
+          "pooled_flip_gap_column": 1,
+          "refits": 1,
+          "rows_sha256": 1,
+          "run_id": 1,
+          "source_bands_sha256": 1,
+          "source_dir": 1,
+          "source_refits_sha256": 1,
+          "value_others": 1,
+          "value_topic": 1,
+          "written": 1
+        },
+        "File": {
+          "created_at": 33,
+          "dataset_id": 33,
+          "dispatch_mode": 33,
+          "file_id": 33,
+          "file_path": 33,
+          "format_family": 33,
+          "rel_path": 33,
+          "sha256": 33,
+          "size_bytes": 33
+        },
+        "Kind": {
+          "name": 6
+        },
+        "Org": {
+          "value": 6
+        },
+        "Product": {
+          "file_id": 30,
+          "name": 30,
+          "name_keys": 30,
+          "pointer": 30
+        },
+        "Role": {
+          "value": 17
+        },
+        "Tag": {
+          "emb": 16714,
+          "name": 16714
+        }
+      },
+      "relationship_properties": {
+        "HAS_TAG": {
+          "facets": 62028,
+          "run_id": 62028,
+          "w_facets": 62028
+        }
+      }
+    },
+    "census_sha256": "7c78defd2c4d77c82e49ecb38268e111315476b98bd67bfb26e4a02f0588e926"
+  },
+  "n_exhausted": 15,
+  "flags": {
+    "HERB_V4_OFFLINE": "on",
+    "HERB_V4_CACHE": "A:/exjobbet/grag_setup/store_815"
+  },
+  "legs": [
+    {
+      "leg": 1,
+      "started_at": "2026-10-31T17:28:02.104395+00:00",
+      "finished_at": "2026-10-31T17:31:54.495185+00:00",
+      "wall_s": 232.3909139999887,
+      "process_cpu_s": 324.734375,
+      "workers": 8,
+      "argv": [
+        "prod/run.py",
+        "--arm",
+        "artefact_v4",
+        "--set",
+        "data/answerable715.jsonl",
+        "--char-budget",
+        "72000",
+        "--retrieval-only",
+        "--workers",
+        "8",
+        "--flag",
+        "HERB_V4_OFFLINE=on",
+        "--flag",
+        "HERB_V4_CACHE=A:/exjobbet/grag_setup/store_815",
+        "--out",
+        "output/k=chars/artefact_v4__answerable715__cb72000__20261031_metadata_search_alone"
+      ],
+      "pid": 14640,
+      "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "data\\answerable715.jsonl",
+      "n_chosen": 715,
+      "n_todo": 715,
+      "n_answered": 715,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 8.437114000000292,
+      "embedder_load_s": null,
+      "retrieval_only": true,
+      "evaluator": "ragas",
+      "peak_memory_bytes": 1138057216,
+      "code_version": {
+        "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+        "branch": "artefact-v4-iteration",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [],
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_sha256": {}
+      },
+      "flags": {
+        "HERB_V4_OFFLINE": "on",
+        "HERB_V4_CACHE": "A:/exjobbet/grag_setup/store_815"
+      },
+      "lane": {
+        "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "system_prompt": "always passed, empty when the call has no system text",
+        "stdin": "the prompt as UTF-8 bytes",
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+          "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+          "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+          "ENABLE_PROMPT_CACHING_1H": "1"
+        },
+        "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+        "config_settings": {
+          "cleanupPeriodDays": 36500
+        },
+        "login_gate": {
+          "model": "claude-sonnet-5",
+          "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+          "rate_tokens_per_second": 16500.0,
+          "limit_backlog_tokens": 886126.5972843313,
+          "tokens_held_per_character": 0.496
+        },
+        "env_per_call": [
+          "CLAUDE_CODE_EFFORT_LEVEL",
+          "MAX_THINKING_TOKENS",
+          "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+          "CLAUDE_CODE_EXTRA_BODY"
+        ],
+        "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+        "cli_adds": {
+          "seen_with": "2.1.212 (Claude Code)",
+          "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+          "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "graph": "herb-eval-volmax",
+        "facet_layer_run": "pilot_full_herb",
+        "counts": {
+          "chunks": 4839,
+          "graph_tags": 16702,
+          "edges": 61592,
+          "products": 30,
+          "eligible_graph_tags": 16657,
+          "eligible_edges": 57778,
+          "product_named_tags": 45,
+          "chunks_with_an_eligible_edge": 4839,
+          "named_structure_nodes": {
+            "Channel": 302,
+            "Company": 10,
+            "Customer": 120,
+            "Employee": 530,
+            "Product": 30
+          },
+          "customer_chunk_edges": 1163,
+          "chunks_with_a_time": 4747
+        },
+        "build_cost": {
+          "graph": "herb-eval-volmax",
+          "collected": "2026-10-20, from the build records named in each step. Every number is as a record gives it; a sum is over per-call or per-shard records. Nothing is estimated, except the chunks' token estimate (steps[chunks].size.token_estimate_of_those_chunks), which the chunker itself wrote. Money is not given. Every number was recounted from its record on 2026-10-20 (test/graph/build_cost_check.json); notes says how some of them are made.",
+          "seconds_kinds": {
+            "summed_per_call": "the seconds of each call added up (calls ran side by side, so this is more than the time it took)",
+            "elapsed": "start to end of the step as its record gives it",
+            "tool_span": "start to end of the command that ran the step, from the session transcript; it includes the step's backup and check"
+          },
+          "steps": [
+            {
+              "id": "chunks",
+              "what": "the HERB corpus cut into chunks deterministically (v1 chunker) and written to Neo4j; 5,843 chunks written, 4,869 of them kept in this graph (the 974 question, unanswerable and profile chunks dropped on 2026-05-19)",
+              "date": "2026-05-13",
+              "where": "local Python, no model",
+              "calls": 0,
+              "tokens_in": 0,
+              "tokens_out": 0,
+              "seconds": null,
+              "size": {
+                "chunks_in_this_graph": 4869,
+                "token_estimate_of_those_chunks": 3850319
+              },
+              "records": [
+                "git 28c95aa: v1/docs/backend/status.md, v1/backend/indexing/chunker.py, v1/backend/indexing/preflight.py, v1/backend/scripts/run_preflight.py",
+                "output/graph_build/herb-eval-v2/step_copy.json (token_estimate_sum)",
+                "Chunk.created_at in the graph (2026-05-13T15:56:30Z to 15:56:36Z)"
+              ],
+              "not_recorded": "the elapsed time of the chunking and the load, and the machine"
+            },
+            {
+              "id": "descriptions_and_tags",
+              "what": "tagging run pilot_full_herb: per chunk a description and its tags (pass extract), then five facet scores per tag (pass score_tags, later replaced by the facet layer), then per file a description and a relevance score per chunk",
+              "date": "2026-05-14",
+              "where": "claude-haiku-4-5 (snapshot claude-haiku-4-5-20251001), anthropic, forced tool use, temperature 0.3, 4 at a time",
+              "whole_run": {
+                "main": {
+                  "records": 11726,
+                  "calls_with_usage": 11709,
+                  "tokens_in": 22736735,
+                  "tokens_out": 9996111,
+                  "seconds_summed_per_call": 54180.2,
+                  "seconds_elapsed": 13644.6
+                },
+                "recovery": {
+                  "calls": 76,
+                  "tokens_in": 245920,
+                  "tokens_out": 79029,
+                  "seconds_summed_per_call": 377.3
+                },
+                "by_pass": {
+                  "extract": {
+                    "records": 5843,
+                    "tokens_in": 9854855,
+                    "tokens_out": 1841463,
+                    "seconds_summed_per_call": 16896.2
+                  },
+                  "score_tags": {
+                    "calls": 5817,
+                    "tokens_in": 11889245,
+                    "tokens_out": 8033494,
+                    "seconds_summed_per_call": 36718.1
+                  },
+                  "describe": {
+                    "calls": 33,
+                    "tokens_in": 492482,
+                    "tokens_out": 6252,
+                    "seconds_summed_per_call": 99.4
+                  },
+                  "score": {
+                    "calls": 33,
+                    "tokens_in": 500153,
+                    "tokens_out": 114902,
+                    "seconds_summed_per_call": 466.6
+                  }
+                }
+              },
+              "the_4869_chunks_of_this_graph": {
+                "extract": {
+                  "records": 4892,
+                  "calls_with_usage": 4878,
+                  "tokens_in": 8190926,
+                  "tokens_out": 1673729,
+                  "seconds_summed_per_call": 14691.8,
+                  "in_the_graph": "the tags; the description as its vector (step embeddings)"
+                },
+                "score_tags": {
+                  "calls": 4869,
+                  "tokens_in": 9946291,
+                  "tokens_out": 7267398,
+                  "seconds_summed_per_call": 32816.8,
+                  "in_the_graph": "no: the facet values were replaced by the facet layer"
+                }
+              },
+              "records": [
+                "git bcc3156: backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip (io.jsonl, recovery_io.jsonl, errors.jsonl, run.json, analysis_final.md)",
+                "git 415148d: backend/tagging/pipeline.py (the code of the main run and of the recovery: committed after the run; the main run's logs print strings only this version has)"
+              ],
+              "not_recorded": "cached input tokens; the 48 first attempts that failed before a retry; request start times"
+            },
+            {
+              "id": "graph_copies",
+              "what": "the graph copied from herb-eval into herb-eval-v2 and cleaned (4,111 tags and 5,470 edges removed), then copied into herb-eval-volmax with the registry's entities added",
+              "date": "2026-08-12 and 2026-08-16",
+              "where": "local Neo4j, no model",
+              "calls": 0,
+              "tokens_in": 0,
+              "tokens_out": 0,
+              "seconds": {
+                "herb_eval_v2_copy_elapsed": 1018.9,
+                "herb_eval_v2_cleanup_elapsed": 9.1,
+                "volmax_copy_from_its_console_print": 193,
+                "volmax_entities_elapsed": 42.3,
+                "volmax_entity_plan_elapsed": 6.8
+              },
+              "records": [
+                "output/graph_build/herb-eval-v2/step_copy.json, step_cleanup.json",
+                "output/graph_build/herb-eval-volmax/build_manifest.json, step_entities.json, step_entity_plan.json, step_copy.json",
+                "docs/canon/raw/user_turns_all.md, the pasted console print of 2026-08-16 21:21"
+              ],
+              "not_recorded": "how herb-eval went from 229,249 to 67,913 tag edges; the elapsed time of the crashed first volmax attempt; how the graph went from 15,605 tags and 62,443 tag edges after the volmax copy to 16,714 tags and 62,028 tag edges on 2026-10-08: no step's record covers that change"
+            },
+            {
+              "id": "embeddings",
+              "what": "every tag and every chunk description embedded in the query role and written to the graph (Tag.emb, Chunk.desc_emb)",
+              "date": "2026-10-08",
+              "where": "nvidia/llama-nemotron-embed-1b-v2 revision 113abe4acafa848e77ead9c0623205e511932348, float32, prefix 'query: ', batch 1",
+              "parts": {
+                "tags": {
+                  "texts": 16714,
+                  "tokens_in": 103614,
+                  "seconds_elapsed": 511.5,
+                  "device": "desktop, cuda, GeForce GTX 1080 Ti"
+                },
+                "tags_with_underscores_in_readable_form": {
+                  "texts": 63,
+                  "tokens_in": 583,
+                  "seconds_elapsed": 19.2,
+                  "device": "laptop CPU"
+                },
+                "descriptions": {
+                  "texts": 4869,
+                  "tokens_in": 351855,
+                  "seconds_elapsed": 287.5,
+                  "device": "desktop, cuda, GeForce GTX 1080 Ti"
+                },
+                "write_tag_vectors": {
+                  "seconds_elapsed": 173
+                },
+                "write_description_vectors": {
+                  "seconds_elapsed": 73
+                }
+              },
+              "records": [
+                "output/embed_local/20261008_rev113abe4acafa_float32/ (MANIFEST.json, tags_query.manifest.json, descriptions_query.manifest.json, the logs)",
+                "output/tag_vector_backup/herb-eval-volmax__as-stored-20261008/ (write_tag_vectors.log, write_desc_vectors.log, the backups)"
+              ],
+              "not_recorded": "the laptop's CPU model; file transfer time; the cost of the arm's pool alone (16,654 tags, 4,808 chunks)"
+            },
+            {
+              "id": "facet_layer",
+              "what": "the four facet values (temporal, why, activity, concreteness) on the 61,018 tag-to-chunk edges: pairs judged by Opus, an encoder cache of every edge, a head fitted on the judged pairs, every edge scored, 24 bootstrap refits whose mean is the stored value and whose agreement gives each facet's range; topic is the cosine of the tag and the description vectors, computed at the write",
+              "date": "2026-09-18 to 2026-10-08 (layer pairwise-round1-refit-mean written 2026-10-08T20:52:59Z)",
+              "parts": {
+                "opus_judgements": {
+                  "model": "claude-opus-5, effort high, headless lane, 8 at a time",
+                  "calls": 1720,
+                  "tokens_in": 58405680,
+                  "tokens_out": 65596,
+                  "seconds_summed_per_call": 21552.5,
+                  "seconds_elapsed_recorded": 2564.4,
+                  "fitted_on": "control and train, 920 calls; the 800 held-out calls only evaluated"
+                },
+                "encoder_bake_off": {
+                  "device": "Colab, cuda",
+                  "edges": 5469,
+                  "encoders": 4,
+                  "seconds_elapsed": 3227.0,
+                  "report_seconds_on_the_laptop": 2069.2,
+                  "in_the_values": "no: it chose the encoder"
+                },
+                "encoder_cache": {
+                  "model": "Alibaba-NLP/gte-reranker-modernbert-base, fp32, fp16 stored",
+                  "device": "desktop, cuda, GeForce GTX 1080 Ti",
+                  "edges": 61018,
+                  "seconds_elapsed": 3549.5
+                },
+                "head_selection_training_scoring": {
+                  "device": "laptop CPU",
+                  "combinations_fitted": 27,
+                  "seconds_elapsed": 979.4
+                },
+                "bootstrap_refits": {
+                  "device": "laptop",
+                  "refits": 24,
+                  "seconds_elapsed": 99.0
+                },
+                "write": {
+                  "seconds_elapsed": 91,
+                  "backup_seconds": 12
+                }
+              },
+              "records": [
+                "output/facet_pairs/answers/{control,heldout,train}/*.json, answers/manifest.*.json, logs/, PROGRESS.md",
+                "output/facet_pairs/bakeoff/cache/*.meta.json, bakeoff/results/summary.json",
+                "output/facet_pairs/fullcache/*.meta.json, fullcache/shard0..7/*.meta.json",
+                "output/facet_pairs/bakeoff/cache/*.npz, output/facet_pairs/fullcache/*.npz, fullcache/shard0..7/*.npz (the encoder caches themselves)",
+                "output/facet_pairs/rounds/round1.log, rounds/round1/eval.json",
+                "output/facet_pairs/logs/bootstrap_rerun_local.log, rounds/round1/bootstrap/meta.json",
+                "output/tag_vector_backup/herb-eval-volmax__as-stored-20261008/write_facet_layer_2.log"
+              ],
+              "not_recorded": "cached input tokens of the judge calls; the elapsed time of the paused held-out run; the encoder cache's total tokens"
+            },
+            {
+              "id": "later_edges_and_fields",
+              "what": "person-to-chunk edges (26,950), the structure nodes' names (992 nodes, 1,642 keys) with the customer-to-chunk edges (1,043), and each chunk's record times (4,747 chunks, 38,377 times)",
+              "date": "2026-10-17 and 2026-10-19",
+              "where": "laptop, no model",
+              "calls": 0,
+              "tokens_in": 0,
+              "tokens_out": 0,
+              "seconds": {
+                "person_edges_tool_span": 35.2,
+                "structure_names_and_customer_edges_tool_span": 67.0,
+                "chunk_times_tool_span": 9.5
+              },
+              "records": [
+                "test/graph/build_person_edges.py, build_structure_names.py, build_customer_edges.py, build_chunk_times.py",
+                "output/research/2026-10-17-person-edges/edges_verify.log",
+                "output/graph_build/herb-eval-volmax/person_edges_to_scope_20261017T022912Z.jsonl",
+                "the session transcripts of 2026-10-17 and 2026-10-19"
+              ],
+              "not_recorded": "the scripts print no elapsed time; the spans include backup and check"
+            }
+          ],
+          "superseded": [
+            {
+              "what": "the graph's vectors before 2026-10-08, made by the hosted NIM service",
+              "not_recorded": "when and at what cost"
+            },
+            {
+              "what": "passage-mode local embeddings of 2026-10-07 (tags 16,714 texts, 120,328 tokens, 441.3 s; descriptions 4,869 texts, 356,724 tokens, 288.3 s; GTX 1080 Ti)",
+              "records": [
+                "output/embed_local/20261007_rev113abe4acafa_float32/MANIFEST.json"
+              ]
+            },
+            {
+              "what": "facet work before round 1: stage 0 (4,492 s), score probe (2,247 s), round-0 training (1,313.7, 1,319.8 and 1,301.2 s), round-0 evaluation (219 s), round-0 scoring desktop half (3,024 s)",
+              "records": [
+                "output/facet_pairs/logs/",
+                "output/facet_pairs/model/round0_history.json",
+                "output/facet_pairs/PROGRESS.md"
+              ]
+            },
+            {
+              "what": "facet smoke and Haiku check calls (3 calls, 102,273 in, 113 out, 37.9 s summed per call; 30 calls, 900,483 in, 69,786 out, 1,101.3 s summed per call, 148 s elapsed)",
+              "records": [
+                "output/facet_pairs/smoke_answers/",
+                "output/facet_pairs/PROGRESS.md"
+              ]
+            }
+          ],
+          "notes": [
+            {
+              "path": "steps[descriptions_and_tags].whole_run.main.seconds_elapsed",
+              "note": "from run.json's created_at to the last stamp of io.jsonl, two files; from the first call's start it is 13,615.8 s"
+            },
+            {
+              "path": "steps[descriptions_and_tags].whole_run.main.seconds_summed_per_call",
+              "note": "holds the 17 records that failed after their retries (201.0 s) and, for each of the 48 retried calls, the failed first try and its 2 s pause (547.1 s in all), since a call's duration is measured from before its first try; only those first tries' tokens are missing"
+            },
+            {
+              "path": "steps[descriptions_and_tags].the_4869_chunks_of_this_graph",
+              "note": "this subset adds the recovery's calls; the whole-run and per-pass numbers do not; the subset is exactly the graph's chunk set"
+            },
+            {
+              "path": "steps[graph_copies].seconds.volmax_copy_from_its_console_print",
+              "note": "the sum of three progress bars (44 + 135 + 14 s) of the first volmax attempt, which crashed after the copy"
+            },
+            {
+              "path": "steps[embeddings].parts.tags_with_underscores_in_readable_form.seconds_elapsed",
+              "note": "the requests' time only; the run's log gives 52 s, of which 33 s is the model's load"
+            },
+            {
+              "path": "steps[facet_layer].parts.opus_judgements.calls",
+              "note": "counted from the answer files; the three manifests add up to 1,648, since the held-out manifest counts only the resumed run"
+            },
+            {
+              "path": "steps[facet_layer].parts.encoder_bake_off.seconds_elapsed",
+              "note": "the sum of the per-encoder seconds; the parts ran one after another and their stamps span about 3,345 s"
+            },
+            {
+              "path": "steps[facet_layer].parts.encoder_cache.seconds_elapsed",
+              "note": "the sum of the per-shard seconds; the parts ran one after another and their stamps span about 3,726 s"
+            },
+            {
+              "path": "steps[facet_layer].parts.write.backup_seconds",
+              "note": "no record gives this number: it is the backup manifest's written time (20:51:42Z) minus the command's start in the session transcript"
+            },
+            {
+              "path": "steps[facet_layer].parts.encoder_cache.device and steps[facet_layer].parts.bootstrap_refits.device",
+              "note": "no record names the machine; it is read from the encoder cache's torch version against docs/ENVIRONMENT.md"
+            }
+          ],
+          "left_out": [
+            {
+              "step": "descriptions_and_tags",
+              "what": "per-pass elapsed, first call start (ts - duration_ms) to last end, io.jsonl",
+              "values": {
+                "extract": 4224.8,
+                "score_tags": 9183.6,
+                "describe": 25.5,
+                "score": 123.3
+              },
+              "unit": "s",
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "descriptions_and_tags",
+              "what": "the recovery's elapsed and its passes (recovery_io.jsonl)",
+              "values": {
+                "all": 487.0,
+                "extract": 19.9,
+                "score_tags": 45.3,
+                "score": 35.7,
+                "score_recovery": 4.6
+              },
+              "unit": "s",
+              "note": "score_recovery ran about 6 min after the rest (05:47:53Z)",
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "descriptions_and_tags",
+              "what": "the recovery by pass (calls, tokens in, tokens out, seconds summed)",
+              "values": {
+                "extract": [
+                  26,
+                  44008,
+                  9158,
+                  73.1
+                ],
+                "score_tags": [
+                  26,
+                  53241,
+                  37542,
+                  167.7
+                ],
+                "score": [
+                  7,
+                  130756,
+                  31445,
+                  120.7
+                ],
+                "score_recovery": [
+                  17,
+                  17915,
+                  884,
+                  15.8
+                ]
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "descriptions_and_tags",
+              "what": "the 4,869-chunk subset leaves out the recovery's score_recovery calls on 14 of its chunks",
+              "values": {
+                "calls": 14,
+                "tokens_in": 14752,
+                "tokens_out": 728,
+                "seconds_summed_per_call": 13.0
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "descriptions_and_tags",
+              "what": "failures of the main run",
+              "values": {
+                "rate_limit_records_after_retry": 17,
+                "their_seconds": 201.0,
+                "errors_jsonl_lines": 33,
+                "extract_pydantic_failures": 9,
+                "score_pydantic_failures": 7,
+                "max_tokens_stops": 7
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "descriptions_and_tags",
+              "what": "time of the 48 retried calls (inside duration_ms, measured from before attempt 1, with a 2 s pause each)",
+              "values": {
+                "records": 48,
+                "seconds": 547.1
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "descriptions_and_tags",
+              "what": "elapsed from the first call's start instead of run.json created_at",
+              "values": {
+                "seconds": 13615.8
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "chunks",
+              "what": "token_estimate of all 5,843 chunks (run.json chunk_ids)",
+              "values": {
+                "token_estimate": 4406995
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "graph_copies",
+              "what": "herb-eval-v2's own steps in the same folder, not carried into volmax (volmax copied only Chunk, Tag and HAS_TAG from v2)",
+              "values": {
+                "step_entities_elapsed_s": 17.4,
+                "step_relations_elapsed_s": 6.9,
+                "build_manifest_elapsed_s": {
+                  "2026-08-12T20:38:00Z": 30.9,
+                  "2026-08-13T22:21:07Z": 33.9,
+                  "2026-08-14T00:25:22Z": 35.4
+                }
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "graph_copies",
+              "what": "the crashed first volmax attempt: start and paste stamps",
+              "values": {
+                "start": "2026-08-16T21:13:39Z",
+                "pasted": "2026-08-16T21:21:44Z",
+                "copy_bars_s": [
+                  44,
+                  135,
+                  14
+                ]
+              },
+              "note": "no end stamp; the attempt lasted at most 485 s",
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "embeddings",
+              "what": "the readable-names run's elapsed and model load (readable_names.log)",
+              "values": {
+                "elapsed_s": 52,
+                "model_load_s": 33,
+                "transcript_span_s": 68.4
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "embeddings",
+              "what": "model load inside the desktop seconds (logs: 'ready in 5s')",
+              "values": {
+                "tags_s": 5,
+                "descriptions_s": 5
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "embeddings",
+              "what": "the laptop CPU run of the same tags (tags_query_laptop_cpu.log, MANIFEST laptop_checks), stopped after 4,000 of 16,714",
+              "values": {
+                "texts": 4000,
+                "rate_at_4000_texts_per_s": 2.5,
+                "cosine_to_desktop_rows": 1.0
+              },
+              "note": "no end line, no token count; at 2.5 texts/s 4,000 texts is about 1,600 s",
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "embeddings",
+              "what": "the write commands' spans in the transcript",
+              "values": {
+                "write_tag_vectors_s": 174.0,
+                "write_desc_vectors_s": 77.1
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "facet_layer",
+              "what": "the paused held-out run (round0.log; answers stamped before 19:25:19Z), inside the 1,720-call totals but not in the elapsed",
+              "values": {
+                "calls": 72,
+                "tokens_in": 2441986,
+                "tokens_out": 2718,
+                "seconds_summed_per_call": 1185.4,
+                "first_answer": "2026-09-18T19:12:41Z",
+                "last_answer": "2026-09-18T19:14:54Z"
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "facet_layer",
+              "what": "the Opus judge runs one by one (calls, tokens in, tokens out, seconds summed, elapsed from the done line)",
+              "values": {
+                "control": [
+                  420,
+                  14256990,
+                  15982,
+                  5101.1,
+                  642.9
+                ],
+                "heldout_all": [
+                  800,
+                  27167652,
+                  30525,
+                  9971.6,
+                  null
+                ],
+                "heldout_resumed": [
+                  728,
+                  24725666,
+                  27807,
+                  8786.2,
+                  1105.8
+                ],
+                "train": [
+                  500,
+                  16981038,
+                  19089,
+                  6479.9,
+                  815.7
+                ]
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "facet_layer",
+              "what": "the first write of the same layer, replaced by write_facet_layer_2 after the description vectors were rewritten",
+              "values": {
+                "done_s": 55,
+                "transcript_span_s": 56.5,
+                "rows_sha256": "ff6da9dff887627e..."
+              },
+              "record": "output/tag_vector_backup/herb-eval-volmax__as-stored-20261008/write_facet_layer.log (the folder the step cites)",
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "facet_layer",
+              "what": "the command that ran backup and the second write",
+              "values": {
+                "transcript_span_s": 104.7
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "facet_layer",
+              "what": "parts inside round 1's 979.4 s (eval.json wall_s)",
+              "values": {
+                "probe_s": 789.4,
+                "bootstrap_B10000_s": 4.6,
+                "scoring_s": 1.0
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "facet_layer",
+              "what": "the bands-only bootstrap rerun that rewrote meta.json and BANDS.md",
+              "values": {
+                "wall_s": 4.4,
+                "written": "2026-09-21T01:24:37Z"
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "facet_layer",
+              "what": "the bake-off's laptop proof caches (bakeoff/cache_proof, cpu)",
+              "values": {
+                "edges": 14,
+                "gte_s": 43.5,
+                "deberta_small_s": 31.3
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "facet_layer",
+              "what": "the merged full-cache meta carries shard0's rate and count",
+              "values": {
+                "seconds_per_1000_edges_in_meta": 58.7,
+                "edges_this_run_in_meta": 7517,
+                "rate_over_61018_edges": 58.2
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "later_edges_and_fields",
+              "what": "separate person-edge commands after the write",
+              "values": {
+                "compare_s": 11.6,
+                "verify_s": 7.6
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "later_edges_and_fields",
+              "what": "the first chunk-times build (time spans) of 2026-10-17, replaced on 2026-10-19",
+              "values": {
+                "command": "2026-10-17T21:04:33.892Z",
+                "span_s": 27.0,
+                "chunks": 4747
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "later_edges_and_fields",
+              "what": "other counts the runs printed",
+              "values": {
+                "employees": 512,
+                "chunks_with_person_edges": 4646,
+                "person_edges_backed_up": 3894,
+                "customers": 120,
+                "distinct_match_keys": 1185
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "between graph_copies and embeddings",
+              "what": "the graph changed between the volmax copy and the 2026-10-08 writes; no step covers it",
+              "values": {
+                "tags_after_copy": 15605,
+                "tags_on_2026_10_08": 16714,
+                "edges_after_copy": 62443,
+                "run_edges_on_2026_10_08": 62028
+              },
+              "record": "herb-eval-volmax step_copy.json; write_tag_vectors.log; write_facet_layer_2.log; facet_weight_backup manifests (62,028 from 2026-08-31)",
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "superseded",
+              "what": "the 2026-10-07 manifest's other parts (not the graph's)",
+              "values": {
+                "questions": [
+                  1514,
+                  34670,
+                  43.0
+                ],
+                "corpus": [
+                  38540,
+                  2719968,
+                  1708.9
+                ]
+              },
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "superseded",
+              "what": "round-0 training began a fourth epoch (round0_train.log ends at A4 step 75/847), not in round0_history.json",
+              "values": {},
+              "added_to_no_number_above": true
+            },
+            {
+              "step": "superseded",
+              "what": "the round-0 scoring Colab half (31,764 edges) has no time in PROGRESS.md",
+              "values": {
+                "edges": 31764
+              },
+              "added_to_no_number_above": true
+            }
+          ],
+          "corrections": [
+            {
+              "made_at": "2026-10-20",
+              "ordered_by": "\"make sure 1-8 is done and correct for the folders/data we have right now\" (2026-10-20)",
+              "rule": "a number or a claim that the recount found different from its record is set to what the record gives; an approximate number is set to the exact one its record gives; what the records give and this file left out is added under left_out and added to no number; how a number is made, where its label does not say, is added under notes",
+              "check": "test/graph/build_cost_check.json: 158 numbers and claims, 155 the same as their record, 1 different, 2 that only the graph holds",
+              "changes": [
+                {
+                  "path": "collected",
+                  "before": "Every number is as a record gives it; a sum is over per-call or per-shard records. Nothing is estimated. Money is not given.",
+                  "after": "Every number is as a record gives it; a sum is over per-call or per-shard records. Nothing is estimated, except the chunks' token estimate (steps[chunks].size.token_estimate_of_those_chunks), which the chunker itself wrote. Money is not given. Every number was recounted from its record on 2026-10-20 (test/graph/build_cost_check.json); notes says how some of them are made."
+                },
+                {
+                  "path": "steps[descriptions_and_tags].records[1]",
+                  "before": "\"git 399ee32: backend/tagging/pipeline.py (main run); git 415148d: the recovery's version\"",
+                  "after": "\"git 415148d: backend/tagging/pipeline.py (the code of the main run and of the recovery: committed after the run; the main run's logs print strings only this version has)\""
+                },
+                {
+                  "path": "steps[facet_layer].records",
+                  "before": "\"output/facet_pairs/fullcache/*.meta.json, fullcache/shard0..7/*.meta.json\",",
+                  "after": "\"output/facet_pairs/fullcache/*.meta.json, fullcache/shard0..7/*.meta.json\",\n                  \"output/facet_pairs/bakeoff/cache/*.npz, output/facet_pairs/fullcache/*.npz, fullcache/shard0..7/*.npz (the encoder caches themselves)\","
+                },
+                {
+                  "path": "steps[graph_copies].not_recorded",
+                  "before": "\"not_recorded\": \"how herb-eval went from 229,249 to 67,913 tag edges; the elapsed time of the crashed first volmax attempt\"",
+                  "after": "\"not_recorded\": \"how herb-eval went from 229,249 to 67,913 tag edges; the elapsed time of the crashed first volmax attempt; how the graph went from 15,605 tags and 62,443 tag edges after the volmax copy to 16,714 tags and 62,028 tag edges on 2026-10-08: no step's record covers that change\""
+                },
+                {
+                  "path": "superseded[3].what",
+                  "before": "30 calls, about 900k in, 70k out, 148 s)",
+                  "after": "30 calls, 900,483 in, 69,786 out, 1,101.3 s summed per call, 148 s elapsed)"
+                },
+                {
+                  "path": "superseded[3].what",
+                  "before": "\"what\": \"facet smoke and Haiku check calls (3 calls, 102,273 in, 113 out, 37.9 s;",
+                  "after": "\"what\": \"facet smoke and Haiku check calls (3 calls, 102,273 in, 113 out, 37.9 s summed per call;"
+                }
+              ]
+            }
+          ]
+        },
+        "build_cost_file_sha256": "a1a3a8d1674c4fff7b2bf668f0c8423720a3cf6112004ecd5203d9417d9c65c7",
+        "first_call": "at query time, claude-sonnet-5 through the lane; an answer already in the store (HERB_V4_CACHE) is read from it and counted as no call by the arm, and the row keeps the record of the call that gave it as the store kept it; with HERB_V4_OFFLINE off, a failed or cut-off one is moved to failed/ at the start and asked again",
+        "question_embedding": "at query time, local embedder, query mode; a text embedded before is read from output/query_embed_cache and counted as no call",
+        "unit_text": "each record as lucene and vector write it (SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'), the records of a chunk one after the other with a blank line between them; a chosen chunk that is a part of a split document or transcript goes in as its whole record, once, at its place, any other part as its record with only that part of its long field (a document's feedback with its last part); after the cut the texts reach the answer model in pointer order: file, section in the file's own order (a metadata file one section), place of the text's first record in its section, part; contexts keeps the arm's order, which RAGAS reads as their rank, and reading_order gives the model's"
+      },
+      "search_pass": {
+        "started_at": "2026-10-31T17:31:55.464185+00:00",
+        "finished_at": "2026-10-31T17:38:03.026969+00:00",
+        "warm_up_question": "ActionGenie::a::2",
+        "questions": 715,
+        "same_records_in_another_order": [],
+        "other_records": [],
+        "failed": []
+      },
+      "embed_pass": null
+    }
+  ],
+  "workers": 8,
+  "lane": {
+    "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+    "cli_version": "2.1.212 (Claude Code)",
+    "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+    "fixed_flags": [
+      "-p",
+      "--tools",
+      "",
+      "--safe-mode"
+    ],
+    "system_prompt": "always passed, empty when the call has no system text",
+    "stdin": "the prompt as UTF-8 bytes",
+    "env_set": {
+      "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+      "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+      "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+      "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+      "ENABLE_PROMPT_CACHING_1H": "1"
+    },
+    "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+    "config_settings": {
+      "cleanupPeriodDays": 36500
+    },
+    "login_gate": {
+      "model": "claude-sonnet-5",
+      "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+      "rate_tokens_per_second": 16500.0,
+      "limit_backlog_tokens": 886126.5972843313,
+      "tokens_held_per_character": 0.496
+    },
+    "env_per_call": [
+      "CLAUDE_CODE_EFFORT_LEVEL",
+      "MAX_THINKING_TOKENS",
+      "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+      "CLAUDE_CODE_EXTRA_BODY"
+    ],
+    "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+    "cli_adds": {
+      "seen_with": "2.1.212 (Claude Code)",
+      "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+      "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+    },
+    "max_tries_default": 6
+  },
+  "generator": null,
+  "index": {
+    "graph": "herb-eval-volmax",
+    "facet_layer_run": "pilot_full_herb",
+    "counts": {
+      "chunks": 4839,
+      "graph_tags": 16702,
+      "edges": 61592,
+      "products": 30,
+      "eligible_graph_tags": 16657,
+      "eligible_edges": 57778,
+      "product_named_tags": 45,
+      "chunks_with_an_eligible_edge": 4839,
+      "named_structure_nodes": {
+        "Channel": 302,
+        "Company": 10,
+        "Customer": 120,
+        "Employee": 530,
+        "Product": 30
+      },
+      "customer_chunk_edges": 1163,
+      "chunks_with_a_time": 4747
+    },
+    "build_cost": {
+      "graph": "herb-eval-volmax",
+      "collected": "2026-10-20, from the build records named in each step. Every number is as a record gives it; a sum is over per-call or per-shard records. Nothing is estimated, except the chunks' token estimate (steps[chunks].size.token_estimate_of_those_chunks), which the chunker itself wrote. Money is not given. Every number was recounted from its record on 2026-10-20 (test/graph/build_cost_check.json); notes says how some of them are made.",
+      "seconds_kinds": {
+        "summed_per_call": "the seconds of each call added up (calls ran side by side, so this is more than the time it took)",
+        "elapsed": "start to end of the step as its record gives it",
+        "tool_span": "start to end of the command that ran the step, from the session transcript; it includes the step's backup and check"
+      },
+      "steps": [
+        {
+          "id": "chunks",
+          "what": "the HERB corpus cut into chunks deterministically (v1 chunker) and written to Neo4j; 5,843 chunks written, 4,869 of them kept in this graph (the 974 question, unanswerable and profile chunks dropped on 2026-05-19)",
+          "date": "2026-05-13",
+          "where": "local Python, no model",
+          "calls": 0,
+          "tokens_in": 0,
+          "tokens_out": 0,
+          "seconds": null,
+          "size": {
+            "chunks_in_this_graph": 4869,
+            "token_estimate_of_those_chunks": 3850319
+          },
+          "records": [
+            "git 28c95aa: v1/docs/backend/status.md, v1/backend/indexing/chunker.py, v1/backend/indexing/preflight.py, v1/backend/scripts/run_preflight.py",
+            "output/graph_build/herb-eval-v2/step_copy.json (token_estimate_sum)",
+            "Chunk.created_at in the graph (2026-05-13T15:56:30Z to 15:56:36Z)"
+          ],
+          "not_recorded": "the elapsed time of the chunking and the load, and the machine"
+        },
+        {
+          "id": "descriptions_and_tags",
+          "what": "tagging run pilot_full_herb: per chunk a description and its tags (pass extract), then five facet scores per tag (pass score_tags, later replaced by the facet layer), then per file a description and a relevance score per chunk",
+          "date": "2026-05-14",
+          "where": "claude-haiku-4-5 (snapshot claude-haiku-4-5-20251001), anthropic, forced tool use, temperature 0.3, 4 at a time",
+          "whole_run": {
+            "main": {
+              "records": 11726,
+              "calls_with_usage": 11709,
+              "tokens_in": 22736735,
+              "tokens_out": 9996111,
+              "seconds_summed_per_call": 54180.2,
+              "seconds_elapsed": 13644.6
+            },
+            "recovery": {
+              "calls": 76,
+              "tokens_in": 245920,
+              "tokens_out": 79029,
+              "seconds_summed_per_call": 377.3
+            },
+            "by_pass": {
+              "extract": {
+                "records": 5843,
+                "tokens_in": 9854855,
+                "tokens_out": 1841463,
+                "seconds_summed_per_call": 16896.2
+              },
+              "score_tags": {
+                "calls": 5817,
+                "tokens_in": 11889245,
+                "tokens_out": 8033494,
+                "seconds_summed_per_call": 36718.1
+              },
+              "describe": {
+                "calls": 33,
+                "tokens_in": 492482,
+                "tokens_out": 6252,
+                "seconds_summed_per_call": 99.4
+              },
+              "score": {
+                "calls": 33,
+                "tokens_in": 500153,
+                "tokens_out": 114902,
+                "seconds_summed_per_call": 466.6
+              }
+            }
+          },
+          "the_4869_chunks_of_this_graph": {
+            "extract": {
+              "records": 4892,
+              "calls_with_usage": 4878,
+              "tokens_in": 8190926,
+              "tokens_out": 1673729,
+              "seconds_summed_per_call": 14691.8,
+              "in_the_graph": "the tags; the description as its vector (step embeddings)"
+            },
+            "score_tags": {
+              "calls": 4869,
+              "tokens_in": 9946291,
+              "tokens_out": 7267398,
+              "seconds_summed_per_call": 32816.8,
+              "in_the_graph": "no: the facet values were replaced by the facet layer"
+            }
+          },
+          "records": [
+            "git bcc3156: backend/data/tagging_runs/pilot_full_herb_snapshot_20260514T052226Z.zip (io.jsonl, recovery_io.jsonl, errors.jsonl, run.json, analysis_final.md)",
+            "git 415148d: backend/tagging/pipeline.py (the code of the main run and of the recovery: committed after the run; the main run's logs print strings only this version has)"
+          ],
+          "not_recorded": "cached input tokens; the 48 first attempts that failed before a retry; request start times"
+        },
+        {
+          "id": "graph_copies",
+          "what": "the graph copied from herb-eval into herb-eval-v2 and cleaned (4,111 tags and 5,470 edges removed), then copied into herb-eval-volmax with the registry's entities added",
+          "date": "2026-08-12 and 2026-08-16",
+          "where": "local Neo4j, no model",
+          "calls": 0,
+          "tokens_in": 0,
+          "tokens_out": 0,
+          "seconds": {
+            "herb_eval_v2_copy_elapsed": 1018.9,
+            "herb_eval_v2_cleanup_elapsed": 9.1,
+            "volmax_copy_from_its_console_print": 193,
+            "volmax_entities_elapsed": 42.3,
+            "volmax_entity_plan_elapsed": 6.8
+          },
+          "records": [
+            "output/graph_build/herb-eval-v2/step_copy.json, step_cleanup.json",
+            "output/graph_build/herb-eval-volmax/build_manifest.json, step_entities.json, step_entity_plan.json, step_copy.json",
+            "docs/canon/raw/user_turns_all.md, the pasted console print of 2026-08-16 21:21"
+          ],
+          "not_recorded": "how herb-eval went from 229,249 to 67,913 tag edges; the elapsed time of the crashed first volmax attempt; how the graph went from 15,605 tags and 62,443 tag edges after the volmax copy to 16,714 tags and 62,028 tag edges on 2026-10-08: no step's record covers that change"
+        },
+        {
+          "id": "embeddings",
+          "what": "every tag and every chunk description embedded in the query role and written to the graph (Tag.emb, Chunk.desc_emb)",
+          "date": "2026-10-08",
+          "where": "nvidia/llama-nemotron-embed-1b-v2 revision 113abe4acafa848e77ead9c0623205e511932348, float32, prefix 'query: ', batch 1",
+          "parts": {
+            "tags": {
+              "texts": 16714,
+              "tokens_in": 103614,
+              "seconds_elapsed": 511.5,
+              "device": "desktop, cuda, GeForce GTX 1080 Ti"
+            },
+            "tags_with_underscores_in_readable_form": {
+              "texts": 63,
+              "tokens_in": 583,
+              "seconds_elapsed": 19.2,
+              "device": "laptop CPU"
+            },
+            "descriptions": {
+              "texts": 4869,
+              "tokens_in": 351855,
+              "seconds_elapsed": 287.5,
+              "device": "desktop, cuda, GeForce GTX 1080 Ti"
+            },
+            "write_tag_vectors": {
+              "seconds_elapsed": 173
+            },
+            "write_description_vectors": {
+              "seconds_elapsed": 73
+            }
+          },
+          "records": [
+            "output/embed_local/20261008_rev113abe4acafa_float32/ (MANIFEST.json, tags_query.manifest.json, descriptions_query.manifest.json, the logs)",
+            "output/tag_vector_backup/herb-eval-volmax__as-stored-20261008/ (write_tag_vectors.log, write_desc_vectors.log, the backups)"
+          ],
+          "not_recorded": "the laptop's CPU model; file transfer time; the cost of the arm's pool alone (16,654 tags, 4,808 chunks)"
+        },
+        {
+          "id": "facet_layer",
+          "what": "the four facet values (temporal, why, activity, concreteness) on the 61,018 tag-to-chunk edges: pairs judged by Opus, an encoder cache of every edge, a head fitted on the judged pairs, every edge scored, 24 bootstrap refits whose mean is the stored value and whose agreement gives each facet's range; topic is the cosine of the tag and the description vectors, computed at the write",
+          "date": "2026-09-18 to 2026-10-08 (layer pairwise-round1-refit-mean written 2026-10-08T20:52:59Z)",
+          "parts": {
+            "opus_judgements": {
+              "model": "claude-opus-5, effort high, headless lane, 8 at a time",
+              "calls": 1720,
+              "tokens_in": 58405680,
+              "tokens_out": 65596,
+              "seconds_summed_per_call": 21552.5,
+              "seconds_elapsed_recorded": 2564.4,
+              "fitted_on": "control and train, 920 calls; the 800 held-out calls only evaluated"
+            },
+            "encoder_bake_off": {
+              "device": "Colab, cuda",
+              "edges": 5469,
+              "encoders": 4,
+              "seconds_elapsed": 3227.0,
+              "report_seconds_on_the_laptop": 2069.2,
+              "in_the_values": "no: it chose the encoder"
+            },
+            "encoder_cache": {
+              "model": "Alibaba-NLP/gte-reranker-modernbert-base, fp32, fp16 stored",
+              "device": "desktop, cuda, GeForce GTX 1080 Ti",
+              "edges": 61018,
+              "seconds_elapsed": 3549.5
+            },
+            "head_selection_training_scoring": {
+              "device": "laptop CPU",
+              "combinations_fitted": 27,
+              "seconds_elapsed": 979.4
+            },
+            "bootstrap_refits": {
+              "device": "laptop",
+              "refits": 24,
+              "seconds_elapsed": 99.0
+            },
+            "write": {
+              "seconds_elapsed": 91,
+              "backup_seconds": 12
+            }
+          },
+          "records": [
+            "output/facet_pairs/answers/{control,heldout,train}/*.json, answers/manifest.*.json, logs/, PROGRESS.md",
+            "output/facet_pairs/bakeoff/cache/*.meta.json, bakeoff/results/summary.json",
+            "output/facet_pairs/fullcache/*.meta.json, fullcache/shard0..7/*.meta.json",
+            "output/facet_pairs/bakeoff/cache/*.npz, output/facet_pairs/fullcache/*.npz, fullcache/shard0..7/*.npz (the encoder caches themselves)",
+            "output/facet_pairs/rounds/round1.log, rounds/round1/eval.json",
+            "output/facet_pairs/logs/bootstrap_rerun_local.log, rounds/round1/bootstrap/meta.json",
+            "output/tag_vector_backup/herb-eval-volmax__as-stored-20261008/write_facet_layer_2.log"
+          ],
+          "not_recorded": "cached input tokens of the judge calls; the elapsed time of the paused held-out run; the encoder cache's total tokens"
+        },
+        {
+          "id": "later_edges_and_fields",
+          "what": "person-to-chunk edges (26,950), the structure nodes' names (992 nodes, 1,642 keys) with the customer-to-chunk edges (1,043), and each chunk's record times (4,747 chunks, 38,377 times)",
+          "date": "2026-10-17 and 2026-10-19",
+          "where": "laptop, no model",
+          "calls": 0,
+          "tokens_in": 0,
+          "tokens_out": 0,
+          "seconds": {
+            "person_edges_tool_span": 35.2,
+            "structure_names_and_customer_edges_tool_span": 67.0,
+            "chunk_times_tool_span": 9.5
+          },
+          "records": [
+            "test/graph/build_person_edges.py, build_structure_names.py, build_customer_edges.py, build_chunk_times.py",
+            "output/research/2026-10-17-person-edges/edges_verify.log",
+            "output/graph_build/herb-eval-volmax/person_edges_to_scope_20261017T022912Z.jsonl",
+            "the session transcripts of 2026-10-17 and 2026-10-19"
+          ],
+          "not_recorded": "the scripts print no elapsed time; the spans include backup and check"
+        }
+      ],
+      "superseded": [
+        {
+          "what": "the graph's vectors before 2026-10-08, made by the hosted NIM service",
+          "not_recorded": "when and at what cost"
+        },
+        {
+          "what": "passage-mode local embeddings of 2026-10-07 (tags 16,714 texts, 120,328 tokens, 441.3 s; descriptions 4,869 texts, 356,724 tokens, 288.3 s; GTX 1080 Ti)",
+          "records": [
+            "output/embed_local/20261007_rev113abe4acafa_float32/MANIFEST.json"
+          ]
+        },
+        {
+          "what": "facet work before round 1: stage 0 (4,492 s), score probe (2,247 s), round-0 training (1,313.7, 1,319.8 and 1,301.2 s), round-0 evaluation (219 s), round-0 scoring desktop half (3,024 s)",
+          "records": [
+            "output/facet_pairs/logs/",
+            "output/facet_pairs/model/round0_history.json",
+            "output/facet_pairs/PROGRESS.md"
+          ]
+        },
+        {
+          "what": "facet smoke and Haiku check calls (3 calls, 102,273 in, 113 out, 37.9 s summed per call; 30 calls, 900,483 in, 69,786 out, 1,101.3 s summed per call, 148 s elapsed)",
+          "records": [
+            "output/facet_pairs/smoke_answers/",
+            "output/facet_pairs/PROGRESS.md"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "path": "steps[descriptions_and_tags].whole_run.main.seconds_elapsed",
+          "note": "from run.json's created_at to the last stamp of io.jsonl, two files; from the first call's start it is 13,615.8 s"
+        },
+        {
+          "path": "steps[descriptions_and_tags].whole_run.main.seconds_summed_per_call",
+          "note": "holds the 17 records that failed after their retries (201.0 s) and, for each of the 48 retried calls, the failed first try and its 2 s pause (547.1 s in all), since a call's duration is measured from before its first try; only those first tries' tokens are missing"
+        },
+        {
+          "path": "steps[descriptions_and_tags].the_4869_chunks_of_this_graph",
+          "note": "this subset adds the recovery's calls; the whole-run and per-pass numbers do not; the subset is exactly the graph's chunk set"
+        },
+        {
+          "path": "steps[graph_copies].seconds.volmax_copy_from_its_console_print",
+          "note": "the sum of three progress bars (44 + 135 + 14 s) of the first volmax attempt, which crashed after the copy"
+        },
+        {
+          "path": "steps[embeddings].parts.tags_with_underscores_in_readable_form.seconds_elapsed",
+          "note": "the requests' time only; the run's log gives 52 s, of which 33 s is the model's load"
+        },
+        {
+          "path": "steps[facet_layer].parts.opus_judgements.calls",
+          "note": "counted from the answer files; the three manifests add up to 1,648, since the held-out manifest counts only the resumed run"
+        },
+        {
+          "path": "steps[facet_layer].parts.encoder_bake_off.seconds_elapsed",
+          "note": "the sum of the per-encoder seconds; the parts ran one after another and their stamps span about 3,345 s"
+        },
+        {
+          "path": "steps[facet_layer].parts.encoder_cache.seconds_elapsed",
+          "note": "the sum of the per-shard seconds; the parts ran one after another and their stamps span about 3,726 s"
+        },
+        {
+          "path": "steps[facet_layer].parts.write.backup_seconds",
+          "note": "no record gives this number: it is the backup manifest's written time (20:51:42Z) minus the command's start in the session transcript"
+        },
+        {
+          "path": "steps[facet_layer].parts.encoder_cache.device and steps[facet_layer].parts.bootstrap_refits.device",
+          "note": "no record names the machine; it is read from the encoder cache's torch version against docs/ENVIRONMENT.md"
+        }
+      ],
+      "left_out": [
+        {
+          "step": "descriptions_and_tags",
+          "what": "per-pass elapsed, first call start (ts - duration_ms) to last end, io.jsonl",
+          "values": {
+            "extract": 4224.8,
+            "score_tags": 9183.6,
+            "describe": 25.5,
+            "score": 123.3
+          },
+          "unit": "s",
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "descriptions_and_tags",
+          "what": "the recovery's elapsed and its passes (recovery_io.jsonl)",
+          "values": {
+            "all": 487.0,
+            "extract": 19.9,
+            "score_tags": 45.3,
+            "score": 35.7,
+            "score_recovery": 4.6
+          },
+          "unit": "s",
+          "note": "score_recovery ran about 6 min after the rest (05:47:53Z)",
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "descriptions_and_tags",
+          "what": "the recovery by pass (calls, tokens in, tokens out, seconds summed)",
+          "values": {
+            "extract": [
+              26,
+              44008,
+              9158,
+              73.1
+            ],
+            "score_tags": [
+              26,
+              53241,
+              37542,
+              167.7
+            ],
+            "score": [
+              7,
+              130756,
+              31445,
+              120.7
+            ],
+            "score_recovery": [
+              17,
+              17915,
+              884,
+              15.8
+            ]
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "descriptions_and_tags",
+          "what": "the 4,869-chunk subset leaves out the recovery's score_recovery calls on 14 of its chunks",
+          "values": {
+            "calls": 14,
+            "tokens_in": 14752,
+            "tokens_out": 728,
+            "seconds_summed_per_call": 13.0
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "descriptions_and_tags",
+          "what": "failures of the main run",
+          "values": {
+            "rate_limit_records_after_retry": 17,
+            "their_seconds": 201.0,
+            "errors_jsonl_lines": 33,
+            "extract_pydantic_failures": 9,
+            "score_pydantic_failures": 7,
+            "max_tokens_stops": 7
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "descriptions_and_tags",
+          "what": "time of the 48 retried calls (inside duration_ms, measured from before attempt 1, with a 2 s pause each)",
+          "values": {
+            "records": 48,
+            "seconds": 547.1
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "descriptions_and_tags",
+          "what": "elapsed from the first call's start instead of run.json created_at",
+          "values": {
+            "seconds": 13615.8
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "chunks",
+          "what": "token_estimate of all 5,843 chunks (run.json chunk_ids)",
+          "values": {
+            "token_estimate": 4406995
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "graph_copies",
+          "what": "herb-eval-v2's own steps in the same folder, not carried into volmax (volmax copied only Chunk, Tag and HAS_TAG from v2)",
+          "values": {
+            "step_entities_elapsed_s": 17.4,
+            "step_relations_elapsed_s": 6.9,
+            "build_manifest_elapsed_s": {
+              "2026-08-12T20:38:00Z": 30.9,
+              "2026-08-13T22:21:07Z": 33.9,
+              "2026-08-14T00:25:22Z": 35.4
+            }
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "graph_copies",
+          "what": "the crashed first volmax attempt: start and paste stamps",
+          "values": {
+            "start": "2026-08-16T21:13:39Z",
+            "pasted": "2026-08-16T21:21:44Z",
+            "copy_bars_s": [
+              44,
+              135,
+              14
+            ]
+          },
+          "note": "no end stamp; the attempt lasted at most 485 s",
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "embeddings",
+          "what": "the readable-names run's elapsed and model load (readable_names.log)",
+          "values": {
+            "elapsed_s": 52,
+            "model_load_s": 33,
+            "transcript_span_s": 68.4
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "embeddings",
+          "what": "model load inside the desktop seconds (logs: 'ready in 5s')",
+          "values": {
+            "tags_s": 5,
+            "descriptions_s": 5
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "embeddings",
+          "what": "the laptop CPU run of the same tags (tags_query_laptop_cpu.log, MANIFEST laptop_checks), stopped after 4,000 of 16,714",
+          "values": {
+            "texts": 4000,
+            "rate_at_4000_texts_per_s": 2.5,
+            "cosine_to_desktop_rows": 1.0
+          },
+          "note": "no end line, no token count; at 2.5 texts/s 4,000 texts is about 1,600 s",
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "embeddings",
+          "what": "the write commands' spans in the transcript",
+          "values": {
+            "write_tag_vectors_s": 174.0,
+            "write_desc_vectors_s": 77.1
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "facet_layer",
+          "what": "the paused held-out run (round0.log; answers stamped before 19:25:19Z), inside the 1,720-call totals but not in the elapsed",
+          "values": {
+            "calls": 72,
+            "tokens_in": 2441986,
+            "tokens_out": 2718,
+            "seconds_summed_per_call": 1185.4,
+            "first_answer": "2026-09-18T19:12:41Z",
+            "last_answer": "2026-09-18T19:14:54Z"
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "facet_layer",
+          "what": "the Opus judge runs one by one (calls, tokens in, tokens out, seconds summed, elapsed from the done line)",
+          "values": {
+            "control": [
+              420,
+              14256990,
+              15982,
+              5101.1,
+              642.9
+            ],
+            "heldout_all": [
+              800,
+              27167652,
+              30525,
+              9971.6,
+              null
+            ],
+            "heldout_resumed": [
+              728,
+              24725666,
+              27807,
+              8786.2,
+              1105.8
+            ],
+            "train": [
+              500,
+              16981038,
+              19089,
+              6479.9,
+              815.7
+            ]
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "facet_layer",
+          "what": "the first write of the same layer, replaced by write_facet_layer_2 after the description vectors were rewritten",
+          "values": {
+            "done_s": 55,
+            "transcript_span_s": 56.5,
+            "rows_sha256": "ff6da9dff887627e..."
+          },
+          "record": "output/tag_vector_backup/herb-eval-volmax__as-stored-20261008/write_facet_layer.log (the folder the step cites)",
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "facet_layer",
+          "what": "the command that ran backup and the second write",
+          "values": {
+            "transcript_span_s": 104.7
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "facet_layer",
+          "what": "parts inside round 1's 979.4 s (eval.json wall_s)",
+          "values": {
+            "probe_s": 789.4,
+            "bootstrap_B10000_s": 4.6,
+            "scoring_s": 1.0
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "facet_layer",
+          "what": "the bands-only bootstrap rerun that rewrote meta.json and BANDS.md",
+          "values": {
+            "wall_s": 4.4,
+            "written": "2026-09-21T01:24:37Z"
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "facet_layer",
+          "what": "the bake-off's laptop proof caches (bakeoff/cache_proof, cpu)",
+          "values": {
+            "edges": 14,
+            "gte_s": 43.5,
+            "deberta_small_s": 31.3
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "facet_layer",
+          "what": "the merged full-cache meta carries shard0's rate and count",
+          "values": {
+            "seconds_per_1000_edges_in_meta": 58.7,
+            "edges_this_run_in_meta": 7517,
+            "rate_over_61018_edges": 58.2
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "later_edges_and_fields",
+          "what": "separate person-edge commands after the write",
+          "values": {
+            "compare_s": 11.6,
+            "verify_s": 7.6
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "later_edges_and_fields",
+          "what": "the first chunk-times build (time spans) of 2026-10-17, replaced on 2026-10-19",
+          "values": {
+            "command": "2026-10-17T21:04:33.892Z",
+            "span_s": 27.0,
+            "chunks": 4747
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "later_edges_and_fields",
+          "what": "other counts the runs printed",
+          "values": {
+            "employees": 512,
+            "chunks_with_person_edges": 4646,
+            "person_edges_backed_up": 3894,
+            "customers": 120,
+            "distinct_match_keys": 1185
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "between graph_copies and embeddings",
+          "what": "the graph changed between the volmax copy and the 2026-10-08 writes; no step covers it",
+          "values": {
+            "tags_after_copy": 15605,
+            "tags_on_2026_10_08": 16714,
+            "edges_after_copy": 62443,
+            "run_edges_on_2026_10_08": 62028
+          },
+          "record": "herb-eval-volmax step_copy.json; write_tag_vectors.log; write_facet_layer_2.log; facet_weight_backup manifests (62,028 from 2026-08-31)",
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "superseded",
+          "what": "the 2026-10-07 manifest's other parts (not the graph's)",
+          "values": {
+            "questions": [
+              1514,
+              34670,
+              43.0
+            ],
+            "corpus": [
+              38540,
+              2719968,
+              1708.9
+            ]
+          },
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "superseded",
+          "what": "round-0 training began a fourth epoch (round0_train.log ends at A4 step 75/847), not in round0_history.json",
+          "values": {},
+          "added_to_no_number_above": true
+        },
+        {
+          "step": "superseded",
+          "what": "the round-0 scoring Colab half (31,764 edges) has no time in PROGRESS.md",
+          "values": {
+            "edges": 31764
+          },
+          "added_to_no_number_above": true
+        }
+      ],
+      "corrections": [
+        {
+          "made_at": "2026-10-20",
+          "ordered_by": "\"make sure 1-8 is done and correct for the folders/data we have right now\" (2026-10-20)",
+          "rule": "a number or a claim that the recount found different from its record is set to what the record gives; an approximate number is set to the exact one its record gives; what the records give and this file left out is added under left_out and added to no number; how a number is made, where its label does not say, is added under notes",
+          "check": "test/graph/build_cost_check.json: 158 numbers and claims, 155 the same as their record, 1 different, 2 that only the graph holds",
+          "changes": [
+            {
+              "path": "collected",
+              "before": "Every number is as a record gives it; a sum is over per-call or per-shard records. Nothing is estimated. Money is not given.",
+              "after": "Every number is as a record gives it; a sum is over per-call or per-shard records. Nothing is estimated, except the chunks' token estimate (steps[chunks].size.token_estimate_of_those_chunks), which the chunker itself wrote. Money is not given. Every number was recounted from its record on 2026-10-20 (test/graph/build_cost_check.json); notes says how some of them are made."
+            },
+            {
+              "path": "steps[descriptions_and_tags].records[1]",
+              "before": "\"git 399ee32: backend/tagging/pipeline.py (main run); git 415148d: the recovery's version\"",
+              "after": "\"git 415148d: backend/tagging/pipeline.py (the code of the main run and of the recovery: committed after the run; the main run's logs print strings only this version has)\""
+            },
+            {
+              "path": "steps[facet_layer].records",
+              "before": "\"output/facet_pairs/fullcache/*.meta.json, fullcache/shard0..7/*.meta.json\",",
+              "after": "\"output/facet_pairs/fullcache/*.meta.json, fullcache/shard0..7/*.meta.json\",\n                  \"output/facet_pairs/bakeoff/cache/*.npz, output/facet_pairs/fullcache/*.npz, fullcache/shard0..7/*.npz (the encoder caches themselves)\","
+            },
+            {
+              "path": "steps[graph_copies].not_recorded",
+              "before": "\"not_recorded\": \"how herb-eval went from 229,249 to 67,913 tag edges; the elapsed time of the crashed first volmax attempt\"",
+              "after": "\"not_recorded\": \"how herb-eval went from 229,249 to 67,913 tag edges; the elapsed time of the crashed first volmax attempt; how the graph went from 15,605 tags and 62,443 tag edges after the volmax copy to 16,714 tags and 62,028 tag edges on 2026-10-08: no step's record covers that change\""
+            },
+            {
+              "path": "superseded[3].what",
+              "before": "30 calls, about 900k in, 70k out, 148 s)",
+              "after": "30 calls, 900,483 in, 69,786 out, 1,101.3 s summed per call, 148 s elapsed)"
+            },
+            {
+              "path": "superseded[3].what",
+              "before": "\"what\": \"facet smoke and Haiku check calls (3 calls, 102,273 in, 113 out, 37.9 s;",
+              "after": "\"what\": \"facet smoke and Haiku check calls (3 calls, 102,273 in, 113 out, 37.9 s summed per call;"
+            }
+          ]
+        }
+      ]
+    },
+    "build_cost_file_sha256": "a1a3a8d1674c4fff7b2bf668f0c8423720a3cf6112004ecd5203d9417d9c65c7",
+    "first_call": "at query time, claude-sonnet-5 through the lane; an answer already in the store (HERB_V4_CACHE) is read from it and counted as no call by the arm, and the row keeps the record of the call that gave it as the store kept it; with HERB_V4_OFFLINE off, a failed or cut-off one is moved to failed/ at the start and asked again",
+    "question_embedding": "at query time, local embedder, query mode; a text embedded before is read from output/query_embed_cache and counted as no call",
+    "unit_text": "each record as lucene and vector write it (SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'), the records of a chunk one after the other with a blank line between them; a chosen chunk that is a part of a split document or transcript goes in as its whole record, once, at its place, any other part as its record with only that part of its long field (a document's feedback with its last part); after the cut the texts reach the answer model in pointer order: file, section in the file's own order (a metadata file one section), place of the text's first record in its section, part; contexts keeps the arm's order, which RAGAS reads as their rank, and reading_order gives the model's"
+  },
+  "code_state": {
+    "status": [],
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "untracked_sha256": {}
+  },
+  "env": {
+    "CLAUDE_CODE_OAUTH_TOKEN": "<set>",
+    "HERB_EMBED_DEVICE": "cuda",
+    "HERB_V4_CACHE": "A:/exjobbet/grag_setup/store_815",
+    "HERB_V4_OFFLINE": "on",
+    "NEO4J_PASSWORD": "<set>",
+    "RAGAS_DO_NOT_TRACK": "true"
+  }
+}

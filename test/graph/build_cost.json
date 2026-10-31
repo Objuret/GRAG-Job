@@ -104,6 +104,29 @@
                   "output/graph_build/herb-eval-volmax/person_edges_to_scope_20261017T022912Z.jsonl",
                   "the session transcripts of 2026-10-17 and 2026-10-19"],
       "not_recorded": "the scripts print no elapsed time; the spans include backup and check"
+    },
+    {
+      "id": "metadata_facet_layer",
+      "what": "the facet layer on the 574 tag edges of the 31 chunks of employee.json (27) and customers_data.json (4), which the arm's pool takes since 2026-10-31: the edges and the chunks' texts read from the graph (inputs), the 574 edges encoded as the full pass encoded, the 24 bootstrap refits made again from their stored seeds, the 574 edges scored by each refit and set after the 61,018 stored rows with the bands computed again over the 61,592 edges (extend), and the layer written to the desktop's graph, which the runs read",
+      "date": "2026-10-31",
+      "where": "inputs on the laptop; the encoding on the desktop's graphics card (Alibaba-NLP/gte-reranker-modernbert-base revision f7481e6055501a30fb19d090657df9ec1f79ab2c, float32 compute, float16 storage); the refits, extend and the write on the desktop; no language model",
+      "calls": 0, "tokens_in": 0, "tokens_out": 0,
+      "seconds": {"inputs_tool_span": 9.08, "encode_574_edges": 12.2, "refits_made_again": 107.6, "extend": 10.8, "desktop_write": 59},
+      "records": ["output/research/2026-10-31-metadata-redo/build_steps_20261031.json",
+                  "output/facet_pairs/rounds/round1/metadata_pool/EXTEND.json (wall_s; new.cache_meta.seconds), refits/check.json (wall_s)",
+                  "output/research/2026-10-31-metadata-facet-layer/job.log, job2.log, graph_b.log ('done (59s).')",
+                  "the facet agent's transcript of 2026-10-31 (inputs)"],
+      "not_recorded": "the inputs step's own elapsed time: metadata_edges.py inputs prints none"
+    },
+    {
+      "id": "metadata_person_and_customer_edges",
+      "what": "the person-to-chunk edges (530 new, 27,480) and the customer-to-chunk edges (120 new, 1,163) computed again over the pool with the employee and customer chunks in it (test/graph/build_person_edges.py write and build_customer_edges.py write at commit 808015c), on the desktop's graph, which the runs read",
+      "date": "2026-10-31",
+      "where": "desktop, no model",
+      "calls": 0, "tokens_in": 0, "tokens_out": 0,
+      "seconds": {"both_builders_tool_span": 32.331},
+      "records": ["output/research/2026-10-31-metadata-redo/build_steps_20261031.json", "the session transcript of 2026-10-31"],
+      "not_recorded": "each builder's time alone: they print none; the span holds both writes, their verifies, the printing of their logs and a count after"
     }
   ],
   "superseded": [
@@ -507,6 +530,20 @@
       "values": {
         "edges": 31764
       },
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "metadata_facet_layer",
+      "what": "the same layer written to the laptop's graph, which no run reads; the backups the writer requires before a write, kept apart as for facet_layer; the checks that built nothing (the shard check that encoded 7,214 stored edges again, check_layer.py, the gap split, the writer's plan and verify); the bands' time, which extend's holds; the copies between the machines",
+      "values": {"laptop_write_s": 104, "laptop_backup_s": 86, "desktop_backup_s": 7, "bands_inside_extend_s": 5.7, "shard_check_encode_s": 424},
+      "record": "output/research/2026-10-31-metadata-redo/build_steps_20261031.json (left_out, with every other time and its record)",
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "metadata_person_and_customer_edges",
+      "what": "the same edges written to the laptop's graph, which no run reads (one call ran both builders); the builders copied to the desktop and its edges counted before the write",
+      "values": {"laptop_both_builders_tool_span_s": 28.395, "desktop_copy_and_count_before_tool_span_s": 6.906},
+      "record": "output/research/2026-10-31-metadata-redo/build_steps_20261031.json",
       "added_to_no_number_above": true
     }
   ],

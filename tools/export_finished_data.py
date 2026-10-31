@@ -18,7 +18,11 @@ and its query embeddings from an earlier run takes those values from that run (M
 run on the 715 takes its query embeddings from a run of the same questions without answers that embedded
 every question's texts in one pass, on the graphics card (EMBEDDED_IN). Two scores
 judged after a run, on its answers with its judge, are read from the folder beside the run
-(REJUDGED), and their judging is added to the run's. A column of a run is a measure he named
+(REJUDGED), and their judging is added to the run's. Since HERB's employee and customer records are
+in every arm's corpus, a run without answers beside each final run (RETRIEVED) gives every question's
+search over the index that holds them, and tells, text by text, which questions are now handed other
+texts; those were answered and judged again, an arm's in one run (REDONE), and their rows, scores and
+judging come from it, every other question's from the final run. A column of a run is a measure he named
 (times, tokens, characters, runtime, the RAGAS scores) or an id of the dataset, the evaluation or
 the run; the construction holds what built the index that each final run read, one model at a
 time, and nothing about how it was built. Nothing that belongs to this machine or this project
@@ -37,6 +41,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font
 
 import correct_missing_judge_legs as judge_records
+from compare_delivered import delivered
 
 ROOT = Path(__file__).resolve().parent.parent
 # an arm's final runs, one per question set; their rows go into the same sheets (his 2026-10-25
@@ -67,6 +72,27 @@ VECTOR_CHECK = "query_vectors_against_the_run.json"
 # on all 100 for all 3 arms"); a run that judged every score itself has no such folder
 REJUDGED = "__j-claude-haiku-4-5-20251001__"
 REJUDGED_SCORES = ("factual_correctness", "context_entity_recall")
+# beside each final run, the run of its questions without answers over the corpus with HERB's employee and
+# customer records (his 2026-10-30 "ok, so, we add them back in then"): which of its questions are now handed
+# other texts (compared text by text, tools/compare_delivered.py), the index the arm reads now, and each
+# question's search over it, measured alone after the run, the six runs one after the other on a quiet desktop, one
+# method and one condition for every question and arm
+RETRIEVED = {"lucene__gold100__cb72000__20261008T234209Z": "lucene__gold100__cb72000__20261031_metadata_search_alone",
+             "lucene__answerable715__cb72000__20261023T112745Z":
+                 "lucene__answerable715__cb72000__20261031_metadata_search_alone",
+             "vector__gold100__cb72000__20261017T061242Z": "vector__gold100__cb72000__20261031_metadata_search_alone",
+             "vector__answerable715__cb72000__20261024T004317Z":
+                 "vector__answerable715__cb72000__20261031_metadata_search_alone",
+             "artefact_v4__gold100__cb72000__20261023T021439Z":
+                 "artefact_v4__gold100__cb72000__20261031_metadata_search_alone",
+             "artefact_v4__answerable715__cb72000__20261025T211532Z":
+                 "artefact_v4__answerable715__cb72000__20261031_metadata_search_alone"}
+# the questions now handed other texts, answered and judged again, an arm's in one run over both sets (his
+# 2026-10-31 "fair enough" to that play, "go ahead and do this "for real""); every other question keeps its
+# final run's answer, scores and judging
+REDONE = {"lucene": "lucene__metadata_redo__cb72000__20261031",
+          "vector": "vector__metadata_redo__cb72000__20261031",
+          "artefact": "artefact_v4__metadata_redo__cb72000__20261031"}
 DATASET, LICENCE = "HERB (Salesforce AI Research)", "CC BY-NC 4.0"
 # the sheets' names
 PER_QUESTION, PER_RUN, CONSTRUCTION, KEY = "results", "run data", "arm construction", "key"
@@ -273,7 +299,11 @@ def judge_cost(folder, ev, calls, cells, d):
     sum, and the score cells' usage is their own calls'. And the tokens the evaluation embedded: the
     entries' embedding, checked against the embedder records."""
     counts = judge_records.COUNTS
-    legs = ev["judge_legs"]
+    # a start stopped before any of its cells ended keeps the entry it wrote as it began (no settings, no usage) and
+    # left no call record: no call of it answered, so it counts nothing (his 2026-10-21 "a model call's time is its
+    # answering try"); a call record of a start with no entry still stops the export below
+    legs = [leg for leg in ev["judge_legs"]
+            if not (leg.get("begun_at") and leg.get("settings") is None and leg.get("usage") is None)]
     starts = [(leg.get("settings") or {}).get("started_at") for leg in legs]
     by_leg = {}
     for c in calls:
@@ -325,6 +355,60 @@ def judge_cost(folder, ev, calls, cells, d):
     # the cost is every judge call that answered, the cells that failed or that a later start dropped
     # included: judge_usage (the main session's decision of 2026-10-25, by the key's "all RAGAS judge calls")
     return ev["judge_usage"], embedded
+
+
+_REDONE = {}
+
+
+def redone(arm):
+    """The arm's run that answered and judged again the questions now handed other texts (REDONE), read once
+    and checked as a final run is: every question answered and judged, the judge legs and their usage those of
+    the call records. Its rows and scores by question, its call records, the questions a set took from it
+    (used) and the lines of its embedding requests a set has counted (claimed), so that none counts twice."""
+    if arm not in _REDONE:
+        folder = REDONE[arm]
+        d = ROOT / "output/k=chars" / folder
+        man, ev = read(d / "run_manifest.json"), read(d / "eval_manifest.json")
+        outputs = {o["id"]: o for o in rows(d / "arm_outputs.jsonl")}
+        if (man["n_questions"], man["n_ran"], man["n_failed"]) != (len(outputs), len(outputs), 0):
+            sys.exit(f"{folder}: not every question was answered")
+        cells = {}
+        for r in rows(d / "eval_results.jsonl"):
+            cells.setdefault(r["question_id"], {})[r["metric"]] = r
+        if set(cells) != set(outputs):
+            sys.exit(f"{folder}: not every question it answered was judged")
+        calls = rows(d / "eval_calls.jsonl")
+        judge, _ = judge_cost(folder, ev, calls, cells, d)
+        judging_seconds(calls, set(cells), folder)
+        recorded = judge_records.usage_of(calls)
+        if (judge["tokens_in"], judge["tokens_out"]) != (recorded["tokens_in"], recorded["tokens_out"]):
+            sys.exit(f"{folder}: judge_usage holds judge calls that no record ties to a question")
+        _REDONE[arm] = {"folder": folder, "man": man, "ev": ev, "rows": outputs, "cells": cells, "calls": calls,
+                        "used": set(), "claimed": set()}
+    return _REDONE[arm]
+
+
+def judging_of(calls, ids, texts, what, claimed=frozenset()):
+    """The judging of the questions ids in one folder's call records: their judge calls, each that answered by
+    its answering try's server time and with its tokens, and every one of RAGAS's embedding requests whose text
+    is one that their scores embed (texts), also when a later start made it again; a request already counted
+    for another set's questions (claimed: its line) is not counted again. Returns the seconds, the seconds of
+    the tries that did not answer and of their pauses, the judge calls' tokens in and out, the tokens embedded,
+    and the lines of the requests counted."""
+    chat = [c for c in calls if c.get("kind") == "chat" and c.get("question_id") in ids]
+    seconds, failed = judging_seconds(chat, set(ids), what)
+    use = judge_records.usage_of(chat)
+    counted, embedded = set(), 0
+    for n, c in enumerate(calls):
+        if c.get("kind") == "chat":
+            continue
+        if c.get("kind") != "embed" or len(c.get("texts") or []) != 1:
+            sys.exit(f"{what}: a record of the scoring is neither a judge call nor an embedding request of one text")
+        if c["texts"][0] in texts and n not in claimed:
+            seconds += float(c["encode_s"])
+            embedded += int(c["tokens_in"])
+            counted.add(n)
+    return seconds, failed, use["tokens_in"], use["tokens_out"], embedded, counted
 
 
 ID_TYPES = ("person", "pr", "url")  # HERB's question types whose reference list holds one ID or link per item
@@ -427,12 +511,13 @@ def environment(d, man):
     return envs[0]
 
 
-def rejudged(arm, d, cells, judge_model, set_name):
+def rejudged(arm, d, cells, judge_model, set_name, keep):
     """REJUDGED_SCORES from the folder beside the run, which judged the run's own answers and holds the
     run's other scores as the run has them. Their cost is that of every judge call of the folder that
     answered, as the run's own judging is counted (judge_usage; the key's "all RAGAS judge calls"); their
-    time their judge calls' server times added, as the run's. A run with no such folder must have judged
-    every score itself."""
+    time their judge calls' server times added, as the run's. Only the questions that keep the run's answer
+    (keep) count; the others were judged again (REDONE). A run with no such folder must have judged every
+    score itself."""
     j = d.parent / (d.name + REJUDGED + set_name)
     if not j.exists():
         return {}, 0.0, 0, 0, 0.0
@@ -461,10 +546,13 @@ def rejudged(arm, d, cells, judge_model, set_name):
             or any(c["kind"] != "chat" or c["model"] != judge_model for c in every)):
         sys.exit(f"{arm}: the re-judged scores' cost is not their calls', or a call is not the run's judge's")
     # one basis for every judging: every judge call that answered (the main session's decision of
-    # 2026-10-25, by the key's "all RAGAS judge calls")
-    cost = judge_records.usage_of(every)
-    seconds, failed = judging_seconds(every, set(cells), f"{arm}: {j.name}")
-    return added, seconds, cost["tokens_in"], cost["tokens_out"], failed
+    # 2026-10-25, by the key's "all RAGAS judge calls"), of the questions that keep the run's answer
+    judging_seconds(every, set(cells), f"{arm}: {j.name}")
+    mine = [c for c in every if c.get("question_id") in keep]
+    cost = judge_records.usage_of(mine)
+    seconds, failed = judging_seconds(mine, set(keep), f"{arm}: {j.name}")
+    return ({q: s for q, s in added.items() if q in keep}, seconds, cost["tokens_in"], cost["tokens_out"],
+            failed)
 
 
 def references():
@@ -472,7 +560,7 @@ def references():
     ids; every final run must have read this file as it is."""
     path = ROOT / "data/questions.jsonl"
     digest = hashlib.sha256(path.read_bytes()).hexdigest()
-    for folder in (f for folders in RUNS.values() for f in folders):
+    for folder in [f for folders in RUNS.values() for f in folders] + list(RETRIEVED.values()) + list(REDONE.values()):
         if read(ROOT / "output/k=chars" / folder / "run_manifest.json")["inputs"]["questions_sha256"] != digest:
             sys.exit(f"{folder}: the run read another questions file than {path}")
     return {q["id"]: q for q in rows(path)}
@@ -509,32 +597,103 @@ def runs_tables(arm, folder, refs, sets, by_sha):
     for r in rows(d / "eval_results.jsonl"):
         cells.setdefault(r["question_id"], {})[r["metric"]] = r
     calls = rows(d / "eval_calls.jsonl")
-    judge, embedded = judge_cost(folder, ev, calls, cells, d)
-    seconds, failed_judging = judging_seconds(calls, set(cells), folder)
-    added, added_seconds, added_in, added_out, added_failed = rejudged(arm, d, cells, ev["judge_model"], set_name)
+    judge, _ = judge_cost(folder, ev, calls, cells, d)
+    judging_seconds(calls, set(cells), folder)
+    # the run without answers over the index with the employee and customer records: which questions are now
+    # handed other texts, and every question's search
+    p = ROOT / "output/k=chars" / RETRIEVED[folder]
+    pman = read(p / "run_manifest.json")
+    if (pman["inputs"]["ids_sha256"] != man["inputs"]["ids_sha256"]
+            or (pman["n_questions"], pman["n_ran"], pman["n_failed"]) != (len(ids), len(ids), 0)):
+        sys.exit(f"{RETRIEVED[folder]}: not a run of every question of {set_name}")
+    passed = {o["id"]: o for o in rows(p / "arm_outputs.jsonl")}
+    if sorted(passed) != sorted(ids) or any(o.get("search_time_s") is None for o in passed.values()):
+        sys.exit(f"{RETRIEVED[folder]}: not every question of {set_name} once, each with its search time")
+    changed = {o["id"] for o in outputs if delivered(o) != delivered(passed[o["id"]])}
+    keep = set(ids) - changed
+    red = redone(arm)
+    if {i for i in red["rows"] if i in set(ids)} != changed:
+        sys.exit(f"{REDONE[arm]}: the questions of {set_name} it answered are not those now handed other texts")
+    if any(delivered(red["rows"][i]) != delivered(passed[i]) for i in changed):
+        sys.exit(f"{REDONE[arm]}: a question was handed other texts than in {RETRIEVED[folder]}")
+    red["used"] |= changed
+
+    def texts(os):
+        """The texts RAGAS embeds for these questions' scores: each answer and each reference, as its samples
+        hold them (eval/ragas.py _to_sample)."""
+        return {t for o in os for t in (" ".join(str(g) for g in refs[o["id"]]["ground_truth"]), o["answer"] or "")}
+
+    # the judging of the questions that keep the run's answer, from the run's records; the calls in judge_usage
+    # that no record ties to a question stay with them. The others' judging is REDONE's
+    seconds, failed_judging, judge_in, judge_out, embedded, counted = judging_of(
+        calls, keep, texts(o for o in outputs if o["id"] in keep), folder)
+    of_changed = texts(o for o in outputs if o["id"] in changed)
+    if any(c["texts"][0] not in of_changed for n, c in enumerate(calls) if c.get("kind") == "embed" and n not in counted):
+        sys.exit(f"{folder}: an embedding request of the scoring is of no question's text")
+    recorded = judge_records.usage_of(calls)
+    if judge["tokens_in"] < recorded["tokens_in"] or judge["tokens_out"] < recorded["tokens_out"]:
+        sys.exit(f"{folder}: judge_usage holds fewer tokens than the call records")
+    judge_in += judge["tokens_in"] - recorded["tokens_in"]
+    judge_out += judge["tokens_out"] - recorded["tokens_out"]
+    r_seconds, r_failed, r_in, r_out, r_embedded, r_counted = judging_of(
+        red["calls"], changed, texts(red["rows"][i] for i in changed), REDONE[arm], red["claimed"])
+    red["claimed"] |= r_counted
+    added, added_seconds, added_in, added_out, added_failed = rejudged(arm, d, cells, ev["judge_model"], set_name,
+                                                                       keep)
     for qid, scores in added.items():
         cells[qid].update(scores)
+    # the rows: the run's where the texts handed over are the same, REDONE's where they changed
+    final_rows = {o["id"]: o for o in outputs}
+    outputs = [red["rows"][o["id"]] if o["id"] in changed else o for o in outputs]
+    for i in changed:
+        cells[i] = red["cells"][i]
     source = {o["id"]: o for o in rows(ROOT / "output/k=chars" / MADE_IN[folder] / "arm_outputs.jsonl")} \
         if folder in MADE_IN else {}
     embedding_source = {o["id"]: o for o in rows(ROOT / "output/k=chars" / EMBEDDED_IN[folder] / "arm_outputs.jsonl")} \
         if folder in EMBEDDED_IN else {}
     # the source's vectors against the run's own, text by text: every text compared, none below the cosine
     vectors = read(ROOT / "output/k=chars" / EMBEDDED_IN[folder] / VECTOR_CHECK) if folder in EMBEDDED_IN else {}
+    # the run's rows of the questions answered again as the run recorded them, before the corrections made after
+    # it: the store keeps a first call's record as it was made
+    p = d / "arm_outputs.as_recorded.jsonl"
+    as_recorded = {o["id"]: o for o in rows(p) if o["id"] in changed} if changed and p.exists() else {}
     questions = []
     for r in outputs:
+        again = r["id"] in changed
         own = {}
         for e in r["retrieval"]:
             if e["kind"] in own:
                 sys.exit(f"{arm} {r['id']}: two {e['kind']} models in the arm's own calls")
             own[e["kind"]] = e
         arm_calls = [c for c in r["calls"] if c.get("role") != "answer"]
+        # entries a REDONE row recorded itself: the harness of that run writes a call's time as its answering
+        # try's time alone (time_s = request_s), the gate's wait and the failed tries beside it, not in it
+        fresh = {id(r["generator"])} | {id(e) for e in own.values()} if again else set()
+        if again and (r.get("meta") or {}).get("interpreter") is not None:
+            # REDONE read the interpreter's answer from the store of the final runs' first calls and asked no
+            # model: the first call counts as it counts for the final run's row
+            f = final_rows[r["id"]]
+            # the row keeps a copy of the stored call's record, as corrected or as recorded; any other record is a
+            # call made anew
+            kept = [source[r["id"]]] if source else [f] + ([as_recorded[r["id"]]] if r["id"] in as_recorded else [])
+            stored = [c for o in kept for c in o["calls"] if c.get("role") != "answer" and c.get("kind") == "chat"]
+            if (any(c not in stored for c in arm_calls if c.get("kind") == "chat")
+                    or interpreter_and_embeddings(r, vectors=False)[0] != interpreter_and_embeddings(f, vectors=False)[0]):
+                sys.exit(f"{arm} {r['id']}: {REDONE[arm]} asked the interpreter again, or got another answer")
+            arm_calls = [c for c in arm_calls if c.get("kind") != "chat"]
+            own.pop("chat", None)
+            if not source:
+                own["chat"] = next(e for e in f["retrieval"] if e["kind"] == "chat")
+                arm_calls += [c for c in f["calls"] if c.get("role") != "answer" and c.get("kind") == "chat"]
         records = [(r["generator"], [c for c in r["calls"] if c.get("role") == "answer"])] + [
             (e, [c for c in arm_calls if c.get("kind") == k]) for k, e in own.items()]
         if source:
             o = source[r["id"]]
             records += [(e, [c for c in o["calls"] if c.get("role") != "answer" and c.get("kind") == e["kind"]])
                         for e in o["retrieval"]]
-            if "chat" in own or interpreter_and_embeddings(r) != interpreter_and_embeddings(o):
+            # a question answered again embedded its texts on another machine: its vectors are compared by text
+            if "chat" in own or (interpreter_and_embeddings(r, vectors=not again)
+                                 != interpreter_and_embeddings(o, vectors=not again)):
                 sys.exit(f"{arm} {r['id']}: the interpreter's answers or the query embeddings are not those of "
                          f"{MADE_IN[folder]}")
             made = {e["kind"]: e for e in o["retrieval"]}
@@ -569,7 +728,8 @@ def runs_tables(arm, folder, refs, sets, by_sha):
         # in the call and stays in it, as in the final runs (the main session's decision of 2026-10-25)
         for call, recs in records:
             if (abs(call["retry_s"] - failed_tries_seconds(recs)) > 1e-4
-                    or call["time_s"] - call["request_s"] - call["wait_s"] - call["retry_s"] < -1e-6):
+                    or (abs(call["time_s"] - call["request_s"]) > 1e-6 if id(call) in fresh
+                        else call["time_s"] - call["request_s"] - call["wait_s"] - call["retry_s"] < -1e-6)):
                 sys.exit(f"{arm} {r['id']}: a call's retry_s is not its records' failed tries and pauses, or "
                          f"its time does not hold its tries and its wait")
         # the question's time is its steps' times added (his 2026-10-22 "THE RUN TIME IS THE ADDED TIME FOR
@@ -577,10 +737,14 @@ def runs_tables(arm, folder, refs, sets, by_sha):
         # embedding calls made in MADE_IN's or EMBEDDED_IN's run, or read from the run's store (its record
         # given back by correction store-hit-calls/1), by their answering try, in place of the run's own;
         # the harness's own time between the steps is in no step
-        parts = {"search_seconds": r["search_time_s"],
-                 "interpreter_seconds": interp and interp["time_s"] - interp["retry_s"],
-                 "query_embedding_seconds": qe and qe["time_s"] - qe["retry_s"] - qe["wait_s"],
-                 "answer_seconds": g["time_s"] - g["retry_s"]}
+        # the search over the index that holds the employee and customer records, from RETRIEVED: one method,
+        # one machine and one index for every question and arm
+        parts = {"search_seconds": passed[r["id"]]["search_time_s"],
+                 "interpreter_seconds": interp and (interp["request_s"] if id(interp) in fresh
+                                                    else interp["time_s"] - interp["retry_s"]),
+                 "query_embedding_seconds": qe and (qe["request_s"] if id(qe) in fresh
+                                                    else qe["time_s"] - qe["retry_s"] - qe["wait_s"]),
+                 "answer_seconds": g["request_s"] if id(g) in fresh else g["time_s"] - g["retry_s"]}
         # the characters the cut handed over, checked against the texts themselves
         chars = r["meta"]["char_budget"]["chars"]
         if chars != sum(len(t) for t in r["contexts"]) or chars > man["char_budget"]:
@@ -631,18 +795,27 @@ def runs_tables(arm, folder, refs, sets, by_sha):
     # a run's time, and its judging's, is the time of all the things in it added: its questions' times,
     # never the clock of the run as a whole (his 2026-10-22 "THE RUN TIME IS THE ADDED TIME FOR ALL THE
     # THINGS IN THE FUCKING RUN", 2026-10-23 "wall time? this is not a thing")
+    # one setup for every row: the redone and the retrieved run's as the final run's
+    rman = red["man"]
+    if ((rman["char_budget"], model_name(rman["generator_model"]), model_name(red["ev"]["judge_model"]),
+         model_name(rman["environment"]["embedder"]["model"]))
+            != (setup["character_limit"], setup["answer_model"], setup["judge_model"], setup["embedding_model"])
+            or (pman["char_budget"], model_name(pman["environment"]["embedder"]["model"]))
+            != (setup["character_limit"], setup["embedding_model"])):
+        sys.exit(f"{arm}: {REDONE[arm]} or {RETRIEVED[folder]} ran with another setup than {folder}")
     run = {
         "run_seconds": sum(q["total_seconds"] for q in questions),
-        "judge_tokens_in": judge["tokens_in"] + added_in, "judge_tokens_out": judge["tokens_out"] + added_out,
-        "judge_embedding_tokens": embedded,
-        "judging_seconds": seconds + added_seconds,
+        "judge_tokens_in": judge_in + r_in + added_in, "judge_tokens_out": judge_out + r_out + added_out,
+        "judge_embedding_tokens": embedded + r_embedded,
+        "judging_seconds": seconds + r_seconds + added_seconds,
     }
     failed_answer = sum(1 for r in outputs for c in r["calls"] if c.get("role") == "answer"
                         for t in c.get("attempts") or [] if t.get("outcome") != "ok")
-    print(f"{folder}: {set_name}, {len(questions)} rows; answer calls' tries that did not answer {failed_answer}, "
+    print(f"{folder}: {set_name}, {len(questions)} rows, {len(changed)} of them answered and judged again in "
+          f"{REDONE[arm]}; answer calls' tries that did not answer {failed_answer}, "
           f"their seconds and pauses out: {sum(r['generator']['retry_s'] for r in outputs):.1f} s; seconds of judge "
           f"calls' tries that did not answer, and their pauses, left out of the judging: "
-          f"{failed_judging + added_failed:.1f} s")
+          f"{failed_judging + r_failed + added_failed:.1f} s")
     return questions, setup, run, set_name
 
 
@@ -654,7 +827,10 @@ def construction_table():
     encoding of every edge, and the steps with no model; work replaced later, trials and tests stay
     out. Every run of an arm must have read the same index, by what the index holds; the column holds
     the build as the arm's run on the 715 timed it."""
-    of_runs = {a: [read(ROOT / "output/k=chars" / f / "run_manifest.json") for f in fs] for a, fs in RUNS.items()}
+    # the index each arm reads now: that of its runs without answers over the corpus with the employee and
+    # customer records (RETRIEVED), which its redone run (REDONE) must hold too
+    now = {a: [RETRIEVED[f] for f in fs] for a, fs in RUNS.items()}
+    of_runs = {a: [read(ROOT / "output/k=chars" / f / "run_manifest.json") for f in fs] for a, fs in now.items()}
 
     # an index is the same when it holds the same: the same units, their text and its digest, from the
     # same corpus, made by the same method or embedding model; not the same cache file or build seconds
@@ -681,8 +857,9 @@ def construction_table():
 
     unequal = []
     for a, ms in of_runs.items():
-        held = [holds(a, f, m) for f, m in zip(RUNS[a], ms)]
-        unequal += [f"{a} {k}: " + ", ".join(f"{f} {h[k]}" for f, h in zip(RUNS[a], held))
+        names = now[a] + [REDONE[a]]
+        held = [holds(a, f, m) for f, m in zip(names, ms + [read(ROOT / "output/k=chars" / REDONE[a] / "run_manifest.json")])]
+        unequal += [f"{a} {k}: " + ", ".join(f"{f} {h[k]}" for f, h in zip(names, held))
                     for k in held[0] if any(h[k] != held[0][k] for h in held)]
     if unequal:
         sys.exit("the runs of an arm read different indexes, by what the indexes hold:\n  " + "\n  ".join(unequal))
@@ -698,7 +875,7 @@ def construction_table():
         mans[a] = on[0]
         # for the record: each run's own build, of which only the 715's goes into the column
         print(f"{a}: build seconds of each run's index: " + ", ".join(
-            f"{f} {m['build_stats'].get('build_time_s')}" for f, m in zip(RUNS[a], ms)))
+            f"{f} {m['build_stats'].get('build_time_s')}" for f, m in zip(now[a], ms)))
     cost = read(ROOT / "test/graph/build_cost.json")
     steps = {s["id"]: s for s in cost["steps"]}
 
@@ -732,7 +909,10 @@ def construction_table():
                 + left_out("facet_layer", "parts inside round 1")["scoring_s"]
                 + facet["bootstrap_refits"]["seconds_elapsed"]
                 + facet["write"]["seconds_elapsed"]
-                + sum(steps["later_edges_and_fields"]["seconds"].values()))
+                + sum(steps["later_edges_and_fields"]["seconds"].values())
+                # the employee and customer chunks' facet layer and edges (2026-10-31), but their encoding
+                + sum(v for k, v in steps["metadata_facet_layer"]["seconds"].items() if k != "encode_574_edges")
+                + sum(steps["metadata_person_and_customer_edges"]["seconds"].values()))
     # the 63 readable tag names were embedded on the laptop's CPU; their time is that of the same requests
     # on the desktop's graphics card, where the other two parts ran (his 2026-10-27 "embeddings via gpu")
     readable = read(ROOT / "test/graph/build_cost_readable_names_gpu_times.json")
@@ -759,11 +939,12 @@ def construction_table():
     if [opus["sets"][s]["calls"] for s in ("control", "train")] != [r[0] for r in learned_from]:
         sys.exit("build_cost_opus_transcript_times.json is not the Opus calls of the control and train runs")
     opus_seconds = opus["seconds"]
-    encoder_seconds = facet["encoder_cache"]["seconds_elapsed"]
+    encoder_seconds = (facet["encoder_cache"]["seconds_elapsed"]
+                       + steps["metadata_facet_layer"]["seconds"]["encode_574_edges"])
     vector = mans["vector"]["build_stats"]["models"][0]
     embedder = model_name(vector["model"])
     if any(model_name(environment(ROOT / "output/k=chars" / f, m)["embedder"]["model"]) != embedder
-           for f, m in zip(RUNS["artefact"], of_runs["artefact"])):
+           for f, m in zip(now["artefact"], of_runs["artefact"])):
         sys.exit("the arms name different embedding models")
     encoder = model_name(facet["encoder_cache"]["model"].split(", ")[0])
     a = "artefact"
@@ -771,7 +952,7 @@ def construction_table():
         ("index", "Index type.", "", {k: INDEX_KIND[k][0] for k in RUNS}),
         ("unit", "Unit stored in the index.", "", {k: INDEX_KIND[k][1] for k in RUNS}),
         ("units in the index", "Units in the index. Artefact: the chunks in the graph; the arm retrieves from all of "
-                               "them but the chunks of three metadata files.", "count",
+                               "them but the chunks of one of HERB's metadata files, salesforce_team.json.", "count",
          {"lucene": mans["lucene"]["index"]["units"], "vector": mans["vector"]["index"]["units"],
           a: mans[a]["graph"]["census"]["labels"]["Chunk"]}),
         ("build time, seconds", "Time to build the index that the arm's runs read. Artefact: the times of "
@@ -861,6 +1042,13 @@ def main():
             covered[arm][set_name] = len(rows_of_run)
             questions += rows_of_run
             runs[arm].append(run_of)
+    # every question an arm's REDONE run answered is one of its sets' questions now handed other texts, and
+    # each of that run's embedding requests is counted once
+    for arm in RUNS:
+        red = redone(arm)
+        if (red["used"] != set(red["rows"])
+                or red["claimed"] != {n for n, c in enumerate(red["calls"]) if c.get("kind") == "embed"}):
+            sys.exit(f"{REDONE[arm]}: a question it answered, or an embedding request it made, is in no set's rows")
     # which question sets each arm's runs cover; an arm without a run on a set is named, and nothing
     # is decided about it here
     for arm in RUNS:

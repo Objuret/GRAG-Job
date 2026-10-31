@@ -1,0 +1,2675 @@
+{
+  "arm": "vector",
+  "generator_model": "claude-sonnet-5",
+  "interpreter_model": null,
+  "top_k": 50,
+  "questions_file": "A:\\exjobbet\\GRAG-Job\\data\\questions.jsonl",
+  "n_questions": 147,
+  "n_ran": 147,
+  "n_failed": 0,
+  "timestamp": "2026-10-31T15:11:05.771924+00:00",
+  "build_stats": {
+    "build_time_s": 3010.8619154999833,
+    "models": [
+      {
+        "kind": "embed",
+        "model": "nvidia/llama-nemotron-embed-1b-v2",
+        "what": "every unit of the corpus embedded in passage mode, for the stored vectors",
+        "calls": 39190,
+        "tokens_in": 4254815,
+        "tokens_out": 0,
+        "seconds_summed_per_call": null,
+        "seconds_elapsed": 2927.065961097316,
+        "device": "cuda (units 1-38540), NVIDIA GeForce GTX 1080 Ti (units 38541-39190)",
+        "not_recorded": "no one timer covered all of it; the cost note says: two builds: units 1-38540 are the vectors of llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz, made in 2968.4 s; units 38541-39190 were embedded and appended to them in 42.4 s, one timer from the start of that build to its vectors"
+      }
+    ],
+    "not_recorded": []
+  },
+  "retrieval_flags": {},
+  "char_budget": 72000,
+  "code_version": {
+    "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+    "branch": "artefact-v4-iteration",
+    "dirty": true
+  },
+  "environment": {
+    "host": "Fräsh",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "python": "3.12.6",
+    "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+    "cpu": "Intel64 Family 6 Model 158 Stepping 10, GenuineIntel",
+    "cpu_count": 6,
+    "ram_bytes": 34280620032,
+    "packages": {
+      "bm25s": "0.2.14",
+      "PyStemmer": "3.1.0",
+      "numpy": "2.4.6",
+      "sentence-transformers": "6.0.1",
+      "torch": "2.14.1+cu126",
+      "transformers": "5.12.1",
+      "httpx": "0.28.1",
+      "ragas": "0.4.3",
+      "neo4j": "6.2.0"
+    },
+    "packages_all": [
+      "absl-py==2.5.0",
+      "aiohappyeyeballs==2.7.1",
+      "aiohttp==3.14.1",
+      "aiosignal==1.4.0",
+      "annotated-doc==0.0.4",
+      "annotated-types==0.7.0",
+      "anyio==4.14.2",
+      "appdirs==1.4.4",
+      "attrs==26.1.0",
+      "blis==1.3.3",
+      "bm25s==0.2.14",
+      "catalogue==2.0.10",
+      "certifi==2026.6.17",
+      "charset-normalizer==3.4.9",
+      "click==8.4.2",
+      "cloudpathlib==0.25.0",
+      "colorama==0.4.6",
+      "confection==1.3.3",
+      "cymem==2.0.13",
+      "dataclasses-json==0.6.7",
+      "datasets==5.0.0",
+      "defusedxml==0.7.1",
+      "dill==0.4.1",
+      "diskcache==5.6.3",
+      "distro==1.9.0",
+      "docstring_parser==0.18.0",
+      "en_core_web_sm==3.8.0",
+      "et_xmlfile==2.0.0",
+      "filelock==3.30.0",
+      "frozenlist==1.8.0",
+      "fsspec==2026.4.0",
+      "graphifyy==0.8.39",
+      "greenlet==3.5.3",
+      "h11==0.16.0",
+      "hf-xet==1.5.1",
+      "httpcore==1.0.9",
+      "httpx-sse==0.4.3",
+      "httpx==0.28.1",
+      "huggingface_hub==1.23.0",
+      "idna==3.18",
+      "iniconfig==2.3.0",
+      "instructor==1.15.4",
+      "Jinja2==3.1.6",
+      "jiter==0.14.0",
+      "joblib==1.5.3",
+      "jsonpatch==1.33",
+      "jsonpointer==3.1.1",
+      "langchain-community==0.3.31",
+      "langchain-core==1.4.9",
+      "langchain-openai==1.3.5",
+      "langchain-protocol==0.0.18",
+      "langchain==1.3.13",
+      "langgraph-checkpoint==4.1.1",
+      "langgraph-prebuilt==1.1.0",
+      "langgraph-sdk==0.4.2",
+      "langgraph==1.2.9",
+      "langsmith==0.10.5",
+      "lxml==6.1.1",
+      "markdown-it-py==4.2.0",
+      "MarkupSafe==3.0.3",
+      "marshmallow==3.26.2",
+      "mdurl==0.1.2",
+      "mpmath==1.3.0",
+      "multidict==6.7.1",
+      "multiprocess==0.70.19",
+      "murmurhash==1.0.15",
+      "mypy_extensions==1.1.0",
+      "narwhals==2.25.0",
+      "neo4j==6.2.0",
+      "nest-asyncio==1.6.0",
+      "networkx==3.6.1",
+      "nltk==3.10.0",
+      "numpy==2.4.6",
+      "openai==2.45.0",
+      "openpyxl==3.1.5",
+      "orjson==3.11.9",
+      "ormsgpack==1.12.2",
+      "packaging==26.2",
+      "pandas==3.0.3",
+      "pillow==12.3.0",
+      "pip==24.2",
+      "pluggy==1.6.0",
+      "portalocker==3.2.0",
+      "preshed==3.0.13",
+      "propcache==0.5.2",
+      "pyarrow==25.0.0",
+      "pydantic-settings==2.14.2",
+      "pydantic==2.13.4",
+      "pydantic_core==2.46.4",
+      "Pygments==2.20.0",
+      "pypdf==6.18.0",
+      "PyStemmer==3.1.0",
+      "pytest==9.1.1",
+      "python-dateutil==2.9.0.post0",
+      "python-dotenv==1.2.2",
+      "pytz==2026.2",
+      "pywin32==312",
+      "PyYAML==6.0.3",
+      "ragas==0.4.3",
+      "RapidFuzz==3.14.5",
+      "regex==2026.7.10",
+      "requests-toolbelt==1.0.0",
+      "requests==2.34.2",
+      "rich==14.3.4",
+      "rouge_score==0.1.2",
+      "sacrebleu==2.6.0",
+      "safetensors==0.8.0",
+      "scikit-learn==1.9.0",
+      "scikit-network==0.33.5",
+      "scipy==1.18.0",
+      "sentence-transformers==6.0.1",
+      "setuptools==78.1.0",
+      "shellingham==1.5.4",
+      "six==1.17.0",
+      "smart_open==8.0.1",
+      "sniffio==1.3.1",
+      "spacy-legacy==3.0.12",
+      "spacy-loggers==1.0.5",
+      "spacy==3.8.16",
+      "SQLAlchemy==2.0.51",
+      "srsly==2.5.3",
+      "sympy==1.14.0",
+      "tabulate==0.10.0",
+      "tenacity==9.1.4",
+      "thinc==8.3.13",
+      "threadpoolctl==3.6.0",
+      "tiktoken==0.13.0",
+      "tokenizers==0.22.2",
+      "torch==2.14.1+cu126",
+      "tqdm==4.67.1",
+      "transformers==5.12.1",
+      "tree-sitter-bash==0.25.1",
+      "tree-sitter-c-sharp==0.23.5",
+      "tree-sitter-c==0.24.2",
+      "tree-sitter-cpp==0.23.4",
+      "tree-sitter-elixir==0.3.5",
+      "tree-sitter-fortran==0.6.0",
+      "tree-sitter-go==0.25.0",
+      "tree-sitter-groovy==0.1.2",
+      "tree-sitter-java==0.23.5",
+      "tree-sitter-javascript==0.25.0",
+      "tree-sitter-json==0.24.8",
+      "tree-sitter-julia==0.23.1",
+      "tree-sitter-kotlin==1.1.0",
+      "tree-sitter-lua==0.5.0",
+      "tree-sitter-objc==3.0.2",
+      "tree-sitter-php==0.24.1",
+      "tree-sitter-powershell==0.26.4",
+      "tree-sitter-python==0.25.0",
+      "tree-sitter-ruby==0.23.1",
+      "tree-sitter-rust==0.24.2",
+      "tree-sitter-scala==0.26.2",
+      "tree-sitter-swift==0.7.3",
+      "tree-sitter-typescript==0.23.2",
+      "tree-sitter-verilog==1.0.3",
+      "tree-sitter-zig==1.1.2",
+      "tree-sitter==0.25.2",
+      "typer==0.27.0",
+      "typing-inspect==0.9.0",
+      "typing-inspection==0.4.2",
+      "typing_extensions==4.16.0",
+      "tzdata==2026.3",
+      "urllib3==2.7.0",
+      "uuid_utils==0.17.0",
+      "wasabi==1.1.3",
+      "weasel==1.0.0",
+      "websockets==15.0.1",
+      "wrapt==2.4.0",
+      "xxhash==3.8.1",
+      "yarl==1.24.2",
+      "zstandard==0.25.0"
+    ],
+    "embedder": {
+      "model": "nvidia/llama-nemotron-embed-1b-v2",
+      "revision": "113abe4acafa848e77ead9c0623205e511932348",
+      "device": "cuda",
+      "dtype": "float32"
+    }
+  },
+  "inputs": {
+    "questions_sha256": "1dfb00e8773123eb66d2d5ae2828bdce976a5e7eb0637f7b3e6c0ca6f52f47ea",
+    "ids_sha256": "e32fe5b472442ff2ea282dfaed0ff38a13772eb84bdf3e22e73b53f2d7ba8823",
+    "corpus": {
+      "sha256": "4eeb46d025c6187319e462e1a78de67631e1b1dbf7b6a18f966cd14ce1ac5a82",
+      "n_files": 33
+    }
+  },
+  "graph": null,
+  "n_exhausted": 0,
+  "flags": null,
+  "legs": [
+    {
+      "leg": 1,
+      "started_at": "2026-10-31T15:06:14.367968+00:00",
+      "finished_at": "2026-10-31T15:10:45.297923+00:00",
+      "wall_s": 270.93025609999313,
+      "process_cpu_s": 30.640625,
+      "workers": 16,
+      "argv": [
+        "prod/run.py",
+        "--arm",
+        "vector",
+        "--set",
+        "output/research/2026-10-31-metadata-redo/vector__redo_ids.jsonl",
+        "--char-budget",
+        "72000",
+        "--workers",
+        "16",
+        "--out",
+        "output/k=chars/vector__metadata_redo__cb72000__20261031"
+      ],
+      "pid": 10196,
+      "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "output\\research\\2026-10-31-metadata-redo\\vector__redo_ids.jsonl",
+      "n_chosen": 147,
+      "n_todo": 147,
+      "n_answered": 147,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 12.948362099996302,
+      "embedder_load_s": 11.80970330000855,
+      "retrieval_only": false,
+      "evaluator": "ragas",
+      "peak_memory_bytes": 8634023936,
+      "code_version": {
+        "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+        "branch": "artefact-v4-iteration",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [],
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_sha256": {}
+      },
+      "flags": null,
+      "lane": {
+        "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "system_prompt": "always passed, empty when the call has no system text",
+        "stdin": "the prompt as UTF-8 bytes",
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+          "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+          "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+          "ENABLE_PROMPT_CACHING_1H": "1"
+        },
+        "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+        "config_settings": {
+          "cleanupPeriodDays": 36500
+        },
+        "login_gate": {
+          "model": "claude-sonnet-5",
+          "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+          "rate_tokens_per_second": 16500.0,
+          "limit_backlog_tokens": 886126.5972843313,
+          "tokens_held_per_character": 0.496
+        },
+        "env_per_call": [
+          "CLAUDE_CODE_EFFORT_LEVEL",
+          "MAX_THINKING_TOKENS",
+          "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+          "CLAUDE_CODE_EXTRA_BODY"
+        ],
+        "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+        "cli_adds": {
+          "seen_with": "2.1.212 (Claude Code)",
+          "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+          "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "units": 39190,
+        "text_chars": 14721423,
+        "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+        "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+        "matrix_shape": [
+          39190,
+          2048
+        ],
+        "matrix_dtype": "float32",
+        "matrix_bytes": 321044480,
+        "cache_file": "A:\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_3b66604d78cf9010.npz",
+        "cache_file_bytes": 336869138,
+        "cache_file_sha256": "93ae1a0e6a1ed1058dc1df969939496bca1476d3db091cc47f29db3d473aaa88",
+        "cache_cost_note": {
+          "model": "nvidia/llama-nemotron-embed-1b-v2",
+          "revision": "113abe4acafa848e77ead9c0623205e511932348",
+          "mode": "passage",
+          "prefix": "passage: ",
+          "dtype": "float32",
+          "batch": 1,
+          "calls": 39190,
+          "tokens_in": 4254815,
+          "tokens_out": 0,
+          "build_time_s": 3010.8619154999833,
+          "build_time_note": "two builds: units 1-38540 are the vectors of llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz, made in 2968.4 s; units 38541-39190 were embedded and appended to them in 42.4 s, one timer from the start of that build to its vectors",
+          "device": "cuda (units 1-38540), NVIDIA GeForce GTX 1080 Ti (units 38541-39190)",
+          "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+          "units": 39190,
+          "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+          "extends": {
+            "cache_file": "llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+            "cache_file_sha256": "388889d5103761514657a7bc018a072227e0d308e48b65bacc130c49e0f4c0b4",
+            "units": 38540,
+            "cost_note": {
+              "model": "nvidia/llama-nemotron-embed-1b-v2",
+              "calls": 38540,
+              "tokens_in": 4232334,
+              "tokens_out": 0,
+              "build_time_s": 2968.4269948999863,
+              "device": "cuda",
+              "revision": "113abe4acafa848e77ead9c0623205e511932348",
+              "mode": "passage",
+              "prefix": "passage: ",
+              "dtype": "float32",
+              "batch": 1,
+              "settings_source": "Added 2026-10-31: the settings these vectors were made with, read from the code of commit 02b2078, the code_version.commit of vector__answerable715__cb72000__20261024T004317Z, the run that read this file (its cache_file_sha256 388889d5...): prod/harness/embed.py EMBED_REVISION, EMBED_PREFIX['passage'], EMBED_DTYPE, EMBED_BATCH, and prod/arms/vector.py build_dense_index embedding in passage mode with EMBED_BATCH. The file was written 2026-10-24 02:42:15 desktop time. The note as the build wrote it (model, calls, tokens, build time, device) is kept as llama-nemotron-embed-1b-v2_2286904ea4dd3527.cost.as_recorded.json."
+            }
+          },
+          "appended": {
+            "units": 650,
+            "first_unit": 38541,
+            "calls": 650,
+            "tokens_in": 22481,
+            "tokens_out": 0,
+            "seconds_elapsed": 17.528391400068358,
+            "build_time_s": 42.434920599996985,
+            "device": "NVIDIA GeForce GTX 1080 Ti",
+            "made_utc": "2026-10-31T07:53:01Z",
+            "host": "Fräsh",
+            "python": "3.12.6",
+            "torch": "2.14.1+cu126",
+            "sentence_transformers": "6.0.1",
+            "transformers": "5.12.1"
+          }
+        },
+        "embedder_warm_s": 12.026639399991836,
+        "question_embedding": "at query time, local embedder, query mode"
+      },
+      "search_pass": {
+        "started_at": "2026-10-31T15:10:45.637424+00:00",
+        "finished_at": "2026-10-31T15:10:58.160424+00:00",
+        "warm_up_question": "ActionGenie::a::0",
+        "questions": 147,
+        "same_records_in_another_order": [],
+        "other_records": [],
+        "failed": []
+      },
+      "embed_pass": {
+        "requests": 147,
+        "warm_up_requests": 20,
+        "started_at": "2026-10-31T15:10:58.544924+00:00",
+        "finished_at": "2026-10-31T15:11:03.914925+00:00"
+      }
+    },
+    {
+      "leg": 2,
+      "started_at": "2026-10-31T15:43:39.551962+00:00",
+      "finished_at": "2026-10-31T15:43:52.542129+00:00",
+      "wall_s": 12.990421599999536,
+      "process_cpu_s": 14.109375,
+      "workers": 16,
+      "argv": [
+        "prod/run.py",
+        "--arm",
+        "vector",
+        "--set",
+        "output/research/2026-10-31-metadata-redo/vector__redo_ids.jsonl",
+        "--char-budget",
+        "72000",
+        "--workers",
+        "16",
+        "--out",
+        "output/k=chars/vector__metadata_redo__cb72000__20261031"
+      ],
+      "pid": 12596,
+      "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "output\\research\\2026-10-31-metadata-redo\\vector__redo_ids.jsonl",
+      "n_chosen": 147,
+      "n_todo": 0,
+      "n_answered": 0,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 12.10230379999848,
+      "embedder_load_s": 11.078641800006153,
+      "retrieval_only": false,
+      "evaluator": "ragas",
+      "peak_memory_bytes": 8634728448,
+      "code_version": {
+        "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+        "branch": "artefact-v4-iteration",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [],
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_sha256": {}
+      },
+      "flags": null,
+      "lane": {
+        "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "system_prompt": "always passed, empty when the call has no system text",
+        "stdin": "the prompt as UTF-8 bytes",
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+          "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+          "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+          "ENABLE_PROMPT_CACHING_1H": "1"
+        },
+        "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+        "config_settings": {
+          "cleanupPeriodDays": 36500
+        },
+        "login_gate": {
+          "model": "claude-sonnet-5",
+          "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+          "rate_tokens_per_second": 16500.0,
+          "limit_backlog_tokens": 886126.5972843313,
+          "tokens_held_per_character": 0.496
+        },
+        "env_per_call": [
+          "CLAUDE_CODE_EFFORT_LEVEL",
+          "MAX_THINKING_TOKENS",
+          "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+          "CLAUDE_CODE_EXTRA_BODY"
+        ],
+        "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+        "cli_adds": {
+          "seen_with": "2.1.212 (Claude Code)",
+          "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+          "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "units": 39190,
+        "text_chars": 14721423,
+        "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+        "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+        "matrix_shape": [
+          39190,
+          2048
+        ],
+        "matrix_dtype": "float32",
+        "matrix_bytes": 321044480,
+        "cache_file": "A:\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_3b66604d78cf9010.npz",
+        "cache_file_bytes": 336869138,
+        "cache_file_sha256": "93ae1a0e6a1ed1058dc1df969939496bca1476d3db091cc47f29db3d473aaa88",
+        "cache_cost_note": {
+          "model": "nvidia/llama-nemotron-embed-1b-v2",
+          "revision": "113abe4acafa848e77ead9c0623205e511932348",
+          "mode": "passage",
+          "prefix": "passage: ",
+          "dtype": "float32",
+          "batch": 1,
+          "calls": 39190,
+          "tokens_in": 4254815,
+          "tokens_out": 0,
+          "build_time_s": 3010.8619154999833,
+          "build_time_note": "two builds: units 1-38540 are the vectors of llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz, made in 2968.4 s; units 38541-39190 were embedded and appended to them in 42.4 s, one timer from the start of that build to its vectors",
+          "device": "cuda (units 1-38540), NVIDIA GeForce GTX 1080 Ti (units 38541-39190)",
+          "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+          "units": 39190,
+          "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+          "extends": {
+            "cache_file": "llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+            "cache_file_sha256": "388889d5103761514657a7bc018a072227e0d308e48b65bacc130c49e0f4c0b4",
+            "units": 38540,
+            "cost_note": {
+              "model": "nvidia/llama-nemotron-embed-1b-v2",
+              "calls": 38540,
+              "tokens_in": 4232334,
+              "tokens_out": 0,
+              "build_time_s": 2968.4269948999863,
+              "device": "cuda",
+              "revision": "113abe4acafa848e77ead9c0623205e511932348",
+              "mode": "passage",
+              "prefix": "passage: ",
+              "dtype": "float32",
+              "batch": 1,
+              "settings_source": "Added 2026-10-31: the settings these vectors were made with, read from the code of commit 02b2078, the code_version.commit of vector__answerable715__cb72000__20261024T004317Z, the run that read this file (its cache_file_sha256 388889d5...): prod/harness/embed.py EMBED_REVISION, EMBED_PREFIX['passage'], EMBED_DTYPE, EMBED_BATCH, and prod/arms/vector.py build_dense_index embedding in passage mode with EMBED_BATCH. The file was written 2026-10-24 02:42:15 desktop time. The note as the build wrote it (model, calls, tokens, build time, device) is kept as llama-nemotron-embed-1b-v2_2286904ea4dd3527.cost.as_recorded.json."
+            }
+          },
+          "appended": {
+            "units": 650,
+            "first_unit": 38541,
+            "calls": 650,
+            "tokens_in": 22481,
+            "tokens_out": 0,
+            "seconds_elapsed": 17.528391400068358,
+            "build_time_s": 42.434920599996985,
+            "device": "NVIDIA GeForce GTX 1080 Ti",
+            "made_utc": "2026-10-31T07:53:01Z",
+            "host": "Fräsh",
+            "python": "3.12.6",
+            "torch": "2.14.1+cu126",
+            "sentence_transformers": "6.0.1",
+            "transformers": "5.12.1"
+          }
+        },
+        "embedder_warm_s": 11.26709180000762,
+        "question_embedding": "at query time, local embedder, query mode"
+      },
+      "search_pass": null,
+      "embed_pass": null
+    },
+    {
+      "leg": 3,
+      "started_at": "2026-10-31T15:46:46.807394+00:00",
+      "finished_at": "2026-10-31T15:47:00.441250+00:00",
+      "wall_s": 13.63385680000647,
+      "process_cpu_s": 13.890625,
+      "workers": 16,
+      "argv": [
+        "prod/run.py",
+        "--arm",
+        "vector",
+        "--set",
+        "output/research/2026-10-31-metadata-redo/vector__redo_ids.jsonl",
+        "--char-budget",
+        "72000",
+        "--workers",
+        "16",
+        "--out",
+        "output/k=chars/vector__metadata_redo__cb72000__20261031"
+      ],
+      "pid": 24644,
+      "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "output\\research\\2026-10-31-metadata-redo\\vector__redo_ids.jsonl",
+      "n_chosen": 147,
+      "n_todo": 0,
+      "n_answered": 0,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 12.650864899987937,
+      "embedder_load_s": 11.330327199990279,
+      "retrieval_only": false,
+      "evaluator": "ragas",
+      "peak_memory_bytes": 8636284928,
+      "code_version": {
+        "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+        "branch": "artefact-v4-iteration",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [],
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_sha256": {}
+      },
+      "flags": null,
+      "lane": {
+        "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "system_prompt": "always passed, empty when the call has no system text",
+        "stdin": "the prompt as UTF-8 bytes",
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+          "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+          "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+          "ENABLE_PROMPT_CACHING_1H": "1"
+        },
+        "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+        "config_settings": {
+          "cleanupPeriodDays": 36500
+        },
+        "login_gate": {
+          "model": "claude-sonnet-5",
+          "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+          "rate_tokens_per_second": 16500.0,
+          "limit_backlog_tokens": 886126.5972843313,
+          "tokens_held_per_character": 0.496
+        },
+        "env_per_call": [
+          "CLAUDE_CODE_EFFORT_LEVEL",
+          "MAX_THINKING_TOKENS",
+          "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+          "CLAUDE_CODE_EXTRA_BODY"
+        ],
+        "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+        "cli_adds": {
+          "seen_with": "2.1.212 (Claude Code)",
+          "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+          "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "units": 39190,
+        "text_chars": 14721423,
+        "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+        "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+        "matrix_shape": [
+          39190,
+          2048
+        ],
+        "matrix_dtype": "float32",
+        "matrix_bytes": 321044480,
+        "cache_file": "A:\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_3b66604d78cf9010.npz",
+        "cache_file_bytes": 336869138,
+        "cache_file_sha256": "93ae1a0e6a1ed1058dc1df969939496bca1476d3db091cc47f29db3d473aaa88",
+        "cache_cost_note": {
+          "model": "nvidia/llama-nemotron-embed-1b-v2",
+          "revision": "113abe4acafa848e77ead9c0623205e511932348",
+          "mode": "passage",
+          "prefix": "passage: ",
+          "dtype": "float32",
+          "batch": 1,
+          "calls": 39190,
+          "tokens_in": 4254815,
+          "tokens_out": 0,
+          "build_time_s": 3010.8619154999833,
+          "build_time_note": "two builds: units 1-38540 are the vectors of llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz, made in 2968.4 s; units 38541-39190 were embedded and appended to them in 42.4 s, one timer from the start of that build to its vectors",
+          "device": "cuda (units 1-38540), NVIDIA GeForce GTX 1080 Ti (units 38541-39190)",
+          "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+          "units": 39190,
+          "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+          "extends": {
+            "cache_file": "llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+            "cache_file_sha256": "388889d5103761514657a7bc018a072227e0d308e48b65bacc130c49e0f4c0b4",
+            "units": 38540,
+            "cost_note": {
+              "model": "nvidia/llama-nemotron-embed-1b-v2",
+              "calls": 38540,
+              "tokens_in": 4232334,
+              "tokens_out": 0,
+              "build_time_s": 2968.4269948999863,
+              "device": "cuda",
+              "revision": "113abe4acafa848e77ead9c0623205e511932348",
+              "mode": "passage",
+              "prefix": "passage: ",
+              "dtype": "float32",
+              "batch": 1,
+              "settings_source": "Added 2026-10-31: the settings these vectors were made with, read from the code of commit 02b2078, the code_version.commit of vector__answerable715__cb72000__20261024T004317Z, the run that read this file (its cache_file_sha256 388889d5...): prod/harness/embed.py EMBED_REVISION, EMBED_PREFIX['passage'], EMBED_DTYPE, EMBED_BATCH, and prod/arms/vector.py build_dense_index embedding in passage mode with EMBED_BATCH. The file was written 2026-10-24 02:42:15 desktop time. The note as the build wrote it (model, calls, tokens, build time, device) is kept as llama-nemotron-embed-1b-v2_2286904ea4dd3527.cost.as_recorded.json."
+            }
+          },
+          "appended": {
+            "units": 650,
+            "first_unit": 38541,
+            "calls": 650,
+            "tokens_in": 22481,
+            "tokens_out": 0,
+            "seconds_elapsed": 17.528391400068358,
+            "build_time_s": 42.434920599996985,
+            "device": "NVIDIA GeForce GTX 1080 Ti",
+            "made_utc": "2026-10-31T07:53:01Z",
+            "host": "Fräsh",
+            "python": "3.12.6",
+            "torch": "2.14.1+cu126",
+            "sentence_transformers": "6.0.1",
+            "transformers": "5.12.1"
+          }
+        },
+        "embedder_warm_s": 11.78488560000551,
+        "question_embedding": "at query time, local embedder, query mode"
+      },
+      "search_pass": null,
+      "embed_pass": null
+    },
+    {
+      "leg": 4,
+      "started_at": "2026-10-31T15:49:32.846601+00:00",
+      "finished_at": "2026-10-31T15:49:43.482665+00:00",
+      "wall_s": 10.635842400006368,
+      "process_cpu_s": 12.421875,
+      "workers": 16,
+      "argv": [
+        "prod/run.py",
+        "--arm",
+        "vector",
+        "--set",
+        "output/research/2026-10-31-metadata-redo/vector__redo_ids.jsonl",
+        "--char-budget",
+        "72000",
+        "--workers",
+        "16",
+        "--out",
+        "output/k=chars/vector__metadata_redo__cb72000__20261031"
+      ],
+      "pid": 25744,
+      "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "output\\research\\2026-10-31-metadata-redo\\vector__redo_ids.jsonl",
+      "n_chosen": 147,
+      "n_todo": 0,
+      "n_answered": 0,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 9.756996800002526,
+      "embedder_load_s": 8.728716300000087,
+      "retrieval_only": false,
+      "evaluator": "ragas",
+      "peak_memory_bytes": 8634769408,
+      "code_version": {
+        "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+        "branch": "artefact-v4-iteration",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [],
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_sha256": {}
+      },
+      "flags": null,
+      "lane": {
+        "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "system_prompt": "always passed, empty when the call has no system text",
+        "stdin": "the prompt as UTF-8 bytes",
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+          "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+          "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+          "ENABLE_PROMPT_CACHING_1H": "1"
+        },
+        "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+        "config_settings": {
+          "cleanupPeriodDays": 36500
+        },
+        "login_gate": {
+          "model": "claude-sonnet-5",
+          "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+          "rate_tokens_per_second": 16500.0,
+          "limit_backlog_tokens": 886126.5972843313,
+          "tokens_held_per_character": 0.496
+        },
+        "env_per_call": [
+          "CLAUDE_CODE_EFFORT_LEVEL",
+          "MAX_THINKING_TOKENS",
+          "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+          "CLAUDE_CODE_EXTRA_BODY"
+        ],
+        "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+        "cli_adds": {
+          "seen_with": "2.1.212 (Claude Code)",
+          "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+          "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "units": 39190,
+        "text_chars": 14721423,
+        "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+        "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+        "matrix_shape": [
+          39190,
+          2048
+        ],
+        "matrix_dtype": "float32",
+        "matrix_bytes": 321044480,
+        "cache_file": "A:\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_3b66604d78cf9010.npz",
+        "cache_file_bytes": 336869138,
+        "cache_file_sha256": "93ae1a0e6a1ed1058dc1df969939496bca1476d3db091cc47f29db3d473aaa88",
+        "cache_cost_note": {
+          "model": "nvidia/llama-nemotron-embed-1b-v2",
+          "revision": "113abe4acafa848e77ead9c0623205e511932348",
+          "mode": "passage",
+          "prefix": "passage: ",
+          "dtype": "float32",
+          "batch": 1,
+          "calls": 39190,
+          "tokens_in": 4254815,
+          "tokens_out": 0,
+          "build_time_s": 3010.8619154999833,
+          "build_time_note": "two builds: units 1-38540 are the vectors of llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz, made in 2968.4 s; units 38541-39190 were embedded and appended to them in 42.4 s, one timer from the start of that build to its vectors",
+          "device": "cuda (units 1-38540), NVIDIA GeForce GTX 1080 Ti (units 38541-39190)",
+          "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+          "units": 39190,
+          "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+          "extends": {
+            "cache_file": "llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+            "cache_file_sha256": "388889d5103761514657a7bc018a072227e0d308e48b65bacc130c49e0f4c0b4",
+            "units": 38540,
+            "cost_note": {
+              "model": "nvidia/llama-nemotron-embed-1b-v2",
+              "calls": 38540,
+              "tokens_in": 4232334,
+              "tokens_out": 0,
+              "build_time_s": 2968.4269948999863,
+              "device": "cuda",
+              "revision": "113abe4acafa848e77ead9c0623205e511932348",
+              "mode": "passage",
+              "prefix": "passage: ",
+              "dtype": "float32",
+              "batch": 1,
+              "settings_source": "Added 2026-10-31: the settings these vectors were made with, read from the code of commit 02b2078, the code_version.commit of vector__answerable715__cb72000__20261024T004317Z, the run that read this file (its cache_file_sha256 388889d5...): prod/harness/embed.py EMBED_REVISION, EMBED_PREFIX['passage'], EMBED_DTYPE, EMBED_BATCH, and prod/arms/vector.py build_dense_index embedding in passage mode with EMBED_BATCH. The file was written 2026-10-24 02:42:15 desktop time. The note as the build wrote it (model, calls, tokens, build time, device) is kept as llama-nemotron-embed-1b-v2_2286904ea4dd3527.cost.as_recorded.json."
+            }
+          },
+          "appended": {
+            "units": 650,
+            "first_unit": 38541,
+            "calls": 650,
+            "tokens_in": 22481,
+            "tokens_out": 0,
+            "seconds_elapsed": 17.528391400068358,
+            "build_time_s": 42.434920599996985,
+            "device": "NVIDIA GeForce GTX 1080 Ti",
+            "made_utc": "2026-10-31T07:53:01Z",
+            "host": "Fräsh",
+            "python": "3.12.6",
+            "torch": "2.14.1+cu126",
+            "sentence_transformers": "6.0.1",
+            "transformers": "5.12.1"
+          }
+        },
+        "embedder_warm_s": 8.920483100009733,
+        "question_embedding": "at query time, local embedder, query mode"
+      },
+      "search_pass": null,
+      "embed_pass": null
+    },
+    {
+      "leg": 5,
+      "started_at": "2026-10-31T15:52:11.043919+00:00",
+      "finished_at": "2026-10-31T15:52:24.329919+00:00",
+      "wall_s": 13.28587079999852,
+      "process_cpu_s": 14.96875,
+      "workers": 16,
+      "argv": [
+        "prod/run.py",
+        "--arm",
+        "vector",
+        "--set",
+        "output/research/2026-10-31-metadata-redo/vector__redo_ids.jsonl",
+        "--char-budget",
+        "72000",
+        "--workers",
+        "16",
+        "--out",
+        "output/k=chars/vector__metadata_redo__cb72000__20261031"
+      ],
+      "pid": 2344,
+      "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "output\\research\\2026-10-31-metadata-redo\\vector__redo_ids.jsonl",
+      "n_chosen": 147,
+      "n_todo": 0,
+      "n_answered": 0,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 12.398910600008094,
+      "embedder_load_s": 11.376579000003403,
+      "retrieval_only": false,
+      "evaluator": "ragas",
+      "peak_memory_bytes": 8634667008,
+      "code_version": {
+        "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+        "branch": "artefact-v4-iteration",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [],
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_sha256": {}
+      },
+      "flags": null,
+      "lane": {
+        "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "system_prompt": "always passed, empty when the call has no system text",
+        "stdin": "the prompt as UTF-8 bytes",
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+          "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+          "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+          "ENABLE_PROMPT_CACHING_1H": "1"
+        },
+        "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+        "config_settings": {
+          "cleanupPeriodDays": 36500
+        },
+        "login_gate": {
+          "model": "claude-sonnet-5",
+          "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+          "rate_tokens_per_second": 16500.0,
+          "limit_backlog_tokens": 886126.5972843313,
+          "tokens_held_per_character": 0.496
+        },
+        "env_per_call": [
+          "CLAUDE_CODE_EFFORT_LEVEL",
+          "MAX_THINKING_TOKENS",
+          "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+          "CLAUDE_CODE_EXTRA_BODY"
+        ],
+        "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+        "cli_adds": {
+          "seen_with": "2.1.212 (Claude Code)",
+          "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+          "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "units": 39190,
+        "text_chars": 14721423,
+        "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+        "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+        "matrix_shape": [
+          39190,
+          2048
+        ],
+        "matrix_dtype": "float32",
+        "matrix_bytes": 321044480,
+        "cache_file": "A:\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_3b66604d78cf9010.npz",
+        "cache_file_bytes": 336869138,
+        "cache_file_sha256": "93ae1a0e6a1ed1058dc1df969939496bca1476d3db091cc47f29db3d473aaa88",
+        "cache_cost_note": {
+          "model": "nvidia/llama-nemotron-embed-1b-v2",
+          "revision": "113abe4acafa848e77ead9c0623205e511932348",
+          "mode": "passage",
+          "prefix": "passage: ",
+          "dtype": "float32",
+          "batch": 1,
+          "calls": 39190,
+          "tokens_in": 4254815,
+          "tokens_out": 0,
+          "build_time_s": 3010.8619154999833,
+          "build_time_note": "two builds: units 1-38540 are the vectors of llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz, made in 2968.4 s; units 38541-39190 were embedded and appended to them in 42.4 s, one timer from the start of that build to its vectors",
+          "device": "cuda (units 1-38540), NVIDIA GeForce GTX 1080 Ti (units 38541-39190)",
+          "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+          "units": 39190,
+          "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+          "extends": {
+            "cache_file": "llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+            "cache_file_sha256": "388889d5103761514657a7bc018a072227e0d308e48b65bacc130c49e0f4c0b4",
+            "units": 38540,
+            "cost_note": {
+              "model": "nvidia/llama-nemotron-embed-1b-v2",
+              "calls": 38540,
+              "tokens_in": 4232334,
+              "tokens_out": 0,
+              "build_time_s": 2968.4269948999863,
+              "device": "cuda",
+              "revision": "113abe4acafa848e77ead9c0623205e511932348",
+              "mode": "passage",
+              "prefix": "passage: ",
+              "dtype": "float32",
+              "batch": 1,
+              "settings_source": "Added 2026-10-31: the settings these vectors were made with, read from the code of commit 02b2078, the code_version.commit of vector__answerable715__cb72000__20261024T004317Z, the run that read this file (its cache_file_sha256 388889d5...): prod/harness/embed.py EMBED_REVISION, EMBED_PREFIX['passage'], EMBED_DTYPE, EMBED_BATCH, and prod/arms/vector.py build_dense_index embedding in passage mode with EMBED_BATCH. The file was written 2026-10-24 02:42:15 desktop time. The note as the build wrote it (model, calls, tokens, build time, device) is kept as llama-nemotron-embed-1b-v2_2286904ea4dd3527.cost.as_recorded.json."
+            }
+          },
+          "appended": {
+            "units": 650,
+            "first_unit": 38541,
+            "calls": 650,
+            "tokens_in": 22481,
+            "tokens_out": 0,
+            "seconds_elapsed": 17.528391400068358,
+            "build_time_s": 42.434920599996985,
+            "device": "NVIDIA GeForce GTX 1080 Ti",
+            "made_utc": "2026-10-31T07:53:01Z",
+            "host": "Fräsh",
+            "python": "3.12.6",
+            "torch": "2.14.1+cu126",
+            "sentence_transformers": "6.0.1",
+            "transformers": "5.12.1"
+          }
+        },
+        "embedder_warm_s": 11.564473099992028,
+        "question_embedding": "at query time, local embedder, query mode"
+      },
+      "search_pass": null,
+      "embed_pass": null
+    },
+    {
+      "leg": 6,
+      "started_at": "2026-10-31T15:54:52.043704+00:00",
+      "finished_at": "2026-10-31T15:55:02.951202+00:00",
+      "wall_s": 10.907473200000823,
+      "process_cpu_s": 12.3125,
+      "workers": 16,
+      "argv": [
+        "prod/run.py",
+        "--arm",
+        "vector",
+        "--set",
+        "output/research/2026-10-31-metadata-redo/vector__redo_ids.jsonl",
+        "--char-budget",
+        "72000",
+        "--workers",
+        "16",
+        "--out",
+        "output/k=chars/vector__metadata_redo__cb72000__20261031"
+      ],
+      "pid": 28640,
+      "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "output\\research\\2026-10-31-metadata-redo\\vector__redo_ids.jsonl",
+      "n_chosen": 147,
+      "n_todo": 0,
+      "n_answered": 0,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 9.990230800001882,
+      "embedder_load_s": 8.965772000010475,
+      "retrieval_only": false,
+      "evaluator": "ragas",
+      "peak_memory_bytes": 8634609664,
+      "code_version": {
+        "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+        "branch": "artefact-v4-iteration",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [],
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_sha256": {}
+      },
+      "flags": null,
+      "lane": {
+        "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "system_prompt": "always passed, empty when the call has no system text",
+        "stdin": "the prompt as UTF-8 bytes",
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+          "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+          "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+          "ENABLE_PROMPT_CACHING_1H": "1"
+        },
+        "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+        "config_settings": {
+          "cleanupPeriodDays": 36500
+        },
+        "login_gate": {
+          "model": "claude-sonnet-5",
+          "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+          "rate_tokens_per_second": 16500.0,
+          "limit_backlog_tokens": 886126.5972843313,
+          "tokens_held_per_character": 0.496
+        },
+        "env_per_call": [
+          "CLAUDE_CODE_EFFORT_LEVEL",
+          "MAX_THINKING_TOKENS",
+          "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+          "CLAUDE_CODE_EXTRA_BODY"
+        ],
+        "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+        "cli_adds": {
+          "seen_with": "2.1.212 (Claude Code)",
+          "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+          "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "units": 39190,
+        "text_chars": 14721423,
+        "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+        "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+        "matrix_shape": [
+          39190,
+          2048
+        ],
+        "matrix_dtype": "float32",
+        "matrix_bytes": 321044480,
+        "cache_file": "A:\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_3b66604d78cf9010.npz",
+        "cache_file_bytes": 336869138,
+        "cache_file_sha256": "93ae1a0e6a1ed1058dc1df969939496bca1476d3db091cc47f29db3d473aaa88",
+        "cache_cost_note": {
+          "model": "nvidia/llama-nemotron-embed-1b-v2",
+          "revision": "113abe4acafa848e77ead9c0623205e511932348",
+          "mode": "passage",
+          "prefix": "passage: ",
+          "dtype": "float32",
+          "batch": 1,
+          "calls": 39190,
+          "tokens_in": 4254815,
+          "tokens_out": 0,
+          "build_time_s": 3010.8619154999833,
+          "build_time_note": "two builds: units 1-38540 are the vectors of llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz, made in 2968.4 s; units 38541-39190 were embedded and appended to them in 42.4 s, one timer from the start of that build to its vectors",
+          "device": "cuda (units 1-38540), NVIDIA GeForce GTX 1080 Ti (units 38541-39190)",
+          "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+          "units": 39190,
+          "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+          "extends": {
+            "cache_file": "llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+            "cache_file_sha256": "388889d5103761514657a7bc018a072227e0d308e48b65bacc130c49e0f4c0b4",
+            "units": 38540,
+            "cost_note": {
+              "model": "nvidia/llama-nemotron-embed-1b-v2",
+              "calls": 38540,
+              "tokens_in": 4232334,
+              "tokens_out": 0,
+              "build_time_s": 2968.4269948999863,
+              "device": "cuda",
+              "revision": "113abe4acafa848e77ead9c0623205e511932348",
+              "mode": "passage",
+              "prefix": "passage: ",
+              "dtype": "float32",
+              "batch": 1,
+              "settings_source": "Added 2026-10-31: the settings these vectors were made with, read from the code of commit 02b2078, the code_version.commit of vector__answerable715__cb72000__20261024T004317Z, the run that read this file (its cache_file_sha256 388889d5...): prod/harness/embed.py EMBED_REVISION, EMBED_PREFIX['passage'], EMBED_DTYPE, EMBED_BATCH, and prod/arms/vector.py build_dense_index embedding in passage mode with EMBED_BATCH. The file was written 2026-10-24 02:42:15 desktop time. The note as the build wrote it (model, calls, tokens, build time, device) is kept as llama-nemotron-embed-1b-v2_2286904ea4dd3527.cost.as_recorded.json."
+            }
+          },
+          "appended": {
+            "units": 650,
+            "first_unit": 38541,
+            "calls": 650,
+            "tokens_in": 22481,
+            "tokens_out": 0,
+            "seconds_elapsed": 17.528391400068358,
+            "build_time_s": 42.434920599996985,
+            "device": "NVIDIA GeForce GTX 1080 Ti",
+            "made_utc": "2026-10-31T07:53:01Z",
+            "host": "Fräsh",
+            "python": "3.12.6",
+            "torch": "2.14.1+cu126",
+            "sentence_transformers": "6.0.1",
+            "transformers": "5.12.1"
+          }
+        },
+        "embedder_warm_s": 9.155848599999445,
+        "question_embedding": "at query time, local embedder, query mode"
+      },
+      "search_pass": null,
+      "embed_pass": null
+    },
+    {
+      "leg": 7,
+      "started_at": "2026-10-31T15:57:31.807968+00:00",
+      "finished_at": "2026-10-31T15:57:45.106898+00:00",
+      "wall_s": 13.298566600002232,
+      "process_cpu_s": 14.15625,
+      "workers": 16,
+      "argv": [
+        "prod/run.py",
+        "--arm",
+        "vector",
+        "--set",
+        "output/research/2026-10-31-metadata-redo/vector__redo_ids.jsonl",
+        "--char-budget",
+        "72000",
+        "--workers",
+        "16",
+        "--out",
+        "output/k=chars/vector__metadata_redo__cb72000__20261031"
+      ],
+      "pid": 24684,
+      "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "output\\research\\2026-10-31-metadata-redo\\vector__redo_ids.jsonl",
+      "n_chosen": 147,
+      "n_todo": 0,
+      "n_answered": 0,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 12.303530399993178,
+      "embedder_load_s": 11.241508200007956,
+      "retrieval_only": false,
+      "evaluator": "ragas",
+      "peak_memory_bytes": 8636133376,
+      "code_version": {
+        "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+        "branch": "artefact-v4-iteration",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [],
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_sha256": {}
+      },
+      "flags": null,
+      "lane": {
+        "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "system_prompt": "always passed, empty when the call has no system text",
+        "stdin": "the prompt as UTF-8 bytes",
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+          "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+          "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+          "ENABLE_PROMPT_CACHING_1H": "1"
+        },
+        "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+        "config_settings": {
+          "cleanupPeriodDays": 36500
+        },
+        "login_gate": {
+          "model": "claude-sonnet-5",
+          "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+          "rate_tokens_per_second": 16500.0,
+          "limit_backlog_tokens": 886126.5972843313,
+          "tokens_held_per_character": 0.496
+        },
+        "env_per_call": [
+          "CLAUDE_CODE_EFFORT_LEVEL",
+          "MAX_THINKING_TOKENS",
+          "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+          "CLAUDE_CODE_EXTRA_BODY"
+        ],
+        "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+        "cli_adds": {
+          "seen_with": "2.1.212 (Claude Code)",
+          "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+          "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "units": 39190,
+        "text_chars": 14721423,
+        "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+        "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+        "matrix_shape": [
+          39190,
+          2048
+        ],
+        "matrix_dtype": "float32",
+        "matrix_bytes": 321044480,
+        "cache_file": "A:\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_3b66604d78cf9010.npz",
+        "cache_file_bytes": 336869138,
+        "cache_file_sha256": "93ae1a0e6a1ed1058dc1df969939496bca1476d3db091cc47f29db3d473aaa88",
+        "cache_cost_note": {
+          "model": "nvidia/llama-nemotron-embed-1b-v2",
+          "revision": "113abe4acafa848e77ead9c0623205e511932348",
+          "mode": "passage",
+          "prefix": "passage: ",
+          "dtype": "float32",
+          "batch": 1,
+          "calls": 39190,
+          "tokens_in": 4254815,
+          "tokens_out": 0,
+          "build_time_s": 3010.8619154999833,
+          "build_time_note": "two builds: units 1-38540 are the vectors of llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz, made in 2968.4 s; units 38541-39190 were embedded and appended to them in 42.4 s, one timer from the start of that build to its vectors",
+          "device": "cuda (units 1-38540), NVIDIA GeForce GTX 1080 Ti (units 38541-39190)",
+          "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+          "units": 39190,
+          "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+          "extends": {
+            "cache_file": "llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+            "cache_file_sha256": "388889d5103761514657a7bc018a072227e0d308e48b65bacc130c49e0f4c0b4",
+            "units": 38540,
+            "cost_note": {
+              "model": "nvidia/llama-nemotron-embed-1b-v2",
+              "calls": 38540,
+              "tokens_in": 4232334,
+              "tokens_out": 0,
+              "build_time_s": 2968.4269948999863,
+              "device": "cuda",
+              "revision": "113abe4acafa848e77ead9c0623205e511932348",
+              "mode": "passage",
+              "prefix": "passage: ",
+              "dtype": "float32",
+              "batch": 1,
+              "settings_source": "Added 2026-10-31: the settings these vectors were made with, read from the code of commit 02b2078, the code_version.commit of vector__answerable715__cb72000__20261024T004317Z, the run that read this file (its cache_file_sha256 388889d5...): prod/harness/embed.py EMBED_REVISION, EMBED_PREFIX['passage'], EMBED_DTYPE, EMBED_BATCH, and prod/arms/vector.py build_dense_index embedding in passage mode with EMBED_BATCH. The file was written 2026-10-24 02:42:15 desktop time. The note as the build wrote it (model, calls, tokens, build time, device) is kept as llama-nemotron-embed-1b-v2_2286904ea4dd3527.cost.as_recorded.json."
+            }
+          },
+          "appended": {
+            "units": 650,
+            "first_unit": 38541,
+            "calls": 650,
+            "tokens_in": 22481,
+            "tokens_out": 0,
+            "seconds_elapsed": 17.528391400068358,
+            "build_time_s": 42.434920599996985,
+            "device": "NVIDIA GeForce GTX 1080 Ti",
+            "made_utc": "2026-10-31T07:53:01Z",
+            "host": "Fräsh",
+            "python": "3.12.6",
+            "torch": "2.14.1+cu126",
+            "sentence_transformers": "6.0.1",
+            "transformers": "5.12.1"
+          }
+        },
+        "embedder_warm_s": 11.427668899996206,
+        "question_embedding": "at query time, local embedder, query mode"
+      },
+      "search_pass": null,
+      "embed_pass": null
+    },
+    {
+      "leg": 8,
+      "started_at": "2026-10-31T16:00:12.458102+00:00",
+      "finished_at": "2026-10-31T16:00:23.205765+00:00",
+      "wall_s": 10.747451700008241,
+      "process_cpu_s": 12.875,
+      "workers": 16,
+      "argv": [
+        "prod/run.py",
+        "--arm",
+        "vector",
+        "--set",
+        "output/research/2026-10-31-metadata-redo/vector__redo_ids.jsonl",
+        "--char-budget",
+        "72000",
+        "--workers",
+        "16",
+        "--out",
+        "output/k=chars/vector__metadata_redo__cb72000__20261031"
+      ],
+      "pid": 13760,
+      "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "output\\research\\2026-10-31-metadata-redo\\vector__redo_ids.jsonl",
+      "n_chosen": 147,
+      "n_todo": 0,
+      "n_answered": 0,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 9.865580499987118,
+      "embedder_load_s": 8.845292600002722,
+      "retrieval_only": false,
+      "evaluator": "ragas",
+      "peak_memory_bytes": 8636440576,
+      "code_version": {
+        "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+        "branch": "artefact-v4-iteration",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [],
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_sha256": {}
+      },
+      "flags": null,
+      "lane": {
+        "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "system_prompt": "always passed, empty when the call has no system text",
+        "stdin": "the prompt as UTF-8 bytes",
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+          "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+          "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+          "ENABLE_PROMPT_CACHING_1H": "1"
+        },
+        "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+        "config_settings": {
+          "cleanupPeriodDays": 36500
+        },
+        "login_gate": {
+          "model": "claude-sonnet-5",
+          "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+          "rate_tokens_per_second": 16500.0,
+          "limit_backlog_tokens": 886126.5972843313,
+          "tokens_held_per_character": 0.496
+        },
+        "env_per_call": [
+          "CLAUDE_CODE_EFFORT_LEVEL",
+          "MAX_THINKING_TOKENS",
+          "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+          "CLAUDE_CODE_EXTRA_BODY"
+        ],
+        "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+        "cli_adds": {
+          "seen_with": "2.1.212 (Claude Code)",
+          "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+          "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "units": 39190,
+        "text_chars": 14721423,
+        "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+        "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+        "matrix_shape": [
+          39190,
+          2048
+        ],
+        "matrix_dtype": "float32",
+        "matrix_bytes": 321044480,
+        "cache_file": "A:\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_3b66604d78cf9010.npz",
+        "cache_file_bytes": 336869138,
+        "cache_file_sha256": "93ae1a0e6a1ed1058dc1df969939496bca1476d3db091cc47f29db3d473aaa88",
+        "cache_cost_note": {
+          "model": "nvidia/llama-nemotron-embed-1b-v2",
+          "revision": "113abe4acafa848e77ead9c0623205e511932348",
+          "mode": "passage",
+          "prefix": "passage: ",
+          "dtype": "float32",
+          "batch": 1,
+          "calls": 39190,
+          "tokens_in": 4254815,
+          "tokens_out": 0,
+          "build_time_s": 3010.8619154999833,
+          "build_time_note": "two builds: units 1-38540 are the vectors of llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz, made in 2968.4 s; units 38541-39190 were embedded and appended to them in 42.4 s, one timer from the start of that build to its vectors",
+          "device": "cuda (units 1-38540), NVIDIA GeForce GTX 1080 Ti (units 38541-39190)",
+          "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+          "units": 39190,
+          "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+          "extends": {
+            "cache_file": "llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+            "cache_file_sha256": "388889d5103761514657a7bc018a072227e0d308e48b65bacc130c49e0f4c0b4",
+            "units": 38540,
+            "cost_note": {
+              "model": "nvidia/llama-nemotron-embed-1b-v2",
+              "calls": 38540,
+              "tokens_in": 4232334,
+              "tokens_out": 0,
+              "build_time_s": 2968.4269948999863,
+              "device": "cuda",
+              "revision": "113abe4acafa848e77ead9c0623205e511932348",
+              "mode": "passage",
+              "prefix": "passage: ",
+              "dtype": "float32",
+              "batch": 1,
+              "settings_source": "Added 2026-10-31: the settings these vectors were made with, read from the code of commit 02b2078, the code_version.commit of vector__answerable715__cb72000__20261024T004317Z, the run that read this file (its cache_file_sha256 388889d5...): prod/harness/embed.py EMBED_REVISION, EMBED_PREFIX['passage'], EMBED_DTYPE, EMBED_BATCH, and prod/arms/vector.py build_dense_index embedding in passage mode with EMBED_BATCH. The file was written 2026-10-24 02:42:15 desktop time. The note as the build wrote it (model, calls, tokens, build time, device) is kept as llama-nemotron-embed-1b-v2_2286904ea4dd3527.cost.as_recorded.json."
+            }
+          },
+          "appended": {
+            "units": 650,
+            "first_unit": 38541,
+            "calls": 650,
+            "tokens_in": 22481,
+            "tokens_out": 0,
+            "seconds_elapsed": 17.528391400068358,
+            "build_time_s": 42.434920599996985,
+            "device": "NVIDIA GeForce GTX 1080 Ti",
+            "made_utc": "2026-10-31T07:53:01Z",
+            "host": "Fräsh",
+            "python": "3.12.6",
+            "torch": "2.14.1+cu126",
+            "sentence_transformers": "6.0.1",
+            "transformers": "5.12.1"
+          }
+        },
+        "embedder_warm_s": 9.034743800002616,
+        "question_embedding": "at query time, local embedder, query mode"
+      },
+      "search_pass": null,
+      "embed_pass": null
+    },
+    {
+      "leg": 9,
+      "started_at": "2026-10-31T16:02:50.961629+00:00",
+      "finished_at": "2026-10-31T16:03:05.534589+00:00",
+      "wall_s": 14.57307139999466,
+      "process_cpu_s": 14.75,
+      "workers": 16,
+      "argv": [
+        "prod/run.py",
+        "--arm",
+        "vector",
+        "--set",
+        "output/research/2026-10-31-metadata-redo/vector__redo_ids.jsonl",
+        "--char-budget",
+        "72000",
+        "--workers",
+        "16",
+        "--out",
+        "output/k=chars/vector__metadata_redo__cb72000__20261031"
+      ],
+      "pid": 5268,
+      "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "output\\research\\2026-10-31-metadata-redo\\vector__redo_ids.jsonl",
+      "n_chosen": 147,
+      "n_todo": 0,
+      "n_answered": 0,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 13.139528999992763,
+      "embedder_load_s": 11.965150000003632,
+      "retrieval_only": false,
+      "evaluator": "ragas",
+      "peak_memory_bytes": 8636698624,
+      "code_version": {
+        "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+        "branch": "artefact-v4-iteration",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [],
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_sha256": {}
+      },
+      "flags": null,
+      "lane": {
+        "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "system_prompt": "always passed, empty when the call has no system text",
+        "stdin": "the prompt as UTF-8 bytes",
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+          "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+          "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+          "ENABLE_PROMPT_CACHING_1H": "1"
+        },
+        "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+        "config_settings": {
+          "cleanupPeriodDays": 36500
+        },
+        "login_gate": {
+          "model": "claude-sonnet-5",
+          "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+          "rate_tokens_per_second": 16500.0,
+          "limit_backlog_tokens": 886126.5972843313,
+          "tokens_held_per_character": 0.496
+        },
+        "env_per_call": [
+          "CLAUDE_CODE_EFFORT_LEVEL",
+          "MAX_THINKING_TOKENS",
+          "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+          "CLAUDE_CODE_EXTRA_BODY"
+        ],
+        "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+        "cli_adds": {
+          "seen_with": "2.1.212 (Claude Code)",
+          "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+          "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "units": 39190,
+        "text_chars": 14721423,
+        "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+        "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+        "matrix_shape": [
+          39190,
+          2048
+        ],
+        "matrix_dtype": "float32",
+        "matrix_bytes": 321044480,
+        "cache_file": "A:\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_3b66604d78cf9010.npz",
+        "cache_file_bytes": 336869138,
+        "cache_file_sha256": "93ae1a0e6a1ed1058dc1df969939496bca1476d3db091cc47f29db3d473aaa88",
+        "cache_cost_note": {
+          "model": "nvidia/llama-nemotron-embed-1b-v2",
+          "revision": "113abe4acafa848e77ead9c0623205e511932348",
+          "mode": "passage",
+          "prefix": "passage: ",
+          "dtype": "float32",
+          "batch": 1,
+          "calls": 39190,
+          "tokens_in": 4254815,
+          "tokens_out": 0,
+          "build_time_s": 3010.8619154999833,
+          "build_time_note": "two builds: units 1-38540 are the vectors of llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz, made in 2968.4 s; units 38541-39190 were embedded and appended to them in 42.4 s, one timer from the start of that build to its vectors",
+          "device": "cuda (units 1-38540), NVIDIA GeForce GTX 1080 Ti (units 38541-39190)",
+          "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+          "units": 39190,
+          "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+          "extends": {
+            "cache_file": "llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+            "cache_file_sha256": "388889d5103761514657a7bc018a072227e0d308e48b65bacc130c49e0f4c0b4",
+            "units": 38540,
+            "cost_note": {
+              "model": "nvidia/llama-nemotron-embed-1b-v2",
+              "calls": 38540,
+              "tokens_in": 4232334,
+              "tokens_out": 0,
+              "build_time_s": 2968.4269948999863,
+              "device": "cuda",
+              "revision": "113abe4acafa848e77ead9c0623205e511932348",
+              "mode": "passage",
+              "prefix": "passage: ",
+              "dtype": "float32",
+              "batch": 1,
+              "settings_source": "Added 2026-10-31: the settings these vectors were made with, read from the code of commit 02b2078, the code_version.commit of vector__answerable715__cb72000__20261024T004317Z, the run that read this file (its cache_file_sha256 388889d5...): prod/harness/embed.py EMBED_REVISION, EMBED_PREFIX['passage'], EMBED_DTYPE, EMBED_BATCH, and prod/arms/vector.py build_dense_index embedding in passage mode with EMBED_BATCH. The file was written 2026-10-24 02:42:15 desktop time. The note as the build wrote it (model, calls, tokens, build time, device) is kept as llama-nemotron-embed-1b-v2_2286904ea4dd3527.cost.as_recorded.json."
+            }
+          },
+          "appended": {
+            "units": 650,
+            "first_unit": 38541,
+            "calls": 650,
+            "tokens_in": 22481,
+            "tokens_out": 0,
+            "seconds_elapsed": 17.528391400068358,
+            "build_time_s": 42.434920599996985,
+            "device": "NVIDIA GeForce GTX 1080 Ti",
+            "made_utc": "2026-10-31T07:53:01Z",
+            "host": "Fräsh",
+            "python": "3.12.6",
+            "torch": "2.14.1+cu126",
+            "sentence_transformers": "6.0.1",
+            "transformers": "5.12.1"
+          }
+        },
+        "embedder_warm_s": 12.153542699990794,
+        "question_embedding": "at query time, local embedder, query mode"
+      },
+      "search_pass": null,
+      "embed_pass": null
+    },
+    {
+      "leg": 10,
+      "started_at": "2026-10-31T16:05:32.654534+00:00",
+      "finished_at": "2026-10-31T16:05:43.548035+00:00",
+      "wall_s": 10.893470199996955,
+      "process_cpu_s": 12.109375,
+      "workers": 16,
+      "argv": [
+        "prod/run.py",
+        "--arm",
+        "vector",
+        "--set",
+        "output/research/2026-10-31-metadata-redo/vector__redo_ids.jsonl",
+        "--char-budget",
+        "72000",
+        "--workers",
+        "16",
+        "--out",
+        "output/k=chars/vector__metadata_redo__cb72000__20261031"
+      ],
+      "pid": 24204,
+      "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "output\\research\\2026-10-31-metadata-redo\\vector__redo_ids.jsonl",
+      "n_chosen": 147,
+      "n_todo": 0,
+      "n_answered": 0,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 9.99074570000812,
+      "embedder_load_s": 8.953833300009137,
+      "retrieval_only": false,
+      "evaluator": "ragas",
+      "peak_memory_bytes": 8635146240,
+      "code_version": {
+        "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+        "branch": "artefact-v4-iteration",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [],
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_sha256": {}
+      },
+      "flags": null,
+      "lane": {
+        "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "system_prompt": "always passed, empty when the call has no system text",
+        "stdin": "the prompt as UTF-8 bytes",
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+          "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+          "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+          "ENABLE_PROMPT_CACHING_1H": "1"
+        },
+        "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+        "config_settings": {
+          "cleanupPeriodDays": 36500
+        },
+        "login_gate": {
+          "model": "claude-sonnet-5",
+          "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+          "rate_tokens_per_second": 16500.0,
+          "limit_backlog_tokens": 886126.5972843313,
+          "tokens_held_per_character": 0.496
+        },
+        "env_per_call": [
+          "CLAUDE_CODE_EFFORT_LEVEL",
+          "MAX_THINKING_TOKENS",
+          "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+          "CLAUDE_CODE_EXTRA_BODY"
+        ],
+        "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+        "cli_adds": {
+          "seen_with": "2.1.212 (Claude Code)",
+          "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+          "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "units": 39190,
+        "text_chars": 14721423,
+        "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+        "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+        "matrix_shape": [
+          39190,
+          2048
+        ],
+        "matrix_dtype": "float32",
+        "matrix_bytes": 321044480,
+        "cache_file": "A:\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_3b66604d78cf9010.npz",
+        "cache_file_bytes": 336869138,
+        "cache_file_sha256": "93ae1a0e6a1ed1058dc1df969939496bca1476d3db091cc47f29db3d473aaa88",
+        "cache_cost_note": {
+          "model": "nvidia/llama-nemotron-embed-1b-v2",
+          "revision": "113abe4acafa848e77ead9c0623205e511932348",
+          "mode": "passage",
+          "prefix": "passage: ",
+          "dtype": "float32",
+          "batch": 1,
+          "calls": 39190,
+          "tokens_in": 4254815,
+          "tokens_out": 0,
+          "build_time_s": 3010.8619154999833,
+          "build_time_note": "two builds: units 1-38540 are the vectors of llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz, made in 2968.4 s; units 38541-39190 were embedded and appended to them in 42.4 s, one timer from the start of that build to its vectors",
+          "device": "cuda (units 1-38540), NVIDIA GeForce GTX 1080 Ti (units 38541-39190)",
+          "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+          "units": 39190,
+          "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+          "extends": {
+            "cache_file": "llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+            "cache_file_sha256": "388889d5103761514657a7bc018a072227e0d308e48b65bacc130c49e0f4c0b4",
+            "units": 38540,
+            "cost_note": {
+              "model": "nvidia/llama-nemotron-embed-1b-v2",
+              "calls": 38540,
+              "tokens_in": 4232334,
+              "tokens_out": 0,
+              "build_time_s": 2968.4269948999863,
+              "device": "cuda",
+              "revision": "113abe4acafa848e77ead9c0623205e511932348",
+              "mode": "passage",
+              "prefix": "passage: ",
+              "dtype": "float32",
+              "batch": 1,
+              "settings_source": "Added 2026-10-31: the settings these vectors were made with, read from the code of commit 02b2078, the code_version.commit of vector__answerable715__cb72000__20261024T004317Z, the run that read this file (its cache_file_sha256 388889d5...): prod/harness/embed.py EMBED_REVISION, EMBED_PREFIX['passage'], EMBED_DTYPE, EMBED_BATCH, and prod/arms/vector.py build_dense_index embedding in passage mode with EMBED_BATCH. The file was written 2026-10-24 02:42:15 desktop time. The note as the build wrote it (model, calls, tokens, build time, device) is kept as llama-nemotron-embed-1b-v2_2286904ea4dd3527.cost.as_recorded.json."
+            }
+          },
+          "appended": {
+            "units": 650,
+            "first_unit": 38541,
+            "calls": 650,
+            "tokens_in": 22481,
+            "tokens_out": 0,
+            "seconds_elapsed": 17.528391400068358,
+            "build_time_s": 42.434920599996985,
+            "device": "NVIDIA GeForce GTX 1080 Ti",
+            "made_utc": "2026-10-31T07:53:01Z",
+            "host": "Fräsh",
+            "python": "3.12.6",
+            "torch": "2.14.1+cu126",
+            "sentence_transformers": "6.0.1",
+            "transformers": "5.12.1"
+          }
+        },
+        "embedder_warm_s": 9.150424599996768,
+        "question_embedding": "at query time, local embedder, query mode"
+      },
+      "search_pass": null,
+      "embed_pass": null
+    },
+    {
+      "leg": 11,
+      "started_at": "2026-10-31T16:08:12.991691+00:00",
+      "finished_at": "2026-10-31T16:08:26.458692+00:00",
+      "wall_s": 13.466653499999666,
+      "process_cpu_s": 14.359375,
+      "workers": 16,
+      "argv": [
+        "prod/run.py",
+        "--arm",
+        "vector",
+        "--set",
+        "output/research/2026-10-31-metadata-redo/vector__redo_ids.jsonl",
+        "--char-budget",
+        "72000",
+        "--workers",
+        "16",
+        "--out",
+        "output/k=chars/vector__metadata_redo__cb72000__20261031"
+      ],
+      "pid": 26344,
+      "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "output\\research\\2026-10-31-metadata-redo\\vector__redo_ids.jsonl",
+      "n_chosen": 147,
+      "n_todo": 0,
+      "n_answered": 0,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 12.468571799996425,
+      "embedder_load_s": 11.389956300001359,
+      "retrieval_only": false,
+      "evaluator": "ragas",
+      "peak_memory_bytes": 8634826752,
+      "code_version": {
+        "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+        "branch": "artefact-v4-iteration",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [],
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_sha256": {}
+      },
+      "flags": null,
+      "lane": {
+        "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "system_prompt": "always passed, empty when the call has no system text",
+        "stdin": "the prompt as UTF-8 bytes",
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+          "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+          "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+          "ENABLE_PROMPT_CACHING_1H": "1"
+        },
+        "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+        "config_settings": {
+          "cleanupPeriodDays": 36500
+        },
+        "login_gate": {
+          "model": "claude-sonnet-5",
+          "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+          "rate_tokens_per_second": 16500.0,
+          "limit_backlog_tokens": 886126.5972843313,
+          "tokens_held_per_character": 0.496
+        },
+        "env_per_call": [
+          "CLAUDE_CODE_EFFORT_LEVEL",
+          "MAX_THINKING_TOKENS",
+          "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+          "CLAUDE_CODE_EXTRA_BODY"
+        ],
+        "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+        "cli_adds": {
+          "seen_with": "2.1.212 (Claude Code)",
+          "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+          "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "units": 39190,
+        "text_chars": 14721423,
+        "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+        "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+        "matrix_shape": [
+          39190,
+          2048
+        ],
+        "matrix_dtype": "float32",
+        "matrix_bytes": 321044480,
+        "cache_file": "A:\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_3b66604d78cf9010.npz",
+        "cache_file_bytes": 336869138,
+        "cache_file_sha256": "93ae1a0e6a1ed1058dc1df969939496bca1476d3db091cc47f29db3d473aaa88",
+        "cache_cost_note": {
+          "model": "nvidia/llama-nemotron-embed-1b-v2",
+          "revision": "113abe4acafa848e77ead9c0623205e511932348",
+          "mode": "passage",
+          "prefix": "passage: ",
+          "dtype": "float32",
+          "batch": 1,
+          "calls": 39190,
+          "tokens_in": 4254815,
+          "tokens_out": 0,
+          "build_time_s": 3010.8619154999833,
+          "build_time_note": "two builds: units 1-38540 are the vectors of llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz, made in 2968.4 s; units 38541-39190 were embedded and appended to them in 42.4 s, one timer from the start of that build to its vectors",
+          "device": "cuda (units 1-38540), NVIDIA GeForce GTX 1080 Ti (units 38541-39190)",
+          "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+          "units": 39190,
+          "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+          "extends": {
+            "cache_file": "llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+            "cache_file_sha256": "388889d5103761514657a7bc018a072227e0d308e48b65bacc130c49e0f4c0b4",
+            "units": 38540,
+            "cost_note": {
+              "model": "nvidia/llama-nemotron-embed-1b-v2",
+              "calls": 38540,
+              "tokens_in": 4232334,
+              "tokens_out": 0,
+              "build_time_s": 2968.4269948999863,
+              "device": "cuda",
+              "revision": "113abe4acafa848e77ead9c0623205e511932348",
+              "mode": "passage",
+              "prefix": "passage: ",
+              "dtype": "float32",
+              "batch": 1,
+              "settings_source": "Added 2026-10-31: the settings these vectors were made with, read from the code of commit 02b2078, the code_version.commit of vector__answerable715__cb72000__20261024T004317Z, the run that read this file (its cache_file_sha256 388889d5...): prod/harness/embed.py EMBED_REVISION, EMBED_PREFIX['passage'], EMBED_DTYPE, EMBED_BATCH, and prod/arms/vector.py build_dense_index embedding in passage mode with EMBED_BATCH. The file was written 2026-10-24 02:42:15 desktop time. The note as the build wrote it (model, calls, tokens, build time, device) is kept as llama-nemotron-embed-1b-v2_2286904ea4dd3527.cost.as_recorded.json."
+            }
+          },
+          "appended": {
+            "units": 650,
+            "first_unit": 38541,
+            "calls": 650,
+            "tokens_in": 22481,
+            "tokens_out": 0,
+            "seconds_elapsed": 17.528391400068358,
+            "build_time_s": 42.434920599996985,
+            "device": "NVIDIA GeForce GTX 1080 Ti",
+            "made_utc": "2026-10-31T07:53:01Z",
+            "host": "Fräsh",
+            "python": "3.12.6",
+            "torch": "2.14.1+cu126",
+            "sentence_transformers": "6.0.1",
+            "transformers": "5.12.1"
+          }
+        },
+        "embedder_warm_s": 11.591368800000055,
+        "question_embedding": "at query time, local embedder, query mode"
+      },
+      "search_pass": null,
+      "embed_pass": null
+    },
+    {
+      "leg": 12,
+      "started_at": "2026-10-31T16:10:53.855857+00:00",
+      "finished_at": "2026-10-31T16:11:04.498636+00:00",
+      "wall_s": 10.642789100005757,
+      "process_cpu_s": 12.4375,
+      "workers": 16,
+      "argv": [
+        "prod/run.py",
+        "--arm",
+        "vector",
+        "--set",
+        "output/research/2026-10-31-metadata-redo/vector__redo_ids.jsonl",
+        "--char-budget",
+        "72000",
+        "--workers",
+        "16",
+        "--out",
+        "output/k=chars/vector__metadata_redo__cb72000__20261031"
+      ],
+      "pid": 17552,
+      "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "output\\research\\2026-10-31-metadata-redo\\vector__redo_ids.jsonl",
+      "n_chosen": 147,
+      "n_todo": 0,
+      "n_answered": 0,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 9.756932299991604,
+      "embedder_load_s": 8.739027500007069,
+      "retrieval_only": false,
+      "evaluator": "ragas",
+      "peak_memory_bytes": 8634646528,
+      "code_version": {
+        "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+        "branch": "artefact-v4-iteration",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [],
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_sha256": {}
+      },
+      "flags": null,
+      "lane": {
+        "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "system_prompt": "always passed, empty when the call has no system text",
+        "stdin": "the prompt as UTF-8 bytes",
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+          "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+          "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+          "ENABLE_PROMPT_CACHING_1H": "1"
+        },
+        "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+        "config_settings": {
+          "cleanupPeriodDays": 36500
+        },
+        "login_gate": {
+          "model": "claude-sonnet-5",
+          "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+          "rate_tokens_per_second": 16500.0,
+          "limit_backlog_tokens": 886126.5972843313,
+          "tokens_held_per_character": 0.496
+        },
+        "env_per_call": [
+          "CLAUDE_CODE_EFFORT_LEVEL",
+          "MAX_THINKING_TOKENS",
+          "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+          "CLAUDE_CODE_EXTRA_BODY"
+        ],
+        "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+        "cli_adds": {
+          "seen_with": "2.1.212 (Claude Code)",
+          "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+          "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "units": 39190,
+        "text_chars": 14721423,
+        "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+        "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+        "matrix_shape": [
+          39190,
+          2048
+        ],
+        "matrix_dtype": "float32",
+        "matrix_bytes": 321044480,
+        "cache_file": "A:\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_3b66604d78cf9010.npz",
+        "cache_file_bytes": 336869138,
+        "cache_file_sha256": "93ae1a0e6a1ed1058dc1df969939496bca1476d3db091cc47f29db3d473aaa88",
+        "cache_cost_note": {
+          "model": "nvidia/llama-nemotron-embed-1b-v2",
+          "revision": "113abe4acafa848e77ead9c0623205e511932348",
+          "mode": "passage",
+          "prefix": "passage: ",
+          "dtype": "float32",
+          "batch": 1,
+          "calls": 39190,
+          "tokens_in": 4254815,
+          "tokens_out": 0,
+          "build_time_s": 3010.8619154999833,
+          "build_time_note": "two builds: units 1-38540 are the vectors of llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz, made in 2968.4 s; units 38541-39190 were embedded and appended to them in 42.4 s, one timer from the start of that build to its vectors",
+          "device": "cuda (units 1-38540), NVIDIA GeForce GTX 1080 Ti (units 38541-39190)",
+          "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+          "units": 39190,
+          "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+          "extends": {
+            "cache_file": "llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+            "cache_file_sha256": "388889d5103761514657a7bc018a072227e0d308e48b65bacc130c49e0f4c0b4",
+            "units": 38540,
+            "cost_note": {
+              "model": "nvidia/llama-nemotron-embed-1b-v2",
+              "calls": 38540,
+              "tokens_in": 4232334,
+              "tokens_out": 0,
+              "build_time_s": 2968.4269948999863,
+              "device": "cuda",
+              "revision": "113abe4acafa848e77ead9c0623205e511932348",
+              "mode": "passage",
+              "prefix": "passage: ",
+              "dtype": "float32",
+              "batch": 1,
+              "settings_source": "Added 2026-10-31: the settings these vectors were made with, read from the code of commit 02b2078, the code_version.commit of vector__answerable715__cb72000__20261024T004317Z, the run that read this file (its cache_file_sha256 388889d5...): prod/harness/embed.py EMBED_REVISION, EMBED_PREFIX['passage'], EMBED_DTYPE, EMBED_BATCH, and prod/arms/vector.py build_dense_index embedding in passage mode with EMBED_BATCH. The file was written 2026-10-24 02:42:15 desktop time. The note as the build wrote it (model, calls, tokens, build time, device) is kept as llama-nemotron-embed-1b-v2_2286904ea4dd3527.cost.as_recorded.json."
+            }
+          },
+          "appended": {
+            "units": 650,
+            "first_unit": 38541,
+            "calls": 650,
+            "tokens_in": 22481,
+            "tokens_out": 0,
+            "seconds_elapsed": 17.528391400068358,
+            "build_time_s": 42.434920599996985,
+            "device": "NVIDIA GeForce GTX 1080 Ti",
+            "made_utc": "2026-10-31T07:53:01Z",
+            "host": "Fräsh",
+            "python": "3.12.6",
+            "torch": "2.14.1+cu126",
+            "sentence_transformers": "6.0.1",
+            "transformers": "5.12.1"
+          }
+        },
+        "embedder_warm_s": 8.92580640000233,
+        "question_embedding": "at query time, local embedder, query mode"
+      },
+      "search_pass": null,
+      "embed_pass": null
+    },
+    {
+      "leg": 13,
+      "started_at": "2026-10-31T16:13:32.009356+00:00",
+      "finished_at": "2026-10-31T16:13:44.802839+00:00",
+      "wall_s": 12.79356689999986,
+      "process_cpu_s": 13.796875,
+      "workers": 16,
+      "argv": [
+        "prod/run.py",
+        "--arm",
+        "vector",
+        "--set",
+        "output/research/2026-10-31-metadata-redo/vector__redo_ids.jsonl",
+        "--char-budget",
+        "72000",
+        "--workers",
+        "16",
+        "--out",
+        "output/k=chars/vector__metadata_redo__cb72000__20261031"
+      ],
+      "pid": 12672,
+      "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "output\\research\\2026-10-31-metadata-redo\\vector__redo_ids.jsonl",
+      "n_chosen": 147,
+      "n_todo": 0,
+      "n_answered": 0,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 11.914971899997909,
+      "embedder_load_s": 10.892557099999976,
+      "retrieval_only": false,
+      "evaluator": "ragas",
+      "peak_memory_bytes": 8635064320,
+      "code_version": {
+        "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+        "branch": "artefact-v4-iteration",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [],
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_sha256": {}
+      },
+      "flags": null,
+      "lane": {
+        "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "system_prompt": "always passed, empty when the call has no system text",
+        "stdin": "the prompt as UTF-8 bytes",
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+          "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+          "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+          "ENABLE_PROMPT_CACHING_1H": "1"
+        },
+        "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+        "config_settings": {
+          "cleanupPeriodDays": 36500
+        },
+        "login_gate": {
+          "model": "claude-sonnet-5",
+          "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+          "rate_tokens_per_second": 16500.0,
+          "limit_backlog_tokens": 886126.5972843313,
+          "tokens_held_per_character": 0.496
+        },
+        "env_per_call": [
+          "CLAUDE_CODE_EFFORT_LEVEL",
+          "MAX_THINKING_TOKENS",
+          "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+          "CLAUDE_CODE_EXTRA_BODY"
+        ],
+        "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+        "cli_adds": {
+          "seen_with": "2.1.212 (Claude Code)",
+          "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+          "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "units": 39190,
+        "text_chars": 14721423,
+        "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+        "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+        "matrix_shape": [
+          39190,
+          2048
+        ],
+        "matrix_dtype": "float32",
+        "matrix_bytes": 321044480,
+        "cache_file": "A:\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_3b66604d78cf9010.npz",
+        "cache_file_bytes": 336869138,
+        "cache_file_sha256": "93ae1a0e6a1ed1058dc1df969939496bca1476d3db091cc47f29db3d473aaa88",
+        "cache_cost_note": {
+          "model": "nvidia/llama-nemotron-embed-1b-v2",
+          "revision": "113abe4acafa848e77ead9c0623205e511932348",
+          "mode": "passage",
+          "prefix": "passage: ",
+          "dtype": "float32",
+          "batch": 1,
+          "calls": 39190,
+          "tokens_in": 4254815,
+          "tokens_out": 0,
+          "build_time_s": 3010.8619154999833,
+          "build_time_note": "two builds: units 1-38540 are the vectors of llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz, made in 2968.4 s; units 38541-39190 were embedded and appended to them in 42.4 s, one timer from the start of that build to its vectors",
+          "device": "cuda (units 1-38540), NVIDIA GeForce GTX 1080 Ti (units 38541-39190)",
+          "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+          "units": 39190,
+          "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+          "extends": {
+            "cache_file": "llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+            "cache_file_sha256": "388889d5103761514657a7bc018a072227e0d308e48b65bacc130c49e0f4c0b4",
+            "units": 38540,
+            "cost_note": {
+              "model": "nvidia/llama-nemotron-embed-1b-v2",
+              "calls": 38540,
+              "tokens_in": 4232334,
+              "tokens_out": 0,
+              "build_time_s": 2968.4269948999863,
+              "device": "cuda",
+              "revision": "113abe4acafa848e77ead9c0623205e511932348",
+              "mode": "passage",
+              "prefix": "passage: ",
+              "dtype": "float32",
+              "batch": 1,
+              "settings_source": "Added 2026-10-31: the settings these vectors were made with, read from the code of commit 02b2078, the code_version.commit of vector__answerable715__cb72000__20261024T004317Z, the run that read this file (its cache_file_sha256 388889d5...): prod/harness/embed.py EMBED_REVISION, EMBED_PREFIX['passage'], EMBED_DTYPE, EMBED_BATCH, and prod/arms/vector.py build_dense_index embedding in passage mode with EMBED_BATCH. The file was written 2026-10-24 02:42:15 desktop time. The note as the build wrote it (model, calls, tokens, build time, device) is kept as llama-nemotron-embed-1b-v2_2286904ea4dd3527.cost.as_recorded.json."
+            }
+          },
+          "appended": {
+            "units": 650,
+            "first_unit": 38541,
+            "calls": 650,
+            "tokens_in": 22481,
+            "tokens_out": 0,
+            "seconds_elapsed": 17.528391400068358,
+            "build_time_s": 42.434920599996985,
+            "device": "NVIDIA GeForce GTX 1080 Ti",
+            "made_utc": "2026-10-31T07:53:01Z",
+            "host": "Fräsh",
+            "python": "3.12.6",
+            "torch": "2.14.1+cu126",
+            "sentence_transformers": "6.0.1",
+            "transformers": "5.12.1"
+          }
+        },
+        "embedder_warm_s": 11.080330700002378,
+        "question_embedding": "at query time, local embedder, query mode"
+      },
+      "search_pass": null,
+      "embed_pass": null
+    },
+    {
+      "leg": 14,
+      "started_at": "2026-10-31T16:14:33.526702+00:00",
+      "finished_at": "2026-10-31T16:14:44.493201+00:00",
+      "wall_s": 10.96652709999762,
+      "process_cpu_s": 12.0625,
+      "workers": 16,
+      "argv": [
+        "prod/run.py",
+        "--arm",
+        "vector",
+        "--set",
+        "output/research/2026-10-31-metadata-redo/vector__redo_ids.jsonl",
+        "--char-budget",
+        "72000",
+        "--workers",
+        "16",
+        "--out",
+        "output/k=chars/vector__metadata_redo__cb72000__20261031"
+      ],
+      "pid": 14580,
+      "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+      "ids_file": "output\\research\\2026-10-31-metadata-redo\\vector__redo_ids.jsonl",
+      "n_chosen": 147,
+      "n_todo": 0,
+      "n_answered": 0,
+      "n_unanswered_after": 0,
+      "aborted": null,
+      "prepare_s": 10.065467599997646,
+      "embedder_load_s": 9.006051500007743,
+      "retrieval_only": false,
+      "evaluator": "ragas",
+      "peak_memory_bytes": 8635555840,
+      "code_version": {
+        "commit": "354276cc0e4f3f7a6b40e5278097559ec2d181eb",
+        "branch": "artefact-v4-iteration",
+        "dirty": true
+      },
+      "code_state": {
+        "status": [],
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_sha256": {}
+      },
+      "flags": null,
+      "lane": {
+        "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+        "cli_version": "2.1.212 (Claude Code)",
+        "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+        "fixed_flags": [
+          "-p",
+          "--tools",
+          "",
+          "--safe-mode"
+        ],
+        "system_prompt": "always passed, empty when the call has no system text",
+        "stdin": "the prompt as UTF-8 bytes",
+        "env_set": {
+          "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+          "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+          "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+          "ENABLE_PROMPT_CACHING_1H": "1"
+        },
+        "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+        "config_settings": {
+          "cleanupPeriodDays": 36500
+        },
+        "login_gate": {
+          "model": "claude-sonnet-5",
+          "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+          "rate_tokens_per_second": 16500.0,
+          "limit_backlog_tokens": 886126.5972843313,
+          "tokens_held_per_character": 0.496
+        },
+        "env_per_call": [
+          "CLAUDE_CODE_EFFORT_LEVEL",
+          "MAX_THINKING_TOKENS",
+          "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+          "CLAUDE_CODE_EXTRA_BODY"
+        ],
+        "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+        "cli_adds": {
+          "seen_with": "2.1.212 (Claude Code)",
+          "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+          "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+        },
+        "max_tries_default": 6
+      },
+      "index": {
+        "units": 39190,
+        "text_chars": 14721423,
+        "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+        "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+        "matrix_shape": [
+          39190,
+          2048
+        ],
+        "matrix_dtype": "float32",
+        "matrix_bytes": 321044480,
+        "cache_file": "A:\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_3b66604d78cf9010.npz",
+        "cache_file_bytes": 336869138,
+        "cache_file_sha256": "93ae1a0e6a1ed1058dc1df969939496bca1476d3db091cc47f29db3d473aaa88",
+        "cache_cost_note": {
+          "model": "nvidia/llama-nemotron-embed-1b-v2",
+          "revision": "113abe4acafa848e77ead9c0623205e511932348",
+          "mode": "passage",
+          "prefix": "passage: ",
+          "dtype": "float32",
+          "batch": 1,
+          "calls": 39190,
+          "tokens_in": 4254815,
+          "tokens_out": 0,
+          "build_time_s": 3010.8619154999833,
+          "build_time_note": "two builds: units 1-38540 are the vectors of llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz, made in 2968.4 s; units 38541-39190 were embedded and appended to them in 42.4 s, one timer from the start of that build to its vectors",
+          "device": "cuda (units 1-38540), NVIDIA GeForce GTX 1080 Ti (units 38541-39190)",
+          "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+          "units": 39190,
+          "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+          "extends": {
+            "cache_file": "llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+            "cache_file_sha256": "388889d5103761514657a7bc018a072227e0d308e48b65bacc130c49e0f4c0b4",
+            "units": 38540,
+            "cost_note": {
+              "model": "nvidia/llama-nemotron-embed-1b-v2",
+              "calls": 38540,
+              "tokens_in": 4232334,
+              "tokens_out": 0,
+              "build_time_s": 2968.4269948999863,
+              "device": "cuda",
+              "revision": "113abe4acafa848e77ead9c0623205e511932348",
+              "mode": "passage",
+              "prefix": "passage: ",
+              "dtype": "float32",
+              "batch": 1,
+              "settings_source": "Added 2026-10-31: the settings these vectors were made with, read from the code of commit 02b2078, the code_version.commit of vector__answerable715__cb72000__20261024T004317Z, the run that read this file (its cache_file_sha256 388889d5...): prod/harness/embed.py EMBED_REVISION, EMBED_PREFIX['passage'], EMBED_DTYPE, EMBED_BATCH, and prod/arms/vector.py build_dense_index embedding in passage mode with EMBED_BATCH. The file was written 2026-10-24 02:42:15 desktop time. The note as the build wrote it (model, calls, tokens, build time, device) is kept as llama-nemotron-embed-1b-v2_2286904ea4dd3527.cost.as_recorded.json."
+            }
+          },
+          "appended": {
+            "units": 650,
+            "first_unit": 38541,
+            "calls": 650,
+            "tokens_in": 22481,
+            "tokens_out": 0,
+            "seconds_elapsed": 17.528391400068358,
+            "build_time_s": 42.434920599996985,
+            "device": "NVIDIA GeForce GTX 1080 Ti",
+            "made_utc": "2026-10-31T07:53:01Z",
+            "host": "Fräsh",
+            "python": "3.12.6",
+            "torch": "2.14.1+cu126",
+            "sentence_transformers": "6.0.1",
+            "transformers": "5.12.1"
+          }
+        },
+        "embedder_warm_s": 9.206961499992758,
+        "question_embedding": "at query time, local embedder, query mode"
+      },
+      "search_pass": null,
+      "embed_pass": null
+    }
+  ],
+  "workers": 16,
+  "lane": {
+    "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+    "cli_version": "2.1.212 (Claude Code)",
+    "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+    "fixed_flags": [
+      "-p",
+      "--tools",
+      "",
+      "--safe-mode"
+    ],
+    "system_prompt": "always passed, empty when the call has no system text",
+    "stdin": "the prompt as UTF-8 bytes",
+    "env_set": {
+      "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+      "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+      "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+      "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+      "ENABLE_PROMPT_CACHING_1H": "1"
+    },
+    "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it. A try the subscription refuses at its usage limit (HTTP 429) goes again with CLAUDE_API as ANTHROPIC_API_KEY, only on a run with HERB_CLAUDE_API_FALLBACK=on; for this run it is off",
+    "config_settings": {
+      "cleanupPeriodDays": 36500
+    },
+    "login_gate": {
+      "model": "claude-sonnet-5",
+      "state_file": "C:\\Users\\Djuret\\.claude-herb-lane\\login_gate.json",
+      "rate_tokens_per_second": 16500.0,
+      "limit_backlog_tokens": 886126.5972843313,
+      "tokens_held_per_character": 0.496
+    },
+    "env_per_call": [
+      "CLAUDE_CODE_EFFORT_LEVEL",
+      "MAX_THINKING_TOKENS",
+      "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+      "CLAUDE_CODE_EXTRA_BODY"
+    ],
+    "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+    "cli_adds": {
+      "seen_with": "2.1.212 (Claude Code)",
+      "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+      "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+    },
+    "max_tries_default": 6
+  },
+  "generator": {
+    "model": "claude-sonnet-5",
+    "system": "Answer the question using only the provided documents. Be concise.",
+    "user_template": "Documents:\\n<the contexts, a blank line between them>\\n\\nQuestion: <the question>",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "answer"
+      ],
+      "additionalProperties": false
+    },
+    "payload": {
+      "temperature": 0,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      },
+      "max_tokens": 8192,
+      "min_tokens": 1
+    },
+    "applied": {
+      "effort": "none sent (the model's own default)",
+      "thinking": "off",
+      "max_output_tokens": 8192
+    },
+    "not_applied": {
+      "temperature": "claude-sonnet-5 refuses a temperature; it is sent only to claude-haiku-4-5",
+      "min_tokens": "no such setting in this lane"
+    },
+    "env_set": {
+      "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+      "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+      "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+      "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+      "ENABLE_PROMPT_CACHING_1H": "1",
+      "CLAUDE_CODE_EFFORT_LEVEL": "auto",
+      "MAX_THINKING_TOKENS": "0",
+      "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8192"
+    },
+    "env_unset": [
+      "CLAUDE_CODE_EXTRA_BODY"
+    ],
+    "timeout_s": 480.0
+  },
+  "index": {
+    "units": 39190,
+    "text_chars": 14721423,
+    "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+    "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+    "matrix_shape": [
+      39190,
+      2048
+    ],
+    "matrix_dtype": "float32",
+    "matrix_bytes": 321044480,
+    "cache_file": "A:\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_3b66604d78cf9010.npz",
+    "cache_file_bytes": 336869138,
+    "cache_file_sha256": "93ae1a0e6a1ed1058dc1df969939496bca1476d3db091cc47f29db3d473aaa88",
+    "cache_cost_note": {
+      "model": "nvidia/llama-nemotron-embed-1b-v2",
+      "revision": "113abe4acafa848e77ead9c0623205e511932348",
+      "mode": "passage",
+      "prefix": "passage: ",
+      "dtype": "float32",
+      "batch": 1,
+      "calls": 39190,
+      "tokens_in": 4254815,
+      "tokens_out": 0,
+      "build_time_s": 3010.8619154999833,
+      "build_time_note": "two builds: units 1-38540 are the vectors of llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz, made in 2968.4 s; units 38541-39190 were embedded and appended to them in 42.4 s, one timer from the start of that build to its vectors",
+      "device": "cuda (units 1-38540), NVIDIA GeForce GTX 1080 Ti (units 38541-39190)",
+      "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+      "units": 39190,
+      "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+      "extends": {
+        "cache_file": "llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+        "cache_file_sha256": "388889d5103761514657a7bc018a072227e0d308e48b65bacc130c49e0f4c0b4",
+        "units": 38540,
+        "cost_note": {
+          "model": "nvidia/llama-nemotron-embed-1b-v2",
+          "calls": 38540,
+          "tokens_in": 4232334,
+          "tokens_out": 0,
+          "build_time_s": 2968.4269948999863,
+          "device": "cuda",
+          "revision": "113abe4acafa848e77ead9c0623205e511932348",
+          "mode": "passage",
+          "prefix": "passage: ",
+          "dtype": "float32",
+          "batch": 1,
+          "settings_source": "Added 2026-10-31: the settings these vectors were made with, read from the code of commit 02b2078, the code_version.commit of vector__answerable715__cb72000__20261024T004317Z, the run that read this file (its cache_file_sha256 388889d5...): prod/harness/embed.py EMBED_REVISION, EMBED_PREFIX['passage'], EMBED_DTYPE, EMBED_BATCH, and prod/arms/vector.py build_dense_index embedding in passage mode with EMBED_BATCH. The file was written 2026-10-24 02:42:15 desktop time. The note as the build wrote it (model, calls, tokens, build time, device) is kept as llama-nemotron-embed-1b-v2_2286904ea4dd3527.cost.as_recorded.json."
+        }
+      },
+      "appended": {
+        "units": 650,
+        "first_unit": 38541,
+        "calls": 650,
+        "tokens_in": 22481,
+        "tokens_out": 0,
+        "seconds_elapsed": 17.528391400068358,
+        "build_time_s": 42.434920599996985,
+        "device": "NVIDIA GeForce GTX 1080 Ti",
+        "made_utc": "2026-10-31T07:53:01Z",
+        "host": "Fräsh",
+        "python": "3.12.6",
+        "torch": "2.14.1+cu126",
+        "sentence_transformers": "6.0.1",
+        "transformers": "5.12.1"
+      }
+    },
+    "embedder_warm_s": 12.026639399991836,
+    "question_embedding": "at query time, local embedder, query mode"
+  },
+  "code_state": {
+    "status": [],
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "untracked_sha256": {}
+  },
+  "env": {
+    "CLAUDE_CODE_OAUTH_TOKEN": "<set>",
+    "HERB_EMBED_DEVICE": "cuda",
+    "NEO4J_PASSWORD": "<set>",
+    "RAGAS_DO_NOT_TRACK": "true",
+    "RAGAS_JUDGE_INFLIGHT": "24"
+  }
+}

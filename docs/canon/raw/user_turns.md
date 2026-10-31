@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-3160 turns, chronological. Verbatim text; no edits.
+3178 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -22338,4 +22338,84 @@ status
 ## 2026-10-31 12:39 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
 
 Dude I told you to do this and you stopped because it would take a model call? Wasn't that fucking both in implied and decided it would absolutely need that?
+
+## 2026-10-31 13:47 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+Dude, if the memory is gone on the desktop, it's because YOU are doing shit there..
+
+## 2026-10-31 14:35 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+Out of 32!?
+
+## 2026-10-31 14:40 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+Close gpt, slack, edge, Firefox, wispr
+
+## 2026-10-31 14:44 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+YOU did not name it.., fucking close it..
+
+## 2026-10-31 14:46 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+Are any of those needed for what WE are doing now?
+
+## 2026-10-31 14:47 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+*queued while an agent was working*
+
+I do not
+
+## 2026-10-31 14:48 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+Fucking close them, not sound switch tho
+
+## 2026-10-31 14:48 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+*queued while an agent was working*
+
+Then carry on with the actual real project
+
+## 2026-10-31 14:55 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+Well.. Is there a reason you are not doing more then depending on the available ram? Doe the gold arm require embedding?
+
+## 2026-10-31 14:57 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+Wait, why would you need "another one".. What the fuck are you talking about? I it's loaded into the memory.. Any fucking process should be able to use it? Also, are you NOT using the rest 6gb cram for anything? The fuck ks this
+
+## 2026-10-31 16:05 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+status
+
+## 2026-10-31 16:07 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+look at why they are timing out
+
+## 2026-10-31 16:11 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+why the fuck are they repeating?
+
+## 2026-10-31 16:16 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+whats next then?
+
+## 2026-10-31 17:43 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+No model calls? Do you have a shitty rule that stops it? Perhaps the rule should be to just ask me instead..
+
+## 2026-10-31 17:44 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+*queued while an agent was working*
+
+Unless I say you are free etc
+
+## 2026-10-31 17:48 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+*queued while an agent was working*
+
+Yeah, NEVER just "wait"..
+
+## 2026-10-31 18:00 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+Holy shit that was an infinity answer, synopsis please
 

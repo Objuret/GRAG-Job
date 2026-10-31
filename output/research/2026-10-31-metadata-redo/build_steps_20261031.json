@@ -1,0 +1,209 @@
+{
+  "collected": "2026-10-31",
+  "steps": [
+    {
+      "id": "metadata_facet_layer",
+      "what": "the round-1 facet layer on the 574 HAS_TAG edges of the 31 chunks of employee.json (27) and customers_data.json (4): the edges and the chunks' texts read from the graph (inputs), the 574 edges encoded by the full pass's extractor, the 24 bootstrap refits made again from their stored seeds, the 574 edges scored by each refit and appended to the 61,018 stored rows with the bands computed again over the 61,592 edges (extend), and the layer written to the laptop's graph and to the desktop's graph",
+      "date": "2026-10-31",
+      "where": "laptop: inputs and the laptop graph's write; desktop: the encoding (cuda; the record names no card, docs/ENVIRONMENT.md gives the desktop's as a GTX 1080 Ti; Alibaba-NLP/gte-reranker-modernbert-base revision f7481e6055501a30fb19d090657df9ec1f79ab2c, float32 compute, float16 storage), the refits and extend (CPU: no tensor is put on a device in metadata_edges.py, bootstrap_scores.py or cache_probe.py; torch 2.14.1+cu126, 6 threads), and the desktop graph's write; no language-model call",
+      "seconds": {
+        "inputs": 9.08,
+        "encode_574_edges": 12.2,
+        "refits_made_again": 107.6,
+        "extend": 10.8,
+        "laptop_write": 104,
+        "desktop_write": 59
+      },
+      "seconds_kind": {
+        "inputs": "tool_span",
+        "encode_574_edges": "elapsed",
+        "refits_made_again": "elapsed",
+        "extend": "elapsed",
+        "laptop_write": "elapsed",
+        "desktop_write": "elapsed"
+      },
+      "records": [
+        "~/.claude/projects/c--Coding-exjobbet-GRAG-Job/ee4300f0-4e86-46d0-bf1f-0f8ea51affea/subagents/agent-a5fd6bd673259ddaa.jsonl (the facet agent): lines 286-288 (inputs; the call also printed parts of the two files it wrote and counted their lines), lines 735-736 (the laptop's write, 'done (104s).')",
+        "output/facet_pairs/rounds/round1/metadata_pool/cache/rows.jsonl, header written 2026-10-31T07:24:18Z",
+        "output/facet_pairs/rounds/round1/metadata_pool/cache/Alibaba-NLP__gte-reranker-modernbert-base.meta.json and EXTEND.json new.cache_meta (seconds 12.2, device cuda); output/research/2026-10-31-metadata-facet-layer/job.log line 9 ('done | 574 edges | 12 s')",
+        "output/facet_pairs/rounds/round1/metadata_pool/refits/check.json (wall_s)",
+        "output/facet_pairs/rounds/round1/metadata_pool/EXTEND.json (wall_s)",
+        "output/research/2026-10-31-metadata-facet-layer/job.cmd, job.log, job2.cmd, job2.log",
+        "output/research/2026-10-31-metadata-facet-layer/graph_b.cmd, graph_b.log line 18 ('done (59s).', the write)",
+        "test/graph/facet_pairs/metadata_edges.py (refits(), extend(): wall_s), test/graph/write_facet_layer.py ('done (Ns).': perf_counter from the start of main, whole seconds)"
+      ]
+    },
+    {
+      "id": "metadata_person_and_customer_edges",
+      "what": "person-to-chunk and customer-to-chunk edges computed again over the arm's pool with the employee and customer chunks in it: 530 new person edges (26,950 before and 27,480 after by the desktop's counts; 530 employees, 4,673 chunks) and 120 new customer edges (1,043 before and 1,163 after; 120 customers, 488 chunks), by test/graph/build_person_edges.py write and test/graph/build_customer_edges.py write, on the laptop's graph and on the desktop's graph",
+      "date": "2026-10-31",
+      "where": "laptop and desktop, no model",
+      "calls": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "seconds": {
+        "laptop_both_builders": 28.395,
+        "desktop_both_builders": 32.331
+      },
+      "seconds_kind": {
+        "laptop_both_builders": "tool_span",
+        "desktop_both_builders": "tool_span"
+      },
+      "records": [
+        "~/.claude/projects/c--Coding-exjobbet-GRAG-Job/ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl: lines 2182-2183 (the laptop: one Bash call ran build_person_edges.py write, then build_customer_edges.py write)",
+        "~/.claude/projects/c--Coding-exjobbet-GRAG-Job/ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl: lines 2268-2269 (the desktop: one ssh call ran both builders through run_builder.py, printed their logs, and counted the edges after: 27,480 person edges, 530 on metadata chunks; 1,163 customer edges, 120 on metadata chunks)",
+        "~/.claude/projects/c--Coding-exjobbet-GRAG-Job/ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl: lines 2258-2263 (the desktop's count before: 26,950 person edges, 1,043 customer edges, none on metadata chunks)",
+        "test/graph/build_person_edges.py, test/graph/build_customer_edges.py at commit 808015c (each write ends in its own verify; neither prints a time)"
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "path": "steps[metadata_facet_layer].seconds.extend",
+      "note": "holds the bands' 5.7 s (left_out: not to be added again) and the scoring of the 61,018 stored edges through each kept refit against their stored scores, a check with no time of its own"
+    },
+    {
+      "path": "steps[metadata_facet_layer].seconds.refits_made_again",
+      "note": "holds the baseline refit, a check against round1/scores.jsonl, and each draw's comparison with the stored scores (left_out)"
+    },
+    {
+      "path": "steps[metadata_facet_layer].seconds.laptop_write and desktop_write",
+      "note": "the writer's own time: reading the layer and the graph's edges, the check that the backup equals the live graph, the write, and the count after it; the imports are outside it"
+    },
+    {
+      "path": "steps[metadata_person_and_customer_edges].seconds",
+      "note": "one call per machine ran both builders, so each span holds both writes, Python's start twice and each builder's verify; the desktop's span also holds the printing of the two logs and the count after the write"
+    }
+  ],
+  "left_out": [
+    {
+      "step": "metadata_facet_layer",
+      "what": "inside extend's time (EXTEND.json wall_s): the bands computed again over the 61,592 edges (bootstrap_scores.py --bands-only, called by metadata_edges.py extend)",
+      "values": {
+        "bands_s": 5.7
+      },
+      "record": "output/facet_pairs/rounds/round1/metadata_pool/bootstrap/meta.json (wall_s, bands_only); job2.log line 59 ('done | 5.7s')",
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "metadata_facet_layer",
+      "what": "inside the refits' time (check.json wall_s): the baseline refit, and the 24 draws' printed seconds added",
+      "values": {
+        "baseline_refit_s": 8.4,
+        "draws_summed_s": 97.6
+      },
+      "record": "job2.log lines 5-29",
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "metadata_facet_layer",
+      "what": "the desktop job logs' stamps around the timed parts (they hold each command's start, its imports and the encoder's load)",
+      "values": {
+        "encode_574_edges_s": 31.19,
+        "refits_s": 112.65,
+        "extend_s": 13.74
+      },
+      "record": "job.log lines 1 and 11; job2.log lines 1, 32 and 61",
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "metadata_facet_layer",
+      "what": "the backups the writer requires before a write (backup_facet_weights.py backup), kept apart as test/graph/build_cost.json keeps the 2026-10-08 write's backup_seconds apart from its seconds_elapsed",
+      "values": {
+        "laptop_backup_s": 86,
+        "desktop_backup_s": 7
+      },
+      "record": "~/.claude/projects/c--Coding-exjobbet-GRAG-Job/ee4300f0-4e86-46d0-bf1f-0f8ea51affea/subagents/agent-a5fd6bd673259ddaa.jsonl (the facet agent) line 454 ('done (86s).'); graph_a.log line 75 ('done (7s).')",
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "metadata_facet_layer",
+      "what": "the writes and backups as spans: the laptop's in the facet agent's transcript, the desktop's between its log stamps",
+      "values": {
+        "laptop_write_tool_span_s": 108.536,
+        "laptop_backup_and_its_verify_to_the_completion_notice_s": 170.741,
+        "desktop_write_stamps_s": 61.05,
+        "desktop_backup_its_verify_and_a_copy_stamps_s": 14.71
+      },
+      "record": "~/.claude/projects/c--Coding-exjobbet-GRAG-Job/ee4300f0-4e86-46d0-bf1f-0f8ea51affea/subagents/agent-a5fd6bd673259ddaa.jsonl (the facet agent) lines 735-736, 453 and 478 (the notice); graph_b.log lines 1-19; graph_a.log lines 71-82",
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "metadata_facet_layer",
+      "what": "checks that built nothing: the backup's verify, the writer's plan and verify",
+      "values": {
+        "laptop_backup_verify_s": 77,
+        "laptop_plan_s": 77,
+        "laptop_plan_tool_span_s": 80.608,
+        "laptop_verify_s": 69,
+        "laptop_verify_tool_span_s": 72.121,
+        "desktop_backup_verify_s": 7,
+        "desktop_plan_s": 49,
+        "desktop_verify_s": 48
+      },
+      "record": "~/.claude/projects/c--Coding-exjobbet-GRAG-Job/ee4300f0-4e86-46d0-bf1f-0f8ea51affea/subagents/agent-a5fd6bd673259ddaa.jsonl (the facet agent) lines 486-488 (the backup's task output read), 728-729, 741-742; graph_a.log lines 80 and 90; graph_b.log line 28",
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "metadata_facet_layer",
+      "what": "the shard check that built nothing: shard 5 of the full pass (7,214 stored edges) encoded again on the desktop and compared with its stored vectors and facet means",
+      "values": {
+        "encode_7214_edges_s": 424,
+        "encode_stamps_s": 442.09,
+        "compare_stamps_s": 6.64
+      },
+      "record": "job2.log lines 61, 76, 78 and 177; output/research/2026-10-31-metadata-facet-layer/shard_check.json",
+      "note": "a first encode of the same shard (job.log line 11, 8:45:38,65 on the desktop's clock) was stopped at 3,072 of 7,214 edges by a taskkill (~/.claude/projects/c--Coding-exjobbet-GRAG-Job/ee4300f0-4e86-46d0-bf1f-0f8ea51affea/subagents/agent-a5fd6bd673259ddaa.jsonl (the facet agent) line 462, 2026-10-31T07:47:36.187Z); job.log has no end line for it",
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "metadata_facet_layer",
+      "what": "check_layer.py, which built nothing: the layer read the way the arm reads it, before and after each write",
+      "values": {
+        "laptop_before_first_tool_span_s": 32.575,
+        "laptop_before_second_to_the_completion_notice_s": 427.542,
+        "laptop_after_tool_span_s": 22.623,
+        "desktop_before_stamps_s": 19.49,
+        "desktop_after_stamps_s": 16.58
+      },
+      "record": "~/.claude/projects/c--Coding-exjobbet-GRAG-Job/ee4300f0-4e86-46d0-bf1f-0f8ea51affea/subagents/agent-a5fd6bd673259ddaa.jsonl (the facet agent) lines 362-363, 613 and 656 (the notice), 746-747; graph_a.log lines 1-70; graph_b.log lines 29-129",
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "metadata_facet_layer",
+      "what": "the gap split, which built nothing: the new bands' gaps read three ways",
+      "values": {
+        "scratch_run_tool_span_s": 10.231,
+        "research_folder_run_tool_span_s": 10.532
+      },
+      "record": "~/.claude/projects/c--Coding-exjobbet-GRAG-Job/ee4300f0-4e86-46d0-bf1f-0f8ea51affea/subagents/agent-a5fd6bd673259ddaa.jsonl (the facet agent) lines 774-775 and 800-801; output/research/2026-10-31-metadata-facet-layer/gap_split.py, gap_split.txt",
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "metadata_facet_layer",
+      "what": "copies between the laptop and the desktop",
+      "values": {
+        "to_the_desktop_before_the_job_s": 31,
+        "encoded_574_edges_back_with_a_check_tool_span_s": 6.82,
+        "metadata_pool_back_with_a_compare_tool_span_s": 7.168
+      },
+      "record": "~/.claude/projects/c--Coding-exjobbet-GRAG-Job/ee4300f0-4e86-46d0-bf1f-0f8ea51affea/subagents/agent-a5fd6bd673259ddaa.jsonl (the facet agent) line 423 ('copied in 31 s', the command's own count), lines 507-508, 715-717",
+      "added_to_no_number_above": true
+    },
+    {
+      "step": "metadata_person_and_customer_edges",
+      "what": "the builders copied to the desktop and its edges counted before the write (built nothing)",
+      "values": {
+        "tool_span_s": 6.906
+      },
+      "record": "~/.claude/projects/c--Coding-exjobbet-GRAG-Job/ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl lines 2258-2263",
+      "added_to_no_number_above": true
+    }
+  ],
+  "not_recorded": [
+    "the time of each edge builder alone and of its own verify: build_person_edges.py and build_customer_edges.py print no time, and one call ran both on each machine",
+    "the inputs step's own elapsed time: metadata_edges.py inputs prints no time",
+    "the end of the first, stopped encode of shard 5 on the desktop: job.log has no end line",
+    "the exit time of the laptop's two commands moved to the background (the backup with its verify, and the second check before): the transcript stamps only their completion notice"
+  ]
+}

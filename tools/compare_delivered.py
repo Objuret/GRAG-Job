@@ -44,7 +44,7 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _delivered(row: dict) -> dict:
+def delivered(row: dict) -> dict:
     meta = row.get("meta") or {}
     return {"contexts": row.get("contexts") or [],
             "context_ids": [str(i) for i in row.get("context_ids") or []],
@@ -58,7 +58,7 @@ def compare(new: dict, final: dict, profile_ids: set) -> dict:
         if qid not in new:
             missing.append(qid)
             continue
-        a, b = _delivered(new[qid]), _delivered(old)
+        a, b = delivered(new[qid]), delivered(old)
         if a == b:
             same.append(qid)
             continue
