@@ -161,8 +161,8 @@ QUESTIONS = [
                                          "followed by a letter or a digit. The forms are our own rule: an employee ID (eid_ and eight hex "
                                          "digits), a customer ID (CUST- and four digits), a PR link (a github.com pull "
                                          "link), a URL (any other link that starts with http:// or https://). Person, PR and "
-                                         "URL questions; empty for content and company questions, and empty when the "
-                                         "answer gives no ID or link of those forms.", "0-1"),
+                                         "URL questions; empty for content and company questions; 0 when the answer "
+                                         "gives no ID or link of those forms.", "0-1"),
     ("string_presence_per_id_f1", "F1 of string_presence_per_id_precision (P) and string_presence_per_id (R): "
                                   "2PR / (P + R); 0 when the answer gives no ID or link of the forms of "
                                   "string_presence_per_id_precision, or when P + R is 0. The forms are our own rule. "
@@ -489,12 +489,13 @@ def string_presence_per_id(answer, items):
 
 def string_presence_per_id_precision(answer, items):
     """RAGAS StringPresence run the other way round: each distinct ID or link of the answer, of the forms the
-    reference items have, looked for in the items joined by spaces; the share of them found. None when the
+    reference items have, looked for in the items joined by spaces; the share of them found. 0 when the
     answer gives none of those forms."""
     forms = {k for item in items for k, _ in ids_and_links(str(item))}
     given = [i for k, i in ids_and_links(answer) if k in forms]
     if not given:
-        return None
+        # the reference holds IDs or links, so the answer is judged: his "how about YOU dont PICK what gets judged or not"
+        return 0.0
     joined = " ".join(str(item) for item in items)
     hits = [bool(h) and whole(joined, g) for h, g in zip(string_presence(joined, given), given)]
     return sum(hits) / len(hits)
@@ -759,7 +760,7 @@ def runs_tables(arm, folder, refs, sets, by_sha):
             # an answer that gives no ID or link scores 0, as in HERB's set F1
             per_id = {"string_presence_per_id": recall, "string_presence_per_id_precision": precision,
                       "string_presence_per_id_f1": (2 * precision * recall / (precision + recall)
-                                                    if precision is not None and precision + recall else 0.0)}
+                                                    if precision + recall else 0.0)}
         questions.append({
             "arm": arm,
             "question_id": r["id"],

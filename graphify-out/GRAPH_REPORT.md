@@ -5,14 +5,14 @@
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 5060 nodes · 10548 edges · 280 communities (218 shown, 62 thin omitted)
+- 5060 nodes · 10548 edges · 281 communities (218 shown, 63 thin omitted)
 - Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 529 edges (avg confidence: 0.55)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
 - [[_COMMUNITY_ModelUsage|ModelUsage]]
-- [[_COMMUNITY_artefact_v2.py|artefact_v2.py]]
 - [[_COMMUNITY_progress.py|progress.py]]
+- [[_COMMUNITY_artefact_v2.py|artefact_v2.py]]
 - [[_COMMUNITY_build_corpus_graph.py|build_corpus_graph.py]]
 - [[_COMMUNITY_artefact_volmax.py|artefact_volmax.py]]
 - [[_COMMUNITY_rank_joint_candidate()|rank_joint_candidate()]]
@@ -80,12 +80,12 @@
 - [[_COMMUNITY_evaluate.py|evaluate.py]]
 - [[_COMMUNITY_PersonPathTests|PersonPathTests]]
 - [[_COMMUNITY_test_facet_neural.py|test_facet_neural.py]]
-- [[_COMMUNITY_CallAsSentTests|CallAsSentTests]]
 - [[_COMMUNITY_artefact_facet_joint.py|artefact_facet_joint.py]]
 - [[_COMMUNITY_artefact_facet_program.py|artefact_facet_program.py]]
-- [[_COMMUNITY_contract.py|contract.py]]
 - [[_COMMUNITY_test_chunk.py|test_chunk.py]]
 - [[_COMMUNITY__layer()|_layer()]]
+- [[_COMMUNITY_CallAsSentTests|CallAsSentTests]]
+- [[_COMMUNITY_contract.py|contract.py]]
 - [[_COMMUNITY_progress()|progress()]]
 - [[_COMMUNITY_provenance.py|provenance.py]]
 - [[_COMMUNITY_._session()|._session()]]
@@ -278,6 +278,7 @@
 - [[_COMMUNITY_in_shard()|in_shard()]]
 - [[_COMMUNITY_facet_views_topic_graph.py|facet_views_topic_graph.py]]
 - [[_COMMUNITY_facet_views_xenc_gpu.py|facet_views_xenc_gpu.py]]
+- [[_COMMUNITY_abort.py|abort.py]]
 - [[_COMMUNITY_truncate_k.py|truncate_k.py]]
 - [[_COMMUNITY_build_questions.py|build_questions.py]]
 - [[_COMMUNITY_BacktickQuotingTests|BacktickQuotingTests]]
@@ -311,19 +312,19 @@
 ## Import Cycles
 - None detected.
 
-## Communities (280 total, 62 thin omitted)
+## Communities (281 total, 63 thin omitted)
 
 ### Community 0 - "ModelUsage"
 Cohesion: 0.06
 Nodes (56): answer_one_question(), Prepared, Harness entry point; query/facet content stays in private cache/run metadata., InterpreterError, InterpreterError, Prepared, Prepared, _QueryAxes (+48 more)
 
-### Community 1 - "artefact_v2.py"
-Cohesion: 0.06
-Nodes (67): answer_one_question(), answer_one_question(), answer_one_question(), answer_one_question(), answer_one_question(), _abs_ref_dists(), _abs_ref_key(), _agg() (+59 more)
-
-### Community 2 - "progress.py"
+### Community 1 - "progress.py"
 Cohesion: 0.07
 Nodes (44): Area, Areas, _candidates(), _capitalised(), combine(), distance(), Hit, land() (+36 more)
+
+### Community 2 - "artefact_v2.py"
+Cohesion: 0.07
+Nodes (66): answer_one_question(), answer_one_question(), answer_one_question(), answer_one_question(), answer_one_question(), _abs_ref_dists(), _abs_ref_key(), _agg() (+58 more)
 
 ### Community 3 - "build_corpus_graph.py"
 Cohesion: 0.08
@@ -589,29 +590,29 @@ Nodes (4): _mention(), _on(), PersonPathTests, _plan()
 Cohesion: 0.15
 Nodes (23): The four-facet neural edge instrument: shapes, the chunk-grouped split, the arti, Correction 1: the target is a signed relevance loss, so the output must not be s, rows(), targets(), test_forward_gives_one_value_per_facet(), test_heads_do_not_share_parameters(), test_mean_pooling_ignores_padding(), test_measured_zero_is_supervision_not_a_hole() (+15 more)
 
-### Community 70 - "CallAsSentTests"
-Cohesion: 0.14
-Nodes (6): CallAsSentTests, CallSettingsTests, EnvironmentRecordTests, _flag(), What a model call carries is what the caller asked for and nothing left over fro, _user()
-
-### Community 71 - "artefact_facet_joint.py"
+### Community 70 - "artefact_facet_joint.py"
 Cohesion: 0.15
 Nodes (20): Explicit area-first variant of the frozen joint-facet arm.  Same interpretation,, _atomic_json(), _cached_stage(), _embed_kept(), _interpret(), _keep_row(), _kept_row(), _key_lock() (+12 more)
 
-### Community 72 - "artefact_facet_program.py"
+### Community 71 - "artefact_facet_program.py"
 Cohesion: 0.15
 Nodes (19): prepare_over_corpus(), Prepared, rank_numeric(), Experimental fixed-program artefact arm for a real 72k gold smoke.  Interpretati, Pure retrieval stage, also used for captured-case parity without models., _selected_program(), edge_gate(), inject() (+11 more)
 
-### Community 73 - "contract.py"
-Cohesion: 0.13
-Nodes (16): answer_one_question(), fuse(), _minmax(), prepare_over_corpus(), Prepared, _qid_text(), backfill_file(), main() (+8 more)
-
-### Community 74 - "test_chunk.py"
+### Community 72 - "test_chunk.py"
 Cohesion: 0.19
 Nodes (22): chunk_file(), expand(), _is_prose_collection(), Ref, _dt(), _resolve(), _slack_msg(), test_conversation_cap_split_at_largest_gap() (+14 more)
 
-### Community 75 - "_layer()"
+### Community 73 - "_layer()"
 Cohesion: 0.18
 Nodes (4): _layer(), MatchTests, RetrieveTests, _unit_rows()
+
+### Community 74 - "CallAsSentTests"
+Cohesion: 0.16
+Nodes (6): CallAsSentTests, CallSettingsTests, _flag(), JudgeCallTests, What a model call carries is what the caller asked for and nothing left over fro, _user()
+
+### Community 75 - "contract.py"
+Cohesion: 0.14
+Nodes (16): answer_one_question(), fuse(), _minmax(), prepare_over_corpus(), Prepared, _qid_text(), backfill_file(), main() (+8 more)
 
 ### Community 76 - "progress()"
 Cohesion: 0.22
@@ -1153,19 +1154,19 @@ Nodes (3): main(), _print(), _scan()
 Cohesion: 0.67
 Nodes (3): in_shard(), By sha1 of the text's sha256, so two machines never take the same text., shard_of()
 
-### Community 273 - "make_corpus()"
+### Community 274 - "make_corpus()"
 Cohesion: 0.67
 Nodes (3): corpus(), make_corpus(), A rows export and a facet_stats file with the shape the real ones have.
 
 ## Knowledge Gaps
 - **13 isolated node(s):** `Metric`, `Path`, `ndarray`, `Path`, `ndarray` (+8 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **62 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **63 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `ModelUsage` connect `ModelUsage` to `gold_evidence.py`, `artefact_v2.py`, `artefact_volmax.py`, `artefact_graph.py`, `artefact_v1_five_questions.py`, `offline_eval.py`, `artefact_v1.py`, `artefact_v4.py`, `artefact_concept_baseline.py`, `index.py`, `orchestrator.py`, `artefact_composed.py`, `_part_levels()`, `Shape`, `vector.py`, `fields.py`, `_SharedEmbedder`, `test_char_budget.py`, `ragas.py`, `artefact_v1_relevance_weight.py`, `ndarray`, `cut_at_budget()`, `VectorBudgetTests`, `FuseTests`, `tag.py`, `test_artefact_facet_joint.py`, `artefact_v1_det.py`, `test_artefact_v4.py`, `_unit()`, `GraphInput`, `QuestionWithTruth`, `artefact_facet_leader_macro.py`, `CallAsSentTests`, `artefact_facet_joint.py`, `artefact_facet_program.py`, `contract.py`, `artefact_cluster.py`, `answer_chunk()`, `AnswerContractTests`, `artefact.py`, `artefact_scope.py`, `lucene.py`, `RunRecordTests`?**
+- **Why does `ModelUsage` connect `ModelUsage` to `gold_evidence.py`, `artefact_v2.py`, `artefact_volmax.py`, `artefact_graph.py`, `artefact_v1_five_questions.py`, `offline_eval.py`, `artefact_v1.py`, `artefact_v4.py`, `artefact_concept_baseline.py`, `index.py`, `orchestrator.py`, `artefact_composed.py`, `_part_levels()`, `Shape`, `vector.py`, `fields.py`, `_SharedEmbedder`, `test_char_budget.py`, `ragas.py`, `artefact_v1_relevance_weight.py`, `ndarray`, `cut_at_budget()`, `VectorBudgetTests`, `FuseTests`, `tag.py`, `test_artefact_facet_joint.py`, `artefact_v1_det.py`, `test_artefact_v4.py`, `_unit()`, `GraphInput`, `QuestionWithTruth`, `artefact_facet_leader_macro.py`, `artefact_facet_joint.py`, `artefact_facet_program.py`, `CallAsSentTests`, `contract.py`, `artefact_cluster.py`, `answer_chunk()`, `AnswerContractTests`, `artefact.py`, `artefact_scope.py`, `lucene.py`, `RunRecordTests`?**
   _High betweenness centrality (0.115) - this node is a cross-community bridge._
 - **Why does `Shape` connect `Shape` to `_unit()`, `ModelUsage`, `DeterministicPlanTests`, `ndarray`?**
   _High betweenness centrality (0.056) - this node is a cross-community bridge._

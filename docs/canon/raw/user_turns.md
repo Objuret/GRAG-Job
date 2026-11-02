@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-3200 turns, chronological. Verbatim text; no edits.
+3210 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -22515,4 +22515,69 @@ No dude, dont write it like a retarded llm, write it like a person who has fixed
 ## 2026-11-01 22:37 · 61e9e03a-8221-49a5-8dfe-e82780e6e42f.jsonl
 
 pretend to be a human, this is fucking terrible writing
+
+## 2026-11-02 01:03 · 61e9e03a-8221-49a5-8dfe-e82780e6e42f.jsonl
+
+Allright, point 2:
+"
+Factual correctness: I understand that the newly added RAGAS metrics do not perform exact identifier matching. However, I noticed some potentially misleading scores. For example, Lucene receives a factual-correctness score of 1.0 for AutoTuneForce::a::0, despite not identifying either expected employee ID. Should we reconsider using this metric in the main evaluation? The new string_presence_per_id metric is useful for measuring identifier recall, but could we also calculate precision and F1 to account for additional incorrect IDs or links?
+"
+
+## 2026-11-02 01:39 · 61e9e03a-8221-49a5-8dfe-e82780e6e42f.jsonl
+
+i think thats good.
+
+now, number 3:
+"
+Retrieval versus answer generation: Artefact achieves considerably higher evidence recall, but the improvement in answer correctness is relatively modest. Could this be due to additional irrelevant information in the retrieved chunks? A small experiment using only HERB's gold evidence with the same answer model might help determine whether answer generation or context construction is limiting performance.
+"
+
+## 2026-11-02 04:51 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+ok, lets take a look now then at how all arms are doing vs the golden arm
+
+## 2026-11-02 05:03 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+what the fuck is those fucking numbers you are showing?
+
+## 2026-11-02 05:03 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+*queued while an agent was working*
+
+are you showing me the CHANGE? what in the actual fuck?
+
+## 2026-11-02 05:39 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+what the actual fuck did you just say..?
+
+## 2026-11-02 05:39 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+2
+
+## 2026-11-02 05:40 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+for this "
+
+<pasted_content id="0351">
+The three per-ID scores are means over the 447 questions whose HERB answer holds IDs or links. The precision covers only the questions where the arm's answer gives an ID or link: 447 for gold, 359 for lucene, 408 for vector and 417 for the artefact.
+
+Conclusion
+
+I worked out the same means again from the results sheet, and they agree with the run data sheet.
+</pasted_content id="0351">
+
+"
+only for the ANSWERS that contain those!?
+
+id you really do that? DID YOU DO IT LIKE THAT?
+
+answer faster you cunt
+
+## 2026-11-02 05:42 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+... and you dont think the metric should be used based on what the fucking expected answer actually should contain then?
+
+## 2026-11-02 05:43 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+how about YOU dont PICK what gets judged or not you fucking idiot
 

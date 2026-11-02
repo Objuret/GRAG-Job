@@ -170,7 +170,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "arms_hybrid",
-      "community": 73,
+      "community": 75,
       "norm_label": "hybrid.py"
     },
     {
@@ -180,7 +180,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "arms_hybrid_env_float",
-      "community": 73,
+      "community": 75,
       "norm_label": "_env_float()"
     },
     {
@@ -190,7 +190,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "arms_hybrid_prepared",
-      "community": 73,
+      "community": 75,
       "norm_label": "prepared"
     },
     {
@@ -200,7 +200,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "arms_hybrid_prepare_over_corpus",
-      "community": 73,
+      "community": 75,
       "norm_label": "prepare_over_corpus()"
     },
     {
@@ -210,7 +210,7 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "arms_hybrid_qid_text",
-      "community": 73,
+      "community": 75,
       "norm_label": "_qid_text()"
     },
     {
@@ -220,7 +220,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "arms_hybrid_minmax",
-      "community": 73,
+      "community": 75,
       "norm_label": "_minmax()"
     },
     {
@@ -230,7 +230,7 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "arms_hybrid_fuse",
-      "community": 73,
+      "community": 75,
       "norm_label": "fuse()"
     },
     {
@@ -240,7 +240,7 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "arms_hybrid_answer_one_question",
-      "community": 73,
+      "community": 75,
       "norm_label": "answer_one_question()"
     },
     {
@@ -1500,7 +1500,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "prod_export_raw",
-      "community": 2,
+      "community": 1,
       "norm_label": "export_raw.py"
     },
     {
@@ -1510,7 +1510,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "prod_export_raw_manifest",
-      "community": 2,
+      "community": 1,
       "norm_label": "_manifest()"
     },
     {
@@ -1520,7 +1520,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "prod_export_raw_py_path",
-      "community": 2,
+      "community": 1,
       "norm_label": "path"
     },
     {
@@ -1530,7 +1530,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "prod_export_raw_collect_rows",
-      "community": 2,
+      "community": 1,
       "norm_label": "_collect_rows()"
     },
     {
@@ -1540,7 +1540,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "prod_export_raw_main",
-      "community": 2,
+      "community": 1,
       "norm_label": "main()"
     },
     {
@@ -1550,7 +1550,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "harness_init",
-      "community": 279,
+      "community": 280,
       "norm_label": "__init__.py"
     },
     {
@@ -1560,7 +1560,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "harness_abort",
-      "community": 1,
+      "community": 269,
       "norm_label": "abort.py"
     },
     {
@@ -1570,7 +1570,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "harness_abort_aborted",
-      "community": 1,
+      "community": 269,
       "norm_label": "aborted"
     },
     {
@@ -1580,7 +1580,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "runtimeerror",
-      "community": 1,
+      "community": 2,
       "norm_label": "runtimeerror"
     },
     {
@@ -1590,7 +1590,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "harness_abort_watch",
-      "community": 1,
+      "community": 269,
       "norm_label": "watch()"
     },
     {
@@ -2440,7 +2440,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "harness_contract",
-      "community": 73,
+      "community": 75,
       "norm_label": "contract.py"
     },
     {
@@ -2480,7 +2480,7 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "harness_contract_generator_user_content",
-      "community": 73,
+      "community": 75,
       "norm_label": "generator_user_content()"
     },
     {
@@ -2490,7 +2490,7 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "harness_contract_generator_messages",
-      "community": 73,
+      "community": 75,
       "norm_label": "generator_messages()"
     },
     {
@@ -2500,7 +2500,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "harness_contract_generator_output_text",
-      "community": 73,
+      "community": 75,
       "norm_label": "generator_output_text()"
     },
     {
@@ -2520,7 +2520,7 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "harness_contract_transport_parts",
-      "community": 73,
+      "community": 75,
       "norm_label": "_transport_parts()"
     },
     {
@@ -2540,7 +2540,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "harness_contract_model_usage_from_telemetry",
-      "community": 73,
+      "community": 75,
       "norm_label": "model_usage_from_telemetry()"
     },
     {
@@ -2550,7 +2550,7 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "harness_contract_unpack_generation",
-      "community": 1,
+      "community": 2,
       "norm_label": "unpack_generation()"
     },
     {
@@ -2560,7 +2560,7 @@
       "source_location": "L138",
       "_origin": "ast",
       "id": "harness_contract_backfill_generator_usage",
-      "community": 73,
+      "community": 75,
       "norm_label": "backfill_generator_usage()"
     },
     {
@@ -2590,7 +2590,7 @@
       "source_location": "L181",
       "_origin": "ast",
       "id": "harness_contract_build_stats_record",
-      "community": 73,
+      "community": 75,
       "norm_label": "build_stats_record()"
     },
     {
@@ -2630,7 +2630,7 @@
       "source_location": "L182",
       "_origin": "ast",
       "id": "harness_contract_rationale_182",
-      "community": 73,
+      "community": 75,
       "norm_label": "the build_stats of a run manifest: one entry per model that worked on the build,"
     },
     {
@@ -2780,7 +2780,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "harness_fields_whole",
-      "community": 274,
+      "community": 275,
       "norm_label": "whole()"
     },
     {
@@ -3010,7 +3010,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "harness_fields_rationale_27",
-      "community": 274,
+      "community": 275,
       "norm_label": "something kept whole from elsewhere: this one line stands for everything below i"
     },
     {
@@ -3720,7 +3720,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "harness_progress",
-      "community": 2,
+      "community": 1,
       "norm_label": "progress.py"
     },
     {
@@ -3740,7 +3740,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "harness_progress_say",
-      "community": 2,
+      "community": 1,
       "norm_label": "say()"
     },
     {
@@ -3750,7 +3750,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "harness_progress_selfcheck",
-      "community": 2,
+      "community": 1,
       "norm_label": "_selfcheck()"
     },
     {
@@ -4890,7 +4890,7 @@
       "source_location": "L418",
       "_origin": "ast",
       "id": "tests_test_capture_usageblocktests_test_cost_in_a_usage_block_is_calls_tokens_and_seconds_only",
-      "community": 73,
+      "community": 75,
       "norm_label": ".test_cost_in_a_usage_block_is_calls_tokens_and_seconds_only()"
     },
     {
@@ -6110,7 +6110,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_lane_settings",
-      "community": 70,
+      "community": 74,
       "norm_label": "test_lane_settings.py"
     },
     {
@@ -6120,7 +6120,7 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "tests_test_lane_settings_user",
-      "community": 70,
+      "community": 74,
       "norm_label": "_user()"
     },
     {
@@ -6130,7 +6130,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "tests_test_lane_settings_flag",
-      "community": 70,
+      "community": 74,
       "norm_label": "_flag()"
     },
     {
@@ -6140,7 +6140,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callsettingstests",
-      "community": 70,
+      "community": 74,
       "norm_label": "callsettingstests"
     },
     {
@@ -6150,7 +6150,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callsettingstests_test_no_effort_named_means_none_is_sent",
-      "community": 70,
+      "community": 74,
       "norm_label": ".test_no_effort_named_means_none_is_sent()"
     },
     {
@@ -6160,7 +6160,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callsettingstests_test_a_named_effort_goes_as_the_flag",
-      "community": 70,
+      "community": 74,
       "norm_label": ".test_a_named_effort_goes_as_the_flag()"
     },
     {
@@ -6170,7 +6170,7 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callsettingstests_test_the_system_prompt_is_always_passed_and_is_empty_when_the_call_has_none",
-      "community": 70,
+      "community": 74,
       "norm_label": ".test_the_system_prompt_is_always_passed_and_is_empty_when_the_call_has_none()"
     },
     {
@@ -6180,7 +6180,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callsettingstests_test_every_call_switches_the_title_request_and_the_billing_line_off",
-      "community": 70,
+      "community": 74,
       "norm_label": ".test_every_call_switches_the_title_request_and_the_billing_line_off()"
     },
     {
@@ -6190,7 +6190,7 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callsettingstests_test_the_answer_call_gets_thinking_off_and_its_cap_and_says_the_temperature_is_refused",
-      "community": 70,
+      "community": 74,
       "norm_label": ".test_the_answer_call_gets_thinking_off_and_its_cap_and_says_the_temperature_is_refused()"
     },
     {
@@ -6200,7 +6200,7 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callsettingstests_test_the_judge_call_gets_thinking_off_and_the_temperature_it_was_handed",
-      "community": 70,
+      "community": 74,
       "norm_label": ".test_the_judge_call_gets_thinking_off_and_the_temperature_it_was_handed()"
     },
     {
@@ -6210,7 +6210,7 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callsettingstests_test_a_cap_or_a_temperature_without_thinking_off_is_said_not_applied",
-      "community": 70,
+      "community": 74,
       "norm_label": ".test_a_cap_or_a_temperature_without_thinking_off_is_said_not_applied()"
     },
     {
@@ -6220,7 +6220,7 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callassenttests",
-      "community": 70,
+      "community": 74,
       "norm_label": "callassenttests"
     },
     {
@@ -6230,7 +6230,7 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callassenttests_setup",
-      "community": 70,
+      "community": 74,
       "norm_label": ".setup()"
     },
     {
@@ -6240,7 +6240,7 @@
       "source_location": "L127",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callassenttests_sent",
-      "community": 70,
+      "community": 74,
       "norm_label": "._sent()"
     },
     {
@@ -6250,7 +6250,7 @@
       "source_location": "L142",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callassenttests_test_the_cli_runs_under_its_own_config_folder_and_the_token_is_never_kept",
-      "community": 70,
+      "community": 74,
       "norm_label": ".test_the_cli_runs_under_its_own_config_folder_and_the_token_is_never_kept()"
     },
     {
@@ -6260,7 +6260,7 @@
       "source_location": "L158",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callassenttests_test_a_call_is_refused_when_no_login_token_is_there",
-      "community": 70,
+      "community": 74,
       "norm_label": ".test_a_call_is_refused_when_no_login_token_is_there()"
     },
     {
@@ -6270,7 +6270,7 @@
       "source_location": "L167",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callassenttests_test_the_prompt_reaches_the_cli_as_the_bytes_that_are_kept",
-      "community": 70,
+      "community": 74,
       "norm_label": ".test_the_prompt_reaches_the_cli_as_the_bytes_that_are_kept()"
     },
     {
@@ -6280,7 +6280,7 @@
       "source_location": "L175",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callassenttests_test_a_switch_left_in_the_shell_does_not_reach_a_call_that_did_not_ask_for_it",
-      "community": 70,
+      "community": 74,
       "norm_label": ".test_a_switch_left_in_the_shell_does_not_reach_a_call_that_did_not_ask_for_it()"
     },
     {
@@ -6290,7 +6290,7 @@
       "source_location": "L195",
       "_origin": "ast",
       "id": "tests_test_lane_settings_callassenttests_test_the_kept_call_says_what_was_applied_and_what_was_not",
-      "community": 70,
+      "community": 74,
       "norm_label": ".test_the_kept_call_says_what_was_applied_and_what_was_not()"
     },
     {
@@ -6300,7 +6300,7 @@
       "source_location": "L208",
       "_origin": "ast",
       "id": "tests_test_lane_settings_judgecalltests",
-      "community": 0,
+      "community": 74,
       "norm_label": "judgecalltests"
     },
     {
@@ -6310,7 +6310,7 @@
       "source_location": "L209",
       "_origin": "ast",
       "id": "tests_test_lane_settings_judgecalltests_test_ragas_own_temperature_reaches_the_lane_with_no_system_text_and_thinking_off",
-      "community": 0,
+      "community": 74,
       "norm_label": ".test_ragas_own_temperature_reaches_the_lane_with_no_system_text_and_thinking_off()"
     },
     {
@@ -6320,7 +6320,7 @@
       "source_location": "L234",
       "_origin": "ast",
       "id": "tests_test_lane_settings_judgecalltests_test_the_evaluation_records_what_a_judge_call_is_given",
-      "community": 0,
+      "community": 74,
       "norm_label": ".test_the_evaluation_records_what_a_judge_call_is_given()"
     },
     {
@@ -6400,7 +6400,7 @@
       "source_location": "L354",
       "_origin": "ast",
       "id": "tests_test_lane_settings_environmentrecordtests",
-      "community": 70,
+      "community": 0,
       "norm_label": "environmentrecordtests"
     },
     {
@@ -6410,7 +6410,7 @@
       "source_location": "L355",
       "_origin": "ast",
       "id": "tests_test_lane_settings_environmentrecordtests_test_the_env_record_takes_what_the_cli_reads_and_never_a_secret",
-      "community": 70,
+      "community": 0,
       "norm_label": ".test_the_env_record_takes_what_the_cli_reads_and_never_a_secret()"
     },
     {
@@ -6420,7 +6420,7 @@
       "source_location": "L371",
       "_origin": "ast",
       "id": "tests_test_lane_settings_environmentrecordtests_test_the_environment_lists_every_installed_package",
-      "community": 70,
+      "community": 0,
       "norm_label": ".test_the_environment_lists_every_installed_package()"
     },
     {
@@ -6430,7 +6430,7 @@
       "source_location": "L378",
       "_origin": "ast",
       "id": "tests_test_lane_settings_environmentrecordtests_test_the_saved_diff_is_gits_own_bytes",
-      "community": 70,
+      "community": 0,
       "norm_label": ".test_the_saved_diff_is_gits_own_bytes()"
     },
     {
@@ -6440,7 +6440,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_lane_settings_rationale_1",
-      "community": 70,
+      "community": 74,
       "norm_label": "what a model call carries is what the caller asked for and nothing left over fro"
     },
     {
@@ -6800,7 +6800,7 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "tests_test_run_telemetry_usageroundtriptests_test_generator_telemetry_carries_the_breakdown_through",
-      "community": 73,
+      "community": 0,
       "norm_label": ".test_generator_telemetry_carries_the_breakdown_through()"
     },
     {
@@ -7000,7 +7000,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "prod_truncate_k",
-      "community": 269,
+      "community": 270,
       "norm_label": "truncate_k.py"
     },
     {
@@ -7010,7 +7010,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "prod_truncate_k_truncate_record",
-      "community": 269,
+      "community": 270,
       "norm_label": "truncate_record()"
     },
     {
@@ -7020,7 +7020,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "prod_truncate_k_main",
-      "community": 269,
+      "community": 270,
       "norm_label": "main()"
     },
     {
@@ -7740,7 +7740,7 @@
       "source_location": "L521",
       "_origin": "ast",
       "id": "arms_artefact_composed_answer_one_question",
-      "community": 1,
+      "community": 2,
       "norm_label": "answer_one_question()"
     },
     {
@@ -7840,7 +7840,7 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "arms_artefact_concept_baseline_answer_one_question",
-      "community": 1,
+      "community": 2,
       "norm_label": "answer_one_question()"
     },
     {
@@ -7860,7 +7860,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "arms_artefact_facet_area",
-      "community": 71,
+      "community": 70,
       "norm_label": "artefact_facet_area.py"
     },
     {
@@ -7870,7 +7870,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "arms_artefact_facet_area_prepare_over_corpus",
-      "community": 71,
+      "community": 70,
       "norm_label": "prepare_over_corpus()"
     },
     {
@@ -7880,7 +7880,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "arms_artefact_facet_area_rationale_1",
-      "community": 71,
+      "community": 70,
       "norm_label": "explicit area-first variant of the frozen joint-facet arm.  same interpretation,"
     },
     {
@@ -7890,7 +7890,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint",
-      "community": 71,
+      "community": 70,
       "norm_label": "artefact_facet_joint.py"
     },
     {
@@ -7900,7 +7900,7 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_sha",
-      "community": 71,
+      "community": 70,
       "norm_label": "_sha()"
     },
     {
@@ -7910,7 +7910,7 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_read",
-      "community": 71,
+      "community": 70,
       "norm_label": "_read()"
     },
     {
@@ -7920,7 +7920,7 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_atomic_json",
-      "community": 71,
+      "community": 70,
       "norm_label": "_atomic_json()"
     },
     {
@@ -7930,7 +7930,7 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_key_lock",
-      "community": 71,
+      "community": 70,
       "norm_label": "_key_lock()"
     },
     {
@@ -7940,7 +7940,7 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_unit",
-      "community": 71,
+      "community": 70,
       "norm_label": "_unit()"
     },
     {
@@ -7950,7 +7950,7 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_query_embedding_texts",
-      "community": 71,
+      "community": 70,
       "norm_label": "_query_embedding_texts()"
     },
     {
@@ -7960,7 +7960,7 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_source_adjacency",
-      "community": 71,
+      "community": 70,
       "norm_label": "_source_adjacency()"
     },
     {
@@ -7980,7 +7980,7 @@
       "source_location": "L162",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_prepare_over_corpus",
-      "community": 71,
+      "community": 70,
       "norm_label": "prepare_over_corpus()"
     },
     {
@@ -7990,7 +7990,7 @@
       "source_location": "L229",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_cached_stage",
-      "community": 71,
+      "community": 70,
       "norm_label": "_cached_stage()"
     },
     {
@@ -8000,7 +8000,7 @@
       "source_location": "L300",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_interpret",
-      "community": 71,
+      "community": 70,
       "norm_label": "_interpret()"
     },
     {
@@ -8010,7 +8010,7 @@
       "source_location": "L313",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_kept_row",
-      "community": 71,
+      "community": 70,
       "norm_label": "_kept_row()"
     },
     {
@@ -8020,7 +8020,7 @@
       "source_location": "L324",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_keep_row",
-      "community": 71,
+      "community": 70,
       "norm_label": "_keep_row()"
     },
     {
@@ -8030,7 +8030,7 @@
       "source_location": "L341",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_embed_kept",
-      "community": 71,
+      "community": 70,
       "norm_label": "_embed_kept()"
     },
     {
@@ -8040,7 +8040,7 @@
       "source_location": "L369",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_query_cosines",
-      "community": 71,
+      "community": 70,
       "norm_label": "_query_cosines()"
     },
     {
@@ -8080,7 +8080,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_rationale_1",
-      "community": 71,
+      "community": 70,
       "norm_label": "frozen-volmax joint-facet arm with raw-query split interpretation.  the graph an"
     },
     {
@@ -8090,7 +8090,7 @@
       "source_location": "L163",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_rationale_163",
-      "community": 71,
+      "community": 70,
       "norm_label": "load pinned graph data only; corpus contents are resolved lazily at delivery."
     },
     {
@@ -8100,7 +8100,7 @@
       "source_location": "L230",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_rationale_230",
-      "community": 71,
+      "community": 70,
       "norm_label": "one transport attempt; failures and uncertain attempts cannot auto-retry. the mo"
     },
     {
@@ -8110,7 +8110,7 @@
       "source_location": "L342",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_rationale_342",
-      "community": 71,
+      "community": 70,
       "norm_label": "`embed._embed(texts, role)` with every row kept on the side and read from there"
     },
     {
@@ -8120,7 +8120,7 @@
       "source_location": "L370",
       "_origin": "ast",
       "id": "arms_artefact_facet_joint_rationale_370",
-      "community": 71,
+      "community": 70,
       "norm_label": "serial pinned embedding in the role given, the query role unless another is name"
     },
     {
@@ -8200,7 +8200,7 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "arms_artefact_facet_leader_hits_answer_one_question",
-      "community": 1,
+      "community": 2,
       "norm_label": "answer_one_question()"
     },
     {
@@ -8300,7 +8300,7 @@
       "source_location": "L139",
       "_origin": "ast",
       "id": "arms_artefact_facet_leader_macro_answer_one_question",
-      "community": 1,
+      "community": 2,
       "norm_label": "answer_one_question()"
     },
     {
@@ -8340,7 +8340,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "arms_artefact_facet_program",
-      "community": 72,
+      "community": 71,
       "norm_label": "artefact_facet_program.py"
     },
     {
@@ -8350,7 +8350,7 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "arms_artefact_facet_program_prepared",
-      "community": 72,
+      "community": 71,
       "norm_label": "prepared"
     },
     {
@@ -8360,7 +8360,7 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "arms_artefact_facet_program_prepared_provenance",
-      "community": 72,
+      "community": 71,
       "norm_label": ".provenance()"
     },
     {
@@ -8370,7 +8370,7 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "arms_artefact_facet_program_selected_program",
-      "community": 72,
+      "community": 71,
       "norm_label": "_selected_program()"
     },
     {
@@ -8380,7 +8380,7 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "arms_artefact_facet_program_prepare_over_corpus",
-      "community": 72,
+      "community": 71,
       "norm_label": "prepare_over_corpus()"
     },
     {
@@ -8390,7 +8390,7 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "arms_artefact_facet_program_rank_numeric",
-      "community": 72,
+      "community": 71,
       "norm_label": "rank_numeric()"
     },
     {
@@ -8400,7 +8400,7 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "arms_artefact_facet_program_answer_one_question",
-      "community": 1,
+      "community": 2,
       "norm_label": "answer_one_question()"
     },
     {
@@ -8420,7 +8420,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "arms_artefact_facet_program_rationale_1",
-      "community": 72,
+      "community": 71,
       "norm_label": "experimental fixed-program artefact arm for a real 72k gold smoke.  interpretati"
     },
     {
@@ -8430,7 +8430,7 @@
       "source_location": "L127",
       "_origin": "ast",
       "id": "arms_artefact_facet_program_rationale_127",
-      "community": 72,
+      "community": 71,
       "norm_label": "pure retrieval stage, also used for captured-case parity without models."
     },
     {
@@ -10920,7 +10920,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "arms_artefact_v2",
-      "community": 1,
+      "community": 2,
       "norm_label": "artefact_v2.py"
     },
     {
@@ -10930,7 +10930,7 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "arms_artefact_v2_env_float",
-      "community": 1,
+      "community": 2,
       "norm_label": "_env_float()"
     },
     {
@@ -10940,7 +10940,7 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "arms_artefact_v2_env_int",
-      "community": 1,
+      "community": 2,
       "norm_label": "_env_int()"
     },
     {
@@ -10950,7 +10950,7 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "arms_artefact_v2_env_bool",
-      "community": 1,
+      "community": 2,
       "norm_label": "_env_bool()"
     },
     {
@@ -10960,7 +10960,7 @@
       "source_location": "L304",
       "_origin": "ast",
       "id": "arms_artefact_v2_hint_terms",
-      "community": 1,
+      "community": 2,
       "norm_label": "_hint_terms()"
     },
     {
@@ -10970,7 +10970,7 @@
       "source_location": "L330",
       "_origin": "ast",
       "id": "arms_artefact_v2_tag_affinity",
-      "community": 1,
+      "community": 2,
       "norm_label": "_tag_affinity()"
     },
     {
@@ -10980,7 +10980,7 @@
       "source_location": "L350",
       "_origin": "ast",
       "id": "arms_artefact_v2_hint_match",
-      "community": 1,
+      "community": 2,
       "norm_label": "_hint_match()"
     },
     {
@@ -10990,7 +10990,7 @@
       "source_location": "L362",
       "_origin": "ast",
       "id": "arms_artefact_v2_corpus_path",
-      "community": 1,
+      "community": 2,
       "norm_label": "_corpus_path()"
     },
     {
@@ -11000,7 +11000,7 @@
       "source_location": "L362",
       "_origin": "ast",
       "id": "test_arms_artefact_v2_py_path",
-      "community": 1,
+      "community": 2,
       "norm_label": "path"
     },
     {
@@ -11010,7 +11010,7 @@
       "source_location": "L370",
       "_origin": "ast",
       "id": "arms_artefact_v2_pointer_value",
-      "community": 1,
+      "community": 2,
       "norm_label": "_pointer_value()"
     },
     {
@@ -11020,7 +11020,7 @@
       "source_location": "L378",
       "_origin": "ast",
       "id": "arms_artefact_v2_channel_names",
-      "community": 1,
+      "community": 2,
       "norm_label": "_channel_names()"
     },
     {
@@ -11030,7 +11030,7 @@
       "source_location": "L399",
       "_origin": "ast",
       "id": "arms_artefact_v2_name_key",
-      "community": 1,
+      "community": 2,
       "norm_label": "_name_key()"
     },
     {
@@ -11040,7 +11040,7 @@
       "source_location": "L403",
       "_origin": "ast",
       "id": "arms_artefact_v2_load_person_directory",
-      "community": 1,
+      "community": 2,
       "norm_label": "_load_person_directory()"
     },
     {
@@ -11050,7 +11050,7 @@
       "source_location": "L453",
       "_origin": "ast",
       "id": "arms_artefact_v2_is_initial",
-      "community": 1,
+      "community": 2,
       "norm_label": "_is_initial()"
     },
     {
@@ -11060,7 +11060,7 @@
       "source_location": "L460",
       "_origin": "ast",
       "id": "arms_artefact_v2_resolve_persons",
-      "community": 1,
+      "community": 2,
       "norm_label": "resolve_persons()"
     },
     {
@@ -11070,7 +11070,7 @@
       "source_location": "L539",
       "_origin": "ast",
       "id": "arms_artefact_v2_gate_persons",
-      "community": 1,
+      "community": 2,
       "norm_label": "_gate_persons()"
     },
     {
@@ -11100,7 +11100,7 @@
       "source_location": "L577",
       "_origin": "ast",
       "id": "arms_artefact_v2_store_cached_vec",
-      "community": 1,
+      "community": 2,
       "norm_label": "_store_cached_vec()"
     },
     {
@@ -11110,7 +11110,7 @@
       "source_location": "L577",
       "_origin": "ast",
       "id": "test_arms_artefact_v2_py_ndarray",
-      "community": 1,
+      "community": 2,
       "norm_label": "ndarray"
     },
     {
@@ -11130,7 +11130,7 @@
       "source_location": "L630",
       "_origin": "ast",
       "id": "arms_artefact_v2_median_nn_dist",
-      "community": 1,
+      "community": 2,
       "norm_label": "_median_nn_dist()"
     },
     {
@@ -11140,7 +11140,7 @@
       "source_location": "L646",
       "_origin": "ast",
       "id": "arms_artefact_v2_median_cross_nn_dist",
-      "community": 1,
+      "community": 2,
       "norm_label": "_median_cross_nn_dist()"
     },
     {
@@ -11150,7 +11150,7 @@
       "source_location": "L663",
       "_origin": "ast",
       "id": "arms_artefact_v2_abs_ref_key",
-      "community": 1,
+      "community": 2,
       "norm_label": "_abs_ref_key()"
     },
     {
@@ -11160,7 +11160,7 @@
       "source_location": "L672",
       "_origin": "ast",
       "id": "arms_artefact_v2_abs_ref_dists",
-      "community": 1,
+      "community": 2,
       "norm_label": "_abs_ref_dists()"
     },
     {
@@ -11190,7 +11190,7 @@
       "source_location": "L754",
       "_origin": "ast",
       "id": "arms_artefact_v2_prepare_over_corpus",
-      "community": 1,
+      "community": 2,
       "norm_label": "prepare_over_corpus()"
     },
     {
@@ -11200,7 +11200,7 @@
       "source_location": "L842",
       "_origin": "ast",
       "id": "arms_artefact_v2_qid_text",
-      "community": 1,
+      "community": 2,
       "norm_label": "_qid_text()"
     },
     {
@@ -11210,7 +11210,7 @@
       "source_location": "L852",
       "_origin": "ast",
       "id": "arms_artefact_v2_extract_json",
-      "community": 1,
+      "community": 2,
       "norm_label": "_extract_json()"
     },
     {
@@ -11240,7 +11240,7 @@
       "source_location": "L924",
       "_origin": "ast",
       "id": "arms_artefact_v2_chat_json",
-      "community": 1,
+      "community": 2,
       "norm_label": "_chat_json()"
     },
     {
@@ -11250,7 +11250,7 @@
       "source_location": "L968",
       "_origin": "ast",
       "id": "arms_artefact_v2_clean_tag",
-      "community": 1,
+      "community": 2,
       "norm_label": "_clean_tag()"
     },
     {
@@ -11280,7 +11280,7 @@
       "source_location": "L1005",
       "_origin": "ast",
       "id": "arms_artefact_v2_validate_scores",
-      "community": 1,
+      "community": 2,
       "norm_label": "_validate_scores()"
     },
     {
@@ -11290,7 +11290,7 @@
       "source_location": "L1023",
       "_origin": "ast",
       "id": "arms_artefact_v2_interpret",
-      "community": 1,
+      "community": 2,
       "norm_label": "_interpret()"
     },
     {
@@ -11300,7 +11300,7 @@
       "source_location": "L1077",
       "_origin": "ast",
       "id": "arms_artefact_v2_interp_key",
-      "community": 1,
+      "community": 2,
       "norm_label": "_interp_key()"
     },
     {
@@ -11310,7 +11310,7 @@
       "source_location": "L1086",
       "_origin": "ast",
       "id": "arms_artefact_v2_store_interp",
-      "community": 1,
+      "community": 2,
       "norm_label": "_store_interp()"
     },
     {
@@ -11320,7 +11320,7 @@
       "source_location": "L1101",
       "_origin": "ast",
       "id": "arms_artefact_v2_interpret_cached",
-      "community": 1,
+      "community": 2,
       "norm_label": "_interpret_cached()"
     },
     {
@@ -11340,7 +11340,7 @@
       "source_location": "L1122",
       "_origin": "ast",
       "id": "arms_artefact_v2_gap_break",
-      "community": 1,
+      "community": 2,
       "norm_label": "_gap_break()"
     },
     {
@@ -11350,7 +11350,7 @@
       "source_location": "L1128",
       "_origin": "ast",
       "id": "arms_artefact_v2_multi_k_support",
-      "community": 1,
+      "community": 2,
       "norm_label": "_multi_k_support()"
     },
     {
@@ -11360,7 +11360,7 @@
       "source_location": "L1144",
       "_origin": "ast",
       "id": "arms_artefact_v2_norm_pool",
-      "community": 1,
+      "community": 2,
       "norm_label": "_norm_pool()"
     },
     {
@@ -11370,7 +11370,7 @@
       "source_location": "L1153",
       "_origin": "ast",
       "id": "arms_artefact_v2_minmax",
-      "community": 1,
+      "community": 2,
       "norm_label": "_minmax()"
     },
     {
@@ -11390,7 +11390,7 @@
       "source_location": "L1163",
       "_origin": "ast",
       "id": "arms_artefact_v2_n_levels",
-      "community": 1,
+      "community": 2,
       "norm_label": "_n_levels()"
     },
     {
@@ -11400,7 +11400,7 @@
       "source_location": "L1170",
       "_origin": "ast",
       "id": "arms_artefact_v2_agg",
-      "community": 1,
+      "community": 2,
       "norm_label": "_agg()"
     },
     {
@@ -11410,7 +11410,7 @@
       "source_location": "L1183",
       "_origin": "ast",
       "id": "arms_artefact_v2_normalize",
-      "community": 1,
+      "community": 2,
       "norm_label": "_normalize()"
     },
     {
@@ -11420,7 +11420,7 @@
       "source_location": "L1208",
       "_origin": "ast",
       "id": "arms_artefact_v2_mod",
-      "community": 1,
+      "community": 2,
       "norm_label": "_mod()"
     },
     {
@@ -11430,7 +11430,7 @@
       "source_location": "L1212",
       "_origin": "ast",
       "id": "arms_artefact_v2_level_chain",
-      "community": 1,
+      "community": 2,
       "norm_label": "_level_chain()"
     },
     {
@@ -11440,7 +11440,7 @@
       "source_location": "L1241",
       "_origin": "ast",
       "id": "arms_artefact_v2_guide_key",
-      "community": 1,
+      "community": 2,
       "norm_label": "_guide_key()"
     },
     {
@@ -11450,7 +11450,7 @@
       "source_location": "L1246",
       "_origin": "ast",
       "id": "arms_artefact_v2_guide_tables",
-      "community": 1,
+      "community": 2,
       "norm_label": "_guide_tables()"
     },
     {
@@ -11460,7 +11460,7 @@
       "source_location": "L1260",
       "_origin": "ast",
       "id": "arms_artefact_v2_guidance",
-      "community": 1,
+      "community": 2,
       "norm_label": "_guidance()"
     },
     {
@@ -11470,7 +11470,7 @@
       "source_location": "L1280",
       "_origin": "ast",
       "id": "arms_artefact_v2_part_levels",
-      "community": 1,
+      "community": 2,
       "norm_label": "_part_levels()"
     },
     {
@@ -11480,7 +11480,7 @@
       "source_location": "L1308",
       "_origin": "ast",
       "id": "arms_artefact_v2_open_area",
-      "community": 1,
+      "community": 2,
       "norm_label": "_open_area()"
     },
     {
@@ -11490,7 +11490,7 @@
       "source_location": "L1323",
       "_origin": "ast",
       "id": "arms_artefact_v2_desc_area",
-      "community": 1,
+      "community": 2,
       "norm_label": "_desc_area()"
     },
     {
@@ -11500,7 +11500,7 @@
       "source_location": "L1339",
       "_origin": "ast",
       "id": "arms_artefact_v2_anchor_cluster",
-      "community": 1,
+      "community": 2,
       "norm_label": "_anchor_cluster()"
     },
     {
@@ -11510,7 +11510,7 @@
       "source_location": "L1348",
       "_origin": "ast",
       "id": "arms_artefact_v2_chunk_regions",
-      "community": 1,
+      "community": 2,
       "norm_label": "_chunk_regions()"
     },
     {
@@ -11520,7 +11520,7 @@
       "source_location": "L1353",
       "_origin": "ast",
       "id": "arms_artefact_v2_lift_distance",
-      "community": 1,
+      "community": 2,
       "norm_label": "_lift_distance()"
     },
     {
@@ -11530,7 +11530,7 @@
       "source_location": "L1357",
       "_origin": "ast",
       "id": "arms_artefact_v2_concentration",
-      "community": 1,
+      "community": 2,
       "norm_label": "_concentration()"
     },
     {
@@ -11540,7 +11540,7 @@
       "source_location": "L1393",
       "_origin": "ast",
       "id": "arms_artefact_v2_promoted_share",
-      "community": 1,
+      "community": 2,
       "norm_label": "_promoted_share()"
     },
     {
@@ -11550,7 +11550,7 @@
       "source_location": "L1402",
       "_origin": "ast",
       "id": "arms_artefact_v2_concentration_modifier",
-      "community": 1,
+      "community": 2,
       "norm_label": "_concentration_modifier()"
     },
     {
@@ -11560,7 +11560,7 @@
       "source_location": "L1437",
       "_origin": "ast",
       "id": "arms_artefact_v2_agreement_modifier",
-      "community": 1,
+      "community": 2,
       "norm_label": "_agreement_modifier()"
     },
     {
@@ -11570,7 +11570,7 @@
       "source_location": "L1460",
       "_origin": "ast",
       "id": "arms_artefact_v2_retrieve",
-      "community": 1,
+      "community": 2,
       "norm_label": "_retrieve()"
     },
     {
@@ -11590,7 +11590,7 @@
       "source_location": "L1805",
       "_origin": "ast",
       "id": "arms_artefact_v2_nth_entry",
-      "community": 1,
+      "community": 2,
       "norm_label": "_nth_entry()"
     },
     {
@@ -11600,7 +11600,7 @@
       "source_location": "L1812",
       "_origin": "ast",
       "id": "arms_artefact_v2_resolve_chunk",
-      "community": 1,
+      "community": 2,
       "norm_label": "_resolve_chunk()"
     },
     {
@@ -11610,7 +11610,7 @@
       "source_location": "L1844",
       "_origin": "ast",
       "id": "arms_artefact_v2_budget_contexts",
-      "community": 1,
+      "community": 2,
       "norm_label": "_budget_contexts()"
     },
     {
@@ -11620,7 +11620,7 @@
       "source_location": "L1866",
       "_origin": "ast",
       "id": "arms_artefact_v2_sufficient_cut",
-      "community": 1,
+      "community": 2,
       "norm_label": "_sufficient_cut()"
     },
     {
@@ -11630,7 +11630,7 @@
       "source_location": "L1899",
       "_origin": "ast",
       "id": "arms_artefact_v2_answer_one_question",
-      "community": 1,
+      "community": 2,
       "norm_label": "answer_one_question()"
     },
     {
@@ -11650,7 +11650,7 @@
       "source_location": "L969",
       "_origin": "ast",
       "id": "arms_artefact_v2_rationale_969",
-      "community": 1,
+      "community": 2,
       "norm_label": "a tag as the vocabulary writes it \u2014 collapsed whitespace, nothing else.     cas"
     },
     {
@@ -11670,7 +11670,7 @@
       "source_location": "L1006",
       "_origin": "ast",
       "id": "arms_artefact_v2_rationale_1006",
-      "community": 1,
+      "community": 2,
       "norm_label": "pass-2 payload shape: `scores` is a list of rows, each {t: str,     facets: {fa"
     },
     {
@@ -11680,7 +11680,7 @@
       "source_location": "L1024",
       "_origin": "ast",
       "id": "arms_artefact_v2_rationale_1024",
-      "community": 1,
+      "community": 2,
       "norm_label": "interpret a question -> (plan, calls, tokens_in, tokens_out, time_s).     plan"
     },
     {
@@ -12290,7 +12290,7 @@
       "source_location": "L3543",
       "_origin": "ast",
       "id": "arms_artefact_v3_answer_one_question",
-      "community": 1,
+      "community": 2,
       "norm_label": "answer_one_question()"
     },
     {
@@ -12920,7 +12920,7 @@
       "source_location": "L373",
       "_origin": "ast",
       "id": "arms_artefact_v3grag_answer_one_question",
-      "community": 1,
+      "community": 2,
       "norm_label": "answer_one_question()"
     },
     {
@@ -14560,7 +14560,7 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "artefact_chunk_expand",
-      "community": 74,
+      "community": 72,
       "norm_label": "expand()"
     },
     {
@@ -14670,7 +14670,7 @@
       "source_location": "L224",
       "_origin": "ast",
       "id": "artefact_chunk_is_prose_collection",
-      "community": 74,
+      "community": 72,
       "norm_label": "_is_prose_collection()"
     },
     {
@@ -14680,7 +14680,7 @@
       "source_location": "L229",
       "_origin": "ast",
       "id": "artefact_chunk_chunk_file",
-      "community": 74,
+      "community": 72,
       "norm_label": "chunk_file()"
     },
     {
@@ -16420,7 +16420,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "artefact_facet_tag_frontier",
-      "community": 72,
+      "community": 71,
       "norm_label": "facet_tag_frontier.py"
     },
     {
@@ -16430,7 +16430,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "artefact_facet_tag_frontier_inject",
-      "community": 72,
+      "community": 71,
       "norm_label": "inject()"
     },
     {
@@ -16440,7 +16440,7 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "artefact_facet_tag_frontier_tiers",
-      "community": 72,
+      "community": 71,
       "norm_label": "_tiers()"
     },
     {
@@ -16450,7 +16450,7 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "artefact_facet_tag_frontier_edge_gate",
-      "community": 72,
+      "community": 71,
       "norm_label": "edge_gate()"
     },
     {
@@ -16460,7 +16460,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "artefact_facet_tag_frontier_rationale_1",
-      "community": 72,
+      "community": 71,
       "norm_label": "value-only tag nomination before has_tag edge reduction.  no corpus, gold, sourc"
     },
     {
@@ -16470,7 +16470,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "artefact_facet_tag_frontier_rationale_17",
-      "community": 72,
+      "community": 71,
       "norm_label": "place the frontier gate immediately after edge evidence, before reduction."
     },
     {
@@ -16480,7 +16480,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "artefact_facet_tag_frontier_rationale_36",
-      "community": 72,
+      "community": 71,
       "norm_label": "dense competition ranks over complete positive score tiers per stream."
     },
     {
@@ -16490,7 +16490,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "artefact_facet_tag_frontier_rationale_47",
-      "community": 72,
+      "community": 71,
       "norm_label": "return [facet,query,edge] gate and inspectable tag/edge frontier state.      `qu"
     },
     {
@@ -17160,7 +17160,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "artefact_landing",
-      "community": 2,
+      "community": 1,
       "norm_label": "landing.py"
     },
     {
@@ -17170,7 +17170,7 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "artefact_landing_landing",
-      "community": 2,
+      "community": 1,
       "norm_label": "landing"
     },
     {
@@ -17180,7 +17180,7 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "artefact_landing_hit",
-      "community": 2,
+      "community": 1,
       "norm_label": "hit"
     },
     {
@@ -17190,7 +17190,7 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "artefact_landing_areas",
-      "community": 2,
+      "community": 1,
       "norm_label": "areas"
     },
     {
@@ -17200,7 +17200,7 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "artefact_landing_area",
-      "community": 2,
+      "community": 1,
       "norm_label": "area"
     },
     {
@@ -17210,7 +17210,7 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "artefact_landing_pointer",
-      "community": 2,
+      "community": 1,
       "norm_label": "_pointer()"
     },
     {
@@ -17220,7 +17220,7 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "artefact_landing_names_of",
-      "community": 2,
+      "community": 1,
       "norm_label": "_names_of()"
     },
     {
@@ -17230,7 +17230,7 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "artefact_landing_read_nodes",
-      "community": 2,
+      "community": 1,
       "norm_label": "_read_nodes()"
     },
     {
@@ -17240,7 +17240,7 @@
       "source_location": "L145",
       "_origin": "ast",
       "id": "artefact_landing_resolve",
-      "community": 2,
+      "community": 1,
       "norm_label": "_resolve()"
     },
     {
@@ -17250,7 +17250,7 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "artefact_landing_resolve_names",
-      "community": 2,
+      "community": 1,
       "norm_label": "resolve_names()"
     },
     {
@@ -17260,7 +17260,7 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "test_artefact_landing_py_path",
-      "community": 2,
+      "community": 1,
       "norm_label": "path"
     },
     {
@@ -17270,7 +17270,7 @@
       "source_location": "L193",
       "_origin": "ast",
       "id": "artefact_landing_tokens",
-      "community": 2,
+      "community": 1,
       "norm_label": "_tokens()"
     },
     {
@@ -17280,7 +17280,7 @@
       "source_location": "L202",
       "_origin": "ast",
       "id": "artefact_landing_distance",
-      "community": 2,
+      "community": 1,
       "norm_label": "distance()"
     },
     {
@@ -17290,7 +17290,7 @@
       "source_location": "L216",
       "_origin": "ast",
       "id": "artefact_landing_capitalised",
-      "community": 2,
+      "community": 1,
       "norm_label": "_capitalised()"
     },
     {
@@ -17300,7 +17300,7 @@
       "source_location": "L220",
       "_origin": "ast",
       "id": "artefact_landing_candidates",
-      "community": 2,
+      "community": 1,
       "norm_label": "_candidates()"
     },
     {
@@ -17310,7 +17310,7 @@
       "source_location": "L242",
       "_origin": "ast",
       "id": "artefact_landing_land",
-      "community": 2,
+      "community": 1,
       "norm_label": "land()"
     },
     {
@@ -17320,7 +17320,7 @@
       "source_location": "L323",
       "_origin": "ast",
       "id": "artefact_landing_combine",
-      "community": 2,
+      "community": 1,
       "norm_label": "combine()"
     },
     {
@@ -17330,7 +17330,7 @@
       "source_location": "L364",
       "_origin": "ast",
       "id": "artefact_landing_smoke",
-      "community": 2,
+      "community": 1,
       "norm_label": "_smoke()"
     },
     {
@@ -17340,7 +17340,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "artefact_landing_rationale_1",
-      "community": 2,
+      "community": 1,
       "norm_label": "the query's names land on structure nodes, and the graph walks from there to its"
     },
     {
@@ -17350,7 +17350,7 @@
       "source_location": "L170",
       "_origin": "ast",
       "id": "artefact_landing_rationale_170",
-      "community": 2,
+      "community": 1,
       "norm_label": "every named structure node, its name resolved through its pointer; cached per co"
     },
     {
@@ -17360,7 +17360,7 @@
       "source_location": "L203",
       "_origin": "ast",
       "id": "artefact_landing_rationale_203",
-      "community": 2,
+      "community": 1,
       "norm_label": "levenshtein distance between two strings."
     },
     {
@@ -17370,7 +17370,7 @@
       "source_location": "L221",
       "_origin": "ast",
       "id": "artefact_landing_rationale_221",
-      "community": 2,
+      "community": 1,
       "norm_label": "capitalised token windows that are no literal name match, widest first.      t"
     },
     {
@@ -17380,7 +17380,7 @@
       "source_location": "L243",
       "_origin": "ast",
       "id": "artefact_landing_rationale_243",
-      "community": 2,
+      "community": 1,
       "norm_label": "the names the question text carries: literal whole-word, else the nearest name o"
     },
     {
@@ -17390,7 +17390,7 @@
       "source_location": "L304",
       "_origin": "ast",
       "id": "artefact_landing_rationale_304",
-      "community": 2,
+      "community": 1,
       "norm_label": "the chunks each landed node reaches over the graph's own relations."
     },
     {
@@ -17400,7 +17400,7 @@
       "source_location": "L324",
       "_origin": "ast",
       "id": "artefact_landing_rationale_324",
-      "community": 2,
+      "community": 1,
       "norm_label": "the question's area: one landing per name, the meet of the distinct landings' ch"
     },
     {
@@ -18760,7 +18760,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_chunk",
-      "community": 74,
+      "community": 72,
       "norm_label": "test_chunk.py"
     },
     {
@@ -18770,7 +18770,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "tests_test_chunk_slack_msg",
-      "community": 74,
+      "community": 72,
       "norm_label": "_slack_msg()"
     },
     {
@@ -18780,7 +18780,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "tests_test_chunk_resolve",
-      "community": 74,
+      "community": 72,
       "norm_label": "_resolve()"
     },
     {
@@ -18790,7 +18790,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "ref",
-      "community": 74,
+      "community": 72,
       "norm_label": "ref"
     },
     {
@@ -18800,7 +18800,7 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "tests_test_chunk_test_expand_wildcard_and_missing_optional",
-      "community": 74,
+      "community": 72,
       "norm_label": "test_expand_wildcard_and_missing_optional()"
     },
     {
@@ -18810,7 +18810,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "tests_test_chunk_test_expand_nested_wildcard",
-      "community": 74,
+      "community": 72,
       "norm_label": "test_expand_nested_wildcard()"
     },
     {
@@ -18840,7 +18840,7 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "tests_test_chunk_test_segment_splits_on_large_gap",
-      "community": 74,
+      "community": 72,
       "norm_label": "test_segment_splits_on_large_gap()"
     },
     {
@@ -18850,7 +18850,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "tests_test_chunk_test_segment_splits_on_day_boundary",
-      "community": 74,
+      "community": 72,
       "norm_label": "test_segment_splits_on_day_boundary()"
     },
     {
@@ -18860,7 +18860,7 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "tests_test_chunk_dt",
-      "community": 74,
+      "community": 72,
       "norm_label": "_dt()"
     },
     {
@@ -18870,7 +18870,7 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "tests_test_chunk_test_conversation_groups_by_channel_and_episode",
-      "community": 74,
+      "community": 72,
       "norm_label": "test_conversation_groups_by_channel_and_episode()"
     },
     {
@@ -18880,7 +18880,7 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "tests_test_chunk_test_conversation_cap_split_at_largest_gap",
-      "community": 74,
+      "community": 72,
       "norm_label": "test_conversation_cap_split_at_largest_gap()"
     },
     {
@@ -18890,7 +18890,7 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "tests_test_chunk_test_whitespace_only_content_is_kept_not_silently_dropped",
-      "community": 74,
+      "community": 72,
       "norm_label": "test_whitespace_only_content_is_kept_not_silently_dropped()"
     },
     {
@@ -18900,7 +18900,7 @@
       "source_location": "L127",
       "_origin": "ast",
       "id": "tests_test_chunk_test_prose_records_stay_one_per_record",
-      "community": 74,
+      "community": 72,
       "norm_label": "test_prose_records_stay_one_per_record()"
     },
     {
@@ -18910,7 +18910,7 @@
       "source_location": "L138",
       "_origin": "ast",
       "id": "tests_test_chunk_test_prose_record_over_cap_splits_and_char_spans_tile_the_leaf",
-      "community": 74,
+      "community": 72,
       "norm_label": "test_prose_record_over_cap_splits_and_char_spans_tile_the_leaf()"
     },
     {
@@ -18920,7 +18920,7 @@
       "source_location": "L148",
       "_origin": "ast",
       "id": "tests_test_chunk_test_short_records_pack_consecutive_into_one_chunk",
-      "community": 74,
+      "community": 72,
       "norm_label": "test_short_records_pack_consecutive_into_one_chunk()"
     },
     {
@@ -18930,7 +18930,7 @@
       "source_location": "L157",
       "_origin": "ast",
       "id": "tests_test_chunk_test_short_records_break_at_cap_referencing_every_record_once",
-      "community": 74,
+      "community": 72,
       "norm_label": "test_short_records_break_at_cap_referencing_every_record_once()"
     },
     {
@@ -18940,7 +18940,7 @@
       "source_location": "L165",
       "_origin": "ast",
       "id": "tests_test_chunk_test_short_record_single_record_keeps_its_leaves_together",
-      "community": 74,
+      "community": 72,
       "norm_label": "test_short_record_single_record_keeps_its_leaves_together()"
     },
     {
@@ -18950,7 +18950,7 @@
       "source_location": "L174",
       "_origin": "ast",
       "id": "tests_test_chunk_test_mixed_file_dispatches_each_collection_by_kind",
-      "community": 74,
+      "community": 72,
       "norm_label": "test_mixed_file_dispatches_each_collection_by_kind()"
     },
     {
@@ -18960,7 +18960,7 @@
       "source_location": "L193",
       "_origin": "ast",
       "id": "tests_test_chunk_test_references_resolve_into_raw_content_leaves",
-      "community": 74,
+      "community": 72,
       "norm_label": "test_references_resolve_into_raw_content_leaves()"
     },
     {
@@ -18970,7 +18970,7 @@
       "source_location": "L206",
       "_origin": "ast",
       "id": "tests_test_chunk_test_directory_file_yields_no_chunks",
-      "community": 74,
+      "community": 72,
       "norm_label": "test_directory_file_yields_no_chunks()"
     },
     {
@@ -19590,7 +19590,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "test_build_questions",
-      "community": 270,
+      "community": 271,
       "norm_label": "build_questions.py"
     },
     {
@@ -19600,7 +19600,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "test_build_questions_mint_id",
-      "community": 270,
+      "community": 271,
       "norm_label": "mint_id()"
     },
     {
@@ -19610,7 +19610,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "test_build_questions_build",
-      "community": 270,
+      "community": 271,
       "norm_label": "build()"
     },
     {
@@ -19810,7 +19810,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "graph_init",
-      "community": 278,
+      "community": 279,
       "norm_label": "__init__.py"
     },
     {
@@ -19820,7 +19820,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "graph_backfill_token_split",
-      "community": 73,
+      "community": 75,
       "norm_label": "backfill_token_split.py"
     },
     {
@@ -19830,7 +19830,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "graph_backfill_token_split_backfill_file",
-      "community": 73,
+      "community": 75,
       "norm_label": "backfill_file()"
     },
     {
@@ -19840,7 +19840,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "test_graph_backfill_token_split_py_path",
-      "community": 73,
+      "community": 75,
       "norm_label": "path"
     },
     {
@@ -19850,7 +19850,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "graph_backfill_token_split_main",
-      "community": 73,
+      "community": 75,
       "norm_label": "main()"
     },
     {
@@ -35500,7 +35500,7 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_unit_rows",
-      "community": 75,
+      "community": 73,
       "norm_label": "_unit_rows()"
     },
     {
@@ -35550,7 +35550,7 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_layer",
-      "community": 75,
+      "community": 73,
       "norm_label": "_layer()"
     },
     {
@@ -35900,7 +35900,7 @@
       "source_location": "L273",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_matchtests",
-      "community": 75,
+      "community": 73,
       "norm_label": "matchtests"
     },
     {
@@ -35910,7 +35910,7 @@
       "source_location": "L274",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_matchtests_test_the_entity_match_is_the_best_pair_on_the_half_cosine_scale",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_the_entity_match_is_the_best_pair_on_the_half_cosine_scale()"
     },
     {
@@ -35920,7 +35920,7 @@
       "source_location": "L283",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_matchtests_test_the_mean_reading_averages_the_per_name_bests",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_the_mean_reading_averages_the_per_name_bests()"
     },
     {
@@ -35930,7 +35930,7 @@
       "source_location": "L295",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_matchtests_test_an_empty_answer_set_carries_the_floor",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_an_empty_answer_set_carries_the_floor()"
     },
     {
@@ -35940,7 +35940,7 @@
       "source_location": "L302",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_matchtests_test_the_neutral_reading_puts_silence_at_the_midpoint",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_the_neutral_reading_puts_silence_at_the_midpoint()"
     },
     {
@@ -35950,7 +35950,7 @@
       "source_location": "L309",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_matchtests_test_a_day_reference_decays_with_distance",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_a_day_reference_decays_with_distance()"
     },
     {
@@ -35960,7 +35960,7 @@
       "source_location": "L316",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_matchtests_test_a_range_reference_is_flat_inside_and_decays_outside",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_a_range_reference_is_flat_inside_and_decays_outside()"
     },
     {
@@ -35970,7 +35970,7 @@
       "source_location": "L323",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_matchtests_test_a_posture_word_maps_onto_recency_rank",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_a_posture_word_maps_onto_recency_rank()"
     },
     {
@@ -35980,7 +35980,7 @@
       "source_location": "L331",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_matchtests_test_an_undated_chunk_carries_the_floor_or_the_neutral",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_an_undated_chunk_carries_the_floor_or_the_neutral()"
     },
     {
@@ -35990,7 +35990,7 @@
       "source_location": "L339",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_matchtests_test_label_agreement_scores_the_labelled_chunks",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_label_agreement_scores_the_labelled_chunks()"
     },
     {
@@ -36000,7 +36000,7 @@
       "source_location": "L348",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_matchtests_test_the_graded_reading_ranks_by_the_kind_score",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_the_graded_reading_ranks_by_the_kind_score()"
     },
     {
@@ -36010,7 +36010,7 @@
       "source_location": "L354",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_matchtests_test_an_asked_kind_with_no_countable_mark_is_a_constant",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_an_asked_kind_with_no_countable_mark_is_a_constant()"
     },
     {
@@ -36020,7 +36020,7 @@
       "source_location": "L362",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_matchtests_test_the_topic_match_is_the_description_channel_unchanged",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_the_topic_match_is_the_description_channel_unchanged()"
     },
     {
@@ -36080,7 +36080,7 @@
       "source_location": "L400",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_silenceruletests_test_chunk_side_silence_never_excludes_the_chunk",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_chunk_side_silence_never_excludes_the_chunk()"
     },
     {
@@ -36340,7 +36340,7 @@
       "source_location": "L598",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_retrievetests",
-      "community": 75,
+      "community": 73,
       "norm_label": "retrievetests"
     },
     {
@@ -36350,7 +36350,7 @@
       "source_location": "L599",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_retrievetests_test_a_non_positive_k_fails_before_any_work",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_a_non_positive_k_fails_before_any_work()"
     },
     {
@@ -36360,7 +36360,7 @@
       "source_location": "L603",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_retrievetests_test_the_callers_k_caps_the_depth",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_the_callers_k_caps_the_depth()"
     },
     {
@@ -36370,7 +36370,7 @@
       "source_location": "L608",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_retrievetests_test_a_selected_row_carries_the_pointer_the_resolver_reads",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_a_selected_row_carries_the_pointer_the_resolver_reads()"
     },
     {
@@ -36390,7 +36390,7 @@
       "source_location": "L621",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_retrievetests_test_equal_scores_rank_on_the_chunk_id",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_equal_scores_rank_on_the_chunk_id()"
     },
     {
@@ -36400,7 +36400,7 @@
       "source_location": "L628",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_retrievetests_test_the_meta_records_the_read_and_the_combine",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_the_meta_records_the_read_and_the_combine()"
     },
     {
@@ -36410,7 +36410,7 @@
       "source_location": "L641",
       "_origin": "ast",
       "id": "tests_test_artefact_v1_five_questions_retrievetests_test_an_unasked_question_is_absent_from_the_meta",
-      "community": 75,
+      "community": 73,
       "norm_label": ".test_an_unasked_question_is_absent_from_the_meta()"
     },
     {
@@ -40260,7 +40260,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_build_chunk_times",
-      "community": 271,
+      "community": 272,
       "norm_label": "test_build_chunk_times.py"
     },
     {
@@ -40270,7 +40270,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "tests_test_build_chunk_times_test_a_records_time_is_read_from_the_field_its_kind_keeps_it_in",
-      "community": 271,
+      "community": 272,
       "norm_label": "test_a_records_time_is_read_from_the_field_its_kind_keeps_it_in()"
     },
     {
@@ -40280,7 +40280,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "tests_test_build_chunk_times_test_a_chunks_times_are_its_records_own_times_sorted",
-      "community": 271,
+      "community": 272,
       "norm_label": "test_a_chunks_times_are_its_records_own_times_sorted()"
     },
     {
@@ -40570,7 +40570,7 @@
       "source_location": "L140",
       "_origin": "ast",
       "id": "tests_test_build_entity_graph_backtickquotingtests",
-      "community": 272,
+      "community": 273,
       "norm_label": "backtickquotingtests"
     },
     {
@@ -40580,7 +40580,7 @@
       "source_location": "L141",
       "_origin": "ast",
       "id": "tests_test_build_entity_graph_backtickquotingtests_test_plain_names_quote",
-      "community": 272,
+      "community": 273,
       "norm_label": ".test_plain_names_quote()"
     },
     {
@@ -40590,7 +40590,7 @@
       "source_location": "L144",
       "_origin": "ast",
       "id": "tests_test_build_entity_graph_backtickquotingtests_test_inner_backticks_are_doubled",
-      "community": 272,
+      "community": 273,
       "norm_label": ".test_inner_backticks_are_doubled()"
     },
     {
@@ -42610,7 +42610,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_final_selection",
-      "community": 275,
+      "community": 276,
       "norm_label": "test_facet_final_selection.py"
     },
     {
@@ -42620,7 +42620,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "tests_test_facet_final_selection_test_fixed_objectives_remain_distinct_and_partial_parent_is_rejected",
-      "community": 275,
+      "community": 276,
       "norm_label": "test_fixed_objectives_remain_distinct_and_partial_parent_is_rejected()"
     },
     {
@@ -43680,7 +43680,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "tests_test_facet_pairs_make_corpus",
-      "community": 273,
+      "community": 274,
       "norm_label": "make_corpus()"
     },
     {
@@ -43690,7 +43690,7 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "tests_test_facet_pairs_corpus",
-      "community": 273,
+      "community": 274,
       "norm_label": "corpus()"
     },
     {
@@ -44080,7 +44080,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tests_test_facet_pairs_rationale_14",
-      "community": 273,
+      "community": 274,
       "norm_label": "a rows export and a facet_stats file with the shape the real ones have."
     },
     {
@@ -46710,7 +46710,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_scope_program_lab",
-      "community": 276,
+      "community": 277,
       "norm_label": "test_facet_scope_program_lab.py"
     },
     {
@@ -46720,7 +46720,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "tests_test_facet_scope_program_lab_test_scope_override_is_query_grounded_and_does_not_mutate_saved_case",
-      "community": 276,
+      "community": 277,
       "norm_label": "test_scope_override_is_query_grounded_and_does_not_mutate_saved_case()"
     },
     {
@@ -47010,7 +47010,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_structural_findings",
-      "community": 277,
+      "community": 278,
       "norm_label": "test_facet_structural_findings.py"
     },
     {
@@ -47020,7 +47020,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "tests_test_facet_structural_findings_test_only_one_structural_change_is_matched_and_context_reversal_is_visible",
-      "community": 277,
+      "community": 278,
       "norm_label": "test_only_one_structural_change_is_matched_and_context_reversal_is_visible()"
     },
     {
@@ -47180,7 +47180,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_facet_tag_frontier",
-      "community": 72,
+      "community": 71,
       "norm_label": "test_facet_tag_frontier.py"
     },
     {
@@ -47190,7 +47190,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "tests_test_facet_tag_frontier_fixture",
-      "community": 72,
+      "community": 71,
       "norm_label": "fixture()"
     },
     {
@@ -47200,7 +47200,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_test_facet_tag_frontier_test_first_tier_changes_edge_evidence_before_chunk_reduction",
-      "community": 72,
+      "community": 71,
       "norm_label": "test_first_tier_changes_edge_evidence_before_chunk_reduction()"
     },
     {
@@ -47210,7 +47210,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "tests_test_facet_tag_frontier_test_all_sponsors_retains_complete_tiers_with_depth_discount",
-      "community": 72,
+      "community": 71,
       "norm_label": "test_all_sponsors_retains_complete_tiers_with_depth_discount()"
     },
     {
@@ -47220,7 +47220,7 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "tests_test_facet_tag_frontier_test_outgoing_facet_readings_can_reverse_tag_frontier",
-      "community": 72,
+      "community": 71,
       "norm_label": "test_outgoing_facet_readings_can_reverse_tag_frontier()"
     },
     {
@@ -47230,7 +47230,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "tests_test_facet_tag_frontier_test_query_streams_can_recruit_different_tag_sponsors",
-      "community": 72,
+      "community": 71,
       "norm_label": "test_query_streams_can_recruit_different_tag_sponsors()"
     },
     {
@@ -47240,7 +47240,7 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "tests_test_facet_tag_frontier_test_unit_gate_reproduces_original_full_order_and_scores",
-      "community": 72,
+      "community": 71,
       "norm_label": "test_unit_gate_reproduces_original_full_order_and_scores()"
     },
     {
@@ -48980,7 +48980,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_landing",
-      "community": 2,
+      "community": 1,
       "norm_label": "test_landing.py"
     },
     {
@@ -48990,7 +48990,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "tests_test_landing_synthetic",
-      "community": 2,
+      "community": 1,
       "norm_label": "synthetic()"
     },
     {
@@ -49000,7 +49000,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "tests_test_landing_rule_of",
-      "community": 2,
+      "community": 1,
       "norm_label": "rule_of()"
     },
     {
@@ -49010,7 +49010,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "tests_test_landing_nodes_of",
-      "community": 2,
+      "community": 1,
       "norm_label": "nodes_of()"
     },
     {
@@ -49020,7 +49020,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "tests_test_landing_literal",
-      "community": 2,
+      "community": 1,
       "norm_label": "literal"
     },
     {
@@ -49030,7 +49030,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "tests_test_landing_literal_test_full_name_lands_one_node",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_full_name_lands_one_node()"
     },
     {
@@ -49040,7 +49040,7 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "tests_test_landing_literal_test_case_insensitive_and_whole_word",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_case_insensitive_and_whole_word()"
     },
     {
@@ -49050,7 +49050,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "tests_test_landing_literal_test_a_name_inside_a_word_is_not_a_literal_match",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_a_name_inside_a_word_is_not_a_literal_match()"
     },
     {
@@ -49060,7 +49060,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "tests_test_landing_literal_test_product_lands_literally",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_product_lands_literally()"
     },
     {
@@ -49070,7 +49070,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "tests_test_landing_nearestunique",
-      "community": 2,
+      "community": 1,
       "norm_label": "nearestunique"
     },
     {
@@ -49080,7 +49080,7 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "tests_test_landing_nearestunique_test_one_nearest_name_is_accepted",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_one_nearest_name_is_accepted()"
     },
     {
@@ -49090,7 +49090,7 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "tests_test_landing_nearestunique_test_a_tie_lands_nothing",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_a_tie_lands_nothing()"
     },
     {
@@ -49100,7 +49100,7 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "tests_test_landing_nearestunique_test_a_literal_hit_does_not_stop_another_word_from_landing",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_a_literal_hit_does_not_stop_another_word_from_landing()"
     },
     {
@@ -49110,7 +49110,7 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "tests_test_landing_nearestunique_test_a_question_with_no_capitalised_word_lands_nothing",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_a_question_with_no_capitalised_word_lands_nothing()"
     },
     {
@@ -49120,7 +49120,7 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "tests_test_landing_nearestunique_test_a_sentence_initial_capital_is_not_a_candidate",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_a_sentence_initial_capital_is_not_a_candidate()"
     },
     {
@@ -49130,7 +49130,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "tests_test_landing_nearestunique_test_only_the_named_words_land",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_only_the_named_words_land()"
     },
     {
@@ -49140,7 +49140,7 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "tests_test_landing_ambiguousfirstname",
-      "community": 2,
+      "community": 1,
       "norm_label": "ambiguousfirstname"
     },
     {
@@ -49150,7 +49150,7 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "tests_test_landing_ambiguousfirstname_test_a_first_name_lands_on_every_employee_carrying_it",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_a_first_name_lands_on_every_employee_carrying_it()"
     },
     {
@@ -49160,7 +49160,7 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "tests_test_landing_ambiguousfirstname_test_the_full_name_also_lands_its_first_name",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_the_full_name_also_lands_its_first_name()"
     },
     {
@@ -49170,7 +49170,7 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "tests_test_landing_synthetic_areas",
-      "community": 2,
+      "community": 1,
       "norm_label": "synthetic_areas()"
     },
     {
@@ -49180,7 +49180,7 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "tests_test_landing_hits_for",
-      "community": 2,
+      "community": 1,
       "norm_label": "hits_for()"
     },
     {
@@ -49190,7 +49190,7 @@
       "source_location": "L122",
       "_origin": "ast",
       "id": "tests_test_landing_combine",
-      "community": 2,
+      "community": 1,
       "norm_label": "combine"
     },
     {
@@ -49200,7 +49200,7 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "tests_test_landing_combine_test_two_employees_of_one_name_and_a_product_meet_on_one_chunk",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_two_employees_of_one_name_and_a_product_meet_on_one_chunk()"
     },
     {
@@ -49210,7 +49210,7 @@
       "source_location": "L134",
       "_origin": "ast",
       "id": "tests_test_landing_combine_test_every_chunk_carries_the_landings_that_reach_it",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_every_chunk_carries_the_landings_that_reach_it()"
     },
     {
@@ -49220,7 +49220,7 @@
       "source_location": "L141",
       "_origin": "ast",
       "id": "tests_test_landing_combine_test_a_single_landing_is_its_own_area",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_a_single_landing_is_its_own_area()"
     },
     {
@@ -49230,7 +49230,7 @@
       "source_location": "L147",
       "_origin": "ast",
       "id": "tests_test_landing_combine_test_landings_that_do_not_meet_come_back_empty_and_named",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_landings_that_do_not_meet_come_back_empty_and_named()"
     },
     {
@@ -49240,7 +49240,7 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "tests_test_landing_combine_test_the_full_name_and_the_first_name_are_two_landings",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_the_full_name_and_the_first_name_are_two_landings()"
     },
     {
@@ -49250,7 +49250,7 @@
       "source_location": "L163",
       "_origin": "ast",
       "id": "tests_test_landing_combine_test_no_landing_is_no_area",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_no_landing_is_no_area()"
     },
     {
@@ -49260,7 +49260,7 @@
       "source_location": "L166",
       "_origin": "ast",
       "id": "tests_test_landing_combine_test_a_landing_reaching_nothing_empties_the_meet",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_a_landing_reaching_nothing_empties_the_meet()"
     },
     {
@@ -49270,7 +49270,7 @@
       "source_location": "L174",
       "_origin": "ast",
       "id": "tests_test_landing_combine_test_every_kind_land_reports_is_a_landing_of_the_meet",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_every_kind_land_reports_is_a_landing_of_the_meet()"
     },
     {
@@ -49280,7 +49280,7 @@
       "source_location": "L182",
       "_origin": "ast",
       "id": "tests_test_landing_dropempty",
-      "community": 2,
+      "community": 1,
       "norm_label": "dropempty"
     },
     {
@@ -49290,7 +49290,7 @@
       "source_location": "L184",
       "_origin": "ast",
       "id": "tests_test_landing_dropempty_test_a_landing_reaching_nothing_is_dropped_and_named",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_a_landing_reaching_nothing_is_dropped_and_named()"
     },
     {
@@ -49300,7 +49300,7 @@
       "source_location": "L194",
       "_origin": "ast",
       "id": "tests_test_landing_dropempty_test_every_landing_dropped_leaves_no_landing_and_no_chunk",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_every_landing_dropped_leaves_no_landing_and_no_chunk()"
     },
     {
@@ -49310,7 +49310,7 @@
       "source_location": "L200",
       "_origin": "ast",
       "id": "tests_test_landing_dropempty_test_landings_that_reach_chunks_are_read_as_before",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_landings_that_reach_chunks_are_read_as_before()"
     },
     {
@@ -49320,7 +49320,7 @@
       "source_location": "L210",
       "_origin": "ast",
       "id": "tests_test_landing_knownwords",
-      "community": 2,
+      "community": 1,
       "norm_label": "knownwords"
     },
     {
@@ -49330,7 +49330,7 @@
       "source_location": "L212",
       "_origin": "ast",
       "id": "tests_test_landing_knownwords_test_a_word_the_corpus_carries_never_reaches_the_nearest_name_pass",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_a_word_the_corpus_carries_never_reaches_the_nearest_name_pass()"
     },
     {
@@ -49340,7 +49340,7 @@
       "source_location": "L217",
       "_origin": "ast",
       "id": "tests_test_landing_knownwords_test_a_misspelling_the_corpus_does_not_carry_still_lands",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_a_misspelling_the_corpus_does_not_carry_still_lands()"
     },
     {
@@ -49350,7 +49350,7 @@
       "source_location": "L223",
       "_origin": "ast",
       "id": "tests_test_landing_knownwords_test_a_window_of_corpus_words_is_no_misspelling",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_a_window_of_corpus_words_is_no_misspelling()"
     },
     {
@@ -49360,7 +49360,7 @@
       "source_location": "L230",
       "_origin": "ast",
       "id": "tests_test_landing_knownwords_test_literal_matches_are_read_as_before",
-      "community": 2,
+      "community": 1,
       "norm_label": ".test_literal_matches_are_read_as_before()"
     },
     {
@@ -49370,7 +49370,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_landing_rationale_1",
-      "community": 2,
+      "community": 1,
       "norm_label": "land: literal, nearest-unique, first-name ambiguity; combine: where the landings"
     },
     {
@@ -49380,7 +49380,7 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "tests_test_landing_rationale_101",
-      "community": 2,
+      "community": 1,
       "norm_label": "eid_1 sits in a channel under actiongenie (c2); eid_2's channel (c3) is elsewher"
     },
     {
@@ -49390,7 +49390,7 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "tests_test_landing_rationale_116",
-      "community": 2,
+      "community": 1,
       "norm_label": "the hits land would carry for these (kind, name) landings, over the synthetic na"
     },
     {
@@ -161533,5 +161533,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "4ab9e7b96184658ed97a76a64d697a14b99cdcac"
+  "built_at_commit": "81c9d2fc462f8cfd5a2795c7823c671b9219b7a2"
 }
