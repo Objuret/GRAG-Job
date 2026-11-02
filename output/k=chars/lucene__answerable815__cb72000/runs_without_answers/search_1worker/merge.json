@@ -1,0 +1,109 @@
+{
+  "merged_at": "2026-11-02T00:15:19.914406+00:00",
+  "tool": "tools/merge_runs.py",
+  "tool_sha256": "6732fd5d5327d7eb426a2739615223fa88b0b8522102900442ff13364dec7a5a",
+  "argv": [
+    "tools/merge_runs.py",
+    "--write"
+  ],
+  "whole_set": {
+    "file": "data/answerable815.jsonl",
+    "sha256": "d7424d33c5b5f22e8b0b49f06814f4442a3e3c712350575677a26c3c189bf34c",
+    "n_questions": 815
+  },
+  "checked_equal": [
+    "arm",
+    "generator_model",
+    "interpreter_model",
+    "top_k",
+    "char_budget",
+    "graph",
+    "inputs (but ids_sha256)"
+  ],
+  "left_empty": [
+    "build_stats"
+  ],
+  "eval_left_empty": [],
+  "judge_settings_left_empty": [],
+  "sources": [
+    {
+      "name": "lucene__gold100__cb72000__20261027_search_1worker",
+      "path": "output/k=chars/lucene__gold100__cb72000__20261027_search_1worker",
+      "n_questions": 100,
+      "ids_sha256": "cddaca624c8513c618657ece0b357b1463282f7c4ef083d1a7058959d8ccbf3d",
+      "host": "Wiktop",
+      "n_rows": 100,
+      "n_failure_lines": 0,
+      "n_score_rows": 0,
+      "n_eval_calls": 0,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 1
+        }
+      ],
+      "manifest_values": {
+        "build_stats": {
+          "build_time_s": 2.708603500010213,
+          "models": [],
+          "not_recorded": []
+        }
+      },
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "ae15be8e2d255580a603b0f18d3676cde61321736f6640c6a0b7e5c07154aa54",
+        "code.ac359df52dea52fb.diff": "ac359df52dea52fbc2f65487a795e6cf3f2ed2488bdb4255ae2eb4b2ab21f795",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "7ce1112a6dd90ac9aa26860cce523d20fc23089d2985a933c4af983970dc2e2b",
+        "run_manifest.json": "2ab0f6090af27d4ec111f64e024417f98cb84c05ee2a7ea9449f504385d48379"
+      }
+    },
+    {
+      "name": "lucene__answerable715__cb72000__20261027_search_1worker",
+      "path": "output/k=chars/lucene__answerable715__cb72000__20261027_search_1worker",
+      "n_questions": 715,
+      "ids_sha256": "2179037350ac45d8e14abebd5cfbf6fe1f9280432c30ece3ca5220b808a1134c",
+      "host": "Wiktop",
+      "n_rows": 715,
+      "n_failure_lines": 0,
+      "n_score_rows": 0,
+      "n_eval_calls": 0,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 2
+        }
+      ],
+      "manifest_values": {
+        "build_stats": {
+          "build_time_s": 2.57460560000618,
+          "models": [],
+          "not_recorded": []
+        }
+      },
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "5fa0f8a4041f7e7cd547e17f1d441b705b0f3c2e47df081f36aa76754ba211e0",
+        "code.ac359df52dea52fb.diff": "ac359df52dea52fbc2f65487a795e6cf3f2ed2488bdb4255ae2eb4b2ab21f795",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "84e4169f124848e81651a7abd4a4fe550f180361756cca70baedc1d701f9c79b",
+        "run_manifest.json": "9eb11318287230d72cae4f72d5b639c1a4924dc824a8a7f4b8820222b793cb95"
+      }
+    }
+  ],
+  "moved": [
+    {
+      "name": "lucene__gold100__cb72000__20261027_search_1worker",
+      "from": "output/k=chars/lucene__gold100__cb72000__20261027_search_1worker",
+      "to": "output/k=chars/lucene__answerable815__cb72000/runs_without_answers/search_1worker/parts/lucene__gold100__cb72000__20261027_search_1worker"
+    },
+    {
+      "name": "lucene__answerable715__cb72000__20261027_search_1worker",
+      "from": "output/k=chars/lucene__answerable715__cb72000__20261027_search_1worker",
+      "to": "output/k=chars/lucene__answerable815__cb72000/runs_without_answers/search_1worker/parts/lucene__answerable715__cb72000__20261027_search_1worker"
+    }
+  ],
+  "kept_raw": "parts/<name>/: every run joined here and its re-judging, moved whole, every file byte for byte as it stood before (sources[].files_sha256)"
+}

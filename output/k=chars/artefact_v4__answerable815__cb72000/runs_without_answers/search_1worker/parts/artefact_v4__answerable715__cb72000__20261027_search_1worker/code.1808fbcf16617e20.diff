@@ -1,0 +1,249 @@
+diff --git a/prod/harness/fields.py b/prod/harness/fields.py
+index 0e4517b..9c07a17 100644
+--- a/prod/harness/fields.py
++++ b/prod/harness/fields.py
+@@ -766,6 +766,29 @@ FILES = {
+                              "question id = id of arm_outputs.jsonl; seq = calls[].seq", None),
+     "measure_gpu_embed_times.py": ("The script that measured the GPU-time correction's evidence on the "
+                                    "desktop's graphics card.", "", None),
++    "correct_judge_embed_gpu_time.py": ("The script that made the judging's GPU-time correction (RAGAS's own "
++                                        "embedding requests made on the CPU given the time the same requests "
++                                        "take on the desktop's graphics card); run on the files from before it, "
++                                        "with its evidence file, it gives the corrected files again.", "", None),
++    "judge_embed_gpu_times.json": ("The evidence of the judging's GPU-time correction: per RAGAS embedding "
++                                   "request that the six final runs' judging made on the CPU, its seconds on "
++                                   "the graphics card, its recorded seconds, texts and tokens.",
++                                   "run = the run folder; line = the record's line in eval_calls.jsonl, from 0; "
++                                   "question_id, eval_leg, seq = the record's own", None),
++    "measure_gpu_judge_embed_times.py": ("The script that measured the judging's GPU-time correction's evidence "
++                                         "on the desktop's graphics card.", "", None),
++    "correct_model_call_time.py": ("The script that made the model-call-time correction (each answer call "
++                                   "and first call given its answering try's server time, and a call "
++                                   "started past the login's limit its arm's clean relation at its own "
++                                   "output tokens); run on the files from before it, over the same run "
++                                   "folders, it gives the corrected files again.", "", None),
++    "model_call_times.json": ("The evidence of the model-call-time correction: the login's backlog of "
++                              "claude-sonnet-5 input tokens (its rate, its limit, the files it was read "
++                              "from with their sha256), the clean relation of each arm and kind of call, "
++                              "and per corrected call its server time, backlog, relation time and time; "
++                              "with the check of the relations on calls sent again one at a time.",
++                              "question_id = id of arm_outputs.jsonl; record = the call's place in calls; "
++                              "seq = calls[].seq", None),
+     "correct_secret_env.py": ("The script that made the credential correction (a credential a "
+                               "manifest had copied written as <set>); the value as recorded is "
+                               "kept nowhere.", "", None),
+diff --git a/tools/export_finished_data.py b/tools/export_finished_data.py
+index deda8d4..98f7c29 100644
+--- a/tools/export_finished_data.py
++++ b/tools/export_finished_data.py
+@@ -9,8 +9,11 @@ file they all read (data/questions.jsonl, checked against each run's hash of it)
+ question sets (SETS, which together are HERB's answerable questions, each once) and the graph's
+ build cost (test/graph/build_cost.json), and writes grag-data.xlsx. It prints which question sets
+ each arm's runs cover and names a set an arm has no run on. A run split over the laptop and the
+-desktop is read with its halves for its environment. Every run's time, and its judging's time, is
+-its questions' times added; an arm's is its runs' added. A run that read its interpreter's answers
++desktop is read with its halves for its environment. Every run's time is its questions' times added,
++its judging's time its judge calls' and embedding requests' times added; an arm's is its runs' added.
++A model call counts by its answering try's server time; the run folders' corrections give the
++answer and first calls past the login's limit, and the search times, their values (model-call-time,
++search-time in each folder's corrections.json). A run that read its interpreter's answers
+ and its query embeddings from an earlier run takes those values from that run (MADE_IN); the artefact's
+ run on the 715 takes its query embeddings from a run of the same questions without answers that embedded
+ every question's texts in one pass, on the graphics card (EMBEDDED_IN). Two scores
+@@ -27,7 +30,6 @@ import hashlib
+ import json
+ import re
+ import sys
+-from datetime import datetime, timedelta
+ from pathlib import Path
+ 
+ from openpyxl import Workbook
+@@ -111,8 +113,6 @@ QUESTIONS = [
+     ("arm", "Retrieval method.", ""),
+     ("question_id", "Question id: product, a (answerable), index of the question in the product's answerable "
+                     "questions in HERB, from 0.", ""),
+-    ("question_set", "Question set of the question: gold100, 100 of HERB's 815 answerable questions; "
+-                     "answerable715, the other 715.", ""),
+     ("question_type", "HERB question type.", ""),
+     ("question", "Question, from HERB.", ""),
+     ("reference_answer", "Reference answer: HERB's answer to the question, as RAGAS was given it (its parts "
+@@ -120,14 +120,21 @@ QUESTIONS = [
+     ("reference_context_ids", "Reference context ids: the ids of HERB's evidence records for the question.", ""),
+     ("answer", "Answer of the answer model.", ""),
+     *SCORES,
+-    ("search_seconds", "Retrieval time, without the interpreter and the query embedding.", "seconds"),
++    ("search_seconds", "Retrieval time, without the interpreter and the query embedding: the retrieval made again "
++                       "with one question at a time on one machine, the same for every arm.", "seconds"),
+     ("interpreter_seconds", "Time of the interpreter call's answering try: the answer model, called before "
+-                            "retrieval. Artefact only.", "seconds"),
+-    ("query_embedding_seconds", "Time to embed the query. Vector and artefact only. The artefact embeds its "
++                            "retrieval, measured and limited as answer_seconds, with the relation fitted on the "
++                            "interpreter calls. Artefact only.", "seconds"),
++    ("query_embedding_seconds", "Time to embed the query on the graphics card, without waits for the embedder. "
++                                "Vector and artefact only. The artefact embeds its "
+                                 "query texts and reads a text embedded before from its cache, counted as no "
+                                 "call: its time is that of the texts embedded for the question, empty when all "
+                                 "of them were embedded before.", "seconds"),
+-    ("answer_seconds", "Time of the answer model call's answering try.", "seconds"),
++    ("answer_seconds", "Time of the answer model call's answering try: the model server's time for it, the "
++                       "Claude CLI's duration_api_ms. For a call started while the account's backlog of answer-model "
++                       "input tokens, added at each call's start and lowered by 16,500 tokens per second, was 886,127 "
++                       "tokens or more (the point past which the server slowed the calls): a + b x output tokens, "
++                       "fitted on the same arm's calls started below it.", "seconds"),
+     ("total_seconds", "Time of all steps for the question, to the answer, without failed tries of model "
+                       "calls.", "seconds"),
+     ("interpreter_tokens_in", "Input tokens of the interpreter call. Artefact only.", "tokens"),
+@@ -157,7 +164,9 @@ RUN = [
+     ("judge_tokens_in", "Input tokens of all RAGAS judge calls.", "tokens"),
+     ("judge_tokens_out", "Output tokens of all RAGAS judge calls.", "tokens"),
+     ("judge_embedding_tokens", "Tokens embedded by RAGAS.", "tokens"),
+-    ("judging_seconds", f"Time of the RAGAS evaluation over the arm's questions in {PER_QUESTION}.", "seconds"),
++    ("judging_seconds", f"Time of the RAGAS evaluation over the arm's questions in {PER_QUESTION}: the judge "
++                        "calls' server times (the Claude CLI's duration_api_ms) and RAGAS's embedding times added.",
++     "seconds"),
+ ]
+ INDEX_KIND = {"lucene": ("BM25 full-text index", "corpus record"),
+               "vector": ("dense vector index", "corpus record"),
+@@ -185,51 +194,35 @@ def one(values, what):
+     return values[0]
+ 
+ 
+-def covered(intervals):
+-    """The seconds a set of (start, end) intervals covers, overlaps counted once."""
+-    total, end = 0.0, None
+-    for a, b in sorted(intervals):
+-        if end is None or a > end:
+-            total, end = total + (b - a).total_seconds(), b
+-        elif b > end:
+-            total, end = total + (b - end).total_seconds(), b
+-    return total
+-
+-
+ def judging_seconds(calls, ids, what):
+-    """The judging's time as each question's judging added, one span per question and scoring start:
+-    from the question's first call record in that start to its last. The time between two starts is
+-    in no span (his 2026-10-22 "THE RUN TIME IS THE ADDED TIME FOR ALL THE THINGS IN THE FUCKING
+-    RUN", 2026-10-23 "wall time? this is not a thing"). A judge call's time is its answering try: out
+-    of each span goes the time in which only tries that did not answer, or the pauses after tries, of
+-    the question's calls were under way, and no answering try or embedder request of the question
+-    (his 2026-10-21 "a model call's time is its answering try; the seconds of failed tries are out of
+-    the call, the question and the run"). Also the seconds so taken out."""
+-    spans, failed, answering = {}, {}, {}
++    """The judging's time: the time of all the things in it added, never a clock over the judging or
++    over a question's judging (his 2026-10-22 "THE RUN TIME IS THE ADDED TIME FOR ALL THE THINGS IN THE
++    FUCKING RUN", 2026-10-23 "wall time? this is not a thing"). A judge call that answered counts by its
++    answering try's server time, the CLI's own duration_api_ms, without the program's start on our
++    machine; one of RAGAS's embedding requests by its encoding time, encode_s, without its wait for the
++    embedder's lock. How many calls ran at once changes neither. A try that did not answer counts with
++    nothing (his 2026-10-21 "a model call's time is its answering try; the seconds of failed tries are
++    out of the call, the question and the run"). Also the seconds of the tries so left out, by our clock."""
++    total, failed, seen = 0.0, 0.0, set()
+     for c in calls:
+-        if c.get("question_id") not in ids or not (c.get("started_at") and c.get("finished_at")):
++        if c.get("question_id") not in ids:
+             continue
+-        key = (c["question_id"], c["eval_leg"])
+-        a, b = datetime.fromisoformat(c["started_at"]), datetime.fromisoformat(c["finished_at"])
+-        s = spans.setdefault(key, [a, b])
+-        s[0], s[1] = min(s[0], a), max(s[1], b)
++        seen.add(c["question_id"])
+         if c.get("kind") != "chat":
+-            answering.setdefault(key, []).append((a, b))
++            total += float(c["encode_s"])
+             continue
+         tries = c.get("attempts") or []
+         for n, t in enumerate(tries):
+-            if not t.get("started_at") or t.get("seconds") is None:
+-                sys.exit(f"{what}: a judge call's try has no start or no seconds; its time cannot be cut")
+-            t0 = datetime.fromisoformat(t["started_at"])
+-            t1 = t0 + timedelta(seconds=float(t["seconds"]))
+             if c.get("ok") and n == len(tries) - 1:
+-                answering.setdefault(key, []).append((t0, t1))
++                server = (c.get("envelope") or {}).get("duration_api_ms")
++                if not server:
++                    sys.exit(f"{what}: a judge call that answered has no server time")
++                total += server / 1000
+             else:
+-                failed.setdefault(key, []).append((t0, t1 + timedelta(seconds=float(t.get("backoff_s") or 0.0))))
+-    if {q for q, _ in spans} != set(ids):
++                failed += float(t.get("seconds") or 0.0) + float(t.get("backoff_s") or 0.0)
++    if seen != set(ids):
+         sys.exit(f"{what}: not every question has its judge calls")
+-    out = {k: covered(failed[k] + answering.get(k, [])) - covered(answering.get(k, [])) for k in failed}
+-    return sum((b - a).total_seconds() - out.get(k, 0.0) for k, (a, b) in spans.items()), sum(out.values())
++    return total, failed
+ 
+ 
+ def judge_cost(folder, ev, calls, cells, d):
+@@ -508,8 +501,6 @@ def runs_tables(arm, folder, refs, sets, by_sha):
+         questions.append({
+             "arm": arm,
+             "question_id": r["id"],
+-            # where the row comes from, like an id (the main session's decision of 2026-10-25)
+-            "question_set": set_name,
+             "question_type": one((c["type"] for c in mine.values()), f"{r['id']} type"),
+             "question": r["question"],
+             "reference_answer": " ".join(str(g) for g in ref["ground_truth"]),
+@@ -549,7 +540,7 @@ def runs_tables(arm, folder, refs, sets, by_sha):
+                         for t in c.get("attempts") or [] if t.get("outcome") != "ok")
+     print(f"{folder}: {set_name}, {len(questions)} rows; answer calls' tries that did not answer {failed_answer}, "
+           f"their seconds and pauses out: {sum(r['generator']['retry_s'] for r in outputs):.1f} s; seconds of judge "
+-          f"calls' tries that did not answer, and their pauses, taken out of the judging's spans: "
++          f"calls' tries that did not answer, and their pauses, left out of the judging: "
+           f"{failed_judging + added_failed:.1f} s")
+     return questions, setup, run, set_name
+ 
+@@ -615,12 +606,9 @@ def construction_table():
+ 
+     tagging = steps["descriptions_and_tags"]
+     graph_chunks = tagging["the_4869_chunks_of_this_graph"]["extract"]
+-    recovery = left_out("descriptions_and_tags", "the recovery by pass")["extract"]   # calls, in, out, summed
+-    # the pass wrote these chunks and the ones taken out later; its time is split by the calls' own time
+-    pass_seconds = (left_out("descriptions_and_tags", "per-pass elapsed")["extract"]
+-                    + left_out("descriptions_and_tags", "the recovery's elapsed and its passes")["extract"])
+-    haiku_seconds = pass_seconds * graph_chunks["seconds_summed_per_call"] / (
+-        tagging["whole_run"]["by_pass"]["extract"]["seconds_summed_per_call"] + recovery[3])
++    # a model's time is its calls' times added, as a run's (his 2026-10-22 "THE RUN TIME IS THE ADDED TIME
++    # FOR ALL THE THINGS IN THE FUCKING RUN"), never the clock of a pass that ran calls at once
++    haiku_seconds = graph_chunks["seconds_summed_per_call"]
+     vectors = steps["embeddings"]["parts"]
+     embedded = [vectors[k] for k in ("tags", "tags_with_underscores_in_readable_form", "descriptions")]
+     runs = left_out("facet_layer", "the Opus judge runs one by one")
+@@ -633,7 +621,7 @@ def construction_table():
+                 + facet["write"]["seconds_elapsed"] + facet["write"]["backup_seconds"]
+                 + sum(steps["later_edges_and_fields"]["seconds"].values()))
+     embed_seconds = sum(p["seconds_elapsed"] for p in embedded)
+-    opus_seconds = sum(r[4] for r in learned_from)
++    opus_seconds = sum(r[3] for r in learned_from)
+     encoder_seconds = facet["encoder_cache"]["seconds_elapsed"]
+     vector = mans["vector"]["build_stats"]["models"][0]
+     embedder = model_name(vector["model"])
+@@ -648,7 +636,8 @@ def construction_table():
+         ("units in the index", "Units in the index.", "count",
+          {"lucene": mans["lucene"]["index"]["units"], "vector": mans["vector"]["index"]["units"],
+           a: mans[a]["index"]["counts"]["chunks"]}),
+-        ("build time, seconds", "Time to build the index. Artefact: sum of the times of the build steps.", "seconds",
++        ("build time, seconds", "Time to build the index. Artefact: sum of the times of the build steps, a model's "
++                                "step as the times of its calls added.", "seconds",
+          {"lucene": mans["lucene"]["build_stats"]["build_time_s"], "vector": vector["seconds_elapsed"],
+           a: haiku_seconds + embed_seconds + opus_seconds + encoder_seconds + no_model}),
+         (f"{embedder}, texts embedded", "Texts embedded for the index.", "count",
+@@ -661,13 +650,15 @@ def construction_table():
+          {a: graph_chunks["calls_with_usage"]}),
+         ("claude-haiku-4-5, tokens in", "Input tokens of those calls.", "tokens", {a: graph_chunks["tokens_in"]}),
+         ("claude-haiku-4-5, tokens out", "Output tokens of those calls.", "tokens", {a: graph_chunks["tokens_out"]}),
+-        ("claude-haiku-4-5, seconds", "Time of those calls: the time of the pass that made them, multiplied by "
+-                                      "their share of the pass's call time.", "seconds", {a: haiku_seconds}),
++        ("claude-haiku-4-5, seconds", "Time of those calls added: each call's own duration as the tagging run "
++                                      "recorded it.", "seconds", {a: haiku_seconds}),
+         ("claude-opus-5, calls", "Calls to claude-opus-5 for the index.", "count",
+          {a: sum(r[0] for r in learned_from)}),
+         ("claude-opus-5, tokens in", "Input tokens of those calls.", "tokens", {a: sum(r[1] for r in learned_from)}),
+         ("claude-opus-5, tokens out", "Output tokens of those calls.", "tokens", {a: sum(r[2] for r in learned_from)}),
+-        ("claude-opus-5, seconds", "Time of those calls.", "seconds", {a: opus_seconds}),
++        ("claude-opus-5, seconds", "Time of those calls added, each by the clock around the call on the machine "
++                                   "that made it; the server's own time was not recorded for them.", "seconds",
++         {a: opus_seconds}),
+         (f"{encoder}, seconds", f"Encoding time of {encoder} for the index.", "seconds", {a: encoder_seconds}),
+     ]
+     table = [{"property": t, **{k: values.get(k) for k in RUNS}} for t, _, _, values in things]

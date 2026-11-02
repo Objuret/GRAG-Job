@@ -55,14 +55,10 @@ the palace and the session transcripts; the numbers are in the run folders and u
   each large change.
 - `finished_data/full-grag-data.xlsx` — the data given away, one workbook and nothing else (his name,
   2026-10-29), four sheets: `results`, `run data`, `arm construction`, `key` (what each holds:
-  "The data given away" below). Made by `tools/export_finished_data.py` (needs openpyxl) from the
-  six final run folders (each arm's run on the hundred and its run on the 715), the re-judging
-  folder beside each run on the hundred, the run without answers beside each final run, each arm's
-  redo run, the gold-evidence arm's two runs (`gold_evidence__gold100__cb72000__20261031` and
-  `gold_evidence__answerable715__cb72000__20261031`: HERB's own evidence for each question under the
-  same cut and answer prompt, his *"Run gold"*, 2026-10-31) and `test/graph/build_cost.json` (the
-  runs: "Current state" below); the export stops on
-  any value that does not line up.
+  "The data given away" below). Made by `tools/export_finished_data.py` (needs openpyxl) from each
+  arm's folder of the 815, the gold-evidence arm's among them (HERB's own evidence for each question
+  under the same cut and answer prompt, his *"Run gold"*, 2026-10-31), and `test/graph/build_cost.json`
+  (the folders: "Current state" below); the export stops on any value that does not line up.
 - `docs/ENVIRONMENT.md` — the machines, the Neo4j start, the model lane and how many calls this
   laptop holds at once; the desktop's clone and graph for split runs, and the commands of a split
   run (`tools/merge_split_run.py split|merge`). `docs/canon/raw/user_turns.jsonl` — his typed messages
@@ -89,56 +85,67 @@ the palace and the session transcripts; the numbers are in the run folders and u
   and the step they name; if no step is named, say so and ask. A specialist runs the script
   itself before any sentence about where the work stands. Not from the palace, not from memory.
 - Arms: `ls prod/arms test/arms`. Database an arm used: its run manifest.
-- Runs: `ls output/k=chars`. The final runs on the hundred, the ones the workbook reads:
-  `artefact_v4__gold100__cb72000__20261023T021439Z` (his *"and the workbook is updated with
-  this?"*, 2026-10-23; commit `751a72d`, one launch on the desktop with 27 workers; the answer
-  call's tokens of 40 rows corrected from the CLI's own record, `tools/correct_zero_usage.py`),
-  `lucene__gold100__cb72000__20261008T234209Z` and `vector__gold100__cb72000__20261017T061242Z`
-  (commit `fbc2f22` from a clean checkout, one worker each). The artefact's
-  interpreter answers were read from the store of `artefact_v4__gold100__cb72000__20261020T041923Z`
-  (commit `0c082a3` from a clean checkout) and most query embeddings from the machines' embedding
-  cache, so the workbook takes those values from that run. Each folder's `FIELDS.md` says what it
-  holds and on whose word anything was left out; its `corrections.json`, what was corrected after
-  the run. `factual_correctness` and `context_entity_recall` were judged after the three, on their
-  answers with the same judge, by `prod/run.py --rejudge` into the folder beside each,
-  `<run>__j-claude-haiku-4-5-20251001__gold100` (his *"just toggle them and run them on all 100 for
-  all 3 arms"*, 2026-10-23); the workbook reads those two scores there.
-  The final runs on the 715 other answerable questions (`data/answerable715.jsonl`), which the
-  workbook reads beside the hundred (his *"the fucking point is to have a full ragas-herb test done
-  finally"*, 2026-10-25): `artefact_v4__answerable715__cb72000__20261025T211532Z` (split over the
-  laptop and the desktop and merged by `tools/merge_split_run.py`, both halves under its `halves/`),
+- Runs: `ls output/k=chars`. Each arm's runs over the 815 are in one folder,
+  `output/k=chars/<arm>__answerable815__cb72000/` (lucene, vector, artefact_v4, gold_evidence), made
+  by `tools/merge_runs.py`: at its top the arm's final runs, on the hundred and on the 715, joined
+  into one run of the 815 (`data/answerable815.jsonl`), each run's lines as it recorded them and a
+  field the runs differ in left empty, each run's value in `merge.json`; under it `parts/` (those runs
+  as recorded), `runs_without_answers/`, `redo/` and, for the artefact, `sources/`. Its `merge.json`
+  says what was joined and checked, where every folder in it came from, and the sha256 of every file.
+  Each run's `FIELDS.md` says what it holds and on whose word anything was left out; its
+  `corrections.json`, what was corrected after the run. Files over 100 MB are listed in `.gitignore`
+  and copied between the machines.
+  The final runs on the hundred, under `parts/`: `artefact_v4__gold100__cb72000__20261023T021439Z`
+  (his *"and the workbook is updated with this?"*, 2026-10-23; commit `751a72d`, one launch on the
+  desktop with 27 workers; the answer call's tokens of 40 rows corrected from the CLI's own record,
+  `tools/correct_zero_usage.py`), `lucene__gold100__cb72000__20261008T234209Z` and
+  `vector__gold100__cb72000__20261017T061242Z` (commit `fbc2f22` from a clean checkout, one worker
+  each). The artefact's interpreter answers were read from the store of
+  `artefact_v4__gold100__cb72000__20261020T041923Z` (under `sources/`; commit `0c082a3` from a clean
+  checkout) and most query embeddings from the machines' embedding cache, so the workbook takes those
+  values from that run. `factual_correctness` and `context_entity_recall` were judged after the three,
+  on their answers with the same judge, by `prod/run.py --rejudge` into
+  `<run>__j-claude-haiku-4-5-20251001__gold100` (under `parts/`; his *"just toggle them and run them on
+  all 100 for all 3 arms"*, 2026-10-23); the joined top holds those two scores from it.
+  The final runs on the 715 other answerable questions (`data/answerable715.jsonl`; his *"the fucking
+  point is to have a full ragas-herb test done finally"*, 2026-10-25), under `parts/`:
+  `artefact_v4__answerable715__cb72000__20261025T211532Z` (split over the laptop and the desktop and
+  merged by `tools/merge_split_run.py`, both halves under its `halves/`),
   `lucene__answerable715__cb72000__20261023T112745Z` and
-  `vector__answerable715__cb72000__20261024T004317Z`; each judged all sixteen scores itself. Their
-  files over 100 MB are listed in `.gitignore` and copied between the machines. Starts of the
-  artefact's run that the desktop's crashes ended had embedded some questions' query texts, and
+  `vector__answerable715__cb72000__20261024T004317Z`; each judged all sixteen scores itself. Starts of
+  the artefact's run that the desktop's crashes ended had embedded some questions' query texts, and
   their records went with them, so the workbook takes that run's query embeddings from
-  `artefact_v4__answerable715__cb72000__20261027_query_embeddings`: the same questions without
-  answers, each first call read from the run's stores, the embedding cache empty, on the desktop's
-  graphics card (the same retrieval on all 715; each text's vector checked against the run's own,
-  `query_vectors_against_the_run.json` in it).
+  `artefact_v4__answerable715__cb72000__20261027_query_embeddings` (under `sources/`): the same
+  questions without answers, each first call read from the run's stores, the embedding cache empty, on
+  the desktop's graphics card (the same retrieval on all 715; each text's vector checked against the
+  run's own, `query_vectors_against_the_run.json` in it). The gold-evidence arm's runs,
+  `gold_evidence__gold100__cb72000__20261031` and `gold_evidence__answerable715__cb72000__20261031`,
+  are under its `parts/`.
   `context_recall_id` and `context_precision_id` count record ids; the nonllm pair counts record
   content against record content, each delivered text cut into its records
   (`nonllm-record-content/1` in each run's `corrections.json`).
   HERB's `employee.json` and `customers_data.json` are in every arm's corpus (39,190 units; his
   *"ok, so, we add them back in then"*, 2026-10-30), appended rather than run again (his *"fair
-  enough"* to that play and *"go ahead and do this "for real""*, 2026-10-31): beside each final run
-  a run of its questions without answers over the new corpus,
-  `<arm>__<set>__cb72000__20261031_metadata_retrieval` (the artefact's `…_metadata_edges_retrieval`,
-  read after the person and customer edges of its 31 employee and customer chunks), whose
-  `delivered_vs_final.json` (`tools/compare_delivered.py`) names the questions now handed other
-  texts; those were answered and judged again, an arm's in one run,
-  `<arm>__metadata_redo__cb72000__20261031` (lucene 785, vector 147, artefact 5 of the 815; the ids
-  in `output/research/2026-10-31-metadata-redo/`), at commit `354276c` on the desktop. Its judging
+  enough"* to that play and *"go ahead and do this "for real""*, 2026-10-31): the final runs'
+  questions without answers over the new corpus,
+  `runs_without_answers/metadata_retrieval` (the artefact's `metadata_edges_retrieval`, read after the
+  person and customer edges of its 31 employee and customer chunks), each a joined pair, whose runs'
+  `delivered_vs_final.json` (`tools/compare_delivered.py`) name the
+  questions now handed other texts; those were answered and judged again, an arm's in one run,
+  `redo/<arm>__metadata_redo__cb72000__20261031` (lucene 785, vector 147, artefact 5 of the 815; the
+  ids in `output/research/2026-10-31-metadata-redo/`), at commit `354276c` on the desktop. Its judging
   ran with the code's judge limit of 120 s, where the final runs on the 715 ran with 1,280 s
   (`RAGAS_JUDGE_TIMEOUT_S=1280`, in their judge starts): the entity-recall cells that 120 s cut and a
   later start answered under 120 s (lucene 80, vector 12) are marked by
   `tools/correct_judge_time_limit.py` (`judge-time-limit/1` in the run's `corrections.json`) and
-  judged again with 1,280 s; the cells a start with 1,280 s answered stand. The six runs without
+  judged again with 1,280 s; the cells a start with 1,280 s answered stand. The runs without
   answers were made again one after the other on a quiet desktop,
-  `<arm>__<set>__cb72000__20261031_metadata_search_alone`, so that every search is timed alone
-  under one condition. The workbook takes the redone questions' rows, scores and judging from the
-  redo run, every other question's from the final run, and every question's search time, the
-  questions handed other texts and the index from the `…_search_alone` runs.
+  `runs_without_answers/metadata_search_alone`, so that every search is timed alone under one
+  condition. The workbook takes the redone questions' rows, scores and judging from the redo run, every
+  other question's from the final runs, and every question's search time, the questions handed other
+  texts and the index from `metadata_search_alone`. `runs_without_answers/` also holds the search-time
+  measurements of 2026-10-27 and 2026-10-28 (`search_1worker`, joined, and the `…_first_question_warm`
+  runs of two questions each).
 - A run: `python prod/run.py --arm artefact_v4 --set gold|10smoke --char-budget 72000 --workers 6
   --out <folder>`; the same command into the same folder resumes. `--retrieval-only` makes no
   answer and no judging; `--flag HERB_V4_OFFLINE=on` reads the first call's answers from the cache.
@@ -167,7 +174,7 @@ Gold, results, numbers:
 - *"then stop showing me the fucking aggreagate every time!"* (2026-10-19, after a difference of 0.003 in the mean over the hundred hid recall going up on 16 questions and down on 16) — two runs are compared question by question: on how many questions the score went up, down or stayed, and by how much; the mean alone is never the comparison.
 - *""Gold chunk in the cloud." It's the most retarded metric I have fucking ever heard."* · *"That's like saying if we pull all hits from the query, one of them will have a gold. No fucking shit, guy."* (2026-10-12, on "a gold chunk somewhere in the cloud: 86 to 94 of 100") — no count of a set that merely holds a gold chunk.
 - *"is not only not interesting at all, its disturbing noise and making you focus on the wrong things, you can look that shit up if you want, maybe thats good, but i NEVER want to see such things unless i extremely specifically ask for just that"* (2026-10-22, on "The worst cases are TrendForce::a::9 (−19), ActionGenie::a::7 (−13) and VizForce::a::43 (−15)") — no single question is named or shown as a case in what he reads, unless he asks for exactly that.
-- *"also, you need to fucking stop separating the 715 and the 100 in all places, they are theoretically "different runs" but they are also fucking not"* (2026-10-28) — the 815 questions are one set: a number is given over the 815, and the hundred and the 715 are named apart only where a file or a folder must be found.
+- *"also, you need to fucking stop separating the 715 and the 100 in all places, they are theoretically "different runs" but they are also fucking not"* (2026-10-28) · *"I mean, yes, but why the fuck are you separating them AFTER the run!?"* (2026-10-31) — the 815 questions are one set: a number is given over the 815, an arm's runs over the hundred and the 715 are joined in one folder of the 815 (`tools/merge_runs.py`), and the hundred and the 715 are named apart only where a file must be found.
 
 What may be done:
 

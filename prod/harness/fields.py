@@ -467,8 +467,8 @@ LEG = {
                        }),
     "embed_pass": EMBED_PASS,
     "correction": CORRECTION,
-    "source_run": "Only in a folder merged from two runs (merge.json): the run this start belongs "
-                  "to, by its folder's name; that folder is kept whole under halves/.",
+    "source_run": "Only in a merged folder (merge.json): the run this start belongs to, by its "
+                  "folder's name; that folder is kept whole under halves/ or parts/.",
     "source_leg": "Only in a merged folder: the start's number in that run.",
     "from_its_log": sub("Only in an entry rebuilt by correction unrecorded-starts/1 "
                         "(corrections.json) for a start that wrote rows and no entry: what the "
@@ -658,10 +658,12 @@ EVAL_MANIFEST = {
         "elapsed_s": "Seconds the start took.",
         "settings": sub("What the start ran under.", SETTINGS),
         "embed_pass": EMBED_PASS,
-        "source_run": "Only in a folder merged from two runs (merge.json): the run this scoring "
-                      "start belongs to, by its folder's name.",
+        "source_run": "Only in a merged folder (merge.json): the run this scoring start belongs to, "
+                      "by its folder's name.",
     }),
-    "judge_settings": sub("What the last scoring start ran under.", SETTINGS),
+    "judge_settings": sub("What the last scoring start ran under; in a merged folder (merge.json), what "
+                          "its scoring starts ran under the same, a field they differ in left empty "
+                          "(judge_settings_left_empty).", SETTINGS),
 }
 
 EVAL_CALL = {
@@ -748,18 +750,19 @@ CORRECTIONS = {
 }
 
 MERGE = {
-    "merged_at": "When the two runs were merged (UTC).",
+    "merged_at": "When the runs were merged (UTC).",
     "tool": "The script that merged them.",
     "tool_sha256": "The sha256 of that script, its line ends as git holds them (LF).",
     "argv": "The command line of the merge.",
-    "whole_set": sub("The question set the two runs are the halves of.", {
+    "whole_set": sub("The question set of this folder: the set the two runs are the halves of, or the "
+                     "set the joined runs' sets make together.", {
         "file": "Its file, as a path on the machine that merged.",
         "sha256": "The sha256 of that file; run_manifest.json's inputs.ids_sha256 is the same.",
         "n_questions": "How many questions it holds.",
     }),
     "split_after": "How many of the set's questions, from the top of its file, the first half "
                    "holds.",
-    "checked_equal": "The fields checked to be the same in both runs before the merge; the merge "
+    "checked_equal": "The fields checked to be the same in every run before the merge; the merge "
                      "stops and writes nothing when one differs.",
     "machine_facts": whole("What each run's machine has of its own, by the run's folder name, and "
                            "the merge does not compare: the machine (host), torch's build, which "
@@ -784,20 +787,26 @@ MERGE = {
                         "value differs: its run, its started_at and its value."),
     }),
     "left_empty": "The top-level fields of run_manifest.json left empty because their value "
-                  "differed between the two runs.",
+                  "differed between the runs; each run's value is in sources[].manifest_values.",
+    "eval_left_empty": "Only in a folder of joined runs: the top-level fields of eval_manifest.json "
+                       "left empty because their value differed between the runs; each run's value "
+                       "is in sources[].eval_values.",
     "judge_settings_left_empty": "The fields of eval_manifest.json's judge_settings left empty "
-                                 "because each scoring start has its own; each start's value is "
-                                 "in judge_legs[].settings. A field of the lane the starts differ "
-                                 "in is named lane.<field>. Of the others, started_at is the "
-                                 "first start, finished_at the last end, and embedding and cells "
-                                 "the starts' counts added.",
-    "sources": sub("The two runs, the first half first.", {
+                                 "because the scoring starts differ in them; each start's value is "
+                                 "in judge_legs[].settings. In a folder merged from two halves, a "
+                                 "field of the lane the starts differ in is named lane.<field>. Of "
+                                 "the others, started_at is the first start, finished_at the last "
+                                 "end, and embedding and cells the starts' counts added.",
+    "sources": sub("The runs, in the order their lines stand in this folder's files.", {
         "name": "The run's folder name; legs[].source_run in run_manifest.json.",
-        "path": "Where the folder was when it was merged, as a path on the machine that merged.",
-        "half": "a for the first half of the set, b for the second.",
-        "n_questions": "How many questions its half holds.",
-        "ids_sha256": "The sha256 of the file that lists its half's questions.",
-        "host": "The machine it ran on.",
+        "path": "Where the folder was when it was merged, as a path on the machine that merged "
+                "(a folder of joined runs: from the repository's root).",
+        "half": "Only in a folder merged from two halves: a for the first half of the set, b for "
+                "the second.",
+        "n_questions": "How many questions its set holds.",
+        "ids_sha256": "The sha256 of the file that lists its set's questions.",
+        "host": "The machine it ran on; empty where its own manifest names none (a run merged from "
+                "two machines' halves names them in its legs).",
         "n_rows": "How many answer rows it has.",
         "n_failure_lines": "How many lines its failures.jsonl has.",
         "n_score_rows": "How many lines its eval_results.jsonl has.",
@@ -809,11 +818,34 @@ MERGE = {
         }),
         "manifest_values": whole("The run's own value of each field named in left_empty, as its "
                                  "run_manifest.json holds it."),
+        "eval_values": whole("Only in a folder of joined runs: the run's own value of each field "
+                             "named in eval_left_empty, as its eval_manifest.json holds it."),
         "files_sha256": whole("The sha256 of every file of the run, by its path in the run's "
-                              "folder, as the run wrote it; the same files are under "
-                              "halves/<name>/."),
+                              "folder, as it stood when merged; the same files are under "
+                              "halves/<name>/ or parts/<name>/."),
+        "rejudged": sub("Only for a joined run whose answers were judged again on some scores after "
+                        "it (prod/run.py --rejudge, into the folder beside it): that folder, kept "
+                        "whole under parts/. Its lines of those scores in eval_results.jsonl, and all "
+                        "its call and failure lines, stand here after the run's; its lines of the "
+                        "run's other scores, the same as the run's, stay in it.", {
+            "name": "The folder's name; judge_legs[].source_run in eval_manifest.json.",
+            "path": "Where the folder was when it was merged, from the repository's root.",
+            "scores": "The scores taken from it.",
+            "n_score_rows": "How many of its eval_results.jsonl lines stand here.",
+            "n_eval_calls": "How many lines its eval_calls.jsonl has; all stand here.",
+            "n_eval_failure_lines": "How many lines its eval_failures.jsonl has; all stand here.",
+            "files_sha256": whole("The sha256 of every file of the folder, by its path in it, as it "
+                                  "stood when merged."),
+        }),
     }),
-    "kept_raw": "Where the two runs are kept, byte for byte.",
+    "moved": sub("Only in a folder of joined runs: every folder moved into this folder whole, the "
+                 "joined runs and, in an arm's folder of the 815, the runs kept beside them (the "
+                 "runs without answers, the redo, the sources).", {
+        "name": "The folder's name.",
+        "from": "Where it was, from the repository's root.",
+        "to": "Where it is now, from the repository's root.",
+    }),
+    "kept_raw": "Where the runs are kept, byte for byte.",
 }
 
 # file name, or a pattern with *, -> (what the file is, how it joins, its fields or None)
@@ -988,21 +1020,31 @@ FILES = {
                                    "the text", None),
     "check_query_vectors.py": ("The script that made query_vectors_against_the_run.json from the desktop's "
                                "part and the laptop's own vectors; it makes no model call.", "", None),
+    "correct_judge_time_limit.py": ("The script that made the judge-time-limit correction (a score cell that a "
+                                    "judge time limit below the final runs' 1,280 s cut and a later start under "
+                                    "such a limit answered, marked to be judged again); run on the files from "
+                                    "before it, it gives the corrected files again.", "", None),
+    "delivered_vs_final.json": ("Made by tools/compare_delivered.py: which questions this run hands the answer "
+                                "model the same texts as the final run it names, and which not, compared text "
+                                "by text; both runs, the sha256 of both arm_outputs.jsonl, and the ids of each "
+                                "group. It makes no model call.", "", None),
     "desktop_start_*": ("The records of a start that ran in this run's own folder on the desktop after the "
                         "folder kept here was copied from it: its run_manifest.json, eval_manifest.json and "
                         "FIELDS.md as that start wrote them, and the sha256 of the folder's files as they "
                         "then stood. The start answered no question and judged no cell (its judging entry "
                         "holds 0 calls), so no value of this folder changes by it; the name holds when it "
                         "began.", "", None),
-    "merge.json": ("Only in a folder merged from two runs over the two halves of one question set, "
-                   "made at the same commit, on one machine or two (tools/merge_split_run.py): "
-                   "what was merged, what was checked to be the same in both, and the sha256 of "
-                   "every file of both runs. Both runs are kept under halves/, byte for byte. The "
-                   "rows of both stand here in the order of the set's questions; legs holds the "
-                   "starts of both runs, numbered again in the order they began, each with its "
-                   "run's machine, and a row's leg is the new number. A top-level field of "
-                   "run_manifest.json whose value differed between the two runs is empty, and "
-                   "each run's value is in sources[].manifest_values.",
+    "merge.json": ("Only in a merged folder: what was merged, what was checked to be the same in "
+                   "every run, and the sha256 of every file of every run. Either two runs over the "
+                   "two halves of one question set, made at the same commit, on one machine or two "
+                   "(tools/merge_split_run.py), kept under halves/, their rows in the order of the "
+                   "set's questions; or runs over parts of a question set joined into one folder of "
+                   "the whole set (tools/merge_runs.py), kept under parts/, each run's lines in the "
+                   "order it wrote them, the runs in the order of sources. legs holds the starts of "
+                   "every run, numbered again in the order they began, each with its run's machine, "
+                   "and a row's leg is the new number. A top-level field of run_manifest.json or "
+                   "eval_manifest.json whose value differed between the runs is empty, and each "
+                   "run's value is in sources[].",
                    "sources[].name = legs[].source_run", MERGE),
 }
 
@@ -1111,6 +1153,13 @@ QUESTION_SETS = {
         "HERB's 815 such questions once (his 2026-10-25 \"the fucking point is to have a full "
         "ragas-herb test done finally\"). HERB's 699 questions with no answer (\"::u::\") are in "
         "neither set: no rule in his words is recorded."),
+    "data/answerable815.jsonl": (
+        "The questions: the 815 questions of data/answerable815.jsonl (inputs.ids_sha256), every "
+        "question of HERB that has an answer (\"::a::\" in its id), each once, in HERB's order: the "
+        "100 of data/gold100.jsonl and the 715 of data/answerable715.jsonl, the sets the runs joined "
+        "here were given (his 2026-10-28 \"you need to fucking stop separating the 715 and the 100 in "
+        "all places\"). HERB's 699 questions with no answer (\"::u::\") are not in it: no rule in his "
+        "words is recorded."),
 }
 
 
@@ -1127,14 +1176,18 @@ def questions_left_out(man: dict) -> list:
             f"is none of {', '.join(QUESTION_SETS)}: a half of a split run, or a smaller set."]
 
 
-def arm_left_out(arm: str | None) -> list:
-    """What an arm says was left out of the data it rests on; empty when it says nothing."""
+def arm_left_out(arm: str | None, man: dict | None = None) -> list:
+    """What an arm says was left out of the data a run of it rests on: its left_out(manifest) where it has one
+    (an arm whose runs differ in it by their switches), else its LEFT_OUT; empty when it says nothing."""
     if not arm:
         return []
     try:
-        return list(getattr(importlib.import_module(f"arms.{arm}"), "LEFT_OUT", None) or [])
+        module = importlib.import_module(f"arms.{arm}")
     except ImportError:
         return []
+    if callable(getattr(module, "left_out", None)):
+        return list(module.left_out(man or {}))
+    return list(getattr(module, "LEFT_OUT", None) or [])
 
 
 def arm_fields(arm: str | None) -> dict:
@@ -1538,8 +1591,11 @@ def render(folder=None, arm: str | None = None, stamp_files: bool = False) -> st
             f"was written once and judged once.", "",
             f"- Answers by `{man.get('generator_model')}`"
             + (f", judged by `{ev.get('judge_model')}`." if ev else "."),
-            f"- Code: commit `{(man.get('code_version') or {}).get('commit')}`; code paths that "
-            f"differed from it: {len((man.get('code_state') or {}).get('status') or [])}.",
+            (f"- Code: commit `{(man.get('code_version') or {}).get('commit')}`; code paths that "
+             f"differed from it: {len((man.get('code_state') or {}).get('status') or [])}."
+             if man.get("code_version") is not None or not (d / "merge.json").is_file() else
+             "- Code: each run's own; the runs merged here differ in it (merge.json, "
+             "sources[].manifest_values)."),
             f"- Starts of this folder: {len(legs)}"
             + (f", the first at {legs[0].get('started_at')}." if legs else "."), ""]
     out += ["**This folder holds the questions and, inside the judge's prompts, the gold answers.** "
@@ -1577,7 +1633,7 @@ def render(folder=None, arm: str | None = None, stamp_files: bool = False) -> st
     # its eval_manifest.json names (source_run)
     run_man = man or (_json(_REPO / ev["source_run"].replace("\\", "/") / "run_manifest.json")
                       if ev.get("source_run") else {})
-    out += [f"- {line}" for line in questions_left_out(run_man or {}) + arm_left_out(arm)]
+    out += [f"- {line}" for line in questions_left_out(run_man or {}) + arm_left_out(arm, run_man)]
     out += ["",
             "## Easy to read wrongly", "",
             "- `top_k` in the manifest is not used by a run with a character budget.",

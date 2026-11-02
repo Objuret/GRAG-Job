@@ -618,7 +618,9 @@ def test_the_graph_build_cost_is_one_entry_per_model_and_no_two_kinds_of_seconds
                + facets['head_selection_training_scoring']['seconds_elapsed']
                + facets['bootstrap_refits']['seconds_elapsed']
                + facets['write']['seconds_elapsed'] + facets['write']['backup_seconds']
-               + sum(steps['later_edges_and_fields']['seconds'].values()))
+               + sum(steps['later_edges_and_fields']['seconds'].values())
+               + sum(steps['metadata_facet_layer']['seconds'].values())
+               + sum(steps['metadata_person_and_customer_edges']['seconds'].values()))
     assert held['build_time_s'] == pytest.approx(by_hand)
     assert len(held['not_recorded']) == len(cost['steps']) + 1
 

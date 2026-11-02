@@ -1,0 +1,144 @@
+{
+  "merged_at": "2026-11-02T00:15:19.914406+00:00",
+  "tool": "tools/merge_runs.py",
+  "tool_sha256": "6732fd5d5327d7eb426a2739615223fa88b0b8522102900442ff13364dec7a5a",
+  "argv": [
+    "tools/merge_runs.py",
+    "--write"
+  ],
+  "whole_set": {
+    "file": "data/answerable815.jsonl",
+    "sha256": "d7424d33c5b5f22e8b0b49f06814f4442a3e3c712350575677a26c3c189bf34c",
+    "n_questions": 815
+  },
+  "checked_equal": [
+    "arm",
+    "generator_model",
+    "interpreter_model",
+    "top_k",
+    "char_budget",
+    "graph",
+    "inputs (but ids_sha256)",
+    "eval_manifest.scorer",
+    "eval_manifest.arm",
+    "eval_manifest.judge_model",
+    "eval_manifest.judge_backend",
+    "eval_manifest.judge_effort"
+  ],
+  "left_empty": [
+    "build_stats",
+    "env"
+  ],
+  "eval_left_empty": [],
+  "judge_settings_left_empty": [
+    "judge_timeout_s",
+    "judge_inflight",
+    "argv",
+    "pid",
+    "wall_s"
+  ],
+  "sources": [
+    {
+      "name": "gold_evidence__gold100__cb72000__20261031",
+      "path": "output/k=chars/gold_evidence__gold100__cb72000__20261031",
+      "n_questions": 100,
+      "ids_sha256": "cddaca624c8513c618657ece0b357b1463282f7c4ef083d1a7058959d8ccbf3d",
+      "host": "Fräsh",
+      "n_rows": 100,
+      "n_failure_lines": 0,
+      "n_score_rows": 1600,
+      "n_eval_calls": 1400,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 1
+        },
+        {
+          "source_leg": 2,
+          "leg": 2
+        }
+      ],
+      "manifest_values": {
+        "build_stats": {
+          "build_time_s": 1.8033738999947673,
+          "models": [],
+          "not_recorded": []
+        },
+        "env": {
+          "CLAUDE_CODE_OAUTH_TOKEN": "<set>",
+          "HERB_EMBED_DEVICE": "cuda",
+          "NEO4J_PASSWORD": "<set>"
+        }
+      },
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "c08ed10d090f281903b1f1eb25077caac8b2dc9c9ee3c30ae8c0e86c9d95de26",
+        "eval_calls.jsonl": "02dd836d99b7f634a2aa6a7a415431ae066c4afef217721ce92e67b32cc4810e",
+        "eval_failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_manifest.json": "a6c0fe8b48381316c0a91927240aec627e89a9772a6f3c0c6f95307b54cad2c3",
+        "eval_results.jsonl": "7bea625eb586b9768304face5ac0af275cfb4ce583732509019a31972da8c5f9",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "e98ed871f8e90fad069f46404b3ba5e238d26d1782d178e3866817c65cb08283",
+        "run_manifest.json": "11d6e6b7e29edc83e3e22e5f88576e238839c685aa0ce4a18cae6f1ebaceff5d"
+      }
+    },
+    {
+      "name": "gold_evidence__answerable715__cb72000__20261031",
+      "path": "output/k=chars/gold_evidence__answerable715__cb72000__20261031",
+      "n_questions": 715,
+      "ids_sha256": "2179037350ac45d8e14abebd5cfbf6fe1f9280432c30ece3ca5220b808a1134c",
+      "host": "Fräsh",
+      "n_rows": 715,
+      "n_failure_lines": 0,
+      "n_score_rows": 11440,
+      "n_eval_calls": 9971,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 3
+        }
+      ],
+      "manifest_values": {
+        "build_stats": {
+          "build_time_s": 0.6411284999921918,
+          "models": [],
+          "not_recorded": []
+        },
+        "env": {
+          "CLAUDE_CODE_OAUTH_TOKEN": "<set>",
+          "HERB_EMBED_DEVICE": "cuda",
+          "NEO4J_PASSWORD": "<set>",
+          "RAGAS_DO_NOT_TRACK": "true",
+          "RAGAS_JUDGE_INFLIGHT": "25",
+          "RAGAS_JUDGE_TIMEOUT_S": "1280"
+        }
+      },
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "23f3a420b93a6de3713fce1a1a52cf275d6add775353da9da353820a55c9f07c",
+        "eval_calls.jsonl": "89df87d7aac0e697697a633e0043a18acdce4922d3387e4d41fbda20e2a41e3b",
+        "eval_failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_manifest.json": "9b5c371aaeba3d6efd8606e1188bb07039a3cdf2bc6f53a827a34fe6e26352cd",
+        "eval_results.jsonl": "0ad2ded81b1f3e185df619886ce44e06b444c10b143ebef379c12be3640e9d09",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "e554c712366a702e77c3e9346ae195896a1abe6128adcc616921da6619f94b94",
+        "run_manifest.json": "26ccc06930fe457cb9462460190ef8434dd0fd0666c4786ee653cf79f4700777"
+      }
+    }
+  ],
+  "moved": [
+    {
+      "name": "gold_evidence__gold100__cb72000__20261031",
+      "from": "output/k=chars/gold_evidence__gold100__cb72000__20261031",
+      "to": "output/k=chars/gold_evidence__answerable815__cb72000/parts/gold_evidence__gold100__cb72000__20261031"
+    },
+    {
+      "name": "gold_evidence__answerable715__cb72000__20261031",
+      "from": "output/k=chars/gold_evidence__answerable715__cb72000__20261031",
+      "to": "output/k=chars/gold_evidence__answerable815__cb72000/parts/gold_evidence__answerable715__cb72000__20261031"
+    }
+  ],
+  "kept_raw": "parts/<name>/: every run joined here and its re-judging, moved whole, every file byte for byte as it stood before (sources[].files_sha256)"
+}

@@ -1,0 +1,50 @@
+{
+ "how_found": "The lane's transcripts in C:\\Users\\Djuret\\.claude-herb-lane\\projects (file name = session id) whose first event lies in [2026-10-26T10:52:52Z, 2026-10-26T22:44:30Z] were compared with the session ids named by half b's eval_calls.jsonl and arm_outputs.jsonl (every session_id key); only times, model and usage were read, no content, and no model call was made.",
+ "found_at": "2026-10-27T00:38:58.644823+00:00",
+ "host": "FRÄSH",
+ "starts": {
+  "2026-10-26T10:52:52.400971+00:00": {
+   "window": [
+    "2026-10-26T10:52:52Z",
+    "2026-10-26T22:44:30Z"
+   ],
+   "transcripts_in_window": 6573,
+   "session_ids_named_by_records": 7534,
+   "named_by_no_record": [
+    {
+     "session_id": "ec406d45-2c8d-4cfb-a8f0-e1936a79a776",
+     "first_event": "2026-10-26T11:52:29.815Z",
+     "last_event": "2026-10-26T11:52:32.740Z",
+     "model": "claude-haiku-4-5-20251001",
+     "assistant_messages": 1,
+     "input_tokens": 459,
+     "cache_creation_input_tokens": 0,
+     "cache_read_input_tokens": 0,
+     "output_tokens": 69
+    },
+    {
+     "session_id": "2cdcac4a-8807-4e14-827d-547b592c70dc",
+     "first_event": "2026-10-26T11:52:34.935Z",
+     "last_event": "2026-10-26T11:52:39.392Z",
+     "model": "claude-haiku-4-5-20251001",
+     "assistant_messages": 1,
+     "input_tokens": 634,
+     "cache_creation_input_tokens": 0,
+     "cache_read_input_tokens": 0,
+     "output_tokens": 261
+    },
+    {
+     "session_id": "92ce5a60-d008-4efa-91d5-1b39e0b7568b",
+     "first_event": "2026-10-26T11:52:50.600Z",
+     "last_event": "2026-10-26T11:52:54.022Z",
+     "model": "claude-haiku-4-5-20251001",
+     "assistant_messages": 1,
+     "input_tokens": 645,
+     "cache_creation_input_tokens": 0,
+     "cache_read_input_tokens": 0,
+     "output_tokens": 265
+    }
+   ]
+  }
+ }
+}

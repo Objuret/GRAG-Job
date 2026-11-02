@@ -1,0 +1,124 @@
+{
+  "merged_at": "2026-11-02T00:15:19.914406+00:00",
+  "tool": "tools/merge_runs.py",
+  "tool_sha256": "6732fd5d5327d7eb426a2739615223fa88b0b8522102900442ff13364dec7a5a",
+  "argv": [
+    "tools/merge_runs.py",
+    "--write"
+  ],
+  "whole_set": {
+    "file": "data/answerable815.jsonl",
+    "sha256": "d7424d33c5b5f22e8b0b49f06814f4442a3e3c712350575677a26c3c189bf34c",
+    "n_questions": 815
+  },
+  "checked_equal": [
+    "arm",
+    "generator_model",
+    "interpreter_model",
+    "top_k",
+    "char_budget",
+    "graph",
+    "inputs (but ids_sha256)",
+    "eval_manifest.scorer",
+    "eval_manifest.arm",
+    "eval_manifest.judge_model",
+    "eval_manifest.judge_backend",
+    "eval_manifest.judge_effort"
+  ],
+  "left_empty": [
+    "build_stats"
+  ],
+  "eval_left_empty": [],
+  "judge_settings_left_empty": [
+    "argv",
+    "pid",
+    "wall_s"
+  ],
+  "sources": [
+    {
+      "name": "lucene__gold100__cb72000__20261031_metadata_search_alone",
+      "path": "output/k=chars/lucene__gold100__cb72000__20261031_metadata_search_alone",
+      "n_questions": 100,
+      "ids_sha256": "cddaca624c8513c618657ece0b357b1463282f7c4ef083d1a7058959d8ccbf3d",
+      "host": "Fräsh",
+      "n_rows": 100,
+      "n_failure_lines": 0,
+      "n_score_rows": 1000,
+      "n_eval_calls": 0,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 1
+        }
+      ],
+      "manifest_values": {
+        "build_stats": {
+          "build_time_s": 2.9195809999946505,
+          "models": [],
+          "not_recorded": []
+        }
+      },
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "11cf17a3a65eab547e2a30a0c75305b7eb686ce78d1a76486aaec29d5b1270d6",
+        "eval_calls.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_manifest.json": "11ad486e3287daa9d1f23189ebc6dc2b5c099004717e08aad3ed2b8eea4d1049",
+        "eval_results.jsonl": "b5225f623cd8075756f15618719d51190643bacc750d3964c1f39816a074b8fa",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "52ff2595dab0d3754182acbb501121e400f2d2cbc3894e907b9f644b5e799286",
+        "run_manifest.json": "6cf914592a62bbd077dd3d2b4ca7de7e093def55e9d02d1e8192b9ec84837cdc"
+      }
+    },
+    {
+      "name": "lucene__answerable715__cb72000__20261031_metadata_search_alone",
+      "path": "output/k=chars/lucene__answerable715__cb72000__20261031_metadata_search_alone",
+      "n_questions": 715,
+      "ids_sha256": "2179037350ac45d8e14abebd5cfbf6fe1f9280432c30ece3ca5220b808a1134c",
+      "host": "Fräsh",
+      "n_rows": 715,
+      "n_failure_lines": 0,
+      "n_score_rows": 7150,
+      "n_eval_calls": 0,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 2
+        }
+      ],
+      "manifest_values": {
+        "build_stats": {
+          "build_time_s": 2.906603299998096,
+          "models": [],
+          "not_recorded": []
+        }
+      },
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "4e6a33294d6f3903f93b90a8c885bc9eac7ef1b756c3950fb9510c37ab5f2f4e",
+        "eval_calls.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_manifest.json": "fe74242c27e4cf7a15304628929aff720a404dca96bb45daae398c2de1d069bd",
+        "eval_results.jsonl": "a5db93eb171deadbb79284719598c4c1079fde9f13f2889708f7b8f2cc2d8634",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "12d48a88c384593aa7c38c6c408c5f6674ed58fa046b3e695f98fcf2bcd65759",
+        "run_manifest.json": "2bf73be7942519eca7aef6ff25110babfd2f311c40f4f3837151070ee0ebd026"
+      }
+    }
+  ],
+  "moved": [
+    {
+      "name": "lucene__gold100__cb72000__20261031_metadata_search_alone",
+      "from": "output/k=chars/lucene__gold100__cb72000__20261031_metadata_search_alone",
+      "to": "output/k=chars/lucene__answerable815__cb72000/runs_without_answers/metadata_search_alone/parts/lucene__gold100__cb72000__20261031_metadata_search_alone"
+    },
+    {
+      "name": "lucene__answerable715__cb72000__20261031_metadata_search_alone",
+      "from": "output/k=chars/lucene__answerable715__cb72000__20261031_metadata_search_alone",
+      "to": "output/k=chars/lucene__answerable815__cb72000/runs_without_answers/metadata_search_alone/parts/lucene__answerable715__cb72000__20261031_metadata_search_alone"
+    }
+  ],
+  "kept_raw": "parts/<name>/: every run joined here and its re-judging, moved whole, every file byte for byte as it stood before (sources[].files_sha256)"
+}

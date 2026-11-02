@@ -95,6 +95,7 @@ FIELDS = {
         "order": "The order the oracle context is handed over in.",
         "kept": "Where the records are held.",
     }),
+    "retrieval_flags": sub("The arm's own switches. The arm has none, so this is empty.", {}),
 }
 
 

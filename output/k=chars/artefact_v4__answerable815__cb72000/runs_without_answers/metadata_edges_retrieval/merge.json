@@ -1,0 +1,116 @@
+{
+  "merged_at": "2026-11-02T00:15:19.914406+00:00",
+  "tool": "tools/merge_runs.py",
+  "tool_sha256": "6732fd5d5327d7eb426a2739615223fa88b0b8522102900442ff13364dec7a5a",
+  "argv": [
+    "tools/merge_runs.py",
+    "--write"
+  ],
+  "whole_set": {
+    "file": "data/answerable815.jsonl",
+    "sha256": "d7424d33c5b5f22e8b0b49f06814f4442a3e3c712350575677a26c3c189bf34c",
+    "n_questions": 815
+  },
+  "checked_equal": [
+    "arm",
+    "generator_model",
+    "interpreter_model",
+    "top_k",
+    "char_budget",
+    "graph",
+    "inputs (but ids_sha256)",
+    "eval_manifest.scorer",
+    "eval_manifest.arm",
+    "eval_manifest.judge_model",
+    "eval_manifest.judge_backend",
+    "eval_manifest.judge_effort"
+  ],
+  "left_empty": [],
+  "eval_left_empty": [],
+  "judge_settings_left_empty": [
+    "argv",
+    "pid",
+    "wall_s"
+  ],
+  "sources": [
+    {
+      "name": "artefact_v4__gold100__cb72000__20261031_metadata_edges_retrieval",
+      "path": "output/k=chars/artefact_v4__gold100__cb72000__20261031_metadata_edges_retrieval",
+      "n_questions": 100,
+      "ids_sha256": "cddaca624c8513c618657ece0b357b1463282f7c4ef083d1a7058959d8ccbf3d",
+      "host": "Fräsh",
+      "n_rows": 100,
+      "n_failure_lines": 0,
+      "n_score_rows": 1000,
+      "n_eval_calls": 0,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 1
+        }
+      ],
+      "manifest_values": {},
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "3e5660ff75ef5504fd4b789013d582cfbc47d88b9b1d417f664e3a6bcfcbe1b1",
+        "delivered_vs_final.json": "a41afb270cf12d4aa2f8ba05bcafce3befd91fa7e8dd53878f01f4a22150d20e",
+        "eval_calls.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_manifest.json": "03f031fd8dfb93f263dc5e1a2f4d74fc0b8f1d3193c3bd21e769a0a52aafabf3",
+        "eval_results.jsonl": "3f6d4e7d1d92ec63d01dba5247b537950d3e01584f92aa424c3332173b950158",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "01f09368041b48cece2c099db629fd8bd617f8e26ea286c3adf2cd1c796ba02a",
+        "run_manifest.json": "135a279cc83407cd0db8d4415ce5a2d83a40640928be1d3c2568b9949f75f318"
+      }
+    },
+    {
+      "name": "artefact_v4__answerable715__cb72000__20261031_metadata_edges_retrieval",
+      "path": "output/k=chars/artefact_v4__answerable715__cb72000__20261031_metadata_edges_retrieval",
+      "n_questions": 715,
+      "ids_sha256": "2179037350ac45d8e14abebd5cfbf6fe1f9280432c30ece3ca5220b808a1134c",
+      "host": "Fräsh",
+      "n_rows": 715,
+      "n_failure_lines": 0,
+      "n_score_rows": 7150,
+      "n_eval_calls": 0,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 2
+        },
+        {
+          "source_leg": 2,
+          "leg": 3
+        }
+      ],
+      "manifest_values": {},
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "69880fe6e7338ae3cb7d3e5a4ce128bb2debe9a9b4124b1ac0b0cbb0be885e48",
+        "delivered_vs_final.json": "a7d393555e4d8439a8007abdb86b68034362ec4b4ccec49e3f718732bb6d3fcd",
+        "eval_calls.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_manifest.json": "8885ce95284365d65febd5c7c1769f688368dcc265e86556f04e212d74588b4c",
+        "eval_results.jsonl": "da1db2271ec82c9a01264c8cd6c4e392a6e24954658fe30a41027e2531095d1a",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "aff386986f6d974d3121290c54d54de7ad49786bbdae73ecc43c426750d02160",
+        "run_manifest.json": "c4b74c0f7bcd581e9d2c5cb5d9856a7d3af7bb745aecf3698c2d8adfbb9d6a7b"
+      }
+    }
+  ],
+  "moved": [
+    {
+      "name": "artefact_v4__gold100__cb72000__20261031_metadata_edges_retrieval",
+      "from": "output/k=chars/artefact_v4__gold100__cb72000__20261031_metadata_edges_retrieval",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/runs_without_answers/metadata_edges_retrieval/parts/artefact_v4__gold100__cb72000__20261031_metadata_edges_retrieval"
+    },
+    {
+      "name": "artefact_v4__answerable715__cb72000__20261031_metadata_edges_retrieval",
+      "from": "output/k=chars/artefact_v4__answerable715__cb72000__20261031_metadata_edges_retrieval",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/runs_without_answers/metadata_edges_retrieval/parts/artefact_v4__answerable715__cb72000__20261031_metadata_edges_retrieval"
+    }
+  ],
+  "kept_raw": "parts/<name>/: every run joined here and its re-judging, moved whole, every file byte for byte as it stood before (sources[].files_sha256)"
+}

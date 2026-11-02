@@ -1,0 +1,745 @@
+{
+  "merged_at": "2026-11-02T00:15:19.914406+00:00",
+  "tool": "tools/merge_runs.py",
+  "tool_sha256": "6732fd5d5327d7eb426a2739615223fa88b0b8522102900442ff13364dec7a5a",
+  "argv": [
+    "tools/merge_runs.py",
+    "--write"
+  ],
+  "whole_set": {
+    "file": "data/answerable815.jsonl",
+    "sha256": "d7424d33c5b5f22e8b0b49f06814f4442a3e3c712350575677a26c3c189bf34c",
+    "n_questions": 815
+  },
+  "checked_equal": [
+    "arm",
+    "generator_model",
+    "interpreter_model",
+    "top_k",
+    "char_budget",
+    "graph",
+    "inputs (but ids_sha256)",
+    "eval_manifest.scorer",
+    "eval_manifest.arm",
+    "eval_manifest.judge_model",
+    "eval_manifest.judge_backend",
+    "eval_manifest.judge_effort"
+  ],
+  "left_empty": [
+    "questions_file",
+    "retrieval_flags",
+    "code_version",
+    "environment",
+    "flags",
+    "workers",
+    "lane",
+    "generator",
+    "code_state",
+    "env"
+  ],
+  "eval_left_empty": [],
+  "judge_settings_left_empty": [
+    "workers",
+    "retrieval_only",
+    "scores",
+    "judge_model",
+    "judge_backend",
+    "judge_timeout_s",
+    "judge_max_tries",
+    "judge_inflight",
+    "judge_empty_reply_tries",
+    "judge_call",
+    "max_judge_context_chars",
+    "max_consecutive_failed_questions",
+    "ragas",
+    "embed_model",
+    "ragas_run_config",
+    "ragas_do_not_track",
+    "lane",
+    "calls_file",
+    "argv",
+    "pid",
+    "python_executable",
+    "wall_s"
+  ],
+  "sources": [
+    {
+      "name": "artefact_v4__gold100__cb72000__20261023T021439Z",
+      "path": "output/k=chars/artefact_v4__gold100__cb72000__20261023T021439Z",
+      "n_questions": 100,
+      "ids_sha256": "cddaca624c8513c618657ece0b357b1463282f7c4ef083d1a7058959d8ccbf3d",
+      "host": "Fräsh",
+      "n_rows": 100,
+      "n_failure_lines": 0,
+      "n_score_rows": 1400,
+      "n_eval_calls": 800,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 1
+        }
+      ],
+      "manifest_values": {
+        "questions_file": "A:\\exjobbet\\GRAG-Job\\data\\questions.jsonl",
+        "retrieval_flags": {
+          "interpreter_model": "claude-sonnet-5",
+          "offline": "HERB_V4_OFFLINE=on reads the first call's answer from the cache and raises where it is missing; off asks the model on a miss.",
+          "retrieval": "Everything the order is made of is asked of the graph for each question (`_ask_graph`): the border's chunks with their pointers, the eligible tags on them with their edges' facet values, every closeness as the graph's cosine of its stored vectors and the query side's, the people of the border's products and the 4-combo's ties; the start of a run only checks and counts the graph. The border (`name_border`, asked of the graph per question): the products, channels, people, customers and companies whose name, or a person's or customer's id, stands in the question word for word (the name_keys `test/graph/build_structure_names.py` wrote); a name picks a scope, never a chunk: a product's and a channel's chunks; for a person, a customer or a company, every chunk under the parents of the chunks it is tied to (a company through its customers); names of one kind add up, kinds narrow each other from the widest area down, and a kind that would leave nothing is set aside (`border_of`); no name, nothing cut; the chunks outside the border are out of the pool. Inside it (`v4_walk.cloud_combo`): each chunk's closest eligible tag to a query tag and the chunk descriptions' closeness to the question with the border's names taken out, closeness alone; each side's cloud is the chunks before the knee of its closeness sorted from the nearest (`v4_walk.levels_of`), the knee looked for among the values above the median, so a cloud holds at most half the border; a chunk's step is 2 in both clouds, 3 in one, 4 in neither; the parents holding the majority of the chunks in a cloud are the scope, whose chunks come first inside a step of the clouds' order, then the two sides' ranks counted equally: the description side's by closeness, the tags side's place by closeness (`v4_walk.closeness_places`: per query tag the border's chunks by closeness, each chunk at the best place any query tag gives it). The facets (`v4_walk.closest_edge_standing`): a chunk's edge to its closest tag stands above, the same or below the same graph tag's other edges on chunks of the same kind, in the facet the first call named for the query tag, beyond the facet's range on the FacetLayer node; the query tag's own phrase never stands below; the tags' cloud keeps the size of its knee and takes the chunks by their level of closeness moved one by the standing, then by closeness. The chunks in both clouds (with none, those of the lowest step) are the chosen chunks. The 4-combo (`v4_walk.storyline`, the graph asked per question in `STORYLINE_CYPHER`): every other chunk of the clouds is tied to each chosen chunk by scope (the same parent), entities (a person tied to both, through the person-to-chunk edges), time (the smallest gap between a record of the one and a record of the other, from the chunks' times, each record's own, near when before the knee of the upper half of the pairs' gaps on the logarithm) and nearness (near each other in what the query asks about: the correlation of their closeness to each query tag, near when before the knee of the upper half of the pairs' correlations); a chunk's strength is the ways it is tied, added over the chosen chunks; the order is the chosen chunks, then the rest of the clouds by strength, equals in the clouds' order, then everything outside the clouds as the clouds order it. What is handed over, in that order (`_hand_over`): every record of each chunk; of a batch of Slack messages its conversations, each whole where it first shows (a conversation is a channel's messages between its long gaps, `v4_walk.conversations`, no length given, read through the chunk's pointer); of a part of a split document or transcript that is a chosen chunk its whole record, once, at its place, of any other part only that part; nothing is left out.",
+          "offline_at_prepare": true
+        },
+        "code_version": {
+          "commit": "751a72d3f932ac39b2e79c20cf3b96c40065c499",
+          "branch": "artefact-v4-iteration",
+          "dirty": true
+        },
+        "environment": {
+          "host": "Fräsh",
+          "platform": "Windows-10-10.0.19045-SP0",
+          "python": "3.12.6",
+          "python_executable": "A:\\exjobbet\\GRAG-Job\\.venv\\Scripts\\python.exe",
+          "cpu": "Intel64 Family 6 Model 158 Stepping 10, GenuineIntel",
+          "cpu_count": 6,
+          "ram_bytes": 34280624128,
+          "packages": {
+            "bm25s": "0.2.14",
+            "PyStemmer": "3.1.0",
+            "numpy": "2.4.6",
+            "sentence-transformers": "6.0.1",
+            "torch": "2.14.0+cpu",
+            "transformers": "5.12.1",
+            "httpx": "0.28.1",
+            "ragas": "0.4.3",
+            "neo4j": "6.2.0"
+          },
+          "packages_all": [
+            "absl-py==2.5.0",
+            "aiohappyeyeballs==2.7.1",
+            "aiohttp==3.14.1",
+            "aiosignal==1.4.0",
+            "annotated-doc==0.0.4",
+            "annotated-types==0.7.0",
+            "anyio==4.14.2",
+            "appdirs==1.4.4",
+            "attrs==26.1.0",
+            "blis==1.3.3",
+            "bm25s==0.2.14",
+            "catalogue==2.0.10",
+            "certifi==2026.6.17",
+            "charset-normalizer==3.4.9",
+            "click==8.4.2",
+            "cloudpathlib==0.25.0",
+            "colorama==0.4.6",
+            "confection==1.3.3",
+            "cymem==2.0.13",
+            "dataclasses-json==0.6.7",
+            "datasets==5.0.0",
+            "defusedxml==0.7.1",
+            "dill==0.4.1",
+            "diskcache==5.6.3",
+            "distro==1.9.0",
+            "docstring_parser==0.18.0",
+            "en_core_web_sm==3.8.0",
+            "et_xmlfile==2.0.0",
+            "filelock==3.30.0",
+            "frozenlist==1.8.0",
+            "fsspec==2026.4.0",
+            "graphifyy==0.8.39",
+            "greenlet==3.5.3",
+            "h11==0.16.0",
+            "hf-xet==1.5.1",
+            "httpcore==1.0.9",
+            "httpx-sse==0.4.3",
+            "httpx==0.28.1",
+            "huggingface_hub==1.23.0",
+            "idna==3.18",
+            "iniconfig==2.3.0",
+            "instructor==1.15.4",
+            "Jinja2==3.1.6",
+            "jiter==0.14.0",
+            "joblib==1.5.3",
+            "jsonpatch==1.33",
+            "jsonpointer==3.1.1",
+            "langchain-community==0.3.31",
+            "langchain-core==1.4.9",
+            "langchain-openai==1.3.5",
+            "langchain-protocol==0.0.18",
+            "langchain==1.3.13",
+            "langgraph-checkpoint==4.1.1",
+            "langgraph-prebuilt==1.1.0",
+            "langgraph-sdk==0.4.2",
+            "langgraph==1.2.9",
+            "langsmith==0.10.5",
+            "lxml==6.1.1",
+            "markdown-it-py==4.2.0",
+            "MarkupSafe==3.0.3",
+            "marshmallow==3.26.2",
+            "mdurl==0.1.2",
+            "mpmath==1.3.0",
+            "multidict==6.7.1",
+            "multiprocess==0.70.19",
+            "murmurhash==1.0.15",
+            "mypy_extensions==1.1.0",
+            "narwhals==2.25.0",
+            "neo4j==6.2.0",
+            "nest-asyncio==1.6.0",
+            "networkx==3.6.1",
+            "nltk==3.10.0",
+            "numpy==2.4.6",
+            "openai==2.45.0",
+            "openpyxl==3.1.5",
+            "orjson==3.11.9",
+            "ormsgpack==1.12.2",
+            "packaging==26.2",
+            "pandas==3.0.3",
+            "pillow==12.3.0",
+            "pip==24.2",
+            "pluggy==1.6.0",
+            "portalocker==3.2.0",
+            "preshed==3.0.13",
+            "propcache==0.5.2",
+            "pyarrow==25.0.0",
+            "pydantic-settings==2.14.2",
+            "pydantic==2.13.4",
+            "pydantic_core==2.46.4",
+            "Pygments==2.20.0",
+            "pypdf==6.18.0",
+            "PyStemmer==3.1.0",
+            "pytest==9.1.1",
+            "python-dateutil==2.9.0.post0",
+            "python-dotenv==1.2.2",
+            "pytz==2026.2",
+            "pywin32==312",
+            "PyYAML==6.0.3",
+            "ragas==0.4.3",
+            "RapidFuzz==3.14.5",
+            "regex==2026.7.10",
+            "requests-toolbelt==1.0.0",
+            "requests==2.34.2",
+            "rich==14.3.4",
+            "rouge_score==0.1.2",
+            "sacrebleu==2.6.0",
+            "safetensors==0.8.0",
+            "scikit-learn==1.9.0",
+            "scikit-network==0.33.5",
+            "scipy==1.18.0",
+            "sentence-transformers==6.0.1",
+            "setuptools==78.1.0",
+            "shellingham==1.5.4",
+            "six==1.17.0",
+            "smart_open==8.0.1",
+            "sniffio==1.3.1",
+            "spacy-legacy==3.0.12",
+            "spacy-loggers==1.0.5",
+            "spacy==3.8.16",
+            "SQLAlchemy==2.0.51",
+            "srsly==2.5.3",
+            "sympy==1.14.0",
+            "tabulate==0.10.0",
+            "tenacity==9.1.4",
+            "thinc==8.3.13",
+            "threadpoolctl==3.6.0",
+            "tiktoken==0.13.0",
+            "tokenizers==0.22.2",
+            "torch==2.14.0+cpu",
+            "tqdm==4.67.1",
+            "transformers==5.12.1",
+            "tree-sitter-bash==0.25.1",
+            "tree-sitter-c-sharp==0.23.5",
+            "tree-sitter-c==0.24.2",
+            "tree-sitter-cpp==0.23.4",
+            "tree-sitter-elixir==0.3.5",
+            "tree-sitter-fortran==0.6.0",
+            "tree-sitter-go==0.25.0",
+            "tree-sitter-groovy==0.1.2",
+            "tree-sitter-java==0.23.5",
+            "tree-sitter-javascript==0.25.0",
+            "tree-sitter-json==0.24.8",
+            "tree-sitter-julia==0.23.1",
+            "tree-sitter-kotlin==1.1.0",
+            "tree-sitter-lua==0.5.0",
+            "tree-sitter-objc==3.0.2",
+            "tree-sitter-php==0.24.1",
+            "tree-sitter-powershell==0.26.4",
+            "tree-sitter-python==0.25.0",
+            "tree-sitter-ruby==0.23.1",
+            "tree-sitter-rust==0.24.2",
+            "tree-sitter-scala==0.26.2",
+            "tree-sitter-swift==0.7.3",
+            "tree-sitter-typescript==0.23.2",
+            "tree-sitter-verilog==1.0.3",
+            "tree-sitter-zig==1.1.2",
+            "tree-sitter==0.25.2",
+            "typer==0.27.0",
+            "typing-inspect==0.9.0",
+            "typing-inspection==0.4.2",
+            "typing_extensions==4.16.0",
+            "tzdata==2026.3",
+            "urllib3==2.7.0",
+            "uuid_utils==0.17.0",
+            "wasabi==1.1.3",
+            "weasel==1.0.0",
+            "websockets==15.0.1",
+            "wrapt==2.4.0",
+            "xxhash==3.8.1",
+            "yarl==1.24.2",
+            "zstandard==0.25.0"
+          ],
+          "embedder": {
+            "model": "nvidia/llama-nemotron-embed-1b-v2",
+            "revision": "113abe4acafa848e77ead9c0623205e511932348",
+            "device": "cpu",
+            "dtype": "float32"
+          }
+        },
+        "flags": {
+          "HERB_V4_OFFLINE": "on",
+          "HERB_V4_CACHE": "A:/exjobbet/grag_setup/final_store"
+        },
+        "workers": 27,
+        "lane": {
+          "exe": "C:\\Users\\Djuret\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+          "cli_version": "2.1.212 (Claude Code)",
+          "cwd": "C:\\Users\\Djuret\\AppData\\Local\\Temp\\herb-claude-lane",
+          "fixed_flags": [
+            "-p",
+            "--tools",
+            "",
+            "--safe-mode"
+          ],
+          "system_prompt": "always passed, empty when the call has no system text",
+          "stdin": "the prompt as UTF-8 bytes",
+          "env_set": {
+            "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+            "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+            "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+            "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane"
+          },
+          "login": "CLAUDE_CODE_OAUTH_TOKEN of the environment (.env); a call is refused without it",
+          "config_settings": {
+            "cleanupPeriodDays": 36500
+          },
+          "env_per_call": [
+            "CLAUDE_CODE_EFFORT_LEVEL",
+            "MAX_THINKING_TOKENS",
+            "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+            "CLAUDE_CODE_EXTRA_BODY"
+          ],
+          "per_call": "effort, thinking, output cap, temperature: each call's applied / not_applied",
+          "cli_adds": {
+            "seen_with": "2.1.212 (Claude Code)",
+            "system_prompt_first": "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+            "in_front_of_the_prompt": "a <system-reminder> block with the day's date"
+          },
+          "max_tries_default": 6
+        },
+        "generator": {
+          "model": "claude-sonnet-5",
+          "system": "Answer the question using only the provided documents. Be concise.",
+          "user_template": "Documents:\\n<the contexts, a blank line between them>\\n\\nQuestion: <the question>",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "answer"
+            ],
+            "additionalProperties": false
+          },
+          "payload": {
+            "temperature": 0,
+            "chat_template_kwargs": {
+              "enable_thinking": false
+            },
+            "max_tokens": 8192,
+            "min_tokens": 1
+          },
+          "applied": {
+            "effort": "none sent (the model's own default)",
+            "thinking": "off",
+            "max_output_tokens": 8192
+          },
+          "not_applied": {
+            "temperature": "claude-sonnet-5 refuses a temperature; it is sent only to claude-haiku-4-5",
+            "min_tokens": "no such setting in this lane"
+          },
+          "env_set": {
+            "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+            "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+            "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+            "CLAUDE_CONFIG_DIR": "C:\\Users\\Djuret\\.claude-herb-lane",
+            "CLAUDE_CODE_EFFORT_LEVEL": "auto",
+            "MAX_THINKING_TOKENS": "0",
+            "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8192"
+          },
+          "env_unset": [
+            "CLAUDE_CODE_EXTRA_BODY"
+          ],
+          "timeout_s": 480.0
+        },
+        "code_state": {
+          "status": [],
+          "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "untracked_sha256": {}
+        },
+        "env": {
+          "CLAUDE_CODE_OAUTH_TOKEN": "<set>",
+          "HERB_V4_CACHE": "A:/exjobbet/grag_setup/final_store",
+          "HERB_V4_OFFLINE": "on",
+          "NEO4J_PASSWORD": "<set>",
+          "RAGAS_DO_NOT_TRACK": "true"
+        }
+      },
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.as_recorded.jsonl": "c7fed810e4cd61efb0298e55622333a0bffc3291d3db20de81206ce334634797",
+        "arm_outputs.jsonl": "19ae257bdc426b0825ea9feeb72c7bfdec64b0a0a428c303bf06dc1600b35fb7",
+        "cli_transcript_usage.json": "088f7fde383d7cdbdb4eda9a144af863f572cc2798ad9eedade6ceab8fbdf245",
+        "correct_judge_embed_gpu_time.py": "22823e15cb005f752c66af694f22e085e3081ca13bb30553de0945c2975fc64d",
+        "correct_model_call_time.py": "32185f94f2157e1441b75bc54af61e7f416905882652ca83aa542b3bd4787b01",
+        "correct_nonllm_record_content.py": "1355320ac71d3b05b84be97f43b90c962526ce0faab05af1cf203ac3732a9c4f",
+        "correct_search_time.py": "4002eb8c2826c46a2b52f634a169f207a2cfa37322d6db64c9517f745bee351d",
+        "correct_zero_usage.py": "bebb0c7214ba2efbafb15b4b0272d8abef7d4600b04123df1f01b365b3ddfb89",
+        "corrections.json": "19cf37ea03df517cec52f858c96b08feab6723705f6ec7434a5c7220c3f947e6",
+        "eval_calls.as_recorded.jsonl": "37d15a75899ba9c487efa370ef2a87c8f4b9b8e58e7a585c5cc019a01cb7824c",
+        "eval_calls.jsonl": "9969b186357c74cc05f8fd94d35b2f739a41e340a91541c976be32e33c760699",
+        "eval_failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_manifest.json": "9ba8774e19d0c0af4d17820202bfc6df08172dbb6a20d0c6a4b95867debbc763",
+        "eval_results.as_recorded.jsonl": "18c7b1bddd6d10f58f524e3bcfe75891dd3d741f317c2d05f6ed96ffd6979a50",
+        "eval_results.jsonl": "7ee43b26f72536912cd4139efd1ec239d9906a86e83dfea19d8ae2146b986ccf",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "913430c9f41eb5ef15f0aae0145e33616baa24e4f88933ddf3552d31243857dc",
+        "judge_embed_gpu_times.json": "3cad191eed55a3528bc1c4eb3bb4136c303053c3da6c1eb4b9273a081379ba0a",
+        "model_call_times.json": "69803299311a1f5694cff2b984ba61a2743b168d7bd5a8c5b66a30d5a368e94b",
+        "model_call_times_v3.json": "5bf435bb0b341507608b96a0ae12dacafc9c936c3309bf967f9493b012e2a6cb",
+        "run_manifest.json": "f758fb52dd6b14c0e819da0cdb0a78904ab8d4c7c60b7fda1d93b8dfb0b1c04b"
+      },
+      "rejudged": {
+        "name": "artefact_v4__gold100__cb72000__20261023T021439Z__j-claude-haiku-4-5-20251001__gold100",
+        "path": "output/k=chars/artefact_v4__gold100__cb72000__20261023T021439Z__j-claude-haiku-4-5-20251001__gold100",
+        "scores": [
+          "factual_correctness",
+          "context_entity_recall"
+        ],
+        "n_score_rows": 200,
+        "n_eval_calls": 602,
+        "n_eval_failure_lines": 1,
+        "files_sha256": {
+          "arm_outputs.jsonl": "a1d2db4a06854e0c5c5b8c7a0da53eb101db9279f45212c60fc0a39ab677acbf",
+          "correct_missing_judge_legs.py": "e8adbbbe26fed551172e08ae67d12df25490d0ef05585d445acabee4d6e8c71e",
+          "correct_nonllm_record_content.py": "2a28f4ef204170fa10c1e0db5a5dd83fc34a520a96940170ef9e91cf398248c9",
+          "corrections.json": "256a8e9fb3b9ea8c7e5e9a5f687a9a75749f95c69676d47833ba292e3312c322",
+          "eval_calls.jsonl": "5cc504c93d3b895d8e0795c66fea0c72ab67f4da0220eb31d156cf26a19649de",
+          "eval_failures.jsonl": "ee9818751fe31bde53352e14cdbaae6637ce2f2343412d952f638faf02fa0f22",
+          "eval_manifest.as_recorded.json": "077c05508d0af1febaf6391c9d199dc8a494ead44d2dd10b8435ca686bd9c2f7",
+          "eval_manifest.json": "71df6423626b4b65add8ca90314946bb7acfddca468016e7a1116d3d616914bd",
+          "eval_results.as_recorded.jsonl": "e02486d118bc479b392dbfcf284c1a668fa73d3248bef152bb653038853df580",
+          "eval_results.jsonl": "0290d0f3facbba9feddd3bbd8132d00c97e84adb5c6af0903b707e88c865b54c",
+          "FIELDS.md": "00cc6eb30beacdd68d45c016a0172ea3e0181b61c2c740b54c444a2db76e59c4"
+        }
+      }
+    },
+    {
+      "name": "artefact_v4__answerable715__cb72000__20261025T211532Z",
+      "path": "output/k=chars/artefact_v4__answerable715__cb72000__20261025T211532Z",
+      "n_questions": 715,
+      "ids_sha256": "2179037350ac45d8e14abebd5cfbf6fe1f9280432c30ece3ca5220b808a1134c",
+      "host": null,
+      "n_rows": 715,
+      "n_failure_lines": 32,
+      "n_score_rows": 11440,
+      "n_eval_calls": 10020,
+      "n_eval_failure_lines": 14,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 2
+        },
+        {
+          "source_leg": 2,
+          "leg": 3
+        },
+        {
+          "source_leg": 3,
+          "leg": 4
+        },
+        {
+          "source_leg": 4,
+          "leg": 5
+        },
+        {
+          "source_leg": 5,
+          "leg": 6
+        },
+        {
+          "source_leg": 6,
+          "leg": 7
+        },
+        {
+          "source_leg": 7,
+          "leg": 8
+        },
+        {
+          "source_leg": 8,
+          "leg": 9
+        },
+        {
+          "source_leg": 9,
+          "leg": 10
+        },
+        {
+          "source_leg": 10,
+          "leg": 11
+        },
+        {
+          "source_leg": 11,
+          "leg": 12
+        }
+      ],
+      "manifest_values": {
+        "questions_file": null,
+        "retrieval_flags": {
+          "interpreter_model": "claude-sonnet-5",
+          "offline": "HERB_V4_OFFLINE=on reads the first call's answer from the cache and raises where it is missing; off asks the model on a miss.",
+          "retrieval": "Everything the order is made of is asked of the graph for each question (`_ask_graph`): the border's chunks with their pointers, the eligible tags on them with their edges' facet values, every closeness as the graph's cosine of its stored vectors and the query side's, the people of the border's products and the 4-combo's ties; the start of a run only checks and counts the graph. The border (`name_border`, asked of the graph per question): the products, channels, people, customers and companies whose name, or a person's or customer's id, stands in the question word for word (the name_keys `test/graph/build_structure_names.py` wrote); a name picks a scope, never a chunk: a product's and a channel's chunks; for a person, a customer or a company, every chunk under the parents of the chunks it is tied to (a company through its customers); names of one kind add up, kinds narrow each other from the widest area down, and a kind that would leave nothing is set aside (`border_of`); no name, nothing cut; the chunks outside the border are out of the pool. Inside it (`v4_walk.cloud_combo`): each chunk's closest eligible tag to a query tag and the chunk descriptions' closeness to the question with the border's names taken out, closeness alone; each side's cloud is the chunks before the knee of its closeness sorted from the nearest (`v4_walk.levels_of`), the knee looked for among the values above the median, so a cloud holds at most half the border; a chunk's step is 2 in both clouds, 3 in one, 4 in neither; the parents holding the majority of the chunks in a cloud are the scope, whose chunks come first inside a step of the clouds' order, then the two sides' ranks counted equally: the description side's by closeness, the tags side's place by closeness (`v4_walk.closeness_places`: per query tag the border's chunks by closeness, each chunk at the best place any query tag gives it). The facets (`v4_walk.closest_edge_standing`): a chunk's edge to its closest tag stands above, the same or below the same graph tag's other edges on chunks of the same kind, in the facet the first call named for the query tag, beyond the facet's range on the FacetLayer node; the query tag's own phrase never stands below; the tags' cloud keeps the size of its knee and takes the chunks by their level of closeness moved one by the standing, then by closeness. The chunks in both clouds (with none, those of the lowest step) are the chosen chunks. The 4-combo (`v4_walk.storyline`, the graph asked per question in `STORYLINE_CYPHER`): every other chunk of the clouds is tied to each chosen chunk by scope (the same parent), entities (a person tied to both, through the person-to-chunk edges), time (the smallest gap between a record of the one and a record of the other, from the chunks' times, each record's own, near when before the knee of the upper half of the pairs' gaps on the logarithm) and nearness (near each other in what the query asks about: the correlation of their closeness to each query tag, near when before the knee of the upper half of the pairs' correlations); a chunk's strength is the ways it is tied, added over the chosen chunks; the order is the chosen chunks, then the rest of the clouds by strength, equals in the clouds' order, then everything outside the clouds as the clouds order it. What is handed over, in that order (`_hand_over`): every record of each chunk; of a batch of Slack messages its conversations, each whole where it first shows (a conversation is a channel's messages between its long gaps, `v4_walk.conversations`, no length given, read through the chunk's pointer); of a part of a split document or transcript that is a chosen chunk its whole record, once, at its place, of any other part only that part; nothing is left out.",
+          "offline_at_prepare": false
+        },
+        "code_version": {
+          "commit": "4518897d18ab86fa25bc398d2efafa9a2635de93",
+          "branch": "artefact-v4-iteration",
+          "dirty": true
+        },
+        "environment": null,
+        "flags": {
+          "HERB_V4_CACHE": "output/private/artefact_v4_cache_20261025T211532Z_a"
+        },
+        "workers": null,
+        "lane": null,
+        "generator": {
+          "model": "claude-sonnet-5",
+          "system": "Answer the question using only the provided documents. Be concise.",
+          "user_template": "Documents:\\n<the contexts, a blank line between them>\\n\\nQuestion: <the question>",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "answer"
+            ],
+            "additionalProperties": false
+          },
+          "payload": {
+            "temperature": 0,
+            "chat_template_kwargs": {
+              "enable_thinking": false
+            },
+            "max_tokens": 8192,
+            "min_tokens": 1
+          },
+          "applied": {
+            "effort": "none sent (the model's own default)",
+            "thinking": "off",
+            "max_output_tokens": 8192
+          },
+          "not_applied": {
+            "temperature": "claude-sonnet-5 refuses a temperature; it is sent only to claude-haiku-4-5",
+            "min_tokens": "no such setting in this lane"
+          },
+          "env_set": {
+            "MEMPALACE_HOOKS_AUTO_SAVE": "false",
+            "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+            "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+            "CLAUDE_CONFIG_DIR": "C:\\Users\\jocke\\.claude-herb-lane",
+            "ENABLE_PROMPT_CACHING_1H": "1",
+            "CLAUDE_CODE_EFFORT_LEVEL": "auto",
+            "MAX_THINKING_TOKENS": "0",
+            "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8192"
+          },
+          "env_unset": [
+            "CLAUDE_CODE_EXTRA_BODY"
+          ],
+          "timeout_s": 480.0
+        },
+        "code_state": {
+          "status": [
+            " M tools/correct_nonllm_record_content.py",
+            "?? tools/correct_missing_judge_legs.py"
+          ],
+          "diff_sha256": "4e2351e29711898c684ebd0a8afbb773f1729be4113347ca478dc0deb157cee8",
+          "untracked_sha256": {
+            "tools/correct_missing_judge_legs.py": "8d21a1aeef9f9deb0c32a2466221577054d59191596d09403314b03de22ca9c4"
+          },
+          "diff_file": "code.4e2351e29711898c.diff"
+        },
+        "env": null
+      },
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.as_recorded.jsonl": "c5b388cf53b3b3d7424ee0c094e02f7cada0e3846f3e10f9daf454b03cca297e",
+        "arm_outputs.jsonl": "34680c90e204c7ebf3299141baf113cae0852c51d59a0ac371451a3c1114bd9c",
+        "cli_transcript_requests.json": "75e211ccffe02657b5e750d371142ef265cc8a8ec7b206afbb03ceae6e7ef074",
+        "cli_transcript_usage.json": "b79cd4afa3c2544e5186861c48ae5119b4503a79b590e813425bbba796eb4946",
+        "code.4e2351e29711898c.diff": "4e2351e29711898c684ebd0a8afbb773f1729be4113347ca478dc0deb157cee8",
+        "code.b5c2065d7bee317b.diff": "b5c2065d7bee317bf988edd095a7847034575f4a527f7a3ddd2fc1a999e85489",
+        "code.db302bf35b9664da.diff": "db302bf35b9664da25a82872af665f0453f6d1e772451821ad707ed47a64e5ed",
+        "correct_embed_gpu_time.py": "9583abff4129657c4aa4e511ef013ac5f918a1eab733b55c7fbd2e65735164cd",
+        "correct_judge_embed_gpu_time.py": "22823e15cb005f752c66af694f22e085e3081ca13bb30553de0945c2975fc64d",
+        "correct_judge_usage.py": "8008359bc0d14a4cecd00e4be959965f395ea37d74851a6f0946328899043c74",
+        "correct_model_call_time.py": "32185f94f2157e1441b75bc54af61e7f416905882652ca83aa542b3bd4787b01",
+        "correct_search_time.py": "4002eb8c2826c46a2b52f634a169f207a2cfa37322d6db64c9517f745bee351d",
+        "correct_store_hit_calls.py": "1dcf4f52fc8d0dcc187a147da819147fe92bcd707a95bbdb303fb2576e014e78",
+        "correct_zero_usage.py": "8b63c600eb42647d868c0d216c6a8ad6073aa60c6bac65ce0ee2e33a6ab8c553",
+        "corrections.json": "6b032fe894bc826ca679e2749bad670d74d1e21bd8661d42b781aec0df1dcd68",
+        "eval_calls.as_recorded.jsonl": "54f5f903e708371559f0436abb36d73c1b27e87ac6b5b3d45d8724ad80c434d5",
+        "eval_calls.jsonl": "6472e385b25c9c0a6e0119b49555fe84219aff4446f65aabd695d9c9361a3994",
+        "eval_failures.jsonl": "244a17e18d6d57d9b1406f4a22773bd4319bd18740eb8637da70118e2628cbdc",
+        "eval_manifest.as_recorded.json": "8238816ecef8a24889936fec753446f2111d8146d059b7efa245a859e8435689",
+        "eval_manifest.json": "a6fee86abfaac3afca19521cae3263bc094d0746cfe33298343d951a220ca1c1",
+        "eval_results.as_recorded.jsonl": "c2437e3e8e66b988a5118eaec4824c45f8db022a37116c6ef402bf66a45fde9d",
+        "eval_results.jsonl": "388b0014fdfe809a77514339cab31a92affb54daee8d2ccde19ad857305a4b95",
+        "failures.jsonl": "ab83617dd4a00fff5bea6a17e1e65f7bec974af41404e2edff035bca729b423f",
+        "FIELDS.md": "6ed7f018c09af7913cef4ec9fd90816ab1363905323aed14205b0d43476e80b8",
+        "first_call_records.jsonl": "8f6e27c840e3cb75fdaac34ea04e5f19725b061df67e8495dc69b284b79fd40a",
+        "gpu_embed_times.json": "c89fcb320518df39411d1c8b63936236b2d75738912b82ad8a93014bfb8b4b6c",
+        "halves/artefact_v4__answerable715.a__cb72000__20261025T211532Z_laptop/arm_outputs.jsonl": "4534a4ef16b67466d5e7ede74eecb2ae9dd4503f3b4253ee83c77b0d27b9e88f",
+        "halves/artefact_v4__answerable715.a__cb72000__20261025T211532Z_laptop/code.4e2351e29711898c.diff": "4e2351e29711898c684ebd0a8afbb773f1729be4113347ca478dc0deb157cee8",
+        "halves/artefact_v4__answerable715.a__cb72000__20261025T211532Z_laptop/correct_secret_env.py": "cd56a6a0bba57f91f403a19e5212b57adb3d2620830be2c65acd212fa7fb3721",
+        "halves/artefact_v4__answerable715.a__cb72000__20261025T211532Z_laptop/corrections.json": "bbdf9fee998880df60a462222e13332646fbda6f768f0ddab53a5d4114449ff3",
+        "halves/artefact_v4__answerable715.a__cb72000__20261025T211532Z_laptop/eval_calls.jsonl": "176b993f183a12f2d50ae3a069f4a6579838f3be59002abac4e3510bea037178",
+        "halves/artefact_v4__answerable715.a__cb72000__20261025T211532Z_laptop/eval_failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "halves/artefact_v4__answerable715.a__cb72000__20261025T211532Z_laptop/eval_manifest.json": "01d3499125bad4e5cfddd421a0b6c964133049d0ef2f970f2b9579944fd8efee",
+        "halves/artefact_v4__answerable715.a__cb72000__20261025T211532Z_laptop/eval_results.jsonl": "b39d67f716c70033c54a46b58e7345a3e42873066944d8fc049bbccac327fe83",
+        "halves/artefact_v4__answerable715.a__cb72000__20261025T211532Z_laptop/failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "halves/artefact_v4__answerable715.a__cb72000__20261025T211532Z_laptop/FIELDS.md": "afe2159cd85f9689b73f603893bfdd97c33c3c73201f219540cdc0fc60d4a2d6",
+        "halves/artefact_v4__answerable715.a__cb72000__20261025T211532Z_laptop/run_manifest.json": "19814ccf874d9f69d79514752fd808c477c546da4d692769edc7791baea54f00",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/arm_outputs.as_recorded.jsonl": "fbcbb5ff4716faaf41212332ac69b9a82e7a7eb05d5ae1baf8599ff20cc74784",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/arm_outputs.jsonl": "6ad557d36048b7cb3490b95480fb55c97f5910bfabd478ba1b0b4685a5fb3f50",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/code.b5c2065d7bee317b.diff": "b5c2065d7bee317bf988edd095a7847034575f4a527f7a3ddd2fc1a999e85489",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/code.db302bf35b9664da.diff": "db302bf35b9664da25a82872af665f0453f6d1e772451821ad707ed47a64e5ed",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/code_reflog.txt": "3afbde103bd3a20f21192f2128ed8a23ccd4dae9caa4683448649069ab195df5",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/correct_code_version_from_reflog.py": "fa6dbcf7a2a2d8eb84900653a531b52b04d441fd8cfa1ce4dd37f3547f2b15e3",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/correct_secret_env.py": "fe89384802cdfdd648cb85b2e1500f6b675e09e3ec4c11afab457538cb49b95b",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/correct_unrecorded_starts.py": "be6aa682e659748cd47f4000affc58da1453751d8485b32d61ca7f1310229682",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/corrections.json": "a8e93f3025c8bbaeeb72fe161e50eeb36967a7205a14542b0b007bf3efb1c84a",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/eval_calls.jsonl": "ffd6688521f7cfa4a10d423a6d7ee1ed5e378e3cff6bda84ec438cfbeeec2898",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/eval_failures.jsonl": "129c47f71e6b1da1b817a18c8d9eb8df986c9dddfecca54501f93713c118f291",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/eval_manifest.json": "dd10a0b93157b53b1e738eeceb31d209fcffbf8ff64b1484513cb99d2feec2b8",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/eval_results.jsonl": "f49ef4e9ed05db42d784aee06d15fc10873820eb306ec257c15a8ea27c47d2d9",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/failures.as_recorded.jsonl": "c732d88e40163042dc339ad3e5d457aaaa3e0e8bf08e8be98bb677bc7bb3a207",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/failures.jsonl": "8e8423b9f1b7117a59102e3ec73e3036fc644c5a3c1cc8d7d605c7c90bc8293a",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/FIELDS.md": "4b4661dab2d78702fca681e3ccd5202ecdeb8cd18367a6541b58881c4d9eb58a",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/run_manifest.as_recorded.json": "f4a33a0954500406de3dadb2f423e6ca2ec4c1f11e05549b4ce071358f31e3e0",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/run_manifest.json": "6aaa1899207fa15553a7df9752c05dd2d17b34d0089251867bbde88081fbb33d",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/starts/answerable715_b_20261025T211532Z.log": "30612a9c6c646886d256bec4e81b58b927cb2d053e01dc219351cd469ec22351",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/starts/answerable715_b_20261025T211532Z_16workers.log": "49eb5c8a9e0449345500d16d022e110ecde3709797b13bf08c3009973428becb",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/starts/answerable715_b_20261025T211532Z_25workers_cpu.log": "1128a49ac9c375eb9769db8ba42dbb35774afc128edea4e9c230ba0687f0561c",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/starts/answerable715_b_20261025T211532Z_27workers.log": "d35c36f7cd4dffde5c79b46c8ca6a9d7bc083b96b9a045777af8dd34629ba704",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/starts/answerable715_b_20261025T211532Z_before_reboot1.log": "759b5f308f7a5f11c060e5e6b5f6ca62a57e7adcab8c181096febde6b0b15284",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/starts/answerable715_b_20261025T211532Z_cuda_aborted.log": "7fca796ca04ff5315576c9f9c8c1597328ddb2cdba4d2147c851dee181fcea2c",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/starts/answerable715_b_20261025T211532Z_judging_crash.log": "dcc6e1049afe45493d2dbfb961a4aa2be032e95e0e79e6791daec3f9aa9508b6",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/starts/answerable715_b_20261025T211532Z_orphan_markers_stop.log": "ef4b08680cbb528076a85779c10176e8cb475406caacc9b2c900c2ef2a44b0b5",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/starts/leg_b_rejudge.log": "65f149942ea8356e2843e61a48393b31cb5e196c696ea580029bd25e56880e77",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/starts/leg_b_rejudge2.log": "6c4a1a9da23caca0b61384f5b8f5a21e45fdd3c98376522452f89a653842499e",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/starts/leg_b_rejudge3.log": "908496cd593d4692ec4fa61bc5645d376ee227ad684397e0a946746727c8dbcf",
+        "halves/artefact_v4__answerable715.b__cb72000__20261025T211532Z_desktop/starts/starts.json": "d442f579e4e04d1bda59e6c04204da9133a2809c11d230bdc41bde75aa2636f5",
+        "judge_calls_without_record.json": "c83c12e473419ff2d1411a19c50f091b1564b4d98788827c00343c4c9f0a8edc",
+        "judge_calls_without_record.py": "08b2a12ad18133a82fbd15017416f4fb0e7935bfa2df1ae8b9349eebdb01329f",
+        "judge_embed_gpu_times.json": "3cad191eed55a3528bc1c4eb3bb4136c303053c3da6c1eb4b9273a081379ba0a",
+        "merge.json": "1002d53d9321ccc6f774a0687b9086b1b62c977a5a9921f789dfac0b6a73b83d",
+        "model_call_times.json": "4d2758d004476aa9a8cc6b1cd50bf9f559618a928d9a35d7127a87cf8f674873",
+        "model_call_times_v2.json": "1ce2ee2c4f620995f7c2a5625cd91d41079ce7c0479147230545f6cd8d9f2640",
+        "model_call_times_v3.json": "60382217d66f1eec284229f5a04fd24c5a1ab38e60498b0168e2c84725c1af0d",
+        "run_manifest.json": "adb19ca256158811af95677427dc88419478aed2e01e002ac7fa9aeb334e2186"
+      }
+    }
+  ],
+  "moved": [
+    {
+      "name": "artefact_v4__gold100__cb72000__20261023T021439Z",
+      "from": "output/k=chars/artefact_v4__gold100__cb72000__20261023T021439Z",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/parts/artefact_v4__gold100__cb72000__20261023T021439Z"
+    },
+    {
+      "name": "artefact_v4__gold100__cb72000__20261023T021439Z__j-claude-haiku-4-5-20251001__gold100",
+      "from": "output/k=chars/artefact_v4__gold100__cb72000__20261023T021439Z__j-claude-haiku-4-5-20251001__gold100",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/parts/artefact_v4__gold100__cb72000__20261023T021439Z__j-claude-haiku-4-5-20251001__gold100"
+    },
+    {
+      "name": "artefact_v4__answerable715__cb72000__20261025T211532Z",
+      "from": "output/k=chars/artefact_v4__answerable715__cb72000__20261025T211532Z",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/parts/artefact_v4__answerable715__cb72000__20261025T211532Z"
+    },
+    {
+      "name": "artefact_v4__gold100__cb72000__20261031_metadata_search_alone",
+      "from": "output/k=chars/artefact_v4__gold100__cb72000__20261031_metadata_search_alone",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/runs_without_answers/metadata_search_alone/parts/artefact_v4__gold100__cb72000__20261031_metadata_search_alone"
+    },
+    {
+      "name": "artefact_v4__answerable715__cb72000__20261031_metadata_search_alone",
+      "from": "output/k=chars/artefact_v4__answerable715__cb72000__20261031_metadata_search_alone",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/runs_without_answers/metadata_search_alone/parts/artefact_v4__answerable715__cb72000__20261031_metadata_search_alone"
+    },
+    {
+      "name": "artefact_v4__gold100__cb72000__20261031_metadata_retrieval",
+      "from": "output/k=chars/artefact_v4__gold100__cb72000__20261031_metadata_retrieval",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/runs_without_answers/metadata_retrieval/parts/artefact_v4__gold100__cb72000__20261031_metadata_retrieval"
+    },
+    {
+      "name": "artefact_v4__answerable715__cb72000__20261031_metadata_retrieval",
+      "from": "output/k=chars/artefact_v4__answerable715__cb72000__20261031_metadata_retrieval",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/runs_without_answers/metadata_retrieval/parts/artefact_v4__answerable715__cb72000__20261031_metadata_retrieval"
+    },
+    {
+      "name": "artefact_v4__gold100__cb72000__20261027_search_1worker",
+      "from": "output/k=chars/artefact_v4__gold100__cb72000__20261027_search_1worker",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/runs_without_answers/search_1worker/parts/artefact_v4__gold100__cb72000__20261027_search_1worker"
+    },
+    {
+      "name": "artefact_v4__answerable715__cb72000__20261027_search_1worker",
+      "from": "output/k=chars/artefact_v4__answerable715__cb72000__20261027_search_1worker",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/runs_without_answers/search_1worker/parts/artefact_v4__answerable715__cb72000__20261027_search_1worker"
+    },
+    {
+      "name": "artefact_v4__gold100__cb72000__20261031_metadata_edges_retrieval",
+      "from": "output/k=chars/artefact_v4__gold100__cb72000__20261031_metadata_edges_retrieval",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/runs_without_answers/metadata_edges_retrieval/parts/artefact_v4__gold100__cb72000__20261031_metadata_edges_retrieval"
+    },
+    {
+      "name": "artefact_v4__answerable715__cb72000__20261031_metadata_edges_retrieval",
+      "from": "output/k=chars/artefact_v4__answerable715__cb72000__20261031_metadata_edges_retrieval",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/runs_without_answers/metadata_edges_retrieval/parts/artefact_v4__answerable715__cb72000__20261031_metadata_edges_retrieval"
+    },
+    {
+      "name": "artefact_v4__gold100__cb72000__20261028_first_question_warm",
+      "from": "output/k=chars/artefact_v4__gold100__cb72000__20261028_first_question_warm",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/runs_without_answers/artefact_v4__gold100__cb72000__20261028_first_question_warm"
+    },
+    {
+      "name": "artefact_v4__answerable715__cb72000__20261028_first_question_warm",
+      "from": "output/k=chars/artefact_v4__answerable715__cb72000__20261028_first_question_warm",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/runs_without_answers/artefact_v4__answerable715__cb72000__20261028_first_question_warm"
+    },
+    {
+      "name": "artefact_v4__metadata_redo__cb72000__20261031",
+      "from": "output/k=chars/artefact_v4__metadata_redo__cb72000__20261031",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/redo/artefact_v4__metadata_redo__cb72000__20261031"
+    },
+    {
+      "name": "artefact_v4__gold100__cb72000__20261020T041923Z",
+      "from": "output/k=chars/artefact_v4__gold100__cb72000__20261020T041923Z",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/sources/artefact_v4__gold100__cb72000__20261020T041923Z"
+    },
+    {
+      "name": "artefact_v4__answerable715__cb72000__20261027_query_embeddings",
+      "from": "output/k=chars/artefact_v4__answerable715__cb72000__20261027_query_embeddings",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/sources/artefact_v4__answerable715__cb72000__20261027_query_embeddings"
+    }
+  ],
+  "kept_raw": "parts/<name>/: every run joined here and its re-judging, moved whole, every file byte for byte as it stood before (sources[].files_sha256)"
+}

@@ -46,6 +46,21 @@ LEFT_OUT = [
     "His words: \"yeah, so, dont fucking talk about or use it then, if its not a current file, why "
     "are you talking about it?\" (2026-10-31).",
 ]
+# a run made before HERB's employee and customer records were in the corpus carries the switch it had then, off
+OLD_RUNS_LEFT_OUT = [
+    "The directory files: the corpus's three directory files (people, teams, customers) are not embedded "
+    "beside the product records (retrieval_flags.HERB_BASELINE_METADATA off). No rule in his words is "
+    "recorded for it; his \"ok, so, we add them back in then\" (2026-10-30) put employee.json and "
+    "customers_data.json into the corpus of the runs after these.",
+]
+
+
+def left_out(man):
+    """What was left out of the data a run of this arm rests on (harness.fields): a run that carries the old
+    switch off left out the directory files."""
+    if (man.get("retrieval_flags") or {}).get("HERB_BASELINE_METADATA") is False:
+        return OLD_RUNS_LEFT_OUT
+    return LEFT_OUT
 
 # the words for what only this arm writes into a run folder (harness.fields, FIELDS.md)
 FIELDS = {
@@ -92,7 +107,12 @@ FIELDS = {
                            "question, so that no question pays for its loading.",
         "question_embedding": "When and how a question is embedded.",
     }),
-    "retrieval_flags": sub("The arm's own switches. The arm has none, so this is empty.", {}),
+    "retrieval_flags": sub("The arm's own switches. The arm has none, so this is empty; a run made before "
+                           "HERB's employee and customer records were in the corpus holds the one it had then.", {
+        "HERB_BASELINE_METADATA": "Only in a run made before HERB's employee and customer records were in the "
+                                  "corpus: whether the corpus's three directory files (people, teams, "
+                                  "customers) were taken in beside the records. Off: the records only.",
+    }),
 }
 
 

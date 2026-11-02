@@ -1,0 +1,112 @@
+{
+  "merged_at": "2026-11-02T00:15:19.914406+00:00",
+  "tool": "tools/merge_runs.py",
+  "tool_sha256": "6732fd5d5327d7eb426a2739615223fa88b0b8522102900442ff13364dec7a5a",
+  "argv": [
+    "tools/merge_runs.py",
+    "--write"
+  ],
+  "whole_set": {
+    "file": "data/answerable815.jsonl",
+    "sha256": "d7424d33c5b5f22e8b0b49f06814f4442a3e3c712350575677a26c3c189bf34c",
+    "n_questions": 815
+  },
+  "checked_equal": [
+    "arm",
+    "generator_model",
+    "interpreter_model",
+    "top_k",
+    "char_budget",
+    "graph",
+    "inputs (but ids_sha256)",
+    "eval_manifest.scorer",
+    "eval_manifest.arm",
+    "eval_manifest.judge_model",
+    "eval_manifest.judge_backend",
+    "eval_manifest.judge_effort"
+  ],
+  "left_empty": [],
+  "eval_left_empty": [],
+  "judge_settings_left_empty": [
+    "argv",
+    "pid",
+    "wall_s"
+  ],
+  "sources": [
+    {
+      "name": "artefact_v4__gold100__cb72000__20261031_metadata_retrieval",
+      "path": "output/k=chars/artefact_v4__gold100__cb72000__20261031_metadata_retrieval",
+      "n_questions": 100,
+      "ids_sha256": "cddaca624c8513c618657ece0b357b1463282f7c4ef083d1a7058959d8ccbf3d",
+      "host": "Fräsh",
+      "n_rows": 100,
+      "n_failure_lines": 0,
+      "n_score_rows": 1000,
+      "n_eval_calls": 0,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 1
+        }
+      ],
+      "manifest_values": {},
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "ff3ed32cde6eb9f42d8cc3a00db7d0bfad27b6bbf36eab953e947202b3be9f81",
+        "delivered_vs_final.json": "0a7b8b22f3d9a625bdcae7b6d22b6e294c4f9edacc5cff12b13313d27385dcac",
+        "eval_calls.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_manifest.json": "a334f5ca6dcab8ce1960c898acfa5420d38389b94128115cf4fc8176a61bdd4a",
+        "eval_results.jsonl": "b2f7ef482211168fa91c6666d6428469859818b39112d840ac838c38e4510db8",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "07f9bd79e14b0874b1d6c051652897c8ed9a597cec7fea16c60175069d00b551",
+        "run_manifest.json": "be881ec84858a12dbd9fc31078d975fb4d2f4d2105bee9b886f7c72248cf218e"
+      }
+    },
+    {
+      "name": "artefact_v4__answerable715__cb72000__20261031_metadata_retrieval",
+      "path": "output/k=chars/artefact_v4__answerable715__cb72000__20261031_metadata_retrieval",
+      "n_questions": 715,
+      "ids_sha256": "2179037350ac45d8e14abebd5cfbf6fe1f9280432c30ece3ca5220b808a1134c",
+      "host": "Fräsh",
+      "n_rows": 715,
+      "n_failure_lines": 0,
+      "n_score_rows": 7150,
+      "n_eval_calls": 0,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 2
+        }
+      ],
+      "manifest_values": {},
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "2309d3a63305ae986c86005a8ad9a373a00fc77100b1140331c522f20a2e82a6",
+        "delivered_vs_final.json": "01b0855b8186b839874411f3f621acaf09d0e37207d2fb268fe9336826d91506",
+        "eval_calls.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_manifest.json": "c2e4792c77c1a37041f269a40e81f711267f27c6f72ce35c87db05406f69b84a",
+        "eval_results.jsonl": "13ed11e4eb977141d43ec7eadc2e5ac046b64b1262ad0b5b156cccc65bb44854",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "1b4b5a1b6b63440069d8f70307e84db0069f264df490ff15fc28c59b1a4160e3",
+        "run_manifest.json": "5030842a2fffa3bfad7ed530312d7fe3d1cff0deab6c9ab881aeb50b333aae39"
+      }
+    }
+  ],
+  "moved": [
+    {
+      "name": "artefact_v4__gold100__cb72000__20261031_metadata_retrieval",
+      "from": "output/k=chars/artefact_v4__gold100__cb72000__20261031_metadata_retrieval",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/runs_without_answers/metadata_retrieval/parts/artefact_v4__gold100__cb72000__20261031_metadata_retrieval"
+    },
+    {
+      "name": "artefact_v4__answerable715__cb72000__20261031_metadata_retrieval",
+      "from": "output/k=chars/artefact_v4__answerable715__cb72000__20261031_metadata_retrieval",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/runs_without_answers/metadata_retrieval/parts/artefact_v4__answerable715__cb72000__20261031_metadata_retrieval"
+    }
+  ],
+  "kept_raw": "parts/<name>/: every run joined here and its re-judging, moved whole, every file byte for byte as it stood before (sources[].files_sha256)"
+}

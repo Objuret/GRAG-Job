@@ -1,0 +1,126 @@
+{
+  "merged_at": "2026-11-02T00:15:19.914406+00:00",
+  "tool": "tools/merge_runs.py",
+  "tool_sha256": "6732fd5d5327d7eb426a2739615223fa88b0b8522102900442ff13364dec7a5a",
+  "argv": [
+    "tools/merge_runs.py",
+    "--write"
+  ],
+  "whole_set": {
+    "file": "data/answerable815.jsonl",
+    "sha256": "d7424d33c5b5f22e8b0b49f06814f4442a3e3c712350575677a26c3c189bf34c",
+    "n_questions": 815
+  },
+  "checked_equal": [
+    "arm",
+    "generator_model",
+    "interpreter_model",
+    "top_k",
+    "char_budget",
+    "graph",
+    "inputs (but ids_sha256)",
+    "eval_manifest.scorer",
+    "eval_manifest.arm",
+    "eval_manifest.judge_model",
+    "eval_manifest.judge_backend",
+    "eval_manifest.judge_effort"
+  ],
+  "left_empty": [
+    "build_stats"
+  ],
+  "eval_left_empty": [],
+  "judge_settings_left_empty": [
+    "argv",
+    "pid",
+    "wall_s"
+  ],
+  "sources": [
+    {
+      "name": "lucene__gold100__cb72000__20261031_metadata_retrieval",
+      "path": "output/k=chars/lucene__gold100__cb72000__20261031_metadata_retrieval",
+      "n_questions": 100,
+      "ids_sha256": "cddaca624c8513c618657ece0b357b1463282f7c4ef083d1a7058959d8ccbf3d",
+      "host": "Fräsh",
+      "n_rows": 100,
+      "n_failure_lines": 0,
+      "n_score_rows": 1000,
+      "n_eval_calls": 0,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 1
+        }
+      ],
+      "manifest_values": {
+        "build_stats": {
+          "build_time_s": 3.419690399998217,
+          "models": [],
+          "not_recorded": []
+        }
+      },
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "0b454c566d202a111bed8fb38ac80eed5eb2f9e53c83ce7764866a7ab3984741",
+        "delivered_vs_final.json": "fc402023ecfe21fdbe81c42e0176a8d2a42bc45b05792bf493728c00e7ffecb5",
+        "eval_calls.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_manifest.json": "69c64309889e871dc6336e6ef7abe5aaa383f7ec7587f62157f89c8f6e77dfb4",
+        "eval_results.jsonl": "25b7b4eebeb8aad38e2e8acf604f98a7675fc41d82877fc02801343649fcd8b5",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "7303411581894d7f19ffcf9475cc31b9b3bc0abd44aa3c240e3e132f9164964d",
+        "run_manifest.json": "bca48bf178820c3bad9237b5c5c2b93ee05c3bb8c316f1c16c692afae22d89ee"
+      }
+    },
+    {
+      "name": "lucene__answerable715__cb72000__20261031_metadata_retrieval",
+      "path": "output/k=chars/lucene__answerable715__cb72000__20261031_metadata_retrieval",
+      "n_questions": 715,
+      "ids_sha256": "2179037350ac45d8e14abebd5cfbf6fe1f9280432c30ece3ca5220b808a1134c",
+      "host": "Fräsh",
+      "n_rows": 715,
+      "n_failure_lines": 0,
+      "n_score_rows": 7150,
+      "n_eval_calls": 0,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 2
+        }
+      ],
+      "manifest_values": {
+        "build_stats": {
+          "build_time_s": 2.989441400000942,
+          "models": [],
+          "not_recorded": []
+        }
+      },
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "04f64eec0a815dd22f4b53530b95bb2089331303a129d2d8dbe21e426dca9ca1",
+        "delivered_vs_final.json": "7b1161497283807fa472b5458368855254586bde465ed3edefeba54414b6cff9",
+        "eval_calls.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_manifest.json": "9426db256b30a8c464dff7b7fe419352e16b74b8f97d3aa7c379f11d03925716",
+        "eval_results.jsonl": "d32b1e4c05cb647b45c0b15074f12700512bbd65227668b23eecd1a6313bf855",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "4b7fbaf09ba8b6862bbf9ec4e7e555acb0fdbc25914264a3d19a8de0eed26ade",
+        "run_manifest.json": "de0dfd27f2345bb8c9fcfc8cf4e55446c4ce3a0a4351d4a203228dc3905f3e92"
+      }
+    }
+  ],
+  "moved": [
+    {
+      "name": "lucene__gold100__cb72000__20261031_metadata_retrieval",
+      "from": "output/k=chars/lucene__gold100__cb72000__20261031_metadata_retrieval",
+      "to": "output/k=chars/lucene__answerable815__cb72000/runs_without_answers/metadata_retrieval/parts/lucene__gold100__cb72000__20261031_metadata_retrieval"
+    },
+    {
+      "name": "lucene__answerable715__cb72000__20261031_metadata_retrieval",
+      "from": "output/k=chars/lucene__answerable715__cb72000__20261031_metadata_retrieval",
+      "to": "output/k=chars/lucene__answerable815__cb72000/runs_without_answers/metadata_retrieval/parts/lucene__answerable715__cb72000__20261031_metadata_retrieval"
+    }
+  ],
+  "kept_raw": "parts/<name>/: every run joined here and its re-judging, moved whole, every file byte for byte as it stood before (sources[].files_sha256)"
+}

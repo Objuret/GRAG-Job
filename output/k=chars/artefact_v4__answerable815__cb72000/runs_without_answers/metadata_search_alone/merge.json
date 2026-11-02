@@ -1,0 +1,110 @@
+{
+  "merged_at": "2026-11-02T00:15:19.914406+00:00",
+  "tool": "tools/merge_runs.py",
+  "tool_sha256": "6732fd5d5327d7eb426a2739615223fa88b0b8522102900442ff13364dec7a5a",
+  "argv": [
+    "tools/merge_runs.py",
+    "--write"
+  ],
+  "whole_set": {
+    "file": "data/answerable815.jsonl",
+    "sha256": "d7424d33c5b5f22e8b0b49f06814f4442a3e3c712350575677a26c3c189bf34c",
+    "n_questions": 815
+  },
+  "checked_equal": [
+    "arm",
+    "generator_model",
+    "interpreter_model",
+    "top_k",
+    "char_budget",
+    "graph",
+    "inputs (but ids_sha256)",
+    "eval_manifest.scorer",
+    "eval_manifest.arm",
+    "eval_manifest.judge_model",
+    "eval_manifest.judge_backend",
+    "eval_manifest.judge_effort"
+  ],
+  "left_empty": [],
+  "eval_left_empty": [],
+  "judge_settings_left_empty": [
+    "argv",
+    "pid",
+    "wall_s"
+  ],
+  "sources": [
+    {
+      "name": "artefact_v4__gold100__cb72000__20261031_metadata_search_alone",
+      "path": "output/k=chars/artefact_v4__gold100__cb72000__20261031_metadata_search_alone",
+      "n_questions": 100,
+      "ids_sha256": "cddaca624c8513c618657ece0b357b1463282f7c4ef083d1a7058959d8ccbf3d",
+      "host": "Fräsh",
+      "n_rows": 100,
+      "n_failure_lines": 0,
+      "n_score_rows": 1000,
+      "n_eval_calls": 0,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 1
+        }
+      ],
+      "manifest_values": {},
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "eca7633e42d86b1c456fd55e151653dc4f607ec2ff9e1f497a071fcb349852e7",
+        "eval_calls.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_manifest.json": "9053b057a1e1ac6ca51b5ee9095803ab66387076ece406b4bbc1db9f145c9a1d",
+        "eval_results.jsonl": "a2f1d799f0b909bc57543663db9729e1aad1a44284b027e49f07ea93d6ca9d6c",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "8af676d5430a4b92df4a735c076c755f9d5aedfed3fa78ace1c39e14fe12fce5",
+        "run_manifest.json": "9fdf38d79ec9d44dbc0cbe269b38092957906af71b6c87e6cd7f48b15b79ba40"
+      }
+    },
+    {
+      "name": "artefact_v4__answerable715__cb72000__20261031_metadata_search_alone",
+      "path": "output/k=chars/artefact_v4__answerable715__cb72000__20261031_metadata_search_alone",
+      "n_questions": 715,
+      "ids_sha256": "2179037350ac45d8e14abebd5cfbf6fe1f9280432c30ece3ca5220b808a1134c",
+      "host": "Fräsh",
+      "n_rows": 715,
+      "n_failure_lines": 0,
+      "n_score_rows": 7150,
+      "n_eval_calls": 0,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 2
+        }
+      ],
+      "manifest_values": {},
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "7146737aa2bfd1d0f88a40ba8521ca3481f9f135e0b712f038c27b02bce44bb0",
+        "eval_calls.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_manifest.json": "acf2d58b80c70c72560005709a62a0f58183e06cd0fd2490c9b3965b6a0d9aae",
+        "eval_results.jsonl": "091d90290632960bda6ba6a6e501d5e37b2c2f4b8c113cfe1da7f0d0f9c49524",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "c48cfa8705cbe51f594c78239841cdfb74a081a29c56c6ece1cd2d32b721c5c7",
+        "run_manifest.json": "0b9df2e6917d6852fcd9f6a71cb2973af5b7090ff0471c9ecb071649dfda8409"
+      }
+    }
+  ],
+  "moved": [
+    {
+      "name": "artefact_v4__gold100__cb72000__20261031_metadata_search_alone",
+      "from": "output/k=chars/artefact_v4__gold100__cb72000__20261031_metadata_search_alone",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/runs_without_answers/metadata_search_alone/parts/artefact_v4__gold100__cb72000__20261031_metadata_search_alone"
+    },
+    {
+      "name": "artefact_v4__answerable715__cb72000__20261031_metadata_search_alone",
+      "from": "output/k=chars/artefact_v4__answerable715__cb72000__20261031_metadata_search_alone",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/runs_without_answers/metadata_search_alone/parts/artefact_v4__answerable715__cb72000__20261031_metadata_search_alone"
+    }
+  ],
+  "kept_raw": "parts/<name>/: every run joined here and its re-judging, moved whole, every file byte for byte as it stood before (sources[].files_sha256)"
+}

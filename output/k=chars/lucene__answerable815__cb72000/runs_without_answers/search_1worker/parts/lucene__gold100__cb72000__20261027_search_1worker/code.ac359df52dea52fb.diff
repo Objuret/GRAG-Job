@@ -1,0 +1,45 @@
+diff --git a/prod/harness/fields.py b/prod/harness/fields.py
+index 0e4517b..950968a 100644
+--- a/prod/harness/fields.py
++++ b/prod/harness/fields.py
+@@ -766,6 +766,18 @@ FILES = {
+                              "question id = id of arm_outputs.jsonl; seq = calls[].seq", None),
+     "measure_gpu_embed_times.py": ("The script that measured the GPU-time correction's evidence on the "
+                                    "desktop's graphics card.", "", None),
++    "correct_model_call_time.py": ("The script that made the model-call-time correction (each answer call "
++                                   "and first call given its answering try's server time, and a call "
++                                   "started past the login's limit its arm's clean relation at its own "
++                                   "output tokens); run on the files from before it, over the same run "
++                                   "folders, it gives the corrected files again.", "", None),
++    "model_call_times.json": ("The evidence of the model-call-time correction: the login's backlog of "
++                              "claude-sonnet-5 input tokens (its rate, its limit, the files it was read "
++                              "from with their sha256), the clean relation of each arm and kind of call, "
++                              "and per corrected call its server time, backlog, relation time and time; "
++                              "with the check of the relations on calls sent again one at a time.",
++                              "question_id = id of arm_outputs.jsonl; record = the call's place in calls; "
++                              "seq = calls[].seq", None),
+     "correct_secret_env.py": ("The script that made the credential correction (a credential a "
+                               "manifest had copied written as <set>); the value as recorded is "
+                               "kept nowhere.", "", None),
+diff --git a/tools/export_finished_data.py b/tools/export_finished_data.py
+index deda8d4..b1e195c 100644
+--- a/tools/export_finished_data.py
++++ b/tools/export_finished_data.py
+@@ -111,8 +111,6 @@ QUESTIONS = [
+     ("arm", "Retrieval method.", ""),
+     ("question_id", "Question id: product, a (answerable), index of the question in the product's answerable "
+                     "questions in HERB, from 0.", ""),
+-    ("question_set", "Question set of the question: gold100, 100 of HERB's 815 answerable questions; "
+-                     "answerable715, the other 715.", ""),
+     ("question_type", "HERB question type.", ""),
+     ("question", "Question, from HERB.", ""),
+     ("reference_answer", "Reference answer: HERB's answer to the question, as RAGAS was given it (its parts "
+@@ -508,8 +506,6 @@ def runs_tables(arm, folder, refs, sets, by_sha):
+         questions.append({
+             "arm": arm,
+             "question_id": r["id"],
+-            # where the row comes from, like an id (the main session's decision of 2026-10-25)
+-            "question_set": set_name,
+             "question_type": one((c["type"] for c in mine.values()), f"{r['id']} type"),
+             "question": r["question"],
+             "reference_answer": " ".join(str(g) for g in ref["ground_truth"]),

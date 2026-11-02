@@ -1,0 +1,189 @@
+{
+  "merged_at": "2026-11-02T00:15:19.914406+00:00",
+  "tool": "tools/merge_runs.py",
+  "tool_sha256": "6732fd5d5327d7eb426a2739615223fa88b0b8522102900442ff13364dec7a5a",
+  "argv": [
+    "tools/merge_runs.py",
+    "--write"
+  ],
+  "whole_set": {
+    "file": "data/answerable815.jsonl",
+    "sha256": "d7424d33c5b5f22e8b0b49f06814f4442a3e3c712350575677a26c3c189bf34c",
+    "n_questions": 815
+  },
+  "checked_equal": [
+    "arm",
+    "generator_model",
+    "interpreter_model",
+    "top_k",
+    "char_budget",
+    "graph",
+    "inputs (but ids_sha256)"
+  ],
+  "left_empty": [
+    "flags",
+    "code_state",
+    "env"
+  ],
+  "eval_left_empty": [],
+  "judge_settings_left_empty": [],
+  "sources": [
+    {
+      "name": "artefact_v4__gold100__cb72000__20261027_search_1worker",
+      "path": "output/k=chars/artefact_v4__gold100__cb72000__20261027_search_1worker",
+      "n_questions": 100,
+      "ids_sha256": "cddaca624c8513c618657ece0b357b1463282f7c4ef083d1a7058959d8ccbf3d",
+      "host": "Wiktop",
+      "n_rows": 100,
+      "n_failure_lines": 0,
+      "n_score_rows": 0,
+      "n_eval_calls": 0,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 1
+        }
+      ],
+      "manifest_values": {
+        "flags": {
+          "HERB_V4_OFFLINE": "on",
+          "HERB_V4_CACHE": "C:/Coding/exjobbet/GRAG-Job-0c082a3/output/private/artefact_v4_cache"
+        },
+        "code_state": {
+          "status": [
+            " M prod/harness/fields.py",
+            " M tools/export_finished_data.py",
+            "?? tools/correct_judge_embed_gpu_time.py",
+            "?? tools/correct_model_call_time.py",
+            "?? tools/correct_search_time.py",
+            "?? tools/measure_gpu_judge_embed_times.py"
+          ],
+          "diff_sha256": "0585bd80e2a3c1988507cc9d20949bd8f1557f17c8898e7f81cc91f4964cd08b",
+          "untracked_sha256": {
+            "tools/correct_judge_embed_gpu_time.py": "22823e15cb005f752c66af694f22e085e3081ca13bb30553de0945c2975fc64d",
+            "tools/correct_model_call_time.py": "f3e49a6b4fbfc779bba8d6793c98897415fbd7693202b2ff89f4e68771420a5c",
+            "tools/correct_search_time.py": "760171756e299ce8849a70d57e10b2b4e4ff045d5afdf92ed0c4e40eaa4e3856",
+            "tools/measure_gpu_judge_embed_times.py": "f5eb2a9328caa02a5470c34df81970422daddc762a7a1874935224603218580f"
+          },
+          "diff_file": "code.0585bd80e2a3c198.diff"
+        },
+        "env": {
+          "CLAUDE": "C:\\Users\\jocke\\.local\\bin",
+          "CLAUDECODE": "1",
+          "CLAUDE_AGENT_SDK_VERSION": "0.3.310",
+          "CLAUDE_CODE_CHILD_SESSION": "1",
+          "CLAUDE_CODE_EMIT_STARTUP_TIMING": "1",
+          "CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING": "true",
+          "CLAUDE_CODE_ENABLE_TASKS": "0",
+          "CLAUDE_CODE_ENTRYPOINT": "claude-vscode",
+          "CLAUDE_CODE_EXECPATH": "C:\\Users\\jocke\\.cursor\\extensions\\anthropic.claude-code-2.1.310-win32-x64\\resources\\native-binary\\claude.exe",
+          "CLAUDE_CODE_MESSAGING_SOCKET": "\\\\.\\pipe\\LOCAL\\cc-msg-c0991aa0f61db875acfa8dc889c329c3",
+          "CLAUDE_CODE_MESSAGING_TOKEN": "<set>",
+          "CLAUDE_CODE_OAUTH_TOKEN": "<set>",
+          "CLAUDE_CODE_QUESTION_PREVIEW_FORMAT": "markdown",
+          "CLAUDE_CODE_SESSION_ATTENDED": "1",
+          "CLAUDE_CODE_SESSION_ID": "9c164e78-008e-41e9-85f3-58c55027a64c",
+          "CLAUDE_EFFORT": "max",
+          "CLAUDE_PID": "17228",
+          "HERB_V4_CACHE": "C:/Coding/exjobbet/GRAG-Job-0c082a3/output/private/artefact_v4_cache",
+          "HERB_V4_OFFLINE": "on",
+          "NEO4J_PASSWORD": "<set>"
+        }
+      },
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "b20ece94c3aaa9f8c628e66657788c8d9662aea431e63014cd5d27d053363330",
+        "code.0585bd80e2a3c198.diff": "0585bd80e2a3c1988507cc9d20949bd8f1557f17c8898e7f81cc91f4964cd08b",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "d44bc0e85d634dad4f5c32767749174bcd90e59288e7915f6b85045f1f4105c6",
+        "run_manifest.json": "2004bd5f2dc21dec05dc607f1c10376f61a2071c568dde95e642aef1005ff70b"
+      }
+    },
+    {
+      "name": "artefact_v4__answerable715__cb72000__20261027_search_1worker",
+      "path": "output/k=chars/artefact_v4__answerable715__cb72000__20261027_search_1worker",
+      "n_questions": 715,
+      "ids_sha256": "2179037350ac45d8e14abebd5cfbf6fe1f9280432c30ece3ca5220b808a1134c",
+      "host": "Wiktop",
+      "n_rows": 715,
+      "n_failure_lines": 0,
+      "n_score_rows": 0,
+      "n_eval_calls": 0,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 2
+        }
+      ],
+      "manifest_values": {
+        "flags": {
+          "HERB_V4_OFFLINE": "on",
+          "HERB_V4_CACHE": "output/private/artefact_v4_cache_20261025T211532Z_ab"
+        },
+        "code_state": {
+          "status": [
+            " M prod/harness/fields.py",
+            " M tools/export_finished_data.py",
+            "?? tools/correct_judge_embed_gpu_time.py",
+            "?? tools/correct_model_call_time.py",
+            "?? tools/correct_search_time.py",
+            "?? tools/measure_gpu_judge_embed_times.py"
+          ],
+          "diff_sha256": "1808fbcf16617e2080e9baddab7f749542e2a01ded560854030894a14f31bc20",
+          "untracked_sha256": {
+            "tools/correct_judge_embed_gpu_time.py": "22823e15cb005f752c66af694f22e085e3081ca13bb30553de0945c2975fc64d",
+            "tools/correct_model_call_time.py": "f3e49a6b4fbfc779bba8d6793c98897415fbd7693202b2ff89f4e68771420a5c",
+            "tools/correct_search_time.py": "760171756e299ce8849a70d57e10b2b4e4ff045d5afdf92ed0c4e40eaa4e3856",
+            "tools/measure_gpu_judge_embed_times.py": "f5eb2a9328caa02a5470c34df81970422daddc762a7a1874935224603218580f"
+          },
+          "diff_file": "code.1808fbcf16617e20.diff"
+        },
+        "env": {
+          "CLAUDE": "C:\\Users\\jocke\\.local\\bin",
+          "CLAUDECODE": "1",
+          "CLAUDE_AGENT_SDK_VERSION": "0.3.310",
+          "CLAUDE_CODE_CHILD_SESSION": "1",
+          "CLAUDE_CODE_EMIT_STARTUP_TIMING": "1",
+          "CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING": "true",
+          "CLAUDE_CODE_ENABLE_TASKS": "0",
+          "CLAUDE_CODE_ENTRYPOINT": "claude-vscode",
+          "CLAUDE_CODE_EXECPATH": "C:\\Users\\jocke\\.cursor\\extensions\\anthropic.claude-code-2.1.310-win32-x64\\resources\\native-binary\\claude.exe",
+          "CLAUDE_CODE_MESSAGING_SOCKET": "\\\\.\\pipe\\LOCAL\\cc-msg-c0991aa0f61db875acfa8dc889c329c3",
+          "CLAUDE_CODE_MESSAGING_TOKEN": "<set>",
+          "CLAUDE_CODE_OAUTH_TOKEN": "<set>",
+          "CLAUDE_CODE_QUESTION_PREVIEW_FORMAT": "markdown",
+          "CLAUDE_CODE_SESSION_ATTENDED": "1",
+          "CLAUDE_CODE_SESSION_ID": "9c164e78-008e-41e9-85f3-58c55027a64c",
+          "CLAUDE_EFFORT": "max",
+          "CLAUDE_PID": "17228",
+          "HERB_V4_CACHE": "output/private/artefact_v4_cache_20261025T211532Z_ab",
+          "HERB_V4_OFFLINE": "on",
+          "NEO4J_PASSWORD": "<set>"
+        }
+      },
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "e92220303abdd266b1e143631831ad212750804b728c96832524187136403321",
+        "code.1808fbcf16617e20.diff": "1808fbcf16617e2080e9baddab7f749542e2a01ded560854030894a14f31bc20",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "852862300ddd37b09646caa3d807fa1425386811290ab72bdc9ceb92b31548d3",
+        "run_manifest.json": "0e82b84b0156a54e958e4805a0d4b58cd4d7e71df83748ff31b44089bcadc21e"
+      }
+    }
+  ],
+  "moved": [
+    {
+      "name": "artefact_v4__gold100__cb72000__20261027_search_1worker",
+      "from": "output/k=chars/artefact_v4__gold100__cb72000__20261027_search_1worker",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/runs_without_answers/search_1worker/parts/artefact_v4__gold100__cb72000__20261027_search_1worker"
+    },
+    {
+      "name": "artefact_v4__answerable715__cb72000__20261027_search_1worker",
+      "from": "output/k=chars/artefact_v4__answerable715__cb72000__20261027_search_1worker",
+      "to": "output/k=chars/artefact_v4__answerable815__cb72000/runs_without_answers/search_1worker/parts/artefact_v4__answerable715__cb72000__20261027_search_1worker"
+    }
+  ],
+  "kept_raw": "parts/<name>/: every run joined here and its re-judging, moved whole, every file byte for byte as it stood before (sources[].files_sha256)"
+}

@@ -1,0 +1,210 @@
+{
+  "merged_at": "2026-11-02T00:15:19.914406+00:00",
+  "tool": "tools/merge_runs.py",
+  "tool_sha256": "6732fd5d5327d7eb426a2739615223fa88b0b8522102900442ff13364dec7a5a",
+  "argv": [
+    "tools/merge_runs.py",
+    "--write"
+  ],
+  "whole_set": {
+    "file": "data/answerable815.jsonl",
+    "sha256": "d7424d33c5b5f22e8b0b49f06814f4442a3e3c712350575677a26c3c189bf34c",
+    "n_questions": 815
+  },
+  "checked_equal": [
+    "arm",
+    "generator_model",
+    "interpreter_model",
+    "top_k",
+    "char_budget",
+    "graph",
+    "inputs (but ids_sha256)"
+  ],
+  "left_empty": [
+    "index",
+    "code_state"
+  ],
+  "eval_left_empty": [],
+  "judge_settings_left_empty": [],
+  "sources": [
+    {
+      "name": "vector__gold100__cb72000__20261027_search_1worker",
+      "path": "output/k=chars/vector__gold100__cb72000__20261027_search_1worker",
+      "n_questions": 100,
+      "ids_sha256": "cddaca624c8513c618657ece0b357b1463282f7c4ef083d1a7058959d8ccbf3d",
+      "host": "Wiktop",
+      "n_rows": 100,
+      "n_failure_lines": 0,
+      "n_score_rows": 0,
+      "n_eval_calls": 0,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 1
+        }
+      ],
+      "manifest_values": {
+        "index": {
+          "units": 38540,
+          "text_chars": 14647521,
+          "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript",
+          "units_sha256": "af778f9dc9fbf1519ebb6a8b252351d5b6647a1c12112c23e7ab4924c28c1ef1",
+          "matrix_shape": [
+            38540,
+            2048
+          ],
+          "matrix_dtype": "float32",
+          "matrix_bytes": 315719680,
+          "cache_file": "C:\\Coding\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+          "cache_file_bytes": 331459074,
+          "cache_file_sha256": "ae3f8073eea7d9d1efe73c57de7251c35b3989882602b0021d5b0d7004c072ea",
+          "cache_cost_note": {
+            "model": "nvidia/llama-nemotron-embed-1b-v2",
+            "revision": "113abe4acafa848e77ead9c0623205e511932348",
+            "mode": "passage",
+            "prefix": "passage: ",
+            "calls": 38540,
+            "tokens_in": 4232334,
+            "tokens_out": 0,
+            "build_time_s": 2982.903398909091,
+            "build_time_note": "two calls on the same machine: the first, cut off when the laptop that started it slept, made parts 0-11 in 1841.3 s (read off the parts' write times); the second made the rest in 1141.6 s (its own manifest)",
+            "batch": 1,
+            "device": "NVIDIA GeForce GTX 1080 Ti",
+            "dtype": "float32",
+            "host": "FRÄSH",
+            "python": "3.11.9",
+            "torch": "2.6.0+cu124",
+            "sentence_transformers": "5.5.0",
+            "transformers": "5.8.1",
+            "made_utc": "2026-10-17T06:06:20Z",
+            "max_seq_length": 8192,
+            "units_over_max_seq_length": 0,
+            "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript",
+            "units_sha256": "af778f9dc9fbf1519ebb6a8b252351d5b6647a1c12112c23e7ab4924c28c1ef1",
+            "source": "output/embed_local/20261009_units_rev113abe4acafa_float32/MANIFEST.json",
+            "earlier_texts_cache": "output/embed_cache/llama-nemotron-embed-1b-v2_a43c8c706908de3a.npz"
+          },
+          "embedder_warm_s": 64.78135100001236,
+          "question_embedding": "at query time, local embedder, query mode"
+        },
+        "code_state": {
+          "status": [
+            " M prod/harness/fields.py",
+            " M tools/export_finished_data.py",
+            "?? tools/correct_model_call_time.py"
+          ],
+          "diff_sha256": "ac359df52dea52fbc2f65487a795e6cf3f2ed2488bdb4255ae2eb4b2ab21f795",
+          "untracked_sha256": {
+            "tools/correct_model_call_time.py": "f3e49a6b4fbfc779bba8d6793c98897415fbd7693202b2ff89f4e68771420a5c"
+          },
+          "diff_file": "code.ac359df52dea52fb.diff"
+        }
+      },
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "3d674ce5f8e0f9876040f3ddf71f2c78c825233716caf14643b0e22c3eb53657",
+        "code.ac359df52dea52fb.diff": "ac359df52dea52fbc2f65487a795e6cf3f2ed2488bdb4255ae2eb4b2ab21f795",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "7115253326f68e10fa64c927445dc9177455dfb2495b049f4e44da6d4790f6c6",
+        "run_manifest.json": "6e163096a184c6f53be1475ab0e1015c292251afe5b4aa29a4cb353bbafadf31"
+      }
+    },
+    {
+      "name": "vector__answerable715__cb72000__20261027_search_1worker",
+      "path": "output/k=chars/vector__answerable715__cb72000__20261027_search_1worker",
+      "n_questions": 715,
+      "ids_sha256": "2179037350ac45d8e14abebd5cfbf6fe1f9280432c30ece3ca5220b808a1134c",
+      "host": "Wiktop",
+      "n_rows": 715,
+      "n_failure_lines": 0,
+      "n_score_rows": 0,
+      "n_eval_calls": 0,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 2
+        }
+      ],
+      "manifest_values": {
+        "index": {
+          "units": 38540,
+          "text_chars": 14647521,
+          "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript",
+          "units_sha256": "af778f9dc9fbf1519ebb6a8b252351d5b6647a1c12112c23e7ab4924c28c1ef1",
+          "matrix_shape": [
+            38540,
+            2048
+          ],
+          "matrix_dtype": "float32",
+          "matrix_bytes": 315719680,
+          "cache_file": "C:\\Coding\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+          "cache_file_bytes": 331459074,
+          "cache_file_sha256": "ae3f8073eea7d9d1efe73c57de7251c35b3989882602b0021d5b0d7004c072ea",
+          "cache_cost_note": {
+            "model": "nvidia/llama-nemotron-embed-1b-v2",
+            "revision": "113abe4acafa848e77ead9c0623205e511932348",
+            "mode": "passage",
+            "prefix": "passage: ",
+            "calls": 38540,
+            "tokens_in": 4232334,
+            "tokens_out": 0,
+            "build_time_s": 2982.903398909091,
+            "build_time_note": "two calls on the same machine: the first, cut off when the laptop that started it slept, made parts 0-11 in 1841.3 s (read off the parts' write times); the second made the rest in 1141.6 s (its own manifest)",
+            "batch": 1,
+            "device": "NVIDIA GeForce GTX 1080 Ti",
+            "dtype": "float32",
+            "host": "FRÄSH",
+            "python": "3.11.9",
+            "torch": "2.6.0+cu124",
+            "sentence_transformers": "5.5.0",
+            "transformers": "5.8.1",
+            "made_utc": "2026-10-17T06:06:20Z",
+            "max_seq_length": 8192,
+            "units_over_max_seq_length": 0,
+            "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript",
+            "units_sha256": "af778f9dc9fbf1519ebb6a8b252351d5b6647a1c12112c23e7ab4924c28c1ef1",
+            "source": "output/embed_local/20261009_units_rev113abe4acafa_float32/MANIFEST.json",
+            "earlier_texts_cache": "output/embed_cache/llama-nemotron-embed-1b-v2_a43c8c706908de3a.npz"
+          },
+          "embedder_warm_s": 22.15356570002041,
+          "question_embedding": "at query time, local embedder, query mode"
+        },
+        "code_state": {
+          "status": [
+            " M prod/harness/fields.py",
+            " M tools/export_finished_data.py",
+            "?? tools/correct_model_call_time.py"
+          ],
+          "diff_sha256": "da889220f56ee079abdeb4b992a33c629d34f2a519d3b805edddae9f261fb7a4",
+          "untracked_sha256": {
+            "tools/correct_model_call_time.py": "f3e49a6b4fbfc779bba8d6793c98897415fbd7693202b2ff89f4e68771420a5c"
+          },
+          "diff_file": "code.da889220f56ee079.diff"
+        }
+      },
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "f34f5f9946f546441384bd529b3798a00d000c77b70c057a64c80099f41b6b64",
+        "code.da889220f56ee079.diff": "da889220f56ee079abdeb4b992a33c629d34f2a519d3b805edddae9f261fb7a4",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "3dbeb73e0e40a4624fb330bdd1f26403e017fd9b8496786b2c50ace338aaa242",
+        "run_manifest.json": "8f8490234ee1c3aa7fd2d53449e5bbbfeb70feb789706991ac18473ebf873146"
+      }
+    }
+  ],
+  "moved": [
+    {
+      "name": "vector__gold100__cb72000__20261027_search_1worker",
+      "from": "output/k=chars/vector__gold100__cb72000__20261027_search_1worker",
+      "to": "output/k=chars/vector__answerable815__cb72000/runs_without_answers/search_1worker/parts/vector__gold100__cb72000__20261027_search_1worker"
+    },
+    {
+      "name": "vector__answerable715__cb72000__20261027_search_1worker",
+      "from": "output/k=chars/vector__answerable715__cb72000__20261027_search_1worker",
+      "to": "output/k=chars/vector__answerable815__cb72000/runs_without_answers/search_1worker/parts/vector__answerable715__cb72000__20261027_search_1worker"
+    }
+  ],
+  "kept_raw": "parts/<name>/: every run joined here and its re-judging, moved whole, every file byte for byte as it stood before (sources[].files_sha256)"
+}

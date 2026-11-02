@@ -1,0 +1,254 @@
+{
+  "merged_at": "2026-11-02T00:15:19.914406+00:00",
+  "tool": "tools/merge_runs.py",
+  "tool_sha256": "6732fd5d5327d7eb426a2739615223fa88b0b8522102900442ff13364dec7a5a",
+  "argv": [
+    "tools/merge_runs.py",
+    "--write"
+  ],
+  "whole_set": {
+    "file": "data/answerable815.jsonl",
+    "sha256": "d7424d33c5b5f22e8b0b49f06814f4442a3e3c712350575677a26c3c189bf34c",
+    "n_questions": 815
+  },
+  "checked_equal": [
+    "arm",
+    "generator_model",
+    "interpreter_model",
+    "top_k",
+    "char_budget",
+    "graph",
+    "inputs (but ids_sha256)",
+    "eval_manifest.scorer",
+    "eval_manifest.arm",
+    "eval_manifest.judge_model",
+    "eval_manifest.judge_backend",
+    "eval_manifest.judge_effort"
+  ],
+  "left_empty": [
+    "index"
+  ],
+  "eval_left_empty": [],
+  "judge_settings_left_empty": [
+    "argv",
+    "pid",
+    "wall_s"
+  ],
+  "sources": [
+    {
+      "name": "vector__gold100__cb72000__20261031_metadata_retrieval",
+      "path": "output/k=chars/vector__gold100__cb72000__20261031_metadata_retrieval",
+      "n_questions": 100,
+      "ids_sha256": "cddaca624c8513c618657ece0b357b1463282f7c4ef083d1a7058959d8ccbf3d",
+      "host": "Fräsh",
+      "n_rows": 100,
+      "n_failure_lines": 0,
+      "n_score_rows": 1000,
+      "n_eval_calls": 0,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 1
+        }
+      ],
+      "manifest_values": {
+        "index": {
+          "units": 39190,
+          "text_chars": 14721423,
+          "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+          "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+          "matrix_shape": [
+            39190,
+            2048
+          ],
+          "matrix_dtype": "float32",
+          "matrix_bytes": 321044480,
+          "cache_file": "A:\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_3b66604d78cf9010.npz",
+          "cache_file_bytes": 336869138,
+          "cache_file_sha256": "93ae1a0e6a1ed1058dc1df969939496bca1476d3db091cc47f29db3d473aaa88",
+          "cache_cost_note": {
+            "model": "nvidia/llama-nemotron-embed-1b-v2",
+            "revision": "113abe4acafa848e77ead9c0623205e511932348",
+            "mode": "passage",
+            "prefix": "passage: ",
+            "dtype": "float32",
+            "batch": 1,
+            "calls": 39190,
+            "tokens_in": 4254815,
+            "tokens_out": 0,
+            "build_time_s": 3010.8619154999833,
+            "build_time_note": "two builds: units 1-38540 are the vectors of llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz, made in 2968.4 s; units 38541-39190 were embedded and appended to them in 42.4 s, one timer from the start of that build to its vectors",
+            "device": "cuda (units 1-38540), NVIDIA GeForce GTX 1080 Ti (units 38541-39190)",
+            "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+            "units": 39190,
+            "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+            "extends": {
+              "cache_file": "llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+              "cache_file_sha256": "388889d5103761514657a7bc018a072227e0d308e48b65bacc130c49e0f4c0b4",
+              "units": 38540,
+              "cost_note": {
+                "model": "nvidia/llama-nemotron-embed-1b-v2",
+                "calls": 38540,
+                "tokens_in": 4232334,
+                "tokens_out": 0,
+                "build_time_s": 2968.4269948999863,
+                "device": "cuda",
+                "revision": "113abe4acafa848e77ead9c0623205e511932348",
+                "mode": "passage",
+                "prefix": "passage: ",
+                "dtype": "float32",
+                "batch": 1,
+                "settings_source": "Added 2026-10-31: the settings these vectors were made with, read from the code of commit 02b2078, the code_version.commit of vector__answerable715__cb72000__20261024T004317Z, the run that read this file (its cache_file_sha256 388889d5...): prod/harness/embed.py EMBED_REVISION, EMBED_PREFIX['passage'], EMBED_DTYPE, EMBED_BATCH, and prod/arms/vector.py build_dense_index embedding in passage mode with EMBED_BATCH. The file was written 2026-10-24 02:42:15 desktop time. The note as the build wrote it (model, calls, tokens, build time, device) is kept as llama-nemotron-embed-1b-v2_2286904ea4dd3527.cost.as_recorded.json."
+              }
+            },
+            "appended": {
+              "units": 650,
+              "first_unit": 38541,
+              "calls": 650,
+              "tokens_in": 22481,
+              "tokens_out": 0,
+              "seconds_elapsed": 17.528391400068358,
+              "build_time_s": 42.434920599996985,
+              "device": "NVIDIA GeForce GTX 1080 Ti",
+              "made_utc": "2026-10-31T07:53:01Z",
+              "host": "Fräsh",
+              "python": "3.12.6",
+              "torch": "2.14.1+cu126",
+              "sentence_transformers": "6.0.1",
+              "transformers": "5.12.1"
+            }
+          },
+          "embedder_warm_s": 11.806273399997735,
+          "question_embedding": "at query time, local embedder, query mode"
+        }
+      },
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "9a50a1da56972496c834addfc787ce6c48d76308895bf28655b8010d63661f1e",
+        "delivered_vs_final.json": "cd7b73d363dcc68fbd810523bf9de77f75ca2c28f9b31e777965c211d734f258",
+        "eval_calls.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_manifest.json": "7f8892a9d1af190a92e0bd1435879e127479674928a0deae720fdcfdda023ba3",
+        "eval_results.jsonl": "cb33548b1032bd531acc2ec8e428fedec0a366a8ebc0e2bff5b4072819871bc1",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "585ff931922478f5fb2a91eb31d268c89c7fb8e65ff0734277ae1f993664f36a",
+        "run_manifest.json": "81df6a1af4e1e37f0cade092210885e8f163d3b4c71a8127a8e42bdc3ed9d196"
+      }
+    },
+    {
+      "name": "vector__answerable715__cb72000__20261031_metadata_retrieval",
+      "path": "output/k=chars/vector__answerable715__cb72000__20261031_metadata_retrieval",
+      "n_questions": 715,
+      "ids_sha256": "2179037350ac45d8e14abebd5cfbf6fe1f9280432c30ece3ca5220b808a1134c",
+      "host": "Fräsh",
+      "n_rows": 715,
+      "n_failure_lines": 0,
+      "n_score_rows": 7150,
+      "n_eval_calls": 0,
+      "n_eval_failure_lines": 0,
+      "legs": [
+        {
+          "source_leg": 1,
+          "leg": 2
+        }
+      ],
+      "manifest_values": {
+        "index": {
+          "units": 39190,
+          "text_chars": 14721423,
+          "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+          "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+          "matrix_shape": [
+            39190,
+            2048
+          ],
+          "matrix_dtype": "float32",
+          "matrix_bytes": 321044480,
+          "cache_file": "A:\\exjobbet\\GRAG-Job\\output\\embed_cache\\llama-nemotron-embed-1b-v2_3b66604d78cf9010.npz",
+          "cache_file_bytes": 336869138,
+          "cache_file_sha256": "93ae1a0e6a1ed1058dc1df969939496bca1476d3db091cc47f29db3d473aaa88",
+          "cache_cost_note": {
+            "model": "nvidia/llama-nemotron-embed-1b-v2",
+            "revision": "113abe4acafa848e77ead9c0623205e511932348",
+            "mode": "passage",
+            "prefix": "passage: ",
+            "dtype": "float32",
+            "batch": 1,
+            "calls": 39190,
+            "tokens_in": 4254815,
+            "tokens_out": 0,
+            "build_time_s": 3010.8619154999833,
+            "build_time_note": "two builds: units 1-38540 are the vectors of llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz, made in 2968.4 s; units 38541-39190 were embedded and appended to them in 42.4 s, one timer from the start of that build to its vectors",
+            "device": "cuda (units 1-38540), NVIDIA GeForce GTX 1080 Ti (units 38541-39190)",
+            "unit_text": "SalesforceAIResearch/HERB db3bf9b3: code/react.py for slack, documents, meeting_transcripts, meeting_chats; code/oracle_eval.py for urls, prs; added: documents.feedback after the content, meeting_transcripts.document_type before the transcript; employee, customers_data: every field as a 'key: value' line under '<file> directory'",
+            "units": 39190,
+            "units_sha256": "4dcc1357a5dc913d802d381e3c80f0d164114fc144cd149dbea696eb29f5df44",
+            "extends": {
+              "cache_file": "llama-nemotron-embed-1b-v2_2286904ea4dd3527.npz",
+              "cache_file_sha256": "388889d5103761514657a7bc018a072227e0d308e48b65bacc130c49e0f4c0b4",
+              "units": 38540,
+              "cost_note": {
+                "model": "nvidia/llama-nemotron-embed-1b-v2",
+                "calls": 38540,
+                "tokens_in": 4232334,
+                "tokens_out": 0,
+                "build_time_s": 2968.4269948999863,
+                "device": "cuda",
+                "revision": "113abe4acafa848e77ead9c0623205e511932348",
+                "mode": "passage",
+                "prefix": "passage: ",
+                "dtype": "float32",
+                "batch": 1,
+                "settings_source": "Added 2026-10-31: the settings these vectors were made with, read from the code of commit 02b2078, the code_version.commit of vector__answerable715__cb72000__20261024T004317Z, the run that read this file (its cache_file_sha256 388889d5...): prod/harness/embed.py EMBED_REVISION, EMBED_PREFIX['passage'], EMBED_DTYPE, EMBED_BATCH, and prod/arms/vector.py build_dense_index embedding in passage mode with EMBED_BATCH. The file was written 2026-10-24 02:42:15 desktop time. The note as the build wrote it (model, calls, tokens, build time, device) is kept as llama-nemotron-embed-1b-v2_2286904ea4dd3527.cost.as_recorded.json."
+              }
+            },
+            "appended": {
+              "units": 650,
+              "first_unit": 38541,
+              "calls": 650,
+              "tokens_in": 22481,
+              "tokens_out": 0,
+              "seconds_elapsed": 17.528391400068358,
+              "build_time_s": 42.434920599996985,
+              "device": "NVIDIA GeForce GTX 1080 Ti",
+              "made_utc": "2026-10-31T07:53:01Z",
+              "host": "Fräsh",
+              "python": "3.12.6",
+              "torch": "2.14.1+cu126",
+              "sentence_transformers": "6.0.1",
+              "transformers": "5.12.1"
+            }
+          },
+          "embedder_warm_s": 11.825207200003206,
+          "question_embedding": "at query time, local embedder, query mode"
+        }
+      },
+      "eval_values": {},
+      "files_sha256": {
+        "arm_outputs.jsonl": "338ed058be170828464d8e3795e5e4dc7cc84be03a412765d14513086f74c2f5",
+        "delivered_vs_final.json": "b083031b42b2cb3b020e52413dfadd51de091e20dba4f82f73e57c44c698973d",
+        "eval_calls.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "eval_manifest.json": "29975c1427c776276a238fa093b2e181ac2bd56a092c446fa726a5ac56fbc9d3",
+        "eval_results.jsonl": "d4504fafb5dc1e5232d8728eea43bac3e062f1b6a5648fe1d42e9c35882b6ec6",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "FIELDS.md": "4b991cee9c40a72c4c795fb25b33f0eef707a2de257c426535075669da078cbb",
+        "run_manifest.json": "bba3df56ce224ad307ab3f0a842548fad6f166091ad8ed0a3ff8e4a4ddec5796"
+      }
+    }
+  ],
+  "moved": [
+    {
+      "name": "vector__gold100__cb72000__20261031_metadata_retrieval",
+      "from": "output/k=chars/vector__gold100__cb72000__20261031_metadata_retrieval",
+      "to": "output/k=chars/vector__answerable815__cb72000/runs_without_answers/metadata_retrieval/parts/vector__gold100__cb72000__20261031_metadata_retrieval"
+    },
+    {
+      "name": "vector__answerable715__cb72000__20261031_metadata_retrieval",
+      "from": "output/k=chars/vector__answerable715__cb72000__20261031_metadata_retrieval",
+      "to": "output/k=chars/vector__answerable815__cb72000/runs_without_answers/metadata_retrieval/parts/vector__answerable715__cb72000__20261031_metadata_retrieval"
+    }
+  ],
+  "kept_raw": "parts/<name>/: every run joined here and its re-judging, moved whole, every file byte for byte as it stood before (sources[].files_sha256)"
+}
