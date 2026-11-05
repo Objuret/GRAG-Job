@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-3237 turns, chronological. Verbatim text; no edits.
+3242 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -22734,4 +22734,30 @@ give me the result/reflection now then
 ## 2026-11-05 08:43 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
 
 yes
+
+## 2026-11-05 09:04 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
+
+did we anser his questions tho?
+
+## 2026-11-05 09:23 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
+
+give me the correctly written humanized version of the emial then
+
+## 2026-11-05 09:36 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
+
+ok, so you maybe finally fucking understand the goddamn fucking concept i am talking about here, i'll give you an example of what i mean, vs what the fuck you think is reasonable.
+This is your version:
+"
+Fixed, the key no longer says 715. With the metadata files in, nothing is filtered from the corpus: corpus_units in run data is the full 39,190, and the key says what those units are. The evaluation settings are at the top of run data, each one described in the key."
+
+This is my version:
+"A typo, fixed."
+
+## 2026-11-05 09:50 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
+
+and i wont have egg on my face from some new fucking shit thing you have written into the workbook if i turn this in?
+
+## 2026-11-05 09:55 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
+
+"same as before" to you, is just the model i used to fix shit in it before you..
 
