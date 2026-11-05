@@ -1,6 +1,6 @@
 # Human-authored user turns
 
-3210 turns, chronological. Verbatim text; no edits.
+3237 turns, chronological. Verbatim text; no edits.
 
 ---
 
@@ -22580,4 +22580,158 @@ answer faster you cunt
 ## 2026-11-02 05:43 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
 
 how about YOU dont PICK what gets judged or not you fucking idiot
+
+## 2026-11-02 23:38 · ee4300f0-4e86-46d0-bf1f-0f8ea51affea.jsonl
+
+what did the analyst ask for?
+
+## 2026-11-02 23:42 · 61e9e03a-8221-49a5-8dfe-e82780e6e42f.jsonl
+
+I have noticed that for some reason, you never answer ALL parts of his question or query, you need to make sure ALL his points are covered or met somehow, first, list all points he has for each one so i see you have understood his entire text
+
+## 2026-11-03 00:08 · 61e9e03a-8221-49a5-8dfe-e82780e6e42f.jsonl
+
+so, you froze, maybe because of memory.. you started alot of things or was it mempalace that broke you? why the fuck did that happen
+
+## 2026-11-03 04:44 · 61e9e03a-8221-49a5-8dfe-e82780e6e42f.jsonl
+
+ok, so, back to business: I have noticed that for some reason, you never answer ALL parts of his question or query, you need to make sure ALL his points are covered or met somehow, first, list all points he has for each one so i see you have understood his entire text
+
+## 2026-11-03 06:52 · 61e9e03a-8221-49a5-8dfe-e82780e6e42f.jsonl
+
+have we answered all of these then? because i think not
+
+## 2026-11-04 00:31 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
+
+the workbook, is it clean? is it correct?
+
+## 2026-11-04 00:33 · 61e9e03a-8221-49a5-8dfe-e82780e6e42f.jsonl
+
+are you adding unimportant information?
+
+## 2026-11-04 02:31 · 61e9e03a-8221-49a5-8dfe-e82780e6e42f.jsonl
+
+"The missing 650 are HERB's employee and customer files (employee.json and customers_data.json), which we had left out. "
+
+The missing 650 are HERB's meta-data files (employee.json and customers_data.json), which we had blocked for a part of the artefact creation and missed enabling it again for the runs. 
+---
+something like that? i mean, detailed specifics are just noise, but we cant say nothing etc..
+WHY did we even not include them?
+
+## 2026-11-04 02:44 · 61e9e03a-8221-49a5-8dfe-e82780e6e42f.jsonl
+
+how about you not make us sound retarded..
+
+## 2026-11-04 02:49 · 61e9e03a-8221-49a5-8dfe-e82780e6e42f.jsonl
+
+nope
+
+## 2026-11-04 02:57 · 61e9e03a-8221-49a5-8dfe-e82780e6e42f.jsonl
+
+good, like that together with the rest
+
+## 2026-11-04 02:57 · 61e9e03a-8221-49a5-8dfe-e82780e6e42f.jsonl
+
+and more human
+
+## 2026-11-04 06:38 · 61e9e03a-8221-49a5-8dfe-e82780e6e42f.jsonl
+
+" put together the way HERB's oracle evaluation does it (the cited records plus the product's team and customer list)," you keep saying shit like this like they have any fucking idea what this means, or if we did that to any other arm or what is even happening here, dude, stop beeing fucking retarded, i have told you this so fucking many times, they litterally know nothing outside the workbook
+
+## 2026-11-04 06:44 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
+
+ok, what is incorrect?
+
+## 2026-11-04 06:45 · 61e9e03a-8221-49a5-8dfe-e82780e6e42f.jsonl
+
+dude, apparently you cannot handle this at all so get some fucking other agents to do this for you because this is driving me insane
+
+## 2026-11-04 18:34 · 61e9e03a-8221-49a5-8dfe-e82780e6e42f.jsonl
+
+soo..
+
+## 2026-11-04 23:01 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
+
+dude, you are rambling, please, constructed and coherent please
+
+## 2026-11-04 23:10 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
+
+well, noone is going to give a shit about the times or call us out on them, so, how far from the truth are they?
+
+## 2026-11-04 23:17 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
+
+i have no idea what the fuck you want to do here
+
+## 2026-11-05 01:31 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
+
+dude, take a fucking step back and think about what you are doing and saying here, get another less contextually retarded agent to review what the fuck you are doing here
+
+## 2026-11-05 03:21 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
+
+so, we have to go through what the actual fuck you have written on all keys.. because i absolutely cannot be bothered to manually read your garbage and i KNOW you have fucing fucked it up on those, adding retarded superflous noisy prose addons
+
+## 2026-11-05 03:42 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
+
+well, you seem to have FULLY missed the ENTIRE reason i asked thise whole work of you, all of it..
+
+the reason is that i am intending to hand this off to the analyst, but you have added confusing prose and garbage that gives him strange signals about shit we have done that he REALLY does not need to know about, and information that just confuses and assumes he knows anything about the builds and so on
+
+## 2026-11-05 03:55 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
+
+*queued while an agent was working*
+
+*paste / file drop · 3886 chars*
+
+also ,is this fitting or incorrect as response to him?
+"
+
+<pasted_content id="d866">
+Written for: the analyst, the whole reply.
+
+Synopsis
+
+The writer agent wrote the reply. A second agent read it as the analyst, with only the mail and the workbook. The writer then fixed the faults that were real. There is one change from the version you accepted: the sentence that the artefact's graph already used the two files is gone, because the analyst cannot place it from the workbook.
+
+Content
+
+Hi,
+
+Thanks for the careful read. We have updated the workbook, and our answers are below.
+
+The missing 650 are HERB's metadata files (employee.json and customers_data.json), which we had excluded during development and missed switching on for the final runs. All three retrieval methods now read both files, and we agree they can matter for the role and company questions. Both lucene and vector now index all 39,190 records, and the artefact's 4,839 chunks include the employee and customer records. A chunk can be part of a record, one record or several, so 4,839 is not a record count. We then ran retrieval again on all 815 questions for all three methods, and every question whose retrieved text changed was answered and judged again: 785 for lucene, 147 for vector and 5 for the artefact. The others got exactly the same text as before, so their results are unchanged.
+
+We agree that factual_correctness, the judge's claim-level score, does no exact ID matching, so we would leave it out of the main evaluation. It stays in the workbook. Your example was among the questions answered again, and lucene's new answer there has factual_correctness 0.67 and string_presence_per_id 0, so the problem is still there. We keep string_presence_per_id for identifier recall and have added precision and F1 beside it as string_presence_per_id_precision and string_presence_per_id_f1, both defined in the key. Precision takes the answer's IDs and links of the kinds that HERB's reference list holds for that question and gives the share of them that are in the list, or 0 if there are none. F1 combines it with string_presence_per_id. An ID or link counts only where no letter or digit follows it, so pull/12 is not found inside pull/123, and string_presence_per_id now follows that rule too.
+
+We ran the experiment you suggest as a fourth arm, gold_evidence, on all 815 questions. The same answer model gets HERB's own evidence for each question instead of retrieved text, with the same answer prompt, the same 72,000-character limit and the same judging, so only the context differs from the other arms. Its context_recall_id is 0.98, not 1, because on 71 questions the evidence is longer than 72,000 characters and is cut. The artefact hands the answer model whole chunks, and a chunk can hold several records. In results, context_precision_id gives the share of the records given to the answer model that are HERB evidence records.
+
+Agreed on both, and we'll leave the statistics to you. Everything is per question in results, question_type included.
+
+We corrected the 715 in the key. With the metadata files in, nothing is filtered from the corpus; corpus_units in run data is the full 39,190, and the key says what they are. The evaluation settings are at the top of run data, each described in the key.
+
+Conclusion
+
+The analyst read found three things that the mail cannot fix. I did not change any of them:
+
+The key calls each arm a "Retrieval method" and says that every arm reads the corpus. Neither is true for gold_evidence.
+run data does not give the answer model's temperature or its prompt, and the analyst asked for the evaluation settings to be documented.
+The analyst can ask why answer_correctness stays when factual_correctness goes. The key says that 0.75 of answer_correctness is factual similarity, which the same judge model scores claim by claim.
+</pasted_content id="d866">
+
+"
+
+## 2026-11-05 06:36 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
+
+ok, apparently you think that this is you beeing "correct and clear" but you have seen the question he asked us, correct?
+
+## 2026-11-05 06:46 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
+
+yes, those are the details, but thats not the fucking context of what i said, is it?
+
+## 2026-11-05 07:01 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
+
+give me the result/reflection now then
+
+## 2026-11-05 08:43 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
+
+yes
 

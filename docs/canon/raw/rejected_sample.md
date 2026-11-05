@@ -2,12 +2,12 @@
 
 40 turns spread across every rule that fired, so the filtering can be checked by hand.
 
-- `tool_result` - 23971 turns rejected
-- `task_notification` - 1823 turns rejected
-- `is_meta` - 807 turns rejected
-- `interrupt_marker` - 123 turns rejected
+- `tool_result` - 24191 turns rejected
+- `task_notification` - 1826 turns rejected
+- `is_meta` - 816 turns rejected
+- `interrupt_marker` - 124 turns rejected
 - `command_expansion` - 100 turns rejected
-- `compact_summary` - 47 turns rejected
+- `compact_summary` - 53 turns rejected
 
 ---
 
@@ -243,18 +243,30 @@ Another Claude session sent a message:
             <command-args>opus[1m]</command-args>
 ```
 
-## `compact_summary` · 2026-10-20 15:03:31 · 27f14760-a0f1-4642-b119-42ed8aa2d5ac.jsonl
+## `compact_summary` · 2026-11-04 03:57:31 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
 
 ```
 This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
 
+<system-reminder>
+<tools-used-before-summary>Agent, Bash, Grep, Read, SubagentHandback, Write</tools-used-before-summary>
+</system-reminder>
 Summary:
 1. Primary Request and Intent:
-   - Ongoing thesis project GRAG-Job (repo C:\Coding\exjobbet\GRAG-Job, branch artefact-v4-iteration). Three final runs on the 100 gold questions: `output/k=chars/lucene__gold100__cb72000__20261008T234209Z`, `output/k=chars/vector__gold100__cb72000__20261017T061242Z` (both commit fbc2f22), `output/k=chars/artefact_v4__gold100__cb72000__20261020T041923Z` (commit 0c082a3, clean checkout GRAG-Job-0c082a3).
-   - Earlier in this session: make the three run folders the same format and correct ("make sure all the correct data is in those folders") — done (commits 3a231f3, c22dd71, 126fc97).
-   - Then: apply research-data rules 1–8 to the current folders/data — done and reported rule by rule.
-   - CURRENT REQUEST: "create these versions then" — create six files, two per arm (one for the runs, one for the construction), holding "all the real, clean data" in "the same format/shape" across arms, at "csv-level of 'data'", delivered "in a less retarded format" than CSV, gathered "IN ITS OWN FUCKING CLEAN 
-[... 19107 more chars]
+   - The user's only message in this session (2026-11-04): **"the workbook, is it clean? is it correct?"**
+   - It is about `finished_data/full-grag-data.xlsx`, the data given away to his people. An analyst reviewed it, and a reply to the analyst was written in a parallel session (61e9e03a, last turns 2026-11-03/04).
+   - "Clean" means it follows his rules for the data given away (CLAUDE.md, "The data given away"):
+     - only values, at the level of a CSV;
+     - a column's name says what it holds and its unit;
+     - no notes, reasons, history or project words;
+     - one number per cell;
+     - the 815 as one set;
+     - the folder holds one workbook and nothing else;
+     - the key is clinical, from the documentation.
+   - "Correct" means every value agrees with the run folders and HERB's data, and the file is what the kept script makes.
+
+2. Key Tech
+[... 9807 more chars]
 ```
 
 ## `tool_result` · 2026-10-20 09:33:31 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
@@ -305,23 +317,25 @@ Another Claude session sent a message:
 <local-command-stdout>Set model to `claude-opus-5[1m]`</local-command-stdout>
 ```
 
-## `compact_summary` · 2026-10-21 02:39:56 · 27f14760-a0f1-4642-b119-42ed8aa2d5ac.jsonl
+## `compact_summary` · 2026-11-05 00:12:47 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
 
 ```
 This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
 
+<system-reminder>
+<tools-used-before-summary>Agent, Bash, Grep, Read, SubagentHandback, Write</tools-used-before-summary>
+</system-reminder>
 Summary:
 1. Primary Request and Intent:
-   - Project GRAG-Job (repo C:\Coding\exjobbet\GRAG-Job, branch artefact-v4-iteration). Three final runs on the 100 gold questions:
-     - `output/k=chars/lucene__gold100__cb72000__20261008T234209Z`
-     - `output/k=chars/vector__gold100__cb72000__20261017T061242Z`
-     - `output/k=chars/artefact_v4__gold100__cb72000__20261020T041923Z`
-   - The overall goal of this span: produce the finished data that he gives away to "our analyst" / "his people". The final state:
-     - `C:\Coding\exjobbet\GRAG-Job\finished_data\` holds four .xlsx workbooks and nothing else: lucene_runs.xlsx, vector_runs.xlsx, artefact_runs.xlsx and construction.xlsx.
-     - The files hold values only, at CSV level, in a proper format (xlsx). They hold no comments, reasons, links, paths, host or user names, session ids, repo files, commits or notes.
-     - Column names must be readable without a key, and the key sheet comes last.
-     - The three runs workbooks have the same sheets and columns ("ALL THREE ARMS have the same 
-[... 20885 more chars]
+   - The session is about `finished_data/full-grag-data.xlsx`, the workbook given away to his people. It has four sheets: results, run data, arm construction and key. It is made by `tools/export_finished_data.py` and is committed at 7f5fa2d.
+   - His first question (2026-11-04): "the workbook, is it clean? is it correct?" Before the earlier compaction, the answer was: the values are correct where checked. It is not clean for four reasons:
+     - the untracked `finished_data/grag-data - backup.xlsx`;
+     - project words in the key (on how values were made);
+     - the row order (the hundred, then the 715);
+     - the gold arm's text.
+   - Then: "ok, what is incorrect?" — he wanted the errors as distinct from clean-up. I checked every part not yet checked and found three errors (section 5).
+   - Then: "dude, you are rambling, please, constructed and coher
+[... 10348 more chars]
 ```
 
 ## `tool_result` · 2026-10-20 09:34:23 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl
@@ -360,17 +374,25 @@ Summary:
             <command-args>claude-fable-5-1[1m]</command-args>
 ```
 
-## `compact_summary` · 2026-10-08 21:27:34 · 33b3bd58-daeb-46f3-adfc-d4f493426826.jsonl
+## `compact_summary` · 2026-11-05 04:53:13 · 22b11604-af51-4ec7-a5a7-1a50064efd8a.jsonl
 
 ```
 This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
 
+<system-reminder>
+<tools-used-before-summary>Agent, Bash, Edit, Glob, Grep, PowerShell, Read, SendMessage, SubagentHandback, ToolSearch, Write</tools-used-before-summary>
+</system-reminder>
 Summary:
 1. Primary Request and Intent:
-   - **Original request (2026-10-08 15:28Z):** "do a critical review of the full lucene and vector runs now, extra careful with academic rigor, compare to the historically required data (metrics like times, tokens in and out, build and more) in the git history, mempalace etc, the new abstract". Delivered (long review; see section 5).
-   - **Then:** "You may make model calls." → I made probe calls and a one-question proof on the made-up question only.
-   - **Then a chain of corrections** in which he (a) wanted a plain yes/no on whether the runs are correctly done (answer: retrieval yes, model calls no), (b) was shocked that the CLI adds text to every call, (c) first ruled the judges are not ours, (d) told me to read RAGAS's own material myself, (e) then reversed: the judge calls must also be done correctly, per RAGAS's own settings, which I was to read and USE, not recite, (f) pointed out that the harness's "temperature 0, thinking off, max_tokens 8192" was in there for a reason (it is the int
-[... 28004 more chars]
+   - The workbook `finished_data/full-grag-data.xlsx` (sheets: results, run data, arm construction, key; made by `tools/export_finished_data.py`, committed at 7f5fa2d) is to be handed to "the analyst".
+   - His stated purpose (latest): "i am intending to hand this off to the analyst, but you have added confusing prose and garbage that gives him strange signals about shit we have done that he REALLY does not need to know about, and information that just confuses and assumes he knows anything about the builds and so on".
+   - Earlier requests in this session:
+     - "the workbook, is it clean? is it correct?"
+     - "ok, what is incorrect?"
+     - "how far from the truth are they?" (about the times)
+     - "take a fucking step back … get another less contextually retarded agent to review" (done)
+     - "we h
+[... 13918 more chars]
 ```
 
 ## `tool_result` · 2026-10-20 09:34:27 · 01cdc39c-ae0a-4777-9788-62636e25d616.jsonl

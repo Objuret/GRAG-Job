@@ -137,7 +137,7 @@ SCORES = [
     ("string_presence", "RAGAS StringPresence. 1 if the answer contains the reference answer, else 0.", "0 or 1"),
 ]
 QUESTIONS = [
-    ("arm", "Retrieval method.", ""),
+    ("arm", "Method that gave the answer model its context.", ""),
     ("question_id", "Question id: product, a (answerable), index of the question in the product's answerable "
                     "questions in HERB, from 0.", ""),
     ("question_type", "HERB question type.", ""),
@@ -151,60 +151,36 @@ QUESTIONS = [
     ("string_presence_per_id", "RAGAS StringPresence run on each item of HERB's reference list (one employee ID, PR "
                                "link or URL per item) instead of on the whole reference answer: the share of the items "
                                "the answer contains, an item counted only where it is not followed by a letter or a "
-                               "digit, so that a link is not found inside a longer one (pull/12 inside pull/123; our "
-                               "own rule). Person, PR and URL questions; empty for content and company questions.",
+                               "digit, so that a link is not found inside a longer one (pull/12 inside pull/123). "
+                               "Person, PR and URL questions; empty for content and company questions.",
      "0-1"),
     ("string_presence_per_id_precision", "RAGAS StringPresence run the other way round: each distinct ID or link in "
                                          "the answer of the forms that the items of HERB's reference list have, looked "
                                          "for in the reference list (its items joined by spaces): the share of them the "
                                          "list contains, each counted as in string_presence_per_id only where it is not "
-                                         "followed by a letter or a digit. The forms are our own rule: an employee ID (eid_ and eight hex "
+                                         "followed by a letter or a digit. The forms: an employee ID (eid_ and eight hex "
                                          "digits), a customer ID (CUST- and four digits), a PR link (a github.com pull "
                                          "link), a URL (any other link that starts with http:// or https://). Person, PR and "
                                          "URL questions; empty for content and company questions; 0 when the answer "
                                          "gives no ID or link of those forms.", "0-1"),
     ("string_presence_per_id_f1", "F1 of string_presence_per_id_precision (P) and string_presence_per_id (R): "
                                   "2PR / (P + R); 0 when the answer gives no ID or link of the forms of "
-                                  "string_presence_per_id_precision, or when P + R is 0. The forms are our own rule. "
+                                  "string_presence_per_id_precision, or when P + R is 0. "
                                   "Person, PR and URL questions; empty for content and company questions.", "0-1"),
-    ("search_seconds", "Retrieval time, without the interpreter and the query embedding, measured with one question "
-                       "at a time on one machine for every arm, never as the first question of a process: for lucene "
-                       "and vector the ranking, for the artefact the reading of its stored first-call answer and query "
-                       "vectors, the ranking and its hand-over of the records up to character_limit, for "
-                       "gold_evidence the reading of HERB's evidence for the question.", "seconds"),
-    ("interpreter_seconds", "Time of the interpreter call's answering try: the answer model, called before "
-                            "retrieval, measured and limited as answer_seconds, with the relation fitted on the "
-                            "interpreter calls. Artefact only.", "seconds"),
-    ("query_embedding_seconds", "Time to embed the query's texts on the graphics card, one request after the other "
-                                "in a warm process, without waits for the embedder. Vector and artefact only. The "
-                                "artefact keeps each text's vector: a text that an earlier question of the same run "
-                                "embedded is read with no request and counts with that question.", "seconds"),
-    ("answer_seconds", "Time of the answer model call's answering try: the Claude CLI's duration_api_ms, its time in "
-                       "requests to the model. For a call started while the backlog of answer-model input tokens of all "
-                       "answer-model calls in the run folders, test runs included (added at each call's start, lowered "
-                       "by 16,500 tokens per second), was 886,127 tokens or more, the fitted backlog at which the "
-                       "seconds per output token rise: a + b x output tokens, "
-                       "fitted on the same arm's calls in its final runs started below it. A call in which the CLI "
-                       "did not accept the answer's form and the model wrote the answer again counts by its first request: "
-                       "duration_api_ms times the first request's share of the requests' times in the CLI's transcript "
-                       "of the call, or the relation at the first request's output tokens.",
+    ("search_seconds", "Time to get the context, without interpreter_seconds and query_embedding_seconds.",
      "seconds"),
-    ("total_seconds", "Time of the question's steps added: search_seconds, interpreter_seconds, "
-                      "query_embedding_seconds and answer_seconds. Without failed tries of model "
-                      "calls.", "seconds"),
-    ("interpreter_tokens_in", "Input tokens of the interpreter call: new input, cache creation and cache read "
-                              "tokens added; of its first request, as answer_seconds says. Artefact only.", "tokens"),
-    ("interpreter_tokens_out", "Output tokens of the interpreter call; of its first request, as answer_seconds says. "
-                               "Artefact only.", "tokens"),
-    ("query_embedding_tokens", "Tokens embedded for the query's texts, counted on each text with the 'query: ' "
-                               "prefix and the tokenizer's special tokens. Vector and artefact only; for the "
-                               "artefact, as query_embedding_seconds says which texts count.", "tokens"),
+    ("interpreter_seconds", "Time of the interpreter call: the artefact's call to the answer model before its "
+                            "retrieval. Artefact only.", "seconds"),
+    ("query_embedding_seconds", "Time to embed the texts that the search uses. Vector and artefact only.", "seconds"),
+    ("answer_seconds", "Time of the answer model call.", "seconds"),
+    ("total_seconds", "search_seconds + interpreter_seconds + query_embedding_seconds + answer_seconds.", "seconds"),
+    ("interpreter_tokens_in", "Input tokens of the interpreter call. Artefact only.", "tokens"),
+    ("interpreter_tokens_out", "Output tokens of the interpreter call. Artefact only.", "tokens"),
+    ("query_embedding_tokens", "Tokens embedded for the search. Vector and artefact only.", "tokens"),
     ("retrieved_context_characters", "Characters of the retrieved context given to the answer model. At most "
                                      "character_limit.", "characters"),
-    ("answer_tokens_in", "Input tokens of the answer model call: new input, cache creation and cache read tokens "
-                         "added; of its first request, as answer_seconds says.", "tokens"),
-    ("answer_tokens_out", "Output tokens of the answer model call; of its first request, as answer_seconds says.",
-     "tokens"),
+    ("answer_tokens_in", "Input tokens of the answer model call.", "tokens"),
+    ("answer_tokens_out", "Output tokens of the answer model call.", "tokens"),
 ]
 # the same for the three arms; the export stops if an arm differs. The dataset and its licence
 # are their own words and have no entry in the data dictionary.
@@ -213,30 +189,23 @@ SETUP = [
     ("dataset_licence", None, ""),
     ("questions", "Questions each arm answered: every question of HERB's question set that cites evidence records.",
      "questions"),
-    ("corpus_units", "Units of HERB's corpus that every arm reads: every record of HERB's products and every employee "
-                     "and customer record (employee.json, customers_data.json), one unit per record.", "units"),
+    ("corpus_units", "Units of HERB's corpus that lucene, vector and the artefact read: every record of HERB's "
+                     "products and every employee and customer record (employee.json, customers_data.json), one unit "
+                     "per record.", "units"),
     ("character_limit", "Maximum characters of retrieved text given to the answer model per question.",
      "characters"),
     ("answer_model", "Language model of the answers and of the artefact's interpreter.", ""),
     ("judge_model", "Language model that RAGAS uses as judge.", ""),
     ("judge_temperature", "Sampling temperature of every judge call.", ""),
-    ("ragas_version", "Version of RAGAS that judged the scores, as every judge start that records its settings "
-                      "names it.", ""),
+    ("ragas_version", "Version of RAGAS that judged the scores.", ""),
     ("embedding_model", "Embedding model of the query embeddings and of the RAGAS scores that use embeddings.", ""),
 ]
 RUN = [
-    ("run_seconds", f"Time of the arm's runs over its questions in {PER_QUESTION}: their total_seconds added.",
-     "seconds"),
-    ("judge_tokens_in", "Input tokens of all RAGAS judge calls that answered: new input, cache creation and cache "
-                        "read tokens added.", "tokens"),
-    ("judge_tokens_out", "Output tokens of all RAGAS judge calls that answered.", "tokens"),
-    ("judge_embedding_tokens", "Tokens embedded by RAGAS, counted on each text with its mode's prefix and the "
-                               "tokenizer's special tokens.", "tokens"),
-    ("judging_seconds", f"Time of the RAGAS evaluation over the arm's questions in {PER_QUESTION}: the Claude CLI's "
-                        "duration_api_ms of every judge call that answered, as judge_tokens_in counts them (also in "
-                        "cells that failed or that a later start judged again), and the encoding times of RAGAS's "
-                        "embedding requests on the graphics card, added. Judge calls that no record holds (three of "
-                        "the artefact, one of vector) are in the tokens and have no time.", "seconds"),
+    ("run_seconds", "Sum of total_seconds over the arm's questions.", "seconds"),
+    ("judge_tokens_in", "Input tokens of the RAGAS judge calls.", "tokens"),
+    ("judge_tokens_out", "Output tokens of the RAGAS judge calls.", "tokens"),
+    ("judge_embedding_tokens", "Tokens embedded by RAGAS.", "tokens"),
+    ("judging_seconds", "Time of the RAGAS judge calls and of RAGAS's embeddings, added.", "seconds"),
 ]
 INDEX_KIND = {"lucene": ("BM25 full-text index", "corpus record"),
               "vector": ("dense vector index", "corpus record"),
@@ -953,37 +922,25 @@ def construction_table():
         ("units in the index", "Units in the index. Artefact: the chunks the arm retrieves from.", "count",
          {"lucene": mans["lucene"]["index"]["units"], "vector": mans["vector"]["index"]["units"],
           a: mans[a]["index"]["counts"]["chunks"]}),
-        ("build time, seconds", "Time to build the index that the arm's runs read. Artefact: the times of "
-                                "the build steps added: the claude-haiku-4-5 and claude-opus-5 steps as the times of "
-                                "their calls added, the embedding as in its row, the other steps as their recorded "
-                                "times; the chunking and loading of the chunks has no recorded time and is not in "
-                                "it.", "seconds",
+        ("build time, seconds", "Time to build the index.", "seconds",
          {"lucene": mans["lucene"]["build_stats"]["build_time_s"], "vector": mans["vector"]["build_stats"]["build_time_s"],
           a: haiku_seconds + embed_seconds + opus_seconds + encoder_seconds + no_model}),
-        (f"{embedder}, texts embedded", "Texts embedded for the index, as the index holds them.", "count",
+        (f"{embedder}, texts embedded", "Texts embedded to build the index.", "count",
          {"vector": vector["calls"], a: embed_texts}),
-        (f"{embedder}, tokens", "Tokens embedded for the index, counted on the text with its mode's prefix and the "
-                                "tokenizer's special tokens.", "tokens",
+        (f"{embedder}, tokens", "Tokens embedded to build the index.", "tokens",
          {"vector": vector["tokens_in"], a: embed_tokens}),
-        (f"{embedder}, seconds", "Embedding time for the index, on the graphics card. Vector: its requests' times "
-                                 "added. Artefact: the elapsed times of its two passes (model load and saving "
-                                 "included), less the share of the 63 tags whose vectors were made again from their "
-                                 "readable names, by the pass's rate, and those 63 requests' times.", "seconds",
+        (f"{embedder}, seconds", "Embedding time to build the index.", "seconds",
          {"vector": vector["seconds_elapsed"], a: embed_seconds}),
-        ("claude-haiku-4-5, calls", "Calls to claude-haiku-4-5 whose descriptions and tags the index holds.", "count",
+        ("claude-haiku-4-5, calls", "Calls to claude-haiku-4-5 to build the index.", "count",
          {a: haiku["calls"]}),
         ("claude-haiku-4-5, tokens in", "Input tokens of those calls.", "tokens", {a: haiku["tokens_in"]}),
         ("claude-haiku-4-5, tokens out", "Output tokens of those calls.", "tokens", {a: haiku["tokens_out"]}),
-        ("claude-haiku-4-5, seconds", "Time of those calls added, each by its answering try as the tagging run "
-                                      "recorded it; a call answered on a later try, whose record also holds its failed "
-                                      "tries, by a + b x its output tokens fitted on the calls answered on the first "
-                                      "try.", "seconds", {a: haiku_seconds}),
+        ("claude-haiku-4-5, seconds", "Time of those calls.", "seconds", {a: haiku_seconds}),
         ("claude-opus-5, calls", "Calls to claude-opus-5 for the index.", "count",
          {a: sum(r[0] for r in learned_from)}),
         ("claude-opus-5, tokens in", "Input tokens of those calls.", "tokens", {a: sum(r[1] for r in learned_from)}),
         ("claude-opus-5, tokens out", "Output tokens of those calls.", "tokens", {a: sum(r[2] for r in learned_from)}),
-        ("claude-opus-5, seconds", "Time of those calls added, each from its prompt to its reply in the Claude CLI's "
-                                   "own transcript of the call.", "seconds",
+        ("claude-opus-5, seconds", "Time of those calls.", "seconds",
          {a: opus_seconds}),
         (f"{encoder}, seconds", f"Encoding time of {encoder} for the index.", "seconds", {a: encoder_seconds}),
     ]
